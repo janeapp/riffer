@@ -1,16 +1,23 @@
 name: Ruby
 
 on:
-  push:
-    branches:
-      - main
-
-  pull_request:
+  - pull_request
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle exec rake standard
+
+  test:
+    runs-on: ubuntu-latest
+    name: test ${{ matrix.ruby }}
+
     strategy:
       matrix:
         ruby:
@@ -25,5 +32,4 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run the default task
-        run: bundle exec rake
+      - run: bundle exec rake spec
