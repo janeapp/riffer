@@ -1,113 +1,104 @@
 # frozen_string_literal: true
 
-module Riffer
-  module Agents
-    module Providers
-      # OpenAI provider for chat completions using the OpenAI API
-      class OpenAI < Base
-        def initialize(api_key:, **openai_options)
-          super()
-          depends_on "openai"
+require "openai"
 
-          raise ArgumentError, "api_key is required" if api_key.nil? || api_key.empty?
+module Riffer::Agents::Providers
+  # OpenAI provider for chat completions using the OpenAI API
+  class OpenAI < Base
+    def initialize(api_key:, **openai_options)
+      depends_on "openai"
 
-          @client = ::OpenAI::Client.new(
-            api_key: api_key,
-            **openai_options
-          )
+      raise ArgumentError, "api_key is required" if api_key.nil? || api_key.empty?
+
+      @client = ::OpenAI::Client.new(
+        api_key: api_key,
+        **openai_options
+      )
+    end
+
+    private
+
+    def perform_generate_text(messages, model:)
+      params = build_request_params(messages, model)
+      response = @client.responses.create(params)
+
+      output = response.output.find { |o| o.type == :message }
+
+      if output.nil?
+        raise Riffer::Agents::Providers::Error, "No output returned from OpenAI API"
+      end
+
+      content = output.content.find { |c| c.type == :output_text }
+
+      if content.nil?
+        raise Riffer::Agents::Providers::Error, "No content returned from OpenAI API"
+      end
+
+      if content.type == :refusal
+        raise Riffer::Agents::Providers::Error, "Request was refused: #{content.refusal}"
+      end
+
+      if content.type != :output_text
+        raise Riffer::Agents::Providers::Error, "Unexpected content type: #{content.type}"
+      end
+
+      Riffer::Agents::Messages::Assistant.new(content.text)
+    end
+
+    def perform_stream_text(messages, model:)
+      Enumerator.new do |yielder|
+        params = build_request_params(messages, model)
+        stream = @client.responses.stream(params)
+
+        process_stream_events(stream, yielder)
+      end
+    end
+
+    def build_request_params(messages, model)
+      {
+        model: model,
+        input: convert_message_to_openai_format(messages)
+      }
+    end
+
+    def convert_message_to_openai_format(messages)
+      messages.map do |message|
+        case message
+        when Riffer::Agents::Messages::System
+          {role: "developer", content: message.content}
+        when Riffer::Agents::Messages::User
+          {role: "user", content: message.content}
+        when Riffer::Agents::Messages::Assistant
+          {role: "assistant", content: message.content}
+        when Riffer::Agents::Messages::Tool
+          raise Riffer::Agents::Providers::InvalidInputError, "Tool messages are not supported by OpenAI provider yet"
+        when Hash
+          message
+        else
+          raise Riffer::Agents::Providers::InvalidInputError, "Unsupported message type: #{message.class}"
         end
+      end
+    end
 
-        private
+    def process_stream_events(stream, yielder)
+      stream.each do |event|
+        next unless should_process_event?(event)
 
-        def perform_generate_text(messages, model:)
-          params = build_request_params(messages, model)
-          response = @client.responses.create(params)
+        content = extract_event_content(event)
+        yielder << content if content
+      end
+    end
 
-          extract_response_content(response)
-        end
+    def should_process_event?(event)
+      [:"response.output_text.delta", :"response.output_text.done"].include?(event.type)
+    end
 
-        def perform_stream_text(messages, model:)
-          Enumerator.new do |yielder|
-            params = build_request_params(messages, model)
-            stream = @client.responses.stream(params)
-
-            process_stream_events(stream, yielder)
-          end
-        end
-
-        def build_request_params(messages, model)
-          instructions = extract_instructions(messages)
-          input = extract_input(messages)
-
-          params = {model: model, input: input}
-          params[:instructions] = instructions if instructions
-
-          params
-        end
-
-        def extract_instructions(messages)
-          system_messages = messages.select { |msg| msg[:role] == "system" }
-          return nil if system_messages.empty?
-
-          system_messages.map { |msg| msg[:content] }.join("\n")
-        end
-
-        def extract_input(messages)
-          messages.reject { |msg| msg[:role] == "system" }
-        end
-
-        def extract_response_content(response)
-          output_item = find_message_output(response)
-          return default_response unless output_item
-
-          content_item = output_item.content&.first
-          return default_response unless content_item
-
-          build_content_response(content_item)
-        end
-
-        def find_message_output(response)
-          response.output&.find { |item| item.type == "message" }
-        end
-
-        def default_response
-          {role: "assistant", content: nil}
-        end
-
-        def build_content_response(content_item)
-          result = {role: "assistant"}
-
-          case content_item.type
-          when "output_text"
-            result[:content] = content_item.text
-          when "refusal"
-            result[:content] = content_item.refusal
-          end
-
-          result.compact
-        end
-
-        def process_stream_events(stream, yielder)
-          stream.each do |event|
-            next unless should_process_event?(event)
-
-            content = extract_event_content(event)
-            yielder << content if content
-          end
-        end
-
-        def should_process_event?(event)
-          ["response.output_text.delta", "response.output_text.done"].include?(event.type)
-        end
-
-        def extract_event_content(event)
-          case event.type
-          when "response.output_text.delta"
-            Riffer::Agents::StreamEvents::TextDelta.new(event.text)
-          when "response.output_text.done"
-            Riffer::Agents::StreamEvents::TextDone.new(event.text)
-          end
-        end
+    def extract_event_content(event)
+      case event.type
+      when :"response.output_text.delta"
+        Riffer::Agents::StreamEvents::TextDelta.new(event.delta)
+      when :"response.output_text.done"
+        Riffer::Agents::StreamEvents::TextDone.new(event.text)
       end
     end
   end
