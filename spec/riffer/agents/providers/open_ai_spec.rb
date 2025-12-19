@@ -2,62 +2,151 @@
 
 require "spec_helper"
 
-RSpec.describe Riffer::Agents::Providers::OpenAI do
-  let(:api_key) { "test-api-key" }
-  let(:provider) { described_class.new(api_key: api_key) }
+RSpec.describe Riffer::Agents::Providers::OpenAI, :vcr do
+  let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 
-  before do
-    stub_request(:post, "https://api.openai.com/v1/responses")
-      .to_return(
-        status: 200,
-        body: {
-          id: "resp_123",
-          output: [
-            {
-              type: "message",
-              content: [
-                {
-                  type: "output_text",
-                  text: "Test response"
-                }
-              ]
-            }
-          ]
-        }.to_json,
-        headers: {"Content-Type" => "application/json"}
-      )
+  describe "#initialize" do
+    it "raises ArgumentError when api_key is nil" do
+      expect {
+        described_class.new(api_key: nil)
+      }.to raise_error(ArgumentError, "api_key is required")
+    end
+
+    it "raises ArgumentError when api_key is empty" do
+      expect {
+        described_class.new(api_key: "")
+      }.to raise_error(ArgumentError, "api_key is required")
+    end
+
+    it "creates OpenAI client with api_key" do
+      provider = described_class.new(api_key: api_key)
+      expect(provider).to be_a(described_class)
+    end
+
+    it "accepts additional options" do
+      provider = described_class.new(api_key: api_key, organization: "org-123")
+      expect(provider).to be_a(described_class)
+    end
   end
 
   describe "#generate_text" do
-    it "returns a response hash with prompt" do
-      result = provider.generate_text(prompt: "Hello")
-      expect(result).to be_a(Hash)
+    let(:provider) { described_class.new(api_key: api_key) }
+
+    context "when prompt is provided" do
+      it "returns an Assistant message" do
+        result = provider.generate_text(prompt: "Say hello", model: "gpt-5-nano")
+        expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+      end
     end
 
-    it "returns a response hash with messages" do
-      result = provider.generate_text(messages: [{role: "user", content: "Hello"}])
-      expect(result).to be_a(Hash)
+    context "when system and prompt are provided" do
+      let(:params) { {system: "Be concise", prompt: "Say hello", model: "gpt-5-nano"} }
+
+      it "returns an Assistant message" do
+        result = provider.generate_text(**params)
+
+        expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+      end
+    end
+
+    context "with a hash messages array" do
+      let(:messages) do
+        [
+          {role: "system", content: "Be concise"},
+          {role: "user", content: "Say hello"}
+        ]
+      end
+
+      it "returns an Assistant message" do
+        result = provider.generate_text(messages: messages, model: "gpt-5-nano")
+        expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+      end
+    end
+
+    context "with a User message" do
+      let(:messages) do
+        [Riffer::Agents::Messages::User.new("Say hello")]
+      end
+
+      it "returns an Assistant" do
+        result = provider.generate_text(messages: messages, model: "gpt-5-nano")
+        expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+      end
+    end
+
+    context "with a System message" do
+      let(:messages) do
+        [
+          Riffer::Agents::Messages::System.new("Be concise"),
+          Riffer::Agents::Messages::User.new("Say hello")
+        ]
+      end
+
+      it "returns an Assistant message" do
+        result = provider.generate_text(messages: messages, model: "gpt-5-nano")
+        expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+      end
+    end
+
+    context "with an Assistant message" do
+      let(:messages) do
+        [
+          Riffer::Agents::Messages::User.new("Say hello"),
+          Riffer::Agents::Messages::Assistant.new("Hello!"),
+          Riffer::Agents::Messages::User.new("How are you?")
+        ]
+      end
+
+      it "returns an Assistant message" do
+        result = provider.generate_text(messages: messages, model: "gpt-5-nano")
+        expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+      end
     end
   end
 
   describe "#stream_text" do
-    before do
-      stub_request(:post, "https://api.openai.com/v1/responses")
-        .to_return(
-          status: 200,
-          body: "event: response.output_text.delta\ndata: {\"type\":\"response.output_text.delta\",\"text\":\"Test\"}\n\n",
-          headers: {"Content-Type" => "text/event-stream"}
+    let(:provider) { described_class.new(api_key: api_key) }
+
+    context "when prompt is provided" do
+      it "returns an Enumerator" do
+        result = provider.stream_text(prompt: "Say hello", model: "gpt-5-nano")
+        expect(result).to be_a(Enumerator)
+      end
+
+      it "yields stream events" do
+        events = provider.stream_text(prompt: "Say hello", model: "gpt-5-nano").to_a
+        expect(events).not_to be_empty
+      end
+
+      it "yields TextDelta events" do
+        events = provider.stream_text(prompt: "Say hello", model: "gpt-5-nano").to_a
+        deltas = events.select { |e| e.is_a?(Riffer::Agents::StreamEvents::TextDelta) }
+        expect(deltas).not_to be_empty
+      end
+
+      it "yields TextDone event" do
+        events = provider.stream_text(prompt: "Say hello", model: "gpt-5-nano").to_a
+        done = events.find { |e| e.is_a?(Riffer::Agents::StreamEvents::TextDone) }
+        expect(done).not_to be_nil
+      end
+    end
+
+    context "when messages are provided" do
+      it "returns an Enumerator" do
+        result = provider.stream_text(
+          messages: [{role: "user", content: "Say hello"}],
+          model: "gpt-5-nano"
         )
-    end
+        expect(result).to be_a(Enumerator)
+      end
 
-    it "returns an enumerator with prompt" do
-      result = provider.stream_text(prompt: "Hello", model: "gpt-4.1")
-      expect(result).to be_a(Enumerator)
-    end
-
-    it "returns an enumerator with messages" do
-      result = provider.stream_text(messages: [{role: "user", content: "Hello"}], model: "gpt-4.1")
-      expect(result).to be_a(Enumerator)
+      it "yields stream events" do
+        events = provider.stream_text(
+          messages: [{role: "user", content: "Say hello"}],
+          model: "gpt-5-nano"
+        ).to_a
+        expect(events).not_to be_empty
+      end
     end
   end
 end

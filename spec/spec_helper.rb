@@ -4,6 +4,13 @@ require "riffer"
 require "vcr"
 require "webmock/rspec"
 
+begin
+  require "dotenv"
+  Dotenv.load
+rescue LoadError
+  # Dotenv not available, skip loading .env file
+end
+
 # Configure VCR for recording HTTP interactions
 VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
@@ -15,7 +22,7 @@ VCR.configure do |config|
   }
 
   # Filter sensitive data
-  config.filter_sensitive_data("<OPENAI_API_KEY>") { ENV["OPENAI_API_KEY"] }
+  config.filter_sensitive_data("<OPENAI_API_KEY>") { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 end
 
 RSpec.configure do |config|
