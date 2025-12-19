@@ -17,6 +17,7 @@ Riffer is a Ruby gem framework for building AI-powered applications and agents. 
 - All Ruby files must include `# frozen_string_literal: true` at the top
 - Follow StandardRB conventions (2-space indentation, double quotes for strings)
 - Run `rake standard` to check formatting and `rake standard:fix` to auto-fix
+- Custom RuboCop rules are defined in `.rubocop.yml` - follow these in addition to StandardRB
 
 ### Testing
 
@@ -26,6 +27,7 @@ Riffer is a Ruby gem framework for building AI-powered applications and agents. 
 - Tests must pass before committing
 - Use modern RSpec syntax with `expect` (not `should`)
 - Disable monkey patching in specs (already configured)
+- **Single Assertion Rule**: Each test should have only one expectation (enforced by RuboCop)
 
 ## Project Structure
 
