@@ -98,10 +98,7 @@ RSpec.describe Riffer::Agents::Providers::Test do
     end
 
     it "cycles through custom responses" do
-      responses = [
-        {role: "assistant", content: "First"},
-        {role: "assistant", content: "Second"}
-      ]
+      responses = [{role: "assistant", content: "First"}, {role: "assistant", content: "Second"}]
       provider = described_class.new(responses: responses)
       provider.chat(messages: [], model: "test")
       result = provider.chat(messages: [], model: "test")
