@@ -1,20 +1,16 @@
 # frozen_string_literal: true
 
-module Riffer
-  module Agents
-    module StreamEvents
-      class TextDone < Base
-        attr_reader :content
+module Riffer::Agents::StreamEvents
+  class TextDone < Base
+    attr_reader :content
 
-        def initialize(content, role: "assistant")
-          super(role: role)
-          @content = content
-        end
+    def initialize(content, role: "assistant")
+      super(role: role)
+      @content = content
+    end
 
-        def to_h
-          {role: @role, content: @content}
-        end
-      end
+    def to_h
+      {role: @role, content: @content}
     end
   end
 end
