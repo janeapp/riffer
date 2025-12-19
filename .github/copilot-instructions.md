@@ -95,6 +95,13 @@ end
 - Document return values with `@return`
 - Document raised errors with `@raise`
 
+### Comments
+
+- Only add comments when the code is ambiguous or not semantically obvious
+- Avoid stating what the code does if it's clear from reading the code itself
+- Use comments to explain **why** something is done, not **what** is being done
+- Comments should add value beyond what the code already expresses
+
 ## Testing Guidelines
 
 ### Spec Structure

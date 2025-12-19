@@ -19,10 +19,7 @@ module Riffer
         end
 
         def chat(messages:, model:, **options)
-          # Track the call
           @calls << {messages: messages, model: model, options: options}
-
-          # Return stubbed response if set, otherwise use responses array or default
           response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
           @current_index += 1
           response
