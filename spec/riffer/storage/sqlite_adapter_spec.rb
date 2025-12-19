@@ -17,7 +17,7 @@ RSpec.describe Riffer::Storage::SqliteAdapter do
   end
 
   describe "#delete" do
-    it "deletes a key" do
+    it "removes the key from storage" do
       adapter.save("test_key", "test_value")
       adapter.delete("test_key")
       expect(adapter.load("test_key")).to be_nil

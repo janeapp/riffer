@@ -4,9 +4,13 @@ require "spec_helper"
 
 RSpec.describe Riffer::Core do
   describe "#initialize" do
-    it "creates a core instance with logger and storage registry" do
+    it "creates a logger instance" do
       core = described_class.new
       expect(core.logger).to be_a(Logger)
+    end
+
+    it "initializes an empty storage registry" do
+      core = described_class.new
       expect(core.storage_registry).to eq({})
     end
   end

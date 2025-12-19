@@ -4,9 +4,13 @@ require "spec_helper"
 
 RSpec.describe Riffer::Tools::Base do
   describe "#initialize" do
-    it "creates a tool with name and description" do
+    it "sets the tool name" do
       tool = described_class.new(name: "test_tool", description: "A test tool")
       expect(tool.name).to eq("test_tool")
+    end
+
+    it "sets the tool description" do
+      tool = described_class.new(name: "test_tool", description: "A test tool")
       expect(tool.description).to eq("A test tool")
     end
   end
@@ -19,11 +23,21 @@ RSpec.describe Riffer::Tools::Base do
   end
 
   describe "#schema" do
-    it "returns a schema hash" do
+    it "includes the tool name in schema" do
       tool = described_class.new(name: "test_tool", description: "A test tool")
       schema = tool.schema
       expect(schema[:name]).to eq("test_tool")
+    end
+
+    it "includes the tool description in schema" do
+      tool = described_class.new(name: "test_tool", description: "A test tool")
+      schema = tool.schema
       expect(schema[:description]).to eq("A test tool")
+    end
+
+    it "includes empty parameters in schema" do
+      tool = described_class.new(name: "test_tool", description: "A test tool")
+      schema = tool.schema
       expect(schema[:parameters]).to eq({})
     end
   end

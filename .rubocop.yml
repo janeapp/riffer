@@ -1,0 +1,18 @@
+# Rubocop configuration for Riffer
+# This project uses StandardRB for most style rules, but adds custom RSpec rules
+
+# Inherit from StandardRB
+inherit_gem:
+  standard: config/base.yml
+
+# Enable RuboCop RSpec plugin
+AllCops:
+  NewCops: enable
+
+plugins:
+  - rubocop-rspec
+
+# Custom RSpec rules
+RSpec/MultipleExpectations:
+  Enabled: true
+  Max: 1

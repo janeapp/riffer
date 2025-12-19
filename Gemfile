@@ -15,3 +15,6 @@ gem "standard", "~> 1.3"
 # Testing dependencies
 gem "vcr", "~> 6.0"
 gem "webmock", "~> 3.0"
+
+# Code quality
+gem "rubocop-rspec", "~> 3.0", require: false
