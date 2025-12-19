@@ -1,0 +1,6 @@
+require:
+  - rubocop-rspec
+
+RSpec/MultipleExpectations:
+  Enabled: true
+  Max: 1

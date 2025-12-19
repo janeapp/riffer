@@ -17,4 +17,4 @@ gem "vcr", "~> 6.0"
 gem "webmock", "~> 3.0"
 
 # Code quality
-gem "rubocop-rspec", "~> 3.0", require: false
+gem "rubocop-rspec", "~> 3.8", require: false

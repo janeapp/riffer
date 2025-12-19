@@ -1,2 +1,2 @@
-# For available configuration options, see:
-#   https://github.com/standardrb/standard
+extend_config:
+  - .rubocop_rspec.yml
