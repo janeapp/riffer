@@ -56,22 +56,32 @@ RSpec.describe Riffer::Agents::Providers::Base do
       expect(result).to all(be_a(Riffer::Agents::Messages::Base))
     end
 
-    it "converts hash messages to message objects" do
-      messages = [
-        {role: "user", content: "Hello"},
-        {role: "assistant", content: "Hi there"}
-      ]
-      result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
-      expect(result).to all(be_a(Riffer::Agents::Messages::Base))
+    context "with hash messages" do
+      let(:messages) do
+        [
+          {role: "user", content: "Hello"},
+          {role: "assistant", content: "Hi there"}
+        ]
+      end
+
+      it "converts hash messages to message objects" do
+        result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
+        expect(result).to all(be_a(Riffer::Agents::Messages::Base))
+      end
     end
 
-    it "preserves message objects when provided" do
-      messages = [
-        Riffer::Agents::Messages::User.new("Hello"),
-        Riffer::Agents::Messages::Assistant.new("Hi there")
-      ]
-      result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
-      expect(result).to eq(messages)
+    context "with message objects" do
+      let(:messages) do
+        [
+          Riffer::Agents::Messages::User.new("Hello"),
+          Riffer::Agents::Messages::Assistant.new("Hi there")
+        ]
+      end
+
+      it "preserves message objects when provided" do
+        result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
+        expect(result).to eq(messages)
+      end
     end
   end
 
@@ -103,14 +113,20 @@ RSpec.describe Riffer::Agents::Providers::Base do
       expect(result).to be_a(Riffer::Agents::Messages::System)
     end
 
-    it "converts tool hash to Tool message" do
-      result = provider.send(:convert_to_message_object, {
-        role: "tool",
-        content: "Result",
-        tool_call_id: "123",
-        name: "search"
-      })
-      expect(result).to be_a(Riffer::Agents::Messages::Tool)
+    context "with tool message hash" do
+      let(:tool_message) do
+        {
+          role: "tool",
+          content: "Result",
+          tool_call_id: "123",
+          name: "search"
+        }
+      end
+
+      it "converts tool hash to Tool message" do
+        result = provider.send(:convert_to_message_object, tool_message)
+        expect(result).to be_a(Riffer::Agents::Messages::Tool)
+      end
     end
 
     it "preserves message objects" do
@@ -119,13 +135,19 @@ RSpec.describe Riffer::Agents::Providers::Base do
       expect(result).to eq(msg)
     end
 
-    it "preserves tool_calls in assistant messages" do
-      result = provider.send(:convert_to_message_object, {
-        role: "assistant",
-        content: "Let me search",
-        tool_calls: [{id: "1", name: "search"}]
-      })
-      expect(result.tool_calls).to eq([{id: "1", name: "search"}])
+    context "with assistant message with tool_calls" do
+      let(:assistant_message) do
+        {
+          role: "assistant",
+          content: "Let me search",
+          tool_calls: [{id: "1", name: "search"}]
+        }
+      end
+
+      it "preserves tool_calls in assistant messages" do
+        result = provider.send(:convert_to_message_object, assistant_message)
+        expect(result.tool_calls).to eq([{id: "1", name: "search"}])
+      end
     end
   end
 
