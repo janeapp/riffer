@@ -34,10 +34,20 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Runtime dependencies
-  spec.add_dependency "langchainrb", "~> 0.19"
-  spec.add_dependency "sequel", "~> 5.0"
-  spec.add_dependency "sqlite3", "~> 2.0"
-  spec.add_dependency "zeitwerk", "~> 2.6"
+  spec.add_dependency "zeitwerk", ">= 2.6.0"
+
+  # Development dependencies
+  spec.add_development_dependency "openai", "~> 0.42.0"
+
+  # Testing
+  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "vcr", "~> 6.0"
+  spec.add_development_dependency "webmock", "~> 3.0"
+  spec.add_development_dependency "rake", "~> 13.0"
+
+  # Quality / Linting
+  spec.add_development_dependency "standard", "~> 1.3"
+  spec.add_development_dependency "rubocop-rspec", "~> 3.8"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

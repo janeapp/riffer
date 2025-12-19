@@ -4,7 +4,7 @@ require "logger"
 
 module Riffer
   class Core
-    attr_reader :logger, :storage_registry
+    attr_reader :logger
 
     def initialize
       @logger = Logger.new($stdout)
@@ -14,14 +14,6 @@ module Riffer
 
     def configure
       yield self if block_given?
-    end
-
-    def register_storage(name, adapter)
-      @storage_registry[name] = adapter
-    end
-
-    def get_storage(name)
-      @storage_registry[name]
     end
   end
 end

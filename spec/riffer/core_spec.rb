@@ -8,20 +8,6 @@ RSpec.describe Riffer::Core do
       core = described_class.new
       expect(core.logger).to be_a(Logger)
     end
-
-    it "initializes an empty storage registry" do
-      core = described_class.new
-      expect(core.storage_registry).to eq({})
-    end
-  end
-
-  describe "#register_storage" do
-    it "registers a storage adapter" do
-      core = described_class.new
-      adapter = instance_double(Riffer::Storage::SqliteAdapter)
-      core.register_storage(:test, adapter)
-      expect(core.get_storage(:test)).to eq(adapter)
-    end
   end
 
   describe "#configure" do

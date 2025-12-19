@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-module Riffer
-  module Agents
-    class Error < StandardError; end
-  end
+module Riffer::Agents
+  class Error < StandardError; end
+  class InvalidInputError < Error; end
 end

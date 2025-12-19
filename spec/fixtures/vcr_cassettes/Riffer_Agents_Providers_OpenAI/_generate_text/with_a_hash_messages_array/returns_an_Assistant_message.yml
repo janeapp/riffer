@@ -1,0 +1,345 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-5-nano","input":[{"role":"system","content":"Be concise"},{"role":"user","content":"Say
+        hello"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.42.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.42.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '111'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 19 Dec 2025 20:23:30 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Ratelimit-Limit-Requests:
+      - '500'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '499'
+      X-Ratelimit-Remaining-Tokens:
+      - '199889'
+      X-Ratelimit-Reset-Requests:
+      - 120ms
+      X-Ratelimit-Reset-Tokens:
+      - 33ms
+      Openai-Version:
+      - '2020-10-01'
+      Openai-Organization:
+      - user-es54vpvsdme6lpuoivzzi85g
+      Openai-Project:
+      - proj_E1uuOHBzdF9a5YsgdGcH09SZ
+      X-Request-Id:
+      - req_0de97b2b64934300943ac54aae3ab9dd
+      Openai-Processing-Ms:
+      - '4592'
+      X-Envoy-Upstream-Service-Time:
+      - '4595'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=R37MDSfGsF1.NVJiyNGWTVylHoInC1Kb11h9L.O.qZg-1766175810-1.0.1.1-dUqsppeUQlzkuhjvpsjCkHOM1XODrp9GQAJxmnwPyTXA.ptp9758mORDe.oPimQUWsOb6SGdj1ky7rHTmAC.tYAi6CKqg5b3tFcuLCXsoRg;
+        path=/; expires=Fri, 19-Dec-25 20:53:30 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=RVmsmIX2zhCiX__qRTCctrmqbHRKxl4vGsy8jaqq3nQ-1766175810403-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 9b099e1ecf3aef7d-YVR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0df2f9b87f65b9c3006945b43dca5c81948d2df31422593afe",
+          "object": "response",
+          "created_at": 1766175805,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1766175810,
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-nano-2025-08-07",
+          "output": [
+            {
+              "id": "rs_0df2f9b87f65b9c3006945b43eb4f48194818b4b5d2d3f5fa3",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "msg_0df2f9b87f65b9c3006945b441cfc88194b2f5ca7af93e10ab",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "Hello!"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": "medium",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 14,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 328,
+            "output_tokens_details": {
+              "reasoning_tokens": 320
+            },
+            "total_tokens": 342
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 19 Dec 2025 20:23:30 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-5-nano","input":[{"role":"developer","content":"Be concise"},{"role":"user","content":"Say
+        hello"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.42.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.42.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '114'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 19 Dec 2025 20:35:07 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Ratelimit-Limit-Requests:
+      - '500'
+      X-Ratelimit-Limit-Tokens:
+      - '200000'
+      X-Ratelimit-Remaining-Requests:
+      - '499'
+      X-Ratelimit-Remaining-Tokens:
+      - '200000'
+      X-Ratelimit-Reset-Requests:
+      - 120ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      Openai-Version:
+      - '2020-10-01'
+      Openai-Organization:
+      - user-es54vpvsdme6lpuoivzzi85g
+      Openai-Project:
+      - proj_E1uuOHBzdF9a5YsgdGcH09SZ
+      X-Request-Id:
+      - req_a5469bc41d114ad6ac1a54ebe3b0e7a8
+      Openai-Processing-Ms:
+      - '2169'
+      X-Envoy-Upstream-Service-Time:
+      - '2173'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=5zejNxxYOeoywQs9P5OhBRTRCUm1YdTIqa24TU2o_1U-1766176507-1.0.1.1-jos2NST0mFaQqwDiPXN8PtGBKd8hclu1PbhN.kekjpG.HFTJHY72YTVjVCiiOszk.xUZMM.6L.4iHPk1z5Ff1paHhCN86OMt_.goXHNMkE4;
+        path=/; expires=Fri, 19-Dec-25 21:05:07 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=pSSb6LF7in3ttRr1umy8tzTy6mvA_rzPalYVEEEKPx0-1766176507210-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 9b09af31ea828443-YVR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0c0475d80a6dccf2006945b6f904e081949fb96274c3adf195",
+          "object": "response",
+          "created_at": 1766176505,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1766176507,
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-nano-2025-08-07",
+          "output": [
+            {
+              "id": "rs_0c0475d80a6dccf2006945b6f981148194802730cbf94fdb64",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "msg_0c0475d80a6dccf2006945b6fac0688194b0ba34c2f1cb60d7",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "Hello!"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": "medium",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 14,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 72,
+            "output_tokens_details": {
+              "reasoning_tokens": 64
+            },
+            "total_tokens": 86
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 19 Dec 2025 20:35:07 GMT
+recorded_with: VCR 6.3.1
