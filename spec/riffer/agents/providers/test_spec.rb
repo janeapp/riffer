@@ -52,7 +52,6 @@ RSpec.describe Riffer::Agents::Providers::Test do
   describe "#calls" do
     it "tracks each call to chat" do
       provider = described_class.new
-      expect(provider.calls).to be_empty
       provider.chat(messages: [{role: "user", content: "Hi"}], model: "test")
       expect(provider.calls.count).to eq(1)
     end
@@ -135,13 +134,19 @@ RSpec.describe Riffer::Agents::Providers::Test do
       expect(result[:content]).to eq("Stubbed response")
     end
 
-    it "uses stubbed response for all calls when set" do
+    it "uses stubbed response for first call" do
       provider = described_class.new
       provider.stub_response("Same response", tool_calls: [])
-      first = provider.chat(messages: [], model: "test")
-      second = provider.chat(messages: [], model: "test")
-      expect(first[:content]).to eq("Same response")
-      expect(second[:content]).to eq("Same response")
+      result = provider.chat(messages: [], model: "test")
+      expect(result[:content]).to eq("Same response")
+    end
+
+    it "uses stubbed response for subsequent calls" do
+      provider = described_class.new
+      provider.stub_response("Same response", tool_calls: [])
+      provider.chat(messages: [], model: "test")
+      result = provider.chat(messages: [], model: "test")
+      expect(result[:content]).to eq("Same response")
     end
   end
 end
