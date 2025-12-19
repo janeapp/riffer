@@ -13,6 +13,9 @@ VCR.configure do |config|
     record: :new_episodes,
     match_requests_on: [:method, :uri, :body]
   }
+
+  # Filter sensitive data
+  config.filter_sensitive_data("<OPENAI_API_KEY>") { ENV["OPENAI_API_KEY"] }
 end
 
 RSpec.configure do |config|
