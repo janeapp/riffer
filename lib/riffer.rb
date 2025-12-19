@@ -10,7 +10,7 @@ end
 # Configure Zeitwerk autoloader for the Riffer namespace
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect(
-  "openai" => "OpenAI",
+  "open_ai" => "OpenAI",
   "sqlite_adapter" => "SqliteAdapter"
 )
 loader.setup
