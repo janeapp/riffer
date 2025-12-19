@@ -11,9 +11,12 @@ module Riffer::DependencyHelper
     return true unless defined?(Bundler)
 
     gem_version = Gem.loaded_specs[gem_name].version
-    gem_requirement = Bundler.load.dependencies.find { |g| g.name == gem_name }&.requirement
+    gem_dependency = Bundler.load.dependencies.find { |g| g.name == gem_name }
+    gem_requirement = gem_dependency&.requirement
 
-    raise LoadError unless gem_requirement
+    unless gem_requirement
+      raise VersionError, "The #{gem_name} gem is installed but not specified in your Bundler dependencies (e.g., Gemfile)."
+    end
 
     unless gem_requirement.satisfied_by?(gem_version)
       raise VersionError, "The #{gem_name} gem is installed, but version #{gem_requirement} is required. You have #{gem_version}."
