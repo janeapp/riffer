@@ -18,7 +18,7 @@ RSpec.describe Riffer::Core do
   describe "#register_storage" do
     it "registers a storage adapter" do
       core = described_class.new
-      adapter = double("adapter")
+      adapter = instance_double(Riffer::Storage::SqliteAdapter)
       core.register_storage(:test, adapter)
       expect(core.get_storage(:test)).to eq(adapter)
     end
