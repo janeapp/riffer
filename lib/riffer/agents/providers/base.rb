@@ -4,25 +4,25 @@ module Riffer::Agents::Providers
   class Base
     include Riffer::DependencyHelper
 
-    def generate_text(prompt: nil, system: nil, messages: nil)
+    def generate_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
-      perform_generate_text(normalized_messages)
+      perform_generate_text(normalized_messages, model: model)
     end
 
-    def stream_text(prompt: nil, system: nil, messages: nil)
+    def stream_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
-      perform_stream_text(normalized_messages)
+      perform_stream_text(normalized_messages, model: model)
     end
 
     private
 
-    def perform_generate_text(messages)
+    def perform_generate_text(messages, model: nil)
       raise NotImplementedError, "Subclasses must implement #perform_generate_text"
     end
 
-    def perform_stream_text(messages)
+    def perform_stream_text(messages, model: nil)
       raise NotImplementedError, "Subclasses must implement #perform_stream_text"
     end
 

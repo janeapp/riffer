@@ -17,14 +17,14 @@ module Riffer::Agents::Providers
 
     private
 
-    def perform_generate_text(messages)
+    def perform_generate_text(messages, model: nil)
       @calls << {messages: messages}
       response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
       @current_index += 1
       response
     end
 
-    def perform_stream_text(messages)
+    def perform_stream_text(messages, model: nil)
       @calls << {messages: messages}
       response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
       @current_index += 1
