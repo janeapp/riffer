@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require "zeitwerk"
 require_relative "riffer/version"
 
 module Riffer
   class Error < StandardError; end
-  # Your code goes here...
 end
+
+# Configure Zeitwerk autoloader for the Riffer namespace
+loader = Zeitwerk::Loader.for_gem
+loader.setup
