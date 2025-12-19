@@ -2,4 +2,5 @@
 
 module Riffer::Agents
   class Error < StandardError; end
+  class InvalidInputError < Error; end
 end

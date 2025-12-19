@@ -6,11 +6,13 @@ module Riffer::Agents::Providers
       depends_on "openai"
     end
 
-    def generate_text(messages:)
+    private
+
+    def perform_generate_text(messages)
       {role: "assistant", content: "OpenAI provider response"}
     end
 
-    def stream_text(messages:)
+    def perform_stream_text(messages)
       Enumerator.new do |yielder|
         yielder << {role: "assistant", content: "Streaming response part 1. "}
         sleep 1

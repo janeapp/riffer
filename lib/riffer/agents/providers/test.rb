@@ -15,14 +15,16 @@ module Riffer::Agents::Providers
       @stubbed_response = {role: "assistant", content: content, tool_calls: tool_calls}
     end
 
-    def generate_text(messages:)
+    private
+
+    def perform_generate_text(messages)
       @calls << {messages: messages}
       response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
       @current_index += 1
       response
     end
 
-    def stream_text(messages:)
+    def perform_stream_text(messages)
       @calls << {messages: messages}
       response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
       @current_index += 1
