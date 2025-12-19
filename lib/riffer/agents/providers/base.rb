@@ -4,13 +4,14 @@ module Riffer
   module Agents
     module Providers
       class Base
-        def initialize(api_key: nil, **options)
-          @api_key = api_key
-          @options = options
+        include Riffer::DependencyHelper
+
+        def generate_text(messages:)
+          raise NotImplementedError, "Subclasses must implement #generate_text"
         end
 
-        def chat(messages:, model:, **options)
-          raise NotImplementedError, "Subclasses must implement #chat"
+        def stream_text(messages:)
+          raise NotImplementedError, "Subclasses must implement #stream_text"
         end
       end
     end

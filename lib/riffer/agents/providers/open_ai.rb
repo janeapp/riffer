@@ -4,14 +4,22 @@ module Riffer
   module Agents
     module Providers
       class OpenAI < Base
-        def initialize(api_key: nil, **options)
-          super
-          @api_key ||= ENV["OPENAI_API_KEY"]
+        def initialize
+          depends_on "openai"
         end
 
-        def chat(messages:, model:, **options)
-          # Implementation will use langchainrb for OpenAI
+        def generate_text(messages:)
           {role: "assistant", content: "OpenAI provider response"}
+        end
+
+        def stream_text(messages:)
+          Enumerator.new do |yielder|
+            yielder << {role: "assistant", content: "Streaming response part 1. "}
+            sleep 1
+            yielder << {role: "assistant", content: "Streaming response part 2. "}
+            sleep 1
+            yielder << {role: "assistant", content: "Streaming response part 3."}
+          end
         end
       end
     end
