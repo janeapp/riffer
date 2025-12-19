@@ -19,6 +19,69 @@ RSpec.describe Riffer::Agents::Providers::Test do
       provider = described_class.new
       expect(provider.instance_variable_get(:@current_index)).to eq(0)
     end
+
+    it "initializes calls to empty array" do
+      provider = described_class.new
+      expect(provider.calls).to eq([])
+    end
+  end
+
+  describe "#stub_response" do
+    it "sets a stubbed response with content" do
+      provider = described_class.new
+      provider.stub_response("Hello from the machine!")
+      result = provider.chat(messages: [{role: "user", content: "Hi"}], model: "test")
+      expect(result[:content]).to eq("Hello from the machine!")
+    end
+
+    it "sets a stubbed response with tool_calls" do
+      provider = described_class.new
+      provider.stub_response("Hello", tool_calls: [{name: "test_tool"}])
+      result = provider.chat(messages: [{role: "user", content: "Hi"}], model: "test")
+      expect(result[:tool_calls]).to eq([{name: "test_tool"}])
+    end
+
+    it "sets a stubbed response with empty tool_calls by default" do
+      provider = described_class.new
+      provider.stub_response("Hello from the machine!", tool_calls: [])
+      result = provider.chat(messages: [{role: "user", content: "Hi"}], model: "test")
+      expect(result[:tool_calls]).to eq([])
+    end
+  end
+
+  describe "#calls" do
+    it "tracks each call to chat" do
+      provider = described_class.new
+      expect(provider.calls).to be_empty
+      provider.chat(messages: [{role: "user", content: "Hi"}], model: "test")
+      expect(provider.calls.count).to eq(1)
+    end
+
+    it "stores messages in call history" do
+      provider = described_class.new
+      messages = [{role: "user", content: "Hi"}]
+      provider.chat(messages: messages, model: "test")
+      expect(provider.calls.first[:messages]).to eq(messages)
+    end
+
+    it "stores model in call history" do
+      provider = described_class.new
+      provider.chat(messages: [], model: "gpt-4")
+      expect(provider.calls.first[:model]).to eq("gpt-4")
+    end
+
+    it "stores options in call history" do
+      provider = described_class.new
+      provider.chat(messages: [], model: "test", temperature: 0.7)
+      expect(provider.calls.first[:options]).to eq({temperature: 0.7})
+    end
+
+    it "tracks multiple calls" do
+      provider = described_class.new
+      provider.chat(messages: [{role: "user", content: "First"}], model: "test")
+      provider.chat(messages: [{role: "user", content: "Second"}], model: "test")
+      expect(provider.calls.count).to eq(2)
+    end
   end
 
   describe "#chat" do
@@ -63,6 +126,22 @@ RSpec.describe Riffer::Agents::Providers::Test do
       provider.chat(messages: [], model: "test")
       result = provider.chat(messages: [], model: "test")
       expect(result).to eq({role: "assistant", content: "Test response"})
+    end
+
+    it "prefers stubbed response over responses array" do
+      provider = described_class.new(responses: [{role: "assistant", content: "From array"}])
+      provider.stub_response("Stubbed response")
+      result = provider.chat(messages: [], model: "test")
+      expect(result[:content]).to eq("Stubbed response")
+    end
+
+    it "uses stubbed response for all calls when set" do
+      provider = described_class.new
+      provider.stub_response("Same response", tool_calls: [])
+      first = provider.chat(messages: [], model: "test")
+      second = provider.chat(messages: [], model: "test")
+      expect(first[:content]).to eq("Same response")
+      expect(second[:content]).to eq("Same response")
     end
   end
 end
