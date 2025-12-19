@@ -18,7 +18,7 @@ module Riffer
           @stubbed_response = {role: "assistant", content: content, tool_calls: tool_calls}
         end
 
-        def chat(messages:, model: nil, **options)
+        def chat(messages:, model:, **options)
           # Track the call
           @calls << {messages: messages, model: model, options: options}
 
