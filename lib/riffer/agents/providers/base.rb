@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
-module Riffer
-  module Agents
-    module Providers
-      class Base
-        include Riffer::DependencyHelper
+module Riffer::Agents::Providers
+  class Base
+    include Riffer::DependencyHelper
 
-        def generate_text(messages:)
-          raise NotImplementedError, "Subclasses must implement #generate_text"
-        end
+    def generate_text(messages:)
+      raise NotImplementedError, "Subclasses must implement #generate_text"
+    end
 
-        def stream_text(messages:)
-          raise NotImplementedError, "Subclasses must implement #stream_text"
-        end
-      end
+    def stream_text(messages:)
+      raise NotImplementedError, "Subclasses must implement #stream_text"
     end
   end
 end
