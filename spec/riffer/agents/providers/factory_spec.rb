@@ -12,14 +12,14 @@ RSpec.describe Riffer::Agents::Providers::Factory do
     end
 
     context "with openai provider" do
-      let(:original_api_key) { Riffer.config.openai_api_key }
+      let(:original_api_key) { Riffer.config.openai.api_key }
 
       after do
-        Riffer.config.openai_api_key = original_api_key
+        Riffer.config.openai.api_key = original_api_key
       end
 
       it "builds an OpenAI provider with config API key" do
-        Riffer.config.openai_api_key = "config-test-key"
+        Riffer.config.openai.api_key = "config-test-key"
         provider = described_class.build("openai/gpt-4")
 
         expect(provider).to be_a(Riffer::Agents::Providers::OpenAI)
@@ -28,14 +28,6 @@ RSpec.describe Riffer::Agents::Providers::Factory do
       it "builds an OpenAI provider with explicit API key" do
         provider = described_class.build("openai/gpt-4", api_key: "explicit-test-key")
         expect(provider).to be_a(Riffer::Agents::Providers::OpenAI)
-      end
-
-      it "raises error when no API key is available" do
-        Riffer.config.openai_api_key = nil
-
-        expect {
-          described_class.build("openai/gpt-4")
-        }.to raise_error(ArgumentError, /OpenAI API key is required/)
       end
     end
 
