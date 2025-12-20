@@ -22,6 +22,8 @@ module Riffer::Agents
       end
 
       def guardrail(guardrail_class, action: :mutate)
+        raise ArgumentError, "guardrail_class must respond to :new" unless guardrail_class.respond_to?(:new)
+
         @guardrails ||= []
         @guardrails << {class: guardrail_class, action: action}
       end

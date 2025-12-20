@@ -146,6 +146,12 @@ RSpec.describe Riffer::Agents::Base do
       agent_class.guardrail(PiiScanner, action: :mutate)
       expect(agent_class.guardrails.length).to eq(2)
     end
+
+    it "raises error when guardrail_class does not respond to new" do
+      expect {
+        agent_class.guardrail("not_a_class")
+      }.to raise_error(ArgumentError, /guardrail_class must respond to :new/)
+    end
   end
 
   describe "guardrail processing" do
