@@ -56,8 +56,8 @@ module Riffer::Agents
 
     def initialize_messages(prompt)
       @messages = [] # Reset messages for each generation call
-      @messages << Riffer::Agents::Messages::System.new(@instructions_text) if @instructions_text
-      @messages << Riffer::Agents::Messages::User.new(prompt)
+      @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
+      @messages << Riffer::Messages::User.new(prompt)
     end
 
     def call_llm
@@ -65,17 +65,17 @@ module Riffer::Agents
     end
 
     def provider_instance
-      @provider_instance ||= Riffer::Agents::Providers::Base.find_provider(@provider_name).new
+      @provider_instance ||= Riffer::Providers::Base.find_provider(@provider_name).new
     end
 
     def has_tool_calls?(response)
-      response.is_a?(Riffer::Agents::Messages::Assistant) && !response.tool_calls.empty?
+      response.is_a?(Riffer::Messages::Assistant) && !response.tool_calls.empty?
     end
 
     def execute_tool_calls(response)
       response.tool_calls.each do |tool_call|
         tool_result = execute_tool_call(tool_call)
-        @messages << Riffer::Agents::Messages::Tool.new(
+        @messages << Riffer::Messages::Tool.new(
           tool_result,
           tool_call_id: tool_call[:id],
           name: tool_call[:name]
@@ -88,7 +88,7 @@ module Riffer::Agents
     end
 
     def extract_final_response
-      last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Agents::Messages::Assistant) }
+      last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
       last_assistant_message&.content || ""
     end
   end
