@@ -65,7 +65,7 @@ module Riffer::Agents
     end
 
     def provider_instance
-      @provider_instance ||= Riffer::Providers::Base.find_provider(@provider_name).new
+      @provider_instance ||= Riffer::Provider.find_provider(@provider_name).new
     end
 
     def has_tool_calls?(response)
