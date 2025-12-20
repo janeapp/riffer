@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 require "zeitwerk"
-require_relative "riffer/version"
+
+loader = Zeitwerk::Loader.for_gem
+loader.inflector.inflect(
+  "open_ai" => "OpenAI"
+)
+loader.setup
 
 module Riffer
   class Error < StandardError; end
@@ -15,11 +20,8 @@ module Riffer
       yield config if block_given?
     end
   end
-end
 
-# Configure Zeitwerk autoloader for the Riffer namespace
-loader = Zeitwerk::Loader.for_gem
-loader.inflector.inflect(
-  "open_ai" => "OpenAI"
-)
-loader.setup
+  Agent = Agents::Base
+  Tool = Tools::Base
+  Provider = Providers::Base
+end

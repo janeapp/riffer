@@ -76,21 +76,21 @@ RSpec.describe Riffer::Agents::Base do
       it "adds system message to messages when instructions are provided" do
         agent = agent_class.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::System) }
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).not_to be_nil
       end
 
       it "adds user message to messages" do
         agent = agent_class.new
         agent.generate("Hello")
-        user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::User) }
+        user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
         expect(user_message).not_to be_nil
       end
 
       it "adds assistant message to messages" do
         agent = agent_class.new
         agent.generate("Hello")
-        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::Assistant) }
+        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
         expect(assistant_message).not_to be_nil
       end
 
@@ -111,7 +111,7 @@ RSpec.describe Riffer::Agents::Base do
       it "does not add system message" do
         agent = agent_class.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::System) }
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).to be_nil
       end
     end

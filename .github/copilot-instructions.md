@@ -17,7 +17,7 @@ Riffer is a Ruby gem framework for building AI-powered applications and agents. 
 - All Ruby files must include `# frozen_string_literal: true` at the top
 - Follow StandardRB conventions (2-space indentation, double quotes for strings)
 - Run `rake standard` to check formatting and `rake standard:fix` to auto-fix
-- Custom RuboCop rules are defined in `.rubocop.yml` - follow these in addition to StandardRB
+- Custom RuboCop rules are defined in `.standard.yml` and `.rubocop_rspec.yml` - follow these in addition to StandardRB
 
 ### Testing
 
@@ -33,24 +33,59 @@ Riffer is a Ruby gem framework for building AI-powered applications and agents. 
 
 ```
 lib/
-  riffer.rb              # Main entry point, requires version and defines module
+  riffer.rb              # Main entry point, uses Zeitwerk for autoloading
   riffer/
     version.rb           # VERSION constant
-    [feature].rb         # Feature modules/classes go here
+    config.rb            # Configuration class
+    core.rb              # Core functionality
+    dependency_helper.rb # Dependency management
+    agents.rb            # Agents namespace/module
+    messages.rb          # Messages namespace/module
+    providers.rb         # Providers namespace/module
+    storage.rb           # Storage namespace/module
+    stream_events.rb     # Stream events namespace/module
+    tools.rb             # Tools namespace/module
+    agents/
+      base.rb            # Base agent class
+    messages/
+      base.rb            # Base message class
+      assistant.rb       # Assistant message
+      system.rb          # System message
+      user.rb            # User message
+      tool.rb            # Tool message
+    providers/
+      base.rb            # Base provider class
+      open_ai.rb         # OpenAI provider
+      test.rb            # Test provider
+    storage/
+      base.rb            # Base storage class
+    stream_events/
+      base.rb            # Base stream event
+      text_delta.rb      # Text delta event
+      text_done.rb       # Text done event
+    tools/
+      base.rb            # Base tool class
 spec/
-  spec_helper.rb         # RSpec configuration
+  spec_helper.rb         # RSpec configuration with VCR
   riffer_spec.rb         # Main module specs
   riffer/
-    [feature]_spec.rb    # Feature specs mirror lib/ structure
+    [feature]_spec.rb    # Feature specs mirror lib/riffer/ structure
 ```
 
 ## Development Workflow
 
+### Autoloading with Zeitwerk
+
+- The project uses Zeitwerk for autoloading
+- File structure must match module/class names
+- No explicit `require` statements needed for lib files
+- Special inflections are configured in [lib/riffer.rb](lib/riffer.rb) (e.g., `open_ai.rb` → `OpenAI`)
+
 ### Adding New Features
 
-1. Create feature files under `lib/riffer/`
-2. Require new files in `lib/riffer.rb`
-3. Create corresponding specs in `spec/riffer/`
+1. Create feature files under `lib/riffer/` following Zeitwerk conventions
+2. File names should be snake_case, class names should be PascalCase
+3. Create corresponding specs in `spec/riffer/` mirroring the lib structure
 4. Run tests: `rake spec`
 5. Check code style: `rake standard`
 
@@ -73,11 +108,9 @@ spec/
 ```ruby
 # frozen_string_literal: true
 
-module Riffer
-  module Feature
-    class MyClass
-      # Implementation
-    end
+module Riffer::Feature
+  class MyClass
+    # Implementation
   end
 end
 ```
