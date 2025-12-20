@@ -4,25 +4,30 @@ require "spec_helper"
 
 RSpec.describe Riffer::Config do
   describe "#initialize" do
-    it "initializes with nil openai_api_key" do
+    it "initializes openai namespace" do
       config = described_class.new
-      expect(config.openai_api_key).to be_nil
+      expect(config.openai).to be_a(Riffer::Config::OpenAIConfig)
+    end
+
+    it "initializes with nil openai api_key" do
+      config = described_class.new
+      expect(config.openai.api_key).to be_nil
     end
   end
 
-  describe "#openai_api_key=" do
-    it "sets the openai_api_key" do
+  describe "openai namespace" do
+    it "allows setting the api_key" do
       config = described_class.new
-      config.openai_api_key = "test-key"
-      expect(config.openai_api_key).to eq("test-key")
+      config.openai.api_key = "test-key"
+      expect(config.openai.api_key).to eq("test-key")
     end
   end
 
   describe "module methods" do
-    let(:original_api_key) { Riffer.config.openai_api_key }
+    let(:original_api_key) { Riffer.config.openai.api_key }
 
     after do
-      Riffer.config.openai_api_key = original_api_key
+      Riffer.config.openai.api_key = original_api_key
     end
 
     describe ".config" do
@@ -38,9 +43,9 @@ RSpec.describe Riffer::Config do
 
       it "allows setting configuration" do
         Riffer.configure do |config|
-          config.openai_api_key = "new-test-key"
+          config.openai.api_key = "new-test-key"
         end
-        expect(Riffer.config.openai_api_key).to eq("new-test-key")
+        expect(Riffer.config.openai.api_key).to eq("new-test-key")
       end
     end
   end

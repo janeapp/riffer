@@ -2,10 +2,18 @@
 
 module Riffer
   class Config
-    attr_accessor :openai_api_key
+    class OpenAIConfig
+      attr_accessor :api_key
+
+      def initialize
+        @api_key = nil
+      end
+    end
+
+    attr_reader :openai
 
     def initialize
-      @openai_api_key = nil
+      @openai = OpenAIConfig.new
     end
   end
 end

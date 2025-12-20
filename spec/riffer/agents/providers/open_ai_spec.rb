@@ -7,15 +7,11 @@ RSpec.describe Riffer::Agents::Providers::OpenAI, :vcr do
 
   describe "#initialize" do
     it "raises ArgumentError when api_key is nil" do
-      expect {
-        described_class.new(api_key: nil)
-      }.to raise_error(ArgumentError, "api_key is required")
+      expect { described_class.new(api_key: nil) }.to raise_error(ArgumentError)
     end
 
     it "raises ArgumentError when api_key is empty" do
-      expect {
-        described_class.new(api_key: "")
-      }.to raise_error(ArgumentError, "api_key is required")
+      expect { described_class.new(api_key: "") }.to raise_error(ArgumentError)
     end
 
     it "creates OpenAI client with api_key" do

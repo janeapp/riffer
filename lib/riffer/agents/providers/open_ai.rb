@@ -5,15 +5,13 @@ require "openai"
 module Riffer::Agents::Providers
   # OpenAI provider for chat completions using the OpenAI API
   class OpenAI < Base
-    def initialize(api_key:, **openai_options)
+    def initialize(**options)
       depends_on "openai"
 
-      raise ArgumentError, "api_key is required" if api_key.nil? || api_key.empty?
+      api_key = options.fetch(:api_key, Riffer.config.openai.api_key)
+      raise ArgumentError, "OpenAI API key is required. Set it via Riffer.configure or pass :api_key option" if api_key.nil? || api_key.empty?
 
-      @client = ::OpenAI::Client.new(
-        api_key: api_key,
-        **openai_options
-      )
+      @client = ::OpenAI::Client.new(api_key: api_key, **options.except(:api_key))
     end
 
     private
