@@ -14,9 +14,7 @@ module Riffer::Agents::Providers
       def find_provider(identifier)
         ensure_providers_loaded
 
-        ObjectSpace.each_object(Class).select { |klass| klass < self }.find do |klass|
-          klass.identifier == identifier
-        end
+        subclasses.find { |provider_class| provider_class.identifier == identifier }
       end
 
       private
