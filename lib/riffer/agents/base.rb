@@ -37,7 +37,7 @@ module Riffer::Agents
       @messages = []
       @model_string = self.class.model
       @instructions_text = self.class.instructions
-      @guardrail_instances = self.class.guardrails.map { |g| {instance: g[:class].new, action: g[:action]} }
+      @guardrail_instances = self.class.guardrails.map { |g| g[:class].new(action: g[:action]) }
 
       provider_name, model_name = @model_string.split("/", 2)
 
@@ -73,14 +73,14 @@ module Riffer::Agents
     end
 
     def apply_input_guardrails(content)
-      @guardrail_instances.reduce(content) do |current_content, guardrail_config|
-        guardrail_config[:instance].process_input(current_content)
+      @guardrail_instances.reduce(content) do |current_content, guardrail|
+        guardrail.process_input(current_content)
       end
     end
 
     def apply_output_guardrails(content)
-      @guardrail_instances.reduce(content) do |current_content, guardrail_config|
-        guardrail_config[:instance].process_output(current_content)
+      @guardrail_instances.reduce(content) do |current_content, guardrail|
+        guardrail.process_output(current_content)
       end
     end
 

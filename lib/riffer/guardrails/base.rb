@@ -2,6 +2,12 @@
 
 module Riffer::Guardrails
   class Base
+    attr_reader :action
+
+    def initialize(action: :mutate)
+      @action = action
+    end
+
     def process_input(content)
       content
     end
