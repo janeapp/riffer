@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "The all-in-one Ruby framework for building AI-powered applications and agents."
   spec.description = "Riffer is a comprehensive Ruby framework designed to simplify the development of AI-powered applications and agents. It provides a complete toolkit for integrating artificial intelligence capabilities into your Ruby projects."
-  spec.homepage = "https://github.com/bottrall/riffer"
+  spec.homepage = "https://riffer.ai"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2.0"
 
@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Runtime dependencies
-  spec.add_dependency "zeitwerk", ">= 2.6.0"
+  spec.add_dependency "zeitwerk", "~> 2.6", ">= 2.6.0"
 
   # Development dependencies
   spec.add_development_dependency "openai", "~> 0.42.0"
