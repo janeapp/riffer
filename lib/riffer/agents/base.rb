@@ -83,9 +83,6 @@ module Riffer::Agents
     end
 
     def execute_tool_call(tool_call)
-      # TODO: Implement actual tool execution
-      # This method should find and execute the appropriate tool based on tool_call[:name]
-      # and return the result as a string
       "Tool execution not implemented yet"
     end
 
