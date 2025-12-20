@@ -31,7 +31,7 @@ module Riffer::Agents
 
       provider_name, model_name = @model_string.split("/", 2)
 
-      raise ArgumentError, "Invalid model string: #{@model_string}" unless [provider_name, model_name].all?
+      raise ArgumentError, "Invalid model string: #{@model_string}" unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
 
       @provider_name = provider_name
       @model_name = model_name
