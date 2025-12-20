@@ -4,6 +4,34 @@ module Riffer::Agents::Providers
   class Base
     include Riffer::DependencyHelper
 
+    class << self
+      def identifier(value = nil)
+        return @identifier if value.nil?
+
+        @identifier = value
+      end
+
+      def find_provider(identifier)
+        ensure_providers_loaded
+
+        provider = subclasses.find { |provider_class| provider_class.identifier == identifier }
+
+        raise Riffer::Agents::InvalidInputError, "Provider not found for identifier: #{identifier}" if provider.nil?
+
+        provider
+      end
+
+      private
+
+      def ensure_providers_loaded
+        return if @providers_loaded
+
+        Zeitwerk::Loader.eager_load_namespace(Riffer::Agents::Providers)
+
+        @providers_loaded = true
+      end
+    end
+
     def generate_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)

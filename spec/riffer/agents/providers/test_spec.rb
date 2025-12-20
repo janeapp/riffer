@@ -15,14 +15,25 @@ RSpec.describe Riffer::Agents::Providers::Test do
     it "sets a stubbed response with content" do
       provider.stub_response("Hello from the machine!")
       result = provider.generate_text(prompt: "Hi")
-      expect(result[:content]).to eq("Hello from the machine!")
+      expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+    end
+
+    it "sets the content of the stubbed response" do
+      provider.stub_response("Hello from the machine!")
+      result = provider.generate_text(prompt: "Hi")
+      expect(result.content).to eq("Hello from the machine!")
     end
   end
 
   describe "#generate_text" do
-    it "returns default response when no stubbed response" do
+    it "returns an Assistant message when no stubbed response" do
       result = provider.generate_text(prompt: "Hello")
-      expect(result).to eq({role: "assistant", content: "Test response"})
+      expect(result).to be_a(Riffer::Agents::Messages::Assistant)
+    end
+
+    it "returns default content when no stubbed response" do
+      result = provider.generate_text(prompt: "Hello")
+      expect(result.content).to eq("Test response")
     end
 
     it "stores normalized messages in calls" do

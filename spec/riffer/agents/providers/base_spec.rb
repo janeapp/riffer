@@ -5,6 +5,40 @@ require "spec_helper"
 RSpec.describe Riffer::Agents::Providers::Base do
   let(:provider) { described_class.new }
 
+  describe ".identifier" do
+    it "can be set and retrieved" do
+      test_class = Class.new(described_class) do
+        identifier "test_provider"
+      end
+
+      expect(test_class.identifier).to eq("test_provider")
+    end
+
+    it "registers provider when identifier is set" do
+      test_class = Class.new(described_class) do
+        identifier "custom_provider"
+      end
+
+      expect(described_class.find_provider("custom_provider")).to eq(test_class)
+    end
+  end
+
+  describe ".find_provider" do
+    it "returns registered provider class" do
+      expect(described_class.find_provider("openai")).to eq(Riffer::Agents::Providers::OpenAI)
+    end
+
+    it "returns registered test provider class" do
+      expect(described_class.find_provider("test")).to eq(Riffer::Agents::Providers::Test)
+    end
+
+    it "raises error when provider not found" do
+      expect {
+        described_class.find_provider("non_existent")
+      }.to raise_error(Riffer::Agents::InvalidInputError, /Provider not found for identifier: non_existent/)
+    end
+  end
+
   describe "#generate_text" do
     it "raises NotImplementedError when perform_generate_text not implemented" do
       expect {
