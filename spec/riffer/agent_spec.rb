@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Riffer::Agent do
-  let(:test_agent_class) do
+  subject(:agent_class) do
     Class.new(described_class) do
       model "test/gpt-4o"
       instructions "You are a helpful assistant."
@@ -12,13 +12,13 @@ RSpec.describe Riffer::Agent do
 
   describe ".model" do
     it "sets the model" do
-      expect(test_agent_class.model).to eq("test/gpt-4o")
+      expect(agent_class.model).to eq("test/gpt-4o")
     end
   end
 
   describe ".instructions" do
     it "sets the instructions" do
-      expect(test_agent_class.instructions).to eq("You are a helpful assistant.")
+      expect(agent_class.instructions).to eq("You are a helpful assistant.")
     end
 
     it "raises error when instructions is not a string" do
@@ -32,7 +32,7 @@ RSpec.describe Riffer::Agent do
 
   describe "#initialize" do
     it "initializes with empty messages" do
-      agent = test_agent_class.new
+      agent = agent_class.new
       expect(agent.messages).to eq([])
     end
   end
@@ -40,27 +40,27 @@ RSpec.describe Riffer::Agent do
   describe "#run" do
     context "with test provider" do
       it "returns a text response" do
-        agent = test_agent_class.new
+        agent = agent_class.new
         result = agent.run("What is the weather?")
         expect(result).to be_a(String)
       end
 
       it "adds system message to messages when instructions are provided" do
-        agent = test_agent_class.new
+        agent = agent_class.new
         agent.run("Hello")
         system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::System) }
         expect(system_message).not_to be_nil
       end
 
       it "adds user message to messages" do
-        agent = test_agent_class.new
+        agent = agent_class.new
         agent.run("Hello")
         user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::User) }
         expect(user_message).not_to be_nil
       end
 
       it "adds assistant message to messages" do
-        agent = test_agent_class.new
+        agent = agent_class.new
         agent.run("Hello")
         assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::Assistant) }
         expect(assistant_message).not_to be_nil
@@ -68,14 +68,14 @@ RSpec.describe Riffer::Agent do
     end
 
     context "without instructions" do
-      let(:no_instructions_agent_class) do
+      subject(:agent_class) do
         Class.new(described_class) do
           model "test/gpt-4o"
         end
       end
 
       it "does not add system message" do
-        agent = no_instructions_agent_class.new
+        agent = agent_class.new
         agent.run("Hello")
         system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::System) }
         expect(system_message).to be_nil
@@ -83,12 +83,13 @@ RSpec.describe Riffer::Agent do
     end
 
     context "with openai provider" do
-      let(:openai_agent_class) do
+      subject(:agent_class) do
         Class.new(described_class) do
           model "openai/gpt-4o"
           instructions "You are a helpful assistant."
         end
       end
+
       let(:original_api_key) { Riffer.config.openai_api_key }
 
       before do
@@ -100,33 +101,33 @@ RSpec.describe Riffer::Agent do
       end
 
       it "raises error when API key is not configured" do
-        agent = openai_agent_class.new
+        agent = agent_class.new
         expect { agent.run("Hello") }.to raise_error(ArgumentError, /OpenAI API key is required/)
       end
     end
 
     context "with invalid model format" do
-      let(:invalid_model_agent_class) do
+      subject(:agent_class) do
         Class.new(described_class) do
           model "invalid-format"
         end
       end
 
       it "raises error" do
-        agent = invalid_model_agent_class.new
+        agent = agent_class.new
         expect { agent.run("Hello") }.to raise_error(ArgumentError, /Model string must be in format/)
       end
     end
 
     context "with unknown provider" do
-      let(:unknown_provider_agent_class) do
+      subject(:agent_class) do
         Class.new(described_class) do
           model "unknown/model"
         end
       end
 
       it "raises error" do
-        agent = unknown_provider_agent_class.new
+        agent = agent_class.new
         expect { agent.run("Hello") }.to raise_error(ArgumentError, /Unknown provider/)
       end
     end
