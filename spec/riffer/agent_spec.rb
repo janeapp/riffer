@@ -6,21 +6,14 @@ RSpec.describe Riffer::Agent do
   describe "DSL methods" do
     let(:test_agent_class) do
       Class.new(described_class) do
-        provider :test
-        model "gpt-4o"
+        model "test/gpt-4o"
         instructions "You are a helpful assistant."
-      end
-    end
-
-    describe ".provider" do
-      it "sets the provider" do
-        expect(test_agent_class.provider).to eq(:test)
       end
     end
 
     describe ".model" do
       it "sets the model" do
-        expect(test_agent_class.model).to eq("gpt-4o")
+        expect(test_agent_class.model).to eq("test/gpt-4o")
       end
     end
 
@@ -28,14 +21,21 @@ RSpec.describe Riffer::Agent do
       it "sets the instructions" do
         expect(test_agent_class.instructions).to eq("You are a helpful assistant.")
       end
+
+      it "raises error when instructions is not a string" do
+        expect {
+          Class.new(described_class) do
+            instructions 123
+          end
+        }.to raise_error(ArgumentError, /instructions must be a String/)
+      end
     end
   end
 
   describe "#initialize" do
     let(:test_agent_class) do
       Class.new(described_class) do
-        provider :test
-        model "gpt-4o"
+        model "test/gpt-4o"
         instructions "You are a helpful assistant."
       end
     end
@@ -50,8 +50,7 @@ RSpec.describe Riffer::Agent do
     context "with test provider" do
       let(:test_agent_class) do
         Class.new(described_class) do
-          provider :test
-          model "gpt-4o"
+          model "test/gpt-4o"
           instructions "You are a helpful assistant."
         end
       end
@@ -87,8 +86,7 @@ RSpec.describe Riffer::Agent do
     context "without instructions" do
       let(:test_agent_class) do
         Class.new(described_class) do
-          provider :test
-          model "gpt-4o"
+          model "test/gpt-4o"
         end
       end
 
@@ -103,24 +101,42 @@ RSpec.describe Riffer::Agent do
     context "with openai provider" do
       let(:openai_agent_class) do
         Class.new(described_class) do
-          provider :openai
-          model "gpt-4o"
+          model "openai/gpt-4o"
           instructions "You are a helpful assistant."
         end
       end
 
-      it "raises error when OPENAI_API_KEY is not set" do
+      # rubocop:disable RSpec/ExampleLength
+      it "raises error when API key is not configured" do
         stub_const("ENV", {})
+        original_config = Riffer.config.openai_api_key
+        Riffer.config.openai_api_key = nil
         agent = openai_agent_class.new
-        expect { agent.run("Hello") }.to raise_error(ArgumentError, /OPENAI_API_KEY/)
+
+        expect { agent.run("Hello") }.to raise_error(ArgumentError, /OpenAI API key is required/)
+      ensure
+        Riffer.config.openai_api_key = original_config
+      end
+      # rubocop:enable RSpec/ExampleLength
+    end
+
+    context "with invalid model format" do
+      let(:invalid_model_agent_class) do
+        Class.new(described_class) do
+          model "invalid-format"
+        end
+      end
+
+      it "raises error" do
+        agent = invalid_model_agent_class.new
+        expect { agent.run("Hello") }.to raise_error(ArgumentError, /Model string must be in format/)
       end
     end
 
     context "with unknown provider" do
       let(:unknown_provider_agent_class) do
         Class.new(described_class) do
-          provider :unknown
-          model "gpt-4o"
+          model "unknown/model"
         end
       end
 

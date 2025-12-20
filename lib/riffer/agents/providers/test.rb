@@ -21,7 +21,12 @@ module Riffer::Agents::Providers
       @calls << {messages: messages.map(&:to_h)}
       response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
       @current_index += 1
-      response
+
+      if response.is_a?(Hash)
+        Riffer::Agents::Messages::Assistant.new(response[:content], tool_calls: response[:tool_calls] || [])
+      else
+        response
+      end
     end
 
     def perform_stream_text(messages, model: nil)

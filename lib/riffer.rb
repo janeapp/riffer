@@ -5,6 +5,16 @@ require_relative "riffer/version"
 
 module Riffer
   class Error < StandardError; end
+
+  class << self
+    def config
+      @config ||= Config.new
+    end
+
+    def configure
+      yield config if block_given?
+    end
+  end
 end
 
 # Configure Zeitwerk autoloader for the Riffer namespace

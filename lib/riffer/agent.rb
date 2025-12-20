@@ -3,19 +3,11 @@
 module Riffer
   class Agent
     class << self
-      def provider(provider_name = nil)
-        if provider_name.nil?
-          @provider
-        else
-          @provider = provider_name
-        end
-      end
-
-      def model(model_name = nil)
-        if model_name.nil?
+      def model(model_string = nil)
+        if model_string.nil?
           @model
         else
-          @model = model_name
+          @model = model_string
         end
       end
 
@@ -23,6 +15,7 @@ module Riffer
         if instructions_text.nil?
           @instructions
         else
+          raise ArgumentError, "instructions must be a String" unless instructions_text.is_a?(String)
           @instructions = instructions_text
         end
       end
@@ -32,8 +25,7 @@ module Riffer
 
     def initialize
       @messages = []
-      @provider_name = self.class.provider
-      @model_name = self.class.model
+      @model_string = self.class.model
       @instructions_text = self.class.instructions
     end
 
@@ -61,8 +53,7 @@ module Riffer
     end
 
     def call_llm
-      response = provider_instance.generate_text(messages: @messages, model: @model_name)
-      normalize_response(response)
+      provider_instance.generate_text(messages: @messages, model: model_name)
     end
 
     def provider_instance
@@ -70,16 +61,11 @@ module Riffer
     end
 
     def build_provider_instance
-      case @provider_name
-      when :openai
-        api_key = ENV["OPENAI_API_KEY"]
-        raise ArgumentError, "OPENAI_API_KEY environment variable is required" if api_key.nil? || api_key.empty?
-        Riffer::Agents::Providers::OpenAI.new(api_key: api_key)
-      when :test
-        Riffer::Agents::Providers::Test.new
-      else
-        raise ArgumentError, "Unknown provider: #{@provider_name}"
-      end
+      Riffer::Agents::Providers::Factory.build(@model_string)
+    end
+
+    def model_name
+      @model_string.split("/", 2)[1] if @model_string
     end
 
     def has_tool_calls?(response)
@@ -107,21 +93,6 @@ module Riffer
     def extract_final_response
       last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Agents::Messages::Assistant) }
       last_assistant_message&.content || ""
-    end
-
-    def normalize_response(response)
-      return response if response.is_a?(Riffer::Agents::Messages::Base)
-
-      if response.is_a?(Hash)
-        case response[:role]
-        when "assistant"
-          Riffer::Agents::Messages::Assistant.new(response[:content], tool_calls: response[:tool_calls] || [])
-        else
-          raise ArgumentError, "Unexpected response role: #{response[:role]}"
-        end
-      else
-        raise ArgumentError, "Unexpected response type: #{response.class}"
-      end
     end
   end
 end
