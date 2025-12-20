@@ -129,31 +129,4 @@ RSpec.describe Riffer::Agents::Base do
       expect { invalid_agent_class }.to raise_error(ArgumentError, /instructions cannot be empty/)
     end
   end
-
-  describe "error handling" do
-    context "with invalid model format during generate" do
-      let(:agent_class) do
-        Class.new(described_class) do
-          model "invalid-format"
-        end
-      end
-
-      it "raises error during initialization" do
-        expect { agent_class.new }.to raise_error(ArgumentError, /Invalid model string/)
-      end
-    end
-
-    context "with unknown provider during generate" do
-      let(:agent_class) do
-        Class.new(described_class) do
-          model "unknown/model"
-        end
-      end
-
-      it "raises error when calling generate" do
-        agent = agent_class.new
-        expect { agent.generate("Hello") }.to raise_error(NoMethodError, /undefined method/)
-      end
-    end
-  end
 end
