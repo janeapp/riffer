@@ -4,26 +4,30 @@ module Riffer::Agents::Providers
   class Base
     include Riffer::DependencyHelper
 
-    @registry = {}
-
     class << self
-      attr_reader :registry
-
       def identifier(value = nil)
         if value
           @identifier = value
-          registry[@identifier] = self
         end
         @identifier
       end
 
-      def inherited(subclass)
-        super
-        subclass.instance_variable_set(:@registry, registry)
+      def find_provider(identifier)
+        ensure_providers_loaded
+
+        ObjectSpace.each_object(Class).select { |klass| klass < self }.find do |klass|
+          klass.identifier == identifier
+        end
       end
 
-      def find_provider(identifier)
-        registry[identifier]
+      private
+
+      def ensure_providers_loaded
+        return if @providers_loaded
+
+        Zeitwerk::Loader.eager_load_namespace(Riffer::Agents::Providers)
+
+        @providers_loaded = true
       end
     end
 
