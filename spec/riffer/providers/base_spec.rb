@@ -35,7 +35,7 @@ RSpec.describe Riffer::Providers::Base do
     it "raises error when provider not found" do
       expect {
         described_class.find_provider("non_existent")
-      }.to raise_error(Riffer::Agents::InvalidInputError, /Provider not found for identifier: non_existent/)
+      }.to raise_error(Riffer::Providers::InvalidInputError, /Provider not found for identifier: non_existent/)
     end
   end
 
@@ -49,25 +49,25 @@ RSpec.describe Riffer::Providers::Base do
     it "raises InvalidInputError when no prompt or messages provided" do
       expect {
         provider.generate_text
-      }.to raise_error(Riffer::Agents::InvalidInputError, "prompt is required when messages is not provided")
+      }.to raise_error(Riffer::Providers::InvalidInputError, "prompt is required when messages is not provided")
     end
 
     it "raises InvalidInputError when both prompt and messages provided" do
       expect {
         provider.generate_text(prompt: "Hello", messages: [{role: "user", content: "Hi"}])
-      }.to raise_error(Riffer::Agents::InvalidInputError, "cannot provide both prompt and messages")
+      }.to raise_error(Riffer::Providers::InvalidInputError, "cannot provide both prompt and messages")
     end
 
     it "raises InvalidInputError when both system and messages provided" do
       expect {
         provider.generate_text(system: "You are helpful", messages: [{role: "user", content: "Hi"}])
-      }.to raise_error(Riffer::Agents::InvalidInputError, "cannot provide both system and messages")
+      }.to raise_error(Riffer::Providers::InvalidInputError, "cannot provide both system and messages")
     end
 
     it "raises InvalidInputError when messages has no user message" do
       expect {
         provider.generate_text(messages: [{role: "system", content: "You are helpful"}])
-      }.to raise_error(Riffer::Agents::InvalidInputError, "messages must include at least one user message")
+      }.to raise_error(Riffer::Providers::InvalidInputError, "messages must include at least one user message")
     end
   end
 
@@ -123,13 +123,13 @@ RSpec.describe Riffer::Providers::Base do
     it "raises InvalidInputError when message is not a Hash or Message object" do
       expect {
         provider.send(:convert_to_message_object, "invalid")
-      }.to raise_error(Riffer::Agents::InvalidInputError, "Message must be a Hash or Message object, got String")
+      }.to raise_error(Riffer::Providers::InvalidInputError, "Message must be a Hash or Message object, got String")
     end
 
     it "raises InvalidInputError when message has unknown role" do
       expect {
         provider.send(:convert_to_message_object, {role: "unknown", content: "test"})
-      }.to raise_error(Riffer::Agents::InvalidInputError, "Unknown message role: unknown")
+      }.to raise_error(Riffer::Providers::InvalidInputError, "Unknown message role: unknown")
     end
 
     it "converts user hash to User message" do

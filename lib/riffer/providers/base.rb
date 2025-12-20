@@ -16,7 +16,7 @@ module Riffer::Providers
 
         provider = subclasses.find { |provider_class| provider_class.identifier == identifier }
 
-        raise Riffer::Agents::InvalidInputError, "Provider not found for identifier: #{identifier}" if provider.nil?
+        raise InvalidInputError, "Provider not found for identifier: #{identifier}" if provider.nil?
 
         provider
       end
@@ -56,11 +56,11 @@ module Riffer::Providers
 
     def validate_input!(prompt:, system:, messages:)
       if messages.nil?
-        raise Riffer::Agents::InvalidInputError, "prompt is required when messages is not provided" if prompt.nil?
+        raise InvalidInputError, "prompt is required when messages is not provided" if prompt.nil?
       else
-        raise Riffer::Agents::InvalidInputError, "cannot provide both prompt and messages" unless prompt.nil?
-        raise Riffer::Agents::InvalidInputError, "cannot provide both system and messages" unless system.nil?
-        raise Riffer::Agents::InvalidInputError, "messages must include at least one user message" unless has_user_message?(messages)
+        raise InvalidInputError, "cannot provide both prompt and messages" unless prompt.nil?
+        raise InvalidInputError, "cannot provide both system and messages" unless system.nil?
+        raise InvalidInputError, "messages must include at least one user message" unless has_user_message?(messages)
       end
     end
 
@@ -81,7 +81,7 @@ module Riffer::Providers
       end
 
       unless msg.is_a?(Hash)
-        raise Riffer::Agents::InvalidInputError, "Message must be a Hash or Message object, got #{msg.class}"
+        raise InvalidInputError, "Message must be a Hash or Message object, got #{msg.class}"
       end
 
       case msg[:role]
@@ -94,7 +94,7 @@ module Riffer::Providers
       when "tool"
         Riffer::Messages::Tool.new(msg[:content], tool_call_id: msg[:tool_call_id], name: msg[:name])
       else
-        raise Riffer::Agents::InvalidInputError, "Unknown message role: #{msg[:role]}"
+        raise InvalidInputError, "Unknown message role: #{msg[:role]}"
       end
     end
 
