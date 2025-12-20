@@ -14,7 +14,11 @@ module Riffer::Agents::Providers
       def find_provider(identifier)
         ensure_providers_loaded
 
-        subclasses.find { |provider_class| provider_class.identifier == identifier }
+        provider = subclasses.find { |provider_class| provider_class.identifier == identifier }
+
+        raise Riffer::Agents::InvalidInputError, "Provider not found for identifier: #{identifier}" if provider.nil?
+
+        provider
       end
 
       private

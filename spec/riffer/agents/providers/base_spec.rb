@@ -32,8 +32,10 @@ RSpec.describe Riffer::Agents::Providers::Base do
       expect(described_class.find_provider("test")).to eq(Riffer::Agents::Providers::Test)
     end
 
-    it "returns nil for unknown provider" do
-      expect(described_class.find_provider("nonexistent")).to be_nil
+    it "raises error when provider not found" do
+      expect {
+        described_class.find_provider("non_existent")
+      }.to raise_error(Riffer::Agents::InvalidInputError, /Provider not found for identifier: non_existent/)
     end
   end
 
