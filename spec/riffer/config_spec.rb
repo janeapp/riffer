@@ -19,6 +19,12 @@ RSpec.describe Riffer::Config do
   end
 
   describe "module methods" do
+    let(:original_api_key) { Riffer.config.openai_api_key }
+
+    after do
+      Riffer.config.openai_api_key = original_api_key
+    end
+
     describe ".config" do
       it "returns a Config instance" do
         expect(Riffer.config).to be_a(described_class)
@@ -30,16 +36,12 @@ RSpec.describe Riffer::Config do
         expect { |b| Riffer.configure(&b) }.to yield_with_args(described_class)
       end
 
-      # rubocop:disable RSpec/ExampleLength
       it "allows setting configuration" do
-        original_key = Riffer.config.openai_api_key
         Riffer.configure do |config|
           config.openai_api_key = "new-test-key"
         end
         expect(Riffer.config.openai_api_key).to eq("new-test-key")
-        Riffer.config.openai_api_key = original_key
       end
-      # rubocop:enable RSpec/ExampleLength
     end
   end
 end

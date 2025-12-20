@@ -28,7 +28,7 @@ module Riffer::Agents::Providers
       end
 
       def build_openai(model_name, **options)
-        api_key = options[:api_key] || Riffer.config.openai_api_key || ENV["OPENAI_API_KEY"]
+        api_key = options[:api_key] || Riffer.config.openai_api_key
         raise ArgumentError, "OpenAI API key is required. Set it via Riffer.configure or pass :api_key option" if api_key.nil? || api_key.empty?
 
         Riffer::Agents::Providers::OpenAI.new(api_key: api_key, **options.except(:api_key))

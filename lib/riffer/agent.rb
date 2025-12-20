@@ -65,7 +65,15 @@ module Riffer
     end
 
     def model_name
-      @model_string.split("/", 2)[1] if @model_string
+      return nil unless @model_string
+
+      parts = @model_string.split("/", 2)
+      raise ArgumentError, "Model string must be in format 'provider/model'" if parts.size != 2
+
+      model = parts[1]
+      raise ArgumentError, "Model name must be a non-empty string" if model.nil? || model.empty? || !model.is_a?(String)
+
+      model
     end
 
     def has_tool_calls?(response)

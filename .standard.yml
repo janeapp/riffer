@@ -1,5 +1,2 @@
 extend_config:
   - .rubocop_rspec.yml
-
-RSpec/ExampleLength:
-  Max: 10

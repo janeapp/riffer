@@ -4,6 +4,3 @@ plugins:
 RSpec/MultipleExpectations:
   Enabled: true
   Max: 1
-
-RSpec/ExampleLength:
-  Max: 10
