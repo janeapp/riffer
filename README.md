@@ -22,7 +22,117 @@ gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
 
 ## Usage
 
-TODO: Write usage instructions here
+### Creating Tools
+
+Riffer provides a simple DSL for creating tools that can be used by AI agents. Tools encapsulate functionality that the LLM can invoke during conversations.
+
+```ruby
+class GetWeather < Riffer::Tool
+  id "get_weather"
+  description "Get the current weather in a given location"
+  
+  parameters({
+    type: "object",
+    properties: {
+      location: { 
+        type: "string", 
+        description: "The city and state, e.g. San Francisco, CA" 
+      },
+      unit: { 
+        type: "string", 
+        enum: ["celsius", "fahrenheit"] 
+      }
+    },
+    required: ["location"]
+  })
+
+  def execute(location:, unit: "celsius")
+    # Your tool logic here
+    # This is a simple example - in practice, you'd call a weather API
+    "Weather in #{location}: 72°#{unit == "celsius" ? "C" : "F"}, sunny"
+  end
+end
+```
+
+### Creating Agents with Tools
+
+Once you've defined your tools, you can register them with an agent:
+
+```ruby
+class WeatherAgent < Riffer::Agent
+  model "openai/gpt-4o"
+  instructions "You are a helpful weather assistant."
+  tool GetWeather
+end
+
+# Configure your provider
+Riffer.configure do |config|
+  config.openai.api_key = ENV["OPENAI_API_KEY"]
+end
+
+# Use the agent
+agent = WeatherAgent.new
+response = agent.generate("What's the weather in San Francisco?")
+puts response
+```
+
+The agent will automatically:
+1. Send the tool definitions to the LLM
+2. Detect when the LLM wants to call a tool
+3. Execute the appropriate tool with the provided arguments
+4. Send the tool results back to the LLM
+5. Return the final response
+
+### Multiple Tools
+
+Agents can register multiple tools:
+
+```ruby
+class Calculator < Riffer::Tool
+  id "calculator"
+  description "Perform basic arithmetic operations"
+  
+  parameters({
+    type: "object",
+    properties: {
+      operation: { 
+        type: "string", 
+        enum: ["add", "subtract", "multiply", "divide"] 
+      },
+      a: { type: "number" },
+      b: { type: "number" }
+    },
+    required: ["operation", "a", "b"]
+  })
+
+  def execute(operation:, a:, b:)
+    result = case operation
+    when "add" then a + b
+    when "subtract" then a - b
+    when "multiply" then a * b
+    when "divide" then a / b
+    end
+    
+    "#{a} #{operation} #{b} = #{result}"
+  end
+end
+
+class AssistantAgent < Riffer::Agent
+  model "openai/gpt-4o"
+  instructions "You are a helpful assistant with access to various tools."
+  tool GetWeather
+  tool Calculator
+end
+```
+
+### Tool Parameters
+
+The `parameters` method accepts a JSON Schema object that defines the structure of arguments your tool expects. This schema is used by:
+- The LLM to understand what arguments to provide
+- The framework to validate and route tool calls
+- Your code documentation
+
+The `execute` method signature should match the properties defined in your parameters schema.
 
 ## Development
 
