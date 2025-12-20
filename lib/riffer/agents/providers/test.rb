@@ -2,6 +2,8 @@
 
 module Riffer::Agents::Providers
   class Test < Base
+    identifier "test"
+
     attr_reader :calls
 
     def initialize(**options)

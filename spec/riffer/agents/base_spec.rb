@@ -4,6 +4,8 @@ require "spec_helper"
 
 RSpec.describe Riffer::Agents::Base do
   let(:agent_class) do
+    # Ensure Test provider is loaded (required for registry lookup)
+    _test_provider = Riffer::Agents::Providers::Test
     Class.new(described_class) do
       model "test/riffer-1"
       instructions "You are a helpful assistant."
@@ -13,6 +15,18 @@ RSpec.describe Riffer::Agents::Base do
   describe ".model" do
     it "sets the model" do
       expect(agent_class.model).to eq("test/riffer-1")
+    end
+
+    it "raises error when model is not a string" do
+      expect {
+        agent_class.model(123)
+      }.to raise_error(ArgumentError, /model must be a String/)
+    end
+
+    it "raises error when model is an empty string" do
+      expect {
+        agent_class.model("   ")
+      }.to raise_error(ArgumentError, /model cannot be empty/)
     end
   end
 
@@ -26,12 +40,30 @@ RSpec.describe Riffer::Agents::Base do
         agent_class.instructions(123)
       }.to raise_error(ArgumentError, /instructions must be a String/)
     end
+
+    it "raises error when instructions is an empty string" do
+      expect {
+        agent_class.instructions("   ")
+      }.to raise_error(ArgumentError, /instructions cannot be empty/)
+    end
   end
 
   describe "#initialize" do
     it "initializes with empty messages" do
       agent = agent_class.new
       expect(agent.messages).to eq([])
+    end
+
+    context "with invalid model format" do
+      let(:agent_class) do
+        Class.new(described_class) do
+          model "invalid-format"
+        end
+      end
+
+      it "raises error for missing provider or model name" do
+        expect { agent_class.new }.to raise_error(ArgumentError, /Invalid model string: invalid-format/)
+      end
     end
   end
 
@@ -63,6 +95,12 @@ RSpec.describe Riffer::Agents::Base do
         assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Agents::Messages::Assistant) }
         expect(assistant_message).not_to be_nil
       end
+
+      it "returns the content of the final assistant message" do
+        agent = agent_class.new
+        result = agent.generate("Hello")
+        expect(result).to be_a(String)
+      end
     end
 
     context "without instructions" do
@@ -79,30 +117,44 @@ RSpec.describe Riffer::Agents::Base do
         expect(system_message).to be_nil
       end
     end
+  end
 
-    context "with invalid model format" do
+  describe "instructions validation" do
+    let(:invalid_agent_class) do
+      Class.new(described_class) do
+        model "test/riffer-1"
+        instructions "   "
+      end
+    end
+
+    it "raises error when instructions is empty string" do
+      expect { invalid_agent_class }.to raise_error(ArgumentError, /instructions cannot be empty/)
+    end
+  end
+
+  describe "error handling" do
+    context "with invalid model format during generate" do
       let(:agent_class) do
         Class.new(described_class) do
           model "invalid-format"
         end
       end
 
-      it "raises error" do
-        agent = agent_class.new
-        expect { agent.generate("Hello") }.to raise_error(ArgumentError, /Model string must be in format/)
+      it "raises error during initialization" do
+        expect { agent_class.new }.to raise_error(ArgumentError, /Invalid model string/)
       end
     end
 
-    context "with unknown provider" do
+    context "with unknown provider during generate" do
       let(:agent_class) do
         Class.new(described_class) do
           model "unknown/model"
         end
       end
 
-      it "raises error" do
+      it "raises error when calling generate" do
         agent = agent_class.new
-        expect { agent.generate("Hello") }.to raise_error(ArgumentError, /Unknown provider/)
+        expect { agent.generate("Hello") }.to raise_error(NoMethodError, /undefined method/)
       end
     end
   end

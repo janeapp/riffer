@@ -5,6 +5,8 @@ require "openai"
 module Riffer::Agents::Providers
   # OpenAI provider for chat completions using the OpenAI API
   class OpenAI < Base
+    identifier "openai"
+
     def initialize(**options)
       depends_on "openai"
 

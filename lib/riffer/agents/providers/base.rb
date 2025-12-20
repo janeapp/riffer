@@ -4,6 +4,29 @@ module Riffer::Agents::Providers
   class Base
     include Riffer::DependencyHelper
 
+    @registry = {}
+
+    class << self
+      attr_reader :registry
+
+      def identifier(value = nil)
+        if value
+          @identifier = value
+          registry[@identifier] = self
+        end
+        @identifier
+      end
+
+      def inherited(subclass)
+        super
+        subclass.instance_variable_set(:@registry, registry)
+      end
+
+      def find_provider(identifier)
+        registry[identifier]
+      end
+    end
+
     def generate_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)

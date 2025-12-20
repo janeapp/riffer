@@ -5,6 +5,10 @@ module Riffer::Agents
     class << self
       def model(model_string = nil)
         return @model if model_string.nil?
+
+        raise ArgumentError, "model must be a String" unless model_string.is_a?(String)
+        raise ArgumentError, "model cannot be empty" if model_string.strip.empty?
+
         @model = model_string
       end
 
@@ -24,6 +28,13 @@ module Riffer::Agents
       @messages = []
       @model_string = self.class.model
       @instructions_text = self.class.instructions
+
+      provider_name, model_name = @model_string.split("/", 2)
+
+      raise ArgumentError, "Invalid model string: #{@model_string}" unless [provider_name, model_name].all?
+
+      @provider_name = provider_name
+      @model_name = model_name
     end
 
     def generate(prompt)
@@ -49,19 +60,11 @@ module Riffer::Agents
     end
 
     def call_llm
-      provider_instance.generate_text(messages: @messages, model: model_name)
+      provider_instance.generate_text(messages: @messages, model: @model_name)
     end
 
     def provider_instance
-      @provider_instance ||= build_provider_instance
-    end
-
-    def build_provider_instance
-      Riffer::Agents::Providers::Factory.build(@model_string)
-    end
-
-    def model_name
-      @model_name ||= @model_string.split("/", 2).last
+      @provider_instance ||= Riffer::Agents::Providers::Base.find_provider(@provider_name).new
     end
 
     def has_tool_calls?(response)
