@@ -129,4 +129,46 @@ RSpec.describe Riffer::Agents::Base do
       expect { invalid_agent_class }.to raise_error(ArgumentError, /instructions cannot be empty/)
     end
   end
+
+  describe ".guardrail" do
+    it "registers a guardrail with default action" do
+      agent_class.guardrail(PiiScanner)
+      expect(agent_class.guardrails).to eq([{class: PiiScanner, action: :mutate}])
+    end
+
+    it "registers a guardrail with custom action" do
+      agent_class.guardrail(PiiScanner, action: :redact)
+      expect(agent_class.guardrails).to eq([{class: PiiScanner, action: :redact}])
+    end
+
+    it "allows multiple guardrails" do
+      agent_class.guardrail(PiiScanner, action: :redact)
+      agent_class.guardrail(PiiScanner, action: :mutate)
+      expect(agent_class.guardrails.length).to eq(2)
+    end
+  end
+
+  describe "guardrail processing" do
+    let(:agent_class_with_guardrail) do
+      Class.new(described_class) do
+        model "test/riffer-1"
+        instructions "You are a helpful assistant."
+        guardrail PiiScanner, action: :redact
+      end
+    end
+
+    it "processes input through guardrails" do
+      agent = agent_class_with_guardrail.new
+      agent.generate("Contact me at jake@example.com")
+
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.content).to eq("Contact me at [REDACTED]")
+    end
+
+    it "returns processed output" do
+      agent = agent_class_with_guardrail.new
+      result = agent.generate("Hello")
+      expect(result).to be_a(String)
+    end
+  end
 end

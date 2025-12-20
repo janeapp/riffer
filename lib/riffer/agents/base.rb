@@ -20,6 +20,15 @@ module Riffer::Agents
 
         @instructions = instructions_text
       end
+
+      def guardrail(guardrail_class, action: :mutate)
+        @guardrails ||= []
+        @guardrails << {class: guardrail_class, action: action}
+      end
+
+      def guardrails
+        @guardrails || []
+      end
     end
 
     attr_reader :messages
@@ -28,6 +37,7 @@ module Riffer::Agents
       @messages = []
       @model_string = self.class.model
       @instructions_text = self.class.instructions
+      @guardrail_instances = self.class.guardrails.map { |g| {instance: g[:class].new, action: g[:action]} }
 
       provider_name, model_name = @model_string.split("/", 2)
 
@@ -57,7 +67,21 @@ module Riffer::Agents
     def initialize_messages(prompt)
       @messages = [] # Reset messages for each generation call
       @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
-      @messages << Riffer::Messages::User.new(prompt)
+
+      processed_prompt = apply_input_guardrails(prompt)
+      @messages << Riffer::Messages::User.new(processed_prompt)
+    end
+
+    def apply_input_guardrails(content)
+      @guardrail_instances.reduce(content) do |current_content, guardrail_config|
+        guardrail_config[:instance].process_input(current_content)
+      end
+    end
+
+    def apply_output_guardrails(content)
+      @guardrail_instances.reduce(content) do |current_content, guardrail_config|
+        guardrail_config[:instance].process_output(current_content)
+      end
     end
 
     def call_llm
@@ -89,7 +113,8 @@ module Riffer::Agents
 
     def extract_final_response
       last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
-      last_assistant_message&.content || ""
+      content = last_assistant_message&.content || ""
+      apply_output_guardrails(content)
     end
   end
 end

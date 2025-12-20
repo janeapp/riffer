@@ -24,4 +24,5 @@ module Riffer
   Agent = Agents::Base
   Tool = Tools::Base
   Provider = Providers::Base
+  Guardrail = Guardrails::Base
 end

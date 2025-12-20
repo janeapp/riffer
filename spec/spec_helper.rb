@@ -11,6 +11,9 @@ rescue LoadError
   # Dotenv not available, skip loading .env file
 end
 
+# Load support files
+Dir[File.expand_path("support/**/*.rb", __dir__)].each { |f| require f }
+
 # Configure VCR for recording HTTP interactions
 VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
