@@ -55,6 +55,7 @@ module Riffer::Agents
     private
 
     def initialize_messages(prompt)
+      @messages = [] # Reset messages for each generation call
       @messages << Riffer::Agents::Messages::System.new(@instructions_text) if @instructions_text
       @messages << Riffer::Agents::Messages::User.new(prompt)
     end
