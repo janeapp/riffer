@@ -4,8 +4,6 @@ require "spec_helper"
 
 RSpec.describe Riffer::Agents::Base do
   let(:agent_class) do
-    # Ensure Test provider is loaded (required for registry lookup)
-    _test_provider = Riffer::Agents::Providers::Test
     Class.new(described_class) do
       model "test/riffer-1"
       instructions "You are a helpful assistant."
