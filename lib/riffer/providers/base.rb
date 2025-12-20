@@ -32,25 +32,25 @@ module Riffer::Providers
       end
     end
 
-    def generate_text(prompt: nil, system: nil, messages: nil, model: nil)
+    def generate_text(prompt: nil, system: nil, messages: nil, model: nil, tools: [])
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
-      perform_generate_text(normalized_messages, model: model)
+      perform_generate_text(normalized_messages, model: model, tools: tools)
     end
 
-    def stream_text(prompt: nil, system: nil, messages: nil, model: nil)
+    def stream_text(prompt: nil, system: nil, messages: nil, model: nil, tools: [])
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
-      perform_stream_text(normalized_messages, model: model)
+      perform_stream_text(normalized_messages, model: model, tools: tools)
     end
 
     private
 
-    def perform_generate_text(messages, model: nil)
+    def perform_generate_text(messages, model: nil, tools: [])
       raise NotImplementedError, "Subclasses must implement #perform_generate_text"
     end
 
-    def perform_stream_text(messages, model: nil)
+    def perform_stream_text(messages, model: nil, tools: [])
       raise NotImplementedError, "Subclasses must implement #perform_stream_text"
     end
 

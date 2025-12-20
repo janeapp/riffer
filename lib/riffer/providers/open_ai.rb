@@ -17,8 +17,8 @@ module Riffer::Providers
 
     private
 
-    def perform_generate_text(messages, model:)
-      params = build_request_params(messages, model)
+    def perform_generate_text(messages, model:, tools: [])
+      params = build_request_params(messages, model, tools)
       response = @client.responses.create(params)
 
       output = response.output.find { |o| o.type == :message }
@@ -44,20 +44,26 @@ module Riffer::Providers
       Riffer::Messages::Assistant.new(content.text)
     end
 
-    def perform_stream_text(messages, model:)
+    def perform_stream_text(messages, model:, tools: [])
       Enumerator.new do |yielder|
-        params = build_request_params(messages, model)
+        params = build_request_params(messages, model, tools)
         stream = @client.responses.stream(params)
 
         process_stream_events(stream, yielder)
       end
     end
 
-    def build_request_params(messages, model)
-      {
+    def build_request_params(messages, model, tools = [])
+      params = {
         model: model,
         input: convert_message_to_openai_format(messages)
       }
+
+      if tools.any?
+        params[:tools] = tools.map(&:to_openai_tool)
+      end
+
+      params
     end
 
     def convert_message_to_openai_format(messages)

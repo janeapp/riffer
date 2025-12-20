@@ -20,14 +20,24 @@ module Riffer::Agents
 
         @instructions = instructions_text
       end
+
+      def tool(*tool_classes)
+        @tools ||= []
+        @tools.concat(tool_classes)
+      end
+
+      def tools
+        @tools || []
+      end
     end
 
-    attr_reader :messages
+    attr_reader :messages, :tools
 
     def initialize
       @messages = []
       @model_string = self.class.model
       @instructions_text = self.class.instructions
+      @tools = self.class.tools.map(&:new)
 
       provider_name, model_name = @model_string.split("/", 2)
 
@@ -61,7 +71,7 @@ module Riffer::Agents
     end
 
     def call_llm
-      provider_instance.generate_text(messages: @messages, model: @model_name)
+      provider_instance.generate_text(messages: @messages, model: @model_name, tools: @tools)
     end
 
     def provider_instance
@@ -84,7 +94,19 @@ module Riffer::Agents
     end
 
     def execute_tool_call(tool_call)
-      "Tool execution not implemented yet"
+      tool_name = tool_call[:name]
+      tool = @tools.find { |t| t.class.id == tool_name }
+
+      if tool.nil?
+        return "Error: Tool '#{tool_name}' not found"
+      end
+
+      arguments = tool_call[:arguments] || {}
+      tool.execute(**arguments.transform_keys(&:to_sym))
+    rescue ArgumentError => e
+      "Error executing tool '#{tool_name}': #{e.message}"
+    rescue => e
+      "Error executing tool '#{tool_name}': #{e.message}"
     end
 
     def extract_final_response
