@@ -6,10 +6,9 @@ module Riffer::Agents::Providers
 
     class << self
       def identifier(value = nil)
-        if value
-          @identifier = value
-        end
-        @identifier
+        return @identifier if value.nil?
+
+        @identifier = value
       end
 
       def find_provider(identifier)
