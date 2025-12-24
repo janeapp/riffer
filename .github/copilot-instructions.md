@@ -143,9 +143,21 @@ end
 
 require "test_helper"
 
-class Riffer::FeatureTest < Minitest::Test
-  def test_method_name_describes_behavior
-    assert_equal expected, result
+describe Riffer::FeatureTest do
+  describe "#method_name" do
+    before do
+      # setup code
+    end
+
+    it "does something expected" do
+      result = Riffer::Feature.method_name(args)
+      assert_equal expected, result
+    end
+
+    it "handles edge case" do
+      result = Riffer::Feature.method_name(edge_case_args)
+      assert_equal edge_case_expected, result
+    end
   end
 end
 ```
@@ -156,6 +168,7 @@ end
 - Test edge cases and error conditions
 - Mock external dependencies
 - Keep tests fast and isolated
+- Stick to the single assertion rule where possible
 
 ## AI/Agent Development Context
 
