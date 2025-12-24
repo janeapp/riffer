@@ -19,6 +19,10 @@ module Riffer
     def configure
       yield config if block_given?
     end
+
+    def version
+      VERSION
+    end
   end
 
   Agent = Agents::Base

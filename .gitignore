@@ -1,12 +1,11 @@
 _yardoc
 .bundle
 .env
-.rspec_status
 .vscode
 .yardo
 coverage
 doc
 pkg
-spec/reports
+test/reports
 tmp
 vendor

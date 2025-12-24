@@ -1,2 +1,1 @@
-extend_config:
-  - .rubocop_rspec.yml
+# Standard Ruby configuration

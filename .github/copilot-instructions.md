@@ -17,17 +17,16 @@ Riffer is a Ruby gem framework for building AI-powered applications and agents. 
 - All Ruby files must include `# frozen_string_literal: true` at the top
 - Follow StandardRB conventions (2-space indentation, double quotes for strings)
 - Run `rake standard` to check formatting and `rake standard:fix` to auto-fix
-- Custom RuboCop rules are defined in `.standard.yml` and `.rubocop_rspec.yml` - follow these in addition to StandardRB
+- Custom RuboCop rules are defined in `.standard.yml` - follow these in addition to StandardRB
 
 ### Testing
 
-- Use RSpec for all tests
-- Test files go in `spec/` directory with `_spec.rb` suffix
-- Run tests with `rake spec` or `bundle exec rspec`
+- Use Minitest for all tests with the spec DSL
+- Test files go in `test/` directory with `*_test.rb` suffix
+- Run tests with `rake test` or `bundle exec rake test`
 - Tests must pass before committing
-- Use modern RSpec syntax with `expect` (not `should`)
-- Disable monkey patching in specs (already configured)
-- **Single Assertion Rule**: Each test should have only one expectation (enforced by RuboCop)
+- Use Minitest assertions: `assert_equal`, `assert_instance_of`, `refute_nil`, etc.
+- Prefer using `setup` and `teardown` methods for test setup/cleanup
 
 ## Project Structure
 
@@ -65,11 +64,11 @@ lib/
       text_done.rb       # Text done event
     tools/
       base.rb            # Base tool class
-spec/
-  spec_helper.rb         # RSpec configuration with VCR
-  riffer_spec.rb         # Main module specs
+test/
+  test_helper.rb         # Minitest configuration with VCR
+  riffer_test.rb         # Main module tests
   riffer/
-    [feature]_spec.rb    # Feature specs mirror lib/riffer/ structure
+    [feature]_test.rb    # Feature tests mirror lib/riffer/ structure
 ```
 
 ## Development Workflow
@@ -85,8 +84,8 @@ spec/
 
 1. Create feature files under `lib/riffer/` following Zeitwerk conventions
 2. File names should be snake_case, class names should be PascalCase
-3. Create corresponding specs in `spec/riffer/` mirroring the lib structure
-4. Run tests: `rake spec`
+3. Create corresponding tests in `test/riffer/` mirroring the lib structure
+4. Run tests: `rake test`
 5. Check code style: `rake standard`
 
 ### Dependencies
@@ -137,17 +136,27 @@ end
 
 ## Testing Guidelines
 
-### Spec Structure
+### Test Structure
 
 ```ruby
 # frozen_string_literal: true
 
-require "spec_helper"
+require "test_helper"
 
-RSpec.describe Riffer::Feature do
+describe Riffer::Feature do
   describe "#method_name" do
-    it "describes behavior" do
-      expect(result).to eq(expected)
+    before do
+      # setup code
+    end
+
+    it "does something expected" do
+      result = Riffer::Feature.method_name(args)
+      assert_equal expected, result
+    end
+
+    it "handles edge case" do
+      result = Riffer::Feature.method_name(edge_case_args)
+      assert_equal edge_case_expected, result
     end
   end
 end
@@ -159,6 +168,7 @@ end
 - Test edge cases and error conditions
 - Mock external dependencies
 - Keep tests fast and isolated
+- Stick to the single assertion rule where possible
 
 ## AI/Agent Development Context
 
@@ -176,7 +186,7 @@ Since Riffer is an AI framework, when working on AI-related features:
 
 - `bin/setup` - Install dependencies
 - `bin/console` - Interactive console with gem loaded
-- `rake spec` - Run tests
+- `rake test` - Run tests
 - `rake standard` - Check code style
 - `rake standard:fix` - Auto-fix style issues
 - `bundle exec rake install` - Install gem locally
@@ -184,7 +194,7 @@ Since Riffer is an AI framework, when working on AI-related features:
 
 ## Important Notes
 
-- Always run `rake` (runs both specs and standard) before committing
+- Always run `rake` (runs both test and standard) before committing
 - Keep the README updated with new features
 - Follow the Code of Conduct in all interactions
 - This gem is MIT licensed - keep license headers consistent
