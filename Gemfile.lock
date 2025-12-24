@@ -106,7 +106,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   irb
-  minitest (~> 5.0)
+  minitest (~> 5.27)
   openai (~> 0.42.0)
   rake (~> 13.0)
   riffer!
