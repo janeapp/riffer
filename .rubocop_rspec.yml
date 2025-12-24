@@ -1,6 +1,0 @@
-plugins:
-  - rubocop-rspec
-
-RSpec/MultipleExpectations:
-  Enabled: true
-  Max: 1

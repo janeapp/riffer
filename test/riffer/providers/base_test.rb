@@ -1,96 +1,95 @@
 # frozen_string_literal: true
 
-require "spec_helper"
+require "test_helper"
 
-RSpec.describe Riffer::Providers::Base do
-  let(:provider) { described_class.new }
+describe Riffer::Providers::Base do
+  let(:provider) { Riffer::Providers::Base.new }
 
   describe ".identifier" do
     it "can be set and retrieved" do
-      test_class = Class.new(described_class) do
+      test_class = Class.new(Riffer::Providers::Base) do
         identifier "test_provider"
       end
-
-      expect(test_class.identifier).to eq("test_provider")
+      expect(test_class.identifier).must_equal "test_provider"
     end
 
     it "registers provider when identifier is set" do
-      test_class = Class.new(described_class) do
+      test_class = Class.new(Riffer::Providers::Base) do
         identifier "custom_provider"
       end
-
-      expect(described_class.find_provider("custom_provider")).to eq(test_class)
+      expect(Riffer::Providers::Base.find_provider("custom_provider")).must_equal test_class
     end
   end
 
   describe ".find_provider" do
     it "returns registered provider class" do
-      expect(described_class.find_provider("openai")).to eq(Riffer::Providers::OpenAI)
+      expect(Riffer::Providers::Base.find_provider("openai")).must_equal Riffer::Providers::OpenAI
     end
 
     it "returns registered test provider class" do
-      expect(described_class.find_provider("test")).to eq(Riffer::Providers::Test)
+      expect(Riffer::Providers::Base.find_provider("test")).must_equal Riffer::Providers::Test
     end
 
     it "raises error when provider not found" do
-      expect {
-        described_class.find_provider("non_existent")
-      }.to raise_error(Riffer::Providers::InvalidInputError, /Provider not found for identifier: non_existent/)
+      error = expect do
+        Riffer::Providers::Base.find_provider("non_existent")
+      end.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_match(/Provider not found for identifier: non_existent/)
     end
   end
 
   describe "#generate_text" do
     it "raises NotImplementedError when perform_generate_text not implemented" do
-      expect {
-        provider.generate_text(prompt: "Hello")
-      }.to raise_error(NotImplementedError, "Subclasses must implement #perform_generate_text")
+      error = expect { provider.generate_text(prompt: "Hello") }.must_raise(NotImplementedError)
+      expect(error.message).must_equal "Subclasses must implement #perform_generate_text"
     end
 
     it "raises InvalidInputError when no prompt or messages provided" do
-      expect {
-        provider.generate_text
-      }.to raise_error(Riffer::Providers::InvalidInputError, "prompt is required when messages is not provided")
+      error = expect { provider.generate_text }.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_equal "prompt is required when messages is not provided"
     end
 
     it "raises InvalidInputError when both prompt and messages provided" do
-      expect {
+      error = expect do
         provider.generate_text(prompt: "Hello", messages: [{role: "user", content: "Hi"}])
-      }.to raise_error(Riffer::Providers::InvalidInputError, "cannot provide both prompt and messages")
+      end.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_equal "cannot provide both prompt and messages"
     end
 
     it "raises InvalidInputError when both system and messages provided" do
-      expect {
+      error = expect do
         provider.generate_text(system: "You are helpful", messages: [{role: "user", content: "Hi"}])
-      }.to raise_error(Riffer::Providers::InvalidInputError, "cannot provide both system and messages")
+      end.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_equal "cannot provide both system and messages"
     end
 
     it "raises InvalidInputError when messages has no user message" do
-      expect {
+      error = expect do
         provider.generate_text(messages: [{role: "system", content: "You are helpful"}])
-      }.to raise_error(Riffer::Providers::InvalidInputError, "messages must include at least one user message")
+      end.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_equal "messages must include at least one user message"
     end
   end
 
   describe "#stream_text" do
     it "raises NotImplementedError when perform_stream_text not implemented" do
-      expect {
-        provider.stream_text(prompt: "Hello")
-      }.to raise_error(NotImplementedError, "Subclasses must implement #perform_stream_text")
+      error = expect { provider.stream_text(prompt: "Hello") }.must_raise(NotImplementedError)
+      expect(error.message).must_equal "Subclasses must implement #perform_stream_text"
     end
   end
 
   describe "#normalize_messages" do
     it "converts prompt to User message" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: nil, messages: nil)
-      expect(result).to all(be_a(Riffer::Messages::Base))
+      expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
     end
 
     it "converts system and prompt to System and User messages" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: "Be helpful", messages: nil)
-      expect(result).to all(be_a(Riffer::Messages::Base))
+      expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
     end
 
-    context "with hash messages" do
+    describe "with hash messages" do
       let(:messages) do
         [
           {role: "user", content: "Hello"},
@@ -100,11 +99,11 @@ RSpec.describe Riffer::Providers::Base do
 
       it "converts hash messages to message objects" do
         result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
-        expect(result).to all(be_a(Riffer::Messages::Base))
+        expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
       end
     end
 
-    context "with message objects" do
+    describe "with message objects" do
       let(:messages) do
         [
           Riffer::Messages::User.new("Hello"),
@@ -114,40 +113,42 @@ RSpec.describe Riffer::Providers::Base do
 
       it "preserves message objects when provided" do
         result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
-        expect(result).to eq(messages)
+        expect(result).must_equal messages
       end
     end
   end
 
   describe "#convert_to_message_object" do
     it "raises InvalidInputError when message is not a Hash or Message object" do
-      expect {
+      error = expect do
         provider.send(:convert_to_message_object, "invalid")
-      }.to raise_error(Riffer::Providers::InvalidInputError, "Message must be a Hash or Message object, got String")
+      end.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_equal "Message must be a Hash or Message object, got String"
     end
 
     it "raises InvalidInputError when message has unknown role" do
-      expect {
+      error = expect do
         provider.send(:convert_to_message_object, {role: "unknown", content: "test"})
-      }.to raise_error(Riffer::Providers::InvalidInputError, "Unknown message role: unknown")
+      end.must_raise(Riffer::Providers::InvalidInputError)
+      expect(error.message).must_equal "Unknown message role: unknown"
     end
 
     it "converts user hash to User message" do
       result = provider.send(:convert_to_message_object, {role: "user", content: "Hello"})
-      expect(result).to be_a(Riffer::Messages::User)
+      expect(result).must_be_instance_of Riffer::Messages::User
     end
 
     it "converts assistant hash to Assistant message" do
       result = provider.send(:convert_to_message_object, {role: "assistant", content: "Hi"})
-      expect(result).to be_a(Riffer::Messages::Assistant)
+      expect(result).must_be_instance_of Riffer::Messages::Assistant
     end
 
     it "converts system hash to System message" do
       result = provider.send(:convert_to_message_object, {role: "system", content: "Be helpful"})
-      expect(result).to be_a(Riffer::Messages::System)
+      expect(result).must_be_instance_of Riffer::Messages::System
     end
 
-    context "with tool message hash" do
+    describe "with tool message hash" do
       let(:tool_message) do
         {
           role: "tool",
@@ -159,17 +160,17 @@ RSpec.describe Riffer::Providers::Base do
 
       it "converts tool hash to Tool message" do
         result = provider.send(:convert_to_message_object, tool_message)
-        expect(result).to be_a(Riffer::Messages::Tool)
+        expect(result).must_be_instance_of Riffer::Messages::Tool
       end
     end
 
     it "preserves message objects" do
       msg = Riffer::Messages::User.new("Hello")
       result = provider.send(:convert_to_message_object, msg)
-      expect(result).to eq(msg)
+      expect(result).must_equal msg
     end
 
-    context "with assistant message with tool_calls" do
+    describe "with assistant message with tool_calls" do
       let(:assistant_message) do
         {
           role: "assistant",
@@ -180,7 +181,7 @@ RSpec.describe Riffer::Providers::Base do
 
       it "preserves tool_calls in assistant messages" do
         result = provider.send(:convert_to_message_object, assistant_message)
-        expect(result.tool_calls).to eq([{id: "1", name: "search"}])
+        expect(result.tool_calls).must_equal [{id: "1", name: "search"}]
       end
     end
   end
@@ -188,17 +189,17 @@ RSpec.describe Riffer::Providers::Base do
   describe "#has_user_message?" do
     it "returns true for User message object" do
       messages = [Riffer::Messages::User.new("Hello")]
-      expect(provider.send(:has_user_message?, messages)).to be true
+      expect(provider.send(:has_user_message?, messages)).must_equal true
     end
 
     it "returns true for user hash message" do
       messages = [{role: "user", content: "Hello"}]
-      expect(provider.send(:has_user_message?, messages)).to be true
+      expect(provider.send(:has_user_message?, messages)).must_equal true
     end
 
     it "returns false when no user messages present" do
       messages = [{role: "system", content: "Be helpful"}]
-      expect(provider.send(:has_user_message?, messages)).to be false
+      expect(provider.send(:has_user_message?, messages)).must_equal false
     end
   end
 end
