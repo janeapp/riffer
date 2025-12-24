@@ -143,7 +143,7 @@ end
 
 require "test_helper"
 
-describe Riffer::FeatureTest do
+describe Riffer::Feature do
   describe "#method_name" do
     before do
       # setup code
