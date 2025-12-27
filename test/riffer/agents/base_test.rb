@@ -16,14 +16,9 @@ describe Riffer::Agents::Base do
       expect(agent_class.identifier).must_equal "test-agent"
     end
 
-    it "raises error when identifier is not a string" do
-      error = expect { agent_class.identifier(123) }.must_raise(ArgumentError)
-      expect(error.message).must_match(/identifier must be a String/)
-    end
-
-    it "raises error when identifier is an empty string" do
-      error = expect { agent_class.identifier("   ") }.must_raise(ArgumentError)
-      expect(error.message).must_match(/identifier cannot be empty/)
+    it "converts non-string identifier to string" do
+      agent_class.identifier(:test_agent)
+      expect(agent_class.identifier).must_equal "test_agent"
     end
   end
 
@@ -180,12 +175,12 @@ describe Riffer::Agents::Base do
       expect(result).must_be_instance_of Array
     end
 
-    it "includes all agent 1" do
+    it "includes agent 1" do
       all_agents = Riffer::Agents::Base.all
       expect(all_agents).must_include @agent1
     end
 
-    it "includes all agent 2" do
+    it "includes agent 2" do
       all_agents = Riffer::Agents::Base.all
       expect(all_agents).must_include @agent2
     end

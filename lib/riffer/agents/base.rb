@@ -6,9 +6,6 @@ module Riffer::Agents
       def identifier(value = nil)
         return @identifier if value.nil?
 
-        raise ArgumentError, "identifier must be a String" unless value.is_a?(String)
-        raise ArgumentError, "identifier cannot be empty" if value.strip.empty?
-
         @identifier = value.to_s
       end
 
@@ -31,7 +28,8 @@ module Riffer::Agents
       end
 
       def find(identifier)
-        subclasses.find { |agent_class| agent_class.identifier == identifier }
+        str_ientifier = identifier.to_s
+        subclasses.find { |agent_class| agent_class.identifier == str_ientifier }
       end
 
       def all
