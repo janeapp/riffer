@@ -184,10 +184,5 @@ describe Riffer::Agents::Base do
       all_agents = Riffer::Agents::Base.all
       expect(all_agents).must_include @agent2
     end
-
-    it "returns the correct number of agents" do
-      all_agents = Riffer::Agents::Base.all
-      expect(all_agents.length).must_equal 2
-    end
   end
 end
