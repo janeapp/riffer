@@ -28,8 +28,7 @@ module Riffer::Agents
       end
 
       def find(identifier)
-        str_ientifier = identifier.to_s
-        subclasses.find { |agent_class| agent_class.identifier == str_ientifier }
+        subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
       end
 
       def all
