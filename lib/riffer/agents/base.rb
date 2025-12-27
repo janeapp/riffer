@@ -3,6 +3,15 @@
 module Riffer::Agents
   class Base
     class << self
+      def identifier(value = nil)
+        return @identifier if value.nil?
+
+        raise ArgumentError, "identifier must be a String" unless value.is_a?(String)
+        raise ArgumentError, "identifier cannot be empty" if value.strip.empty?
+
+        @identifier = value.to_s
+      end
+
       def model(model_string = nil)
         return @model if model_string.nil?
 
@@ -19,6 +28,26 @@ module Riffer::Agents
         raise ArgumentError, "instructions cannot be empty" if instructions_text.strip.empty?
 
         @instructions = instructions_text
+      end
+
+      def find(identifier)
+        ensure_agents_loaded
+        subclasses.find { |agent_class| agent_class.identifier == identifier }
+      end
+
+      def all
+        ensure_agents_loaded
+        subclasses
+      end
+
+      private
+
+      def ensure_agents_loaded
+        return if @agents_loaded
+
+        Zeitwerk::Loader.eager_load_namespace(Riffer::Agents)
+
+        @agents_loaded = true
       end
     end
 
