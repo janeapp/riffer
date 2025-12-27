@@ -51,8 +51,8 @@ module Riffer::Agents
       @model_name = model_name
     end
 
-    def generate(prompt)
-      initialize_messages(prompt)
+    def generate(prompt_or_messages)
+      initialize_messages(prompt_or_messages)
 
       loop do
         response = call_llm
@@ -68,10 +68,15 @@ module Riffer::Agents
 
     private
 
-    def initialize_messages(prompt)
-      @messages = [] # Reset messages for each generation call
+    def initialize_messages(prompt_or_messages)
+      @messages = []
       @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
-      @messages << Riffer::Messages::User.new(prompt)
+
+      if prompt_or_messages.is_a?(Array)
+        @messages.concat(prompt_or_messages)
+      else
+        @messages << Riffer::Messages::User.new(prompt_or_messages)
+      end
     end
 
     def call_llm
