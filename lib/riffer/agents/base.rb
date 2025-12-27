@@ -31,23 +31,11 @@ module Riffer::Agents
       end
 
       def find(identifier)
-        ensure_agents_loaded
         subclasses.find { |agent_class| agent_class.identifier == identifier }
       end
 
       def all
-        ensure_agents_loaded
         subclasses
-      end
-
-      private
-
-      def ensure_agents_loaded
-        return if @agents_loaded
-
-        Zeitwerk::Loader.eager_load_namespace(Riffer::Agents)
-
-        @agents_loaded = true
       end
     end
 
