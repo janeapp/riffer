@@ -185,9 +185,9 @@ describe Riffer::Agents::Base do
       expect(all_agents).must_include @agent2
     end
 
-    it "includes the base agent class subclasses" do
+    it "returns the correct number of agents" do
       all_agents = Riffer::Agents::Base.all
-      expect(all_agents.length).must_be :>, 0
+      expect(all_agents.length).must_equal 2
     end
   end
 end
