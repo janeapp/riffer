@@ -2,6 +2,8 @@
 
 module Riffer::Agents
   class Base
+    include Riffer::Messages::Converter
+
     class << self
       def identifier(value = nil)
         return @identifier if value.nil?
@@ -73,7 +75,9 @@ module Riffer::Agents
       @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
 
       if prompt_or_messages.is_a?(Array)
-        @messages.concat(prompt_or_messages)
+        prompt_or_messages.each do |item|
+          @messages << convert_to_message_object(item)
+        end
       else
         @messages << Riffer::Messages::User.new(prompt_or_messages)
       end

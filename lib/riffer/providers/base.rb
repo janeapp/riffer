@@ -3,6 +3,7 @@
 module Riffer::Providers
   class Base
     include Riffer::DependencyHelper
+    include Riffer::Messages::Converter
 
     class << self
       def identifier(value = nil)
@@ -35,12 +36,14 @@ module Riffer::Providers
     def generate_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
+      validate_normalized_messages!(normalized_messages)
       perform_generate_text(normalized_messages, model: model)
     end
 
     def stream_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
+      validate_normalized_messages!(normalized_messages)
       perform_stream_text(normalized_messages, model: model)
     end
 
@@ -60,8 +63,12 @@ module Riffer::Providers
       else
         raise InvalidInputError, "cannot provide both prompt and messages" unless prompt.nil?
         raise InvalidInputError, "cannot provide both system and messages" unless system.nil?
-        raise InvalidInputError, "messages must include at least one user message" unless has_user_message?(messages)
       end
+    end
+
+    def validate_normalized_messages!(messages)
+      has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }
+      raise InvalidInputError, "messages must include at least one user message" unless has_user
     end
 
     def normalize_messages(prompt:, system:, messages:)
@@ -73,35 +80,8 @@ module Riffer::Providers
       result << Riffer::Messages::System.new(system) if system
       result << Riffer::Messages::User.new(prompt)
       result
-    end
-
-    def convert_to_message_object(msg)
-      if msg.is_a?(Riffer::Messages::Base)
-        return msg
-      end
-
-      unless msg.is_a?(Hash)
-        raise InvalidInputError, "Message must be a Hash or Message object, got #{msg.class}"
-      end
-
-      case msg[:role]
-      when "user"
-        Riffer::Messages::User.new(msg[:content])
-      when "assistant"
-        Riffer::Messages::Assistant.new(msg[:content], tool_calls: msg[:tool_calls] || [])
-      when "system"
-        Riffer::Messages::System.new(msg[:content])
-      when "tool"
-        Riffer::Messages::Tool.new(msg[:content], tool_call_id: msg[:tool_call_id], name: msg[:name])
-      else
-        raise InvalidInputError, "Unknown message role: #{msg[:role]}"
-      end
-    end
-
-    def has_user_message?(messages)
-      messages.any? do |msg|
-        msg.is_a?(Riffer::Messages::User) || (msg.is_a?(Hash) && msg[:role] == "user")
-      end
+    rescue Riffer::Messages::InvalidInputError => e
+      raise InvalidInputError, e.message
     end
   end
 end
