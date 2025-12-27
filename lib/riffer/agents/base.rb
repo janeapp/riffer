@@ -3,6 +3,12 @@
 module Riffer::Agents
   class Base
     class << self
+      def identifier(value = nil)
+        return @identifier if value.nil?
+
+        @identifier = value.to_s
+      end
+
       def model(model_string = nil)
         return @model if model_string.nil?
 
@@ -19,6 +25,14 @@ module Riffer::Agents
         raise ArgumentError, "instructions cannot be empty" if instructions_text.strip.empty?
 
         @instructions = instructions_text
+      end
+
+      def find(identifier)
+        subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
+      end
+
+      def all
+        subclasses
       end
     end
 
