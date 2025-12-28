@@ -2,9 +2,9 @@
 
 require "test_helper"
 
-describe Riffer::Agents::Base do
+describe Riffer::Agent do
   let(:agent_class) do
-    Class.new(Riffer::Agents::Base) do
+    Class.new(Riffer::Agent) do
       identifier "test-agent"
       model "test/riffer-1"
       instructions "You are a helpful assistant."
@@ -28,12 +28,12 @@ describe Riffer::Agents::Base do
     end
 
     it "raises error when model is not a string" do
-      error = expect { agent_class.model(123) }.must_raise(ArgumentError)
+      error = expect { agent_class.model(123) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/model must be a String/)
     end
 
     it "raises error when model is an empty string" do
-      error = expect { agent_class.model("   ") }.must_raise(ArgumentError)
+      error = expect { agent_class.model("   ") }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/model cannot be empty/)
     end
   end
@@ -44,12 +44,12 @@ describe Riffer::Agents::Base do
     end
 
     it "raises error when instructions is not a string" do
-      error = expect { agent_class.instructions(123) }.must_raise(ArgumentError)
+      error = expect { agent_class.instructions(123) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/instructions must be a String/)
     end
 
     it "raises error when instructions is an empty string" do
-      error = expect { agent_class.instructions("   ") }.must_raise(ArgumentError)
+      error = expect { agent_class.instructions("   ") }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/instructions cannot be empty/)
     end
   end
@@ -62,13 +62,13 @@ describe Riffer::Agents::Base do
 
     describe "with invalid model format" do
       let(:invalid_agent_class) do
-        Class.new(Riffer::Agents::Base) do
+        Class.new(Riffer::Agent) do
           model "invalid-format"
         end
       end
 
       it "raises error for missing provider or model name" do
-        error = expect { invalid_agent_class.new }.must_raise(ArgumentError)
+        error = expect { invalid_agent_class.new }.must_raise(Riffer::ArgumentError)
         expect(error.message).must_match(/Invalid model string: invalid-format/)
       end
     end
@@ -176,7 +176,7 @@ describe Riffer::Agents::Base do
 
     describe "without instructions" do
       let(:no_instructions_agent_class) do
-        Class.new(Riffer::Agents::Base) do
+        Class.new(Riffer::Agent) do
           model "test/gpt-4o"
         end
       end
@@ -193,59 +193,59 @@ describe Riffer::Agents::Base do
   describe "instructions validation" do
     it "raises error when instructions is empty string" do
       error = expect do
-        Class.new(Riffer::Agents::Base) do
+        Class.new(Riffer::Agent) do
           model "test/riffer-1"
           instructions "   "
         end
-      end.must_raise(ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/instructions cannot be empty/)
     end
   end
 
   describe ".find" do
     before do
-      @test_agent_class = Class.new(Riffer::Agents::Base) do
+      @test_agent_class = Class.new(Riffer::Agent) do
         identifier "findable-agent"
         model "test/riffer-1"
       end
     end
 
     it "returns the agent class with matching identifier" do
-      found_agent = Riffer::Agents::Base.find("findable-agent")
+      found_agent = Riffer::Agent.find("findable-agent")
       expect(found_agent).must_equal @test_agent_class
     end
 
     it "returns nil when identifier is not found" do
-      found_agent = Riffer::Agents::Base.find("nonexistent-agent")
+      found_agent = Riffer::Agent.find("nonexistent-agent")
       expect(found_agent).must_be_nil
     end
   end
 
   describe ".all" do
     before do
-      @agent1 = Class.new(Riffer::Agents::Base) do
+      @agent1 = Class.new(Riffer::Agent) do
         identifier "all-test-agent-1"
         model "test/riffer-1"
       end
 
-      @agent2 = Class.new(Riffer::Agents::Base) do
+      @agent2 = Class.new(Riffer::Agent) do
         identifier "all-test-agent-2"
         model "test/riffer-2"
       end
     end
 
     it "returns an array of agent classes" do
-      result = Riffer::Agents::Base.all
+      result = Riffer::Agent.all
       expect(result).must_be_instance_of Array
     end
 
     it "includes agent 1" do
-      all_agents = Riffer::Agents::Base.all
+      all_agents = Riffer::Agent.all
       expect(all_agents).must_include @agent1
     end
 
     it "includes agent 2" do
-      all_agents = Riffer::Agents::Base.all
+      all_agents = Riffer::Agent.all
       expect(all_agents).must_include @agent2
     end
   end

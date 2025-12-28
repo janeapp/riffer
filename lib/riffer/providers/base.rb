@@ -2,7 +2,7 @@
 
 module Riffer::Providers
   class Base
-    include Riffer::DependencyHelper
+    include Riffer::Helpers::Dependencies
     include Riffer::Messages::Converter
 
     class << self
@@ -14,12 +14,7 @@ module Riffer::Providers
 
       def find_provider(identifier)
         ensure_providers_loaded
-
-        provider = subclasses.find { |provider_class| provider_class.identifier == identifier }
-
-        raise InvalidInputError, "Provider not found for identifier: #{identifier}" if provider.nil?
-
-        provider
+        subclasses.find { |provider_class| provider_class.identifier == identifier }
       end
 
       private
@@ -59,16 +54,11 @@ module Riffer::Providers
 
     def validate_input!(prompt:, system:, messages:)
       if messages.nil?
-        raise InvalidInputError, "prompt is required when messages is not provided" if prompt.nil?
+        raise Riffer::ArgumentError, "prompt is required when messages is not provided" if prompt.nil?
       else
-        raise InvalidInputError, "cannot provide both prompt and messages" unless prompt.nil?
-        raise InvalidInputError, "cannot provide both system and messages" unless system.nil?
+        raise Riffer::ArgumentError, "cannot provide both prompt and messages" unless prompt.nil?
+        raise Riffer::ArgumentError, "cannot provide both system and messages" unless system.nil?
       end
-    end
-
-    def validate_normalized_messages!(messages)
-      has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }
-      raise InvalidInputError, "messages must include at least one user message" unless has_user
     end
 
     def normalize_messages(prompt:, system:, messages:)
@@ -80,8 +70,11 @@ module Riffer::Providers
       result << Riffer::Messages::System.new(system) if system
       result << Riffer::Messages::User.new(prompt)
       result
-    rescue Riffer::Messages::InvalidInputError => e
-      raise InvalidInputError, e.message
+    end
+
+    def validate_normalized_messages!(messages)
+      has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }
+      raise Riffer::ArgumentError, "messages must include at least one user message" unless has_user
     end
   end
 end

@@ -6,7 +6,7 @@ module Riffer::Messages
       return msg if msg.is_a?(Riffer::Messages::Base)
 
       unless msg.is_a?(Hash)
-        raise Riffer::Messages::InvalidInputError, "Message must be a Hash or Message object, got #{msg.class}"
+        raise Riffer::ArgumentError, "Message must be a Hash or Message object, got #{msg.class}"
       end
 
       convert_hash_to_message(msg)
@@ -19,7 +19,7 @@ module Riffer::Messages
       content = hash[:content] || hash["content"]
 
       if role.nil? || role.empty?
-        raise Riffer::Messages::InvalidInputError, "Message hash must include a 'role' key"
+        raise Riffer::ArgumentError, "Message hash must include a 'role' key"
       end
 
       case role
@@ -35,7 +35,7 @@ module Riffer::Messages
         name = hash[:name] || hash["name"]
         Riffer::Messages::Tool.new(content, tool_call_id: tool_call_id, name: name)
       else
-        raise Riffer::Messages::InvalidInputError, "Unknown message role: #{role}"
+        raise Riffer::ArgumentError, "Unknown message role: #{role}"
       end
     end
   end

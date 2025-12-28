@@ -30,11 +30,8 @@ describe Riffer::Providers::Base do
       expect(Riffer::Providers::Base.find_provider("test")).must_equal Riffer::Providers::Test
     end
 
-    it "raises error when provider not found" do
-      error = expect do
-        Riffer::Providers::Base.find_provider("non_existent")
-      end.must_raise(Riffer::Providers::InvalidInputError)
-      expect(error.message).must_match(/Provider not found for identifier: non_existent/)
+    it "returns nil when provider not found" do
+      expect(Riffer::Providers::Base.find_provider("non_existent")).must_be_nil
     end
   end
 
@@ -44,29 +41,29 @@ describe Riffer::Providers::Base do
       expect(error.message).must_equal "Subclasses must implement #perform_generate_text"
     end
 
-    it "raises InvalidInputError when no prompt or messages provided" do
-      error = expect { provider.generate_text }.must_raise(Riffer::Providers::InvalidInputError)
+    it "raises ArgumentError when no prompt or messages provided" do
+      error = expect { provider.generate_text }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "prompt is required when messages is not provided"
     end
 
-    it "raises InvalidInputError when both prompt and messages provided" do
+    it "raises ArgumentError when both prompt and messages provided" do
       error = expect do
         provider.generate_text(prompt: "Hello", messages: [{role: "user", content: "Hi"}])
-      end.must_raise(Riffer::Providers::InvalidInputError)
+      end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "cannot provide both prompt and messages"
     end
 
-    it "raises InvalidInputError when both system and messages provided" do
+    it "raises ArgumentError when both system and messages provided" do
       error = expect do
         provider.generate_text(system: "You are helpful", messages: [{role: "user", content: "Hi"}])
-      end.must_raise(Riffer::Providers::InvalidInputError)
+      end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "cannot provide both system and messages"
     end
 
-    it "raises InvalidInputError when messages has no user message" do
+    it "raises ArgumentError when messages has no user message" do
       error = expect do
         provider.generate_text(messages: [{role: "system", content: "You are helpful"}])
-      end.must_raise(Riffer::Providers::InvalidInputError)
+      end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "messages must include at least one user message"
     end
   end

@@ -10,7 +10,7 @@ module Riffer::Providers
       depends_on "openai"
 
       api_key = options.fetch(:api_key, Riffer.config.openai.api_key)
-      raise ArgumentError, "OpenAI API key is required. Set it via Riffer.configure or pass :api_key option" if api_key.nil? || api_key.empty?
+      raise Riffer::ArgumentError, "OpenAI API key is required. Set it via Riffer.configure or pass :api_key option" if api_key.nil? || api_key.empty?
 
       @client = ::OpenAI::Client.new(api_key: api_key, **options.except(:api_key))
     end
@@ -24,21 +24,21 @@ module Riffer::Providers
       output = response.output.find { |o| o.type == :message }
 
       if output.nil?
-        raise Riffer::Providers::Error, "No output returned from OpenAI API"
+        raise Riffer::Error, "No output returned from OpenAI API"
       end
 
       content = output.content.find { |c| c.type == :output_text }
 
       if content.nil?
-        raise Riffer::Providers::Error, "No content returned from OpenAI API"
+        raise Riffer::Error, "No content returned from OpenAI API"
       end
 
       if content.type == :refusal
-        raise Riffer::Providers::Error, "Request was refused: #{content.refusal}"
+        raise Riffer::Error, "Request was refused: #{content.refusal}"
       end
 
       if content.type != :output_text
-        raise Riffer::Providers::Error, "Unexpected content type: #{content.type}"
+        raise Riffer::Error, "Unexpected content type: #{content.type}"
       end
 
       Riffer::Messages::Assistant.new(content.text)
@@ -70,11 +70,11 @@ module Riffer::Providers
         when Riffer::Messages::Assistant
           {role: "assistant", content: message.content}
         when Riffer::Messages::Tool
-          raise Riffer::Providers::InvalidInputError, "Tool messages are not supported by OpenAI provider yet"
+          raise NotImplementedError, "Tool messages are not supported by OpenAI provider yet"
         when Hash
           message
         else
-          raise Riffer::Providers::InvalidInputError, "Unsupported message type: #{message.class}"
+          raise NotImplementedError, "Unsupported message type: #{message.class}"
         end
       end
     end
