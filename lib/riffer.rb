@@ -10,7 +10,6 @@ loader.setup
 
 module Riffer
   # Base error for Riffer
-  # @see Riffer::ArgumentError
   class Error < StandardError; end
 
   # Argument error for Riffer
