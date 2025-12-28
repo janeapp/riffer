@@ -89,20 +89,6 @@ describe Riffer::Providers::Base do
       expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
     end
 
-    describe "with hash messages" do
-      let(:messages) do
-        [
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi there"}
-        ]
-      end
-
-      it "converts hash messages to message objects" do
-        result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
-        expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
-      end
-    end
-
     describe "with message objects" do
       let(:messages) do
         [
@@ -115,91 +101,6 @@ describe Riffer::Providers::Base do
         result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
         expect(result).must_equal messages
       end
-    end
-  end
-
-  describe "#convert_to_message_object" do
-    it "raises InvalidInputError when message is not a Hash or Message object" do
-      error = expect do
-        provider.send(:convert_to_message_object, "invalid")
-      end.must_raise(Riffer::Providers::InvalidInputError)
-      expect(error.message).must_equal "Message must be a Hash or Message object, got String"
-    end
-
-    it "raises InvalidInputError when message has unknown role" do
-      error = expect do
-        provider.send(:convert_to_message_object, {role: "unknown", content: "test"})
-      end.must_raise(Riffer::Providers::InvalidInputError)
-      expect(error.message).must_equal "Unknown message role: unknown"
-    end
-
-    it "converts user hash to User message" do
-      result = provider.send(:convert_to_message_object, {role: "user", content: "Hello"})
-      expect(result).must_be_instance_of Riffer::Messages::User
-    end
-
-    it "converts assistant hash to Assistant message" do
-      result = provider.send(:convert_to_message_object, {role: "assistant", content: "Hi"})
-      expect(result).must_be_instance_of Riffer::Messages::Assistant
-    end
-
-    it "converts system hash to System message" do
-      result = provider.send(:convert_to_message_object, {role: "system", content: "Be helpful"})
-      expect(result).must_be_instance_of Riffer::Messages::System
-    end
-
-    describe "with tool message hash" do
-      let(:tool_message) do
-        {
-          role: "tool",
-          content: "Result",
-          tool_call_id: "123",
-          name: "search"
-        }
-      end
-
-      it "converts tool hash to Tool message" do
-        result = provider.send(:convert_to_message_object, tool_message)
-        expect(result).must_be_instance_of Riffer::Messages::Tool
-      end
-    end
-
-    it "preserves message objects" do
-      msg = Riffer::Messages::User.new("Hello")
-      result = provider.send(:convert_to_message_object, msg)
-      expect(result).must_equal msg
-    end
-
-    describe "with assistant message with tool_calls" do
-      let(:assistant_message) do
-        {
-          role: "assistant",
-          content: "Let me search",
-          tool_calls: [{id: "1", name: "search"}]
-        }
-      end
-
-      it "preserves tool_calls in assistant messages" do
-        result = provider.send(:convert_to_message_object, assistant_message)
-        expect(result.tool_calls).must_equal [{id: "1", name: "search"}]
-      end
-    end
-  end
-
-  describe "#has_user_message?" do
-    it "returns true for User message object" do
-      messages = [Riffer::Messages::User.new("Hello")]
-      expect(provider.send(:has_user_message?, messages)).must_equal true
-    end
-
-    it "returns true for user hash message" do
-      messages = [{role: "user", content: "Hello"}]
-      expect(provider.send(:has_user_message?, messages)).must_equal true
-    end
-
-    it "returns false when no user messages present" do
-      messages = [{role: "system", content: "Be helpful"}]
-      expect(provider.send(:has_user_message?, messages)).must_equal false
     end
   end
 end

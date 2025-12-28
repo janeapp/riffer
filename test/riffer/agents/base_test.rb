@@ -110,6 +110,70 @@ describe Riffer::Agents::Base do
       end
     end
 
+    describe "with an array of messages" do
+      it "accepts an array of messages" do
+        agent = agent_class.new
+        messages = [
+          Riffer::Messages::User.new("Hello"),
+          Riffer::Messages::Assistant.new("Hi there!"),
+          Riffer::Messages::User.new("How are you?")
+        ]
+        result = agent.generate(messages)
+        expect(result).must_be_instance_of String
+      end
+
+      it "adds system message before the provided messages when instructions are present" do
+        agent = agent_class.new
+        messages = [Riffer::Messages::User.new("Hello")]
+        agent.generate(messages)
+        expect(agent.messages.first).must_be_instance_of Riffer::Messages::System
+      end
+
+      it "preserves message order with system message first" do
+        agent = agent_class.new
+        messages = [Riffer::Messages::User.new("Hello")]
+        agent.generate(messages)
+        expect(agent.messages[1]).must_be_instance_of Riffer::Messages::User
+      end
+
+      it "preserves all provided messages" do
+        agent = agent_class.new
+        messages = [
+          Riffer::Messages::User.new("First message"),
+          Riffer::Messages::Assistant.new("Response"),
+          Riffer::Messages::User.new("Second message")
+        ]
+        agent.generate(messages)
+        user_messages = agent.messages.select { |msg| msg.is_a?(Riffer::Messages::User) }
+        expect(user_messages.length).must_be :>=, 2
+      end
+    end
+
+    describe "with an array of hashes" do
+      it "accepts an array of hashes and converts them to messages" do
+        agent = agent_class.new
+        messages = [
+          {role: "user", content: "Hello"},
+          {role: "assistant", content: "Hi there!"},
+          {role: "user", content: "How are you?"}
+        ]
+        result = agent.generate(messages)
+        expect(result).must_be_instance_of String
+      end
+
+      it "supports mixed hash and message objects" do
+        agent = agent_class.new
+        messages = [
+          {role: "user", content: "First"},
+          Riffer::Messages::Assistant.new("Second"),
+          {role: "user", content: "Third"}
+        ]
+        agent.generate(messages)
+        user_messages = agent.messages.select { |msg| msg.is_a?(Riffer::Messages::User) }
+        expect(user_messages.length).must_be :>=, 2
+      end
+    end
+
     describe "without instructions" do
       let(:no_instructions_agent_class) do
         Class.new(Riffer::Agents::Base) do

@@ -2,6 +2,8 @@
 
 module Riffer::Agents
   class Base
+    include Riffer::Messages::Converter
+
     class << self
       def identifier(value = nil)
         return @identifier if value.nil?
@@ -51,8 +53,8 @@ module Riffer::Agents
       @model_name = model_name
     end
 
-    def generate(prompt)
-      initialize_messages(prompt)
+    def generate(prompt_or_messages)
+      initialize_messages(prompt_or_messages)
 
       loop do
         response = call_llm
@@ -68,10 +70,17 @@ module Riffer::Agents
 
     private
 
-    def initialize_messages(prompt)
-      @messages = [] # Reset messages for each generation call
+    def initialize_messages(prompt_or_messages)
+      @messages = []
       @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
-      @messages << Riffer::Messages::User.new(prompt)
+
+      if prompt_or_messages.is_a?(Array)
+        prompt_or_messages.each do |item|
+          @messages << convert_to_message_object(item)
+        end
+      else
+        @messages << Riffer::Messages::User.new(prompt_or_messages)
+      end
     end
 
     def call_llm
