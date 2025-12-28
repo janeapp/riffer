@@ -71,8 +71,6 @@ module Riffer::Providers
           {role: "assistant", content: message.content}
         when Riffer::Messages::Tool
           raise NotImplementedError, "Tool messages are not supported by OpenAI provider yet"
-        else
-          raise NotImplementedError, "Unsupported message type: #{message.class}"
         end
       end
     end
