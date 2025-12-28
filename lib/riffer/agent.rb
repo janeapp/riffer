@@ -87,7 +87,11 @@ class Riffer::Agent
   end
 
   def provider_instance
-    @provider_instance ||= Riffer::Providers::Base.find_provider(@provider_name).new
+    @provider_instance ||= begin
+      provider_class = Riffer::Providers::Base.find_provider(@provider_name)
+      raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
+      provider_class.new
+    end
   end
 
   def has_tool_calls?(response)

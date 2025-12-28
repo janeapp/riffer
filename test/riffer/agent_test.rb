@@ -188,6 +188,18 @@ describe Riffer::Agent do
         expect(system_message).must_be_nil
       end
     end
+
+    describe "with invalid provider" do
+      it "raises error when provider is not found" do
+        invalid_agent_class = Class.new(Riffer::Agent) do
+          model "nonexistent/gpt-4"
+        end
+
+        agent = invalid_agent_class.new
+        error = expect { agent.generate("Hello") }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/Provider not found: nonexistent/)
+      end
+    end
   end
 
   describe "instructions validation" do
