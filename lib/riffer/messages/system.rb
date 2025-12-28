@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-module Riffer::Messages
-  class System < Base
-    def role
-      "system"
-    end
+class Riffer::Messages::System < Riffer::Messages::Base
+  def role
+    "system"
   end
 end

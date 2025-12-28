@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # Riffer::Agent is the base class for all agents in the Riffer framework.
+#
 # Provides orchestration for LLM calls, tool use, and message management.
 #
 # @abstract
@@ -9,22 +10,21 @@
 
 class Riffer::Agent
   include Riffer::Messages::Converter
-  include Riffer::Messages::Converter
 
   class << self
     include Riffer::Helpers::Validations
 
     # Gets or sets the agent identifier
-    # @param value [String, nil]
-    # @return [String]
+    # @param value [String, nil] the identifier to set, or nil to get
+    # @return [String] the agent identifier
     def identifier(value = nil)
       return @identifier if value.nil?
       @identifier = value.to_s
     end
 
     # Gets or sets the model string (e.g., "openai/gpt-4")
-    # @param model_string [String, nil]
-    # @return [String]
+    # @param model_string [String, nil] the model string to set, or nil to get
+    # @return [String] the model string
     def model(model_string = nil)
       return @model if model_string.nil?
       validate_is_string!(model_string, "model")
@@ -32,8 +32,8 @@ class Riffer::Agent
     end
 
     # Gets or sets the agent instructions
-    # @param instructions_text [String, nil]
-    # @return [String]
+    # @param instructions_text [String, nil] the instructions to set, or nil to get
+    # @return [String] the agent instructions
     def instructions(instructions_text = nil)
       return @instructions if instructions_text.nil?
       validate_is_string!(instructions_text, "instructions")
@@ -41,14 +41,14 @@ class Riffer::Agent
     end
 
     # Finds an agent class by identifier
-    # @param identifier [String]
-    # @return [Class, nil]
+    # @param identifier [String] the identifier to search for
+    # @return [Class, nil] the agent class, or nil if not found
     def find(identifier)
       subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
     end
 
     # Returns all agent subclasses
-    # @return [Array<Class>]
+    # @return [Array<Class>] all agent subclasses
     def all
       subclasses
     end
@@ -59,6 +59,9 @@ class Riffer::Agent
   attr_reader :messages
 
   # Initializes a new agent
+  # @raise [Riffer::ArgumentError] if the configured model string is invalid (must be "provider/model")
+  # @return [void]
+  #
   def initialize
     @messages = []
     @model_string = self.class.model
@@ -118,7 +121,7 @@ class Riffer::Agent
   # @return [Riffer::Providers::Base]
   def provider_instance
     @provider_instance ||= begin
-      provider_class = Riffer::Providers::Base.find_provider(@provider_name)
+      provider_class = Riffer::Providers::Base.find(@provider_name)
       raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
       provider_class.new
     end

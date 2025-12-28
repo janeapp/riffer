@@ -2,6 +2,8 @@
 
 # Configuration for the Riffer framework
 #
+# Provides configuration options for AI providers and other settings.
+#
 # @example Setting the OpenAI API key
 #   Riffer.config.openai.api_key = "sk-..."
 class Riffer::Config
@@ -10,6 +12,7 @@ class Riffer::Config
   attr_reader :openai
 
   # Initializes the configuration
+  # @return [void]
   def initialize
     @openai = Struct.new(:api_key).new
   end

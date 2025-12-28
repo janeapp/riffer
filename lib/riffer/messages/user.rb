@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-module Riffer::Messages
-  class User < Base
-    def role
-      "user"
-    end
+class Riffer::Messages::User < Riffer::Messages::Base
+  def role
+    "user"
   end
 end
