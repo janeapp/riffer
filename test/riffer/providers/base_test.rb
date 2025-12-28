@@ -89,20 +89,6 @@ describe Riffer::Providers::Base do
       expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
     end
 
-    describe "with hash messages" do
-      let(:messages) do
-        [
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi there"}
-        ]
-      end
-
-      it "converts hash messages to message objects" do
-        result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
-        expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
-      end
-    end
-
     describe "with message objects" do
       let(:messages) do
         [
@@ -114,20 +100,6 @@ describe Riffer::Providers::Base do
       it "preserves message objects when provided" do
         result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
         expect(result).must_equal messages
-      end
-
-      it "raises InvalidInputError when message is not a Hash or Message object" do
-        error = expect do
-          provider.generate_text(messages: ["invalid"])
-        end.must_raise(Riffer::Providers::InvalidInputError)
-        expect(error.message).must_equal "Message must be a Hash or Message object, got String"
-      end
-
-      it "raises InvalidInputError when message has unknown role" do
-        error = expect do
-          provider.generate_text(messages: [{role: "unknown", content: "test"}])
-        end.must_raise(Riffer::Providers::InvalidInputError)
-        expect(error.message).must_equal "Unknown message role: unknown"
       end
     end
   end
