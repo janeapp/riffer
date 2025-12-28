@@ -19,24 +19,24 @@ describe Riffer::Messages::System do
 
   describe "#initialize" do
     describe "validation" do
-      it "raises InvalidInputError when content is nil" do
+      it "raises ArgumentError when content is nil" do
         error = expect {
           Riffer::Messages::System.new(nil)
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_equal "System message content cannot be nil"
       end
 
-      it "raises InvalidInputError when content is empty string" do
+      it "raises ArgumentError when content is empty string" do
         error = expect {
           Riffer::Messages::System.new("")
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_equal "System message content cannot be empty"
       end
 
-      it "raises InvalidInputError when content is whitespace only" do
+      it "raises ArgumentError when content is whitespace only" do
         error = expect {
           Riffer::Messages::System.new("   ")
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_equal "System message content cannot be empty"
       end
 

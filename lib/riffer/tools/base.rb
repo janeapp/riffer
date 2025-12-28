@@ -5,7 +5,9 @@ module Riffer::Tools
     attr_reader :name, :description
 
     def initialize(name:, description:, **options)
-      validate_required_fields!(name, description)
+      raise ArgumentError, "Tool name is required, got: #{name.inspect}" if name.nil? || (name.respond_to?(:empty?) && name.empty?)
+      raise ArgumentError, "Tool description is required, got: #{description.inspect}" if description.nil? || (description.respond_to?(:empty?) && description.empty?)
+
       @name = name
       @description = description
       @options = options
@@ -24,11 +26,6 @@ module Riffer::Tools
     end
 
     private
-
-    def validate_required_fields!(name, description)
-      raise ArgumentError, "Tool name is required, got: #{name.inspect}" if name.nil? || (name.respond_to?(:empty?) && name.empty?)
-      raise ArgumentError, "Tool description is required, got: #{description.inspect}" if description.nil? || (description.respond_to?(:empty?) && description.empty?)
-    end
 
     def parameters_schema
       {}

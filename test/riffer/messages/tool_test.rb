@@ -20,31 +20,31 @@ describe Riffer::Messages::Tool do
 
   describe "#initialize" do
     describe "validation" do
-      it "raises InvalidInputError when tool_call_id is nil" do
+      it "raises ArgumentError when tool_call_id is nil" do
         error = expect {
           Riffer::Messages::Tool.new("Result", tool_call_id: nil, name: "my_tool")
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_match(/tool_call_id is required/)
       end
 
-      it "raises InvalidInputError when tool_call_id is empty" do
+      it "raises ArgumentError when tool_call_id is empty" do
         error = expect {
           Riffer::Messages::Tool.new("Result", tool_call_id: "", name: "my_tool")
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_match(/tool_call_id is required/)
       end
 
-      it "raises InvalidInputError when name is nil" do
+      it "raises ArgumentError when name is nil" do
         error = expect {
           Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: nil)
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_match(/name is required/)
       end
 
-      it "raises InvalidInputError when name is empty" do
+      it "raises ArgumentError when name is empty" do
         error = expect {
           Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "")
-        }.must_raise(Riffer::Messages::InvalidInputError)
+        }.must_raise(ArgumentError)
         expect(error.message).must_match(/name is required/)
       end
 
