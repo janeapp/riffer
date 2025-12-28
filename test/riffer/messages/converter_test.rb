@@ -13,17 +13,24 @@ describe Riffer::Messages::Converter do
 
   describe "#convert_to_message_object" do
     it "raises InvalidInputError when message is not a Hash or Message object" do
-      error = expect do
+      error = expect {
         instance.convert_to_message_object("invalid")
-      end.must_raise(Riffer::Messages::InvalidInputError)
+      }.must_raise(Riffer::Messages::InvalidInputError)
       expect(error.message).must_equal "Message must be a Hash or Message object, got String"
     end
 
     it "raises InvalidInputError when message has unknown role" do
-      error = expect do
+      error = expect {
         instance.convert_to_message_object({role: "unknown", content: "test"})
-      end.must_raise(Riffer::Messages::InvalidInputError)
+      }.must_raise(Riffer::Messages::InvalidInputError)
       expect(error.message).must_equal "Unknown message role: unknown"
+    end
+
+    it "raises InvalidInputError when message is missing role key" do
+      error = expect {
+        instance.convert_to_message_object({content: "test"})
+      }.must_raise(Riffer::Messages::InvalidInputError)
+      expect(error.message).must_equal "Message hash must include a 'role' key"
     end
 
     it "converts user hash to User message" do

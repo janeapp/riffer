@@ -18,6 +18,10 @@ module Riffer::Messages
       role = hash[:role] || hash["role"]
       content = hash[:content] || hash["content"]
 
+      if role.nil? || role.empty?
+        raise Riffer::Messages::InvalidInputError, "Message hash must include a 'role' key"
+      end
+
       case role
       when "user"
         Riffer::Messages::User.new(content)
