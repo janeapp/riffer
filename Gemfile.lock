@@ -28,7 +28,8 @@ GEM
     json (2.18.0)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
-    minitest (5.27.0)
+    minitest (6.0.1)
+      prism (~> 1.5)
     openai (0.42.0)
       base64
       connection_pool
@@ -105,7 +106,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   irb
-  minitest (~> 5.0)
+  minitest (~> 6.0)
   openai (~> 0.42.0)
   rake (~> 13.0)
   riffer!
