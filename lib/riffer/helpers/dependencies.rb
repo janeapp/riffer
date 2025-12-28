@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-module Riffer::DependencyHelper
+module Riffer::Helpers::Dependencies
   class LoadError < ::LoadError; end
-
   class VersionError < ScriptError; end
 
   def depends_on(gem_name, req: true)

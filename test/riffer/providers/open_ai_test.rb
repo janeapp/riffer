@@ -7,12 +7,12 @@ describe Riffer::Providers::OpenAI do
 
   describe "#initialize" do
     it "raises ArgumentError when api_key is nil" do
-      error = expect { Riffer::Providers::OpenAI.new(api_key: nil) }.must_raise(ArgumentError)
+      error = expect { Riffer::Providers::OpenAI.new(api_key: nil) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/openai api key is required/i)
     end
 
     it "raises ArgumentError when api_key is empty" do
-      error = expect { Riffer::Providers::OpenAI.new(api_key: "") }.must_raise(ArgumentError)
+      error = expect { Riffer::Providers::OpenAI.new(api_key: "") }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/openai api key is required/i)
     end
 

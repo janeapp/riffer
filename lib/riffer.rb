@@ -10,6 +10,7 @@ loader.setup
 
 module Riffer
   class Error < StandardError; end
+  class ArgumentError < ::ArgumentError; end
 
   class << self
     def config
@@ -25,7 +26,5 @@ module Riffer
     end
   end
 
-  Agent = Agents::Base
-  Tool = Tools::Base
   Provider = Providers::Base
 end
