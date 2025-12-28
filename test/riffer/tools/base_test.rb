@@ -13,6 +13,42 @@ describe Riffer::Tools::Base do
       tool = Riffer::Tools::Base.new(name: "test_tool", description: "A test tool")
       expect(tool.description).must_equal "A test tool"
     end
+
+    describe "validation" do
+      it "raises ArgumentError when name is nil" do
+        error = expect {
+          Riffer::Tools::Base.new(name: nil, description: "A test tool")
+        }.must_raise(ArgumentError)
+        expect(error.message).must_match(/name is required/)
+      end
+
+      it "raises ArgumentError when name is empty" do
+        error = expect {
+          Riffer::Tools::Base.new(name: "", description: "A test tool")
+        }.must_raise(ArgumentError)
+        expect(error.message).must_match(/name is required/)
+      end
+
+      it "raises ArgumentError when description is nil" do
+        error = expect {
+          Riffer::Tools::Base.new(name: "test_tool", description: nil)
+        }.must_raise(ArgumentError)
+        expect(error.message).must_match(/description is required/)
+      end
+
+      it "raises ArgumentError when description is empty" do
+        error = expect {
+          Riffer::Tools::Base.new(name: "test_tool", description: "")
+        }.must_raise(ArgumentError)
+        expect(error.message).must_match(/description is required/)
+      end
+
+      it "accepts valid name and description" do
+        tool = Riffer::Tools::Base.new(name: "test_tool", description: "A test tool")
+        expect(tool.name).must_equal "test_tool"
+        expect(tool.description).must_equal "A test tool"
+      end
+    end
   end
 
   describe "#call" do

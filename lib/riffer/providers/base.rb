@@ -35,6 +35,7 @@ module Riffer::Providers
 
     def generate_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
+      validate_model!(model)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
       validate_normalized_messages!(normalized_messages)
       perform_generate_text(normalized_messages, model: model)
@@ -42,6 +43,7 @@ module Riffer::Providers
 
     def stream_text(prompt: nil, system: nil, messages: nil, model: nil)
       validate_input!(prompt: prompt, system: system, messages: messages)
+      validate_model!(model)
       normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
       validate_normalized_messages!(normalized_messages)
       perform_stream_text(normalized_messages, model: model)
@@ -55,6 +57,11 @@ module Riffer::Providers
 
     def perform_stream_text(messages, model: nil)
       raise NotImplementedError, "Subclasses must implement #perform_stream_text"
+    end
+
+    def validate_model!(model)
+      raise InvalidInputError, "model is required" if model.nil?
+      raise InvalidInputError, "model cannot be empty" if model.respond_to?(:strip) && model.strip.empty?
     end
 
     def validate_input!(prompt:, system:, messages:)

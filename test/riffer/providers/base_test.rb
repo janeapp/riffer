@@ -40,41 +40,80 @@ describe Riffer::Providers::Base do
 
   describe "#generate_text" do
     it "raises NotImplementedError when perform_generate_text not implemented" do
-      error = expect { provider.generate_text(prompt: "Hello") }.must_raise(NotImplementedError)
+      error = expect { provider.generate_text(prompt: "Hello", model: "test-model") }.must_raise(NotImplementedError)
       expect(error.message).must_equal "Subclasses must implement #perform_generate_text"
     end
 
     it "raises InvalidInputError when no prompt or messages provided" do
-      error = expect { provider.generate_text }.must_raise(Riffer::Providers::InvalidInputError)
+      error = expect { provider.generate_text(model: "test-model") }.must_raise(Riffer::Providers::InvalidInputError)
       expect(error.message).must_equal "prompt is required when messages is not provided"
     end
 
     it "raises InvalidInputError when both prompt and messages provided" do
       error = expect do
-        provider.generate_text(prompt: "Hello", messages: [{role: "user", content: "Hi"}])
+        provider.generate_text(prompt: "Hello", messages: [{role: "user", content: "Hi"}], model: "test-model")
       end.must_raise(Riffer::Providers::InvalidInputError)
       expect(error.message).must_equal "cannot provide both prompt and messages"
     end
 
     it "raises InvalidInputError when both system and messages provided" do
       error = expect do
-        provider.generate_text(system: "You are helpful", messages: [{role: "user", content: "Hi"}])
+        provider.generate_text(system: "You are helpful", messages: [{role: "user", content: "Hi"}], model: "test-model")
       end.must_raise(Riffer::Providers::InvalidInputError)
       expect(error.message).must_equal "cannot provide both system and messages"
     end
 
     it "raises InvalidInputError when messages has no user message" do
       error = expect do
-        provider.generate_text(messages: [{role: "system", content: "You are helpful"}])
+        provider.generate_text(messages: [{role: "system", content: "You are helpful"}], model: "test-model")
       end.must_raise(Riffer::Providers::InvalidInputError)
       expect(error.message).must_equal "messages must include at least one user message"
+    end
+
+    describe "model validation" do
+      it "raises InvalidInputError when model is nil" do
+        error = expect {
+          provider.generate_text(prompt: "Hello", model: nil)
+        }.must_raise(Riffer::Providers::InvalidInputError)
+        expect(error.message).must_equal "model is required"
+      end
+
+      it "raises InvalidInputError when model is empty string" do
+        error = expect {
+          provider.generate_text(prompt: "Hello", model: "")
+        }.must_raise(Riffer::Providers::InvalidInputError)
+        expect(error.message).must_equal "model cannot be empty"
+      end
+
+      it "raises InvalidInputError when model is whitespace only" do
+        error = expect {
+          provider.generate_text(prompt: "Hello", model: "   ")
+        }.must_raise(Riffer::Providers::InvalidInputError)
+        expect(error.message).must_equal "model cannot be empty"
+      end
     end
   end
 
   describe "#stream_text" do
     it "raises NotImplementedError when perform_stream_text not implemented" do
-      error = expect { provider.stream_text(prompt: "Hello") }.must_raise(NotImplementedError)
+      error = expect { provider.stream_text(prompt: "Hello", model: "test-model") }.must_raise(NotImplementedError)
       expect(error.message).must_equal "Subclasses must implement #perform_stream_text"
+    end
+
+    describe "model validation" do
+      it "raises InvalidInputError when model is nil" do
+        error = expect {
+          provider.stream_text(prompt: "Hello", model: nil)
+        }.must_raise(Riffer::Providers::InvalidInputError)
+        expect(error.message).must_equal "model is required"
+      end
+
+      it "raises InvalidInputError when model is empty string" do
+        error = expect {
+          provider.stream_text(prompt: "Hello", model: "")
+        }.must_raise(Riffer::Providers::InvalidInputError)
+        expect(error.message).must_equal "model cannot be empty"
+      end
     end
   end
 
