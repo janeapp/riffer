@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Riffer::Tool
   attr_reader :name, :description
 
