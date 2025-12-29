@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2](https://github.com/bottrall/riffer/compare/riffer/v0.4.1...riffer/v0.4.2) (2025-12-29)
+
+
+### Bug Fixes
+
+* update README for clarity on provider usage and examples ([#60](https://github.com/bottrall/riffer/issues/60)) ([b12835c](https://github.com/bottrall/riffer/commit/b12835ce71c29e02074a0897551db50283ac8be6))
+
 ## [0.4.1](https://github.com/bottrall/riffer/compare/riffer/v0.4.0...riffer/v0.4.1) (2025-12-29)
 
 
