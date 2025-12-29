@@ -1,5 +1,10 @@
 {
   "release-type": "ruby",
-  "package-name": "riffer",
-  "version-file": "lib/riffer/version.rb"
+  "packages": {
+    ".": {
+      "release-type": "ruby",
+      "package-name": "riffer",
+      "version-file": "lib/riffer/version.rb"
+    }
+  }
 }
