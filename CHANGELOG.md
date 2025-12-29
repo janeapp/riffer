@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1](https://github.com/bottrall/riffer/compare/riffer/v0.4.0...riffer/v0.4.1) (2025-12-29)
+
+
+### Bug Fixes
+
+* add conditional check for docs job execution based on release creation ([#58](https://github.com/bottrall/riffer/issues/58)) ([97bc6f7](https://github.com/bottrall/riffer/commit/97bc6f79b20902f94edac35b7d9d25c2e033d8bd))
+* add permissions for contents in docs job ([#57](https://github.com/bottrall/riffer/issues/57)) ([1dd5f7a](https://github.com/bottrall/riffer/commit/1dd5f7a817d4f73c1a0cad1a93fee0148ef10705))
+* suppress output during documentation generation ([#53](https://github.com/bottrall/riffer/issues/53)) ([6b7f2d9](https://github.com/bottrall/riffer/commit/6b7f2d9aa7adb5450855097840c971dcf201d8c0))
+* update rdoc command to target the lib directory ([#56](https://github.com/bottrall/riffer/issues/56)) ([c319efe](https://github.com/bottrall/riffer/commit/c319efe039ddb118411ad9e270dc0994d3b8cf5c))
+
 ## [0.4.0](https://github.com/bottrall/riffer/compare/riffer/v0.3.2...riffer/v0.4.0) (2025-12-29)
 
 
