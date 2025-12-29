@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Riffer::Providers::Test < Riffer::Providers::Base
-  identifier "test"
-
   attr_reader :calls
 
   def initialize(**options)

@@ -3,8 +3,6 @@
 require "openai"
 
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
-  identifier "openai"
-
   # Initializes the OpenAI provider.
   # @param options [Hash] optional client options. Use `:api_key` to override `Riffer.config.openai.api_key`.
   # @raise [Riffer::ArgumentError] if an API key is not provided either via `:api_key` or `Riffer.config.openai.api_key`.

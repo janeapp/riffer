@@ -5,36 +5,6 @@ require "test_helper"
 describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
-  describe ".identifier" do
-    it "can be set and retrieved" do
-      test_class = Class.new(Riffer::Providers::Base) do
-        identifier "test_provider"
-      end
-      expect(test_class.identifier).must_equal "test_provider"
-    end
-
-    it "registers provider when identifier is set" do
-      test_class = Class.new(Riffer::Providers::Base) do
-        identifier "custom_provider"
-      end
-      expect(Riffer::Providers::Base.find("custom_provider")).must_equal test_class
-    end
-  end
-
-  describe ".find" do
-    it "returns registered provider class" do
-      expect(Riffer::Providers::Base.find("openai")).must_equal Riffer::Providers::OpenAI
-    end
-
-    it "returns registered test provider class" do
-      expect(Riffer::Providers::Base.find("test")).must_equal Riffer::Providers::Test
-    end
-
-    it "returns nil when provider not found" do
-      expect(Riffer::Providers::Base.find("non_existent")).must_be_nil
-    end
-  end
-
   describe "#generate_text" do
     it "raises NotImplementedError when perform_generate_text not implemented" do
       error = expect { provider.generate_text(prompt: "Hello") }.must_raise(NotImplementedError)
