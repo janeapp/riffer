@@ -4,32 +4,6 @@ class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
 
-  class << self
-    def identifier(value = nil)
-      return @identifier if value.nil?
-
-      @identifier = value
-    end
-
-    # Finds a provider class by identifier
-    # @param identifier [String, Symbol] the identifier to search for
-    # @return [Class, nil] the provider class, or nil if not found
-    def find(identifier)
-      ensure_providers_loaded
-      subclasses.find { |provider_class| provider_class.identifier == identifier }
-    end
-
-    private
-
-    def ensure_providers_loaded
-      return if @providers_loaded
-
-      Zeitwerk::Loader.eager_load_namespace(Riffer::Providers)
-
-      @providers_loaded = true
-    end
-  end
-
   # Generates text using the provider.
   #
   # @param prompt [String, nil] the user prompt (required when `messages` is not provided)
