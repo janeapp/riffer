@@ -468,7 +468,7 @@
 <ul><li>
 <p>Minimal, well-documented core for building AI agents</p>
 </li><li>
-<p>Provider abstraction (OpenAI + test provider) for easy testing</p>
+<p>Provider abstraction (OpenAI) for pluggable providers</p>
 </li><li>
 <p>Streaming support and structured stream events</p>
 </li><li>
@@ -499,42 +499,32 @@
 
 <h2 id="label-Quick+Start"><a href="#label-Quick+Start">Quick Start</a></h2>
 
-<p>Basic usage with the built-in test provider:</p>
+<p>Basic usage with the OpenAI provider:</p>
 
 <pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;riffer&#39;</span>
 
+<span class="ruby-comment"># Configure OpenAI API key (recommended to use ENV)</span>
+<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">class</span> <span class="ruby-constant">EchoAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
   <span class="ruby-identifier">identifier</span> <span class="ruby-string">&#39;echo&#39;</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;test/default&#39;</span> <span class="ruby-comment"># provider/model</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-5-mini&#39;</span> <span class="ruby-comment"># provider/model</span>
   <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are an assistant that repeats what the user says.&#39;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">agent</span> = <span class="ruby-constant">EchoAgent</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Hello world&#39;</span>)
-<span class="ruby-comment"># =&gt; &quot;Test response&quot; (the test provider returns a canned response by default)</span>
+<span class="ruby-comment"># =&gt; &quot;Hello world&quot;</span>
 </pre>
 
-<p>Using the test provider directly (useful for unit tests):</p>
+<p>Streaming example (OpenAI):</p>
 
-<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Test</span>.<span class="ruby-identifier">new</span>
-<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&#39;Hello from test provider!&#39;</span>)
-<span class="ruby-identifier">assistant</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&#39;Say hi&#39;</span>)
-<span class="ruby-identifier">puts</span> <span class="ruby-identifier">assistant</span>.<span class="ruby-identifier">content</span> <span class="ruby-comment"># =&gt; &quot;Hello from test provider!&quot;</span>
-</pre>
-
-<p>Streaming example (provider-dependent):</p>
-
-<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Test</span>.<span class="ruby-identifier">new</span>
-<span class="ruby-identifier">enum</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&#39;Stream something&#39;</span>)
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">enum</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&#39;Stream something&#39;</span>, <span class="ruby-value">model:</span> <span class="ruby-string">&#39;gpt-4&#39;</span>)
 <span class="ruby-identifier">enum</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">chunk</span><span class="ruby-operator">|</span>
-  <span class="ruby-identifier">puts</span> <span class="ruby-identifier">chunk</span>[<span class="ruby-value">:content</span>]
-<span class="ruby-keyword">end</span>
-</pre>
-
-<p>Configuration example (OpenAI API key):</p>
-
-<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
-  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+  <span class="ruby-identifier">puts</span> <span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">content</span>
 <span class="ruby-keyword">end</span>
 </pre>
 
@@ -584,9 +574,6 @@
 <ul><li>
 <p>Jake Bottrall — <a href="https://github.com/bottrall">github.com/bottrall</a></p>
 </li></ul>
-<hr>
-
-<p>If you’d like, I can add short usage examples to the documentation site or update the gemspec metadata (authors, homepage, summary).</p>
 
 
 </main>
