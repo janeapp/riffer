@@ -1,0 +1,23 @@
+Mon, 29 Dec 2025 01:29:51 +0000
+lib/riffer/agent.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/config.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/core.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/helpers/dependencies.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/helpers/validations.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages/assistant.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages/base.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages/converter.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages/system.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages/tool.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages/user.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/messages.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/providers/base.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/providers/open_ai.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/providers/test.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/providers.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/stream_events/base.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/stream_events/text_delta.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/stream_events/text_done.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/stream_events.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer/version.rb	Mon, 29 Dec 2025 01:29:47 +0000
+lib/riffer.rb	Mon, 29 Dec 2025 01:29:47 +0000
