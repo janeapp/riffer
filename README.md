@@ -2,7 +2,7 @@
 
 The all-in-one Ruby framework for building AI-powered applications and agents.
 
-[![Gem Version](https://badge.fury.io/rb/riffer.svg)](https://badge.fury.io/rb/riffer) [![Build Status](https://github.com/bottrall/riffer/actions/workflows/ci.yml/badge.svg)](https://github.com/bottrall/riffer/actions) ⚠️ Work in progress
+[![Gem Version](https://badge.fury.io/rb/riffer.svg)](https://badge.fury.io/rb/riffer) ⚠️ Work in progress
 
 ## Overview
 
