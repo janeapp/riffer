@@ -1,43 +1,142 @@
 # Riffer
 
-TODO: Delete this and the text below, and describe your gem
+The all-in-one Ruby framework for building AI-powered applications and agents.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/riffer`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Gem Version](https://badge.fury.io/rb/riffer.svg)](https://badge.fury.io/rb/riffer) ⚠️ Work in progress
+
+## Overview
+
+Riffer is a comprehensive Ruby framework designed to simplify the development of AI-powered applications and agents. It provides a complete toolkit for integrating artificial intelligence capabilities into your Ruby projects.
+
+Key concepts:
+
+- **Agents** – orchestrate messages, LLM calls, and tool execution (`Riffer::Agent`).
+- **Providers** – adapters that implement text generation and streaming (`Riffer::Providers::*`).
+- **Messages** – typed message objects for system, user, assistant, and tool messages (`Riffer::Messages::*`).
+
+## Features
+
+- Minimal, well-documented core for building AI agents
+- Provider abstraction (OpenAI + test provider) for easy testing
+- Streaming support and structured stream events
+- Message converters and helpers for robust message handling
+
+## Requirements
+
+- Ruby 3.2 or later
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
+Install the released gem:
 
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+gem install riffer
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Or add to your application's Gemfile:
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem 'riffer'
 ```
 
-## Usage
+Install the development branch directly from GitHub:
 
-TODO: Write usage instructions here
+```ruby
+gem 'riffer', git: 'https://github.com/bottrall/riffer.git'
+```
+
+## Quick Start
+
+Basic usage with the built-in test provider:
+
+```ruby
+require 'riffer'
+
+class EchoAgent < Riffer::Agent
+  identifier 'echo'
+  model 'test/default' # provider/model
+  instructions 'You are an assistant that repeats what the user says.'
+end
+
+agent = EchoAgent.new
+puts agent.generate('Hello world')
+# => "Test response" (the test provider returns a canned response by default)
+```
+
+Using the test provider directly (useful for unit tests):
+
+```ruby
+provider = Riffer::Providers::Test.new
+provider.stub_response('Hello from test provider!')
+assistant = provider.generate_text(prompt: 'Say hi')
+puts assistant.content # => "Hello from test provider!"
+```
+
+Streaming example (provider-dependent):
+
+```ruby
+provider = Riffer::Providers::Test.new
+enum = provider.stream_text(prompt: 'Stream something')
+enum.each do |chunk|
+  puts chunk[:content]
+end
+```
+
+Configuration example (OpenAI API key):
+
+```ruby
+Riffer.configure do |config|
+  config.openai.api_key = ENV['OPENAI_API_KEY']
+end
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```bash
+bin/setup
+```
+
+Run the test suite:
+
+```bash
+bundle exec rake test
+```
+
+Check and fix code style:
+
+```bash
+bundle exec rake standard
+bundle exec rake standard:fix
+```
+
+Run the interactive console:
+
+```bash
+bin/console
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/riffer. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/riffer/blob/main/CODE_OF_CONDUCT.md).
+1. Fork the repository and create your branch: `git checkout -b feature/foo`
+2. Run tests and linters locally: `bundle exec rake`
+3. Submit a pull request with a clear description of the change
+
+Please follow the [Code of Conduct](https://github.com/bottrall/riffer/blob/main/CODE_OF_CONDUCT.md).
+
+## Changelog
+
+All notable changes to this project are documented in `CHANGELOG.md`.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+Licensed under the MIT License. See `LICENSE.txt` for details.
 
-## Code of Conduct
+## Maintainers
 
-Everyone interacting in the Riffer project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/riffer/blob/main/CODE_OF_CONDUCT.md).
+- Jake Bottrall — https://github.com/bottrall
+
+---
+
+If you'd like, I can add short usage examples to the documentation site or update the gemspec metadata (authors, homepage, summary).
