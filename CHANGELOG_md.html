@@ -5,33 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer - Riffer Documentation</title>
+<title>CHANGELOG - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,CHANGELOG">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer"
+    name="description"
+    content="CHANGELOG: Changelog All notable changes to this project will be documented in this file. keepachangelog."
   >
-
-    <meta
-      name="description"
-      content="Documentation for the Riffer module"
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer - Riffer Documentation">
+<meta property="og:title" content="CHANGELOG - Riffer Documentation">
 
 
 
-    <meta
-      property="og:description"
-      content="Documentation for Riffer module - API reference and code examples"
-    >
+    <meta property="og:description" content="Changelog All notable changes to this project will be documented in this file. keepachangelog.">
 
 
 
@@ -39,14 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer - Riffer Documentation">
+<meta name="twitter:title" content="CHANGELOG - Riffer Documentation">
 
 
 
-    <meta
-      name="twitter:description"
-      content="Documentation for Riffer module - API reference and code examples"
-    >
+    <meta name="twitter:description" content="Changelog All notable changes to this project will be documented in this file. keepachangelog.">
 
 
 
@@ -97,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -375,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -429,41 +420,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-class-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Class Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-c-config">config</a></li>
-
-        <li ><a href="#method-c-configure">configure</a></li>
-
-        <li ><a href="#method-c-version">version</a></li>
-
-      </ul>
-    </details>
-  </div>
-
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -482,181 +438,105 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer">
-  
-  
-
-  <h1 id="module-Riffer" class="anchor-link module">
-    module Riffer
-  </h1>
-
-  <section class="description">
-    
-  </section>
-
-
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
-
-
-
-
-
-    <section class="constants-list">
-      <header>
-        <h3 id="constants"><a href="#constants">Constants</a></h3>
-      </header>
-      <dl>
-
-        <dt id="VERSION">VERSION</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-      </dl>
-    </section>
-
-
-
-
-
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
-       </header>
-
-
-      <div id="method-c-config" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-config" title="Link to this method">
-                <span class="method-name">config</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="config-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer.rb, line 35</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">config</span>
-  <span class="ruby-ivar">@config</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Config</span>.<span class="ruby-identifier">new</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the <a href="Riffer.html"><code>Riffer</code></a> configuration @return [Riffer::Config]</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-c-configure" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-configure" title="Link to this method">
-                <span class="method-name">configure</span>
-                <span class="method-args">() { |config| ... }</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="configure-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer.rb, line 42</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure</span>
-  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">config</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Yields the configuration for block-based setup @yieldparam config [Riffer::Config] the configuration object @return [void]</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-c-version" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-version" title="Link to this method">
-                <span class="method-name">version</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="version-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer.rb, line 48</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">version</span>
-  <span class="ruby-constant">VERSION</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the gem version @return [String] the version string</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
-
-  </section>
+<main role="main" aria-label="Page CHANGELOG.md">
+
+<h1 id="label-Changelog"><a href="#label-Changelog">Changelog</a></h1>
+
+<p>All notable changes to this project will be documented in this file.</p>
+
+<p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+
+<h2 id="label-0.4.1+-282025-12-29-29"><a href="#label-0.4.1+-282025-12-29-29"><a href="https://github.com/bottrall/riffer/compare/riffer/v0.4.0...riffer/v0.4.1">0.4.1</a> (2025-12-29)</a></h2>
+
+<h3 id="label-Bug+Fixes"><a href="#label-Bug+Fixes">Bug Fixes</a></h3>
+<ul><li>
+<p>add conditional check for docs job execution based on release creation (<a href="https://github.com/bottrall/riffer/issues/58">#58</a>) (<a href="https://github.com/bottrall/riffer/commit/97bc6f79b20902f94edac35b7d9d25c2e033d8bd">97bc6f7</a>)</p>
+</li><li>
+<p>add permissions for contents in docs job (<a href="https://github.com/bottrall/riffer/issues/57">#57</a>) (<a href="https://github.com/bottrall/riffer/commit/1dd5f7a817d4f73c1a0cad1a93fee0148ef10705">1dd5f7a</a>)</p>
+</li><li>
+<p>suppress output during documentation generation (<a href="https://github.com/bottrall/riffer/issues/53">#53</a>) (<a href="https://github.com/bottrall/riffer/commit/6b7f2d9aa7adb5450855097840c971dcf201d8c0">6b7f2d9</a>)</p>
+</li><li>
+<p>update rdoc command to target the lib directory (<a href="https://github.com/bottrall/riffer/issues/56">#56</a>) (<a href="https://github.com/bottrall/riffer/commit/c319efe039ddb118411ad9e270dc0994d3b8cf5c">c319efe</a>)</p>
+</li></ul>
+
+<h2 id="label-0.4.0+-282025-12-29-29"><a href="#label-0.4.0+-282025-12-29-29"><a href="https://github.com/bottrall/riffer/compare/riffer/v0.3.2...riffer/v0.4.0">0.4.0</a> (2025-12-29)</a></h2>
+
+<h3 id="label-Features"><a href="#label-Features">Features</a></h3>
+<ul><li>
+<p>add documentation generation and publishing workflow (<a href="https://github.com/bottrall/riffer/issues/51">#51</a>) (<a href="https://github.com/bottrall/riffer/commit/49e3b046c2011f56bb8803b76e152df9ffb26617">49e3b04</a>)</p>
+</li></ul>
+
+<h2 id="label-0.3.2+-282025-12-29-29"><a href="#label-0.3.2+-282025-12-29-29"><a href="https://github.com/bottrall/riffer/compare/riffer/v0.3.1...riffer/v0.3.2">0.3.2</a> (2025-12-29)</a></h2>
+
+<h3 id="label-Bug+Fixes"><a href="#label-Bug+Fixes">Bug Fixes</a></h3>
+<ul><li>
+<p>add Rubygems credentials configuration step in release workflow (<a href="https://github.com/bottrall/riffer/issues/49">#49</a>) (<a href="https://github.com/bottrall/riffer/commit/dcc71e01f541510ab73986237adaabfab1ef2401">dcc71e0</a>)</p>
+</li></ul>
+
+<h2 id="label-0.3.1+-282025-12-29-29"><a href="#label-0.3.1+-282025-12-29-29"><a href="https://github.com/bottrall/riffer/compare/riffer/v0.3.0...riffer/v0.3.1">0.3.1</a> (2025-12-29)</a></h2>
+
+<h3 id="label-Bug+Fixes"><a href="#label-Bug+Fixes">Bug Fixes</a></h3>
+<ul><li>
+<p>update checkout action version in release workflow (<a href="https://github.com/bottrall/riffer/issues/47">#47</a>) (<a href="https://github.com/bottrall/riffer/commit/c6b1361b20d7cc4522e20c46fa1a75ad3a8a80d7">c6b1361</a>)</p>
+</li></ul>
+
+<h2 id="label-0.3.0+-282025-12-29-29"><a href="#label-0.3.0+-282025-12-29-29"><a href="https://github.com/bottrall/riffer/compare/riffer-v0.2.0...riffer/v0.3.0">0.3.0</a> (2025-12-29)</a></h2>
+
+<h3 id="label-Features"><a href="#label-Features">Features</a></h3>
+<ul><li>
+<p>add release and publish workflows (<a href="https://github.com/bottrall/riffer/issues/35">#35</a>) (<a href="https://github.com/bottrall/riffer/commit/3eb03897d0e96c01ef1857c04b2bafa53e37dde0">3eb0389</a>)</p>
+</li></ul>
+
+<h3 id="label-Bug+Fixes"><a href="#label-Bug+Fixes">Bug Fixes</a></h3>
+<ul><li>
+<p>add manifest file to release configuration (<a href="https://github.com/bottrall/riffer/issues/43">#43</a>) (<a href="https://github.com/bottrall/riffer/commit/8d46135ccd1c4315d624fa11a639e51aa1f1e5b8">8d46135</a>)</p>
+</li><li>
+<p>auto-publishing on new release (<a href="https://github.com/bottrall/riffer/issues/38">#38</a>) (<a href="https://github.com/bottrall/riffer/commit/5a1d267e046c1531e01c80b9e40b94eed216360c">5a1d267</a>)</p>
+</li><li>
+<p>remove manifest file from release configuration (<a href="https://github.com/bottrall/riffer/issues/41">#41</a>) (<a href="https://github.com/bottrall/riffer/commit/2f898d8e1bdf6787583f22c83e83e90f2a75142e">2f898d8</a>)</p>
+</li><li>
+<p>remove release-type configuration from release workflow (<a href="https://github.com/bottrall/riffer/issues/42">#42</a>) (<a href="https://github.com/bottrall/riffer/commit/e270a6c906f7e04f1b0ce57b7d29808c98e7dce8">e270a6c</a>)</p>
+</li><li>
+<p>reset release manifest to empty object (<a href="https://github.com/bottrall/riffer/issues/44">#44</a>) (<a href="https://github.com/bottrall/riffer/commit/26f1b6d2dcb622295026cc7fb247559156864d74">26f1b6d</a>)</p>
+</li><li>
+<p>restructure release configuration and update manifest format (<a href="https://github.com/bottrall/riffer/issues/45">#45</a>) (<a href="https://github.com/bottrall/riffer/commit/d07694c05d49166740f3408a343c351d33749edf">d07694c</a>)</p>
+</li><li>
+<p>simplify release configuration by removing unnecessary package structure (<a href="https://github.com/bottrall/riffer/issues/40">#40</a>) (<a href="https://github.com/bottrall/riffer/commit/84729670fd202208256e6de69f1b81366ad0a688">8472967</a>)</p>
+</li></ul>
+
+<h2 id="label-0.2.0+-282025-12-28-29"><a href="#label-0.2.0+-282025-12-28-29"><a href="https://github.com/bottrall/riffer/compare/v0.1.0...v0.2.0">0.2.0</a> (2025-12-28)</a></h2>
+
+<h3 id="label-Features"><a href="#label-Features">Features</a></h3>
+<ul><li>
+<p>add release and publish workflows (<a href="https://github.com/bottrall/riffer/issues/35">#35</a>) (<a href="https://github.com/bottrall/riffer/commit/3eb03897d0e96c01ef1857c04b2bafa53e37dde0">3eb0389</a>)</p>
+</li></ul>
+
+<h2 id="label-5B0.1.0-5D+-+2024-12-20"><a href="#label-5B0.1.0-5D+-+2024-12-20">[0.1.0] - 2024-12-20</a></h2>
+
+<h3 id="label-Added"><a href="#label-Added">Added</a></h3>
+<ul><li>
+<p><strong>Core Framework</strong>: Foundation for building AI-powered applications and agents</p>
+</li><li>
+<p><strong>Configuration System</strong>: Global and instance-level configuration management</p>
+</li><li>
+<p><strong>Agents</strong>: Base agent class for building conversational agents</p>
+</li><li>
+<p><strong>Messages</strong>: Complete message system with support for User, Assistant, System, and Tool messages</p>
+</li><li>
+<p><strong>Providers</strong>: Pluggable provider architecture</p>
+</li><li>
+<p><strong>OpenAI Provider</strong>: Full integration with OpenAI API for text generation and streaming</p>
+</li><li>
+<p><strong>Test Provider</strong>: Built-in test provider for development and testing</p>
+</li><li>
+<p><strong>Stream Events</strong>: Streaming response support with TextDelta and TextDone events</p>
+</li><li>
+<p><strong>Zeitwerk Autoloading</strong>: Modern Ruby autoloading for clean code organization</p>
+</li><li>
+<p><strong>Comprehensive Test Suite</strong>: Full RSpec test coverage with VCR cassettes for API mocking</p>
+</li><li>
+<p><strong>StandardRB Code Style</strong>: Enforced code formatting and linting</p>
+</li></ul>
 
 </main>
 

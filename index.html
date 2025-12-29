@@ -2,15 +2,18 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>RDoc Documentation</title>
+<title>Riffer Documentation</title>
 
 
-  <meta name="keywords" content="ruby,documentation,RDoc Documentation">
+  <meta name="keywords" content="ruby,documentation,Riffer Documentation">
 
-    <meta name="description" content="Documentation for RDoc Documentation">
+    <meta
+      name="description"
+      content="Riffer Documentation: Riffer The all-in-one Ruby framework for building AI-powered applications and agents. badge."
+    >
 
 
 
@@ -18,12 +21,12 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="RDoc Documentation">
+<meta property="og:title" content="Riffer Documentation">
 
 
   <meta
     property="og:description"
-    content="API documentation for RDoc Documentation - Browse classes, modules, and methods"
+    content="API documentation for Riffer Documentation - Browse classes, modules, and methods"
   >
 
 
@@ -31,12 +34,12 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RDoc Documentation">
+<meta name="twitter:title" content="Riffer Documentation">
 
 
   <meta
     name="twitter:description"
-    content="API documentation for RDoc Documentation - Browse classes, modules, and methods"
+    content="API documentation for Riffer Documentation - Browse classes, modules, and methods"
   >
 
 
@@ -299,7 +302,7 @@
 
 <header class="top-navbar">
   <a href="./index.html" class="navbar-brand">
-    RDoc Documentation
+    Riffer Documentation
   </a>
 
   <!-- Desktop search bar -->
@@ -366,6 +369,61 @@
 
 
 
+
+  <div id="fileindex-section" class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg>
+            <use href="#icon-file"></use>
+          </svg>
+        </span>
+
+        <span class="nav-section-title">Pages</span>
+
+        <span class="nav-section-chevron">
+          <svg>
+            <use href="#icon-chevron"></use>
+          </svg>
+        </span>
+      </summary>
+
+      <ul class="nav-list">
+
+
+
+
+
+
+            <li>
+              <a href="./CHANGELOG_md.html">
+                CHANGELOG
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./LICENSE_txt.html">
+                LICENSE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./README_md.html">
+                README
+              </a>
+            </li>
+
+      </ul>
+    </details>
+  </div>
+
+
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -386,7 +444,150 @@
 
 <main role="main">
 
-  <p>This is the API documentation for RDoc Documentation.</p>
+  
+<h1 id="label-Riffer"><a href="#label-Riffer"><a href="Riffer.html"><code>Riffer</code></a></a></h1>
+
+<p>The all-in-one Ruby framework for building AI-powered applications and agents.</p>
+
+<p><a href="https://badge.fury.io/rb/riffer"><img src="https://badge.fury.io/rb/riffer.svg" alt="Gem Version"></a> ⚠️ Work in progress</p>
+
+<h2 id="label-Overview"><a href="#label-Overview">Overview</a></h2>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> is a comprehensive Ruby framework designed to simplify the development of AI-powered applications and agents. It provides a complete toolkit for integrating artificial intelligence capabilities into your Ruby projects.</p>
+
+<p>Key concepts:</p>
+<ul><li>
+<p><strong>Agents</strong> – orchestrate messages, LLM calls, and tool execution (<a href="Riffer/Agent.html"><code>Riffer::Agent</code></a>).</p>
+</li><li>
+<p><strong>Providers</strong> – adapters that implement text generation and streaming (<code>Riffer::Providers::*</code>).</p>
+</li><li>
+<p><strong>Messages</strong> – typed message objects for system, user, assistant, and tool messages (<code>Riffer::Messages::*</code>).</p>
+</li></ul>
+
+<h2 id="label-Features"><a href="#label-Features">Features</a></h2>
+<ul><li>
+<p>Minimal, well-documented core for building AI agents</p>
+</li><li>
+<p>Provider abstraction (OpenAI + test provider) for easy testing</p>
+</li><li>
+<p>Streaming support and structured stream events</p>
+</li><li>
+<p>Message converters and helpers for robust message handling</p>
+</li></ul>
+
+<h2 id="label-Requirements"><a href="#label-Requirements">Requirements</a></h2>
+<ul><li>
+<p>Ruby 3.2 or later</p>
+</li></ul>
+
+<h2 id="label-Installation"><a href="#label-Installation">Installation</a></h2>
+
+<p>Install the released gem:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-identifier">install</span> <span class="ruby-identifier">riffer</span>
+</pre>
+
+<p>Or add to your application’s Gemfile:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;riffer&#39;</span>
+</pre>
+
+<p>Install the development branch directly from GitHub:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;riffer&#39;</span>, <span class="ruby-value">git:</span> <span class="ruby-string">&#39;https://github.com/bottrall/riffer.git&#39;</span>
+</pre>
+
+<h2 id="label-Quick+Start"><a href="#label-Quick+Start">Quick Start</a></h2>
+
+<p>Basic usage with the built-in test provider:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;riffer&#39;</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">EchoAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">identifier</span> <span class="ruby-string">&#39;echo&#39;</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;test/default&#39;</span> <span class="ruby-comment"># provider/model</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are an assistant that repeats what the user says.&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">EchoAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Hello world&#39;</span>)
+<span class="ruby-comment"># =&gt; &quot;Test response&quot; (the test provider returns a canned response by default)</span>
+</pre>
+
+<p>Using the test provider directly (useful for unit tests):</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Test</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&#39;Hello from test provider!&#39;</span>)
+<span class="ruby-identifier">assistant</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&#39;Say hi&#39;</span>)
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">assistant</span>.<span class="ruby-identifier">content</span> <span class="ruby-comment"># =&gt; &quot;Hello from test provider!&quot;</span>
+</pre>
+
+<p>Streaming example (provider-dependent):</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Test</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">enum</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&#39;Stream something&#39;</span>)
+<span class="ruby-identifier">enum</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">chunk</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">puts</span> <span class="ruby-identifier">chunk</span>[<span class="ruby-value">:content</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Configuration example (OpenAI API key):</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Development"><a href="#label-Development">Development</a></h2>
+
+<p>After checking out the repo, run:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bin</span><span class="ruby-operator">/</span><span class="ruby-identifier">setup</span>
+</pre>
+
+<p>Run the test suite:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span> <span class="ruby-identifier">test</span>
+</pre>
+
+<p>Check and fix code style:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span> <span class="ruby-identifier">standard</span>
+<span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span> <span class="ruby-value">standard:</span><span class="ruby-identifier">fix</span>
+</pre>
+
+<p>Run the interactive console:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bin</span><span class="ruby-operator">/</span><span class="ruby-identifier">console</span>
+</pre>
+
+<h2 id="label-Contributing"><a href="#label-Contributing">Contributing</a></h2>
+<ol><li>
+<p>Fork the repository and create your branch: <code>git checkout -b feature/foo</code></p>
+</li><li>
+<p>Run tests and linters locally: <code>bundle exec rake</code></p>
+</li><li>
+<p>Submit a pull request with a clear description of the change</p>
+</li></ol>
+
+<p>Please follow the <a href="https://github.com/bottrall/riffer/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
+
+<h2 id="label-Changelog"><a href="#label-Changelog">Changelog</a></h2>
+
+<p>All notable changes to this project are documented in <a href="CHANGELOG_md.html">CHANGELOG.md</a>.</p>
+
+<h2 id="label-License"><a href="#label-License">License</a></h2>
+
+<p>Licensed under the MIT License. See <a href="LICENSE_txt.html">LICENSE.txt</a> for details.</p>
+
+<h2 id="label-Maintainers"><a href="#label-Maintainers">Maintainers</a></h2>
+<ul><li>
+<p>Jake Bottrall — <a href="https://github.com/bottrall">github.com/bottrall</a></p>
+</li></ul>
+<hr>
+
+<p>If you’d like, I can add short usage examples to the documentation site or update the gemspec metadata (authors, homepage, summary).</p>
+
 
 </main>
 
