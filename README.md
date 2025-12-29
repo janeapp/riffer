@@ -17,7 +17,7 @@ Key concepts:
 ## Features
 
 - Minimal, well-documented core for building AI agents
-- Provider abstraction (OpenAI + test provider) for easy testing
+- Provider abstraction (OpenAI) for pluggable providers
 - Streaming support and structured stream events
 - Message converters and helpers for robust message handling
 
@@ -47,46 +47,34 @@ gem 'riffer', git: 'https://github.com/bottrall/riffer.git'
 
 ## Quick Start
 
-Basic usage with the built-in test provider:
+Basic usage with the OpenAI provider:
 
 ```ruby
 require 'riffer'
 
+# Configure OpenAI API key (recommended to use ENV)
+Riffer.configure do |config|
+  config.openai.api_key = ENV['OPENAI_API_KEY']
+end
+
 class EchoAgent < Riffer::Agent
   identifier 'echo'
-  model 'test/default' # provider/model
+  model 'openai/gpt-5-mini' # provider/model
   instructions 'You are an assistant that repeats what the user says.'
 end
 
 agent = EchoAgent.new
 puts agent.generate('Hello world')
-# => "Test response" (the test provider returns a canned response by default)
+# => "Hello world"
 ```
 
-Using the test provider directly (useful for unit tests):
+Streaming example (OpenAI):
 
 ```ruby
-provider = Riffer::Providers::Test.new
-provider.stub_response('Hello from test provider!')
-assistant = provider.generate_text(prompt: 'Say hi')
-puts assistant.content # => "Hello from test provider!"
-```
-
-Streaming example (provider-dependent):
-
-```ruby
-provider = Riffer::Providers::Test.new
-enum = provider.stream_text(prompt: 'Stream something')
+provider = Riffer::Providers::OpenAI.new
+enum = provider.stream_text(prompt: 'Stream something', model: 'gpt-4')
 enum.each do |chunk|
-  puts chunk[:content]
-end
-```
-
-Configuration example (OpenAI API key):
-
-```ruby
-Riffer.configure do |config|
-  config.openai.api_key = ENV['OPENAI_API_KEY']
+  puts chunk.content
 end
 ```
 
@@ -136,7 +124,3 @@ Licensed under the MIT License. See `LICENSE.txt` for details.
 ## Maintainers
 
 - Jake Bottrall — https://github.com/bottrall
-
----
-
-If you'd like, I can add short usage examples to the documentation site or update the gemspec metadata (authors, homepage, summary).
