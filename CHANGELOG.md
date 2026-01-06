@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0](https://github.com/bottrall/riffer/compare/riffer/v0.4.2...riffer/v0.5.0) (2026-01-06)
+
+
+### Features
+
+* streaming via agents ([#63](https://github.com/bottrall/riffer/issues/63)) ([b4171c2](https://github.com/bottrall/riffer/commit/b4171c20f64a7ada1264ce90ab5278c19ff8a47a))
+
 ## [0.4.2](https://github.com/bottrall/riffer/compare/riffer/v0.4.1...riffer/v0.4.2) (2025-12-29)
 
 
