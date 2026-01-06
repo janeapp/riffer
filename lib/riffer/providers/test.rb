@@ -33,11 +33,14 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     response = @stubbed_response || @responses[@current_index] || {role: "assistant", content: "Test response"}
     @current_index += 1
     Enumerator.new do |yielder|
-      content_parts = response[:content].split(". ").map { |part| part + (part.end_with?(".") ? "" : ".") }
+      full_content = response[:content]
+      content_parts = full_content.split(". ").map { |part| part + (part.end_with?(".") ? "" : ".") }
+
       content_parts.each do |part|
-        yielder << {role: "assistant", content: part + " "}
-        sleep 0.5
+        yielder << Riffer::StreamEvents::TextDelta.new(part + " ")
       end
+
+      yielder << Riffer::StreamEvents::TextDone.new(full_content)
     end
   end
 end
