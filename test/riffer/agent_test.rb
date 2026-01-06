@@ -202,6 +202,134 @@ describe Riffer::Agent do
     end
   end
 
+  describe "#stream" do
+    describe "with test provider" do
+      it "returns an enumerator" do
+        agent = agent_class.new
+        result = agent.stream("What is the weather?")
+        expect(result).must_be_instance_of Enumerator
+      end
+
+      it "yields stream events" do
+        agent = agent_class.new
+        chunks = []
+        agent.stream("Hello").each do |chunk|
+          chunks << chunk
+        end
+        expect(chunks).wont_be_empty
+      end
+
+      it "yields TextDelta events" do
+        agent = agent_class.new
+        events = agent.stream("Hello").to_a
+        text_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        expect(text_deltas).wont_be_empty
+      end
+
+      it "yields a TextDone event" do
+        agent = agent_class.new
+        events = agent.stream("Hello").to_a
+        text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+        expect(text_done).wont_be_nil
+      end
+
+      it "adds system message to messages when instructions are provided" do
+        agent = agent_class.new
+        agent.stream("Hello").each { |_| }
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message).wont_be_nil
+      end
+
+      it "adds user message to messages" do
+        agent = agent_class.new
+        agent.stream("Hello").each { |_| }
+        user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+        expect(user_message).wont_be_nil
+      end
+
+      it "adds assistant message to messages" do
+        agent = agent_class.new
+        agent.stream("Hello").each { |_| }
+        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+        expect(assistant_message).wont_be_nil
+      end
+
+      it "accumulates content from TextDelta events" do
+        agent = agent_class.new
+        agent.stream("Hello").each { |_| }
+        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+        expect(assistant_message.content).wont_be_empty
+      end
+    end
+
+    describe "with an array of messages" do
+      it "accepts an array of messages" do
+        agent = agent_class.new
+        messages = [
+          Riffer::Messages::User.new("Hello"),
+          Riffer::Messages::Assistant.new("Hi there!"),
+          Riffer::Messages::User.new("How are you?")
+        ]
+        result = agent.stream(messages)
+        expect(result).must_be_instance_of Enumerator
+      end
+
+      it "adds system message before the provided messages when instructions are present" do
+        agent = agent_class.new
+        messages = [Riffer::Messages::User.new("Hello")]
+        agent.stream(messages).each { |_| }
+        expect(agent.messages.first).must_be_instance_of Riffer::Messages::System
+      end
+
+      it "preserves message order with system message first" do
+        agent = agent_class.new
+        messages = [Riffer::Messages::User.new("Hello")]
+        agent.stream(messages).each { |_| }
+        expect(agent.messages[1]).must_be_instance_of Riffer::Messages::User
+      end
+    end
+
+    describe "with an array of hashes" do
+      it "accepts an array of hashes and converts them to messages" do
+        agent = agent_class.new
+        messages = [
+          {role: "user", content: "Hello"},
+          {role: "assistant", content: "Hi there!"},
+          {role: "user", content: "How are you?"}
+        ]
+        result = agent.stream(messages)
+        expect(result).must_be_instance_of Enumerator
+      end
+    end
+
+    describe "without instructions" do
+      let(:no_instructions_agent_class) do
+        Class.new(Riffer::Agent) do
+          model "test/gpt-4o"
+        end
+      end
+
+      it "does not add system message" do
+        agent = no_instructions_agent_class.new
+        agent.stream("Hello").each { |_| }
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message).must_be_nil
+      end
+    end
+
+    describe "with invalid provider" do
+      it "raises error when provider is not found" do
+        invalid_agent_class = Class.new(Riffer::Agent) do
+          model "nonexistent/gpt-4"
+        end
+
+        agent = invalid_agent_class.new
+        error = expect { agent.stream("Hello").each { |_| } }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/Provider not found: nonexistent/)
+      end
+    end
+  end
+
   describe "instructions validation" do
     it "raises error when instructions is empty string" do
       error = expect do

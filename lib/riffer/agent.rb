@@ -91,6 +91,31 @@ class Riffer::Agent
     extract_final_response
   end
 
+  # Streams a response from the agent
+  # @param prompt_or_messages [String, Array<Hash, Riffer::Messages::Base>]
+  # @return [Enumerator] an enumerator yielding stream events
+  def stream(prompt_or_messages)
+    initialize_messages(prompt_or_messages)
+
+    Enumerator.new do |yielder|
+      accumulated_content = ""
+
+      call_llm_stream.each do |event|
+        yielder << event
+
+        case event
+        when Riffer::StreamEvents::TextDelta
+          accumulated_content += event.content
+        when Riffer::StreamEvents::TextDone
+          accumulated_content = event.content
+        end
+      end
+
+      response = Riffer::Messages::Assistant.new(accumulated_content)
+      @messages << response
+    end
+  end
+
   private
 
   def initialize_messages(prompt_or_messages)
@@ -108,6 +133,10 @@ class Riffer::Agent
 
   def call_llm
     provider_instance.generate_text(messages: @messages, model: @model_name)
+  end
+
+  def call_llm_stream
+    provider_instance.stream_text(messages: @messages, model: @model_name)
   end
 
   def provider_instance
