@@ -76,19 +76,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   def process_stream_events(stream, yielder)
-    stream.each do |event|
-      next unless should_process_event?(event)
+    stream.each do |raw_event|
+      event = convert_event(raw_event)
 
-      content = extract_event_content(event)
-      yielder << content if content
+      next unless event
+
+      yielder << event if event
     end
   end
 
-  def should_process_event?(event)
-    [:"response.output_text.delta", :"response.output_text.done"].include?(event.type)
-  end
-
-  def extract_event_content(event)
+  def convert_event(event)
     case event.type
     when :"response.output_text.delta"
       Riffer::StreamEvents::TextDelta.new(event.delta)

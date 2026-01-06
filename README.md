@@ -68,13 +68,12 @@ puts agent.generate('Hello world')
 # => "Hello world"
 ```
 
-Streaming example (OpenAI):
+Streaming example:
 
 ```ruby
-provider = Riffer::Providers::OpenAI.new
-enum = provider.stream_text(prompt: 'Stream something', model: 'gpt-4')
-enum.each do |chunk|
-  puts chunk.content
+agent = EchoAgent.new
+agent.stream('Tell me a story').each do |event|
+  print event.content
 end
 ```
 
