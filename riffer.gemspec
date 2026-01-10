@@ -17,8 +17,8 @@ Gem::Specification.new do |spec|
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/bottrall/riffer"
-  spec.metadata["changelog_uri"] = "https://github.com/bottrall/riffer/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/janeapp/riffer"
+  spec.metadata["changelog_uri"] = "https://github.com/janeapp/riffer/blob/main/CHANGELOG.md"
 
   # Extra files to include in generated documentation
   spec.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE.txt"]
