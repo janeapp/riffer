@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1](https://github.com/janeapp/riffer/compare/riffer/v0.5.0...riffer/v0.5.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* update Code of Conduct URL in README ([#67](https://github.com/janeapp/riffer/issues/67)) ([39ae1f5](https://github.com/janeapp/riffer/commit/39ae1f5025bcd36e1c5cab76fe8d312179f664ba))
+* update gem details to reflect janeapp ownership ([#66](https://github.com/janeapp/riffer/issues/66)) ([06a008d](https://github.com/janeapp/riffer/commit/06a008d5ab050ca2c1afd4163104c6c95c9d248b))
+* update GitHub Pages deployment action in release workflow ([#68](https://github.com/janeapp/riffer/issues/68)) ([e2f7961](https://github.com/janeapp/riffer/commit/e2f79616464101d90488f8f28aedcbdf4086277d))
+
 ## [0.5.0](https://github.com/janeapp/riffer/compare/riffer/v0.4.2...riffer/v0.5.0) (2026-01-06)
 
 ### Features
