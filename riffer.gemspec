@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "zeitwerk", "~> 2.6", ">= 2.6.0"
 
   # Development dependencies
-  spec.add_development_dependency "openai", "~> 0.42.0"
+  spec.add_development_dependency "openai", "~> 0.43.0"
 
   # Testing
   spec.add_development_dependency "minitest", "~> 6.0"
