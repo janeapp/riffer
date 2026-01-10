@@ -110,7 +110,7 @@ bin/console
 2. Run tests and linters locally: `bundle exec rake`
 3. Submit a pull request with a clear description of the change
 
-Please follow the [Code of Conduct](https://github.com/bottrall/janeapp/blob/main/CODE_OF_CONDUCT.md).
+Please follow the [Code of Conduct](https://github.com/janeapp/riffer/blob/main/CODE_OF_CONDUCT.md).
 
 ## Changelog
 
