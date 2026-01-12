@@ -20,6 +20,10 @@ describe Riffer::Agent do
       agent_class.identifier(:test_agent)
       expect(agent_class.identifier).must_equal "test_agent"
     end
+
+    it "defaults to snake_case class name when not set" do
+      expect(Riffer::Agent.identifier).must_equal "riffer/agent"
+    end
   end
 
   describe ".model" do

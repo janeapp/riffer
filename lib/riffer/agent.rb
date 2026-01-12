@@ -11,13 +11,14 @@ class Riffer::Agent
   include Riffer::Messages::Converter
 
   class << self
+    include Riffer::Helpers::ClassNameConverter
     include Riffer::Helpers::Validations
 
     # Gets or sets the agent identifier
     # @param value [String, nil] the identifier to set, or nil to get
     # @return [String] the agent identifier
     def identifier(value = nil)
-      return @identifier if value.nil?
+      return @identifier || class_name_to_path(name) if value.nil?
       @identifier = value.to_s
     end
 
