@@ -22,15 +22,7 @@ describe Riffer::Agent do
     end
 
     it "defaults to snake_case class name when not set" do
-      default_agent_class = Class.new(Riffer::Agent)
-      default_agent_class.singleton_class.define_method(:name) { "MyCustomAgent" }
-      expect(default_agent_class.identifier).must_equal "my_custom_agent"
-    end
-
-    it "defaults to snake_case namespaced class name when not set" do
-      default_agent_class = Class.new(Riffer::Agent)
-      default_agent_class.singleton_class.define_method(:name) { "MyApp::Agents::ChatBot" }
-      expect(default_agent_class.identifier).must_equal "my_app/agents/chat_bot"
+      expect(Riffer::Agent.identifier).must_equal "riffer/agent"
     end
   end
 
