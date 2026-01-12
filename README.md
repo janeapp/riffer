@@ -58,7 +58,6 @@ Riffer.configure do |config|
 end
 
 class EchoAgent < Riffer::Agent
-  identifier 'echo'
   model 'openai/gpt-5-mini' # provider/model
   instructions 'You are an assistant that repeats what the user says.'
 end
