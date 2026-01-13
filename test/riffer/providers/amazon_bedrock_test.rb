@@ -7,7 +7,7 @@ describe Riffer::Providers::AmazonBedrock do
 
   describe "#initialize" do
     it "creates Bedrock client with default options" do
-      provider = Riffer::Providers::AmazonBedrock.new
+      provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
 
