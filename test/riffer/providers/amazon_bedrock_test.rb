@@ -11,9 +11,33 @@ describe Riffer::Providers::AmazonBedrock do
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
 
-    it "creates Bedrock client without an api_token" do
-      provider = Riffer::Providers::AmazonBedrock.new(region: "us-west-2")
+    it "sets the region correctly with an api_token" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      client = provider.instance_variable_get(:@client)
+      assert_equal "us-east-1", client.config.region
+    end
+
+    it "accepts additional options with an api_token" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1", retry_limit: 60)
+      client = provider.instance_variable_get(:@client)
+      assert_equal 60, client.config.retry_limit
+    end
+
+    it "creates Bedrock client with an api_token" do
+      provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
+    end
+
+    it "sets the region correctly without an api_token" do
+      provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
+      client = provider.instance_variable_get(:@client)
+      assert_equal "us-east-1", client.config.region
+    end
+
+    it "accepts additional options without an api_token" do
+      provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1", retry_limit: 60)
+      client = provider.instance_variable_get(:@client)
+      assert_equal 60, client.config.retry_limit
     end
   end
 
