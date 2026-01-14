@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Helpers::Dependencies::LoadError - Riffer Documentation</title>
+<title>module Riffer::Helpers::ClassNameConverter - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Helpers::Dependencies::LoadError"
+    content="ruby,module,Riffer::Helpers::ClassNameConverter"
   >
 
     <meta
       name="description"
-      content="Documentation for the Riffer::Helpers::Dependencies::LoadError class"
+      content="Documentation for the Riffer::Helpers::ClassNameConverter module"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Helpers::Dependencies::LoadError - Riffer Documentation">
+<meta property="og:title" content="module Riffer::Helpers::ClassNameConverter - Riffer Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for Riffer::Helpers::Dependencies::LoadError class - API reference and code examples"
+      content="Documentation for Riffer::Helpers::ClassNameConverter module - API reference and code examples"
     >
 
 
@@ -39,65 +39,65 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Helpers::Dependencies::LoadError - Riffer Documentation">
+<meta name="twitter:title" content="module Riffer::Helpers::ClassNameConverter - Riffer Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for Riffer::Helpers::Dependencies::LoadError class - API reference and code examples"
+      content="Documentation for Riffer::Helpers::ClassNameConverter module - API reference and code examples"
     >
 
 
 
 <script type="text/javascript">
-  var rdoc_rel_prefix = "../../../";
-  var index_rel_prefix = "../../../";
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
 </script>
 
 <script
-  src="../../../js/theme-toggle.js?v=7.0.1"
+  src="../../js/theme-toggle.js?v=7.0.1"
 ></script>
 
 <script
-  src="../../../js/search_navigation.js?v=7.0.1"
+  src="../../js/search_navigation.js?v=7.0.1"
   defer
 ></script>
 
 <script
-  src="../../../js/search_data.js?v=7.0.1"
+  src="../../js/search_data.js?v=7.0.1"
   defer
 ></script>
 
 <script
-  src="../../../js/search_ranker.js?v=7.0.1"
+  src="../../js/search_ranker.js?v=7.0.1"
   defer
 ></script>
 
 <script
-  src="../../../js/search_controller.js?v=7.0.1"
+  src="../../js/search_controller.js?v=7.0.1"
   defer
 ></script>
 
 <script
-  src="../../../js/c_highlighter.js?v=7.0.1"
+  src="../../js/c_highlighter.js?v=7.0.1"
   defer
 ></script>
 
 <script
-  src="../../../js/aliki.js?v=7.0.1"
+  src="../../js/aliki.js?v=7.0.1"
   defer
 ></script>
 
 <link
-  href="../../../css/rdoc.css?v=7.0.1"
+  href="../../css/rdoc.css?v=7.0.1"
   rel="stylesheet"
 >
 
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="module has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -308,7 +308,7 @@
 </svg>
 
 <header class="top-navbar">
-  <a href="../../../index.html" class="navbar-brand">
+  <a href="../../index.html" class="navbar-brand">
     Riffer Documentation
   </a>
 
@@ -401,7 +401,7 @@
 
 
             <li>
-              <a href="../../../CHANGELOG_md.html">
+              <a href="../../CHANGELOG_md.html">
                 CHANGELOG
               </a>
             </li>
@@ -410,7 +410,7 @@
 
 
             <li>
-              <a href="../../../LICENSE_txt.html">
+              <a href="../../LICENSE_txt.html">
                 LICENSE
               </a>
             </li>
@@ -419,7 +419,7 @@
 
 
             <li>
-              <a href="../../../README_md.html">
+              <a href="../../README_md.html">
                 README
               </a>
             </li>
@@ -432,21 +432,6 @@
   
 
   
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li>LoadError</li></ul>
-  </details>
-</div>
-
 
   
 
@@ -454,6 +439,25 @@
 
   
 
+
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-class_name_to_path">class_name_to_path</a></li>
+
+      </ul>
+    </details>
+  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -468,46 +472,40 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li></ul></details></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li></ul></details></li></ul></details></li></ul>
   </details>
 </div>
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Helpers::Dependencies::LoadError">
+<main role="main" aria-labelledby="module-Riffer::Helpers::ClassNameConverter">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
       
       <li>
         
-        <a href="../../../Riffer.html">Riffer</a><span>::</span>
+        <a href="../../Riffer.html">Riffer</a><span>::</span>
         
       </li>
       
       <li>
         
-        <a href="../../../Riffer/Helpers.html">Helpers</a><span>::</span>
+        <a href="../../Riffer/Helpers.html">Helpers</a><span>::</span>
         
       </li>
       
       <li>
         
-        <a href="../../../Riffer/Helpers/Dependencies.html">Dependencies</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>LoadError</span>
+        <span>ClassNameConverter</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Helpers::Dependencies::LoadError" class="anchor-link class">
-    class Riffer::Helpers::Dependencies::LoadError
+  <h1 id="module-Riffer::Helpers::ClassNameConverter" class="anchor-link module">
+    module Riffer::Helpers::ClassNameConverter
   </h1>
 
   <section class="description">
@@ -524,6 +522,61 @@
 
 
 
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-class_name_to_path" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-class_name_to_path" title="Link to this method">
+                <span class="method-name">class_name_to_path</span>
+                <span class="method-args">(class_name)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="class_name_to_path-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/helpers/class_name_converter.rb, line 7</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_name_to_path</span>(<span class="ruby-identifier">class_name</span>)
+  <span class="ruby-identifier">class_name</span>
+    .<span class="ruby-identifier">to_s</span>
+    .<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot;::&quot;</span>, <span class="ruby-string">&quot;/&quot;</span>)
+    .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/([A-Z]+)([A-Z][a-z])/</span>, <span class="ruby-string">&#39;\1_\2&#39;</span>)
+    .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/([a-z\d])([A-Z])/</span>, <span class="ruby-string">&#39;\1_\2&#39;</span>)
+    .<span class="ruby-identifier">downcase</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Converts a class name to snake_case path format @param class_name [String] the class name (e.g., “Riffer::Agent”) @return [String] the snake_case path (e.g., “riffer/agent”)</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
   </section>
 

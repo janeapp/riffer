@@ -481,7 +481,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li></ul></details></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li></ul></details></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -519,6 +519,8 @@
 
 <p>@example Setting the OpenAI API key <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>.openai.api_key = “sk-…”</p>
 
+<p>@example Setting Amazon Bedrock configuration <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>.amazon_bedrock.region = “us-east-1” <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>.amazon_bedrock.api_token = “…”</p>
+
   </section>
 
 
@@ -535,6 +537,22 @@
         <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
       </header>
 
+
+      <div id="attribute-i-amazon_bedrock" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-amazon_bedrock" title="Link to this attribute">
+            <span class="method-name">amazon_bedrock</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Amazon Bedrock configuration @return [Struct]</p>
+
+        </div>
+      </div>
 
       <div id="attribute-i-openai" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
@@ -581,9 +599,10 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 16</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 24</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@openai</span> = <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:api_key</span>).<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@amazon_bedrock</span> = <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:api_token</span>, <span class="ruby-value">:region</span>).<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
