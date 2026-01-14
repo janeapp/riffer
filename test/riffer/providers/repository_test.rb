@@ -14,6 +14,16 @@ describe Riffer::Providers::Repository do
       expect(result).must_equal Riffer::Providers::OpenAI
     end
 
+    it "returns the AmazonBedrock provider class for :amazon_bedrock symbol" do
+      result = Riffer::Providers::Repository.find(:amazon_bedrock)
+      expect(result).must_equal Riffer::Providers::AmazonBedrock
+    end
+
+    it "returns the AmazonBedrock provider class for 'amazon_bedrock' string" do
+      result = Riffer::Providers::Repository.find("amazon_bedrock")
+      expect(result).must_equal Riffer::Providers::AmazonBedrock
+    end
+
     it "returns the Test provider class for :test symbol" do
       expect(Riffer::Providers::Repository.find(:test)).must_equal Riffer::Providers::Test
     end

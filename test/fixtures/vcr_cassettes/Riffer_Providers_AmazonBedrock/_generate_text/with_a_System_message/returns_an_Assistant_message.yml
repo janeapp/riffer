@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-haiku-20240307-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Say hello"}]}],"system":[{"text":"Be
+        concise"}]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 9f6f1fb5-bc13-460b-91f4-260278c4d5c3
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.241.3 ua/2.1 api/bedrock_runtime#1.70.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '96'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Jan 2026 00:08:01 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '207'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 3fa5b14f-eb11-4b56-bd3c-ebd27f9ac5d8
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":364},"output":{"message":{"content":[{"text":"Hello!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":12,"outputTokens":5,"serverToolUsage":{},"totalTokens":17}}'
+  recorded_at: Wed, 14 Jan 2026 00:08:01 GMT
+recorded_with: VCR 6.4.0

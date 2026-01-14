@@ -1,6 +1,7 @@
 class Riffer::Providers::Repository
   REPO = {
     openai: -> { Riffer::Providers::OpenAI },
+    amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     test: -> { Riffer::Providers::Test }
   }.freeze
 

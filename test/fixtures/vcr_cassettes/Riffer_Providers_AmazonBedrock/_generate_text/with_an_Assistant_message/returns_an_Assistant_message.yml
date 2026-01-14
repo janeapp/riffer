@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-haiku-20240307-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Say hello"}]},{"role":"assistant","content":[{"text":"Hello!"}]},{"role":"user","content":[{"text":"How
+        are you?"}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - c8c8d766-262e-4016-a14b-f71449595488
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.241.3 ua/2.1 api/bedrock_runtime#1.70.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '178'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Jan 2026 00:08:04 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '421'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - f6d80c4e-e3c1-4614-b630-1849448d46f7
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1365},"output":{"message":{"content":[{"text":"I''m
+        doing well, thanks for asking! As an AI assistant, I don''t have feelings
+        or a physical state, but I''m functioning properly and ready to help you with
+        any questions or tasks you may have. How can I assist you today?"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":21,"outputTokens":53,"serverToolUsage":{},"totalTokens":74}}'
+  recorded_at: Wed, 14 Jan 2026 00:08:04 GMT
+recorded_with: VCR 6.4.0
