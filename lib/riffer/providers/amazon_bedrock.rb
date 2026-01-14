@@ -11,15 +11,17 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     depends_on "aws-sdk-bedrockruntime"
 
     api_token ||= Riffer.config.amazon_bedrock.api_token
+    region ||= Riffer.config.amazon_bedrock.region
 
     @client = if api_token && !api_token.empty?
       Aws::BedrockRuntime::Client.new(
-        region: region || Riffer.config.amazon_bedrock.region,
+        region: region,
         token_provider: Aws::StaticTokenProvider.new(api_token),
-        auth_scheme_preference: ["httpBearerAuth"]
+        auth_scheme_preference: ["httpBearerAuth"],
+        **options
       )
     else
-      Aws::BedrockRuntime::Client.new(**options)
+      Aws::BedrockRuntime::Client.new(region: region, **options)
     end
   end
 
