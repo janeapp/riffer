@@ -7,15 +7,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # @option options [String] :api_token Bearer token for API authentication (requires :region)
   # @option options [String] :region AWS region
   # @see https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
-  def initialize(**options)
+  def initialize(api_token: nil, region: nil, **options)
     depends_on "aws-sdk-bedrockruntime"
 
-    api_token = options.delete(:api_token) || Riffer.config.amazon_bedrock.api_token
+    api_token ||= Riffer.config.amazon_bedrock.api_token
 
     @client = if api_token && !api_token.empty?
-      region = options.delete(:region) || Riffer.config.amazon_bedrock.region || "us-east-1"
       Aws::BedrockRuntime::Client.new(
-        region: region,
+        region: region || Riffer.config.amazon_bedrock.region,
         token_provider: Aws::StaticTokenProvider.new(api_token),
         auth_scheme_preference: ["httpBearerAuth"]
       )
