@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0](https://github.com/janeapp/riffer/compare/riffer/v0.5.1...riffer/v0.6.0) (2026-01-14)
+
+
+### Features
+
+* aws bedrock provider ([#73](https://github.com/janeapp/riffer/issues/73)) ([428ae90](https://github.com/janeapp/riffer/commit/428ae902db90c2d3765186ea06d76ee379b3eae7))
+* reasoning support ([#75](https://github.com/janeapp/riffer/issues/75)) ([fcee502](https://github.com/janeapp/riffer/commit/fcee502054882f41d15ea312222a5538c8f04220))
+
 ## [0.5.1](https://github.com/janeapp/riffer/compare/riffer/v0.5.0...riffer/v0.5.1) (2026-01-10)
 
 
