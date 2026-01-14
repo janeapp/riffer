@@ -58,6 +58,30 @@ describe Riffer::Agent do
     end
   end
 
+  describe ".reasoning" do
+    it "sets the reasoning level" do
+      agent_class.reasoning("medium")
+      expect(agent_class.reasoning).must_equal "medium"
+    end
+
+    it "raises error when reasoning is not a string" do
+      error = expect { agent_class.reasoning(123) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/reasoning must be a String/)
+    end
+
+    it "raises error when reasoning is an empty string" do
+      error = expect { agent_class.reasoning("   ") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/reasoning cannot be empty/)
+    end
+
+    it "returns nil when not set" do
+      no_reasoning_class = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      expect(no_reasoning_class.reasoning).must_be_nil
+    end
+  end
+
   describe "#initialize" do
     it "initializes with empty messages" do
       agent = agent_class.new
@@ -79,6 +103,24 @@ describe Riffer::Agent do
   end
 
   describe "#generate" do
+    describe "with reasoning" do
+      let(:reasoning_agent_class) do
+        Class.new(Riffer::Agent) do
+          identifier "reasoning-agent"
+          model "test/riffer-1"
+          instructions "You are a helpful assistant."
+          reasoning "medium"
+        end
+      end
+
+      it "passes reasoning parameter to provider" do
+        agent = reasoning_agent_class.new
+        provider = agent.send(:provider_instance)
+        agent.generate("Hello")
+        expect(provider.calls.last[:reasoning]).must_equal "medium"
+      end
+    end
+
     describe "with test provider" do
       it "returns a text response" do
         agent = agent_class.new
@@ -207,6 +249,45 @@ describe Riffer::Agent do
   end
 
   describe "#stream" do
+    describe "with reasoning" do
+      let(:reasoning_agent_class) do
+        Class.new(Riffer::Agent) do
+          identifier "reasoning-stream-agent"
+          model "test/riffer-1"
+          instructions "You are a helpful assistant."
+          reasoning "high"
+        end
+      end
+
+      it "passes reasoning parameter to provider" do
+        agent = reasoning_agent_class.new
+        provider = agent.send(:provider_instance)
+        agent.stream("Hello").each { |_| }
+        expect(provider.calls.last[:reasoning]).must_equal "high"
+      end
+
+      it "yields ReasoningDelta events when provider emits them" do
+        agent = reasoning_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("Answer", reasoning: "Let me think about this")
+
+        events = agent.stream("Question").to_a
+        reasoning_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
+        expect(reasoning_deltas.size).must_be :>, 0
+      end
+
+      it "yields ReasoningDone event when provider emits it" do
+        agent = reasoning_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("Answer", reasoning: "My reasoning process")
+
+        events = agent.stream("Question").to_a
+        reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
+        expect(reasoning_done).wont_be_nil
+        expect(reasoning_done.content).must_equal "My reasoning process"
+      end
+    end
+
     describe "with test provider" do
       it "returns an enumerator" do
         agent = agent_class.new
