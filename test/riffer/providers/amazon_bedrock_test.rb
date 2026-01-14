@@ -23,7 +23,7 @@ describe Riffer::Providers::AmazonBedrock do
       assert_equal 60, client.config.retry_limit
     end
 
-    it "creates Bedrock client with an api_token" do
+    it "creates Bedrock client without an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
