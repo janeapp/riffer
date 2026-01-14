@@ -17,8 +17,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   private
 
-  def perform_generate_text(messages, model:)
-    params = build_request_params(messages, model)
+  def perform_generate_text(messages, model:, reasoning: nil)
+    params = build_request_params(messages, model, reasoning)
     response = @client.responses.create(params)
 
     output = response.output.find { |o| o.type == :message }
@@ -44,19 +44,23 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer::Messages::Assistant.new(content.text)
   end
 
-  def perform_stream_text(messages, model:)
+  def perform_stream_text(messages, model:, reasoning: nil)
     Enumerator.new do |yielder|
-      params = build_request_params(messages, model)
+      params = build_request_params(messages, model, reasoning)
       stream = @client.responses.stream(params)
 
       process_stream_events(stream, yielder)
     end
   end
 
-  def build_request_params(messages, model)
+  def build_request_params(messages, model, reasoning)
     {
+      input: convert_message_to_openai_format(messages),
       model: model,
-      input: convert_message_to_openai_format(messages)
+      reasoning: reasoning && {
+        effort: reasoning,
+        summary: "auto"
+      }
     }
   end
 
@@ -91,6 +95,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       Riffer::StreamEvents::TextDelta.new(event.delta)
     when :"response.output_text.done"
       Riffer::StreamEvents::TextDone.new(event.text)
+    when :"response.reasoning_summary_text.delta"
+      Riffer::StreamEvents::ReasoningDelta.new(event.delta)
+    when :"response.reasoning_summary_text.done"
+      Riffer::StreamEvents::ReasoningDone.new(event.text)
     end
   end
 end

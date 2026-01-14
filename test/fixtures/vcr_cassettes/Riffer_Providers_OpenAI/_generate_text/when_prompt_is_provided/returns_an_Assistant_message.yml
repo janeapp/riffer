@@ -5,14 +5,14 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"model":"gpt-5-nano","input":[{"role":"user","content":"Say hello"}]}'
+      string: '{"input":[{"role":"user","content":"Say hello"}],"model":"gpt-5-nano","reasoning":null}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.42.0
+      - OpenAI::Client/Ruby 0.43.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -22,7 +22,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.42.0
+      - 0.43.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -36,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '70'
+      - '87'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Sat, 20 Dec 2025 19:09:54 GMT
+      - Wed, 14 Jan 2026 04:12:19 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -69,18 +69,18 @@ http_interactions:
       Openai-Project:
       - proj_E1uuOHBzdF9a5YsgdGcH09SZ
       X-Request-Id:
-      - req_d8ee3f01cb664e19a44fcae4235a1ae3
+      - req_98c04899506b465a85788ecd2f4032a8
       Openai-Processing-Ms:
-      - '2813'
+      - '2223'
       X-Envoy-Upstream-Service-Time:
-      - '2817'
+      - '2229'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=t4ePNh40dsyIPiZ.w.CRvtsEBSbCiYxcY___LxAUDSo-1766257794-1.0.1.1-hjhMXWCoP2klPMYloLvwxC4Hdu6brMqxgMbNoGFTtz3iJm8rHHW7_dL0ql6cnwDmkGMC5E_uM_.bHN0lC1LG8F3MAPbjK7GwNYrLFbWmR58;
-        path=/; expires=Sat, 20-Dec-25 19:39:54 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=Upck7bbESGp4R3HjnmoJUuOC2EYgdF2OalB.D5U9gLU-1768363939-1.0.1.1-j5WIbeoGRp301Fe2UKcOsvGRnO8oQ88BJPvocXm4ABYL5g.hY_O.BQw2fs38IbpqS1sI.T2jcdugOucS1gwVLtmMrgrG79t.AwK8x0Rr52w;
+        path=/; expires=Wed, 14-Jan-26 04:42:19 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=js50Ec7cgFaN05BeQs_JTWIuSJrCDJ3neB363tiyxMA-1766257794148-0.0.1.1-604800000;
+      - _cfuvid=aPbYZaD.At2ll50y5Eo4Fhgv9.wQKQN1JlU9U2QhN14-1768363939538-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
@@ -89,23 +89,24 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 9b116fb88b0b8f72-YVR
+      - 9bda4b4fbbf44675-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_06885dac4a491666006946f47f504481968163f5e1477c99c1",
+          "id": "resp_0300655c6cd8b98c00696717a14a648195a847c16c3252e053",
           "object": "response",
-          "created_at": 1766257791,
+          "created_at": 1768363937,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1766257793,
+          "completed_at": 1768363939,
           "error": null,
+          "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
@@ -113,12 +114,12 @@ http_interactions:
           "model": "gpt-5-nano-2025-08-07",
           "output": [
             {
-              "id": "rs_06885dac4a491666006946f47f9ec081968b078d8fa2f96956",
+              "id": "rs_0300655c6cd8b98c00696717a18ce881959dbdbfd2232da661",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_06885dac4a491666006946f48111c48196bf3c0e58944e054d",
+              "id": "msg_0300655c6cd8b98c00696717a30a84819586e85d6f1bb73fa4",
               "type": "message",
               "status": "completed",
               "content": [
@@ -133,6 +134,7 @@ http_interactions:
             }
           ],
           "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
           "prompt_cache_retention": null,
@@ -169,5 +171,5 @@ http_interactions:
           "user": null,
           "metadata": {}
         }
-  recorded_at: Sat, 20 Dec 2025 19:09:54 GMT
-recorded_with: VCR 6.3.1
+  recorded_at: Wed, 14 Jan 2026 04:12:19 GMT
+recorded_with: VCR 6.4.0

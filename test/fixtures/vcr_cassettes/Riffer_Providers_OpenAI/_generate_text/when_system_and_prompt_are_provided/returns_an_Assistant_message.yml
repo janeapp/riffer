@@ -5,15 +5,15 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"model":"gpt-5-nano","input":[{"role":"developer","content":"Be concise"},{"role":"user","content":"Say
-        hello"}]}'
+      string: '{"input":[{"role":"developer","content":"Be concise"},{"role":"user","content":"Say
+        hello"}],"model":"gpt-5-nano","reasoning":null}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.42.0
+      - OpenAI::Client/Ruby 0.43.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -23,7 +23,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.42.0
+      - 0.43.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '114'
+      - '131'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Sat, 20 Dec 2025 19:09:56 GMT
+      - Wed, 14 Jan 2026 04:12:30 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -70,18 +70,18 @@ http_interactions:
       Openai-Project:
       - proj_E1uuOHBzdF9a5YsgdGcH09SZ
       X-Request-Id:
-      - req_49af73e6f14e48778ac88493a5cc629d
+      - req_92954d5cbf08488e95cbf5991d02c879
       Openai-Processing-Ms:
-      - '1919'
+      - '2055'
       X-Envoy-Upstream-Service-Time:
-      - '1922'
+      - '2058'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=prJaZIfzs8dG1HLJXRuIlYaAdHVU9l98wW6OWnTKKmc-1766257796-1.0.1.1-5JQg7YaXVeHAhvBvUb1RAd51WJyqXUZkwdbzNKh7zpoC4RGYzlRAKburImGWeHYL9tmpd24S2oiFlmuRFixhDgQxU5Hzenbp5lq7hOiJfXg;
-        path=/; expires=Sat, 20-Dec-25 19:39:56 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=QysgIdmBPLzkVK2LsYoDphQYlyJpjQMM7NzSgLzAzYQ-1768363950-1.0.1.1-lgQf68zJWmz9TfOqbYDhLY.wyngI4lvle3VpAUQgFRdiuEGn2cUoBbNH1XuLNb2neEYAL5A.pMSgZUErR6BP1F1PKMC63Akdb0V1_dsYhag;
+        path=/; expires=Wed, 14-Jan-26 04:42:30 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=oonoBjGfTnC_fbSWC0u9toINqoZfbU9_jLo9ciKWtgc-1766257796693-0.0.1.1-604800000;
+      - _cfuvid=ch5sMK3o_fE4FqgqdsPVN_GZ6rErAzOq7tWnlorutRw-1768363950478-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
@@ -90,23 +90,24 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 9b116fcdbc08ef7d-YVR
+      - 9bda4b952f80c55d-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_01b8295e26048100006946f482c0ec8194ad4b751d2e48fff2",
+          "id": "resp_04fa459c8c45b60f00696717ac679881958470fb23b9b97b56",
           "object": "response",
-          "created_at": 1766257794,
+          "created_at": 1768363948,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1766257796,
+          "completed_at": 1768363950,
           "error": null,
+          "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
@@ -114,12 +115,12 @@ http_interactions:
           "model": "gpt-5-nano-2025-08-07",
           "output": [
             {
-              "id": "rs_01b8295e26048100006946f483086c81948ca6025b6e3de431",
+              "id": "rs_04fa459c8c45b60f00696717acb0008195bc9b2cca01f25806",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_01b8295e26048100006946f4843f3c8194973de813e8333206",
+              "id": "msg_04fa459c8c45b60f00696717adfa1881959ac7d88bea49b463",
               "type": "message",
               "status": "completed",
               "content": [
@@ -127,13 +128,14 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "Hello!"
+                  "text": "Hello! How can I help you today?"
                 }
               ],
               "role": "assistant"
             }
           ],
           "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
           "prompt_cache_retention": null,
@@ -161,14 +163,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 136,
+            "output_tokens": 207,
             "output_tokens_details": {
-              "reasoning_tokens": 128
+              "reasoning_tokens": 192
             },
-            "total_tokens": 150
+            "total_tokens": 221
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Sat, 20 Dec 2025 19:09:56 GMT
-recorded_with: VCR 6.3.1
+  recorded_at: Wed, 14 Jan 2026 04:12:30 GMT
+recorded_with: VCR 6.4.0
