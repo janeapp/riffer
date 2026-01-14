@@ -5,8 +5,7 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"developer","content":"Be concise"},{"role":"user","content":"Say
-        hello"}],"model":"gpt-5-nano","reasoning":null}'
+      string: '{"input":[{"role":"user","content":"What is 2+2?"}],"model":"gpt-5-nano","reasoning":{"effort":"medium","summary":"auto"}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -37,14 +36,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '131'
+      - '122'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 14 Jan 2026 04:12:21 GMT
+      - Wed, 14 Jan 2026 04:14:03 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -58,11 +57,11 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '499'
       X-Ratelimit-Remaining-Tokens:
-      - '200000'
+      - '199941'
       X-Ratelimit-Reset-Requests:
       - 120ms
       X-Ratelimit-Reset-Tokens:
-      - 0s
+      - 17ms
       Openai-Version:
       - '2020-10-01'
       Openai-Organization:
@@ -70,18 +69,18 @@ http_interactions:
       Openai-Project:
       - proj_E1uuOHBzdF9a5YsgdGcH09SZ
       X-Request-Id:
-      - req_f9c1cb63154e4d7fa2b1cd8be6cd72cb
+      - req_f4353f08c244435ebb889da16f160eb7
       Openai-Processing-Ms:
-      - '1617'
+      - '8052'
       X-Envoy-Upstream-Service-Time:
-      - '1620'
+      - '8057'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=8MbaBC40zmh5CoK5Xk7oFoWXvFL70UOg1n8aFWH4ulM-1768363941-1.0.1.1-Pnvc6TQ3VKl29jRCNACz_t.XjvzUcKa_CPGZTC9s5N6Lbd_Mz9VnALgV.4Ju73gyEBlzsJLwfrgv6fJXRGgHrBVK.Vs_fxKQVUfJIlkh_J4;
-        path=/; expires=Wed, 14-Jan-26 04:42:21 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=S1IW0XBqqNY95REwcJGor_f35p9SSWgC4NsX1Q0OrKw-1768364043-1.0.1.1-YAmkZbljRved45qSFtUmeF6Vj.nFEfjWtWyfPFIdB.lHvQbU7ocJxZvu0Zbnq7xhlngx5D1vNNLR2Ya6ztdTd5tMH80cRPJBc3boRcH475A;
+        path=/; expires=Wed, 14-Jan-26 04:44:03 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=GHifETYwcHvIo2FBBunQztlUJ43Yci6_bK0lfa7zFJQ-1768363941387-0.0.1.1-604800000;
+      - _cfuvid=eO1llN3LqP7lZ1Ei_wjjN0cPL2oqWEJoThLROY_2GiU-1768364043609-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
@@ -90,22 +89,22 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 9bda4b5ef9ff078e-YVR
+      - 9bda4db5bda62ed2-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0f78f8bc502352c600696717a3bef88193885b2407b0c39eca",
+          "id": "resp_094417bd7e30b467006967180388688193aadd5f122964f4ce",
           "object": "response",
-          "created_at": 1768363939,
+          "created_at": 1768364035,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1768363941,
+          "completed_at": 1768364043,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
@@ -115,12 +114,21 @@ http_interactions:
           "model": "gpt-5-nano-2025-08-07",
           "output": [
             {
-              "id": "rs_0f78f8bc502352c600696717a405ec81938bd065b9ff815cc3",
+              "id": "rs_094417bd7e30b4670069671803ebd881939cfeaab5a3644b56",
               "type": "reasoning",
-              "summary": []
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Providing a simple math answer**\n\nThe user asked, \"What is 2+2?\" It's straightforward: 2+2 equals 4. I could add a brief note that in standard arithmetic, 2 + 2 equals 4. If they\u2019re curious about other contexts, like binary, I could mention that it\u2019s still 4 (which is 100 in binary). However, since they asked simply, I\u2019ll keep the answer concise. I'll respond with just \"4.\" No need for extras or images!"
+                },
+                {
+                  "type": "summary_text",
+                  "text": "**Crafting the math answer**\n\nI want to respond to the user with a simple answer to \"What is 2 + 2?\" My answer is: \"4.\" I might add a brief note saying, \"In base-10 arithmetic, two plus two equals four,\" but that feels a bit like extra fluff. So, keeping it straightforward is key. I think just saying \"4\" is good enough for clarity. That way, the user gets what they asked for, simply and nicely!"
+                }
+              ]
             },
             {
-              "id": "msg_0f78f8bc502352c600696717a50f88819381d78289ddd096dd",
+              "id": "msg_094417bd7e30b467006967180afd3c8193a7277a652c92bf79",
               "type": "message",
               "status": "completed",
               "content": [
@@ -128,7 +136,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "Hello! How can I help today?"
+                  "text": "4. In base-10 arithmetic, two plus two equals four."
                 }
               ],
               "role": "assistant"
@@ -141,7 +149,7 @@ http_interactions:
           "prompt_cache_retention": null,
           "reasoning": {
             "effort": "medium",
-            "summary": null
+            "summary": "detailed"
           },
           "safety_identifier": null,
           "service_tier": "default",
@@ -159,18 +167,18 @@ http_interactions:
           "top_p": 1.0,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 14,
+            "input_tokens": 13,
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 142,
+            "output_tokens": 276,
             "output_tokens_details": {
-              "reasoning_tokens": 128
+              "reasoning_tokens": 256
             },
-            "total_tokens": 156
+            "total_tokens": 289
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 14 Jan 2026 04:12:21 GMT
+  recorded_at: Wed, 14 Jan 2026 04:14:03 GMT
 recorded_with: VCR 6.4.0

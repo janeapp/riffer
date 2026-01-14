@@ -5,15 +5,15 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"model":"gpt-5-nano","input":[{"role":"user","content":"Say hello"},{"role":"assistant","content":"Hello!"},{"role":"user","content":"How
-        are you?"}]}'
+      string: '{"input":[{"role":"user","content":"Say hello"},{"role":"assistant","content":"Hello!"},{"role":"user","content":"How
+        are you?"}],"model":"gpt-5-nano","reasoning":null}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.42.0
+      - OpenAI::Client/Ruby 0.43.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -23,7 +23,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.42.0
+      - 0.43.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '151'
+      - '168'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Sat, 20 Dec 2025 19:10:09 GMT
+      - Wed, 14 Jan 2026 04:12:14 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -58,11 +58,11 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '499'
       X-Ratelimit-Remaining-Tokens:
-      - '199864'
+      - '199926'
       X-Ratelimit-Reset-Requests:
       - 120ms
       X-Ratelimit-Reset-Tokens:
-      - 40ms
+      - 22ms
       Openai-Version:
       - '2020-10-01'
       Openai-Organization:
@@ -70,18 +70,18 @@ http_interactions:
       Openai-Project:
       - proj_E1uuOHBzdF9a5YsgdGcH09SZ
       X-Request-Id:
-      - req_135726b45f804fd9a7aa3e03fa3ca5e1
+      - req_29be98cec04c40fea8ca7d25b09f4740
       Openai-Processing-Ms:
-      - '3788'
+      - '2918'
       X-Envoy-Upstream-Service-Time:
-      - '3791'
+      - '2921'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=9eSpwfawtorySf8Kssl48XkCmEDh2XY4so12onIqzj0-1766257809-1.0.1.1-oRfg_aG2jh7ypl65_cHry9y7cyi5mhArMy4XzyC_2USgHsTVpVHB_wj.Q9S7g.veXf6ANpeAOizNdXWOkV8HTWdgAA8osteh5Qjha134Q8o;
-        path=/; expires=Sat, 20-Dec-25 19:40:09 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=rrG1Tr3J9FdjqKKlULCYOthJJ8Qpbt0eMRlKYD2yViE-1768363934-1.0.1.1-V.o1NFAiBIFbEV5e.GDbdyuw0g8boNohbQ8FNgRpue8oR0f2wBDwv6arQ3x0AabKS6jCW9DYTlqrbZ4_9ZZt8yd58P3fM5hBC.sYZnt3D1U;
+        path=/; expires=Wed, 14-Jan-26 04:42:14 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=XggEko9EDO45zRIaPZ_gpvh1bRWgo3qJWrd0WCGPP6w-1766257809532-0.0.1.1-604800000;
+      - _cfuvid=ZEMdjfhAfvTCuBTRn28Z0YRTLXqcSohxVIHC6yBZVGA-1768363934696-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
@@ -90,23 +90,24 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 9b1170155d027631-YVR
+      - 9bda4b2d0d48ef12-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0408cbfcb01c0dbf006946f48db5fc81948cdb3d2d3ab32033",
+          "id": "resp_0b2393436bc40a88006967179bc1948196acd242d1629ca8a1",
           "object": "response",
-          "created_at": 1766257805,
+          "created_at": 1768363931,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1766257809,
+          "completed_at": 1768363934,
           "error": null,
+          "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
@@ -114,12 +115,12 @@ http_interactions:
           "model": "gpt-5-nano-2025-08-07",
           "output": [
             {
-              "id": "rs_0408cbfcb01c0dbf006946f48e0b8881949e9cbeb110a93833",
+              "id": "rs_0b2393436bc40a88006967179c095c8196a739f4e99bfab308",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_0408cbfcb01c0dbf006946f490cb88819488136c310646251f",
+              "id": "msg_0b2393436bc40a88006967179e261881968260d7a31f9cc140",
               "type": "message",
               "status": "completed",
               "content": [
@@ -127,13 +128,14 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "I'm doing well, thanks for asking! I'm here and ready to help with whatever you need. What can I do for you today?"
+                  "text": "I\u2019m here and ready to help. I\u2019m doing well\u2014thanks for asking. How about you? What would you like to do today?"
                 }
               ],
               "role": "assistant"
             }
           ],
           "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
           "previous_response_id": null,
           "prompt_cache_key": null,
           "prompt_cache_retention": null,
@@ -161,14 +163,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 353,
+            "output_tokens": 291,
             "output_tokens_details": {
-              "reasoning_tokens": 320
+              "reasoning_tokens": 256
             },
-            "total_tokens": 377
+            "total_tokens": 315
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Sat, 20 Dec 2025 19:10:09 GMT
-recorded_with: VCR 6.3.1
+  recorded_at: Wed, 14 Jan 2026 04:12:14 GMT
+recorded_with: VCR 6.4.0

@@ -102,6 +102,26 @@ describe Riffer::Providers::OpenAI do
         end
       end
     end
+
+    describe "with reasoning parameter" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/with_reasoning_parameter/returns_an_Assistant_message") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(prompt: "What is 2+2?", model: "gpt-5-nano", reasoning: "medium")
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+    end
+
+    describe "without reasoning parameter" do
+      it "does not include reasoning in request params" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/without_reasoning_parameter/does_not_include_reasoning") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(prompt: "Say hello", model: "gpt-5-nano")
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+    end
   end
 
   describe "#stream_text" do
@@ -161,6 +181,39 @@ describe Riffer::Providers::OpenAI do
             model: "gpt-5-nano"
           ).to_a
           expect(events).wont_be_empty
+        end
+      end
+    end
+
+    describe "with reasoning parameter" do
+      it "yields ReasoningDelta events" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDelta_events") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-nano", reasoning: "medium").to_a
+          reasoning_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
+          expect(reasoning_deltas).wont_be_empty
+        end
+      end
+
+      it "yields ReasoningDone event" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDone_event") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-nano", reasoning: "medium").to_a
+          reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
+          expect(reasoning_done).wont_be_nil
+        end
+      end
+
+      it "yields reasoning events before text events" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_reasoning_before_text") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-nano", reasoning: "medium").to_a
+          first_reasoning_index = events.index { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
+          first_text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+
+          if first_reasoning_index && first_text_index
+            expect(first_reasoning_index).must_be :<, first_text_index
+          end
         end
       end
     end

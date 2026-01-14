@@ -40,6 +40,12 @@ class Riffer::Agent
       @instructions = instructions_text
     end
 
+    def reasoning(level = nil)
+      return @reasoning if level.nil?
+      validate_is_string!(level, "reasoning")
+      @reasoning = level
+    end
+
     # Finds an agent class by identifier
     # @param identifier [String] the identifier to search for
     # @return [Class, nil] the agent class, or nil if not found
@@ -65,6 +71,7 @@ class Riffer::Agent
     @messages = []
     @model_string = self.class.model
     @instructions_text = self.class.instructions
+    @reasoning = self.class.reasoning
 
     provider_name, model_name = @model_string.split("/", 2)
 
@@ -133,11 +140,11 @@ class Riffer::Agent
   end
 
   def call_llm
-    provider_instance.generate_text(messages: @messages, model: @model_name)
+    provider_instance.generate_text(messages: @messages, model: @model_name, reasoning: @reasoning)
   end
 
   def call_llm_stream
-    provider_instance.stream_text(messages: @messages, model: @model_name)
+    provider_instance.stream_text(messages: @messages, model: @model_name, reasoning: @reasoning)
   end
 
   def provider_instance

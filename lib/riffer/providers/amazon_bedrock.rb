@@ -27,7 +27,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   private
 
-  def perform_generate_text(messages, model:)
+  def perform_generate_text(messages, model:, reasoning: nil)
     partitioned_messages = partition_messages(messages)
 
     params = {
@@ -40,7 +40,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     extract_assistant_message(response)
   end
 
-  def perform_stream_text(messages, model:)
+  def perform_stream_text(messages, model:, reasoning: nil)
     Enumerator.new do |yielder|
       partitioned_messages = partition_messages(messages)
 
