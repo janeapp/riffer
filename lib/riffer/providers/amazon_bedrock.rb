@@ -26,10 +26,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   private
 
   def perform_generate_text(messages, model:)
-    system_prompts, conversation_messages = partition_messages(messages)
+    partitioned_messages = partition_messages(messages)
 
-    params = {model_id: model, messages: conversation_messages}
-    params[:system] = system_prompts unless system_prompts.empty?
+    params = {
+      model_id: model,
+      system: partitioned_messages[:system],
+      messages: partitioned_messages[:conversation]
+    }
 
     response = @client.converse(**params)
     extract_assistant_message(response)
@@ -37,10 +40,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   def perform_stream_text(messages, model:)
     Enumerator.new do |yielder|
-      system_prompts, conversation_messages = partition_messages(messages)
+      partitioned_messages = partition_messages(messages)
 
-      params = {model_id: model, messages: conversation_messages}
-      params[:system] = system_prompts unless system_prompts.empty?
+      params = {
+        model_id: model,
+        system: partitioned_messages[:system],
+        messages: partitioned_messages[:conversation]
+      }
 
       accumulated_text = ""
 
@@ -77,7 +83,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       end
     end
 
-    [system_prompts, conversation_messages]
+    {
+      system: system_prompts,
+      conversation: conversation_messages
+    }
   end
 
   def extract_assistant_message(response)

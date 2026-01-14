@@ -11,7 +11,7 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 2d5f493f-cbc9-433f-9e88-75d692061c78
+      - d536f111-1c18-4b68-a01c-790bc3f6b644
       Content-Type:
       - application/json
       Authorization:
@@ -29,7 +29,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 12 Jan 2026 23:52:16 GMT
+      - Wed, 14 Jan 2026 00:08:07 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -37,9 +37,9 @@ http_interactions:
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 2cb712b8-05c0-4729-9f4d-148291742491
+      - 61e42245-0044-4180-b9a9-85590159a08b
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":454},"output":{"message":{"content":[{"text":"Hello!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":12,"outputTokens":5,"serverToolUsage":{},"totalTokens":17}}'
-  recorded_at: Mon, 12 Jan 2026 23:52:16 GMT
+      string: '{"metrics":{"latencyMs":361},"output":{"message":{"content":[{"text":"Hello!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":12,"outputTokens":5,"serverToolUsage":{},"totalTokens":17}}'
+  recorded_at: Wed, 14 Jan 2026 00:08:07 GMT
 recorded_with: VCR 6.4.0

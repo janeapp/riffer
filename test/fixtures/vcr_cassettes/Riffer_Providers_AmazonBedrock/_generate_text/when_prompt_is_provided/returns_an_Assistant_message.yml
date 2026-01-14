@@ -5,12 +5,12 @@ http_interactions:
     uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-haiku-20240307-v1:0/converse
     body:
       encoding: UTF-8
-      string: '{"messages":[{"role":"user","content":[{"text":"Say hello"}]}]}'
+      string: '{"messages":[{"role":"user","content":[{"text":"Say hello"}]}],"system":[]}'
     headers:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 95574725-8a5a-4ccc-9f2d-51a084cfed6b
+      - 9fcf8967-d0db-44af-92bc-3f3473e72b01
       Content-Type:
       - application/json
       Authorization:
@@ -19,7 +19,7 @@ http_interactions:
       - aws-sdk-ruby3/3.241.3 ua/2.1 api/bedrock_runtime#1.70.0 os/macos#25 md/arm64
         lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
       Content-Length:
-      - '63'
+      - '75'
       Accept:
       - "*/*"
   response:
@@ -28,7 +28,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 12 Jan 2026 23:52:21 GMT
+      - Wed, 14 Jan 2026 00:08:01 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -36,9 +36,9 @@ http_interactions:
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 5a321b06-9348-47f2-ba71-43cfc4ca905f
+      - 9ce580d3-2d0a-4c5f-ab91-8abdea6fa46b
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":935},"output":{"message":{"content":[{"text":"Hello!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":9,"outputTokens":5,"serverToolUsage":{},"totalTokens":14}}'
-  recorded_at: Mon, 12 Jan 2026 23:52:21 GMT
+      string: '{"metrics":{"latencyMs":448},"output":{"message":{"content":[{"text":"Hello!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":9,"outputTokens":5,"serverToolUsage":{},"totalTokens":14}}'
+  recorded_at: Wed, 14 Jan 2026 00:08:01 GMT
 recorded_with: VCR 6.4.0
