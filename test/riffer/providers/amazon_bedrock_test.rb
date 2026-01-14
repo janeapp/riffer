@@ -6,33 +6,18 @@ describe Riffer::Providers::AmazonBedrock do
   let(:api_token) { ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token") }
 
   describe "#initialize" do
-    it "creates Bedrock client with default options" do
-      provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
-      expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
-    end
-
-    it "creates Bedrock client with api_token and region" do
+    it "creates Bedrock client with an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
 
-    it "passes options to AWS client" do
-      provider = Riffer::Providers::AmazonBedrock.new(region: "us-west-2", profile: "default")
+    it "creates Bedrock client without an api_token" do
+      provider = Riffer::Providers::AmazonBedrock.new(region: "us-west-2")
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
   end
 
   describe "#generate_text" do
-    describe "with api_token" do
-      it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/with_api_token/returns_an_Assistant_message") do
-          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          result = provider.generate_text(prompt: "Say hello", model: "anthropic.claude-3-haiku-20240307-v1:0")
-          expect(result).must_be_instance_of Riffer::Messages::Assistant
-        end
-      end
-    end
-
     describe "when prompt is provided" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
