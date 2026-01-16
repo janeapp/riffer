@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openai"
-
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # Initializes the OpenAI provider.
   # @param options [Hash] optional client options. Use `:api_key` to override `Riffer.config.openai.api_key`.
