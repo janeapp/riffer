@@ -3,20 +3,17 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # Initializes the OpenAI provider.
   # @param options [Hash] optional client options. Use `:api_key` to override `Riffer.config.openai.api_key`.
-  # @raise [Riffer::ArgumentError] if an API key is not provided either via `:api_key` or `Riffer.config.openai.api_key`.
   def initialize(**options)
     depends_on "openai"
 
     api_key = options.fetch(:api_key, Riffer.config.openai.api_key)
-    raise Riffer::ArgumentError, "OpenAI API key is required. Set it via Riffer.configure or pass :api_key option" if api_key.nil? || api_key.empty?
-
     @client = ::OpenAI::Client.new(api_key: api_key, **options.except(:api_key))
   end
 
   private
 
-  def perform_generate_text(messages, model:, reasoning: nil)
-    params = build_request_params(messages, model, reasoning)
+  def perform_generate_text(messages, model:, **options)
+    params = build_request_params(messages, model, options)
     response = @client.responses.create(params)
 
     output = response.output.find { |o| o.type == :message }
@@ -42,24 +39,26 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer::Messages::Assistant.new(content.text)
   end
 
-  def perform_stream_text(messages, model:, reasoning: nil)
+  def perform_stream_text(messages, model:, **options)
     Enumerator.new do |yielder|
-      params = build_request_params(messages, model, reasoning)
+      params = build_request_params(messages, model, options)
       stream = @client.responses.stream(params)
 
       process_stream_events(stream, yielder)
     end
   end
 
-  def build_request_params(messages, model, reasoning)
+  def build_request_params(messages, model, options)
+    reasoning = options[:reasoning]
     {
       input: convert_message_to_openai_format(messages),
       model: model,
       reasoning: reasoning && {
         effort: reasoning,
         summary: "auto"
-      }
-    }
+      },
+      **options.except(:reasoning)
+    }.compact
   end
 
   def convert_message_to_openai_format(messages)

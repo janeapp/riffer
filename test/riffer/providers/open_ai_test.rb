@@ -6,16 +6,6 @@ describe Riffer::Providers::OpenAI do
   let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 
   describe "#initialize" do
-    it "raises ArgumentError when api_key is nil" do
-      error = expect { Riffer::Providers::OpenAI.new(api_key: nil) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/openai api key is required/i)
-    end
-
-    it "raises ArgumentError when api_key is empty" do
-      error = expect { Riffer::Providers::OpenAI.new(api_key: "") }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/openai api key is required/i)
-    end
-
     it "creates OpenAI client with api_key" do
       provider = Riffer::Providers::OpenAI.new(api_key: api_key)
       expect(provider).must_be_instance_of Riffer::Providers::OpenAI

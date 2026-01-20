@@ -27,27 +27,29 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   private
 
-  def perform_generate_text(messages, model:, reasoning: nil)
+  def perform_generate_text(messages, model:, **options)
     partitioned_messages = partition_messages(messages)
 
     params = {
       model_id: model,
       system: partitioned_messages[:system],
-      messages: partitioned_messages[:conversation]
+      messages: partitioned_messages[:conversation],
+      **options
     }
 
     response = @client.converse(**params)
     extract_assistant_message(response)
   end
 
-  def perform_stream_text(messages, model:, reasoning: nil)
+  def perform_stream_text(messages, model:, **options)
     Enumerator.new do |yielder|
       partitioned_messages = partition_messages(messages)
 
       params = {
         model_id: model,
         system: partitioned_messages[:system],
-        messages: partitioned_messages[:conversation]
+        messages: partitioned_messages[:conversation],
+        **options
       }
 
       accumulated_text = ""

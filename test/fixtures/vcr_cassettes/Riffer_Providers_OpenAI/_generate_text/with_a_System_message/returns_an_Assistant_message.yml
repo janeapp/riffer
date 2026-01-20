@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"developer","content":"Be concise"},{"role":"user","content":"Say
-        hello"}],"model":"gpt-5-nano","reasoning":null}'
+        hello"}],"model":"gpt-5-nano"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '131'
+      - '114'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 14 Jan 2026 04:12:09 GMT
+      - Tue, 20 Jan 2026 18:51:44 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -58,11 +58,11 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '499'
       X-Ratelimit-Remaining-Tokens:
-      - '200000'
+      - '199947'
       X-Ratelimit-Reset-Requests:
       - 120ms
       X-Ratelimit-Reset-Tokens:
-      - 0s
+      - 15ms
       Openai-Version:
       - '2020-10-01'
       Openai-Organization:
@@ -70,18 +70,18 @@ http_interactions:
       Openai-Project:
       - proj_E1uuOHBzdF9a5YsgdGcH09SZ
       X-Request-Id:
-      - req_90849318812a4d27b5c2c74646474aa9
+      - req_7fe2ee28d2f14adfb929b934cc3ecc57
       Openai-Processing-Ms:
-      - '2025'
+      - '4674'
       X-Envoy-Upstream-Service-Time:
-      - '2028'
+      - '4676'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=moiR7UvQfa6_07xbFTkcE1FEJj5zHYroSAxapyFbdfI-1768363929-1.0.1.1-QZTTAazKugx_ydomi5ZrbhKN64gSLo4DBHc7YNMogMw42K0behIyPetyY0cNvK3E9QauJszWMaoMZczuL1b0bAtTeYal2x6Lz7YiCzqhAVs;
-        path=/; expires=Wed, 14-Jan-26 04:42:09 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=CMo.DCY0S9Fs0IO9PV8qJbkhnDnQSelY_8KSMQqSlm8-1768935104-1.0.1.1-OgPYl8q6.b_5mM0yHbctb1pHSjP_M6iVsVQKOAsgc_DHt7QrQc32PT6aJ4NjLUuZ.6IVg5t9YMetkDsOnBqo.EMhGAet34KFfsiAc5tJftM;
+        path=/; expires=Tue, 20-Jan-26 19:21:44 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=PBFJdDhD_xNm0Lqkhx9p4ghjvdZXl2xayrxqzvqnX.k-1768363929533-0.0.1.1-604800000;
+      - _cfuvid=_ITxBZITTdjcjrs8vzU9lFEKztj0nsOgS_QkDPCEYZo-1768935104118-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
@@ -90,22 +90,22 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 9bda4b125fdb4ae3-YVR
+      - 9c10c3b2ff1e95a2-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0bc7c38fa10eaa4700696717977ba08196a8c63e76f727655f",
+          "id": "resp_01ad024654259afe00696fcebb6b64819097a2334cf8a001f1",
           "object": "response",
-          "created_at": 1768363927,
+          "created_at": 1768935099,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1768363929,
+          "completed_at": 1768935103,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
@@ -115,12 +115,12 @@ http_interactions:
           "model": "gpt-5-nano-2025-08-07",
           "output": [
             {
-              "id": "rs_0bc7c38fa10eaa470069671797ba648196a6392cc12471e524",
+              "id": "rs_01ad024654259afe00696fcebba2c0819080f3f56bb70e1d92",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_0bc7c38fa10eaa470069671799123081969e861d98507d8270",
+              "id": "msg_01ad024654259afe00696fcebf9db08190b9dc320689a08723",
               "type": "message",
               "status": "completed",
               "content": [
@@ -128,7 +128,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "Hello!"
+                  "text": "Hello! How can I help today?"
                 }
               ],
               "role": "assistant"
@@ -163,14 +163,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 200,
+            "output_tokens": 270,
             "output_tokens_details": {
-              "reasoning_tokens": 192
+              "reasoning_tokens": 256
             },
-            "total_tokens": 214
+            "total_tokens": 284
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 14 Jan 2026 04:12:09 GMT
+  recorded_at: Tue, 20 Jan 2026 18:51:44 GMT
 recorded_with: VCR 6.4.0
