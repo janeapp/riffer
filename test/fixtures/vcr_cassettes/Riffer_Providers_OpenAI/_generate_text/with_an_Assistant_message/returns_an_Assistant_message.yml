@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Say hello"},{"role":"assistant","content":"Hello!"},{"role":"user","content":"How
-        are you?"}],"model":"gpt-5-nano","reasoning":null}'
+        are you?"}],"model":"gpt-5-nano"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -37,14 +37,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '168'
+      - '151'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Wed, 14 Jan 2026 04:12:14 GMT
+      - Tue, 20 Jan 2026 18:51:48 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -58,11 +58,11 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '499'
       X-Ratelimit-Remaining-Tokens:
-      - '199926'
+      - '199940'
       X-Ratelimit-Reset-Requests:
       - 120ms
       X-Ratelimit-Reset-Tokens:
-      - 22ms
+      - 18ms
       Openai-Version:
       - '2020-10-01'
       Openai-Organization:
@@ -70,18 +70,18 @@ http_interactions:
       Openai-Project:
       - proj_E1uuOHBzdF9a5YsgdGcH09SZ
       X-Request-Id:
-      - req_29be98cec04c40fea8ca7d25b09f4740
+      - req_f4c4e8978f33419a96492f98c4f978d3
       Openai-Processing-Ms:
-      - '2918'
+      - '3393'
       X-Envoy-Upstream-Service-Time:
-      - '2921'
+      - '3396'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=rrG1Tr3J9FdjqKKlULCYOthJJ8Qpbt0eMRlKYD2yViE-1768363934-1.0.1.1-V.o1NFAiBIFbEV5e.GDbdyuw0g8boNohbQ8FNgRpue8oR0f2wBDwv6arQ3x0AabKS6jCW9DYTlqrbZ4_9ZZt8yd58P3fM5hBC.sYZnt3D1U;
-        path=/; expires=Wed, 14-Jan-26 04:42:14 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=O58AgpAaEdQwndvKQTZwUhfuSt0ymoG_tz6CUFel31g-1768935108-1.0.1.1-vA684VuLDbWH79bXKJg9.DPx323o90piwlFHkGE2H8YmdlfR8wSYpZ0JlosSPtCCg2GMMHszoIKkj0E3pteEN4xONtiAHpLDXJe5dPN6OiM;
+        path=/; expires=Tue, 20-Jan-26 19:21:48 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=ZEMdjfhAfvTCuBTRn28Z0YRTLXqcSohxVIHC6yBZVGA-1768363934696-0.0.1.1-604800000;
+      - _cfuvid=tsBp0b8ApqKVnnWVyMNr4uBfnQm1fvSx0eF6WEgmRKw-1768935108114-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
@@ -90,22 +90,22 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 9bda4b2d0d48ef12-YVR
+      - 9c10c3d15a76c25f-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0b2393436bc40a88006967179bc1948196acd242d1629ca8a1",
+          "id": "resp_0af8235579e640aa00696fcec0b1d8819399ee932eadc0ca1c",
           "object": "response",
-          "created_at": 1768363931,
+          "created_at": 1768935104,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1768363934,
+          "completed_at": 1768935107,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
@@ -115,12 +115,12 @@ http_interactions:
           "model": "gpt-5-nano-2025-08-07",
           "output": [
             {
-              "id": "rs_0b2393436bc40a88006967179c095c8196a739f4e99bfab308",
+              "id": "rs_0af8235579e640aa00696fcec11e608193974c9aeaa044778b",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_0b2393436bc40a88006967179e261881968260d7a31f9cc140",
+              "id": "msg_0af8235579e640aa00696fcec365608193a3ea18b4766c1d95",
               "type": "message",
               "status": "completed",
               "content": [
@@ -128,7 +128,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "I\u2019m here and ready to help. I\u2019m doing well\u2014thanks for asking. How about you? What would you like to do today?"
+                  "text": "I'm doing well, thanks for asking! How can I help you today?"
                 }
               ],
               "role": "assistant"
@@ -163,14 +163,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 291,
+            "output_tokens": 277,
             "output_tokens_details": {
               "reasoning_tokens": 256
             },
-            "total_tokens": 315
+            "total_tokens": 301
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Wed, 14 Jan 2026 04:12:14 GMT
+  recorded_at: Tue, 20 Jan 2026 18:51:48 GMT
 recorded_with: VCR 6.4.0

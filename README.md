@@ -76,6 +76,26 @@ agent.stream('Tell me a story').each do |event|
 end
 ```
 
+### Provider & Model Options
+
+Agents support two optional configuration methods for passing options through to the underlying provider:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  instructions 'You are a helpful assistant.'
+
+  # Options passed directly to the provider client (e.g., OpenAI::Client)
+  provider_options api_key: ENV['CUSTOM_OPENAI_KEY']
+
+  # Options passed to the model invocation (e.g., reasoning, temperature)
+  model_options reasoning: 'medium'
+end
+```
+
+- `provider_options` - Hash of options passed to the provider client during instantiation
+- `model_options` - Hash of options passed to `generate_text` / `stream_text` calls
+
 ## Development
 
 After checking out the repo, run:

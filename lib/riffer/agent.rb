@@ -40,10 +40,20 @@ class Riffer::Agent
       @instructions = instructions_text
     end
 
-    def reasoning(level = nil)
-      return @reasoning if level.nil?
-      validate_is_string!(level, "reasoning")
-      @reasoning = level
+    # Gets or sets provider options passed to the provider client
+    # @param options [Hash, nil] the options to set, or nil to get
+    # @return [Hash] the provider options
+    def provider_options(options = nil)
+      return @provider_options || {} if options.nil?
+      @provider_options = options
+    end
+
+    # Gets or sets model options passed to generate_text/stream_text
+    # @param options [Hash, nil] the options to set, or nil to get
+    # @return [Hash] the model options
+    def model_options(options = nil)
+      return @model_options || {} if options.nil?
+      @model_options = options
     end
 
     # Finds an agent class by identifier
@@ -71,7 +81,6 @@ class Riffer::Agent
     @messages = []
     @model_string = self.class.model
     @instructions_text = self.class.instructions
-    @reasoning = self.class.reasoning
 
     provider_name, model_name = @model_string.split("/", 2)
 
@@ -140,18 +149,18 @@ class Riffer::Agent
   end
 
   def call_llm
-    provider_instance.generate_text(messages: @messages, model: @model_name, reasoning: @reasoning)
+    provider_instance.generate_text(messages: @messages, model: @model_name, **self.class.model_options)
   end
 
   def call_llm_stream
-    provider_instance.stream_text(messages: @messages, model: @model_name, reasoning: @reasoning)
+    provider_instance.stream_text(messages: @messages, model: @model_name, **self.class.model_options)
   end
 
   def provider_instance
     @provider_instance ||= begin
       provider_class = Riffer::Providers::Repository.find(@provider_name)
       raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
-      provider_class.new
+      provider_class.new(**self.class.provider_options)
     end
   end
 

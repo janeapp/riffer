@@ -10,13 +10,13 @@ class Riffer::Providers::Base
   # @param system [String, nil] an optional system message
   # @param messages [Array<Hash, Riffer::Messages::Base>, nil] optional messages array
   # @param model [String, nil] optional model string to override the configured model
-  # @param reasoning [String, nil] optional reasoning level or instructions
+  # @param options [Hash] additional options passed to the model invocation
   # @return [Riffer::Messages::Assistant] the generated assistant message
-  def generate_text(prompt: nil, system: nil, messages: nil, model: nil, reasoning: nil)
+  def generate_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
     validate_normalized_messages!(normalized_messages)
-    perform_generate_text(normalized_messages, model: model, reasoning: reasoning)
+    perform_generate_text(normalized_messages, model: model, **options)
   end
 
   # Streams text from the provider.
@@ -25,22 +25,22 @@ class Riffer::Providers::Base
   # @param system [String, nil] an optional system message
   # @param messages [Array<Hash, Riffer::Messages::Base>, nil] optional messages array
   # @param model [String, nil] optional model string to override the configured model
-  # @param reasoning [String, nil] optional reasoning level or instructions
+  # @param options [Hash] additional options passed to the model invocation
   # @return [Enumerator] an enumerator yielding stream events or chunks (provider-specific)
-  def stream_text(prompt: nil, system: nil, messages: nil, model: nil, reasoning: nil)
+  def stream_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
     validate_normalized_messages!(normalized_messages)
-    perform_stream_text(normalized_messages, model: model, reasoning: reasoning)
+    perform_stream_text(normalized_messages, model: model, **options)
   end
 
   private
 
-  def perform_generate_text(messages, model: nil, reasoning: nil)
+  def perform_generate_text(messages, model: nil, **options)
     raise NotImplementedError, "Subclasses must implement #perform_generate_text"
   end
 
-  def perform_stream_text(messages, model: nil, reasoning: nil)
+  def perform_stream_text(messages, model: nil, **options)
     raise NotImplementedError, "Subclasses must implement #perform_stream_text"
   end
 
