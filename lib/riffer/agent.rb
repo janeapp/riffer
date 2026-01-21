@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "json"
+
 # Riffer::Agent is the base class for all agents in the Riffer framework.
 #
 # Provides orchestration for LLM calls, tool use, and message management.
@@ -56,6 +58,14 @@ class Riffer::Agent
       @model_options = options
     end
 
+    # Gets or sets the tools used by this agent
+    # @param tools_or_lambda [Array<Class>, Proc, nil] tools array or lambda returning tools
+    # @return [Array<Class>, Proc, nil] the tools configuration
+    def uses_tools(tools_or_lambda = nil)
+      return @tools_config if tools_or_lambda.nil?
+      @tools_config = tools_or_lambda
+    end
+
     # Finds an agent class by identifier
     # @param identifier [String] the identifier to search for
     # @return [Class, nil] the agent class, or nil if not found
@@ -92,8 +102,11 @@ class Riffer::Agent
 
   # Generates a response from the agent
   # @param prompt_or_messages [String, Array<Hash, Riffer::Messages::Base>]
+  # @param tool_context [Object, nil] optional context object passed to all tool calls
   # @return [String]
-  def generate(prompt_or_messages)
+  def generate(prompt_or_messages, tool_context: nil)
+    @tool_context = tool_context
+    @resolved_tools = nil
     initialize_messages(prompt_or_messages)
 
     loop do
@@ -110,26 +123,49 @@ class Riffer::Agent
 
   # Streams a response from the agent
   # @param prompt_or_messages [String, Array<Hash, Riffer::Messages::Base>]
+  # @param tool_context [Object, nil] optional context object passed to all tool calls
   # @return [Enumerator] an enumerator yielding stream events
-  def stream(prompt_or_messages)
+  def stream(prompt_or_messages, tool_context: nil)
+    @tool_context = tool_context
+    @resolved_tools = nil
     initialize_messages(prompt_or_messages)
 
     Enumerator.new do |yielder|
-      accumulated_content = ""
+      loop do
+        accumulated_content = ""
+        accumulated_tool_calls = []
+        current_tool_call = nil
 
-      call_llm_stream.each do |event|
-        yielder << event
+        call_llm_stream.each do |event|
+          yielder << event
 
-        case event
-        when Riffer::StreamEvents::TextDelta
-          accumulated_content += event.content
-        when Riffer::StreamEvents::TextDone
-          accumulated_content = event.content
+          case event
+          when Riffer::StreamEvents::TextDelta
+            accumulated_content += event.content
+          when Riffer::StreamEvents::TextDone
+            accumulated_content = event.content
+          when Riffer::StreamEvents::ToolCallDelta
+            current_tool_call ||= {item_id: event.item_id, name: event.name, arguments: ""}
+            current_tool_call[:arguments] += event.arguments_delta
+            current_tool_call[:name] ||= event.name
+          when Riffer::StreamEvents::ToolCallDone
+            accumulated_tool_calls << {
+              id: event.item_id,
+              call_id: event.call_id,
+              name: event.name,
+              arguments: event.arguments
+            }
+            current_tool_call = nil
+          end
         end
-      end
 
-      response = Riffer::Messages::Assistant.new(accumulated_content)
-      @messages << response
+        response = Riffer::Messages::Assistant.new(accumulated_content, tool_calls: accumulated_tool_calls)
+        @messages << response
+
+        break unless has_tool_calls?(response)
+
+        execute_tool_calls(response)
+      end
     end
   end
 
@@ -149,11 +185,21 @@ class Riffer::Agent
   end
 
   def call_llm
-    provider_instance.generate_text(messages: @messages, model: @model_name, **self.class.model_options)
+    provider_instance.generate_text(
+      messages: @messages,
+      model: @model_name,
+      tools: resolved_tools,
+      **self.class.model_options
+    )
   end
 
   def call_llm_stream
-    provider_instance.stream_text(messages: @messages, model: @model_name, **self.class.model_options)
+    provider_instance.stream_text(
+      messages: @messages,
+      model: @model_name,
+      tools: resolved_tools,
+      **self.class.model_options
+    )
   end
 
   def provider_instance
@@ -170,17 +216,71 @@ class Riffer::Agent
 
   def execute_tool_calls(response)
     response.tool_calls.each do |tool_call|
-      tool_result = execute_tool_call(tool_call)
+      result = execute_tool_call(tool_call)
       @messages << Riffer::Messages::Tool.new(
-        tool_result,
+        result[:content],
         tool_call_id: tool_call[:id],
-        name: tool_call[:name]
+        name: tool_call[:name],
+        error: result[:error],
+        error_type: result[:error_type]
       )
     end
   end
 
   def execute_tool_call(tool_call)
-    "Tool execution not implemented yet"
+    tool_class = find_tool_class(tool_call[:name])
+
+    if tool_class.nil?
+      return {
+        content: "Error: Unknown tool '#{tool_call[:name]}'",
+        error: "Unknown tool '#{tool_call[:name]}'",
+        error_type: :unknown_tool
+      }
+    end
+
+    tool_instance = tool_class.new
+    arguments = parse_tool_arguments(tool_call[:arguments])
+
+    begin
+      result = tool_instance.call_with_validation(context: @tool_context, **arguments)
+      {content: result.to_s, error: nil, error_type: nil}
+    rescue Riffer::ValidationError => e
+      {
+        content: "Validation error: #{e.message}",
+        error: e.message,
+        error_type: :validation_error
+      }
+    rescue => e
+      {
+        content: "Error executing tool: #{e.message}",
+        error: e.message,
+        error_type: :execution_error
+      }
+    end
+  end
+
+  def resolved_tools
+    @resolved_tools ||= begin
+      config = self.class.uses_tools
+      return [] if config.nil?
+
+      if config.is_a?(Proc)
+        (config.arity == 0) ? config.call : config.call(@tool_context)
+      else
+        config
+      end
+    end
+  end
+
+  def find_tool_class(name)
+    resolved_tools.find { |tool_class| tool_class.name == name }
+  end
+
+  def parse_tool_arguments(arguments)
+    return {} if arguments.nil? || arguments.empty?
+
+    args = arguments.is_a?(String) ? JSON.parse(arguments) : arguments
+    args.transform_keys(&:to_sym)
   end
 
   def extract_final_response

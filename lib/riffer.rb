@@ -26,6 +26,10 @@ module Riffer
   # @api public
   class ArgumentError < ::ArgumentError; end
 
+  # Validation error for tool parameter validation
+  # @api public
+  class ValidationError < Error; end
+
   # Provides configuration and versioning methods for Riffer
   #
   # @!group Configuration

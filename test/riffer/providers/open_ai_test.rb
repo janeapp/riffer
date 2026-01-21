@@ -208,4 +208,186 @@ describe Riffer::Providers::OpenAI do
       end
     end
   end
+
+  describe "tool calling" do
+    let(:weather_tool) do
+      Class.new(Riffer::Tool) do
+        identifier "get_weather"
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+    end
+
+    describe "#generate_text with tools" do
+      it "returns Assistant message" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns tool_calls" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result.tool_calls).wont_be_empty
+        end
+      end
+
+      it "returns correct tool name" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result.tool_calls.first[:name]).must_equal "get_weather"
+        end
+      end
+
+      it "parses tool call arguments correctly" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/parses_arguments") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          args = JSON.parse(result.tool_calls.first[:arguments])
+          expect(args["city"]).must_equal "Toronto"
+        end
+      end
+
+      it "includes tool call id" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/includes_ids") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result.tool_calls.first[:id]).wont_be_nil
+        end
+      end
+
+      it "includes tool call call_id" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/includes_ids") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result.tool_calls.first[:call_id]).wont_be_nil
+        end
+      end
+    end
+
+    describe "#generate_text with Tool message in history" do
+      it "returns Assistant message" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/with_tool_message") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          messages = [
+            Riffer::Messages::User.new("What is the weather in Toronto?"),
+            Riffer::Messages::Assistant.new("", tool_calls: [
+              {id: "fc_tool_call_123", call_id: "call_tool_123", name: "get_weather", arguments: '{"city":"Toronto"}'}
+            ]),
+            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "call_tool_123", name: "get_weather")
+          ]
+          result = provider.generate_text(
+            messages: messages,
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns response with content" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/with_tool_message") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          messages = [
+            Riffer::Messages::User.new("What is the weather in Toronto?"),
+            Riffer::Messages::Assistant.new("", tool_calls: [
+              {id: "fc_tool_call_123", call_id: "call_tool_123", name: "get_weather", arguments: '{"city":"Toronto"}'}
+            ]),
+            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "call_tool_123", name: "get_weather")
+          ]
+          result = provider.generate_text(
+            messages: messages,
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          )
+          expect(result.content).wont_be_empty
+        end
+      end
+    end
+
+    describe "#stream_text with tools" do
+      it "yields ToolCallDelta events" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/yields_tool_call_delta") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          ).to_a
+          tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+          expect(tool_deltas).wont_be_empty
+        end
+      end
+
+      it "yields ToolCallDone event" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/yields_tool_call_done") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          ).to_a
+          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+          expect(tool_done).wont_be_nil
+        end
+      end
+
+      it "includes tool name in ToolCallDone" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/tool_call_done_has_name") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          ).to_a
+          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+          expect(tool_done.name).must_equal "get_weather"
+        end
+      end
+
+      it "includes arguments in ToolCallDone" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/tool_call_done_has_arguments") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(
+            prompt: "What is the weather in Toronto?",
+            model: "gpt-5-nano",
+            tools: [weather_tool]
+          ).to_a
+          tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+          args = JSON.parse(tool_done.arguments)
+          expect(args["city"]).must_equal "Toronto"
+        end
+      end
+    end
+  end
 end

@@ -11,13 +11,15 @@ Riffer is a comprehensive Ruby framework designed to simplify the development of
 Key concepts:
 
 - **Agents** – orchestrate messages, LLM calls, and tool execution (`Riffer::Agent`).
+- **Tools** – define callable functions that agents can use to interact with external systems (`Riffer::Tool`).
 - **Providers** – adapters that implement text generation and streaming (`Riffer::Providers::*`).
 - **Messages** – typed message objects for system, user, assistant, and tool messages (`Riffer::Messages::*`).
 
 ## Features
 
 - Minimal, well-documented core for building AI agents
-- Provider abstraction (OpenAI) for pluggable providers
+- Tool calling support with parameter validation
+- Provider abstraction (OpenAI, Amazon Bedrock) for pluggable providers
 - Streaming support and structured stream events
 - Message converters and helpers for robust message handling
 
@@ -95,6 +97,65 @@ end
 
 - `provider_options` - Hash of options passed to the provider client during instantiation
 - `model_options` - Hash of options passed to `generate_text` / `stream_text` calls
+
+### Tools
+
+Tools allow agents to interact with external systems. Define a tool by extending `Riffer::Tool`:
+
+```ruby
+class WeatherLookupTool < Riffer::Tool
+  description "Provides current weather information for a specified city."
+
+  params do
+    required :city, String, description: "The city to look up"
+    optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
+  end
+
+  def call(context:, city:, units: nil)
+    weather = WeatherService.lookup(city, units: units || "celsius")
+    "The weather in #{city} is #{weather.temperature} #{units}."
+  end
+end
+```
+
+Register tools with an agent using `uses_tools`:
+
+```ruby
+class WeatherAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  instructions 'You are a helpful weather assistant.'
+
+  uses_tools [WeatherLookupTool]
+end
+
+agent = WeatherAgent.new
+puts agent.generate("What's the weather in Toronto?")
+```
+
+Tools can also be dynamically resolved at runtime. The lambda receives `tool_context` when it accepts a parameter, enabling conditional tool resolution based on the current user or request:
+
+```ruby
+class DynamicAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+
+  uses_tools ->(context) {
+    tools = [WeatherLookupTool]
+    tools << AdminTool if context&.dig(:current_user)&.admin?
+    tools
+  }
+end
+
+agent = DynamicAgent.new
+agent.generate("Do admin things", tool_context: { current_user: current_user })
+```
+
+Pass context to tools using `tool_context`:
+
+```ruby
+agent.generate("Look up my city", tool_context: { user_id: current_user.id })
+```
+
+The `context` keyword argument is passed to every tool's `call` method, allowing tools to access shared state like user information, database connections, or API clients.
 
 ## Development
 
