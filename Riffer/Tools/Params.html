@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Providers::AmazonBedrock - Riffer Documentation</title>
+<title>class Riffer::Tools::Params - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Providers::AmazonBedrock"
+    content="ruby,class,Riffer::Tools::Params"
   >
 
     <meta
       name="description"
-      content="Documentation for the Riffer::Providers::AmazonBedrock class"
+      content="class Riffer::Tools::Params: Params provides a DSL for defining tool parameters. Used within a Tool&#39;s `params` block to define required and optional parameters."
     >
 
 
@@ -24,14 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Providers::AmazonBedrock - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Tools::Params - Riffer Documentation">
 
 
 
-    <meta
-      property="og:description"
-      content="Documentation for Riffer::Providers::AmazonBedrock class - API reference and code examples"
-    >
+    <meta property="og:description" content="Params provides a DSL for defining tool parameters. Used within a Tool&#39;s `params` block to define required and optional parameters.">
 
 
 
@@ -39,14 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Providers::AmazonBedrock - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Tools::Params - Riffer Documentation">
 
 
 
-    <meta
-      name="twitter:description"
-      content="Documentation for Riffer::Providers::AmazonBedrock class - API reference and code examples"
-    >
+    <meta name="twitter:description" content="Params provides a DSL for defining tool parameters. Used within a Tool&#39;s `params` block to define required and optional parameters.">
 
 
 
@@ -443,7 +437,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::Providers::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -474,6 +468,31 @@
 
 
 
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-optional">optional</a></li>
+
+        <li ><a href="#method-i-required">required</a></li>
+
+        <li ><a href="#method-i-to_json_schema">to_json_schema</a></li>
+
+        <li ><a href="#method-i-validate">validate</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
@@ -493,7 +512,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Providers::AmazonBedrock">
+<main role="main" aria-labelledby="class-Riffer::Tools::Params">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -506,25 +525,33 @@
       
       <li>
         
-        <a href="../../Riffer/Providers.html">Providers</a><span>::</span>
+        <a href="../../Riffer/Tools.html">Tools</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>AmazonBedrock</span>
+        <span>Params</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Providers::AmazonBedrock" class="anchor-link class">
-    class Riffer::Providers::AmazonBedrock
+  <h1 id="class-Riffer::Tools::Params" class="anchor-link class">
+    class Riffer::Tools::Params
   </h1>
 
   <section class="description">
     
+<p><a href="Params.html"><code>Riffer::Tools::Params</code></a> provides a DSL for defining tool parameters.</p>
+
+<p>Used within a Tool’s <code>params</code> block to define required and optional parameters.</p>
+
+<p>@example params do required :city, String, description: “The city name” optional :units, String, default: “celsius”, enum: [“celsius”, “fahrenheit”] end</p>
+
+<p>@api private</p>
+
   </section>
 
 
@@ -535,6 +562,30 @@
 
 
 
+
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
+      </header>
+
+
+      <div id="attribute-i-parameters" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-parameters" title="Link to this attribute">
+            <span class="method-name">parameters</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        
+
+        </div>
+      </div>
+
+    </section>
 
 
 
@@ -550,7 +601,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(api_token: nil, region: nil, **options)</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -563,23 +614,9 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/providers/amazon_bedrock.rb, line 12</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">api_token:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">region:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
-  <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;aws-sdk-bedrockruntime&quot;</span>
-
-  <span class="ruby-identifier">api_token</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">api_token</span>
-  <span class="ruby-identifier">region</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span>
-
-  <span class="ruby-ivar">@client</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">api_token</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">api_token</span>.<span class="ruby-identifier">empty?</span>
-    <span class="ruby-constant">Aws</span><span class="ruby-operator">::</span><span class="ruby-constant">BedrockRuntime</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">region:</span> <span class="ruby-identifier">region</span>,
-      <span class="ruby-value">token_provider:</span> <span class="ruby-constant">Aws</span><span class="ruby-operator">::</span><span class="ruby-constant">StaticTokenProvider</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">api_token</span>),
-      <span class="ruby-value">auth_scheme_preference:</span> [<span class="ruby-string">&quot;httpBearerAuth&quot;</span>],
-      <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>
-    )
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-constant">Aws</span><span class="ruby-operator">::</span><span class="ruby-constant">BedrockRuntime</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">region:</span> <span class="ruby-identifier">region</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
-  <span class="ruby-keyword">end</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/params.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
+  <span class="ruby-ivar">@parameters</span> = []
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -588,9 +625,240 @@
         <div class="method-description">
 
 
-          <p>Initializes the Amazon Bedrock provider.</p>
+          
 
-<p>@param options [Hash] options passed to Aws::BedrockRuntime::Client @option options [String] :api_token Bearer token for API authentication (requires :region) @option options [String] :region AWS region @see <a href="https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html">docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html</a></p>
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-optional" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-optional" title="Link to this method">
+                <span class="method-name">optional</span>
+                <span class="method-args">(name, type, description: nil, enum: nil, default: nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="optional-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/params.rb, line 44</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">optional</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span>, <span class="ruby-value">description:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">enum:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">default:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@parameters</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Param</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>,
+    <span class="ruby-value">type:</span> <span class="ruby-identifier">type</span>,
+    <span class="ruby-value">required:</span> <span class="ruby-keyword">false</span>,
+    <span class="ruby-value">description:</span> <span class="ruby-identifier">description</span>,
+    <span class="ruby-value">enum:</span> <span class="ruby-identifier">enum</span>,
+    <span class="ruby-value">default:</span> <span class="ruby-identifier">default</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Defines an optional parameter @param name [Symbol] the parameter name @param type [Class] the expected Ruby type @param description [String, nil] optional description @param enum [Array, nil] optional list of allowed values @param default [Object, nil] default value when not provided @return [void]</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-required" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-required" title="Link to this method">
+                <span class="method-name">required</span>
+                <span class="method-args">(name, type, description: nil, enum: nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="required-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/params.rb, line 27</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">required</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span>, <span class="ruby-value">description:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">enum:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@parameters</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Param</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>,
+    <span class="ruby-value">type:</span> <span class="ruby-identifier">type</span>,
+    <span class="ruby-value">required:</span> <span class="ruby-keyword">true</span>,
+    <span class="ruby-value">description:</span> <span class="ruby-identifier">description</span>,
+    <span class="ruby-value">enum:</span> <span class="ruby-identifier">enum</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Defines a required parameter @param name [Symbol] the parameter name @param type [Class] the expected Ruby type @param description [String, nil] optional description @param enum [Array, nil] optional list of allowed values @return [void]</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-to_json_schema" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-to_json_schema" title="Link to this method">
+                <span class="method-name">to_json_schema</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="to_json_schema-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/params.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json_schema</span>
+  <span class="ruby-identifier">properties</span> = {}
+  <span class="ruby-identifier">required_params</span> = []
+
+  <span class="ruby-ivar">@parameters</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">param</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">properties</span>[<span class="ruby-identifier">param</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-identifier">param</span>.<span class="ruby-identifier">to_json_schema</span>
+    <span class="ruby-identifier">required_params</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">required</span>
+  <span class="ruby-keyword">end</span>
+
+  {
+    <span class="ruby-value">type:</span> <span class="ruby-string">&quot;object&quot;</span>,
+    <span class="ruby-value">properties:</span> <span class="ruby-identifier">properties</span>,
+    <span class="ruby-value">required:</span> <span class="ruby-identifier">required_params</span>,
+    <span class="ruby-value">additionalProperties:</span> <span class="ruby-keyword">false</span>
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Converts all parameters to JSON Schema format @return [Hash] the JSON Schema representation</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-validate" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-validate" title="Link to this method">
+                <span class="method-name">validate</span>
+                <span class="method-args">(arguments)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="validate-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/params.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>(<span class="ruby-identifier">arguments</span>)
+  <span class="ruby-identifier">validated</span> = {}
+  <span class="ruby-identifier">errors</span> = []
+
+  <span class="ruby-ivar">@parameters</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">param</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">arguments</span>[<span class="ruby-identifier">param</span>.<span class="ruby-identifier">name</span>]
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">required</span>
+      <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{param.name} is required&quot;</span>
+      <span class="ruby-keyword">next</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">validated</span>[<span class="ruby-identifier">param</span>.<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">param</span>.<span class="ruby-identifier">default</span>
+      <span class="ruby-keyword">next</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">valid_type?</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{param.name} must be a #{param.type_name}&quot;</span>
+      <span class="ruby-keyword">next</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">enum</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">param</span>.<span class="ruby-identifier">enum</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{param.name} must be one of: #{param.enum.join(&quot;, &quot;)}&quot;</span>
+      <span class="ruby-keyword">next</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">validated</span>[<span class="ruby-identifier">param</span>.<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ValidationError</span>, <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;; &quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">any?</span>
+
+  <span class="ruby-identifier">validated</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Validates arguments against parameter definitions @param arguments [Hash] the arguments to validate @return [Hash] validated arguments with defaults applied @raise [Riffer::ValidationError] if validation fails</p>
 
 
         </div>

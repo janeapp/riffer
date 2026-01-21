@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Config - Riffer Documentation</title>
+<title>class Riffer::Tool - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Config"
+    content="ruby,class,Riffer::Tool"
   >
 
     <meta
       name="description"
-      content="class Riffer::Config: Configuration for the Riffer framework Provides configuration options for AI providers and other settings. example Setting the OpenAI API key Riffe"
+      content="class Riffer::Tool: Tool is the base class for all tools in the Riffer framework. Provides a DSL for defining tool description and parameters."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Config - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Tool - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Configuration for the Riffer framework Provides configuration options for AI providers and other settings. example Setting the OpenAI API key Riffe">
+    <meta property="og:description" content="Tool is the base class for all tools in the Riffer framework. Provides a DSL for defining tool description and parameters.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Config - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Tool - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Configuration for the Riffer framework Provides configuration options for AI providers and other settings. example Setting the OpenAI API key Riffe">
+    <meta name="twitter:description" content="Tool is the base class for all tools in the Riffer framework. Provides a DSL for defining tool description and parameters.">
 
 
 
@@ -443,6 +443,28 @@
 
 
   
+<div id="includes-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-includes"></use></svg>
+      </span>
+      <span class="nav-section-title">Included Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="nav-list">
+
+
+      <li><a class="include" href="Helpers/ClassNameConverter.html">Riffer::Helpers::ClassNameConverter</a></li>
+
+
+    </ul>
+  </details>
+</div>
+
 
   
 
@@ -460,13 +482,42 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-c-new">new</a></li>
+        <li ><a href="#method-c-description">description</a></li>
+
+        <li ><a href="#method-c-identifier">identifier</a></li>
+
+        <li ><a href="#method-c-name">name</a></li>
+
+        <li ><a href="#method-c-parameters_schema">parameters_schema</a></li>
+
+        <li ><a href="#method-c-params">params</a></li>
 
       </ul>
     </details>
   </div>
 
 
+
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-call">call</a></li>
+
+        <li ><a href="#method-i-call_with_validation">call_with_validation</a></li>
+
+      </ul>
+    </details>
+  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -487,7 +538,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Config">
+<main role="main" aria-labelledby="class-Riffer::Tool">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -500,26 +551,40 @@
       
       <li>
         
-        <span>Config</span>
+        <span>Tool</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Config" class="anchor-link class">
-    class Riffer::Config
+  <h1 id="class-Riffer::Tool" class="anchor-link class">
+    class Riffer::Tool
   </h1>
 
   <section class="description">
     
-<p>Configuration for the <a href="../Riffer.html"><code>Riffer</code></a> framework</p>
+<p><a href="Tool.html"><code>Riffer::Tool</code></a> is the base class for all tools in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
 
-<p>Provides configuration options for AI providers and other settings.</p>
+<p>Provides a DSL for defining tool description and parameters.</p>
 
-<p>@example Setting the OpenAI API key <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>.openai.api_key = “sk-…”</p>
+<p>@abstract Subclasses must implement the <code>call</code> method.</p>
 
-<p>@example Setting Amazon Bedrock configuration <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>.amazon_bedrock.region = “us-east-1” <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>.amazon_bedrock.api_token = “…”</p>
+<p>@example class WeatherLookupTool &lt; <a href="Tool.html"><code>Riffer::Tool</code></a> description “Provides current weather information for a specified city.”</p>
+
+<pre class="ruby"><span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The city to look up&quot;</span>
+  <span class="ruby-identifier">optional</span> <span class="ruby-value">:units</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">default:</span> <span class="ruby-string">&quot;celsius&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>, <span class="ruby-value">units:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-comment"># Implementation</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>end</p>
+
+<p>@see <a href="Agent.html"><code>Riffer::Agent</code></a></p>
 
   </section>
 
@@ -532,46 +597,6 @@
 
 
 
-    <section class="attribute-method-details method-section">
-      <header>
-        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
-      </header>
-
-
-      <div id="attribute-i-amazon_bedrock" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-amazon_bedrock" title="Link to this attribute">
-            <span class="method-name">amazon_bedrock</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>Amazon Bedrock configuration @return [Struct]</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-openai" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-openai" title="Link to this attribute">
-            <span class="method-name">openai</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>OpenAI configuration @return [Struct]</p>
-
-        </div>
-      </div>
-
-    </section>
-
 
 
      <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
@@ -580,12 +605,136 @@
        </header>
 
 
-      <div id="method-c-new" class="method-detail anchor-link ">
+      <div id="method-c-description" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-new" title="Link to this method">
-                <span class="method-name">new</span>
+              <a href="#method-c-description" title="Link to this method">
+                <span class="method-name">description</span>
+                <span class="method-args">(value = nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="description-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 31</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">description</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@description</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Gets or sets the tool description @param value [String, nil] the description to set, or nil to get @return [String, nil] the tool description</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-identifier" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-identifier" title="Link to this method">
+                <span class="method-name">identifier</span>
+                <span class="method-args">(value = nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="identifier-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-constant">Module</span>.<span class="ruby-identifier">instance_method</span>(<span class="ruby-value">:name</span>).<span class="ruby-identifier">bind_call</span>(<span class="ruby-keyword">self</span>)) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Gets or sets the tool identifier/name @param value [String, nil] the identifier to set, or nil to get @return [String] the tool identifier (defaults to snake_case class name)</p>
+
+
+        </div>
+
+
+
+        <div class="aliases">
+          Also aliased as: <a href="Tool.html#method-c-name">name</a>
+        </div>
+
+
+
+      </div>
+
+
+      <div id="method-c-name" class="method-detail anchor-link method-alias">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-name" title="Link to this method">
+                <span class="method-name">name</span>
+                <span class="method-args">(value = nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+
+
+        <div class="method-description">
+
+
+          <p>Alias for identifier - used by providers</p>
+
+
+        </div>
+
+
+
+
+
+        <div class="aliases">
+          Alias for: <a href="Tool.html#method-c-identifier">identifier</a>
+        </div>
+
+      </div>
+
+
+      <div id="method-c-parameters_schema" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-parameters_schema" title="Link to this method">
+                <span class="method-name">parameters_schema</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -598,11 +747,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 24</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
-  <span class="ruby-ivar">@openai</span> = <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:api_key</span>).<span class="ruby-identifier">new</span>
-  <span class="ruby-ivar">@amazon_bedrock</span> = <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:api_token</span>, <span class="ruby-value">:region</span>).<span class="ruby-identifier">new</span>
+          <div class="method-source-code" id="parameters_schema-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parameters_schema</span>
+  <span class="ruby-ivar">@params_builder</span>&amp;.<span class="ruby-identifier">to_json_schema</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">empty_schema</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -611,7 +759,145 @@
         <div class="method-description">
 
 
-          <p>Initializes the configuration @return [void]</p>
+          <p>Returns the JSON Schema for the tool’s parameters @return [Hash] the JSON Schema</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-params" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-params" title="Link to this method">
+                <span class="method-name">params</span>
+                <span class="method-args">(&amp;block)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="params-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">params</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@params_builder</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@params_builder</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@params_builder</span>.<span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Defines parameters using the Params DSL @yield the parameter definition block @return [Riffer::Tools::Params, nil] the params builder</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-call" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-call" title="Link to this method">
+                <span class="method-name">call</span>
+                <span class="method-args">(context:, **kwargs)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="call-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 74</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} must implement #call&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Executes the tool with the given arguments @param context [Object, nil] optional context passed from the agent @param kwargs [Hash] the tool arguments @return [Object] the tool result @raise [NotImplementedError] if not implemented by subclass</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-call_with_validation" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-call_with_validation" title="Link to this method">
+                <span class="method-name">call_with_validation</span>
+                <span class="method-args">(context:, **kwargs)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="call_with_validation-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call_with_validation</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
+  <span class="ruby-identifier">params_builder</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">params</span>
+  <span class="ruby-identifier">validated_args</span> = <span class="ruby-identifier">params_builder</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">params_builder</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">kwargs</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">kwargs</span>
+  <span class="ruby-identifier">call</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">validated_args</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Executes the tool with validation (used by Agent) @param context [Object, nil] context passed from the agent @param kwargs [Hash] the tool arguments @return [Object] the tool result @raise [Riffer::ValidationError] if validation fails</p>
 
 
         </div>
