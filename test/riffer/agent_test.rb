@@ -537,7 +537,7 @@ describe Riffer::Agent do
     end
 
     describe "#generate with tools" do
-      it "executes tool calls and returns final response" do
+      it "adds tool message after executing tool call" do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
@@ -547,20 +547,55 @@ describe Riffer::Agent do
 
         agent = agent_class.new
         provider = agent.send(:provider_instance)
-
-        # First response has tool call
         provider.stub_response("", tool_calls: [
           {name: "weather_tool", arguments: '{"city":"Toronto"}'}
         ])
-        # Second response after tool execution (final response)
+        provider.stub_response("The weather in Toronto is nice!")
+
+        agent.generate("What's the weather in Toronto?")
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.length).must_equal 1
+      end
+
+      it "includes tool result in tool message content" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
+        provider.stub_response("The weather in Toronto is nice!")
+
+        agent.generate("What's the weather in Toronto?")
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.first.content).must_equal "Weather in Toronto: 20 degrees"
+      end
+
+      it "returns final response after tool execution" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
         provider.stub_response("The weather in Toronto is nice!")
 
         result = agent.generate("What's the weather in Toronto?")
 
-        # Verify tool message was added
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
-        expect(tool_messages.length).must_equal 1
-        expect(tool_messages.first.content).must_equal "Weather in Toronto: 20 degrees"
         expect(result).must_equal "The weather in Toronto is nice!"
       end
 
@@ -625,7 +660,7 @@ describe Riffer::Agent do
         expect(tool_messages.first.content).must_match(/Validation error/)
       end
 
-      it "passes tool definitions to provider" do
+      it "passes tools to provider" do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
@@ -638,6 +673,20 @@ describe Riffer::Agent do
         agent.generate("Hello")
 
         expect(provider.calls.last[:tools]).wont_be_nil
+      end
+
+      it "passes correct number of tools to provider" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        agent.generate("Hello")
+
         expect(provider.calls.last[:tools].length).must_equal 1
       end
     end

@@ -23,6 +23,8 @@
 # @see Riffer::Agent
 class Riffer::Tool
   class << self
+    include Riffer::Helpers::ClassNameConverter
+
     # Gets or sets the tool description
     # @param value [String, nil] the description to set, or nil to get
     # @return [String, nil] the tool description
@@ -35,7 +37,7 @@ class Riffer::Tool
     # @param value [String, nil] the identifier to set, or nil to get
     # @return [String] the tool identifier (defaults to snake_case class name)
     def identifier(value = nil)
-      return @identifier || derive_identifier_from_class if value.nil?
+      return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self)) if value.nil?
       @identifier = value.to_s
     end
 
@@ -58,19 +60,6 @@ class Riffer::Tool
     end
 
     private
-
-    def derive_identifier_from_class
-      # Use Module#name directly to get the Ruby class name, avoiding the aliased name method
-      ruby_class_name = Module.instance_method(:name).bind_call(self)
-      return "tool" if ruby_class_name.nil? || ruby_class_name == "Riffer::Tool"
-
-      # Get the class name without module prefix
-      class_name = ruby_class_name.split("::").last
-      class_name
-        .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-        .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-        .downcase
-    end
 
     def empty_schema
       {type: "object", properties: {}, required: [], additionalProperties: false}

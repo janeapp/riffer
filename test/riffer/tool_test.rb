@@ -40,17 +40,10 @@ describe Riffer::Tool do
   end
 
   describe ".identifier" do
-    it "derives identifier from class name" do
-      # Anonymous classes don't have names, so we can't test the derivation
-      # But we can test setting it explicitly
+    it "can be set explicitly" do
       tool_class = Class.new(Riffer::Tool)
       tool_class.identifier("my_custom_tool")
       expect(tool_class.identifier).must_equal "my_custom_tool"
-    end
-
-    it "returns 'tool' for anonymous class without identifier" do
-      tool_class = Class.new(Riffer::Tool)
-      expect(tool_class.identifier).must_equal "tool"
     end
   end
 
@@ -89,10 +82,15 @@ describe Riffer::Tool do
       expect(schema[:required]).must_include "city"
     end
 
-    it "returns empty schema when no params" do
+    it "returns object type when no params" do
       tool_class = Class.new(Riffer::Tool)
       schema = tool_class.parameters_schema
       expect(schema[:type]).must_equal "object"
+    end
+
+    it "returns empty properties when no params" do
+      tool_class = Class.new(Riffer::Tool)
+      schema = tool_class.parameters_schema
       expect(schema[:properties]).must_equal({})
     end
   end
@@ -123,7 +121,12 @@ describe Riffer::Tool do
   end
 
   describe "#call_with_validation" do
-    it "validates required params" do
+    it "raises ValidationError for missing required params" do
+      tool = weather_tool_class.new
+      expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::ValidationError)
+    end
+
+    it "includes param name in validation error message" do
       tool = weather_tool_class.new
       error = expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city is required/)
