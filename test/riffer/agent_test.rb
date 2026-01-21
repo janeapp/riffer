@@ -465,4 +465,267 @@ describe Riffer::Agent do
       expect(all_agents).must_include @agent2
     end
   end
+
+  describe ".uses_tools" do
+    let(:weather_tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Gets the weather"
+
+        params do
+          required :city, String
+        end
+
+        def call(context:, city:)
+          "Weather in #{city}: 20 degrees"
+        end
+      end
+    end
+
+    let(:agent_with_tools_class) do
+      tool_class = weather_tool_class
+      Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+        uses_tools [tool_class]
+      end
+    end
+
+    it "returns nil when not set" do
+      expect(agent_class.uses_tools).must_be_nil
+    end
+
+    it "sets the tools array" do
+      expect(agent_with_tools_class.uses_tools).must_equal [weather_tool_class]
+    end
+
+    it "accepts a lambda" do
+      tool_class = weather_tool_class
+      agent = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+        uses_tools -> { [tool_class] }
+      end
+      expect(agent.uses_tools).must_be_instance_of Proc
+    end
+  end
+
+  describe "tool calling" do
+    let(:weather_tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Gets the weather"
+
+        params do
+          required :city, String
+        end
+
+        def call(context:, city:)
+          "Weather in #{city}: 20 degrees"
+        end
+      end
+    end
+
+    let(:context_tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Gets user info"
+
+        params do
+          required :field, String
+        end
+
+        def call(context:, field:)
+          context[field.to_sym] || "unknown"
+        end
+      end
+    end
+
+    describe "#generate with tools" do
+      it "executes tool calls and returns final response" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+
+        # First response has tool call
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
+        # Second response after tool execution (final response)
+        provider.stub_response("The weather in Toronto is nice!")
+
+        result = agent.generate("What's the weather in Toronto?")
+
+        # Verify tool message was added
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.length).must_equal 1
+        expect(tool_messages.first.content).must_equal "Weather in Toronto: 20 degrees"
+        expect(result).must_equal "The weather in Toronto is nice!"
+      end
+
+      it "passes tool_context to tools" do
+        tool_class = context_tool_class
+        tool_class.identifier("context_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "context_tool", arguments: '{"field":"user_name"}'}
+        ])
+        provider.stub_response("Your name is Alice!")
+
+        agent.generate("Get my name", tool_context: {user_name: "Alice"})
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.first.content).must_equal "Alice"
+      end
+
+      it "returns error message for unknown tool" do
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools []
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "nonexistent_tool", arguments: "{}"}
+        ])
+        provider.stub_response("I couldn't find that tool.")
+
+        agent.generate("Call nonexistent tool")
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.first.content).must_match(/Unknown tool/)
+      end
+
+      it "handles validation errors gracefully" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: "{}"}
+        ])
+        provider.stub_response("Sorry, I need a city.")
+
+        agent.generate("What's the weather?")
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.first.content).must_match(/Validation error/)
+      end
+
+      it "passes tool definitions to provider" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        agent.generate("Hello")
+
+        expect(provider.calls.last[:tools]).wont_be_nil
+        expect(provider.calls.last[:tools].length).must_equal 1
+      end
+    end
+
+    describe "#stream with tools" do
+      it "yields tool call events" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
+        provider.stub_response("The weather is nice!")
+
+        events = agent.stream("What's the weather?").to_a
+
+        tool_call_done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        expect(tool_call_done_events).wont_be_empty
+      end
+
+      it "adds tool messages during streaming" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
+        provider.stub_response("The weather is nice!")
+
+        agent.stream("What's the weather?").each { |_| }
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.length).must_equal 1
+      end
+
+      it "passes tool_context in streaming mode" do
+        tool_class = context_tool_class
+        tool_class.identifier("context_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "context_tool", arguments: '{"field":"user_id"}'}
+        ])
+        provider.stub_response("Your ID is 12345!")
+
+        agent.stream("Get my id", tool_context: {user_id: "12345"}).each { |_| }
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.first.content).must_equal "12345"
+      end
+    end
+
+    describe "with lambda-based tools" do
+      it "evaluates lambda at resolution time" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        call_count = 0
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools -> {
+            call_count += 1
+            [tool_class]
+          }
+        end
+
+        agent = agent_class.new
+        agent.generate("Hello")
+
+        expect(call_count).must_be :>, 0
+      end
+    end
+  end
 end
