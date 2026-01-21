@@ -106,6 +106,7 @@ class Riffer::Agent
   # @return [String]
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
+    @resolved_tools = nil
     initialize_messages(prompt_or_messages)
 
     loop do
@@ -126,6 +127,7 @@ class Riffer::Agent
   # @return [Enumerator] an enumerator yielding stream events
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
+    @resolved_tools = nil
     initialize_messages(prompt_or_messages)
 
     Enumerator.new do |yielder|
@@ -186,7 +188,7 @@ class Riffer::Agent
     provider_instance.generate_text(
       messages: @messages,
       model: @model_name,
-      tools: tool_definitions,
+      tools: resolved_tools,
       **self.class.model_options
     )
   end
@@ -195,7 +197,7 @@ class Riffer::Agent
     provider_instance.stream_text(
       messages: @messages,
       model: @model_name,
-      tools: tool_definitions,
+      tools: resolved_tools,
       **self.class.model_options
     )
   end
@@ -214,11 +216,13 @@ class Riffer::Agent
 
   def execute_tool_calls(response)
     response.tool_calls.each do |tool_call|
-      tool_result = execute_tool_call(tool_call)
+      result = execute_tool_call(tool_call)
       @messages << Riffer::Messages::Tool.new(
-        tool_result,
+        result[:content],
         tool_call_id: tool_call[:id],
-        name: tool_call[:name]
+        name: tool_call[:name],
+        error: result[:error],
+        error_type: result[:error_type]
       )
     end
   end
@@ -227,7 +231,11 @@ class Riffer::Agent
     tool_class = find_tool_class(tool_call[:name])
 
     if tool_class.nil?
-      return "Error: Unknown tool '#{tool_call[:name]}'"
+      return {
+        content: "Error: Unknown tool '#{tool_call[:name]}'",
+        error: "Unknown tool '#{tool_call[:name]}'",
+        error_type: :unknown_tool
+      }
     end
 
     tool_instance = tool_class.new
@@ -235,11 +243,19 @@ class Riffer::Agent
 
     begin
       result = tool_instance.call_with_validation(context: @tool_context, **arguments)
-      result.to_s
+      {content: result.to_s, error: nil, error_type: nil}
     rescue Riffer::ValidationError => e
-      "Validation error: #{e.message}"
+      {
+        content: "Validation error: #{e.message}",
+        error: e.message,
+        error_type: :validation_error
+      }
     rescue => e
-      "Error executing tool: #{e.message}"
+      {
+        content: "Error executing tool: #{e.message}",
+        error: e.message,
+        error_type: :execution_error
+      }
     end
   end
 
@@ -248,12 +264,12 @@ class Riffer::Agent
       config = self.class.uses_tools
       return [] if config.nil?
 
-      config.is_a?(Proc) ? config.call : config
+      if config.is_a?(Proc)
+        (config.arity == 0) ? config.call : config.call(@tool_context)
+      else
+        config
+      end
     end
-  end
-
-  def tool_definitions
-    resolved_tools
   end
 
   def find_tool_class(name)

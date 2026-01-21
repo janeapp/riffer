@@ -639,6 +639,27 @@ describe Riffer::Agent do
         expect(tool_messages.first.content).must_match(/Unknown tool/)
       end
 
+      it "sets error attributes for unknown tool" do
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools []
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "nonexistent_tool", arguments: "{}"}
+        ])
+        provider.stub_response("I couldn't find that tool.")
+
+        agent.generate("Call nonexistent tool")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.error?).must_equal true
+        expect(tool_message.error).must_equal "Unknown tool 'nonexistent_tool'"
+        expect(tool_message.error_type).must_equal :unknown_tool
+      end
+
       it "handles validation errors gracefully" do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
@@ -658,6 +679,51 @@ describe Riffer::Agent do
 
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_match(/Validation error/)
+      end
+
+      it "sets error attributes for validation errors" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: "{}"}
+        ])
+        provider.stub_response("Sorry, I need a city.")
+
+        agent.generate("What's the weather?")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.error?).must_equal true
+        expect(tool_message.error_type).must_equal :validation_error
+      end
+
+      it "does not set error attributes for successful tool calls" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
+        provider.stub_response("The weather in Toronto is nice!")
+
+        agent.generate("What's the weather in Toronto?")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.error?).must_equal false
+        expect(tool_message.error).must_be_nil
+        expect(tool_message.error_type).must_be_nil
       end
 
       it "passes tools to provider" do
@@ -774,6 +840,86 @@ describe Riffer::Agent do
         agent.generate("Hello")
 
         expect(call_count).must_be :>, 0
+      end
+
+      it "passes tool_context to lambda when it accepts a parameter" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        received_context = nil
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools ->(context) {
+            received_context = context
+            [tool_class]
+          }
+        end
+
+        agent = agent_class.new
+        context = {user_id: 123, admin: true}
+        agent.generate("Hello", tool_context: context)
+
+        expect(received_context).must_equal context
+      end
+
+      it "allows conditional tool resolution based on context" do
+        admin_tool_class = Class.new(Riffer::Tool) do
+          description "Admin only tool"
+          params {}
+          def call(context:)
+            "admin action"
+          end
+        end
+        admin_tool_class.identifier("admin_tool")
+
+        basic_tool_class = weather_tool_class
+        basic_tool_class.identifier("weather_tool")
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools ->(context) {
+            tools = [basic_tool_class]
+            tools << admin_tool_class if context&.dig(:admin)
+            tools
+          }
+        end
+
+        admin_agent = agent_class.new
+        provider = admin_agent.send(:provider_instance)
+        provider.stub_response("Done")
+        admin_agent.generate("Hello", tool_context: {admin: true})
+        admin_tools = provider.calls.last[:tools]
+
+        regular_agent = agent_class.new
+        provider2 = regular_agent.send(:provider_instance)
+        provider2.stub_response("Done")
+        regular_agent.generate("Hello", tool_context: {admin: false})
+        regular_tools = provider2.calls.last[:tools]
+
+        expect(admin_tools.length).must_equal 2
+        expect(regular_tools.length).must_equal 1
+      end
+
+      it "re-evaluates lambda for each generate call" do
+        tool_class = weather_tool_class
+        tool_class.identifier("weather_tool")
+        contexts_received = []
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools ->(context) {
+            contexts_received << context
+            [tool_class]
+          }
+        end
+
+        agent = agent_class.new
+        agent.generate("Hello", tool_context: {call: 1})
+        agent.generate("Hello again", tool_context: {call: 2})
+
+        expect(contexts_received.length).must_equal 2
+        expect(contexts_received[0]).must_equal({call: 1})
+        expect(contexts_received[1]).must_equal({call: 2})
       end
     end
   end

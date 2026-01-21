@@ -132,18 +132,21 @@ agent = WeatherAgent.new
 puts agent.generate("What's the weather in Toronto?")
 ```
 
-Tools can also be dynamically resolved at runtime:
+Tools can also be dynamically resolved at runtime. The lambda receives `tool_context` when it accepts a parameter, enabling conditional tool resolution based on the current user or request:
 
 ```ruby
 class DynamicAgent < Riffer::Agent
   model 'openai/gpt-4o'
 
-  uses_tools -> {
+  uses_tools ->(context) {
     tools = [WeatherLookupTool]
-    tools << AdminTool if FeatureFlags.enabled?(:admin_tools)
+    tools << AdminTool if context&.dig(:current_user)&.admin?
     tools
   }
 end
+
+agent = DynamicAgent.new
+agent.generate("Do admin things", tool_context: { current_user: current_user })
 ```
 
 Pass context to tools using `tool_context`:
