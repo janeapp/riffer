@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
+# Base class for all LLM providers in the Riffer framework.
+#
+# Subclasses must implement +perform_generate_text+ and +perform_stream_text+.
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
 
   # Generates text using the provider.
   #
-  # @param prompt [String, nil] the user prompt (required when `messages` is not provided)
-  # @param system [String, nil] an optional system message
-  # @param messages [Array<Hash, Riffer::Messages::Base>, nil] optional messages array
-  # @param model [String, nil] optional model string to override the configured model
-  # @param options [Hash] additional options passed to the model invocation
-  # @return [Riffer::Messages::Assistant] the generated assistant message
+  # prompt:: String or nil - the user prompt (required when messages is not provided)
+  # system:: String or nil - an optional system message
+  # messages:: Array or nil - optional messages array
+  # model:: String or nil - optional model string to override the configured model
+  # options:: Hash - additional options passed to the model invocation
+  #
+  # Returns Riffer::Messages::Assistant - the generated assistant message.
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
@@ -21,12 +25,13 @@ class Riffer::Providers::Base
 
   # Streams text from the provider.
   #
-  # @param prompt [String, nil] the user prompt (required when `messages` is not provided)
-  # @param system [String, nil] an optional system message
-  # @param messages [Array<Hash, Riffer::Messages::Base>, nil] optional messages array
-  # @param model [String, nil] optional model string to override the configured model
-  # @param options [Hash] additional options passed to the model invocation
-  # @return [Enumerator] an enumerator yielding stream events or chunks (provider-specific)
+  # prompt:: String or nil - the user prompt (required when messages is not provided)
+  # system:: String or nil - an optional system message
+  # messages:: Array or nil - optional messages array
+  # model:: String or nil - optional model string to override the configured model
+  # options:: Hash - additional options passed to the model invocation
+  #
+  # Returns Enumerator - an enumerator yielding stream events.
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)

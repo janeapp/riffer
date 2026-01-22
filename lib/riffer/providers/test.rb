@@ -1,8 +1,19 @@
 # frozen_string_literal: true
 
+# Test provider for mocking LLM responses in tests.
+#
+# No external gems required.
 class Riffer::Providers::Test < Riffer::Providers::Base
+  # Array of recorded method calls for assertions.
+  #
+  # Returns Array of Hash.
   attr_reader :calls
 
+  # Initializes the test provider.
+  #
+  # options:: Hash - optional configuration
+  #
+  # Use +:responses+ to pre-configure responses.
   def initialize(**options)
     @responses = options[:responses] || []
     @current_index = 0
@@ -10,14 +21,17 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     @stubbed_responses = []
   end
 
-  # Stubs the next response from the provider
-  # Can be called multiple times to queue responses
-  # @param content [String] the response content
-  # @param tool_calls [Array<Hash>] optional tool calls to include
-  # @example
+  # Stubs the next response from the provider.
+  #
+  # Can be called multiple times to queue responses.
+  #
+  # content:: String - the response content
+  # tool_calls:: Array of Hash - optional tool calls to include
+  #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
-  #   provider.stub_response("Final response")  # Queued for after tool execution
+  #   provider.stub_response("Final response")
+  #
   def stub_response(content, tool_calls: [])
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
       {
@@ -30,7 +44,7 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     @stubbed_responses << {role: "assistant", content: content, tool_calls: formatted_tool_calls}
   end
 
-  # Clears all stubbed responses
+  # Clears all stubbed responses.
   def clear_stubs
     @stubbed_responses = []
   end

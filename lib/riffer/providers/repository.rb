@@ -1,4 +1,6 @@
+# Registry for finding provider classes by identifier.
 class Riffer::Providers::Repository
+  # Mapping of provider identifiers to provider class lambdas.
   REPO = {
     openai: -> { Riffer::Providers::OpenAI },
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
@@ -6,9 +8,11 @@ class Riffer::Providers::Repository
   }.freeze
 
   class << self
-    # Finds a provider class by identifier
-    # @param identifier [String, Symbol] the identifier to search for
-    # @return [Class, nil] the provider class, or nil if not found
+    # Finds a provider class by identifier.
+    #
+    # identifier:: String or Symbol - the identifier to search for
+    #
+    # Returns Class or nil - the provider class, or nil if not found.
     def find(identifier)
       REPO.fetch(identifier.to_sym, nil)&.call
     end
