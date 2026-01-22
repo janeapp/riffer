@@ -5,10 +5,18 @@ require "json"
 # Riffer::Agent is the base class for all agents in the Riffer framework.
 #
 # Provides orchestration for LLM calls, tool use, and message management.
+# Subclass this to create your own agents.
 #
-# @abstract
-# @see Riffer::Messages
-# @see Riffer::Providers
+# See Riffer::Messages and Riffer::Providers.
+#
+#   class MyAgent < Riffer::Agent
+#     model 'openai/gpt-4o'
+#     instructions 'You are a helpful assistant.'
+#   end
+#
+#   agent = MyAgent.new
+#   agent.generate('Hello!')
+#
 class Riffer::Agent
   include Riffer::Messages::Converter
 
@@ -16,77 +24,94 @@ class Riffer::Agent
     include Riffer::Helpers::ClassNameConverter
     include Riffer::Helpers::Validations
 
-    # Gets or sets the agent identifier
-    # @param value [String, nil] the identifier to set, or nil to get
-    # @return [String] the agent identifier
+    # Gets or sets the agent identifier.
+    #
+    # value:: String or nil - the identifier to set, or nil to get
+    #
+    # Returns String - the agent identifier.
     def identifier(value = nil)
       return @identifier || class_name_to_path(name) if value.nil?
       @identifier = value.to_s
     end
 
-    # Gets or sets the model string (e.g., "openai/gpt-4")
-    # @param model_string [String, nil] the model string to set, or nil to get
-    # @return [String] the model string
+    # Gets or sets the model string (e.g., "openai/gpt-4o").
+    #
+    # model_string:: String or nil - the model string to set, or nil to get
+    #
+    # Returns String - the model string.
     def model(model_string = nil)
       return @model if model_string.nil?
       validate_is_string!(model_string, "model")
       @model = model_string
     end
 
-    # Gets or sets the agent instructions
-    # @param instructions_text [String, nil] the instructions to set, or nil to get
-    # @return [String] the agent instructions
+    # Gets or sets the agent instructions.
+    #
+    # instructions_text:: String or nil - the instructions to set, or nil to get
+    #
+    # Returns String - the agent instructions.
     def instructions(instructions_text = nil)
       return @instructions if instructions_text.nil?
       validate_is_string!(instructions_text, "instructions")
       @instructions = instructions_text
     end
 
-    # Gets or sets provider options passed to the provider client
-    # @param options [Hash, nil] the options to set, or nil to get
-    # @return [Hash] the provider options
+    # Gets or sets provider options passed to the provider client.
+    #
+    # options:: Hash or nil - the options to set, or nil to get
+    #
+    # Returns Hash - the provider options.
     def provider_options(options = nil)
       return @provider_options || {} if options.nil?
       @provider_options = options
     end
 
-    # Gets or sets model options passed to generate_text/stream_text
-    # @param options [Hash, nil] the options to set, or nil to get
-    # @return [Hash] the model options
+    # Gets or sets model options passed to generate_text/stream_text.
+    #
+    # options:: Hash or nil - the options to set, or nil to get
+    #
+    # Returns Hash - the model options.
     def model_options(options = nil)
       return @model_options || {} if options.nil?
       @model_options = options
     end
 
-    # Gets or sets the tools used by this agent
-    # @param tools_or_lambda [Array<Class>, Proc, nil] tools array or lambda returning tools
-    # @return [Array<Class>, Proc, nil] the tools configuration
+    # Gets or sets the tools used by this agent.
+    #
+    # tools_or_lambda:: Array of Tool classes, Proc, or nil - tools array or lambda returning tools
+    #
+    # Returns Array, Proc, or nil - the tools configuration.
     def uses_tools(tools_or_lambda = nil)
       return @tools_config if tools_or_lambda.nil?
       @tools_config = tools_or_lambda
     end
 
-    # Finds an agent class by identifier
-    # @param identifier [String] the identifier to search for
-    # @return [Class, nil] the agent class, or nil if not found
+    # Finds an agent class by identifier.
+    #
+    # identifier:: String - the identifier to search for
+    #
+    # Returns Class or nil - the agent class, or nil if not found.
     def find(identifier)
       subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
     end
 
-    # Returns all agent subclasses
-    # @return [Array<Class>] all agent subclasses
+    # Returns all agent subclasses.
+    #
+    # Returns Array of Class - all agent subclasses.
     def all
       subclasses
     end
   end
 
-  # The message history for the agent
-  # @return [Array<Riffer::Messages::Base>]
+  # The message history for the agent.
+  #
+  # Returns Array of Riffer::Messages::Base.
   attr_reader :messages
 
-  # Initializes a new agent
-  # @raise [Riffer::ArgumentError] if the configured model string is invalid (must be "provider/model")
-  # @return [void]
+  # Initializes a new agent.
+  #
+  # Raises Riffer::ArgumentError if the configured model string is invalid
+  # (must be "provider/model" format).
   def initialize
     @messages = []
     @model_string = self.class.model
@@ -100,10 +125,12 @@ class Riffer::Agent
     @model_name = model_name
   end
 
-  # Generates a response from the agent
-  # @param prompt_or_messages [String, Array<Hash, Riffer::Messages::Base>]
-  # @param tool_context [Object, nil] optional context object passed to all tool calls
-  # @return [String]
+  # Generates a response from the agent.
+  #
+  # prompt_or_messages:: String or Array - a string prompt or array of message hashes/objects
+  # tool_context:: Object or nil - optional context object passed to all tool calls
+  #
+  # Returns String - the final response content.
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
@@ -121,10 +148,12 @@ class Riffer::Agent
     extract_final_response
   end
 
-  # Streams a response from the agent
-  # @param prompt_or_messages [String, Array<Hash, Riffer::Messages::Base>]
-  # @param tool_context [Object, nil] optional context object passed to all tool calls
-  # @return [Enumerator] an enumerator yielding stream events
+  # Streams a response from the agent.
+  #
+  # prompt_or_messages:: String or Array - a string prompt or array of message hashes/objects
+  # tool_context:: Object or nil - optional context object passed to all tool calls
+  #
+  # Returns Enumerator - an enumerator yielding stream events.
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil

@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
+# OpenAI provider for GPT models.
+#
+# Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # Initializes the OpenAI provider.
-  # @param options [Hash] optional client options. Use `:api_key` to override `Riffer.config.openai.api_key`.
+  #
+  # options:: Hash - optional client options
+  #
+  # Use +:api_key+ to override +Riffer.config.openai.api_key+.
   def initialize(**options)
     depends_on "openai"
 

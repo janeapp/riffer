@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
+# Module for converting hashes to message objects.
+#
+# Included in Agent and Provider classes to handle message normalization.
 module Riffer::Messages::Converter
+  # Converts a hash or message object to a Riffer::Messages::Base subclass.
+  #
+  # msg:: Hash or Riffer::Messages::Base - the message to convert
+  #
+  # Returns Riffer::Messages::Base subclass.
+  #
+  # Raises Riffer::ArgumentError if the message format is invalid.
   def convert_to_message_object(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
 

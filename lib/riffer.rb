@@ -2,15 +2,11 @@
 
 require "zeitwerk"
 
-# :nodoc:
 # Riffer is the main module for the Riffer AI framework.
 #
 # Provides configuration, error classes, and versioning for the gem.
 #
-# @see Riffer::Config
-# @see Riffer::Agent
-# @see Riffer::Providers
-# @see Riffer::Messages
+# See Riffer::Config, Riffer::Agent, Riffer::Providers, and Riffer::Messages.
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect(
   "open_ai" => "OpenAI"
@@ -18,37 +14,38 @@ loader.inflector.inflect(
 loader.setup
 
 module Riffer
-  # Base error for Riffer
-  # @api public
+  # Base error class for Riffer.
   class Error < StandardError; end
 
-  # Argument error for Riffer
-  # @api public
+  # Raised when invalid arguments are provided.
   class ArgumentError < ::ArgumentError; end
 
-  # Validation error for tool parameter validation
-  # @api public
+  # Raised when tool parameter validation fails.
   class ValidationError < Error; end
 
-  # Provides configuration and versioning methods for Riffer
-  #
-  # @!group Configuration
   class << self
-    # Returns the Riffer configuration
-    # @return [Riffer::Config]
+    # Returns the Riffer configuration.
+    #
+    # Returns Riffer::Config.
     def config
       @config ||= Config.new
     end
 
-    # Yields the configuration for block-based setup
-    # @yieldparam config [Riffer::Config] the configuration object
-    # @return [void]
+    # Yields the configuration for block-based setup.
+    #
+    # Yields config (Riffer::Config) to the block.
+    #
+    #   Riffer.configure do |config|
+    #     config.openai.api_key = ENV['OPENAI_API_KEY']
+    #   end
+    #
     def configure
       yield config if block_given?
     end
 
-    # Returns the gem version
-    # @return [String] the version string
+    # Returns the gem version.
+    #
+    # Returns String.
     def version
       VERSION
     end

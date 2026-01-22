@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
+# Helper module for converting class names.
 module Riffer::Helpers::ClassNameConverter
-  # Converts a class name to snake_case path format
-  # @param class_name [String] the class name (e.g., "Riffer::Agent")
-  # @return [String] the snake_case path (e.g., "riffer/agent")
+  # Converts a class name to snake_case path format.
+  #
+  # class_name:: String - the class name (e.g., "Riffer::Agent")
+  #
+  # Returns String - the snake_case path (e.g., "riffer/agent").
   def class_name_to_path(class_name)
     class_name
       .to_s

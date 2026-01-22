@@ -2,15 +2,13 @@
 
 # Riffer::Tools::Params provides a DSL for defining tool parameters.
 #
-# Used within a Tool's `params` block to define required and optional parameters.
+# Used within a Tool's +params+ block to define required and optional parameters.
 #
-# @example
 #   params do
 #     required :city, String, description: "The city name"
 #     optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
 #   end
 #
-# @api private
 class Riffer::Tools::Params
   attr_reader :parameters
 
@@ -18,12 +16,14 @@ class Riffer::Tools::Params
     @parameters = []
   end
 
-  # Defines a required parameter
-  # @param name [Symbol] the parameter name
-  # @param type [Class] the expected Ruby type
-  # @param description [String, nil] optional description
-  # @param enum [Array, nil] optional list of allowed values
-  # @return [void]
+  # Defines a required parameter.
+  #
+  # name:: Symbol - the parameter name
+  # type:: Class - the expected Ruby type
+  # description:: String or nil - optional description
+  # enum:: Array or nil - optional list of allowed values
+  #
+  # Returns void.
   def required(name, type, description: nil, enum: nil)
     @parameters << Riffer::Tools::Param.new(
       name: name,
@@ -34,13 +34,15 @@ class Riffer::Tools::Params
     )
   end
 
-  # Defines an optional parameter
-  # @param name [Symbol] the parameter name
-  # @param type [Class] the expected Ruby type
-  # @param description [String, nil] optional description
-  # @param enum [Array, nil] optional list of allowed values
-  # @param default [Object, nil] default value when not provided
-  # @return [void]
+  # Defines an optional parameter.
+  #
+  # name:: Symbol - the parameter name
+  # type:: Class - the expected Ruby type
+  # description:: String or nil - optional description
+  # enum:: Array or nil - optional list of allowed values
+  # default:: Object or nil - default value when not provided
+  #
+  # Returns void.
   def optional(name, type, description: nil, enum: nil, default: nil)
     @parameters << Riffer::Tools::Param.new(
       name: name,
@@ -52,10 +54,13 @@ class Riffer::Tools::Params
     )
   end
 
-  # Validates arguments against parameter definitions
-  # @param arguments [Hash] the arguments to validate
-  # @return [Hash] validated arguments with defaults applied
-  # @raise [Riffer::ValidationError] if validation fails
+  # Validates arguments against parameter definitions.
+  #
+  # arguments:: Hash - the arguments to validate
+  #
+  # Returns Hash - validated arguments with defaults applied.
+  #
+  # Raises Riffer::ValidationError if validation fails.
   def validate(arguments)
     validated = {}
     errors = []
@@ -91,8 +96,9 @@ class Riffer::Tools::Params
     validated
   end
 
-  # Converts all parameters to JSON Schema format
-  # @return [Hash] the JSON Schema representation
+  # Converts all parameters to JSON Schema format.
+  #
+  # Returns Hash - the JSON Schema representation.
   def to_json_schema
     properties = {}
     required_params = []

@@ -2,13 +2,17 @@
 
 require "json"
 
+# Amazon Bedrock provider for Claude and other foundation models.
+#
+# Requires the +aws-sdk-bedrockruntime+ gem to be installed.
+#
+# See https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # Initializes the Amazon Bedrock provider.
   #
-  # @param options [Hash] options passed to Aws::BedrockRuntime::Client
-  # @option options [String] :api_token Bearer token for API authentication (requires :region)
-  # @option options [String] :region AWS region
-  # @see https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
+  # api_token:: String or nil - Bearer token for API authentication
+  # region:: String or nil - AWS region
+  # options:: Hash - additional options passed to Aws::BedrockRuntime::Client
   def initialize(api_token: nil, region: nil, **options)
     depends_on "aws-sdk-bedrockruntime"
 
