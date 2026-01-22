@@ -128,10 +128,36 @@ end
 
 ### Documentation
 
-- Use YARD-style comments for public APIs
-- Document parameters with `@param`
-- Document return values with `@return`
-- Document raised errors with `@raise`
+Use pure RDoc comments for public APIs (not YARD). Follow these conventions:
+
+- Document parameters using definition list syntax (`::`):
+  ```ruby
+  # Creates a new agent.
+  #
+  # name:: String - the agent name
+  # options:: Hash - optional configuration
+  ```
+
+- Document return values with prose:
+  ```ruby
+  # Returns String - the agent identifier.
+  ```
+
+- Document exceptions with prose:
+  ```ruby
+  # Raises Riffer::ArgumentError if the name is invalid.
+  ```
+
+- Include usage examples as indented code blocks:
+  ```ruby
+  # Creates a new agent.
+  #
+  #   agent = MyAgent.new
+  #   agent.generate('Hello')
+  #
+  ```
+
+- Mark internal APIs with `:nodoc:` to exclude from documentation
 
 ### Comments
 
