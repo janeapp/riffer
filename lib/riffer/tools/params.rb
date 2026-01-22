@@ -22,6 +22,8 @@ class Riffer::Tools::Params
   # type:: Class - the expected Ruby type
   # description:: String or nil - optional description
   # enum:: Array or nil - optional list of allowed values
+  #
+  # Returns void.
   def required(name, type, description: nil, enum: nil)
     @parameters << Riffer::Tools::Param.new(
       name: name,
@@ -39,6 +41,8 @@ class Riffer::Tools::Params
   # description:: String or nil - optional description
   # enum:: Array or nil - optional list of allowed values
   # default:: Object or nil - default value when not provided
+  #
+  # Returns void.
   def optional(name, type, description: nil, enum: nil, default: nil)
     @parameters << Riffer::Tools::Param.new(
       name: name,

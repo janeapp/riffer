@@ -28,6 +28,8 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   # content:: String - the response content
   # tool_calls:: Array of Hash - optional tool calls to include
   #
+  # Returns void.
+  #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
   #   provider.stub_response("Final response")
@@ -45,6 +47,8 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   end
 
   # Clears all stubbed responses.
+  #
+  # Returns void.
   def clear_stubs
     @stubbed_responses = []
   end
