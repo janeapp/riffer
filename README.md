@@ -54,7 +54,7 @@ For comprehensive documentation, see the [docs](docs/) directory:
 - [Messages](docs/05_MESSAGES.md) - Message types and formats
 - [Stream Events](docs/06_STREAM_EVENTS.md) - Streaming responses
 - [Configuration](docs/07_CONFIGURATION.md) - Framework configuration
-- [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
+- [Providers](docs_providers/01_PROVIDERS.md) - LLM provider adapters
 
 ### API Reference
 
