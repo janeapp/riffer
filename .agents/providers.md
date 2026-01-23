@@ -37,7 +37,7 @@ Add to `Riffer::Providers::Repository::REPO`:
 ```ruby
 REPO = {
   # ... existing providers
-  "your_provider" => YourProvider
+  your_provider: -> { YourProvider }
 }.freeze
 ```
 
