@@ -27,7 +27,7 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   # Returns String or nil.
   attr_reader :error
 
-  # The type of error (:unknown_tool, :validation_error, :execution_error).
+  # The type of error (:unknown_tool, :validation_error, :execution_error, :timeout_error).
   #
   # Returns Symbol or nil.
   attr_reader :error_type
