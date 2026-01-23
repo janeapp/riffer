@@ -9,6 +9,8 @@ GEM
   specs:
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
+    anthropic (1.16.3)
+      connection_pool
     ast (2.4.3)
     aws-eventstream (1.4.0)
     aws-partitions (1.1206.0)
@@ -124,6 +126,7 @@ PLATFORMS
   x86_64-linux-gnu
 
 DEPENDENCIES
+  anthropic (~> 1.16.3)
   aws-sdk-bedrockruntime (~> 1.0)
   dotenv
   irb
