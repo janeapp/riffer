@@ -4,11 +4,12 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 
 ## Available Providers
 
-| Provider | Identifier | Gem Required |
-|----------|------------|--------------|
-| OpenAI | `openai` | `openai` |
+| Provider       | Identifier       | Gem Required             |
+| -------------- | ---------------- | ------------------------ |
+| OpenAI         | `openai`         | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
-| Test | `test` | None |
+| Anthropic      | `anthropic`      | `anthropic`              |
+| Test           | `test`           | None                     |
 
 ## Model String Format
 
@@ -18,6 +19,7 @@ Agents specify providers using the `provider/model` format:
 class MyAgent < Riffer::Agent
   model 'openai/gpt-4o'              # OpenAI
   model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'  # Bedrock
+  model 'anthropic/claude-3-5-sonnet-20241022'  # Anthropic
   model 'test/any'                   # Test provider
 end
 ```
@@ -61,14 +63,14 @@ end
 
 ## Method Parameters
 
-| Parameter | Description |
-|-----------|-------------|
-| `prompt` | String prompt (required if `messages` not provided) |
-| `system` | Optional system message string |
-| `messages` | Array of message objects/hashes (alternative to `prompt`) |
-| `model` | Model name string |
-| `tools` | Array of Tool classes |
-| `**options` | Provider-specific options |
+| Parameter   | Description                                               |
+| ----------- | --------------------------------------------------------- |
+| `prompt`    | String prompt (required if `messages` not provided)       |
+| `system`    | Optional system message string                            |
+| `messages`  | Array of message objects/hashes (alternative to `prompt`) |
+| `model`     | Model name string                                         |
+| `tools`     | Array of Tool classes                                     |
+| `**options` | Provider-specific options                                 |
 
 You must provide either `prompt` or `messages`, but not both.
 
@@ -150,13 +152,17 @@ Riffer::Providers::Repository.find(:openai)
 Riffer::Providers::Repository.find(:amazon_bedrock)
 # => Riffer::Providers::AmazonBedrock
 
+Riffer::Providers::Repository.find(:anthropic)
+# => Riffer::Providers::Anthropic
+
 Riffer::Providers::Repository.find(:test)
 # => Riffer::Providers::Test
 ```
 
 ## Provider-Specific Guides
 
-- [OpenAI](02_OPENAI.md) - GPT models
-- [Amazon Bedrock](03_AMAZON_BEDROCK.md) - Claude and other models via AWS
-- [Test](04_TEST_PROVIDER.md) - Mock provider for testing
-- [Custom Providers](05_CUSTOM_PROVIDERS.md) - Creating your own provider
+- [Amazon Bedrock](02_AMAZON_BEDROCK.md) - Claude and other models via AWS
+- [Anthropic](03_ANTHROPIC.md) - Claude models via Anthropic API
+- [OpenAI](04_OPENAI.md) - GPT models
+- [Test](05_TEST_PROVIDER.md) - Mock provider for testing
+- [Custom Providers](06_CUSTOM_PROVIDERS.md) - Creating your own provider
