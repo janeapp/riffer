@@ -1,0 +1,137 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-3-haiku-20240307","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Helper-Method:
+      - stream
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '376'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Jan 2026 23:40:31 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '400000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '400000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-23T23:40:31Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '80000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '80000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-23T23:40:31Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '4000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '3999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-23T23:40:31Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '480000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '480000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-23T23:40:31Z'
+      Request-Id:
+      - req_011CXRCB4B1WwXfZLnmrGooc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '198'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9c2b22f7495f70f4-YVR
+    body:
+      encoding: UTF-8
+      string: |+
+        event: message_start
+        data: {"type":"message_start","message":{"model":"claude-3-haiku-20240307","id":"msg_01RxtFegYkAkz8U3m4TZiohR","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":348,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}   }
+
+        event: content_block_start
+        data: {"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_01NiRVQ32QwZFn9UPwtwCBqk","name":"get_weather","input":{}}          }
+
+        event: ping
+        data: {"type": "ping"}
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}       }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"city\": \"T"}   }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"oront"}         }
+
+        event: content_block_delta
+        data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"o\"}"}               }
+
+        event: content_block_stop
+        data: {"type":"content_block_stop","index":0     }
+
+        event: message_delta
+        data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"input_tokens":348,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":53}       }
+
+        event: message_stop
+        data: {"type":"message_stop"          }
+
+  recorded_at: Fri, 23 Jan 2026 23:40:31 GMT
+recorded_with: VCR 6.4.0
+...

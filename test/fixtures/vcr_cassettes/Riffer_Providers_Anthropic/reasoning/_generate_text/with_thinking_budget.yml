@@ -1,0 +1,109 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-3-7-sonnet-20250219","messages":[{"role":"user","content":"What
+        is 2+2? Think step by step."}],"max_tokens":16000,"thinking":{"type":"enabled","budget_tokens":5000}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '182'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Jan 2026 23:40:28 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '200000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '200000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-23T23:40:24Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '80000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '80000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-23T23:40:28Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '4000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '3999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-23T23:40:24Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '280000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '280000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-23T23:40:24Z'
+      Request-Id:
+      - req_011CXRCAYCxG2F7tBCRFpgtc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '4107'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9c2b22cb7dcd2086-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-3-7-sonnet-20250219","id":"msg_013kwZftFC1o5Sm2qSDBukHQ","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"This
+        is a very basic arithmetic question. I''ll solve it step by step.\n\n2+2 means
+        I need to add 2 and 2 together.\n\nI can think of this as combining 2 objects
+        with another 2 objects.\nIf I have 2 apples and I get 2 more apples, I would
+        have 4 apples total.\n\nOr I can solve it algebraically:\n2+2 = 4\n\nSo the
+        answer is 4.","signature":"ErcBCkgICxgCIkCGXUWFyY7W7KtgLnmnpT5IveQx60ldsS28oKTI+o5Y16/fusPO+ftxXZ9sGyqs4J0lppm5Nje1C3EzV8VgjkDeKAESDHuh/1Fr3tXYmSR3kRoMHqSggl1NejN3sIbJIjC1Bf4XpfgJimx25WJZT4P8vdKOo+DOoKXYsJIj/oRpr/+zgF6fj3nUzMD+GjtbX4MqHYytay1aoJ1jgkkG9dy4wpZdVRW6cTyxJtZ+Dls2GAI="},{"type":"text","text":"To
+        find the sum of 2+2:\n\n1) I need to add the number 2 with another 2\n2) When
+        adding two numbers, I combine their values\n3) If I visualize this, it''s
+        like having 2 objects and then getting 2 more objects\n4) Counting the total
+        gives: 1, 2, 3, 4\n\nTherefore, 2+2 = 4"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":48,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":213,"service_tier":"standard"}}'
+  recorded_at: Fri, 23 Jan 2026 23:40:28 GMT
+recorded_with: VCR 6.4.0

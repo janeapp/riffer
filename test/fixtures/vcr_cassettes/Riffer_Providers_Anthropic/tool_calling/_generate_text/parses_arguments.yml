@@ -1,0 +1,103 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-3-haiku-20240307","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4096,"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '362'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Jan 2026 23:40:11 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '400000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '400000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-23T23:40:11Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '80000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '80000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-23T23:40:11Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '4000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '3999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-23T23:40:11Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '480000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '480000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-23T23:40:11Z'
+      Request-Id:
+      - req_011CXRC9aRshPWGYn6ENEtLF
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '638'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9c2b2279fea52c3d-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-3-haiku-20240307","id":"msg_01EGzroDfbUbKQZB6bE2iFrJ","type":"message","role":"assistant","content":[{"type":"text","text":"Here
+        is the current weather for Toronto:"},{"type":"tool_use","id":"toolu_01EsGM6mgaLhJmYqPnhaLNiJ","name":"get_weather","input":{"city":"Toronto"}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":348,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":62,"service_tier":"standard"}}'
+  recorded_at: Fri, 23 Jan 2026 23:40:11 GMT
+recorded_with: VCR 6.4.0
