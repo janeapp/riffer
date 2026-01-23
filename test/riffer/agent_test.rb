@@ -822,6 +822,121 @@ describe Riffer::Agent do
       end
     end
 
+    describe "tool timeouts" do
+      let(:slow_tool_class) do
+        Class.new(Riffer::Tool) do
+          description "A slow tool"
+          timeout 0.1
+
+          def call(context:)
+            sleep 2
+            "done"
+          end
+        end
+      end
+
+      let(:fast_tool_class) do
+        Class.new(Riffer::Tool) do
+          description "A fast tool"
+
+          def call(context:)
+            "fast result"
+          end
+        end
+      end
+
+      it "times out slow tools" do
+        tool_class = slow_tool_class
+        tool_class.identifier("slow_tool")
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "slow_tool", arguments: "{}"}
+        ])
+        provider.stub_response("The tool timed out.")
+
+        agent.generate("Run the slow tool")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.error?).must_equal true
+      end
+
+      it "sets error content and error_type for timeout" do
+        tool_class = slow_tool_class
+        tool_class.identifier("slow_tool")
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "slow_tool", arguments: "{}"}
+        ])
+        provider.stub_response("The tool timed out.")
+
+        agent.generate("Run the slow tool")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.content).must_match(/timed out/)
+        expect(tool_message.error_type).must_equal :timeout_error
+      end
+
+      it "uses tool-level timeout in error message" do
+        tool_class = slow_tool_class
+        tool_class.identifier("slow_tool")
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "slow_tool", arguments: "{}"}
+        ])
+        provider.stub_response("The tool timed out.")
+
+        agent.generate("Run the slow tool")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.error?).must_equal true
+        expect(tool_message.error).must_match(/0\.1 seconds/)
+      end
+
+      it "fast tools do not timeout" do
+        tool_class = fast_tool_class
+        tool_class.identifier("fast_tool")
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tool_class]
+        end
+
+        agent = agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "fast_tool", arguments: "{}"}
+        ])
+        provider.stub_response("The tool ran successfully.")
+
+        agent.generate("Run the fast tool")
+
+        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_message.error?).must_equal false
+        expect(tool_message.content).must_equal "fast result"
+      end
+    end
+
     describe "with lambda-based tools" do
       it "evaluates lambda at resolution time" do
         tool_class = weather_tool_class
