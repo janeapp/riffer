@@ -114,6 +114,7 @@ class Riffer::Agent
   # (must be "provider/model" format).
   def initialize
     @messages = []
+    @message_callbacks = []
     @model_string = self.class.model
     @instructions_text = self.class.instructions
 
@@ -138,7 +139,7 @@ class Riffer::Agent
 
     loop do
       response = call_llm
-      @messages << response
+      add_message(response)
 
       break unless has_tool_calls?(response)
 
@@ -189,7 +190,7 @@ class Riffer::Agent
         end
 
         response = Riffer::Messages::Assistant.new(accumulated_content, tool_calls: accumulated_tool_calls)
-        @messages << response
+        add_message(response)
 
         break unless has_tool_calls?(response)
 
@@ -198,7 +199,25 @@ class Riffer::Agent
     end
   end
 
+  # Registers a callback to be invoked when messages are added during generation.
+  #
+  # block:: Block - callback receiving a Riffer::Messages::Base subclass
+  #
+  # Raises Riffer::ArgumentError if no block is given.
+  #
+  # Returns self for method chaining.
+  def on_message(&block)
+    raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
+    @message_callbacks << block
+    self
+  end
+
   private
+
+  def add_message(message)
+    @messages << message
+    @message_callbacks.each { |callback| callback.call(message) }
+  end
 
   def initialize_messages(prompt_or_messages)
     @messages = []
@@ -246,13 +265,13 @@ class Riffer::Agent
   def execute_tool_calls(response)
     response.tool_calls.each do |tool_call|
       result = execute_tool_call(tool_call)
-      @messages << Riffer::Messages::Tool.new(
+      add_message(Riffer::Messages::Tool.new(
         result[:content],
         tool_call_id: tool_call[:id],
         name: tool_call[:name],
         error: result[:error],
         error_type: result[:error_type]
-      )
+      ))
     end
   end
 
