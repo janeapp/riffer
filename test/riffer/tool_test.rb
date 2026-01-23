@@ -179,5 +179,48 @@ describe Riffer::Tool do
       result = tool.call_with_validation(context: nil)
       expect(result).must_equal "Simple result"
     end
+
+    it "raises TimeoutError when execution exceeds timeout" do
+      slow_tool_class = Class.new(Riffer::Tool) do
+        timeout 0.01
+
+        def call(context:)
+          sleep 0.02
+          "done"
+        end
+      end
+
+      tool = slow_tool_class.new
+      expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::TimeoutError)
+    end
+
+    it "includes timeout duration in error message" do
+      slow_tool_class = Class.new(Riffer::Tool) do
+        timeout 0.01
+
+        def call(context:)
+          sleep 0.02
+          "done"
+        end
+      end
+
+      tool = slow_tool_class.new
+      error = expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::TimeoutError)
+      expect(error.message).must_match(/0\.01 seconds/)
+    end
+
+    it "completes successfully when within timeout" do
+      fast_tool_class = Class.new(Riffer::Tool) do
+        timeout 1
+
+        def call(context:)
+          "fast result"
+        end
+      end
+
+      tool = fast_tool_class.new
+      result = tool.call_with_validation(context: nil)
+      expect(result).must_equal "fast result"
+    end
   end
 end

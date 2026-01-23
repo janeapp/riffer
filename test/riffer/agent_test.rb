@@ -826,10 +826,10 @@ describe Riffer::Agent do
       let(:slow_tool_class) do
         Class.new(Riffer::Tool) do
           description "A slow tool"
-          timeout 0.1
+          timeout 0.01
 
           def call(context:)
-            sleep 2
+            sleep 0.02
             "done"
           end
         end
@@ -910,7 +910,7 @@ describe Riffer::Agent do
 
         tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal true
-        expect(tool_message.error).must_match(/0\.1 seconds/)
+        expect(tool_message.error).must_match(/0\.01 seconds/)
       end
 
       it "fast tools do not timeout" do
