@@ -3,6 +3,12 @@
 require "test_helper"
 
 describe Riffer do
+  describe "TimeoutError" do
+    it "is a subclass of Riffer::Error" do
+      expect(Riffer::TimeoutError.superclass).must_equal Riffer::Error
+    end
+  end
+
   describe ".version" do
     it "has a version number" do
       expect(Riffer.version).wont_be_nil
