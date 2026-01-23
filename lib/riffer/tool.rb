@@ -104,7 +104,7 @@ class Riffer::Tool
   # Returns Object - the tool result.
   #
   # Raises Riffer::ValidationError if validation fails.
-  # Raises Timeout::Error if execution exceeds the configured timeout.
+  # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params
     validated_args = params_builder ? params_builder.validate(kwargs) : kwargs
@@ -112,5 +112,7 @@ class Riffer::Tool
     Timeout.timeout(self.class.timeout) do
       call(context: context, **validated_args)
     end
+  rescue Timeout::Error
+    raise Riffer::TimeoutError, "Tool execution timed out after #{self.class.timeout} seconds"
   end
 end

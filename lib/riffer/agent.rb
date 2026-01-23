@@ -273,10 +273,10 @@ class Riffer::Agent
     begin
       result = tool_instance.call_with_validation(context: @tool_context, **arguments)
       {content: result.to_s, error: nil, error_type: nil}
-    rescue Timeout::Error
+    rescue Riffer::TimeoutError => e
       {
-        content: "Error: Tool '#{tool_call[:name]}' timed out after #{tool_class.timeout} seconds",
-        error: "Tool '#{tool_call[:name]}' timed out after #{tool_class.timeout} seconds",
+        content: "Error: #{e.message}",
+        error: e.message,
         error_type: :timeout_error
       }
     rescue Riffer::ValidationError => e
