@@ -47,6 +47,27 @@ describe Riffer::Tool do
     end
   end
 
+  describe ".timeout" do
+    it "returns 10 when not set" do
+      tool_class = Class.new(Riffer::Tool)
+      expect(tool_class.timeout).must_equal 10
+    end
+
+    it "sets the timeout value" do
+      tool_class = Class.new(Riffer::Tool) do
+        timeout 30
+      end
+      expect(tool_class.timeout).must_equal 30.0
+    end
+
+    it "converts to float" do
+      tool_class = Class.new(Riffer::Tool) do
+        timeout 15
+      end
+      expect(tool_class.timeout).must_be_instance_of Float
+    end
+  end
+
   describe ".params" do
     it "returns the params builder" do
       expect(weather_tool_class.params).must_be_instance_of Riffer::Tools::Params
