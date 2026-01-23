@@ -34,8 +34,8 @@ Riffer.config.anthropic.api_key
 
 ### OpenAI
 
-| Option | Description |
-|--------|-------------|
+| Option    | Description         |
+| --------- | ------------------- |
 | `api_key` | Your OpenAI API key |
 
 ```ruby
@@ -46,9 +46,9 @@ end
 
 ### Amazon Bedrock
 
-| Option | Description |
-|--------|-------------|
-| `region` | AWS region (e.g., `us-east-1`) |
+| Option      | Description                                  |
+| ----------- | -------------------------------------------- |
+| `region`    | AWS region (e.g., `us-east-1`)               |
 | `api_token` | Optional bearer token for API authentication |
 
 ```ruby
@@ -62,8 +62,8 @@ When `api_token` is not set, the provider uses standard AWS IAM authentication.
 
 ### Anthropic
 
-| Option | Description |
-|--------|-------------|
+| Option    | Description            |
+| --------- | ---------------------- |
 | `api_key` | Your Anthropic API key |
 
 ```ruby
@@ -106,12 +106,12 @@ end
 
 ### OpenAI
 
-| Option | Description |
-|--------|-------------|
-| `temperature` | Sampling temperature (0.0-2.0) |
-| `max_tokens` | Maximum tokens in response |
-| `top_p` | Nucleus sampling parameter |
-| `reasoning` | Reasoning effort level (`low`, `medium`, `high`) |
+| Option        | Description                                      |
+| ------------- | ------------------------------------------------ |
+| `temperature` | Sampling temperature (0.0-2.0)                   |
+| `max_tokens`  | Maximum tokens in response                       |
+| `top_p`       | Nucleus sampling parameter                       |
+| `reasoning`   | Reasoning effort level (`low`, `medium`, `high`) |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -122,12 +122,12 @@ end
 
 ### Amazon Bedrock
 
-| Option | Description |
-|--------|-------------|
-| `temperature` | Sampling temperature |
-| `max_tokens` | Maximum tokens in response |
-| `top_p` | Nucleus sampling parameter |
-| `top_k` | Top-k sampling parameter |
+| Option        | Description                |
+| ------------- | -------------------------- |
+| `temperature` | Sampling temperature       |
+| `max_tokens`  | Maximum tokens in response |
+| `top_p`       | Nucleus sampling parameter |
+| `top_k`       | Top-k sampling parameter   |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -138,13 +138,13 @@ end
 
 ### Anthropic
 
-| Option | Description |
-|--------|-------------|
-| `temperature` | Sampling temperature |
-| `max_tokens` | Maximum tokens in response |
-| `top_p` | Nucleus sampling parameter |
-| `top_k` | Top-k sampling parameter |
-| `thinking` | Extended thinking config hash (Claude 3.7+) |
+| Option        | Description                                 |
+| ------------- | ------------------------------------------- |
+| `temperature` | Sampling temperature                        |
+| `max_tokens`  | Maximum tokens in response                  |
+| `top_p`       | Nucleus sampling parameter                  |
+| `top_k`       | Top-k sampling parameter                    |
+| `thinking`    | Extended thinking config hash (Claude 3.7+) |
 
 ```ruby
 class MyAgent < Riffer::Agent
