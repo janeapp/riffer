@@ -212,7 +212,7 @@ puts response.content
 response = provider.generate_text(
   prompt: "Explain step by step how to solve a Rubik's cube",
   model: "claude-3-7-sonnet-20250219",
-  thinking: true
+  thinking: { type: "enabled", budget_tokens: 10000 }
 )
 
 puts response.content
