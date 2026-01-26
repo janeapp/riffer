@@ -161,10 +161,10 @@ Registers a callback to receive messages as they're added during generation:
 
 ```ruby
 agent.on_message do |message|
-  case message
-  when Riffer::Messages::Assistant
+  case message.role
+  when :assistant
     puts "[Assistant] #{message.content}"
-  when Riffer::Messages::Tool
+  when :tool
     puts "[Tool:#{message.name}] #{message.content}"
   end
 end
