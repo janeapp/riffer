@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>01_OVERVIEW - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,01_OVERVIEW">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="01_OVERVIEW: Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo"
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="01_OVERVIEW - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="01_OVERVIEW - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -423,7 +420,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,125 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs/01_OVERVIEW.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Overview"><a href="#label-Overview">Overview</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p><a href="../Riffer.html"><code>Riffer</code></a> is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Models (LLMs) into your Ruby projects.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Core+Concepts"><a href="#label-Core+Concepts">Core Concepts</a></h2>
 
-  </section>
+<h3 id="label-Agent"><a href="#label-Agent">Agent</a></h3>
 
+<p>The Agent is the central orchestrator for AI interactions. It manages messages, calls the LLM provider, and handles tool execution.</p>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a helpful assistant.&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
+<p>See <a href="03_AGENTS_md.html">Agents</a> for details.</p>
 
+<h3 id="label-Tool"><a href="#label-Tool">Tool</a></h3>
 
+<p>Tools are callable functions that agents can invoke to interact with external systems. They have structured parameter definitions and automatic validation.</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets the weather for a city&quot;</span>
 
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The city name&quot;</span>
+  <span class="ruby-keyword">end</span>
 
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>)
+    <span class="ruby-constant">WeatherAPI</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">city</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
+<p>See <a href="04_TOOLS_md.html">Tools</a> for details.</p>
 
+<h3 id="label-Provider"><a href="#label-Provider">Provider</a></h3>
 
-  </section>
+<p>Providers are adapters that connect to LLM services. <a href="../Riffer.html"><code>Riffer</code></a> supports:</p>
+<ul><li>
+<p><strong>OpenAI</strong> - GPT models via the OpenAI API</p>
+</li><li>
+<p><strong>Amazon Bedrock</strong> - Claude and other models via AWS Bedrock</p>
+</li><li>
+<p><strong>Test</strong> - Mock provider for testing</p>
+</li></ul>
+
+<p>See <a href="providers/01_PROVIDERS_md.html">Providers</a> for details.</p>
+
+<h3 id="label-Messages"><a href="#label-Messages">Messages</a></h3>
+
+<p>Messages represent the conversation between user and assistant. <a href="../Riffer.html"><code>Riffer</code></a> uses strongly-typed message objects:</p>
+<ul><li>
+<p><a href="../Riffer/Messages/System.html"><code>Riffer::Messages::System</code></a> - System instructions</p>
+</li><li>
+<p><a href="../Riffer/Messages/User.html"><code>Riffer::Messages::User</code></a> - User input</p>
+</li><li>
+<p><a href="../Riffer/Messages/Assistant.html"><code>Riffer::Messages::Assistant</code></a> - LLM responses</p>
+</li><li>
+<p><a href="../Riffer/Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> - Tool execution results</p>
+</li></ul>
+
+<p>See <a href="05_MESSAGES_md.html">Messages</a> for details.</p>
+
+<h3 id="label-Stream+Events"><a href="#label-Stream+Events">Stream Events</a></h3>
+
+<p>When streaming responses, <a href="../Riffer.html"><code>Riffer</code></a> emits typed events:</p>
+<ul><li>
+<p><code>TextDelta</code> - Incremental text chunks</p>
+</li><li>
+<p><code>TextDone</code> - Complete text</p>
+</li><li>
+<p><code>ToolCallDelta</code> - Incremental tool call arguments</p>
+</li><li>
+<p><code>ToolCallDone</code> - Complete tool call</p>
+</li></ul>
+
+<p>See <a href="06_STREAM_EVENTS_md.html">Stream Events</a> for details.</p>
+
+<h2 id="label-Architecture"><a href="#label-Architecture">Architecture</a></h2>
+
+<pre>User Request
+     |
+     v
++------------+
+|   Agent    |  &lt;-- Manages conversation flow
++------------+
+     |
+     v
++------------+
+|  Provider  |  &lt;-- Calls LLM API
++------------+
+     |
+     v
++------------+
+|    LLM     |  &lt;-- Returns response
++------------+
+     |
+     v
++------------+
+|   Tool?    |  &lt;-- Execute if tool call present
++------------+
+     |
+     v
+Response</pre>
+
+<h2 id="label-Next+Steps"><a href="#label-Next+Steps">Next Steps</a></h2>
+<ul><li>
+<p><a href="02_GETTING_STARTED_md.html">Getting Started</a> - Quick start guide</p>
+</li><li>
+<p><a href="03_AGENTS_md.html">Agents</a> - Agent configuration and usage</p>
+</li><li>
+<p><a href="04_TOOLS_md.html">Tools</a> - Creating tools</p>
+</li><li>
+<p><a href="07_CONFIGURATION_md.html">Configuration</a> - Global configuration</p>
+</li></ul>
 
 </main>
 

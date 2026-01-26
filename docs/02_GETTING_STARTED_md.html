@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>02_GETTING_STARTED - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,02_GETTING_STARTED">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="02_GETTING_STARTED: Getting Started This guide walks you through installing Riffer and creating your first AI agent. bash gem install riffer ``` ## Provider Setup Riff"
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="02_GETTING_STARTED - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Getting Started This guide walks you through installing Riffer and creating your first AI agent. bash gem install riffer ``` ## Provider Setup Riff">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="02_GETTING_STARTED - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Getting Started This guide walks you through installing Riffer and creating your first AI agent. bash gem install riffer ``` ## Provider Setup Riff">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -423,7 +420,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,131 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs/02_GETTING_STARTED.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Getting+Started"><a href="#label-Getting+Started">Getting Started</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>This guide walks you through installing <a href="../Riffer.html"><code>Riffer</code></a> and creating your first AI agent.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Installation"><a href="#label-Installation">Installation</a></h2>
 
-  </section>
+<p>Add <a href="../Riffer.html"><code>Riffer</code></a> to your Gemfile:</p>
 
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;riffer&#39;</span>
+</pre>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<p>Then run:</p>
 
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">install</span>
+</pre>
 
+<p>Or install directly:</p>
 
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-identifier">install</span> <span class="ruby-identifier">riffer</span>
+</pre>
 
+<h2 id="label-Provider+Setup"><a href="#label-Provider+Setup">Provider Setup</a></h2>
 
+<p><a href="../Riffer.html"><code>Riffer</code></a> requires an LLM provider. Install the provider gem for your chosen service:</p>
 
+<h3 id="label-OpenAI"><a href="#label-OpenAI">OpenAI</a></h3>
 
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;openai&#39;</span>
+</pre>
 
+<p>Configure your API key:</p>
 
-  </section>
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-Amazon+Bedrock"><a href="#label-Amazon+Bedrock">Amazon Bedrock</a></h3>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;aws-sdk-bedrockruntime&#39;</span>
+</pre>
+
+<p>Configure your credentials:</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-string">&#39;us-east-1&#39;</span>
+  <span class="ruby-comment"># Optional: Use bearer token auth instead of IAM</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">api_token</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Creating+Your+First+Agent"><a href="#label-Creating+Your+First+Agent">Creating Your First Agent</a></h2>
+
+<p>Define an agent by subclassing <a href="../Riffer/Agent.html"><code>Riffer::Agent</code></a>:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;riffer&#39;</span>
+
+<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">GreetingAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a friendly assistant. Greet the user warmly.&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">GreetingAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Hello!&#39;</span>)
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>
+<span class="ruby-comment"># =&gt; &quot;Hello! It&#39;s wonderful to meet you...&quot;</span>
+</pre>
+
+<h2 id="label-Streaming+Responses"><a href="#label-Streaming+Responses">Streaming Responses</a></h2>
+
+<p>Use <code>stream</code> for real-time output:</p>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span> = <span class="ruby-constant">GreetingAgent</span>.<span class="ruby-identifier">new</span>
+
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&#39;Tell me a story&#39;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDone</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\n[Done]&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Adding+Tools"><a href="#label-Adding+Tools">Adding Tools</a></h2>
+
+<p>Tools let agents interact with external systems:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">TimeTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets the current time&quot;</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>)
+    <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&#39;%Y-%m-%d %H:%M:%S&#39;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">TimeAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You can tell the user the current time.&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">TimeTool</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">TimeAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;What time is it?&quot;</span>)
+<span class="ruby-comment"># =&gt; &quot;The current time is 2024-01-15 14:30:00.&quot;</span>
+</pre>
+
+<h2 id="label-Next+Steps"><a href="#label-Next+Steps">Next Steps</a></h2>
+<ul><li>
+<p><a href="03_AGENTS_md.html">Agents</a> - Agent configuration options</p>
+</li><li>
+<p><a href="04_TOOLS_md.html">Tools</a> - Creating tools with parameters</p>
+</li><li>
+<p><a href="05_MESSAGES_md.html">Messages</a> - Message types and history</p>
+</li><li>
+<p><a href="06_STREAM_EVENTS_md.html">Stream Events</a> - Streaming event types</p>
+</li><li>
+<p><a href="providers/01_PROVIDERS_md.html">Providers</a> - Provider-specific guides</p>
+</li></ul>
 
 </main>
 

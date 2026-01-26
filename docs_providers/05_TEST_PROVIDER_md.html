@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>05_TEST_PROVIDER - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,05_TEST_PROVIDER">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="05_TEST_PROVIDER: Test Provider The Test provider is a mock provider for testing agents without making real API calls. Usage No additional gems required."
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="05_TEST_PROVIDER - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Test Provider The Test provider is a mock provider for testing agents without making real API calls. Usage No additional gems required.">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="05_TEST_PROVIDER - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Test Provider The Test provider is a mock provider for testing agents without making real API calls. Usage No additional gems required.">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -484,7 +481,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs_providers
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,161 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs_providers/05_TEST_PROVIDER.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Test+Provider"><a href="#label-Test+Provider">Test Provider</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>The Test provider is a mock provider for testing agents without making real API calls.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Usage"><a href="#label-Usage">Usage</a></h2>
 
-  </section>
+<p>No additional gems required. Use the <code>test</code> provider identifier:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">TestableAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;test/any&#39;</span>  <span class="ruby-comment"># The model name doesn&#39;t matter for test provider</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are helpful.&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">MyTool</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<h2 id="label-Stubbing+Responses"><a href="#label-Stubbing+Responses">Stubbing Responses</a></h2>
 
+<p>Use <code>stub_response</code> to queue responses:</p>
 
+<pre class="ruby"><span class="ruby-comment"># Get the provider instance from the agent</span>
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">TestableAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">provider</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">send</span>(<span class="ruby-value">:provider_instance</span>)
 
+<span class="ruby-comment"># Stub a simple text response</span>
+<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Hello, I&#39;m here to help!&quot;</span>)
 
+<span class="ruby-comment"># Now generate will return the stubbed response</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Hi&quot;</span>)
+<span class="ruby-comment"># =&gt; &quot;Hello, I&#39;m here to help!&quot;</span>
+</pre>
 
+<h2 id="label-Stubbing+Tool+Calls"><a href="#label-Stubbing+Tool+Calls">Stubbing Tool Calls</a></h2>
 
+<p>Stub responses that trigger tool execution:</p>
 
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">tool_calls:</span> [
+  {<span class="ruby-value">name:</span> <span class="ruby-string">&quot;my_tool&quot;</span>, <span class="ruby-value">arguments:</span> <span class="ruby-string">&#39;{&quot;query&quot;:&quot;test&quot;}&#39;</span>}
+])
 
+<span class="ruby-comment"># Queue the response after tool execution</span>
+<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Based on the tool result, here&#39;s my answer.&quot;</span>)
 
-  </section>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Use the tool&quot;</span>)
+</pre>
+
+<h2 id="label-Queueing+Multiple+Responses"><a href="#label-Queueing+Multiple+Responses">Queueing Multiple Responses</a></h2>
+
+<p>Responses are consumed in order:</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;First response&quot;</span>)
+<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Second response&quot;</span>)
+<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Third response&quot;</span>)
+
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Message 1&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;First response&quot;</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Message 2&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;Second response&quot;</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Message 3&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;Third response&quot;</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Message 4&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;Test response&quot; (default)</span>
+</pre>
+
+<h2 id="label-Inspecting+Calls"><a href="#label-Inspecting+Calls">Inspecting Calls</a></h2>
+
+<p>Access recorded calls for assertions:</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">calls</span>
+<span class="ruby-comment"># =&gt; [</span>
+<span class="ruby-comment">#   {messages: [...], model: &quot;any&quot;, tools: [...], ...},</span>
+<span class="ruby-comment">#   {messages: [...], model: &quot;any&quot;, tools: [...], ...}</span>
+<span class="ruby-comment"># ]</span>
+
+<span class="ruby-comment"># Check what was sent</span>
+<span class="ruby-identifier">expect</span>(<span class="ruby-identifier">provider</span>.<span class="ruby-identifier">calls</span>.<span class="ruby-identifier">last</span>[<span class="ruby-value">:messages</span>].<span class="ruby-identifier">last</span>[<span class="ruby-value">:content</span>]).<span class="ruby-identifier">to</span> <span class="ruby-identifier">eq</span>(<span class="ruby-string">&quot;Hi&quot;</span>)
+</pre>
+
+<h2 id="label-Clearing+State"><a href="#label-Clearing+State">Clearing State</a></h2>
+
+<p>Reset stubbed responses:</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">clear_stubs</span>
+</pre>
+
+<h2 id="label-Example+Test"><a href="#label-Example+Test">Example Test</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;minitest/autorun&#39;</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgentTest</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Minitest</span><span class="ruby-operator">::</span><span class="ruby-constant">Test</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">setup</span>
+    <span class="ruby-ivar">@agent</span> = <span class="ruby-constant">TestableAgent</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@provider</span> = <span class="ruby-ivar">@agent</span>.<span class="ruby-identifier">send</span>(<span class="ruby-value">:provider_instance</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">test_generates_response</span>
+    <span class="ruby-ivar">@provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Hello!&quot;</span>)
+
+    <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Hi&quot;</span>)
+
+    <span class="ruby-identifier">assert_equal</span> <span class="ruby-string">&quot;Hello!&quot;</span>, <span class="ruby-identifier">response</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">test_executes_tool</span>
+    <span class="ruby-ivar">@provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">tool_calls:</span> [
+      {<span class="ruby-value">name:</span> <span class="ruby-string">&quot;weather_tool&quot;</span>, <span class="ruby-value">arguments:</span> <span class="ruby-string">&#39;{&quot;city&quot;:&quot;Tokyo&quot;}&#39;</span>}
+    ])
+    <span class="ruby-ivar">@provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;The weather is sunny.&quot;</span>)
+
+    <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;What&#39;s the weather?&quot;</span>)
+
+    <span class="ruby-identifier">assert_equal</span> <span class="ruby-string">&quot;The weather is sunny.&quot;</span>, <span class="ruby-identifier">response</span>
+    <span class="ruby-identifier">assert_equal</span> <span class="ruby-value">2</span>, <span class="ruby-ivar">@provider</span>.<span class="ruby-identifier">calls</span>.<span class="ruby-identifier">length</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">test_passes_context_to_tools</span>
+    <span class="ruby-ivar">@provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">tool_calls:</span> [
+      {<span class="ruby-value">name:</span> <span class="ruby-string">&quot;user_tool&quot;</span>, <span class="ruby-value">arguments:</span> <span class="ruby-string">&#39;{}&#39;</span>}
+    ])
+    <span class="ruby-ivar">@provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Done.&quot;</span>)
+
+    <span class="ruby-ivar">@agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Do something&quot;</span>, <span class="ruby-value">tool_context:</span> {<span class="ruby-value">user_id:</span> <span class="ruby-value">123</span>})
+
+    <span class="ruby-comment"># Tool receives the context</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Streaming"><a href="#label-Streaming">Streaming</a></h2>
+
+<p>The test provider also supports streaming:</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stub_response</span>(<span class="ruby-string">&quot;Hello world.&quot;</span>)
+
+<span class="ruby-identifier">events</span> = []
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&quot;Hi&quot;</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">events</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">e</span> }
+
+<span class="ruby-comment"># Events include TextDelta and TextDone</span>
+<span class="ruby-identifier">text_deltas</span> = <span class="ruby-identifier">events</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>) }
+<span class="ruby-identifier">text_done</span> = <span class="ruby-identifier">events</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDone</span>) }
+</pre>
+
+<h2 id="label-Initial+Responses"><a href="#label-Initial+Responses">Initial Responses</a></h2>
+
+<p>Pass responses during initialization:</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Test</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">responses:</span> [
+  {<span class="ruby-value">content:</span> <span class="ruby-string">&quot;First&quot;</span>},
+  {<span class="ruby-value">content:</span> <span class="ruby-string">&quot;Second&quot;</span>}
+])
+</pre>
+
+<h2 id="label-Default+Response"><a href="#label-Default+Response">Default Response</a></h2>
+
+<p>When no stubs are queued and initial responses are exhausted, the provider returns:</p>
+
+<pre class="ruby">{<span class="ruby-value">role:</span> <span class="ruby-string">&quot;assistant&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-string">&quot;Test response&quot;</span>}
+</pre>
 
 </main>
 

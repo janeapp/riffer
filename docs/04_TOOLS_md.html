@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>04_TOOLS - Riffer Documentation</title>
+
+
+  <meta name="keywords" content="ruby,documentation,04_TOOLS">
+  <meta
+    name="description"
+    content="04_TOOLS: Tools Tools are callable functions that agents can invoke to interact with external systems, fetch data, or perform actions. nil) weather = Weath"
+  >
+
+
+
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="04_TOOLS - Riffer Documentation">
+
+
+
+    <meta property="og:description" content="Tools Tools are callable functions that agents can invoke to interact with external systems, fetch data, or perform actions. nil) weather = Weath">
+
+
+
+
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="04_TOOLS - Riffer Documentation">
+
+
+
+    <meta name="twitter:description" content="Tools Tools are callable functions that agents can invoke to interact with external systems, fetch data, or perform actions. nil) weather = Weath">
+
+
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script
+  src="../js/theme-toggle.js?v=7.0.1"
+></script>
+
+<script
+  src="../js/search_navigation.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/search_data.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/search_ranker.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/search_controller.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/c_highlighter.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/aliki.js?v=7.0.1"
+  defer
+></script>
+
+<link
+  href="../css/rdoc.css?v=7.0.1"
+  rel="stylesheet"
+>
+
+
+
+
+<body role="document" class="file has-toc">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- Chevron (right arrow) - used for expand/collapse -->
+  <symbol
+    id="icon-chevron"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </symbol>
+
+  <!-- File/Document - Pages section -->
+  <symbol
+    id="icon-file"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+    ></path>
+
+    <polyline points="14 2 14 8 20 8"></polyline>
+  </symbol>
+
+  <!-- Layers/Stack - Classes and Modules section -->
+  <symbol
+    id="icon-layers"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+    <polyline points="2 17 12 22 22 17"></polyline>
+    <polyline points="2 12 12 17 22 12"></polyline>
+  </symbol>
+
+  <!-- Curly braces with C - Class Methods section -->
+  <symbol
+    id="icon-class-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      C
+    </text>
+  </symbol>
+
+  <!-- Curly braces with I - Instance Methods section -->
+  <symbol
+    id="icon-instance-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      I
+    </text>
+  </symbol>
+
+  <!-- Double chevrons up - Ancestors section -->
+  <symbol
+    id="icon-ancestors"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </symbol>
+
+  <!-- User with plus - Included Modules section -->
+  <symbol
+    id="icon-includes"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+
+    <line
+      x1="20"
+      y1="8"
+      x2="20"
+      y2="14"
+    ></line>
+
+    <line
+      x1="23"
+      y1="11"
+      x2="17"
+      y2="11"
+    ></line>
+  </symbol>
+
+  <!-- User with check - Extended Modules section -->
+  <symbol
+    id="icon-extends"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+    <polyline points="17 11 19 13 23 9"></polyline>
+  </symbol>
+
+  <!-- List - Sections section -->
+  <symbol
+    id="icon-list"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <line
+      x1="8"
+      y1="6"
+      x2="21"
+      y2="6"
+    ></line>
+
+    <line
+      x1="8"
+      y1="12"
+      x2="21"
+      y2="12"
+    ></line>
+
+    <line
+      x1="8"
+      y1="18"
+      x2="21"
+      y2="18"
+    ></line>
+
+    <line
+      x1="3"
+      y1="6"
+      x2="3.01"
+      y2="6"
+    ></line>
+
+    <line
+      x1="3"
+      y1="12"
+      x2="3.01"
+      y2="12"
+    ></line>
+
+    <line
+      x1="3"
+      y1="18"
+      x2="3.01"
+      y2="18"
+    ></line>
+  </symbol>
+</svg>
+
+<header class="top-navbar">
+  <a href="../index.html" class="navbar-brand">
+    Riffer Documentation
+  </a>
+
+  <!-- Desktop search bar -->
+  <div class="navbar-search navbar-search-desktop" role="search">
+    <form action="#" method="get" accept-charset="utf-8">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results-desktop"
+             type="text" name="search" placeholder="Search (/) for a class, method..."
+             spellcheck="false" autocomplete="off"
+             title="Type to search, Up and Down to navigate, Enter to load">
+      <ul id="search-results-desktop" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="initially-hidden search-results"></ul>
+    </form>
+  </div>
+
+  <!-- Mobile search icon button -->
+  <button id="search-toggle" class="navbar-search-mobile" aria-label="Open search" type="button">
+    <span aria-hidden="true">🔍</span>
+  </button>
+
+  <!-- Theme toggle button -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+    <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+  </button>
+</header>
+
+<!-- Search Modal (Mobile) -->
+<div id="search-modal" class="search-modal" hidden aria-modal="true" role="dialog" aria-label="Search">
+  <div class="search-modal-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <form class="search-modal-form" action="#" method="get" accept-charset="utf-8">
+        <span class="search-modal-icon" aria-hidden="true">🔍</span>
+        <input id="search-field-mobile" role="combobox" aria-label="Search"
+               aria-autocomplete="list" aria-controls="search-results-mobile"
+               type="text" name="search" placeholder="Search documentation"
+               spellcheck="false" autocomplete="off">
+        <button type="button" class="search-modal-close" aria-label="Close search" id="search-modal-close">
+          <span aria-hidden="true">esc</span>
+        </button>
+      </form>
+    </div>
+    <div class="search-modal-body">
+      <ul id="search-results-mobile" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="search-results search-modal-results initially-hidden"></ul>
+      <div class="search-modal-empty">
+        <p>No recent searches</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="navigation-toggle" role="button" tabindex="0" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="navigation">
+  <span aria-hidden="true">&#9776;</span>
+</div>
+
+
+<nav id="navigation" role="navigation">
+  
+
+
+
+
+
+
+  <div id="fileindex-section" class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg>
+            <use href="#icon-file"></use>
+          </svg>
+        </span>
+
+        <span class="nav-section-title">Pages</span>
+
+        <span class="nav-section-chevron">
+          <svg>
+            <use href="#icon-chevron"></use>
+          </svg>
+        </span>
+      </summary>
+
+      <ul class="nav-list">
+
+
+
+
+
+
+            <li>
+              <a href="../CHANGELOG_md.html">
+                CHANGELOG
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../LICENSE_txt.html">
+                LICENSE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../README_md.html">
+                README
+              </a>
+            </li>
+
+
+
+
+
+          <li>
+            <details  open>
+              <summary>
+                
+                  docs
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="../docs/01_OVERVIEW_md.html">
+                      01_OVERVIEW
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/02_GETTING_STARTED_md.html">
+                      02_GETTING_STARTED
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/03_AGENTS_md.html">
+                      03_AGENTS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/04_TOOLS_md.html">
+                      04_TOOLS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/05_MESSAGES_md.html">
+                      05_MESSAGES
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/06_STREAM_EVENTS_md.html">
+                      06_STREAM_EVENTS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/07_CONFIGURATION_md.html">
+                      07_CONFIGURATION
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+
+
+
+
+          <li>
+            <details >
+              <summary>
+                
+                  docs_providers
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="../docs_providers/01_PROVIDERS_md.html">
+                      01_PROVIDERS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/02_AMAZON_BEDROCK_md.html">
+                      02_AMAZON_BEDROCK
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/03_ANTHROPIC_md.html">
+                      03_ANTHROPIC
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/04_OPENAI_md.html">
+                      04_OPENAI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/05_TEST_PROVIDER_md.html">
+                      05_TEST_PROVIDER
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/06_CUSTOM_PROVIDERS_md.html">
+                      06_CUSTOM_PROVIDERS
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+      </ul>
+    </details>
+  </div>
+
+
+  <div id="classindex-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-layers"></use></svg>
+      </span>
+      <span class="nav-section-title">Classes and Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+  </details>
+</div>
+
+</nav>
+
+<main role="main" aria-label="Page docs/04_TOOLS.md">
+
+<h1 id="label-Tools"><a href="#label-Tools">Tools</a></h1>
+
+<p>Tools are callable functions that agents can invoke to interact with external systems, fetch data, or perform actions.</p>
+
+<h2 id="label-Defining+a+Tool"><a href="#label-Defining+a+Tool">Defining a Tool</a></h2>
+
+<p>Create a tool by subclassing <a href="../Riffer/Tool.html"><code>Riffer::Tool</code></a>:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets the current weather for a city&quot;</span>
+
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The city name&quot;</span>
+    <span class="ruby-identifier">optional</span> <span class="ruby-value">:units</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">default:</span> <span class="ruby-string">&quot;celsius&quot;</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&quot;celsius&quot;</span>, <span class="ruby-string">&quot;fahrenheit&quot;</span>]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>, <span class="ruby-value">units:</span> <span class="ruby-keyword">nil</span>)
+    <span class="ruby-identifier">weather</span> = <span class="ruby-constant">WeatherAPI</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">city</span>, <span class="ruby-value">units:</span> <span class="ruby-identifier">units</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;celsius&quot;</span>)
+    <span class="ruby-node">&quot;The weather in #{city} is #{weather.temperature} #{units}.&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Configuration+Methods"><a href="#label-Configuration+Methods">Configuration Methods</a></h2>
+
+<h3 id="label-description"><a href="#label-description">description</a></h3>
+
+<p>Sets a description that helps the LLM understand when to use the tool:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SearchTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Searches the knowledge base for relevant information&quot;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-identifier+-2F+name"><a href="#label-identifier+-2F+name">identifier / name</a></h3>
+
+<p>Sets a custom identifier (defaults to snake_case class name):</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SearchTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">identifier</span> <span class="ruby-string">&#39;kb_search&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-constant">SearchTool</span>.<span class="ruby-identifier">identifier</span>  <span class="ruby-comment"># =&gt; &quot;kb_search&quot;</span>
+<span class="ruby-constant">SearchTool</span>.<span class="ruby-identifier">name</span>        <span class="ruby-comment"># =&gt; &quot;kb_search&quot; (alias)</span>
+</pre>
+
+<h3 id="label-params"><a href="#label-params">params</a></h3>
+
+<p>Defines the tool’s parameters using a DSL:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CreateOrderTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:product_id</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The product ID&quot;</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:quantity</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Number of items&quot;</span>
+    <span class="ruby-identifier">optional</span> <span class="ruby-value">:notes</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Order notes&quot;</span>
+    <span class="ruby-identifier">optional</span> <span class="ruby-value">:priority</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">default:</span> <span class="ruby-string">&quot;normal&quot;</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&quot;low&quot;</span>, <span class="ruby-string">&quot;normal&quot;</span>, <span class="ruby-string">&quot;high&quot;</span>]
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Parameter+DSL"><a href="#label-Parameter+DSL">Parameter DSL</a></h2>
+
+<h3 id="label-required"><a href="#label-required">required</a></h3>
+
+<p>Defines a required parameter:</p>
+
+<pre class="ruby"><span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">required</span> <span class="ruby-value">:name</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The user&#39;s name&quot;</span>
+  <span class="ruby-identifier">required</span> <span class="ruby-value">:age</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The user&#39;s age&quot;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Options:</p>
+<ul><li>
+<p><code>description</code> - Human-readable description for the LLM</p>
+</li><li>
+<p><code>enum</code> - Array of allowed values</p>
+</li></ul>
+
+<h3 id="label-optional"><a href="#label-optional">optional</a></h3>
+
+<p>Defines an optional parameter:</p>
+
+<pre class="ruby"><span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">optional</span> <span class="ruby-value">:limit</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-value">default:</span> <span class="ruby-value">10</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Max results&quot;</span>
+  <span class="ruby-identifier">optional</span> <span class="ruby-value">:format</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&quot;json&quot;</span>, <span class="ruby-string">&quot;xml&quot;</span>], <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Output format&quot;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Options:</p>
+<ul><li>
+<p><code>description</code> - Human-readable description</p>
+</li><li>
+<p><code>default</code> - Default value when not provided</p>
+</li><li>
+<p><code>enum</code> - Array of allowed values</p>
+</li></ul>
+
+<h3 id="label-Supported+Types"><a href="#label-Supported+Types">Supported Types</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Ruby Type</th>
+<th>JSON Schema Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>String</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>Integer</code></td>
+<td><code>integer</code></td>
+</tr>
+<tr>
+<td><code>Float</code></td>
+<td><code>number</code></td>
+</tr>
+<tr>
+<td><code>TrueClass</code> / <code>FalseClass</code></td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
+<td><code>Array</code></td>
+<td><code>array</code></td>
+</tr>
+<tr>
+<td><code>Hash</code></td>
+<td><code>object</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="label-The+call+Method"><a href="#label-The+call+Method">The call Method</a></h2>
+
+<p>Every tool must implement the <code>call</code> method:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
+  <span class="ruby-comment"># context - The tool_context passed to agent.generate()</span>
+  <span class="ruby-comment"># kwargs  - Validated parameters</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-Accessing+Context"><a href="#label-Accessing+Context">Accessing Context</a></h3>
+
+<p>The <code>context</code> argument receives whatever was passed to <code>tool_context</code>:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">UserOrdersTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets the current user&#39;s orders&quot;</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>)
+    <span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">context</span>&amp;.<span class="ruby-identifier">dig</span>(<span class="ruby-value">:user_id</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;No user ID provided&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">user_id</span>
+
+    <span class="ruby-identifier">orders</span> = <span class="ruby-constant">Order</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">user_id:</span> <span class="ruby-identifier">user_id</span>)
+    <span class="ruby-identifier">orders</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_s</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Usage</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Show my orders&quot;</span>, <span class="ruby-value">tool_context:</span> {<span class="ruby-value">user_id:</span> <span class="ruby-value">123</span>})
+</pre>
+
+<h3 id="label-Return+Values"><a href="#label-Return+Values">Return Values</a></h3>
+
+<p>Return a string that will be sent back to the LLM:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">query:</span>)
+  <span class="ruby-identifier">results</span> = <span class="ruby-constant">Database</span>.<span class="ruby-identifier">search</span>(<span class="ruby-identifier">query</span>)
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-node">&quot;No results found for &#39;#{query}&#39;&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">results</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;- #{r.title}: #{r.summary}&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Timeout+Configuration"><a href="#label-Timeout+Configuration">Timeout Configuration</a></h2>
+
+<p>Configure timeouts to prevent tools from running indefinitely. The default timeout is 10 seconds.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SlowExternalApiTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Calls a slow external API&quot;</span>
+  <span class="ruby-identifier">timeout</span> <span class="ruby-value">30</span>  <span class="ruby-comment"># 30 seconds</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">query:</span>)
+    <span class="ruby-constant">ExternalAPI</span>.<span class="ruby-identifier">search</span>(<span class="ruby-identifier">query</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>When a tool times out, the error is reported to the LLM with error type <code>:timeout_error</code>, allowing it to respond appropriately (e.g., suggest retrying or using a different approach).</p>
+
+<h2 id="label-Validation"><a href="#label-Validation">Validation</a></h2>
+
+<p>Arguments are automatically validated before <code>call</code> is invoked:</p>
+<ul><li>
+<p>Required parameters must be present</p>
+</li><li>
+<p>Types must match the schema</p>
+</li><li>
+<p>Enum values must be in the allowed list</p>
+</li></ul>
+
+<p>Validation errors are captured and sent back to the LLM as tool results.</p>
+
+<h2 id="label-JSON+Schema+Generation"><a href="#label-JSON+Schema+Generation">JSON Schema Generation</a></h2>
+
+<p><a href="../Riffer.html"><code>Riffer</code></a> automatically generates JSON Schema for each tool:</p>
+
+<pre class="ruby"><span class="ruby-constant">WeatherTool</span>.<span class="ruby-identifier">parameters_schema</span>
+<span class="ruby-comment"># =&gt; {</span>
+<span class="ruby-comment">#   type: &quot;object&quot;,</span>
+<span class="ruby-comment">#   properties: {</span>
+<span class="ruby-comment">#     &quot;city&quot; =&gt; {type: &quot;string&quot;, description: &quot;The city name&quot;},</span>
+<span class="ruby-comment">#     &quot;units&quot; =&gt; {type: &quot;string&quot;, enum: [&quot;celsius&quot;, &quot;fahrenheit&quot;]}</span>
+<span class="ruby-comment">#   },</span>
+<span class="ruby-comment">#   required: [&quot;city&quot;],</span>
+<span class="ruby-comment">#   additionalProperties: false</span>
+<span class="ruby-comment"># }</span>
+</pre>
+
+<h2 id="label-Registering+Tools+with+Agents"><a href="#label-Registering+Tools+with+Agents">Registering Tools with Agents</a></h2>
+
+<h3 id="label-Static+Registration"><a href="#label-Static+Registration">Static Registration</a></h3>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">WeatherTool</span>, <span class="ruby-constant">SearchTool</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-Dynamic+Registration"><a href="#label-Dynamic+Registration">Dynamic Registration</a></h3>
+
+<p>Use a lambda for context-aware tool resolution:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+
+  <span class="ruby-identifier">uses_tools</span> <span class="ruby-operator">-&gt;</span>(<span class="ruby-identifier">context</span>) {
+    <span class="ruby-identifier">tools</span> = [<span class="ruby-constant">PublicSearchTool</span>]
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>&amp;.<span class="ruby-identifier">dig</span>(<span class="ruby-value">:user</span>)&amp;.<span class="ruby-identifier">premium?</span>
+      <span class="ruby-identifier">tools</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">PremiumAnalyticsTool</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>&amp;.<span class="ruby-identifier">dig</span>(<span class="ruby-value">:user</span>)&amp;.<span class="ruby-identifier">admin?</span>
+      <span class="ruby-identifier">tools</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">AdminTool</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">tools</span>
+  }
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Error+Handling"><a href="#label-Error+Handling">Error Handling</a></h2>
+
+<p>Errors in tools are captured and reported back to the LLM:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">query:</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;API rate limit exceeded&quot;</span>
+<span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
+  <span class="ruby-comment"># Error is caught by Riffer and sent as tool result:</span>
+  <span class="ruby-comment"># &quot;Error executing tool: API rate limit exceeded&quot;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>The LLM can then decide how to respond (retry, apologize, ask for different input, etc.).</p>
+
+</main>
+
+<aside class="table-of-contents" role="complementary" aria-label="Table of Contents">
+  <div class="toc-sticky">
+    <h3 class="toc-heading">On This Page</h3>
+    <nav class="toc-nav" id="toc-nav" aria-label="Page sections">
+      <!-- Generated by JavaScript based on page headings -->
+    </nav>
+  </div>
+</aside>
+
+
+<footer class="site-footer">
+  
+
+  <div class="footer-bottom">
+    <p>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.0.1</a>
+      using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+

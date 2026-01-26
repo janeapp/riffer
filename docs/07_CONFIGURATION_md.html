@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>07_CONFIGURATION - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,07_CONFIGURATION">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="07_CONFIGURATION: Configuration Riffer uses a centralized configuration system for provider credentials and settings. Global Configuration Use `Riffer."
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="07_CONFIGURATION - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Configuration Riffer uses a centralized configuration system for provider credentials and settings. Global Configuration Use `Riffer.">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="07_CONFIGURATION - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Configuration Riffer uses a centralized configuration system for provider credentials and settings. Global Configuration Use `Riffer.">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -423,7 +420,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,290 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs/07_CONFIGURATION.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Configuration"><a href="#label-Configuration">Configuration</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p><a href="../Riffer.html"><code>Riffer</code></a> uses a centralized configuration system for provider credentials and settings.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Global+Configuration"><a href="#label-Global+Configuration">Global Configuration</a></h2>
 
-  </section>
+<p>Use <a href="../Riffer.html#method-c-configure"><code>Riffer.configure</code></a> to set up provider credentials:</p>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-string">&#39;us-east-1&#39;</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">api_token</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">anthropic</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;ANTHROPIC_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<h2 id="label-Accessing+Configuration"><a href="#label-Accessing+Configuration">Accessing Configuration</a></h2>
 
+<p>Access the current configuration via <a href="../Riffer.html#method-c-config"><code>Riffer.config</code></a>:</p>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span>
+<span class="ruby-comment"># =&gt; &quot;sk-...&quot;</span>
 
+<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span>
+<span class="ruby-comment"># =&gt; &quot;us-east-1&quot;</span>
 
+<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">anthropic</span>.<span class="ruby-identifier">api_key</span>
+<span class="ruby-comment"># =&gt; &quot;sk-ant-...&quot;</span>
+</pre>
 
+<h2 id="label-Provider-Specific+Configuration"><a href="#label-Provider-Specific+Configuration">Provider-Specific Configuration</a></h2>
 
+<h3 id="label-OpenAI"><a href="#label-OpenAI">OpenAI</a></h3>
 
+<table role="table">
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>api_key</code></td>
+<td>Your OpenAI API key</td>
+</tr>
+</tbody>
+</table>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
-  </section>
+<h3 id="label-Amazon+Bedrock"><a href="#label-Amazon+Bedrock">Amazon Bedrock</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>region</code></td>
+<td>AWS region (e.g., <code>us-east-1</code>)</td>
+</tr>
+<tr>
+<td><code>api_token</code></td>
+<td>Optional bearer token for API authentication</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-string">&#39;us-east-1&#39;</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">api_token</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]  <span class="ruby-comment"># Optional</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>When <code>api_token</code> is not set, the provider uses standard AWS IAM authentication.</p>
+
+<h3 id="label-Anthropic"><a href="#label-Anthropic">Anthropic</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>api_key</code></td>
+<td>Your Anthropic API key</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">anthropic</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;ANTHROPIC_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Agent-Level+Configuration"><a href="#label-Agent-Level+Configuration">Agent-Level Configuration</a></h2>
+
+<p>Override global configuration at the agent level:</p>
+
+<h3 id="label-provider_options"><a href="#label-provider_options">provider_options</a></h3>
+
+<p>Pass options directly to the provider client:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+
+  <span class="ruby-comment"># Override API key for this agent only</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;CUSTOM_OPENAI_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-model_options"><a href="#label-model_options">model_options</a></h3>
+
+<p>Pass options to each LLM request:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+
+  <span class="ruby-comment"># These options are sent with every generate/stream call</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>, <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;medium&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Common+Model+Options"><a href="#label-Common+Model+Options">Common Model Options</a></h2>
+
+<h3 id="label-OpenAI"><a href="#label-OpenAI">OpenAI</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperature</code></td>
+<td>Sampling temperature (0.0-2.0)</td>
+</tr>
+<tr>
+<td><code>max_tokens</code></td>
+<td>Maximum tokens in response</td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td>Nucleus sampling parameter</td>
+</tr>
+<tr>
+<td><code>reasoning</code></td>
+<td>Reasoning effort level (<code>low</code>, <code>medium</code>, <code>high</code>)</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>, <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;medium&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-Amazon+Bedrock"><a href="#label-Amazon+Bedrock">Amazon Bedrock</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperature</code></td>
+<td>Sampling temperature</td>
+</tr>
+<tr>
+<td><code>max_tokens</code></td>
+<td>Maximum tokens in response</td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td>Nucleus sampling parameter</td>
+</tr>
+<tr>
+<td><code>top_k</code></td>
+<td>Top-k sampling parameter</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>, <span class="ruby-value">max_tokens:</span> <span class="ruby-value">4096</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-Anthropic"><a href="#label-Anthropic">Anthropic</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperature</code></td>
+<td>Sampling temperature</td>
+</tr>
+<tr>
+<td><code>max_tokens</code></td>
+<td>Maximum tokens in response</td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td>Nucleus sampling parameter</td>
+</tr>
+<tr>
+<td><code>top_k</code></td>
+<td>Top-k sampling parameter</td>
+</tr>
+<tr>
+<td><code>thinking</code></td>
+<td>Extended thinking config hash (Claude 3.7+)</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;anthropic/claude-3-5-sonnet-20241022&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>, <span class="ruby-value">max_tokens:</span> <span class="ruby-value">4096</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># With extended thinking (Claude 3.7+)</span>
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ReasoningAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;anthropic/claude-3-7-sonnet-20250219&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">thinking:</span> {<span class="ruby-value">type:</span> <span class="ruby-string">&quot;enabled&quot;</span>, <span class="ruby-value">budget_tokens:</span> <span class="ruby-value">10000</span>}
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Environment+Variables"><a href="#label-Environment+Variables">Environment Variables</a></h2>
+
+<p>Recommended pattern for managing credentials:</p>
+
+<pre class="ruby"><span class="ruby-comment"># config/initializers/riffer.rb (Rails)</span>
+<span class="ruby-comment"># or at application startup</span>
+
+<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>) { <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;OPENAI_API_KEY not set&#39;</span> }
+
+  <span class="ruby-keyword">if</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_REGION&#39;</span>]
+    <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_REGION&#39;</span>]
+    <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">api_token</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Multiple+Configurations"><a href="#label-Multiple+Configurations">Multiple Configurations</a></h2>
+
+<p>For different environments or use cases, use agent-level overrides:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">ProductionAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;PRODUCTION_OPENAI_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">DevelopmentAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o-mini&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;DEV_OPENAI_KEY&#39;</span>]
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.0</span>  <span class="ruby-comment"># Deterministic for testing</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
 </main>
 

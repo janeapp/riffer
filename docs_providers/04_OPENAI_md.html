@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>04_OPENAI - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,04_OPENAI">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="04_OPENAI: OpenAI Provider The OpenAI provider connects to OpenAI&#39;s API for GPT models. ruby Riffer."
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="04_OPENAI - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="OpenAI Provider The OpenAI provider connects to OpenAI&#39;s API for GPT models. ruby Riffer.">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="04_OPENAI - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="OpenAI Provider The OpenAI provider connects to OpenAI&#39;s API for GPT models. ruby Riffer.">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -484,7 +481,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs_providers
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,174 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs_providers/04_OPENAI.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-OpenAI+Provider"><a href="#label-OpenAI+Provider">OpenAI Provider</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>The OpenAI provider connects to OpenAI’s API for GPT models.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Installation"><a href="#label-Installation">Installation</a></h2>
 
-  </section>
+<p>Add the OpenAI gem to your Gemfile:</p>
 
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;openai&#39;</span>
+</pre>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<h2 id="label-Configuration"><a href="#label-Configuration">Configuration</a></h2>
 
+<p>Set your API key globally:</p>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<p>Or per-agent:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;CUSTOM_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<h2 id="label-Supported+Models"><a href="#label-Supported+Models">Supported Models</a></h2>
 
+<p>Use any OpenAI model in the <code>openai/model</code> format:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o-mini&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4-turbo&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-3.5-turbo&#39;</span>
+</pre>
 
+<h2 id="label-Model+Options"><a href="#label-Model+Options">Model Options</a></h2>
 
-  </section>
+<h3 id="label-temperature"><a href="#label-temperature">temperature</a></h3>
+
+<p>Controls randomness (0.0-2.0):</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+</pre>
+
+<h3 id="label-max_tokens"><a href="#label-max_tokens">max_tokens</a></h3>
+
+<p>Maximum tokens in response:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">max_tokens:</span> <span class="ruby-value">4096</span>
+</pre>
+
+<h3 id="label-reasoning"><a href="#label-reasoning">reasoning</a></h3>
+
+<p>Enables extended thinking (for supported models):</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;medium&#39;</span>  <span class="ruby-comment"># &#39;low&#39;, &#39;medium&#39;, or &#39;high&#39;</span>
+</pre>
+
+<p>When reasoning is enabled, you’ll receive <code>ReasoningDelta</code> and <code>ReasoningDone</code> events during streaming.</p>
+
+<h2 id="label-Example"><a href="#label-Example">Example</a></h2>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">CodeReviewAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a code reviewer. Provide constructive feedback.&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.3</span>, <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;medium&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">CodeReviewAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Review this code: def add(a,b); a+b; end&quot;</span>)
+</pre>
+
+<h2 id="label-Streaming"><a href="#label-Streaming">Streaming</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&quot;Explain Ruby blocks&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningDelta</span>
+    <span class="ruby-comment"># Extended thinking content</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;[thinking] #{event.content}&quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningDone</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\n[reasoning complete]&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Tool+Calling"><a href="#label-Tool+Calling">Tool Calling</a></h2>
+
+<p>OpenAI provider converts tools to function calling format with strict mode:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CalculatorTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Performs basic math operations&quot;</span>
+
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:operation</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&quot;add&quot;</span>, <span class="ruby-string">&quot;subtract&quot;</span>, <span class="ruby-string">&quot;multiply&quot;</span>, <span class="ruby-string">&quot;divide&quot;</span>]
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:a</span>, <span class="ruby-constant">Float</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;First number&quot;</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:b</span>, <span class="ruby-constant">Float</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Second number&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">operation:</span>, <span class="ruby-value">a:</span>, <span class="ruby-value">b:</span>)
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">operation</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;add&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;subtract&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;multiply&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;divide&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">end</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">MathAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">CalculatorTool</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Message+Format"><a href="#label-Message+Format">Message Format</a></h2>
+
+<p>The provider converts <a href="../Riffer.html"><code>Riffer</code></a> messages to OpenAI format:</p>
+
+<table role="table">
+<thead>
+<tr>
+<th><a href="../Riffer.html"><code>Riffer</code></a> Message</th>
+<th>OpenAI Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>System</code></td>
+<td><code>developer</code></td>
+</tr>
+<tr>
+<td><code>User</code></td>
+<td><code>user</code></td>
+</tr>
+<tr>
+<td><code>Assistant</code></td>
+<td><code>assistant</code></td>
+</tr>
+<tr>
+<td><code>Tool</code></td>
+<td><code>function_call_output</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="label-Direct+Provider+Usage"><a href="#label-Direct+Provider+Usage">Direct Provider Usage</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>])
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Hello!&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>,
+  <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+)
+
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+</pre>
 
 </main>
 

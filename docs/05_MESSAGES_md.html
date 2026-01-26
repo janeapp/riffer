@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>05_MESSAGES - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,05_MESSAGES">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="05_MESSAGES: Messages Messages represent the conversation between users and the assistant. Riffer uses strongly-typed message objects to ensure consistency and ty"
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="05_MESSAGES - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Messages Messages represent the conversation between users and the assistant. Riffer uses strongly-typed message objects to ensure consistency and ty">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="05_MESSAGES - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Messages Messages represent the conversation between users and the assistant. Riffer uses strongly-typed message objects to ensure consistency and ty">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -423,7 +420,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,171 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs/05_MESSAGES.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Messages"><a href="#label-Messages">Messages</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>Messages represent the conversation between users and the assistant. <a href="../Riffer.html"><code>Riffer</code></a> uses strongly-typed message objects to ensure consistency and type safety.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Message+Types"><a href="#label-Message+Types">Message Types</a></h2>
 
-  </section>
+<h3 id="label-System"><a href="#label-System">System</a></h3>
 
+<p>System messages provide instructions to the LLM:</p>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<pre class="ruby"><span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;You are a helpful assistant.&quot;</span>)
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">role</span>     <span class="ruby-comment"># =&gt; :system</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>  <span class="ruby-comment"># =&gt; &quot;You are a helpful assistant.&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">to_h</span>     <span class="ruby-comment"># =&gt; {role: :system, content: &quot;You are a helpful assistant.&quot;}</span>
+</pre>
 
+<p>System messages are typically set via agent <code>instructions</code> and automatically prepended to conversations.</p>
 
+<h3 id="label-User"><a href="#label-User">User</a></h3>
 
+<p>User messages represent input from the user:</p>
 
+<pre class="ruby"><span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello, how are you?&quot;</span>)
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">role</span>     <span class="ruby-comment"># =&gt; :user</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>  <span class="ruby-comment"># =&gt; &quot;Hello, how are you?&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">to_h</span>     <span class="ruby-comment"># =&gt; {role: :user, content: &quot;Hello, how are you?&quot;}</span>
+</pre>
 
+<h3 id="label-Assistant"><a href="#label-Assistant">Assistant</a></h3>
 
+<p>Assistant messages represent LLM responses, potentially including tool calls:</p>
 
+<pre class="ruby"><span class="ruby-comment"># Text-only response</span>
+<span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;I&#39;m doing well, thank you!&quot;</span>)
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">role</span>        <span class="ruby-comment"># =&gt; :assistant</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>     <span class="ruby-comment"># =&gt; &quot;I&#39;m doing well, thank you!&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">tool_calls</span>  <span class="ruby-comment"># =&gt; []</span>
 
+<span class="ruby-comment"># Response with tool calls</span>
+<span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">tool_calls:</span> [
+  {<span class="ruby-value">id:</span> <span class="ruby-string">&quot;call_123&quot;</span>, <span class="ruby-value">call_id:</span> <span class="ruby-string">&quot;call_123&quot;</span>, <span class="ruby-value">name:</span> <span class="ruby-string">&quot;weather_tool&quot;</span>, <span class="ruby-value">arguments:</span> <span class="ruby-string">&#39;{&quot;city&quot;:&quot;Tokyo&quot;}&#39;</span>}
+])
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">tool_calls</span>  <span class="ruby-comment"># =&gt; [{id: &quot;call_123&quot;, ...}]</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">to_h</span>        <span class="ruby-comment"># =&gt; {role: &quot;assistant&quot;, content: &quot;&quot;, tool_calls: [...]}</span>
+</pre>
 
-  </section>
+<h3 id="label-Tool"><a href="#label-Tool">Tool</a></h3>
+
+<p>Tool messages contain the results of tool executions:</p>
+
+<pre class="ruby"><span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-string">&quot;The weather in Tokyo is 22C and sunny.&quot;</span>,
+  <span class="ruby-value">tool_call_id:</span> <span class="ruby-string">&quot;call_123&quot;</span>,
+  <span class="ruby-value">name:</span> <span class="ruby-string">&quot;weather_tool&quot;</span>
+)
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">role</span>          <span class="ruby-comment"># =&gt; :tool</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>       <span class="ruby-comment"># =&gt; &quot;The weather in Tokyo is 22C and sunny.&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">tool_call_id</span>  <span class="ruby-comment"># =&gt; &quot;call_123&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">name</span>          <span class="ruby-comment"># =&gt; &quot;weather_tool&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">error?</span>        <span class="ruby-comment"># =&gt; false</span>
+
+<span class="ruby-comment"># Error result</span>
+<span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-string">&quot;API rate limit exceeded&quot;</span>,
+  <span class="ruby-value">tool_call_id:</span> <span class="ruby-string">&quot;call_123&quot;</span>,
+  <span class="ruby-value">name:</span> <span class="ruby-string">&quot;weather_tool&quot;</span>,
+  <span class="ruby-value">error:</span> <span class="ruby-string">&quot;API rate limit exceeded&quot;</span>,
+  <span class="ruby-value">error_type:</span> <span class="ruby-value">:execution_error</span>
+)
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">error?</span>      <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">error</span>       <span class="ruby-comment"># =&gt; &quot;API rate limit exceeded&quot;</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">error_type</span>  <span class="ruby-comment"># =&gt; :execution_error</span>
+</pre>
+
+<h2 id="label-Using+Messages+with+Agents"><a href="#label-Using+Messages+with+Agents">Using Messages with Agents</a></h2>
+
+<h3 id="label-String+Prompts"><a href="#label-String+Prompts">String Prompts</a></h3>
+
+<p>The simplest way to interact with an agent:</p>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span> = <span class="ruby-constant">MyAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Hello!&quot;</span>)
+</pre>
+
+<p>This creates a <code>User</code> message internally.</p>
+
+<h3 id="label-Message+Arrays"><a href="#label-Message+Arrays">Message Arrays</a></h3>
+
+<p>For multi-turn conversations, pass an array of messages:</p>
+
+<pre class="ruby"><span class="ruby-identifier">messages</span> = [
+  {<span class="ruby-value">role:</span> <span class="ruby-value">:user</span>, <span class="ruby-value">content:</span> <span class="ruby-string">&quot;What&#39;s the weather?&quot;</span>},
+  {<span class="ruby-value">role:</span> <span class="ruby-value">:assistant</span>, <span class="ruby-value">content:</span> <span class="ruby-string">&quot;I&#39;ll check that for you.&quot;</span>},
+  {<span class="ruby-value">role:</span> <span class="ruby-value">:user</span>, <span class="ruby-value">content:</span> <span class="ruby-string">&quot;Thanks, I meant in Tokyo specifically.&quot;</span>}
+]
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">messages</span>)
+</pre>
+
+<p>Messages can be hashes or <a href="../Riffer/Messages/Base.html"><code>Riffer::Messages::Base</code></a> objects:</p>
+
+<pre class="ruby"><span class="ruby-identifier">messages</span> = [
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello&quot;</span>),
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hi there!&quot;</span>),
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;How are you?&quot;</span>)
+]
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">messages</span>)
+</pre>
+
+<h3 id="label-Accessing+Message+History"><a href="#label-Accessing+Message+History">Accessing Message History</a></h3>
+
+<p>After calling <code>generate</code> or <code>stream</code>, access the full conversation:</p>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span> = <span class="ruby-constant">MyAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Hello!&quot;</span>)
+
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;[#{msg.role}] #{msg.content}&quot;</span>
+<span class="ruby-keyword">end</span>
+<span class="ruby-comment"># [system] You are a helpful assistant.</span>
+<span class="ruby-comment"># [user] Hello!</span>
+<span class="ruby-comment"># [assistant] Hi there! How can I help you today?</span>
+</pre>
+
+<h2 id="label-Tool+Call+Structure"><a href="#label-Tool+Call+Structure">Tool Call Structure</a></h2>
+
+<p>Tool calls in assistant messages have this structure:</p>
+
+<pre class="ruby">{
+  <span class="ruby-value">id:</span> <span class="ruby-string">&quot;item_123&quot;</span>,       <span class="ruby-comment"># Item identifier</span>
+  <span class="ruby-value">call_id:</span> <span class="ruby-string">&quot;call_456&quot;</span>,  <span class="ruby-comment"># Call identifier for response matching</span>
+  <span class="ruby-value">name:</span> <span class="ruby-string">&quot;weather_tool&quot;</span>, <span class="ruby-comment"># Tool name</span>
+  <span class="ruby-value">arguments:</span> <span class="ruby-string">&#39;{&quot;city&quot;:&quot;Tokyo&quot;}&#39;</span>  <span class="ruby-comment"># JSON string of arguments</span>
+}
+</pre>
+
+<p>When creating tool result messages, use the <code>id</code> as <code>tool_call_id</code>.</p>
+
+<h2 id="label-Message+Emission"><a href="#label-Message+Emission">Message Emission</a></h2>
+
+<p>Agents can emit messages as they’re added during generation via the <code>on_message</code> callback. This is useful for persistence or real-time logging. Only agent-generated messages (Assistant, Tool) are emitted—not inputs (System, User).</p>
+
+<p>See <a href="03_AGENTS_md.html#on_message">Agents - on_message</a> for details.</p>
+
+<h2 id="label-Base+Class"><a href="#label-Base+Class">Base Class</a></h2>
+
+<p>All messages inherit from <a href="../Riffer/Messages/Base.html"><code>Riffer::Messages::Base</code></a>:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:content</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+    {<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>}
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Subclasses implement <code>role</code> and optionally extend <code>to_h</code> with additional fields.</p>
 
 </main>
 

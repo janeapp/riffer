@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>02_AMAZON_BEDROCK - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,02_AMAZON_BEDROCK">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="02_AMAZON_BEDROCK: Amazon Bedrock Provider The Amazon Bedrock provider connects to AWS Bedrock for Claude and other foundation models. ruby gem &#39;aws-sdk-bedrockruntime&#39;"
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="02_AMAZON_BEDROCK - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Amazon Bedrock Provider The Amazon Bedrock provider connects to AWS Bedrock for Claude and other foundation models. ruby gem &#39;aws-sdk-bedrockruntime&#39;">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="02_AMAZON_BEDROCK - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Amazon Bedrock Provider The Amazon Bedrock provider connects to AWS Bedrock for Claude and other foundation models. ruby gem &#39;aws-sdk-bedrockruntime&#39;">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -484,7 +481,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs_providers
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,210 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs_providers/02_AMAZON_BEDROCK.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Amazon+Bedrock+Provider"><a href="#label-Amazon+Bedrock+Provider">Amazon Bedrock Provider</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>The Amazon Bedrock provider connects to AWS Bedrock for Claude and other foundation models.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Installation"><a href="#label-Installation">Installation</a></h2>
 
-  </section>
+<p>Add the AWS SDK gem to your Gemfile:</p>
 
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;aws-sdk-bedrockruntime&#39;</span>
+</pre>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<h2 id="label-Configuration"><a href="#label-Configuration">Configuration</a></h2>
 
+<h3 id="label-IAM+Authentication+-28Recommended-29"><a href="#label-IAM+Authentication+-28Recommended-29">IAM Authentication (Recommended)</a></h3>
 
+<p>Configure your AWS credentials using standard AWS methods (environment variables, IAM roles, etc.):</p>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-string">&#39;us-east-1&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
+<h3 id="label-Bearer+Token+Authentication"><a href="#label-Bearer+Token+Authentication">Bearer Token Authentication</a></h3>
 
+<p>For API token authentication:</p>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-string">&#39;us-east-1&#39;</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">api_token</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<p>Or per-agent:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">region:</span> <span class="ruby-string">&#39;us-west-2&#39;</span>, <span class="ruby-value">api_token:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
-  </section>
+<h2 id="label-Supported+Models"><a href="#label-Supported+Models">Supported Models</a></h2>
+
+<p>Use Bedrock model IDs in the <code>amazon_bedrock/model</code> format:</p>
+
+<pre class="ruby"><span class="ruby-comment"># Claude models</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-opus-20240229-v1:0&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-haiku-20240307-v1:0&#39;</span>
+
+<span class="ruby-comment"># Other foundation models available in Bedrock</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/amazon.titan-text-express-v1&#39;</span>
+</pre>
+
+<h2 id="label-Model+Options"><a href="#label-Model+Options">Model Options</a></h2>
+
+<h3 id="label-temperature"><a href="#label-temperature">temperature</a></h3>
+
+<p>Controls randomness:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+</pre>
+
+<h3 id="label-max_tokens"><a href="#label-max_tokens">max_tokens</a></h3>
+
+<p>Maximum tokens in response:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">max_tokens:</span> <span class="ruby-value">4096</span>
+</pre>
+
+<h3 id="label-top_p"><a href="#label-top_p">top_p</a></h3>
+
+<p>Nucleus sampling parameter:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">top_p:</span> <span class="ruby-value">0.95</span>
+</pre>
+
+<h3 id="label-top_k"><a href="#label-top_k">top_k</a></h3>
+
+<p>Top-k sampling parameter:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">top_k:</span> <span class="ruby-value">250</span>
+</pre>
+
+<h2 id="label-Example"><a href="#label-Example">Example</a></h2>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">amazon_bedrock</span>.<span class="ruby-identifier">region</span> = <span class="ruby-string">&#39;us-east-1&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">AssistantAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a helpful assistant.&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>, <span class="ruby-value">max_tokens:</span> <span class="ruby-value">4096</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">AssistantAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Explain cloud computing&quot;</span>)
+</pre>
+
+<h2 id="label-Streaming"><a href="#label-Streaming">Streaming</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&quot;Tell me about AWS services&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDone</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\n[Complete]&quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCallDone</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;[Tool: #{event.name}]&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Tool+Calling"><a href="#label-Tool+Calling">Tool Calling</a></h2>
+
+<p>Bedrock provider converts tools to the Bedrock tool_config format:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">S3ListTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Lists objects in an S3 bucket&quot;</span>
+
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:bucket</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The S3 bucket name&quot;</span>
+    <span class="ruby-identifier">optional</span> <span class="ruby-value">:prefix</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Object prefix filter&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">bucket:</span>, <span class="ruby-value">prefix:</span> <span class="ruby-keyword">nil</span>)
+    <span class="ruby-comment"># Implementation</span>
+    <span class="ruby-node">&quot;Found 10 objects in #{bucket}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">AWSAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">S3ListTool</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Message+Format"><a href="#label-Message+Format">Message Format</a></h2>
+
+<p>The provider converts <a href="../Riffer.html"><code>Riffer</code></a> messages to Bedrock format:</p>
+
+<table role="table">
+<thead>
+<tr>
+<th><a href="../Riffer.html"><code>Riffer</code></a> Message</th>
+<th>Bedrock Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>System</code></td>
+<td>Added to <code>system</code> array as <code>{text: ...}</code></td>
+</tr>
+<tr>
+<td><code>User</code></td>
+<td><code>{role: &quot;user&quot;, content: [{text: ...}]}</code></td>
+</tr>
+<tr>
+<td><code>Assistant</code></td>
+<td><code>{role: &quot;assistant&quot;, content: [...]}</code></td>
+</tr>
+<tr>
+<td><code>Tool</code></td>
+<td><code>{role: &quot;user&quot;, content: [{tool_result: ...}]}</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="label-Direct+Provider+Usage"><a href="#label-Direct+Provider+Usage">Direct Provider Usage</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">AmazonBedrock</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">region:</span> <span class="ruby-string">&#39;us-east-1&#39;</span>,
+  <span class="ruby-value">api_token:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;BEDROCK_API_TOKEN&#39;</span>]  <span class="ruby-comment"># Optional</span>
+)
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Hello!&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;anthropic.claude-3-sonnet-20240229-v1:0&quot;</span>,
+  <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+)
+
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+</pre>
+
+<h2 id="label-AWS+IAM+Permissions"><a href="#label-AWS+IAM+Permissions">AWS IAM Permissions</a></h2>
+
+<p>Ensure your IAM role/user has the following permissions:</p>
+
+<pre class="ruby">{
+  <span class="ruby-value">&quot;Version&quot;:</span> <span class="ruby-string">&quot;2012-10-17&quot;</span>,
+  <span class="ruby-value">&quot;Statement&quot;:</span> [
+    {
+      <span class="ruby-value">&quot;Effect&quot;:</span> <span class="ruby-string">&quot;Allow&quot;</span>,
+      <span class="ruby-value">&quot;Action&quot;:</span> [
+        <span class="ruby-string">&quot;bedrock:InvokeModel&quot;</span>,
+        <span class="ruby-string">&quot;bedrock:InvokeModelWithResponseStream&quot;</span>
+      ],
+      <span class="ruby-value">&quot;Resource&quot;:</span> <span class="ruby-string">&quot;arn:aws:bedrock:*::foundation-model/*&quot;</span>
+    }
+  ]
+}
+</pre>
 
 </main>
 

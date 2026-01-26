@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools - Riffer Documentation</title>
+<title>01_PROVIDERS - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,01_PROVIDERS">
   <meta
-    name="keywords"
-    content="ruby,module,Riffer::Tools"
+    name="description"
+    content="01_PROVIDERS: Providers Overview Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming."
   >
-
-    <meta
-      name="description"
-      content="module Riffer::Tools: Namespace for tool-related classes in the Riffer framework."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools - Riffer Documentation">
+<meta property="og:title" content="01_PROVIDERS - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta property="og:description" content="Providers Overview Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming.">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools - Riffer Documentation">
+<meta name="twitter:title" content="01_PROVIDERS - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Namespace for tool-related classes in the Riffer framework.">
+    <meta name="twitter:description" content="Providers Overview Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming.">
 
 
 
@@ -91,7 +86,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,8 +364,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -484,7 +481,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs_providers
@@ -539,18 +536,6 @@
   </div>
 
 
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -569,50 +554,226 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-Riffer::Tools">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Tools</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs_providers/01_PROVIDERS.md">
 
-  <h1 id="module-Riffer::Tools" class="anchor-link module">
-    module Riffer::Tools
-  </h1>
+<h1 id="label-Providers+Overview"><a href="#label-Providers+Overview">Providers Overview</a></h1>
 
-  <section class="description">
-    
-<p>Namespace for tool-related classes in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>Providers are adapters that connect <a href="../Riffer.html"><code>Riffer</code></a> to LLM services. They implement a common interface for text generation and streaming.</p>
 
-<p>Contains: - <a href="Tools/Params.html"><code>Riffer::Tools::Params</code></a> - DSL for defining tool parameters - <a href="Tools/Param.html"><code>Riffer::Tools::Param</code></a> - Individual parameter definition</p>
+<h2 id="label-Available+Providers"><a href="#label-Available+Providers">Available Providers</a></h2>
 
-  </section>
+<table role="table">
+<thead>
+<tr>
+<th>Provider</th>
+<th>Identifier</th>
+<th>Gem Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenAI</td>
+<td><code>openai</code></td>
+<td><code>openai</code></td>
+</tr>
+<tr>
+<td>Amazon Bedrock</td>
+<td><a href="../lib/riffer/providers/amazon_bedrock_rb.html">amazon_bedrock</a></td>
+<td><code>aws-sdk-bedrockruntime</code></td>
+</tr>
+<tr>
+<td>Anthropic</td>
+<td><code>anthropic</code></td>
+<td><code>anthropic</code></td>
+</tr>
+<tr>
+<td>Test</td>
+<td><code>test</code></td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
 
+<h2 id="label-Model+String+Format"><a href="#label-Model+String+Format">Model String Format</a></h2>
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+<p>Agents specify providers using the <code>provider/model</code> format:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>              <span class="ruby-comment"># OpenAI</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>  <span class="ruby-comment"># Bedrock</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;anthropic/claude-3-5-sonnet-20241022&#39;</span>  <span class="ruby-comment"># Anthropic</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;test/any&#39;</span>                   <span class="ruby-comment"># Test provider</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
+<h2 id="label-Provider+Interface"><a href="#label-Provider+Interface">Provider Interface</a></h2>
 
+<p>All providers inherit from <a href="../Riffer/Providers/Base.html"><code>Riffer::Providers::Base</code></a> and implement:</p>
 
+<h3 id="label-generate_text"><a href="#label-generate_text">generate_text</a></h3>
 
+<p>Generates a response synchronously:</p>
 
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-string">&quot;...&quot;</span>)
 
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Hello!&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
+)
+<span class="ruby-comment"># =&gt; Riffer::Messages::Assistant</span>
 
+<span class="ruby-comment"># Or with messages</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">messages:</span> [<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello!&quot;</span>)],
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
+)
+</pre>
 
-  </section>
+<h3 id="label-stream_text"><a href="#label-stream_text">stream_text</a></h3>
+
+<p>Streams a response as an Enumerator:</p>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Tell me a story&quot;</span>, <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Method+Parameters"><a href="#label-Method+Parameters">Method Parameters</a></h2>
+
+<table role="table">
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prompt</code></td>
+<td>String prompt (required if <code>messages</code> not provided)</td>
+</tr>
+<tr>
+<td><code>system</code></td>
+<td>Optional system message string</td>
+</tr>
+<tr>
+<td><code>messages</code></td>
+<td>Array of message objects/hashes (alternative to <code>prompt</code>)</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>Model name string</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td>Array of Tool classes</td>
+</tr>
+<tr>
+<td><code>**options</code></td>
+<td>Provider-specific options</td>
+</tr>
+</tbody>
+</table>
+
+<p>You must provide either <code>prompt</code> or <code>messages</code>, but not both.</p>
+
+<h2 id="label-Using+Providers+Directly"><a href="#label-Using+Providers+Directly">Using Providers Directly</a></h2>
+
+<p>While agents abstract provider usage, you can use providers directly:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;riffer&#39;</span>
+
+<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>
+
+<span class="ruby-comment"># Simple prompt</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;What is Ruby?&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
+)
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+
+<span class="ruby-comment"># With system message</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Explain recursion&quot;</span>,
+  <span class="ruby-value">system:</span> <span class="ruby-string">&quot;You are a programming tutor. Use simple language.&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
+)
+
+<span class="ruby-comment"># With message history</span>
+<span class="ruby-identifier">messages</span> = [
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;You are helpful.&quot;</span>),
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hi!&quot;</span>),
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello!&quot;</span>),
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;How are you?&quot;</span>)
+]
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
+)
+</pre>
+
+<h2 id="label-Tool+Support"><a href="#label-Tool+Support">Tool Support</a></h2>
+
+<p>Providers convert tools to their native format:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets weather&quot;</span>
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>)
+    <span class="ruby-node">&quot;Sunny in #{city}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;What&#39;s the weather in Tokyo?&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>,
+  <span class="ruby-value">tools:</span> [<span class="ruby-constant">WeatherTool</span>]
+)
+
+<span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">any?</span>
+  <span class="ruby-comment"># Handle tool calls</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Provider+Registry"><a href="#label-Provider+Registry">Provider Registry</a></h2>
+
+<p><a href="../Riffer.html"><code>Riffer</code></a> uses a registry to find providers by identifier:</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:openai</span>)
+<span class="ruby-comment"># =&gt; Riffer::Providers::OpenAI</span>
+
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:amazon_bedrock</span>)
+<span class="ruby-comment"># =&gt; Riffer::Providers::AmazonBedrock</span>
+
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:anthropic</span>)
+<span class="ruby-comment"># =&gt; Riffer::Providers::Anthropic</span>
+
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:test</span>)
+<span class="ruby-comment"># =&gt; Riffer::Providers::Test</span>
+</pre>
+
+<h2 id="label-Provider-Specific+Guides"><a href="#label-Provider-Specific+Guides">Provider-Specific Guides</a></h2>
+<ul><li>
+<p><a href="02_AMAZON_BEDROCK_md.html">Amazon Bedrock</a> - Claude and other models via AWS</p>
+</li><li>
+<p><a href="03_ANTHROPIC_md.html">Anthropic</a> - Claude models via Anthropic API</p>
+</li><li>
+<p><a href="04_OPENAI_md.html">OpenAI</a> - GPT models</p>
+</li><li>
+<p><a href="05_TEST_PROVIDER_md.html">Test</a> - Mock provider for testing</p>
+</li><li>
+<p><a href="06_CUSTOM_PROVIDERS_md.html">Custom Providers</a> - Creating your own provider</p>
+</li></ul>
 
 </main>
 

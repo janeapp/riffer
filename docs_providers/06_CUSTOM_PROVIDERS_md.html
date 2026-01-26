@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>06_CUSTOM_PROVIDERS - Riffer Documentation</title>
+
+
+  <meta name="keywords" content="ruby,documentation,06_CUSTOM_PROVIDERS">
+  <meta
+    name="description"
+    content="06_CUSTOM_PROVIDERS: Creating Custom Providers You can create custom providers to connect Riffer to other LLM services. api_key] || ENV[&#39;MY_PROVIDER_API_KEY&#39;] @client"
+  >
+
+
+
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="06_CUSTOM_PROVIDERS - Riffer Documentation">
+
+
+
+    <meta property="og:description" content="Creating Custom Providers You can create custom providers to connect Riffer to other LLM services. api_key] || ENV[&#39;MY_PROVIDER_API_KEY&#39;] @client">
+
+
+
+
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="06_CUSTOM_PROVIDERS - Riffer Documentation">
+
+
+
+    <meta name="twitter:description" content="Creating Custom Providers You can create custom providers to connect Riffer to other LLM services. api_key] || ENV[&#39;MY_PROVIDER_API_KEY&#39;] @client">
+
+
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script
+  src="../js/theme-toggle.js?v=7.0.1"
+></script>
+
+<script
+  src="../js/search_navigation.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/search_data.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/search_ranker.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/search_controller.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/c_highlighter.js?v=7.0.1"
+  defer
+></script>
+
+<script
+  src="../js/aliki.js?v=7.0.1"
+  defer
+></script>
+
+<link
+  href="../css/rdoc.css?v=7.0.1"
+  rel="stylesheet"
+>
+
+
+
+
+<body role="document" class="file has-toc">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- Chevron (right arrow) - used for expand/collapse -->
+  <symbol
+    id="icon-chevron"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </symbol>
+
+  <!-- File/Document - Pages section -->
+  <symbol
+    id="icon-file"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+    ></path>
+
+    <polyline points="14 2 14 8 20 8"></polyline>
+  </symbol>
+
+  <!-- Layers/Stack - Classes and Modules section -->
+  <symbol
+    id="icon-layers"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+    <polyline points="2 17 12 22 22 17"></polyline>
+    <polyline points="2 12 12 17 22 12"></polyline>
+  </symbol>
+
+  <!-- Curly braces with C - Class Methods section -->
+  <symbol
+    id="icon-class-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      C
+    </text>
+  </symbol>
+
+  <!-- Curly braces with I - Instance Methods section -->
+  <symbol
+    id="icon-instance-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      I
+    </text>
+  </symbol>
+
+  <!-- Double chevrons up - Ancestors section -->
+  <symbol
+    id="icon-ancestors"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </symbol>
+
+  <!-- User with plus - Included Modules section -->
+  <symbol
+    id="icon-includes"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+
+    <line
+      x1="20"
+      y1="8"
+      x2="20"
+      y2="14"
+    ></line>
+
+    <line
+      x1="23"
+      y1="11"
+      x2="17"
+      y2="11"
+    ></line>
+  </symbol>
+
+  <!-- User with check - Extended Modules section -->
+  <symbol
+    id="icon-extends"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+    <polyline points="17 11 19 13 23 9"></polyline>
+  </symbol>
+
+  <!-- List - Sections section -->
+  <symbol
+    id="icon-list"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <line
+      x1="8"
+      y1="6"
+      x2="21"
+      y2="6"
+    ></line>
+
+    <line
+      x1="8"
+      y1="12"
+      x2="21"
+      y2="12"
+    ></line>
+
+    <line
+      x1="8"
+      y1="18"
+      x2="21"
+      y2="18"
+    ></line>
+
+    <line
+      x1="3"
+      y1="6"
+      x2="3.01"
+      y2="6"
+    ></line>
+
+    <line
+      x1="3"
+      y1="12"
+      x2="3.01"
+      y2="12"
+    ></line>
+
+    <line
+      x1="3"
+      y1="18"
+      x2="3.01"
+      y2="18"
+    ></line>
+  </symbol>
+</svg>
+
+<header class="top-navbar">
+  <a href="../index.html" class="navbar-brand">
+    Riffer Documentation
+  </a>
+
+  <!-- Desktop search bar -->
+  <div class="navbar-search navbar-search-desktop" role="search">
+    <form action="#" method="get" accept-charset="utf-8">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results-desktop"
+             type="text" name="search" placeholder="Search (/) for a class, method..."
+             spellcheck="false" autocomplete="off"
+             title="Type to search, Up and Down to navigate, Enter to load">
+      <ul id="search-results-desktop" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="initially-hidden search-results"></ul>
+    </form>
+  </div>
+
+  <!-- Mobile search icon button -->
+  <button id="search-toggle" class="navbar-search-mobile" aria-label="Open search" type="button">
+    <span aria-hidden="true">🔍</span>
+  </button>
+
+  <!-- Theme toggle button -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+    <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+  </button>
+</header>
+
+<!-- Search Modal (Mobile) -->
+<div id="search-modal" class="search-modal" hidden aria-modal="true" role="dialog" aria-label="Search">
+  <div class="search-modal-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <form class="search-modal-form" action="#" method="get" accept-charset="utf-8">
+        <span class="search-modal-icon" aria-hidden="true">🔍</span>
+        <input id="search-field-mobile" role="combobox" aria-label="Search"
+               aria-autocomplete="list" aria-controls="search-results-mobile"
+               type="text" name="search" placeholder="Search documentation"
+               spellcheck="false" autocomplete="off">
+        <button type="button" class="search-modal-close" aria-label="Close search" id="search-modal-close">
+          <span aria-hidden="true">esc</span>
+        </button>
+      </form>
+    </div>
+    <div class="search-modal-body">
+      <ul id="search-results-mobile" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="search-results search-modal-results initially-hidden"></ul>
+      <div class="search-modal-empty">
+        <p>No recent searches</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="navigation-toggle" role="button" tabindex="0" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="navigation">
+  <span aria-hidden="true">&#9776;</span>
+</div>
+
+
+<nav id="navigation" role="navigation">
+  
+
+
+
+
+
+
+  <div id="fileindex-section" class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg>
+            <use href="#icon-file"></use>
+          </svg>
+        </span>
+
+        <span class="nav-section-title">Pages</span>
+
+        <span class="nav-section-chevron">
+          <svg>
+            <use href="#icon-chevron"></use>
+          </svg>
+        </span>
+      </summary>
+
+      <ul class="nav-list">
+
+
+
+
+
+
+            <li>
+              <a href="../CHANGELOG_md.html">
+                CHANGELOG
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../LICENSE_txt.html">
+                LICENSE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../README_md.html">
+                README
+              </a>
+            </li>
+
+
+
+
+
+          <li>
+            <details >
+              <summary>
+                
+                  docs
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="../docs/01_OVERVIEW_md.html">
+                      01_OVERVIEW
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/02_GETTING_STARTED_md.html">
+                      02_GETTING_STARTED
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/03_AGENTS_md.html">
+                      03_AGENTS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/04_TOOLS_md.html">
+                      04_TOOLS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/05_MESSAGES_md.html">
+                      05_MESSAGES
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/06_STREAM_EVENTS_md.html">
+                      06_STREAM_EVENTS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/07_CONFIGURATION_md.html">
+                      07_CONFIGURATION
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+
+
+
+
+          <li>
+            <details  open>
+              <summary>
+                
+                  docs_providers
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="../docs_providers/01_PROVIDERS_md.html">
+                      01_PROVIDERS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/02_AMAZON_BEDROCK_md.html">
+                      02_AMAZON_BEDROCK
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/03_ANTHROPIC_md.html">
+                      03_ANTHROPIC
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/04_OPENAI_md.html">
+                      04_OPENAI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/05_TEST_PROVIDER_md.html">
+                      05_TEST_PROVIDER
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs_providers/06_CUSTOM_PROVIDERS_md.html">
+                      06_CUSTOM_PROVIDERS
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+      </ul>
+    </details>
+  </div>
+
+
+  <div id="classindex-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-layers"></use></svg>
+      </span>
+      <span class="nav-section-title">Classes and Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+  </details>
+</div>
+
+</nav>
+
+<main role="main" aria-label="Page docs_providers/06_CUSTOM_PROVIDERS.md">
+
+<h1 id="label-Creating+Custom+Providers"><a href="#label-Creating+Custom+Providers">Creating Custom Providers</a></h1>
+
+<p>You can create custom providers to connect <a href="../Riffer.html"><code>Riffer</code></a> to other LLM services.</p>
+
+<h2 id="label-Basic+Structure"><a href="#label-Basic+Structure">Basic Structure</a></h2>
+
+<p>Extend <a href="../Riffer/Providers/Base.html"><code>Riffer::Providers::Base</code></a> and implement the required methods:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-comment"># Initialize your client</span>
+    <span class="ruby-ivar">@api_key</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:api_key</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;MY_PROVIDER_API_KEY&#39;</span>]
+    <span class="ruby-ivar">@client</span> = <span class="ruby-constant">MyProviderClient</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-ivar">@api_key</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform_generate_text</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">model:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-comment"># Convert messages to provider format</span>
+    <span class="ruby-identifier">formatted</span> = <span class="ruby-identifier">convert_messages</span>(<span class="ruby-identifier">messages</span>)
+
+    <span class="ruby-comment"># Call your provider&#39;s API</span>
+    <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">generate</span>(
+      <span class="ruby-value">model:</span> <span class="ruby-identifier">model</span>,
+      <span class="ruby-value">messages:</span> <span class="ruby-identifier">formatted</span>,
+      <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>
+    )
+
+    <span class="ruby-comment"># Return a Riffer::Messages::Assistant</span>
+    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-identifier">response</span>.<span class="ruby-identifier">text</span>,
+      <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">extract_tool_calls</span>(<span class="ruby-identifier">response</span>)
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform_stream_text</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">model:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">yielder</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">formatted</span> = <span class="ruby-identifier">convert_messages</span>(<span class="ruby-identifier">messages</span>)
+
+      <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-value">model:</span> <span class="ruby-identifier">model</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">formatted</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">chunk</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment"># Yield appropriate stream events</span>
+        <span class="ruby-keyword">case</span> <span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">type</span>
+        <span class="ruby-keyword">when</span> <span class="ruby-value">:text</span>
+          <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword">when</span> <span class="ruby-value">:text_done</span>
+          <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDone</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword">when</span> <span class="ruby-value">:tool_call</span>
+          <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCallDone</span>.<span class="ruby-identifier">new</span>(
+            <span class="ruby-value">item_id:</span> <span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">id</span>,
+            <span class="ruby-value">call_id:</span> <span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">id</span>,
+            <span class="ruby-value">name:</span> <span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">name</span>,
+            <span class="ruby-value">arguments:</span> <span class="ruby-identifier">chunk</span>.<span class="ruby-identifier">arguments</span>
+          )
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">convert_messages</span>(<span class="ruby-identifier">messages</span>)
+    <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">msg</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>
+        {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;system&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>}
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>
+        {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;user&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>}
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>
+        <span class="ruby-identifier">convert_assistant</span>(<span class="ruby-identifier">msg</span>)
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+        {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;tool&quot;</span>, <span class="ruby-value">tool_call_id:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">tool_call_id</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>}
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">convert_assistant</span>(<span class="ruby-identifier">msg</span>)
+    <span class="ruby-comment"># Handle tool calls if present</span>
+    {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;assistant&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">tool_calls</span>}
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">extract_tool_calls</span>(<span class="ruby-identifier">response</span>)
+    <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">tool_calls</span>
+
+    <span class="ruby-identifier">response</span>.<span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tc</span><span class="ruby-operator">|</span>
+      {
+        <span class="ruby-value">id:</span> <span class="ruby-identifier">tc</span>.<span class="ruby-identifier">id</span>,
+        <span class="ruby-value">call_id:</span> <span class="ruby-identifier">tc</span>.<span class="ruby-identifier">id</span>,
+        <span class="ruby-value">name:</span> <span class="ruby-identifier">tc</span>.<span class="ruby-identifier">name</span>,
+        <span class="ruby-value">arguments:</span> <span class="ruby-identifier">tc</span>.<span class="ruby-identifier">arguments</span>
+      }
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Using+depends_on"><a href="#label-Using+depends_on">Using depends_on</a></h2>
+
+<p>For lazy loading of external gems:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;my_provider_gem&quot;</span>  <span class="ruby-comment"># Only loaded when provider is used</span>
+
+    <span class="ruby-ivar">@client</span> = <span class="ruby-operator">::</span><span class="ruby-constant">MyProviderGem</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Registering+Your+Provider"><a href="#label-Registering+Your+Provider">Registering Your Provider</a></h2>
+
+<p>Add your provider to the repository:</p>
+
+<pre class="ruby"><span class="ruby-comment"># In lib/riffer/providers/repository.rb or your own code</span>
+
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span><span class="ruby-operator">::</span><span class="ruby-constant">REPO</span>[<span class="ruby-value">:my_provider</span>] = <span class="ruby-operator">-&gt;</span> { <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span> }
+</pre>
+
+<p>Or create a custom repository:</p>
+
+<pre class="ruby"><span class="ruby-keyword">module</span> <span class="ruby-constant">MyApp</span>
+  <span class="ruby-keyword">module</span> <span class="ruby-constant">Providers</span>
+    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_sym</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-value">:my_provider</span>
+        <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">identifier</span>)
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Using+Your+Provider"><a href="#label-Using+Your+Provider">Using Your Provider</a></h2>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;my_provider/model-name&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Tool+Support"><a href="#label-Tool+Support">Tool Support</a></h2>
+
+<p>Convert tools to your provider’s format:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform_generate_text</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">model:</span>, <span class="ruby-value">tools:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">params</span> = {
+    <span class="ruby-value">model:</span> <span class="ruby-identifier">model</span>,
+    <span class="ruby-value">messages:</span> <span class="ruby-identifier">convert_messages</span>(<span class="ruby-identifier">messages</span>)
+  }
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">tools</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">tools</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">params</span>[<span class="ruby-value">:tools</span>] = <span class="ruby-identifier">tools</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">convert_tool</span>(<span class="ruby-identifier">t</span>) }
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">params</span>)
+  <span class="ruby-comment"># ...</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">convert_tool</span>(<span class="ruby-identifier">tool</span>)
+  {
+    <span class="ruby-value">name:</span> <span class="ruby-identifier">tool</span>.<span class="ruby-identifier">name</span>,
+    <span class="ruby-value">description:</span> <span class="ruby-identifier">tool</span>.<span class="ruby-identifier">description</span>,
+    <span class="ruby-value">parameters:</span> <span class="ruby-identifier">tool</span>.<span class="ruby-identifier">parameters_schema</span>
+  }
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Stream+Events"><a href="#label-Stream+Events">Stream Events</a></h2>
+
+<p>Use the appropriate stream event classes:</p>
+
+<pre class="ruby"><span class="ruby-comment"># Text streaming</span>
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;chunk of text&quot;</span>)
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDone</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;complete text&quot;</span>)
+
+<span class="ruby-comment"># Tool calls</span>
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCallDelta</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">item_id:</span> <span class="ruby-string">&quot;id&quot;</span>,
+  <span class="ruby-value">name:</span> <span class="ruby-string">&quot;tool_name&quot;</span>,
+  <span class="ruby-value">arguments_delta:</span> <span class="ruby-string">&#39;{&quot;partial&quot;:&#39;</span>
+)
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCallDone</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">item_id:</span> <span class="ruby-string">&quot;id&quot;</span>,
+  <span class="ruby-value">call_id:</span> <span class="ruby-string">&quot;call_id&quot;</span>,
+  <span class="ruby-value">name:</span> <span class="ruby-string">&quot;tool_name&quot;</span>,
+  <span class="ruby-value">arguments:</span> <span class="ruby-string">&#39;{&quot;complete&quot;:&quot;args&quot;}&#39;</span>
+)
+
+<span class="ruby-comment"># Reasoning (if supported)</span>
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningDelta</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;thinking...&quot;</span>)
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningDone</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;complete reasoning&quot;</span>)
+</pre>
+
+<h2 id="label-Error+Handling"><a href="#label-Error+Handling">Error Handling</a></h2>
+
+<p>Raise appropriate <a href="../Riffer.html"><code>Riffer</code></a> errors:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform_generate_text</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">model:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-operator">...</span>)
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">error?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>, <span class="ruby-node">&quot;Provider error: #{response.error_message}&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># ...</span>
+<span class="ruby-keyword">rescue</span> <span class="ruby-constant">MyProviderGem</span><span class="ruby-operator">::</span><span class="ruby-constant">AuthError</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Authentication failed: #{e.message}&quot;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="label-Complete+Example"><a href="#label-Complete+Example">Complete Example</a></h2>
+
+<pre class="ruby"><span class="ruby-comment"># lib/riffer/providers/anthropic.rb</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Anthropic</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;anthropic&quot;</span>
+
+    <span class="ruby-identifier">api_key</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:api_key</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;ANTHROPIC_API_KEY&#39;</span>]
+    <span class="ruby-ivar">@client</span> = <span class="ruby-operator">::</span><span class="ruby-constant">Anthropic</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-identifier">api_key</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform_generate_text</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">model:</span>, <span class="ruby-value">tools:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-identifier">system_message</span> = <span class="ruby-identifier">extract_system</span>(<span class="ruby-identifier">messages</span>)
+    <span class="ruby-identifier">conversation</span> = <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">reject</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>) }
+
+    <span class="ruby-identifier">params</span> = {
+      <span class="ruby-value">model:</span> <span class="ruby-identifier">model</span>,
+      <span class="ruby-value">messages:</span> <span class="ruby-identifier">convert_messages</span>(<span class="ruby-identifier">conversation</span>),
+      <span class="ruby-value">system:</span> <span class="ruby-identifier">system_message</span>,
+      <span class="ruby-value">max_tokens:</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:max_tokens</span>] <span class="ruby-operator">||</span> <span class="ruby-value">4096</span>
+    }
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">tools</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">tools</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">params</span>[<span class="ruby-value">:tools</span>] = <span class="ruby-identifier">tools</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">convert_tool</span>(<span class="ruby-identifier">t</span>) }
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">create</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">params</span>)
+    <span class="ruby-identifier">extract_assistant_message</span>(<span class="ruby-identifier">response</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform_stream_text</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">model:</span>, <span class="ruby-value">tools:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+    <span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">yielder</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment"># Similar implementation with streaming</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">extract_system</span>(<span class="ruby-identifier">messages</span>)
+    <span class="ruby-identifier">system_msg</span> = <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>) }
+    <span class="ruby-identifier">system_msg</span>&amp;.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">convert_messages</span>(<span class="ruby-identifier">messages</span>)
+    <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">msg</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>
+        {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;user&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>}
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>
+        {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;assistant&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>}
+      <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+        {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;user&quot;</span>, <span class="ruby-value">content:</span> [{<span class="ruby-value">type:</span> <span class="ruby-string">&quot;tool_result&quot;</span>, <span class="ruby-value">tool_use_id:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">tool_call_id</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>}]}
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">convert_tool</span>(<span class="ruby-identifier">tool</span>)
+    {
+      <span class="ruby-value">name:</span> <span class="ruby-identifier">tool</span>.<span class="ruby-identifier">name</span>,
+      <span class="ruby-value">description:</span> <span class="ruby-identifier">tool</span>.<span class="ruby-identifier">description</span>,
+      <span class="ruby-value">input_schema:</span> <span class="ruby-identifier">tool</span>.<span class="ruby-identifier">parameters_schema</span>
+    }
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">extract_assistant_message</span>(<span class="ruby-identifier">response</span>)
+    <span class="ruby-identifier">text</span> = <span class="ruby-string">&quot;&quot;</span>
+    <span class="ruby-identifier">tool_calls</span> = []
+
+    <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">block</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">type</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;text&quot;</span>
+        <span class="ruby-identifier">text</span> = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">text</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;tool_use&quot;</span>
+        <span class="ruby-identifier">tool_calls</span> <span class="ruby-operator">&lt;&lt;</span> {
+          <span class="ruby-value">id:</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">id</span>,
+          <span class="ruby-value">call_id:</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">id</span>,
+          <span class="ruby-value">name:</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">name</span>,
+          <span class="ruby-value">arguments:</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">input</span>.<span class="ruby-identifier">to_json</span>
+        }
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">text</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">tool_calls</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+</main>
+
+<aside class="table-of-contents" role="complementary" aria-label="Table of Contents">
+  <div class="toc-sticky">
+    <h3 class="toc-heading">On This Page</h3>
+    <nav class="toc-nav" id="toc-nav" aria-label="Page sections">
+      <!-- Generated by JavaScript based on page headings -->
+    </nav>
+  </div>
+</aside>
+
+
+<footer class="site-footer">
+  
+
+  <div class="footer-bottom">
+    <p>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.0.1</a>
+      using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+
