@@ -23,6 +23,8 @@ require "timeout"
 #   end
 #
 class Riffer::Tool
+  DEFAULT_TIMEOUT = 10
+
   class << self
     include Riffer::Helpers::ClassNameConverter
 
@@ -55,7 +57,7 @@ class Riffer::Tool
     #
     # Returns Numeric - the tool timeout (defaults to 10).
     def timeout(value = nil)
-      return @timeout || 10 if value.nil?
+      return @timeout || DEFAULT_TIMEOUT if value.nil?
       @timeout = value.to_f
     end
 
