@@ -13,8 +13,8 @@ class Riffer::StreamEvents::ReasoningDelta < Riffer::StreamEvents::Base
   # Creates a new reasoning delta event.
   #
   # content:: String - the incremental reasoning content
-  # role:: String - the message role (defaults to "assistant")
-  def initialize(content, role: "assistant")
+  # role:: Symbol - the message role (defaults to :assistant)
+  def initialize(content, role: :assistant)
     super(role: role)
     @content = content
   end

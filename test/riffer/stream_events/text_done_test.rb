@@ -11,19 +11,19 @@ describe Riffer::StreamEvents::TextDone do
 
     it "sets default role to assistant" do
       event = Riffer::StreamEvents::TextDone.new("Hello")
-      expect(event.role).must_equal "assistant"
+      expect(event.role).must_equal :assistant
     end
 
     it "allows setting custom role" do
-      event = Riffer::StreamEvents::TextDone.new("Hello", role: "user")
-      expect(event.role).must_equal "user"
+      event = Riffer::StreamEvents::TextDone.new("Hello", role: :user)
+      expect(event.role).must_equal :user
     end
   end
 
   describe "#to_h" do
     it "returns hash with role and content" do
       event = Riffer::StreamEvents::TextDone.new("Hello")
-      expect(event.to_h).must_equal({role: "assistant", content: "Hello"})
+      expect(event.to_h).must_equal({role: :assistant, content: "Hello"})
     end
   end
 end

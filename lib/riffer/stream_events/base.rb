@@ -4,15 +4,15 @@
 #
 # Subclasses must implement the +to_h+ method.
 class Riffer::StreamEvents::Base
-  # The message role (typically "assistant").
+  # The message role (typically :assistant).
   #
-  # Returns String.
+  # Returns Symbol.
   attr_reader :role
 
   # Creates a new stream event.
   #
-  # role:: String - the message role (defaults to "assistant")
-  def initialize(role: "assistant")
+  # role:: Symbol - the message role (defaults to :assistant)
+  def initialize(role: :assistant)
     @role = role
   end
 

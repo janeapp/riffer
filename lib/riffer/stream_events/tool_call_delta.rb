@@ -18,8 +18,8 @@ class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
   # item_id:: String - the tool call item identifier
   # name:: String or nil - the tool name (may only be present in first delta)
   # arguments_delta:: String - the incremental arguments JSON fragment
-  # role:: String - the message role (defaults to "assistant")
-  def initialize(item_id:, arguments_delta:, name: nil, role: "assistant")
+  # role:: Symbol - the message role (defaults to :assistant)
+  def initialize(item_id:, arguments_delta:, name: nil, role: :assistant)
     super(role: role)
     @item_id = item_id
     @name = name

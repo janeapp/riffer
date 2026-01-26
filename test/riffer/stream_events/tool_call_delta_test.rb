@@ -21,12 +21,12 @@ describe Riffer::StreamEvents::ToolCallDelta do
 
     it "sets default role to assistant" do
       event = Riffer::StreamEvents::ToolCallDelta.new(item_id: "call_123", arguments_delta: '{"city":')
-      expect(event.role).must_equal "assistant"
+      expect(event.role).must_equal :assistant
     end
 
     it "allows setting custom role" do
-      event = Riffer::StreamEvents::ToolCallDelta.new(item_id: "call_123", arguments_delta: '{"city":', role: "custom")
-      expect(event.role).must_equal "custom"
+      event = Riffer::StreamEvents::ToolCallDelta.new(item_id: "call_123", arguments_delta: '{"city":', role: :custom)
+      expect(event.role).must_equal :custom
     end
   end
 
@@ -37,7 +37,7 @@ describe Riffer::StreamEvents::ToolCallDelta do
         name: "weather_lookup",
         arguments_delta: '{"city":'
       )
-      expected = {role: "assistant", item_id: "call_123", name: "weather_lookup", arguments_delta: '{"city":'}
+      expected = {role: :assistant, item_id: "call_123", name: "weather_lookup", arguments_delta: '{"city":'}
       expect(event.to_h).must_equal expected
     end
 

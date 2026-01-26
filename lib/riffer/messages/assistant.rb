@@ -5,7 +5,7 @@
 # May include tool calls when the LLM requests tool execution.
 #
 #   msg = Riffer::Messages::Assistant.new("Hello!")
-#   msg.role        # => "assistant"
+#   msg.role        # => :assistant
 #   msg.content     # => "Hello!"
 #   msg.tool_calls  # => []
 #
@@ -26,9 +26,9 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     @tool_calls = tool_calls
   end
 
-  # Returns "assistant".
+  # Returns :assistant.
   def role
-    "assistant"
+    :assistant
   end
 
   # Converts the message to a hash.

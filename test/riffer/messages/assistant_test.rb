@@ -6,14 +6,14 @@ describe Riffer::Messages::Assistant do
   describe "#role" do
     it "returns assistant" do
       message = Riffer::Messages::Assistant.new("I can help")
-      expect(message.role).must_equal "assistant"
+      expect(message.role).must_equal :assistant
     end
   end
 
   describe "#to_h" do
     it "returns hash with role and content" do
       message = Riffer::Messages::Assistant.new("I can help")
-      expect(message.to_h).must_equal({role: "assistant", content: "I can help"})
+      expect(message.to_h).must_equal({role: :assistant, content: "I can help"})
     end
 
     it "includes tool_calls when provided" do
@@ -23,7 +23,7 @@ describe Riffer::Messages::Assistant do
 
     it "excludes tool_calls when empty" do
       message = Riffer::Messages::Assistant.new("No tools")
-      expect(message.to_h).must_equal({role: "assistant", content: "No tools"})
+      expect(message.to_h).must_equal({role: :assistant, content: "No tools"})
     end
   end
 end

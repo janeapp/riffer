@@ -10,9 +10,9 @@ System messages provide instructions to the LLM:
 
 ```ruby
 msg = Riffer::Messages::System.new("You are a helpful assistant.")
-msg.role     # => "system"
+msg.role     # => :system
 msg.content  # => "You are a helpful assistant."
-msg.to_h     # => {role: "system", content: "You are a helpful assistant."}
+msg.to_h     # => {role: :system, content: "You are a helpful assistant."}
 ```
 
 System messages are typically set via agent `instructions` and automatically prepended to conversations.
@@ -23,9 +23,9 @@ User messages represent input from the user:
 
 ```ruby
 msg = Riffer::Messages::User.new("Hello, how are you?")
-msg.role     # => "user"
+msg.role     # => :user
 msg.content  # => "Hello, how are you?"
-msg.to_h     # => {role: "user", content: "Hello, how are you?"}
+msg.to_h     # => {role: :user, content: "Hello, how are you?"}
 ```
 
 ### Assistant
@@ -35,7 +35,7 @@ Assistant messages represent LLM responses, potentially including tool calls:
 ```ruby
 # Text-only response
 msg = Riffer::Messages::Assistant.new("I'm doing well, thank you!")
-msg.role        # => "assistant"
+msg.role        # => :assistant
 msg.content     # => "I'm doing well, thank you!"
 msg.tool_calls  # => []
 
@@ -57,7 +57,7 @@ msg = Riffer::Messages::Tool.new(
   tool_call_id: "call_123",
   name: "weather_tool"
 )
-msg.role          # => "tool"
+msg.role          # => :tool
 msg.content       # => "The weather in Tokyo is 22C and sunny."
 msg.tool_call_id  # => "call_123"
 msg.name          # => "weather_tool"
@@ -95,9 +95,9 @@ For multi-turn conversations, pass an array of messages:
 
 ```ruby
 messages = [
-  {role: "user", content: "What's the weather?"},
-  {role: "assistant", content: "I'll check that for you."},
-  {role: "user", content: "Thanks, I meant in Tokyo specifically."}
+  {role: :user, content: "What's the weather?"},
+  {role: :assistant, content: "I'll check that for you."},
+  {role: :user, content: "Thanks, I meant in Tokyo specifically."}
 ]
 
 response = agent.generate(messages)
@@ -129,20 +129,6 @@ end
 # [system] You are a helpful assistant.
 # [user] Hello!
 # [assistant] Hi there! How can I help you today?
-```
-
-## Message Conversion
-
-Messages can be created from hashes using the internal converter:
-
-```ruby
-# Hash to message object
-msg = agent.send(:convert_to_message_object, {role: "user", content: "Hello"})
-# => #<Riffer::Messages::User ...>
-
-# Message to hash
-msg.to_h
-# => {role: "user", content: "Hello"}
 ```
 
 ## Tool Call Structure

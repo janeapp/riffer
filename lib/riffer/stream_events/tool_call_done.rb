@@ -22,8 +22,8 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
   # call_id:: String - the call identifier for response matching
   # name:: String - the tool name
   # arguments:: String - the complete arguments JSON string
-  # role:: String - the message role (defaults to "assistant")
-  def initialize(item_id:, call_id:, name:, arguments:, role: "assistant")
+  # role:: Symbol - the message role (defaults to :assistant)
+  def initialize(item_id:, call_id:, name:, arguments:, role: :assistant)
     super(role: role)
     @item_id = item_id
     @call_id = call_id

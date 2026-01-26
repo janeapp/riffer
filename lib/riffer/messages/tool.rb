@@ -7,7 +7,7 @@
 #     tool_call_id: "call_123",
 #     name: "weather_tool"
 #   )
-#   msg.role          # => "tool"
+#   msg.role          # => :tool
 #   msg.tool_call_id  # => "call_123"
 #   msg.error?        # => false
 #
@@ -54,9 +54,9 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
     !@error.nil?
   end
 
-  # Returns "tool".
+  # Returns :tool.
   def role
-    "tool"
+    :tool
   end
 
   # Converts the message to a hash.

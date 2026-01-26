@@ -51,7 +51,7 @@ describe Riffer::StreamEvents::ToolCallDone do
         name: "weather_lookup",
         arguments: '{"city":"Toronto"}'
       )
-      expect(event.role).must_equal "assistant"
+      expect(event.role).must_equal :assistant
     end
   end
 
@@ -64,7 +64,7 @@ describe Riffer::StreamEvents::ToolCallDone do
         arguments: '{"city":"Toronto"}'
       )
       expected = {
-        role: "assistant",
+        role: :assistant,
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",

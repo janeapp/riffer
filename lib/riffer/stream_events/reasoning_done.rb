@@ -13,8 +13,8 @@ class Riffer::StreamEvents::ReasoningDone < Riffer::StreamEvents::Base
   # Creates a new reasoning done event.
   #
   # content:: String - the complete reasoning content
-  # role:: String - the message role (defaults to "assistant")
-  def initialize(content, role: "assistant")
+  # role:: Symbol - the message role (defaults to :assistant)
+  def initialize(content, role: :assistant)
     super(role: role)
     @content = content
   end
