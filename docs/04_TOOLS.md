@@ -156,6 +156,23 @@ def call(context:, query:)
 end
 ```
 
+## Timeout Configuration
+
+Configure timeouts to prevent tools from running indefinitely. The default timeout is 10 seconds.
+
+```ruby
+class SlowExternalApiTool < Riffer::Tool
+  description "Calls a slow external API"
+  timeout 30  # 30 seconds
+
+  def call(context:, query:)
+    ExternalAPI.search(query)
+  end
+end
+```
+
+When a tool times out, the error is reported to the LLM with error type `:timeout_error`, allowing it to respond appropriately (e.g., suggest retrying or using a different approach).
+
 ## Validation
 
 Arguments are automatically validated before `call` is invoked:

@@ -273,6 +273,12 @@ class Riffer::Agent
     begin
       result = tool_instance.call_with_validation(context: @tool_context, **arguments)
       {content: result.to_s, error: nil, error_type: nil}
+    rescue Riffer::TimeoutError => e
+      {
+        content: "Error: #{e.message}",
+        error: e.message,
+        error_type: :timeout_error
+      }
     rescue Riffer::ValidationError => e
       {
         content: "Validation error: #{e.message}",

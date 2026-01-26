@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "timeout"
+
 # Riffer::Tool is the base class for all tools in the Riffer framework.
 #
 # Provides a DSL for defining tool description and parameters.
@@ -21,6 +23,8 @@
 #   end
 #
 class Riffer::Tool
+  DEFAULT_TIMEOUT = 10
+
   class << self
     include Riffer::Helpers::ClassNameConverter
 
@@ -46,6 +50,16 @@ class Riffer::Tool
 
     # Alias for identifier - used by providers
     alias_method :name, :identifier
+
+    # Gets or sets the tool timeout in seconds.
+    #
+    # value:: Numeric or nil - the timeout to set in seconds, or nil to get
+    #
+    # Returns Numeric - the tool timeout (defaults to 10).
+    def timeout(value = nil)
+      return @timeout || DEFAULT_TIMEOUT if value.nil?
+      @timeout = value.to_f
+    end
 
     # Defines parameters using the Params DSL.
     #
@@ -84,7 +98,7 @@ class Riffer::Tool
     raise NotImplementedError, "#{self.class} must implement #call"
   end
 
-  # Executes the tool with validation (used by Agent).
+  # Executes the tool with validation and timeout (used by Agent).
   #
   # context:: Object or nil - context passed from the agent
   # kwargs:: Hash - the tool arguments
@@ -92,9 +106,15 @@ class Riffer::Tool
   # Returns Object - the tool result.
   #
   # Raises Riffer::ValidationError if validation fails.
+  # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params
     validated_args = params_builder ? params_builder.validate(kwargs) : kwargs
-    call(context: context, **validated_args)
+
+    Timeout.timeout(self.class.timeout) do
+      call(context: context, **validated_args)
+    end
+  rescue Timeout::Error
+    raise Riffer::TimeoutError, "Tool execution timed out after #{self.class.timeout} seconds"
   end
 end
