@@ -24,7 +24,7 @@ Or per-agent:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'anthropic/claude-3-5-sonnet-20241022'
+  model 'anthropic/claude-4-5-haiku-20251001'
   provider_options api_key: ENV['ANTHROPIC_API_KEY']
 end
 ```
@@ -34,17 +34,9 @@ end
 Use Anthropic model IDs in the `anthropic/model` format:
 
 ```ruby
-# Claude 3.5 models
-model 'anthropic/claude-3-5-sonnet-20241022'
-model 'anthropic/claude-3-5-haiku-20241022'
-
-# Claude 3 models
-model 'anthropic/claude-3-opus-20240229'
-model 'anthropic/claude-3-sonnet-20240229'
-model 'anthropic/claude-3-haiku-20240307'
-
-# Claude 3.7 models (with extended thinking support)
-model 'anthropic/claude-3-7-sonnet-20250219'
+model 'anthropic/claude-haiku-4-5-20251001'
+model 'anthropic/claude-sonnet-4-5-20250929'
+model 'anthropic/claude-opus-4-5-20251101'
 ```
 
 ## Model Options
@@ -98,7 +90,7 @@ Riffer.configure do |config|
 end
 
 class AssistantAgent < Riffer::Agent
-  model 'anthropic/claude-3-5-sonnet-20241022'
+  model 'anthropic/claude-4-5-haiku-20251001'
   instructions 'You are a helpful assistant.'
   model_options temperature: 0.7, max_tokens: 4096
 end
@@ -146,7 +138,7 @@ class WeatherTool < Riffer::Tool
 end
 
 class WeatherAgent < Riffer::Agent
-  model 'anthropic/claude-3-5-sonnet-20241022'
+  model 'anthropic/claude-4-5-haiku-20251001'
   uses_tools [WeatherTool]
 end
 ```
@@ -157,7 +149,7 @@ Extended thinking enables Claude to reason through complex problems before respo
 
 ```ruby
 class ReasoningAgent < Riffer::Agent
-  model 'anthropic/claude-3-7-sonnet-20250219'
+  model 'anthropic/claude-4-5-haiku-20251001'
   model_options thinking: {type: "enabled", budget_tokens: 10000}
 end
 ```
@@ -199,7 +191,7 @@ provider = Riffer::Providers::Anthropic.new(
 
 response = provider.generate_text(
   prompt: "Hello!",
-  model: "claude-3-5-sonnet-20241022",
+  model: "claude-4-5-haiku-20251001",
   temperature: 0.7
 )
 
@@ -211,7 +203,7 @@ puts response.content
 ```ruby
 response = provider.generate_text(
   prompt: "Explain step by step how to solve a Rubik's cube",
-  model: "claude-3-7-sonnet-20250219",
+  model: "claude-4-5-haiku-20251001",
   thinking: { type: "enabled", budget_tokens: 10000 }
 )
 
