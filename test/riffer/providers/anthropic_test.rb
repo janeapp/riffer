@@ -22,7 +22,7 @@ describe Riffer::Providers::Anthropic do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          result = provider.generate_text(prompt: "Say hello", model: "claude-3-haiku-20240307")
+          result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001")
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -32,7 +32,7 @@ describe Riffer::Providers::Anthropic do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          params = {system: "Be concise", prompt: "Say hello", model: "claude-3-haiku-20240307"}
+          params = {system: "Be concise", prompt: "Say hello", model: "claude-haiku-4-5-20251001"}
           result = provider.generate_text(**params)
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -47,7 +47,7 @@ describe Riffer::Providers::Anthropic do
             {role: "system", content: "Be concise"},
             {role: "user", content: "Say hello"}
           ]
-          result = provider.generate_text(messages: messages, model: "claude-3-haiku-20240307")
+          result = provider.generate_text(messages: messages, model: "claude-haiku-4-5-20251001")
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -58,7 +58,7 @@ describe Riffer::Providers::Anthropic do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/with_a_User_message/returns_an_Assistant") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           messages = [Riffer::Messages::User.new("Say hello")]
-          result = provider.generate_text(messages: messages, model: "claude-3-haiku-20240307")
+          result = provider.generate_text(messages: messages, model: "claude-haiku-4-5-20251001")
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -72,7 +72,7 @@ describe Riffer::Providers::Anthropic do
             Riffer::Messages::System.new("Be concise"),
             Riffer::Messages::User.new("Say hello")
           ]
-          result = provider.generate_text(messages: messages, model: "claude-3-haiku-20240307")
+          result = provider.generate_text(messages: messages, model: "claude-haiku-4-5-20251001")
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -87,7 +87,7 @@ describe Riffer::Providers::Anthropic do
             Riffer::Messages::Assistant.new("Hello!"),
             Riffer::Messages::User.new("How are you?")
           ]
-          result = provider.generate_text(messages: messages, model: "claude-3-haiku-20240307")
+          result = provider.generate_text(messages: messages, model: "claude-haiku-4-5-20251001")
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -99,7 +99,7 @@ describe Riffer::Providers::Anthropic do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          result = provider.stream_text(prompt: "Say hello", model: "claude-3-haiku-20240307")
+          result = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001")
           expect(result).must_be_instance_of Enumerator
         end
       end
@@ -107,7 +107,7 @@ describe Riffer::Providers::Anthropic do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "Say hello", model: "claude-3-haiku-20240307").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001").to_a
           expect(events).wont_be_empty
         end
       end
@@ -115,7 +115,7 @@ describe Riffer::Providers::Anthropic do
       it "yields TextDelta events" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "Say hello", model: "claude-3-haiku-20240307").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001").to_a
           deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
           expect(deltas).wont_be_empty
         end
@@ -124,7 +124,7 @@ describe Riffer::Providers::Anthropic do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "Say hello", model: "claude-3-haiku-20240307").to_a
+          events = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001").to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           expect(done).wont_be_nil
         end
@@ -137,7 +137,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.stream_text(
             messages: [{role: "user", content: "Say hello"}],
-            model: "claude-3-haiku-20240307"
+            model: "claude-haiku-4-5-20251001"
           )
           expect(result).must_be_instance_of Enumerator
         end
@@ -148,7 +148,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             messages: [{role: "user", content: "Say hello"}],
-            model: "claude-3-haiku-20240307"
+            model: "claude-haiku-4-5-20251001"
           ).to_a
           expect(events).wont_be_empty
         end
@@ -173,7 +173,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -185,7 +185,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           expect(result.tool_calls).wont_be_empty
@@ -197,7 +197,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           expect(result.tool_calls.first[:name]).must_equal "get_weather"
@@ -209,7 +209,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           args = JSON.parse(result.tool_calls.first[:arguments])
@@ -222,7 +222,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           expect(result.tool_calls.first[:id]).wont_be_nil
@@ -243,7 +243,7 @@ describe Riffer::Providers::Anthropic do
           ]
           result = provider.generate_text(
             messages: messages,
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -262,7 +262,7 @@ describe Riffer::Providers::Anthropic do
           ]
           result = provider.generate_text(
             messages: messages,
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
           expect(result.content).wont_be_empty
@@ -276,7 +276,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           ).to_a
           tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
@@ -289,7 +289,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
@@ -302,7 +302,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
@@ -315,7 +315,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
-            model: "claude-3-haiku-20240307",
+            model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
@@ -329,11 +329,11 @@ describe Riffer::Providers::Anthropic do
   describe "extended thinking" do
     describe "#generate_text with thinking" do
       it "returns an Assistant message with thinking enabled" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/reasoning/_generate_text/with_thinking_true") do
+        VCR.use_cassette("Riffer_Providers_Anthropic/reasoning/_generate_text/with_thinking_enabled") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is 2+2? Think step by step.",
-            model: "claude-3-7-sonnet-20250219",
+            model: "claude-haiku-4-5-20251001",
             thinking: {type: "enabled", budget_tokens: 10000},
             max_tokens: 16000
           )
@@ -346,7 +346,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "What is 2+2? Think step by step.",
-            model: "claude-3-7-sonnet-20250219",
+            model: "claude-haiku-4-5-20251001",
             thinking: {type: "enabled", budget_tokens: 5000},
             max_tokens: 16000
           )
@@ -361,7 +361,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             prompt: "What is 2+2? Think step by step.",
-            model: "claude-3-7-sonnet-20250219",
+            model: "claude-haiku-4-5-20251001",
             thinking: {type: "enabled", budget_tokens: 10000},
             max_tokens: 16000
           ).to_a
@@ -375,7 +375,7 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           events = provider.stream_text(
             prompt: "What is 2+2? Think step by step.",
-            model: "claude-3-7-sonnet-20250219",
+            model: "claude-haiku-4-5-20251001",
             thinking: {type: "enabled", budget_tokens: 10000},
             max_tokens: 16000
           ).to_a

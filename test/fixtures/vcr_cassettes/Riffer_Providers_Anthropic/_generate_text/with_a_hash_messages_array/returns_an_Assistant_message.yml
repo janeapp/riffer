@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.anthropic.com/v1/messages
     body:
       encoding: UTF-8
-      string: '{"model":"claude-3-haiku-20240307","messages":[{"role":"user","content":"Say
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":"Say
         hello"}],"max_tokens":4096,"system":[{"type":"text","text":"Be concise"}]}'
     headers:
       Accept-Encoding:
@@ -39,14 +39,14 @@ http_interactions:
       X-Stainless-Timeout:
       - '600.0'
       Content-Length:
-      - '151'
+      - '153'
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Fri, 23 Jan 2026 23:40:08 GMT
+      - Mon, 26 Jan 2026 15:52:43 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -54,31 +54,31 @@ http_interactions:
       Connection:
       - keep-alive
       Anthropic-Ratelimit-Input-Tokens-Limit:
-      - '400000'
+      - '4000000'
       Anthropic-Ratelimit-Input-Tokens-Remaining:
-      - '400000'
+      - '4000000'
       Anthropic-Ratelimit-Input-Tokens-Reset:
-      - '2026-01-23T23:40:08Z'
+      - '2026-01-26T15:52:43Z'
       Anthropic-Ratelimit-Output-Tokens-Limit:
-      - '80000'
+      - '800000'
       Anthropic-Ratelimit-Output-Tokens-Remaining:
-      - '80000'
+      - '800000'
       Anthropic-Ratelimit-Output-Tokens-Reset:
-      - '2026-01-23T23:40:08Z'
+      - '2026-01-26T15:52:43Z'
       Anthropic-Ratelimit-Requests-Limit:
       - '4000'
       Anthropic-Ratelimit-Requests-Remaining:
       - '3999'
       Anthropic-Ratelimit-Requests-Reset:
-      - '2026-01-23T23:40:08Z'
+      - '2026-01-26T15:52:43Z'
       Anthropic-Ratelimit-Tokens-Limit:
-      - '480000'
+      - '4800000'
       Anthropic-Ratelimit-Tokens-Remaining:
-      - '480000'
+      - '4800000'
       Anthropic-Ratelimit-Tokens-Reset:
-      - '2026-01-23T23:40:08Z'
+      - '2026-01-26T15:52:43Z'
       Request-Id:
-      - req_011CXRC9MmcbzokEarqmyMDK
+      - req_011CXWFvmkdPTXEc8Z4AsdqG
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Anthropic-Organization-Id:
@@ -86,15 +86,16 @@ http_interactions:
       Server:
       - cloudflare
       X-Envoy-Upstream-Service-Time:
-      - '242'
+      - '566'
       Cf-Cache-Status:
       - DYNAMIC
       X-Robots-Tag:
       - none
       Cf-Ray:
-      - 9c2b22676f41dfdb-YVR
+      - 9c412dd4ca1fe57f-YVR
     body:
       encoding: ASCII-8BIT
-      string: '{"model":"claude-3-haiku-20240307","id":"msg_01UcMpSJ1fjEzCSV7bNt56B3","type":"message","role":"assistant","content":[{"type":"text","text":"Hello!"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":12,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5,"service_tier":"standard"}}'
-  recorded_at: Fri, 23 Jan 2026 23:40:08 GMT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS00LTUtMjAyNTEwMDEiLCJpZCI6Im1zZ18wMUZqS2RGU0hOakNtWHRIcTZBYllnUVIiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGV4dCIsInRleHQiOiJIZWxsbyEg8J+RiyJ9XSwic3RvcF9yZWFzb24iOiJlbmRfdHVybiIsInN0b3Bfc2VxdWVuY2UiOm51bGwsInVzYWdlIjp7ImlucHV0X3Rva2VucyI6MTIsImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjo4LCJzZXJ2aWNlX3RpZXIiOiJzdGFuZGFyZCJ9fQ==
+  recorded_at: Mon, 26 Jan 2026 15:52:43 GMT
 recorded_with: VCR 6.4.0
