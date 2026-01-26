@@ -6,14 +6,14 @@ describe Riffer::Messages::Tool do
   describe "#role" do
     it "returns tool" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
-      expect(message.role).must_equal "tool"
+      expect(message.role).must_equal :tool
     end
   end
 
   describe "#to_h" do
     it "returns hash with role, content, tool_call_id, and name" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
-      expected = {role: "tool", content: "Result", tool_call_id: "123", name: "my_tool"}
+      expected = {role: :tool, content: "Result", tool_call_id: "123", name: "my_tool"}
       expect(message.to_h).must_equal expected
     end
 
@@ -26,7 +26,7 @@ describe Riffer::Messages::Tool do
         error_type: :unknown_tool
       )
       expected = {
-        role: "tool",
+        role: :tool,
         content: "Error: Unknown tool 'foo'",
         tool_call_id: "123",
         name: "foo",

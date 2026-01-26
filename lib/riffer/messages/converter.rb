@@ -31,15 +31,15 @@ module Riffer::Messages::Converter
       raise Riffer::ArgumentError, "Message hash must include a 'role' key"
     end
 
-    case role
-    when "user"
+    case role.to_sym
+    when :user
       Riffer::Messages::User.new(content)
-    when "assistant"
+    when :assistant
       tool_calls = hash[:tool_calls] || hash["tool_calls"] || []
       Riffer::Messages::Assistant.new(content, tool_calls: tool_calls)
-    when "system"
+    when :system
       Riffer::Messages::System.new(content)
-    when "tool"
+    when :tool
       tool_call_id = hash[:tool_call_id] || hash["tool_call_id"]
       name = hash[:name] || hash["name"]
       Riffer::Messages::Tool.new(content, tool_call_id: tool_call_id, name: name)

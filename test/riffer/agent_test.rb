@@ -1038,4 +1038,239 @@ describe Riffer::Agent do
       end
     end
   end
+
+  describe "#on_message" do
+    it "raises error without block" do
+      agent = agent_class.new
+      error = expect { agent.on_message }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/on_message requires a block/)
+    end
+
+    it "returns self for chaining" do
+      agent = agent_class.new
+      result = agent.on_message { |_| }
+      expect(result).must_equal agent
+    end
+
+    describe "with multiple callbacks" do
+      let(:callbacks_called) { [] }
+      let(:agent) do
+        a = agent_class.new
+        a.on_message { |_| callbacks_called << 1 }
+        a.on_message { |_| callbacks_called << 2 }
+        a.generate("Hello")
+        a
+      end
+
+      it "calls first callback" do
+        agent
+        expect(callbacks_called).must_include 1
+      end
+
+      it "calls second callback" do
+        agent
+        expect(callbacks_called).must_include 2
+      end
+    end
+  end
+
+  describe "message emit with #generate" do
+    describe "on simple generate" do
+      let(:emitted) { [] }
+      let(:agent) do
+        a = agent_class.new
+        a.on_message { |msg| emitted << msg }
+        a.generate("Hello")
+        a
+      end
+
+      it "emits one message" do
+        agent
+        expect(emitted.length).must_equal 1
+      end
+
+      it "emits an assistant message" do
+        agent
+        expect(emitted.first).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+
+    describe "during tool use" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "Gets the weather"
+          params do
+            required :city, String
+          end
+          def call(context:, city:)
+            "Weather in #{city}: 20 degrees"
+          end
+        end.tap { |t| t.identifier("emit_weather_tool") }
+      end
+
+      let(:emitted) { [] }
+      let(:agent) do
+        tc = tool_class
+        agent_with_tools = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tc]
+        end
+
+        a = agent_with_tools.new
+        provider = a.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "emit_weather_tool", arguments: '{"city":"Toronto"}'}
+        ])
+        provider.stub_response("The weather is nice!")
+
+        a.on_message { |msg| emitted << msg }
+        a.generate("What's the weather?")
+        a
+      end
+
+      it "emits three messages" do
+        agent
+        expect(emitted.length).must_equal 3
+      end
+
+      it "emits assistant with tool_calls first" do
+        agent
+        expect(emitted[0]).must_be_instance_of Riffer::Messages::Assistant
+      end
+
+      it "includes tool_calls in first assistant message" do
+        agent
+        expect(emitted[0].tool_calls).wont_be_empty
+      end
+
+      it "emits tool message second" do
+        agent
+        expect(emitted[1]).must_be_instance_of Riffer::Messages::Tool
+      end
+
+      it "emits final assistant message third" do
+        agent
+        expect(emitted[2]).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+
+    describe "when tool fails" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "A failing tool"
+          params do
+            required :value, String
+          end
+          def call(context:, value:)
+            raise "Something went wrong"
+          end
+        end.tap { |t| t.identifier("failing_tool") }
+      end
+
+      let(:emitted) { [] }
+      let(:tool_message) do
+        tc = tool_class
+        agent_with_tools = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tc]
+        end
+
+        agent = agent_with_tools.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "failing_tool", arguments: '{"value":"test"}'}
+        ])
+        provider.stub_response("Tool failed.")
+
+        agent.on_message { |msg| emitted << msg }
+        agent.generate("Call tool")
+
+        emitted.find { |m| m.is_a?(Riffer::Messages::Tool) }
+      end
+
+      it "emits tool message with error flag" do
+        expect(tool_message.error?).must_equal true
+      end
+
+      it "emits tool message with execution_error type" do
+        expect(tool_message.error_type).must_equal :execution_error
+      end
+    end
+  end
+
+  describe "message emit with #stream" do
+    describe "on simple stream" do
+      let(:emitted) { [] }
+      let(:agent) do
+        a = agent_class.new
+        a.on_message { |msg| emitted << msg }
+        a.stream("Hello").each { |_| }
+        a
+      end
+
+      it "emits one message" do
+        agent
+        expect(emitted.length).must_equal 1
+      end
+
+      it "emits an assistant message" do
+        agent
+        expect(emitted.first).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+
+    describe "during tool calling loop" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "Gets the weather"
+          params do
+            required :city, String
+          end
+          def call(context:, city:)
+            "Weather in #{city}: 20 degrees"
+          end
+        end.tap { |t| t.identifier("stream_emit_weather_tool") }
+      end
+
+      let(:emitted) { [] }
+      let(:agent) do
+        tc = tool_class
+        agent_with_tools = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          uses_tools [tc]
+        end
+
+        a = agent_with_tools.new
+        provider = a.send(:provider_instance)
+        provider.stub_response("", tool_calls: [
+          {name: "stream_emit_weather_tool", arguments: '{"city":"Tokyo"}'}
+        ])
+        provider.stub_response("The weather is nice!")
+
+        a.on_message { |msg| emitted << msg }
+        a.stream("What's the weather?").each { |_| }
+        a
+      end
+
+      it "emits three messages" do
+        agent
+        expect(emitted.length).must_equal 3
+      end
+
+      it "emits assistant message first" do
+        agent
+        expect(emitted[0]).must_be_instance_of Riffer::Messages::Assistant
+      end
+
+      it "emits tool message second" do
+        agent
+        expect(emitted[1]).must_be_instance_of Riffer::Messages::Tool
+      end
+
+      it "emits final assistant message third" do
+        agent
+        expect(emitted[2]).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
 end

@@ -6,12 +6,12 @@ describe Riffer::StreamEvents::Base do
   describe "#initialize" do
     it "sets default role to assistant" do
       event = Riffer::StreamEvents::Base.new
-      expect(event.role).must_equal "assistant"
+      expect(event.role).must_equal :assistant
     end
 
     it "allows setting custom role" do
-      event = Riffer::StreamEvents::Base.new(role: "user")
-      expect(event.role).must_equal "user"
+      event = Riffer::StreamEvents::Base.new(role: :user)
+      expect(event.role).must_equal :user
     end
   end
 

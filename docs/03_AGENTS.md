@@ -155,6 +155,32 @@ agent.messages.each do |msg|
 end
 ```
 
+### on_message
+
+Registers a callback to receive messages as they're added during generation:
+
+```ruby
+agent.on_message do |message|
+  case message.role
+  when :assistant
+    puts "[Assistant] #{message.content}"
+  when :tool
+    puts "[Tool:#{message.name}] #{message.content}"
+  end
+end
+```
+
+Multiple callbacks can be registered. Returns `self` for method chaining:
+
+```ruby
+agent
+  .on_message { |msg| persist_message(msg) }
+  .on_message { |msg| log_message(msg) }
+  .generate('Hello')
+```
+
+Works with both `generate` and `stream`. Only emits agent-generated messages (Assistant, Tool), not inputs (System, User).
+
 ## Class Methods
 
 ### find
