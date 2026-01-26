@@ -2,8 +2,9 @@
 class Riffer::Providers::Repository
   # Mapping of provider identifiers to provider class lambdas.
   REPO = {
-    openai: -> { Riffer::Providers::OpenAI },
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
+    anthropic: -> { Riffer::Providers::Anthropic },
+    openai: -> { Riffer::Providers::OpenAI },
     test: -> { Riffer::Providers::Test }
   }.freeze
 

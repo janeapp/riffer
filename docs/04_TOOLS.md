@@ -76,6 +76,7 @@ end
 ```
 
 Options:
+
 - `description` - Human-readable description for the LLM
 - `enum` - Array of allowed values
 
@@ -91,20 +92,21 @@ end
 ```
 
 Options:
+
 - `description` - Human-readable description
 - `default` - Default value when not provided
 - `enum` - Array of allowed values
 
 ### Supported Types
 
-| Ruby Type | JSON Schema Type |
-|-----------|------------------|
-| `String`  | `string`         |
-| `Integer` | `integer`        |
-| `Float`   | `number`         |
-| `TrueClass` / `FalseClass` | `boolean` |
-| `Array`   | `array`          |
-| `Hash`    | `object`         |
+| Ruby Type                  | JSON Schema Type |
+| -------------------------- | ---------------- |
+| `String`                   | `string`         |
+| `Integer`                  | `integer`        |
+| `Float`                    | `number`         |
+| `TrueClass` / `FalseClass` | `boolean`        |
+| `Array`                    | `array`          |
+| `Hash`                     | `object`         |
 
 ## The call Method
 

@@ -135,12 +135,12 @@ end
 
 The provider converts Riffer messages to OpenAI format:
 
-| Riffer Message | OpenAI Role |
-|----------------|-------------|
-| `System` | `developer` |
-| `User` | `user` |
-| `Assistant` | `assistant` |
-| `Tool` | `function_call_output` |
+| Riffer Message | OpenAI Role            |
+| -------------- | ---------------------- |
+| `System`       | `developer`            |
+| `User`         | `user`                 |
+| `Assistant`    | `assistant`            |
+| `Tool`         | `function_call_output` |
 
 ## Direct Provider Usage
 

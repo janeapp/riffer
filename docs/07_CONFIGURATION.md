@@ -11,6 +11,7 @@ Riffer.configure do |config|
   config.openai.api_key = ENV['OPENAI_API_KEY']
   config.amazon_bedrock.region = 'us-east-1'
   config.amazon_bedrock.api_token = ENV['BEDROCK_API_TOKEN']
+  config.anthropic.api_key = ENV['ANTHROPIC_API_KEY']
 end
 ```
 
@@ -24,14 +25,17 @@ Riffer.config.openai.api_key
 
 Riffer.config.amazon_bedrock.region
 # => "us-east-1"
+
+Riffer.config.anthropic.api_key
+# => "sk-ant-..."
 ```
 
 ## Provider-Specific Configuration
 
 ### OpenAI
 
-| Option | Description |
-|--------|-------------|
+| Option    | Description         |
+| --------- | ------------------- |
 | `api_key` | Your OpenAI API key |
 
 ```ruby
@@ -42,9 +46,9 @@ end
 
 ### Amazon Bedrock
 
-| Option | Description |
-|--------|-------------|
-| `region` | AWS region (e.g., `us-east-1`) |
+| Option      | Description                                  |
+| ----------- | -------------------------------------------- |
+| `region`    | AWS region (e.g., `us-east-1`)               |
 | `api_token` | Optional bearer token for API authentication |
 
 ```ruby
@@ -55,6 +59,18 @@ end
 ```
 
 When `api_token` is not set, the provider uses standard AWS IAM authentication.
+
+### Anthropic
+
+| Option    | Description            |
+| --------- | ---------------------- |
+| `api_key` | Your Anthropic API key |
+
+```ruby
+Riffer.configure do |config|
+  config.anthropic.api_key = ENV['ANTHROPIC_API_KEY']
+end
+```
 
 ## Agent-Level Configuration
 
@@ -90,12 +106,12 @@ end
 
 ### OpenAI
 
-| Option | Description |
-|--------|-------------|
-| `temperature` | Sampling temperature (0.0-2.0) |
-| `max_tokens` | Maximum tokens in response |
-| `top_p` | Nucleus sampling parameter |
-| `reasoning` | Reasoning effort level (`low`, `medium`, `high`) |
+| Option        | Description                                      |
+| ------------- | ------------------------------------------------ |
+| `temperature` | Sampling temperature (0.0-2.0)                   |
+| `max_tokens`  | Maximum tokens in response                       |
+| `top_p`       | Nucleus sampling parameter                       |
+| `reasoning`   | Reasoning effort level (`low`, `medium`, `high`) |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -106,17 +122,40 @@ end
 
 ### Amazon Bedrock
 
-| Option | Description |
-|--------|-------------|
-| `temperature` | Sampling temperature |
-| `max_tokens` | Maximum tokens in response |
-| `top_p` | Nucleus sampling parameter |
-| `top_k` | Top-k sampling parameter |
+| Option        | Description                |
+| ------------- | -------------------------- |
+| `temperature` | Sampling temperature       |
+| `max_tokens`  | Maximum tokens in response |
+| `top_p`       | Nucleus sampling parameter |
+| `top_k`       | Top-k sampling parameter   |
 
 ```ruby
 class MyAgent < Riffer::Agent
   model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
   model_options temperature: 0.7, max_tokens: 4096
+end
+```
+
+### Anthropic
+
+| Option        | Description                                 |
+| ------------- | ------------------------------------------- |
+| `temperature` | Sampling temperature                        |
+| `max_tokens`  | Maximum tokens in response                  |
+| `top_p`       | Nucleus sampling parameter                  |
+| `top_k`       | Top-k sampling parameter                    |
+| `thinking`    | Extended thinking config hash (Claude 3.7+) |
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'anthropic/claude-3-5-sonnet-20241022'
+  model_options temperature: 0.7, max_tokens: 4096
+end
+
+# With extended thinking (Claude 3.7+)
+class ReasoningAgent < Riffer::Agent
+  model 'anthropic/claude-3-7-sonnet-20250219'
+  model_options thinking: {type: "enabled", budget_tokens: 10000}
 end
 ```
 

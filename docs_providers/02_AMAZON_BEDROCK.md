@@ -151,12 +151,12 @@ end
 
 The provider converts Riffer messages to Bedrock format:
 
-| Riffer Message | Bedrock Format |
-|----------------|----------------|
-| `System` | Added to `system` array as `{text: ...}` |
-| `User` | `{role: "user", content: [{text: ...}]}` |
-| `Assistant` | `{role: "assistant", content: [...]}` |
-| `Tool` | `{role: "user", content: [{tool_result: ...}]}` |
+| Riffer Message | Bedrock Format                                  |
+| -------------- | ----------------------------------------------- |
+| `System`       | Added to `system` array as `{text: ...}`        |
+| `User`         | `{role: "user", content: [{text: ...}]}`        |
+| `Assistant`    | `{role: "assistant", content: [...]}`           |
+| `Tool`         | `{role: "user", content: [{tool_result: ...}]}` |
 
 ## Direct Provider Usage
 
