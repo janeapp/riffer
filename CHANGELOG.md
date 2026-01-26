@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0](https://github.com/janeapp/riffer/compare/riffer/v0.7.0...riffer/v0.8.0) (2026-01-26)
+
+
+### Features
+
+* add anthropic provider support ([#89](https://github.com/janeapp/riffer/issues/89)) ([338674e](https://github.com/janeapp/riffer/commit/338674e794535b2559ce4dca5d36e09e9512b94c))
+* add on_message callback for real-time message emission ([#87](https://github.com/janeapp/riffer/issues/87)) ([92e6f91](https://github.com/janeapp/riffer/commit/92e6f919b9facee9a2fb6234c1bdd69b525dbf21))
+* add timeout functionality to tools ([#86](https://github.com/janeapp/riffer/issues/86)) ([3b7d9af](https://github.com/janeapp/riffer/commit/3b7d9afeed829001de0f6524694c193d54f1e7af))
+* better docs ([#84](https://github.com/janeapp/riffer/issues/84)) ([630580a](https://github.com/janeapp/riffer/commit/630580ae08a86dfa5ab1f75ebb229db7cff6344d))
+
 ## [0.7.0](https://github.com/janeapp/riffer/compare/riffer/v0.6.1...riffer/v0.7.0) (2026-01-21)
 
 
