@@ -103,17 +103,24 @@ class Riffer::Tool
   # context:: Object or nil - context passed from the agent
   # kwargs:: Hash - the tool arguments
   #
-  # Returns Object - the tool result.
+  # Returns Riffer::Tools::Response - the tool response.
   #
   # Raises Riffer::ValidationError if validation fails.
   # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
+  # Raises Riffer::Error if the tool does not return a Response object.
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params
     validated_args = params_builder ? params_builder.validate(kwargs) : kwargs
 
-    Timeout.timeout(self.class.timeout) do
+    result = Timeout.timeout(self.class.timeout) do
       call(context: context, **validated_args)
     end
+
+    unless result.is_a?(Riffer::Tools::Response)
+      raise Riffer::Error, "#{self.class} must return a Riffer::Tools::Response from #call"
+    end
+
+    result
   rescue Timeout::Error
     raise Riffer::TimeoutError, "Tool execution timed out after #{self.class.timeout} seconds"
   end

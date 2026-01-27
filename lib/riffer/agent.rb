@@ -279,37 +279,24 @@ class Riffer::Agent
     tool_class = find_tool_class(tool_call[:name])
 
     if tool_class.nil?
-      return {
-        content: "Error: Unknown tool '#{tool_call[:name]}'",
-        error: "Unknown tool '#{tool_call[:name]}'",
-        error_type: :unknown_tool
-      }
+      return Riffer::Tools::Response.error(
+        "Unknown tool '#{tool_call[:name]}'",
+        type: :unknown_tool
+      ).to_h
     end
 
     tool_instance = tool_class.new
     arguments = parse_tool_arguments(tool_call[:arguments])
 
     begin
-      result = tool_instance.call_with_validation(context: @tool_context, **arguments)
-      {content: result.to_s, error: nil, error_type: nil}
+      response = tool_instance.call_with_validation(context: @tool_context, **arguments)
+      response.to_h
     rescue Riffer::TimeoutError => e
-      {
-        content: "Error: #{e.message}",
-        error: e.message,
-        error_type: :timeout_error
-      }
+      Riffer::Tools::Response.error(e.message, type: :timeout_error).to_h
     rescue Riffer::ValidationError => e
-      {
-        content: "Validation error: #{e.message}",
-        error: e.message,
-        error_type: :validation_error
-      }
+      Riffer::Tools::Response.error(e.message, type: :validation_error).to_h
     rescue => e
-      {
-        content: "Error executing tool: #{e.message}",
-        error: e.message,
-        error_type: :execution_error
-      }
+      Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error).to_h
     end
   end
 
