@@ -180,7 +180,7 @@ Riffer::Tools::Response.text(42)
 
 #### .json
 
-Converts the result to JSON via `JSON.generate`:
+Converts the result to JSON via `to_json`:
 
 ```ruby
 Riffer::Tools::Response.json({name: "Alice", age: 30})
