@@ -476,7 +476,7 @@ describe Riffer::Agent do
         end
 
         def call(context:, city:)
-          Riffer::Tools::Response.success("Weather in #{city}: 20 degrees")
+          text("Weather in #{city}: 20 degrees")
         end
       end
     end
@@ -517,7 +517,7 @@ describe Riffer::Agent do
         end
 
         def call(context:, city:)
-          Riffer::Tools::Response.success("Weather in #{city}: 20 degrees")
+          text("Weather in #{city}: 20 degrees")
         end
       end
     end
@@ -531,7 +531,7 @@ describe Riffer::Agent do
         end
 
         def call(context:, field:)
-          Riffer::Tools::Response.success(context[field.to_sym] || "unknown")
+          text(context[field.to_sym] || "unknown")
         end
       end
     end
@@ -830,7 +830,7 @@ describe Riffer::Agent do
 
           def call(context:)
             sleep 0.02
-            Riffer::Tools::Response.success("done")
+            text("done")
           end
         end
       end
@@ -840,7 +840,7 @@ describe Riffer::Agent do
           description "A fast tool"
 
           def call(context:)
-            Riffer::Tools::Response.success("fast result")
+            text("fast result")
           end
         end
       end
@@ -982,7 +982,7 @@ describe Riffer::Agent do
           description "Admin only tool"
           params {}
           def call(context:)
-            Riffer::Tools::Response.success("admin action")
+            text("admin action")
           end
         end
         admin_tool_class.identifier("admin_tool")
@@ -1103,7 +1103,7 @@ describe Riffer::Agent do
             required :city, String
           end
           def call(context:, city:)
-            Riffer::Tools::Response.success("Weather in #{city}: 20 degrees")
+            text("Weather in #{city}: 20 degrees")
           end
         end.tap { |t| t.identifier("emit_weather_tool") }
       end
@@ -1227,7 +1227,7 @@ describe Riffer::Agent do
             required :city, String
           end
           def call(context:, city:)
-            Riffer::Tools::Response.success("Weather in #{city}: 20 degrees")
+            text("Weather in #{city}: 20 degrees")
           end
         end.tap { |t| t.identifier("stream_emit_weather_tool") }
       end

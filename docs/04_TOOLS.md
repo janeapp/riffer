@@ -17,7 +17,7 @@ class WeatherTool < Riffer::Tool
 
   def call(context:, city:, units: nil)
     weather = WeatherAPI.fetch(city, units: units || "celsius")
-    Riffer::Tools::Response.text("The weather in #{city} is #{weather.temperature} #{units}.")
+    text("The weather in #{city} is #{weather.temperature} #{units}.")
   end
 end
 ```
@@ -132,11 +132,11 @@ class UserOrdersTool < Riffer::Tool
   def call(context:)
     user_id = context&.dig(:user_id)
     unless user_id
-      return Riffer::Tools::Response.error("No user ID provided")
+      return error("No user ID provided")
     end
 
     orders = Order.where(user_id: user_id)
-    Riffer::Tools::Response.text(orders.map(&:to_s).join("\n"))
+    text(orders.map(&:to_s).join("\n"))
   end
 end
 
@@ -146,91 +146,95 @@ agent.generate("Show my orders", tool_context: {user_id: 123})
 
 ## Response Objects
 
-All tools must return a `Riffer::Tools::Response` object from their `call` method. This ensures consistent handling of tool results.
+All tools must return a `Riffer::Tools::Response` object from their `call` method. Riffer::Tool provides shorthand methods for creating responses.
 
 ### Success Responses
 
-Use `.text` for string responses and `.json` for structured data:
+Use `text` for string responses and `json` for structured data:
 
 ```ruby
 def call(context:, query:)
   results = Database.search(query)
 
   if results.empty?
-    Riffer::Tools::Response.text("No results found for '#{query}'")
+    text("No results found for '#{query}'")
   else
-    Riffer::Tools::Response.text(
-      results.map { |r| "- #{r.title}: #{r.summary}" }.join("\n")
-    )
+    text(results.map { |r| "- #{r.title}: #{r.summary}" }.join("\n"))
   end
 end
 ```
 
-#### .text
+#### text
 
 Converts the result to a string via `to_s`:
 
 ```ruby
-Riffer::Tools::Response.text("Hello, world!")
+text("Hello, world!")
 # => content: "Hello, world!"
 
-Riffer::Tools::Response.text(42)
+text(42)
 # => content: "42"
 ```
 
-#### .json
+#### json
 
 Converts the result to JSON via `to_json`:
 
 ```ruby
-Riffer::Tools::Response.json({name: "Alice", age: 30})
+json({name: "Alice", age: 30})
 # => content: '{"name":"Alice","age":30}'
 
-Riffer::Tools::Response.json([1, 2, 3])
+json([1, 2, 3])
 # => content: '[1,2,3]'
 ```
 
-#### .success
-
-A lower-level method is also available via `.success(result, format:)` where format is `:text` (default) or `:json`. Prefer using `.text` or `.json` for clarity.
-
 ### Error Responses
 
-Use `Riffer::Tools::Response.error(message, type:)` for errors:
+Use `error(message, type:)` for errors:
 
 ```ruby
 def call(context:, user_id:)
   user = User.find_by(id: user_id)
 
   unless user
-    return Riffer::Tools::Response.error("User not found", type: :not_found)
+    return error("User not found", type: :not_found)
   end
 
-  Riffer::Tools::Response.text("User: #{user.name}")
+  text("User: #{user.name}")
 end
 ```
 
 The error type is any symbol that describes the error category:
 
 ```ruby
-Riffer::Tools::Response.error("Invalid input", type: :validation_error)
-Riffer::Tools::Response.error("Service unavailable", type: :service_error)
-Riffer::Tools::Response.error("Rate limit exceeded", type: :rate_limit)
+error("Invalid input", type: :validation_error)
+error("Service unavailable", type: :service_error)
+error("Rate limit exceeded", type: :rate_limit)
 ```
 
 If no type is specified, it defaults to `:execution_error`.
 
+### Using Riffer::Tools::Response Directly
+
+The shorthand methods delegate to `Riffer::Tools::Response`. You can also use the class directly if preferred:
+
+```ruby
+Riffer::Tools::Response.text("Hello")
+Riffer::Tools::Response.json({data: [1, 2, 3]})
+Riffer::Tools::Response.error("Failed", type: :custom_error)
+```
+
 ### Response Methods
 
 ```ruby
-response = Riffer::Tools::Response.text("result")
+response = text("result")
 response.content        # => "result"
 response.success?       # => true
 response.error?         # => false
 response.error_message  # => nil
 response.error_type     # => nil
 
-error_response = Riffer::Tools::Response.error("failed", type: :not_found)
+error_response = error("failed", type: :not_found)
 error_response.content        # => "failed"
 error_response.success?       # => false
 error_response.error?         # => true
@@ -249,7 +253,7 @@ class SlowExternalApiTool < Riffer::Tool
 
   def call(context:, query:)
     result = ExternalAPI.search(query)
-    Riffer::Tools::Response.text(result)
+    text(result)
   end
 end
 ```
@@ -320,16 +324,16 @@ end
 
 ## Error Handling
 
-Errors can be returned explicitly using `.error`:
+Errors can be returned explicitly using `error`:
 
 ```ruby
 def call(context:, query:)
   results = ExternalAPI.search(query)
-  Riffer::Tools::Response.json(results)
+  json(results)
 rescue RateLimitError => e
-  Riffer::Tools::Response.error("API rate limit exceeded, please try again later", type: :rate_limit)
+  error("API rate limit exceeded, please try again later", type: :rate_limit)
 rescue => e
-  Riffer::Tools::Response.error("Search failed: #{e.message}")
+  error("Search failed: #{e.message}")
 end
 ```
 

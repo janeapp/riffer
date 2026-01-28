@@ -13,7 +13,7 @@ describe Riffer::Tool do
       end
 
       def call(context:, city:, units: nil)
-        Riffer::Tools::Response.success("Weather in #{city}: 20 #{units || "celsius"}")
+        text("Weather in #{city}: 20 #{units || "celsius"}")
       end
     end
   end
@@ -23,7 +23,7 @@ describe Riffer::Tool do
       description "A simple tool"
 
       def call(context:, **kwargs)
-        Riffer::Tools::Response.success("Simple result")
+        text("Simple result")
       end
     end
   end
@@ -132,7 +132,7 @@ describe Riffer::Tool do
     it "receives context" do
       tool_class = Class.new(Riffer::Tool) do
         def call(context:, **kwargs)
-          Riffer::Tools::Response.success(context[:user_id])
+          text(context[:user_id])
         end
       end
       tool = tool_class.new
@@ -166,7 +166,7 @@ describe Riffer::Tool do
         end
 
         def call(context:, name:)
-          Riffer::Tools::Response.success("#{context[:greeting]}, #{name}!")
+          text("#{context[:greeting]}, #{name}!")
         end
       end
       tool = tool_class.new
@@ -186,7 +186,7 @@ describe Riffer::Tool do
 
         def call(context:)
           sleep 0.02
-          Riffer::Tools::Response.success("done")
+          text("done")
         end
       end
 
@@ -200,7 +200,7 @@ describe Riffer::Tool do
 
         def call(context:)
           sleep 0.02
-          Riffer::Tools::Response.success("done")
+          text("done")
         end
       end
 
@@ -214,7 +214,7 @@ describe Riffer::Tool do
         timeout 1
 
         def call(context:)
-          Riffer::Tools::Response.success("fast result")
+          text("fast result")
         end
       end
 
@@ -233,6 +233,42 @@ describe Riffer::Tool do
       tool = bad_tool_class.new
       error = expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::Error)
       expect(error.message).must_match(/must return a Riffer::Tools::Response/)
+    end
+  end
+
+  describe "#text" do
+    it "creates a text response" do
+      tool = simple_tool_class.new
+      response = tool.text("hello")
+      expect(response).must_be_instance_of Riffer::Tools::Response
+      expect(response.content).must_equal "hello"
+      expect(response.success?).must_equal true
+    end
+  end
+
+  describe "#json" do
+    it "creates a JSON response" do
+      tool = simple_tool_class.new
+      response = tool.json({name: "Alice"})
+      expect(response).must_be_instance_of Riffer::Tools::Response
+      expect(response.content).must_equal '{"name":"Alice"}'
+      expect(response.success?).must_equal true
+    end
+  end
+
+  describe "#error" do
+    it "creates an error response" do
+      tool = simple_tool_class.new
+      response = tool.error("something failed")
+      expect(response).must_be_instance_of Riffer::Tools::Response
+      expect(response.content).must_equal "something failed"
+      expect(response.error?).must_equal true
+    end
+
+    it "accepts custom error type" do
+      tool = simple_tool_class.new
+      response = tool.error("not found", type: :not_found)
+      expect(response.error_type).must_equal :not_found
     end
   end
 end

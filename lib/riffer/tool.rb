@@ -98,6 +98,34 @@ class Riffer::Tool
     raise NotImplementedError, "#{self.class} must implement #call"
   end
 
+  # Creates a text response. Shorthand for Riffer::Tools::Response.text.
+  #
+  # result:: Object - the tool result (converted via to_s)
+  #
+  # Returns Riffer::Tools::Response.
+  def text(result)
+    Riffer::Tools::Response.text(result)
+  end
+
+  # Creates a JSON response. Shorthand for Riffer::Tools::Response.json.
+  #
+  # result:: Object - the tool result (converted via JSON.generate)
+  #
+  # Returns Riffer::Tools::Response.
+  def json(result)
+    Riffer::Tools::Response.json(result)
+  end
+
+  # Creates an error response. Shorthand for Riffer::Tools::Response.error.
+  #
+  # message:: String - the error message
+  # type:: Symbol - the error type (default: :execution_error)
+  #
+  # Returns Riffer::Tools::Response.
+  def error(message, type: :execution_error)
+    Riffer::Tools::Response.error(message, type: type)
+  end
+
   # Executes the tool with validation and timeout (used by Agent).
   #
   # context:: Object or nil - context passed from the agent
