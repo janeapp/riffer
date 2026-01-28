@@ -17,7 +17,7 @@ class WeatherTool < Riffer::Tool
 
   def call(context:, city:, units: nil)
     weather = WeatherAPI.fetch(city, units: units || "celsius")
-    "The weather in #{city} is #{weather.temperature} #{units}."
+    text("The weather in #{city} is #{weather.temperature} #{units}.")
   end
 end
 ```
@@ -110,12 +110,14 @@ Options:
 
 ## The call Method
 
-Every tool must implement the `call` method:
+Every tool must implement the `call` method and return a `Riffer::Tools::Response`:
 
 ```ruby
 def call(context:, **kwargs)
   # context - The tool_context passed to agent.generate()
   # kwargs  - Validated parameters
+  #
+  # Must return a Riffer::Tools::Response
 end
 ```
 
@@ -129,10 +131,12 @@ class UserOrdersTool < Riffer::Tool
 
   def call(context:)
     user_id = context&.dig(:user_id)
-    return "No user ID provided" unless user_id
+    unless user_id
+      return error("No user ID provided")
+    end
 
     orders = Order.where(user_id: user_id)
-    orders.map(&:to_s).join("\n")
+    text(orders.map(&:to_s).join("\n"))
   end
 end
 
@@ -140,20 +144,102 @@ end
 agent.generate("Show my orders", tool_context: {user_id: 123})
 ```
 
-### Return Values
+## Response Objects
 
-Return a string that will be sent back to the LLM:
+All tools must return a `Riffer::Tools::Response` object from their `call` method. Riffer::Tool provides shorthand methods for creating responses.
+
+### Success Responses
+
+Use `text` for string responses and `json` for structured data:
 
 ```ruby
 def call(context:, query:)
   results = Database.search(query)
 
   if results.empty?
-    "No results found for '#{query}'"
+    text("No results found for '#{query}'")
   else
-    results.map { |r| "- #{r.title}: #{r.summary}" }.join("\n")
+    text(results.map { |r| "- #{r.title}: #{r.summary}" }.join("\n"))
   end
 end
+```
+
+#### text
+
+Converts the result to a string via `to_s`:
+
+```ruby
+text("Hello, world!")
+# => content: "Hello, world!"
+
+text(42)
+# => content: "42"
+```
+
+#### json
+
+Converts the result to JSON via `to_json`:
+
+```ruby
+json({name: "Alice", age: 30})
+# => content: '{"name":"Alice","age":30}'
+
+json([1, 2, 3])
+# => content: '[1,2,3]'
+```
+
+### Error Responses
+
+Use `error(message, type:)` for errors:
+
+```ruby
+def call(context:, user_id:)
+  user = User.find_by(id: user_id)
+
+  unless user
+    return error("User not found", type: :not_found)
+  end
+
+  text("User: #{user.name}")
+end
+```
+
+The error type is any symbol that describes the error category:
+
+```ruby
+error("Invalid input", type: :validation_error)
+error("Service unavailable", type: :service_error)
+error("Rate limit exceeded", type: :rate_limit)
+```
+
+If no type is specified, it defaults to `:execution_error`.
+
+### Using Riffer::Tools::Response Directly
+
+The shorthand methods delegate to `Riffer::Tools::Response`. You can also use the class directly if preferred:
+
+```ruby
+Riffer::Tools::Response.text("Hello")
+Riffer::Tools::Response.json({data: [1, 2, 3]})
+Riffer::Tools::Response.error("Failed", type: :custom_error)
+```
+
+### Response Methods
+
+```ruby
+response = text("result")
+response.content        # => "result"
+response.success?       # => true
+response.error?         # => false
+response.error_message  # => nil
+response.error_type     # => nil
+
+error_response = error("failed", type: :not_found)
+error_response.content        # => "failed"
+error_response.success?       # => false
+error_response.error?         # => true
+error_response.error_message  # => "failed"
+error_response.error_type     # => :not_found
 ```
 
 ## Timeout Configuration
@@ -166,7 +252,8 @@ class SlowExternalApiTool < Riffer::Tool
   timeout 30  # 30 seconds
 
   def call(context:, query:)
-    ExternalAPI.search(query)
+    result = ExternalAPI.search(query)
+    text(result)
   end
 end
 ```
@@ -181,7 +268,7 @@ Arguments are automatically validated before `call` is invoked:
 - Types must match the schema
 - Enum values must be in the allowed list
 
-Validation errors are captured and sent back to the LLM as tool results.
+Validation errors are captured and sent back to the LLM as tool results with error type `:validation_error`.
 
 ## JSON Schema Generation
 
@@ -237,15 +324,19 @@ end
 
 ## Error Handling
 
-Errors in tools are captured and reported back to the LLM:
+Errors can be returned explicitly using `error`:
 
 ```ruby
 def call(context:, query:)
-  raise "API rate limit exceeded"
+  results = ExternalAPI.search(query)
+  json(results)
+rescue RateLimitError => e
+  error("API rate limit exceeded, please try again later", type: :rate_limit)
 rescue => e
-  # Error is caught by Riffer and sent as tool result:
-  # "Error executing tool: API rate limit exceeded"
+  error("Search failed: #{e.message}")
 end
 ```
 
-The LLM can then decide how to respond (retry, apologize, ask for different input, etc.).
+Unhandled exceptions are caught by Riffer and converted to error responses with type `:execution_error`. However, it's recommended to handle expected errors explicitly for better error messages.
+
+The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).
