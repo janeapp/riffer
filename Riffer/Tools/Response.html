@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Tools::Param - Riffer Documentation</title>
+<title>class Riffer::Tools::Response - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Tools::Param"
+    content="ruby,class,Riffer::Tools::Response"
   >
 
     <meta
       name="description"
-      content="class Riffer::Tools::Param: Param represents a single parameter definition for a tool. Handles type validation and JSON Schema generation for individual parameters."
+      content="class Riffer::Tools::Response: Response represents the result of a tool execution. All tools must return a Response object from their +call+ method."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Tools::Param - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Tools::Response - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Param represents a single parameter definition for a tool. Handles type validation and JSON Schema generation for individual parameters.">
+    <meta property="og:description" content="Response represents the result of a tool execution. All tools must return a Response object from their +call+ method.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Tools::Param - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Tools::Response - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Param represents a single parameter definition for a tool. Handles type validation and JSON Schema generation for individual parameters.">
+    <meta name="twitter:description" content="Response represents the result of a tool execution. All tools must return a Response object from their +call+ method.">
 
 
 
@@ -576,7 +576,15 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-c-error">error</a></li>
+
+        <li ><a href="#method-c-json">json</a></li>
+
         <li ><a href="#method-c-new">new</a></li>
+
+        <li ><a href="#method-c-success">success</a></li>
+
+        <li ><a href="#method-c-text">text</a></li>
 
       </ul>
     </details>
@@ -597,11 +605,11 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-to_json_schema">to_json_schema</a></li>
+        <li ><a href="#method-i-error-3F">error?</a></li>
 
-        <li ><a href="#method-i-type_name">type_name</a></li>
+        <li ><a href="#method-i-success-3F">success?</a></li>
 
-        <li ><a href="#method-i-valid_type-3F">valid_type?</a></li>
+        <li ><a href="#method-i-to_h">to_h</a></li>
 
       </ul>
     </details>
@@ -626,7 +634,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Tools::Param">
+<main role="main" aria-labelledby="class-Riffer::Tools::Response">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -645,22 +653,24 @@
       
       <li>
         
-        <span>Param</span>
+        <span>Response</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Tools::Param" class="anchor-link class">
-    class Riffer::Tools::Param
+  <h1 id="class-Riffer::Tools::Response" class="anchor-link class">
+    class Riffer::Tools::Response
   </h1>
 
   <section class="description">
     
-<p><a href="Param.html"><code>Riffer::Tools::Param</code></a> represents a single parameter definition for a tool.</p>
+<p><a href="Response.html"><code>Riffer::Tools::Response</code></a> represents the result of a tool execution.</p>
 
-<p>Handles type validation and JSON Schema generation for individual parameters.</p>
+<p>All tools must return a <a href="Response.html"><code>Response</code></a> object from their <code>call</code> method. Use <a href="Response.html#method-c-success"><code>Response.success</code></a> for successful results and <a href="Response.html#method-c-error"><code>Response.error</code></a> for failures.</p>
+
+<p>class MyTool &lt; <a href="../Tool.html"><code>Riffer::Tool</code></a> def call(context:, **kwargs) result = perform_operation <a href="Response.html#method-c-success"><code>Riffer::Tools::Response.success(result)</code></a> rescue MyError =&gt; e <a href="Response.html#method-c-error"><code>Riffer::Tools::Response.error(e.message)</code></a> end end</p>
 
   </section>
 
@@ -677,11 +687,11 @@
       </header>
       <dl>
 
-        <dt id="TYPE_MAPPINGS">TYPE_MAPPINGS</dt>
+        <dt id="VALID_FORMATS">VALID_FORMATS</dt>
 
         <dd>
 
-          <p>Maps Ruby types to JSON Schema type strings</p>
+          
         </dd>
 
 
@@ -696,10 +706,10 @@
       </header>
 
 
-      <div id="attribute-i-default" class="method-detail anchor-link">
+      <div id="attribute-i-content" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-default" title="Link to this attribute">
-            <span class="method-name">default</span>
+          <a href="#attribute-i-content" title="Link to this attribute">
+            <span class="method-name">content</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -712,10 +722,10 @@
         </div>
       </div>
 
-      <div id="attribute-i-description" class="method-detail anchor-link">
+      <div id="attribute-i-error_message" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-description" title="Link to this attribute">
-            <span class="method-name">description</span>
+          <a href="#attribute-i-error_message" title="Link to this attribute">
+            <span class="method-name">error_message</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -728,58 +738,10 @@
         </div>
       </div>
 
-      <div id="attribute-i-enum" class="method-detail anchor-link">
+      <div id="attribute-i-error_type" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-enum" title="Link to this attribute">
-            <span class="method-name">enum</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        
-
-        </div>
-      </div>
-
-      <div id="attribute-i-name" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-name" title="Link to this attribute">
-            <span class="method-name">name</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        
-
-        </div>
-      </div>
-
-      <div id="attribute-i-required" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-required" title="Link to this attribute">
-            <span class="method-name">required</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        
-
-        </div>
-      </div>
-
-      <div id="attribute-i-type" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-type" title="Link to this attribute">
-            <span class="method-name">type</span>
+          <a href="#attribute-i-error_type" title="Link to this attribute">
+            <span class="method-name">error_type</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -802,13 +764,105 @@
        </header>
 
 
+      <div id="method-c-error" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-error" title="Link to this method">
+                <span class="method-name">error</span>
+                <span class="method-args">(message, type: :execution_error)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="error-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 65</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:execution_error</span>)
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">content:</span> <span class="ruby-identifier">message</span>, <span class="ruby-value">success:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">error_message:</span> <span class="ruby-identifier">message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-identifier">type</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates an error response.</p>
+
+<p>message:: String - the error message type:: Symbol - the error type (default: :execution_error)</p>
+
+<p>Returns <a href="Response.html"><code>Riffer::Tools::Response</code></a>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-json" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-json" title="Link to this method">
+                <span class="method-name">json</span>
+                <span class="method-args">(result)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="json-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">json</span>(<span class="ruby-identifier">result</span>)
+  <span class="ruby-identifier">success</span>(<span class="ruby-identifier">result</span>, <span class="ruby-value">format:</span> <span class="ruby-value">:json</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates a success response with JSON format.</p>
+
+<p>result:: Object - the tool result (converted via to_json)</p>
+
+<p>Returns <a href="Response.html"><code>Riffer::Tools::Response</code></a>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-c-new" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(name:, type:, required:, description: nil, enum: nil, default: nil)</span>
+                <span class="method-args">(content:, success:, error_message: nil, error_type: nil)</span>
               </a>
             </div>
 
@@ -821,14 +875,12 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/param.rb, line 28</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">type:</span>, <span class="ruby-value">required:</span>, <span class="ruby-value">description:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">enum:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">default:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>
-  <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">type</span>
-  <span class="ruby-ivar">@required</span> = <span class="ruby-identifier">required</span>
-  <span class="ruby-ivar">@description</span> = <span class="ruby-identifier">description</span>
-  <span class="ruby-ivar">@enum</span> = <span class="ruby-identifier">enum</span>
-  <span class="ruby-ivar">@default</span> = <span class="ruby-identifier">default</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 84</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
+  <span class="ruby-ivar">@success</span> = <span class="ruby-identifier">success</span>
+  <span class="ruby-ivar">@error_message</span> = <span class="ruby-identifier">error_message</span>
+  <span class="ruby-ivar">@error_type</span> = <span class="ruby-identifier">error_type</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -837,9 +889,106 @@
         <div class="method-description">
 
 
-          <p>Creates a new parameter definition.</p>
+          
 
-<p>name:: Symbol - the parameter name type:: Class - the expected Ruby type required:: Boolean - whether the parameter is required description:: String or nil - optional description for the parameter enum:: Array or nil - optional list of allowed values default:: Object or nil - optional default value for optional parameters</p>
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-success" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-success" title="Link to this method">
+                <span class="method-name">success</span>
+                <span class="method-args">(result, format: :text)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="success-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">success</span>(<span class="ruby-identifier">result</span>, <span class="ruby-value">format:</span> <span class="ruby-value">:text</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">VALID_FORMATS</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">format</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid format: #{format}. Must be one of: #{VALID_FORMATS.join(&quot;, &quot;)}&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">content</span> = (<span class="ruby-identifier">format</span> <span class="ruby-operator">==</span> <span class="ruby-value">:json</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">to_json</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">success:</span> <span class="ruby-keyword">true</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates a success response.</p>
+
+<p>result:: Object - the tool result format:: Symbol - the format (:text or :json; default: :text)</p>
+
+<p>Returns <a href="Response.html"><code>Riffer::Tools::Response</code></a>.</p>
+
+<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if format is invalid.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-text" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-text" title="Link to this method">
+                <span class="method-name">text</span>
+                <span class="method-args">(result)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="text-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">text</span>(<span class="ruby-identifier">result</span>)
+  <span class="ruby-identifier">success</span>(<span class="ruby-identifier">result</span>, <span class="ruby-value">format:</span> <span class="ruby-value">:text</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates a success response with text format.</p>
+
+<p>result:: Object - the tool result (converted via to_s)</p>
+
+<p>Returns <a href="Response.html"><code>Riffer::Tools::Response</code></a>.</p>
 
 
         </div>
@@ -859,13 +1008,13 @@
        </header>
 
 
-      <div id="method-i-to_json_schema" class="method-detail anchor-link ">
+      <div id="method-i-error-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-to_json_schema" title="Link to this method">
-                <span class="method-name">to_json_schema</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-error-3F" title="Link to this method">
+                <span class="method-name">error?</span>
+                <span class="method-args">(= !@success)</span>
               </a>
             </div>
 
@@ -877,106 +1026,24 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="to_json_schema-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/param.rb, line 62</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json_schema</span>
-  <span class="ruby-identifier">schema</span> = {<span class="ruby-value">type:</span> <span class="ruby-identifier">type_name</span>}
-  <span class="ruby-identifier">schema</span>[<span class="ruby-value">:description</span>] = <span class="ruby-identifier">description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">description</span>
-  <span class="ruby-identifier">schema</span>[<span class="ruby-value">:enum</span>] = <span class="ruby-identifier">enum</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">enum</span>
-  <span class="ruby-identifier">schema</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
+          <div class="method-source-code" id="error-3F-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 73</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error?</span> = <span class="ruby-operator">!</span><span class="ruby-ivar">@success</span>
 
+  <span class="ruby-comment"># Returns a hash representation of the response.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Returns Hash with :content, :error, and :error_type keys.</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+    {<span class="ruby-value">content:</span> <span class="ruby-ivar">@content</span>, <span class="ruby-value">error:</span> <span class="ruby-ivar">@error_message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-ivar">@error_type</span>}
+  <span class="ruby-keyword">end</span>
 
+  <span class="ruby-identifier">private</span>
 
-        <div class="method-description">
-
-
-          <p>Converts this parameter to JSON Schema format.</p>
-
-<p>Returns Hash - the JSON Schema representation.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-type_name" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-type_name" title="Link to this method">
-                <span class="method-name">type_name</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="type_name-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/param.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">type_name</span>
-  <span class="ruby-constant">TYPE_MAPPINGS</span>[<span class="ruby-identifier">type</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the JSON Schema type name for this parameter.</p>
-
-<p>Returns String - the JSON Schema type.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-valid_type-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-valid_type-3F" title="Link to this method">
-                <span class="method-name">valid_type?</span>
-                <span class="method-args">(value)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="valid_type-3F-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/param.rb, line 42</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">valid_type?</span>(<span class="ruby-identifier">value</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">required</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-constant">TrueClass</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-constant">FalseClass</span>
-    <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">type</span>)
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+    <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
+    <span class="ruby-ivar">@success</span> = <span class="ruby-identifier">success</span>
+    <span class="ruby-ivar">@error_message</span> = <span class="ruby-identifier">error_message</span>
+    <span class="ruby-ivar">@error_type</span> = <span class="ruby-identifier">error_type</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -986,11 +1053,110 @@
         <div class="method-description">
 
 
-          <p>Validates that a value matches the expected type.</p>
+          <p>Returns true if the response is an error.</p>
 
-<p>value:: Object - the value to validate</p>
 
-<p>Returns Boolean - true if valid, false otherwise.</p>
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-success-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-success-3F" title="Link to this method">
+                <span class="method-name">success?</span>
+                <span class="method-args">(= @success)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="success-3F-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">success?</span> = <span class="ruby-ivar">@success</span>
+
+<span class="ruby-comment"># Returns true if the response is an error.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error?</span> = <span class="ruby-operator">!</span><span class="ruby-ivar">@success</span>
+
+<span class="ruby-comment"># Returns a hash representation of the response.</span>
+<span class="ruby-comment">#</span>
+<span class="ruby-comment"># Returns Hash with :content, :error, and :error_type keys.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  {<span class="ruby-value">content:</span> <span class="ruby-ivar">@content</span>, <span class="ruby-value">error:</span> <span class="ruby-ivar">@error_message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-ivar">@error_type</span>}
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
+  <span class="ruby-ivar">@success</span> = <span class="ruby-identifier">success</span>
+  <span class="ruby-ivar">@error_message</span> = <span class="ruby-identifier">error_message</span>
+  <span class="ruby-ivar">@error_type</span> = <span class="ruby-identifier">error_type</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns true if the response is successful.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-to_h" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-to_h" title="Link to this method">
+                <span class="method-name">to_h</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="to_h-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 78</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  {<span class="ruby-value">content:</span> <span class="ruby-ivar">@content</span>, <span class="ruby-value">error:</span> <span class="ruby-ivar">@error_message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-ivar">@error_type</span>}
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns a hash representation of the response.</p>
+
+<p>Returns Hash with :content, :error, and :error_type keys.</p>
 
 
         </div>

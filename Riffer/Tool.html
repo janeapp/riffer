@@ -633,6 +633,12 @@
 
         <li ><a href="#method-i-call_with_validation">call_with_validation</a></li>
 
+        <li ><a href="#method-i-error">error</a></li>
+
+        <li ><a href="#method-i-json">json</a></li>
+
+        <li ><a href="#method-i-text">text</a></li>
+
       </ul>
     </details>
   </div>
@@ -650,7 +656,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -1084,14 +1090,20 @@
             </details>
           </div>
           <div class="method-source-code" id="call_with_validation-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 110</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 139</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call_with_validation</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
   <span class="ruby-identifier">params_builder</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">params</span>
   <span class="ruby-identifier">validated_args</span> = <span class="ruby-identifier">params_builder</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">params_builder</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">kwargs</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">kwargs</span>
 
-  <span class="ruby-constant">Timeout</span>.<span class="ruby-identifier">timeout</span>(<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">timeout</span>) <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">result</span> = <span class="ruby-constant">Timeout</span>.<span class="ruby-identifier">timeout</span>(<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">timeout</span>) <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">call</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">validated_args</span>)
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>, <span class="ruby-node">&quot;#{self.class} must return a Riffer::Tools::Response from #call&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">result</span>
 <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Timeout</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">TimeoutError</span>, <span class="ruby-node">&quot;Tool execution timed out after #{self.class.timeout} seconds&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1106,9 +1118,147 @@
 
 <p>context:: Object or nil - context passed from the agent kwargs:: Hash - the tool arguments</p>
 
-<p>Returns Object - the tool result.</p>
+<p>Returns <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a> - the tool response.</p>
 
-<p>Raises <a href="ValidationError.html"><code>Riffer::ValidationError</code></a> if validation fails. Raises <a href="TimeoutError.html"><code>Riffer::TimeoutError</code></a> if execution exceeds the configured timeout.</p>
+<p>Raises <a href="ValidationError.html"><code>Riffer::ValidationError</code></a> if validation fails. Raises <a href="TimeoutError.html"><code>Riffer::TimeoutError</code></a> if execution exceeds the configured timeout. Raises <a href="Error.html"><code>Riffer::Error</code></a> if the tool does not return a Response object.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-error" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-error" title="Link to this method">
+                <span class="method-name">error</span>
+                <span class="method-args">(message, type: :execution_error)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="error-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 125</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:execution_error</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-identifier">type</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates an error response. Shorthand for <a href="Tools/Response.html#method-c-error"><code>Riffer::Tools::Response.error</code></a>.</p>
+
+<p>message:: String - the error message type:: Symbol - the error type (default: :execution_error)</p>
+
+<p>Returns <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-json" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-json" title="Link to this method">
+                <span class="method-name">json</span>
+                <span class="method-args">(result)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="json-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">json</span>(<span class="ruby-identifier">result</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">json</span>(<span class="ruby-identifier">result</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates a JSON response. Shorthand for <a href="Tools/Response.html#method-c-json"><code>Riffer::Tools::Response.json</code></a>.</p>
+
+<p>result:: Object - the tool result (converted via JSON.generate)</p>
+
+<p>Returns <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-text" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-text" title="Link to this method">
+                <span class="method-name">text</span>
+                <span class="method-args">(result)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="text-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 106</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text</span>(<span class="ruby-identifier">result</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">text</span>(<span class="ruby-identifier">result</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates a text response. Shorthand for <a href="Tools/Response.html#method-c-text"><code>Riffer::Tools::Response.text</code></a>.</p>
+
+<p>result:: Object - the tool result (converted via to_s)</p>
+
+<p>Returns <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a>.</p>
 
 
         </div>
