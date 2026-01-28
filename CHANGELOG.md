@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0](https://github.com/janeapp/riffer/compare/riffer/v0.8.0...riffer/v0.9.0) (2026-01-28)
+
+
+### Features
+
+* implement Riffer::Tools::Response for consistent tool result handling ([#91](https://github.com/janeapp/riffer/issues/91)) ([df44f1f](https://github.com/janeapp/riffer/commit/df44f1fe8ff0b5bea73a2df8d6c0b8359e6c47f3))
+
 ## [0.8.0](https://github.com/janeapp/riffer/compare/riffer/v0.7.0...riffer/v0.8.0) (2026-01-26)
 
 
