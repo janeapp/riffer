@@ -2,15 +2,15 @@
 
 # Helper module for converting class names.
 module Riffer::Helpers::ClassNameConverter
-  # Converts a class name to snake_case path format.
+  # Converts a class name to snake_case identifier format.
   #
   # class_name:: String - the class name (e.g., "Riffer::Agent")
   #
-  # Returns String - the snake_case path (e.g., "riffer/agent").
+  # Returns String - the snake_case identifier (e.g., "riffer__agent").
   def class_name_to_path(class_name)
     class_name
       .to_s
-      .gsub("::", "/")
+      .gsub("::", "__")
       .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
       .gsub(/([a-z\d])([A-Z])/, '\1_\2')
       .downcase

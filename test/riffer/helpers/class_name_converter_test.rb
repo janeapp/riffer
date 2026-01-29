@@ -15,9 +15,9 @@ describe Riffer::Helpers::ClassNameConverter do
       assert_equal "agent", result
     end
 
-    it "converts namespaced class to path with slashes" do
+    it "converts namespaced class to double underscore format" do
       result = converter_class.class_name_to_path("Riffer::Agent")
-      assert_equal "riffer/agent", result
+      assert_equal "riffer__agent", result
     end
 
     it "converts multi-word class names to snake_case" do
@@ -27,7 +27,7 @@ describe Riffer::Helpers::ClassNameConverter do
 
     it "converts deeply nested namespaces" do
       result = converter_class.class_name_to_path("Riffer::Providers::OpenAI")
-      assert_equal "riffer/providers/open_ai", result
+      assert_equal "riffer__providers__open_ai", result
     end
 
     it "handles consecutive capitals correctly" do
@@ -37,17 +37,17 @@ describe Riffer::Helpers::ClassNameConverter do
 
     it "handles symbols" do
       result = converter_class.class_name_to_path(:"Riffer::Agent")
-      assert_equal "riffer/agent", result
+      assert_equal "riffer__agent", result
     end
 
     it "handles already snake_cased names" do
-      result = converter_class.class_name_to_path("riffer/agent")
-      assert_equal "riffer/agent", result
+      result = converter_class.class_name_to_path("riffer__agent")
+      assert_equal "riffer__agent", result
     end
 
     it "converts complex real-world example" do
       result = converter_class.class_name_to_path("Riffer::Messages::Assistant")
-      assert_equal "riffer/messages/assistant", result
+      assert_equal "riffer__messages__assistant", result
     end
   end
 end
