@@ -294,6 +294,50 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
+    describe "#generate_text with multiple Tool messages" do
+      it "returns Assistant message" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/with_multiple_tool_messages") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          messages = [
+            Riffer::Messages::User.new("What is the weather in Toronto and Vancouver?"),
+            Riffer::Messages::Assistant.new("", tool_calls: [
+              {id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather", arguments: '{"city":"Toronto"}'},
+              {id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather", arguments: '{"city":"Vancouver"}'}
+            ]),
+            Riffer::Messages::Tool.new("Toronto: 15°C", tool_call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather"),
+            Riffer::Messages::Tool.new("Vancouver: 12°C", tool_call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather")
+          ]
+          result = provider.generate_text(
+            messages: messages,
+            model: "anthropic.claude-3-haiku-20240307-v1:0",
+            tools: [weather_tool]
+          )
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns response with content" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_generate_text/with_multiple_tool_messages") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          messages = [
+            Riffer::Messages::User.new("What is the weather in Toronto and Vancouver?"),
+            Riffer::Messages::Assistant.new("", tool_calls: [
+              {id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather", arguments: '{"city":"Toronto"}'},
+              {id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather", arguments: '{"city":"Vancouver"}'}
+            ]),
+            Riffer::Messages::Tool.new("Toronto: 15°C", tool_call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather"),
+            Riffer::Messages::Tool.new("Vancouver: 12°C", tool_call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather")
+          ]
+          result = provider.generate_text(
+            messages: messages,
+            model: "anthropic.claude-3-haiku-20240307-v1:0",
+            tools: [weather_tool]
+          )
+          expect(result.content).wont_be_empty
+        end
+      end
+    end
+
     describe "#stream_text with tools" do
       it "yields ToolCallDelta events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/tool_calling/_stream_text/yields_tool_call_delta") do

@@ -137,15 +137,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       when Riffer::Messages::Assistant
         conversation_messages << convert_assistant_to_bedrock_format(message)
       when Riffer::Messages::Tool
-        conversation_messages << {
-          role: "user",
-          content: [{
-            tool_result: {
-              tool_use_id: message.tool_call_id,
-              content: [{text: message.content}]
-            }
-          }]
-        }
+        append_tool_result(conversation_messages, message)
       end
     end
 
@@ -153,6 +145,22 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       system: system_prompts,
       conversation: conversation_messages
     }
+  end
+
+  def append_tool_result(conversation_messages, message)
+    tool_result = {
+      tool_result: {
+        tool_use_id: message.tool_call_id,
+        content: [{text: message.content}]
+      }
+    }
+
+    prev = conversation_messages.last
+    if prev && prev[:role] == "user" && prev[:content]&.first&.key?(:tool_result)
+      prev[:content] << tool_result
+    else
+      conversation_messages << {role: "user", content: [tool_result]}
+    end
   end
 
   def convert_assistant_to_bedrock_format(message)
