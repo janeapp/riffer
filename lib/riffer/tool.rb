@@ -25,6 +25,9 @@ require "timeout"
 class Riffer::Tool
   DEFAULT_TIMEOUT = 10
 
+  # Some providers do not allow "/" in tool names, so we use "__" as separator.
+  TOOL_SEPARATOR = "__"
+
   class << self
     include Riffer::Helpers::ClassNameConverter
 
@@ -44,7 +47,7 @@ class Riffer::Tool
     #
     # Returns String - the tool identifier (defaults to snake_case class name).
     def identifier(value = nil)
-      return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self)) if value.nil?
+      return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self), separator: TOOL_SEPARATOR) if value.nil?
       @identifier = value.to_s
     end
 

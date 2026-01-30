@@ -22,7 +22,7 @@ describe Riffer::Agent do
     end
 
     it "defaults to snake_case class name when not set" do
-      expect(Riffer::Agent.identifier).must_equal "riffer__agent"
+      expect(Riffer::Agent.identifier).must_equal "riffer/agent"
     end
   end
 
