@@ -731,6 +731,14 @@
         </dd>
 
 
+        <dt id="TOOL_SEPARATOR">TOOL_SEPARATOR</dt>
+
+        <dd>
+
+          <p>Some providers do not allow “/” in tool names, so we use “__” as separator.</p>
+        </dd>
+
+
       </dl>
     </section>
 
@@ -763,7 +771,7 @@
             </details>
           </div>
           <div class="method-source-code" id="description-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 36</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">description</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@description</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
@@ -810,9 +818,9 @@
             </details>
           </div>
           <div class="method-source-code" id="identifier-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 46</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-constant">Module</span>.<span class="ruby-identifier">instance_method</span>(<span class="ruby-value">:name</span>).<span class="ruby-identifier">bind_call</span>(<span class="ruby-keyword">self</span>)) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-constant">Module</span>.<span class="ruby-identifier">instance_method</span>(<span class="ruby-value">:name</span>).<span class="ruby-identifier">bind_call</span>(<span class="ruby-keyword">self</span>), <span class="ruby-value">separator:</span> <span class="ruby-constant">TOOL_SEPARATOR</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -895,7 +903,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parameters_schema-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 78</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 81</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parameters_schema</span>
   <span class="ruby-ivar">@params_builder</span>&amp;.<span class="ruby-identifier">to_json_schema</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">empty_schema</span>
 <span class="ruby-keyword">end</span></pre>
@@ -939,7 +947,7 @@
             </details>
           </div>
           <div class="method-source-code" id="params-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 69</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">params</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@params_builder</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@params_builder</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
@@ -987,7 +995,7 @@
             </details>
           </div>
           <div class="method-source-code" id="timeout-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 59</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">timeout</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DEFAULT_TIMEOUT</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@timeout</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_f</span>
@@ -1042,7 +1050,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 97</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 100</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} must implement #call&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1090,7 +1098,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call_with_validation-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 139</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 142</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call_with_validation</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
   <span class="ruby-identifier">params_builder</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">params</span>
   <span class="ruby-identifier">validated_args</span> = <span class="ruby-identifier">params_builder</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">params_builder</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">kwargs</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">kwargs</span>
@@ -1151,7 +1159,7 @@
             </details>
           </div>
           <div class="method-source-code" id="error-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 125</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 128</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:execution_error</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-identifier">type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1197,7 +1205,7 @@
             </details>
           </div>
           <div class="method-source-code" id="json-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 115</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 118</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">json</span>(<span class="ruby-identifier">result</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">json</span>(<span class="ruby-identifier">result</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1243,7 +1251,7 @@
             </details>
           </div>
           <div class="method-source-code" id="text-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 106</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 109</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text</span>(<span class="ruby-identifier">result</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">text</span>(<span class="ruby-identifier">result</span>)
 <span class="ruby-keyword">end</span></pre>

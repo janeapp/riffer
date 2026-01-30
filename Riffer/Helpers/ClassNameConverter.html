@@ -631,6 +631,23 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="constants"><a href="#constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="DEFAULT_SEPARATOR">DEFAULT_SEPARATOR</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
+
 
 
 
@@ -647,7 +664,7 @@
             <div class="method-heading">
               <a href="#method-i-class_name_to_path" title="Link to this method">
                 <span class="method-name">class_name_to_path</span>
-                <span class="method-args">(class_name)</span>
+                <span class="method-args">(class_name, separator: DEFAULT_SEPARATOR)</span>
               </a>
             </div>
 
@@ -660,11 +677,11 @@
             </details>
           </div>
           <div class="method-source-code" id="class_name_to_path-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/helpers/class_name_converter.rb, line 10</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_name_to_path</span>(<span class="ruby-identifier">class_name</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/helpers/class_name_converter.rb, line 13</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_name_to_path</span>(<span class="ruby-identifier">class_name</span>, <span class="ruby-value">separator:</span> <span class="ruby-constant">DEFAULT_SEPARATOR</span>)
   <span class="ruby-identifier">class_name</span>
     .<span class="ruby-identifier">to_s</span>
-    .<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot;::&quot;</span>, <span class="ruby-string">&quot;/&quot;</span>)
+    .<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot;::&quot;</span>, <span class="ruby-identifier">separator</span>)
     .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/([A-Z]+)([A-Z][a-z])/</span>, <span class="ruby-string">&#39;\1_\2&#39;</span>)
     .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/([a-z\d])([A-Z])/</span>, <span class="ruby-string">&#39;\1_\2&#39;</span>)
     .<span class="ruby-identifier">downcase</span>
@@ -676,11 +693,11 @@
         <div class="method-description">
 
 
-          <p>Converts a class name to snake_case path format.</p>
+          <p>Converts a class name to snake_case identifier format.</p>
 
-<p>class_name:: String - the class name (e.g., “Riffer::Agent”)</p>
+<p>class_name:: String - the class name (e.g., “Riffer::Agent”) separator:: String - the separator to use for namespaces (default: “/”)</p>
 
-<p>Returns String - the snake_case path (e.g., “riffer/agent”).</p>
+<p>Returns String - the snake_case identifier (e.g., “riffer/agent”).</p>
 
 
         </div>
