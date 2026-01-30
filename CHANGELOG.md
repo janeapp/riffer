@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0](https://github.com/janeapp/riffer/compare/riffer/v0.9.0...riffer/v0.10.0) (2026-01-30)
+
+
+### Features
+
+* update class name conversion to support configurable namespace separators ([#96](https://github.com/janeapp/riffer/issues/96)) ([e7091e9](https://github.com/janeapp/riffer/commit/e7091e95210c2df27138e61e64032d52ecf174e1))
+
+
+### Bug Fixes
+
+* handle multiple tools correctly for bedrock ([#95](https://github.com/janeapp/riffer/issues/95)) ([50ae6f6](https://github.com/janeapp/riffer/commit/50ae6f6cd803d5e95b79cb6ceafca5b2d9b4a52c))
+* update class name conversion to use double underscore format ([#93](https://github.com/janeapp/riffer/issues/93)) ([f6ffad7](https://github.com/janeapp/riffer/commit/f6ffad775a2d8254543dd7819dca93c15f514742))
+
 ## [0.9.0](https://github.com/janeapp/riffer/compare/riffer/v0.8.0...riffer/v0.9.0) (2026-01-28)
 
 
