@@ -101,6 +101,20 @@ class Riffer::Agent
     def all
       subclasses
     end
+
+    # Generates a response using a new agent instance.
+    #
+    # See #generate for parameters and return value.
+    def generate(...)
+      new.generate(...)
+    end
+
+    # Streams a response using a new agent instance.
+    #
+    # See #stream for parameters and return value.
+    def stream(...)
+      new.stream(...)
+    end
   end
 
   # The message history for the agent.

@@ -466,6 +466,77 @@ describe Riffer::Agent do
     end
   end
 
+  describe ".generate" do
+    it "returns a text response" do
+      result = agent_class.generate("Hello")
+      expect(result).must_be_instance_of String
+    end
+
+    it "passes tool_context to tools" do
+      context_tool = Class.new(Riffer::Tool) do
+        description "Gets user info"
+        params do
+          required :field, String
+        end
+        def call(context:, field:)
+          text(context[field.to_sym] || "unknown")
+        end
+      end
+      context_tool.identifier("class_generate_context_tool")
+
+      tool = context_tool
+      received_context = nil
+      custom_agent_class = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+        uses_tools ->(ctx) {
+          received_context = ctx
+          [tool]
+        }
+      end
+
+      custom_agent_class.generate("Hello", tool_context: {user_name: "Bob"})
+      expect(received_context).must_equal({user_name: "Bob"})
+    end
+  end
+
+  describe ".stream" do
+    it "returns an enumerator" do
+      result = agent_class.stream("Hello")
+      expect(result).must_be_instance_of Enumerator
+    end
+
+    it "yields stream events" do
+      events = agent_class.stream("Hello").to_a
+      expect(events).wont_be_empty
+    end
+
+    it "passes tool_context to tools" do
+      context_tool = Class.new(Riffer::Tool) do
+        description "Gets user info"
+        params do
+          required :field, String
+        end
+        def call(context:, field:)
+          text(context[field.to_sym] || "unknown")
+        end
+      end
+      context_tool.identifier("class_stream_context_tool")
+
+      tool = context_tool
+      received_context = nil
+      custom_agent_class = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+        uses_tools ->(ctx) {
+          received_context = ctx
+          [tool]
+        }
+      end
+
+      custom_agent_class.stream("Hello", tool_context: {user_id: "42"}).each { |_| }
+      expect(received_context).must_equal({user_id: "42"})
+    end
+  end
+
   describe ".uses_tools" do
     let(:weather_tool_class) do
       Class.new(Riffer::Tool) do

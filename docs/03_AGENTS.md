@@ -107,20 +107,24 @@ end
 Generates a response synchronously:
 
 ```ruby
-agent = MyAgent.new
+# Class method (recommended for simple calls)
+response = MyAgent.generate('Hello')
 
-# With a string prompt
+# Instance method (when you need message history or callbacks)
+agent = MyAgent.new
+agent.on_message { |msg| log(msg) }
 response = agent.generate('Hello')
+agent.messages  # Access message history
 
 # With message objects/hashes
-response = agent.generate([
+response = MyAgent.generate([
   {role: 'user', content: 'Hello'},
   {role: 'assistant', content: 'Hi there!'},
   {role: 'user', content: 'How are you?'}
 ])
 
 # With tool context
-response = agent.generate('Look up my orders', tool_context: {user_id: 123})
+response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
 ```
 
 ### stream
@@ -128,9 +132,8 @@ response = agent.generate('Look up my orders', tool_context: {user_id: 123})
 Streams a response as an Enumerator:
 
 ```ruby
-agent = MyAgent.new
-
-agent.stream('Tell me a story').each do |event|
+# Class method (recommended for simple calls)
+MyAgent.stream('Tell me a story').each do |event|
   case event
   when Riffer::StreamEvents::TextDelta
     print event.content
@@ -140,6 +143,12 @@ agent.stream('Tell me a story').each do |event|
     puts "[Tool: #{event.name}]"
   end
 end
+
+# Instance method (when you need message history or callbacks)
+agent = MyAgent.new
+agent.on_message { |msg| persist_message(msg) }
+agent.stream('Tell me a story').each { |event| handle(event) }
+agent.messages  # Access message history
 ```
 
 ### messages
