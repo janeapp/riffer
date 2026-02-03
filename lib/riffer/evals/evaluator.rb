@@ -52,7 +52,7 @@ class Riffer::Evals::Evaluator
     #
     # Returns Boolean - whether higher is better (default: true).
     def higher_is_better(value = nil)
-      return @higher_is_better.nil? ? true : @higher_is_better if value.nil?
+      return @higher_is_better.nil? || @higher_is_better if value.nil?
       @higher_is_better = value
     end
 
@@ -76,13 +76,11 @@ class Riffer::Evals::Evaluator
       return nil if class_name.nil?
 
       # Convert CamelCase to snake_case and remove _evaluator suffix
-      identifier = class_name
+      class_name
         .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
         .gsub(/([a-z\d])([A-Z])/, '\1_\2')
         .downcase
         .sub(/_evaluator$/, "")
-
-      identifier
     end
   end
 

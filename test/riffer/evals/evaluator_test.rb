@@ -32,7 +32,7 @@ describe Riffer::Evals::Evaluator do
 
     it "strips _evaluator suffix from generated identifier" do
       # Create a named class to test
-      eval <<~RUBY
+      eval <<~RUBY, binding, __FILE__, __LINE__ + 1
         class TestNamedEvaluator < Riffer::Evals::Evaluator
         end
       RUBY
