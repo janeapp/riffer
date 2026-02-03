@@ -180,6 +180,45 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "usage" do
+    describe "#generate_text returns usage" do
+      it "includes usage in the response" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/usage/_generate_text/includes_usage") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          result = provider.generate_text(prompt: "Say hello", model: "anthropic.claude-3-haiku-20240307-v1:0")
+          expect(result.usage).wont_be_nil
+          expect(result.usage.input_tokens).must_equal 9
+          expect(result.usage.output_tokens).must_equal 5
+          expect(result.usage.total_tokens).must_equal 14
+        end
+      end
+    end
+
+    describe "#stream_text yields UsageDone" do
+      it "yields UsageDone event with correct token counts" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/usage/_stream_text/yields_usage_done") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          events = provider.stream_text(prompt: "Say hello", model: "anthropic.claude-3-haiku-20240307-v1:0").to_a
+          usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+          expect(usage_done).wont_be_nil
+          expect(usage_done.usage.input_tokens).must_equal 9
+          expect(usage_done.usage.output_tokens).must_equal 5
+          expect(usage_done.usage.total_tokens).must_equal 14
+        end
+      end
+
+      it "yields UsageDone after TextDone" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/usage/_stream_text/yields_usage_done") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          events = provider.stream_text(prompt: "Say hello", model: "anthropic.claude-3-haiku-20240307-v1:0").to_a
+          text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+          usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+          expect(usage_done_index).must_be :>, text_done_index
+        end
+      end
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

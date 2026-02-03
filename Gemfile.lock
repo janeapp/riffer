@@ -128,7 +128,7 @@ PLATFORMS
 
 DEPENDENCIES
   anthropic (~> 1.17.0)
-  aws-sdk-bedrockruntime (~> 1.0)
+  aws-sdk-bedrockruntime (~> 1.42)
   dotenv
   irb
   minitest (~> 6.0)

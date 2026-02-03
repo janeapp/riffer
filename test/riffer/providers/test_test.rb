@@ -272,4 +272,53 @@ describe Riffer::Providers::Test do
       end
     end
   end
+
+  describe "usage tracking" do
+    let(:usage) { Riffer::Usage.new(input_tokens: 100, output_tokens: 50) }
+
+    describe "#stub_response with usage" do
+      it "returns usage in generate_text response" do
+        provider.stub_response("Hello", usage: usage)
+        result = provider.generate_text(prompt: "Hi")
+        expect(result.usage).must_equal usage
+      end
+
+      it "returns nil usage when not provided" do
+        provider.stub_response("Hello")
+        result = provider.generate_text(prompt: "Hi")
+        expect(result.usage).must_be_nil
+      end
+    end
+
+    describe "#stream_text with usage" do
+      it "emits UsageDone event when usage provided" do
+        provider.stub_response("Hello", usage: usage)
+        events = provider.stream_text(prompt: "Hi").to_a
+        usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+        expect(usage_done).wont_be_nil
+      end
+
+      it "includes correct usage in UsageDone event" do
+        provider.stub_response("Hello", usage: usage)
+        events = provider.stream_text(prompt: "Hi").to_a
+        usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+        expect(usage_done.usage).must_equal usage
+      end
+
+      it "does not emit UsageDone when usage not provided" do
+        provider.stub_response("Hello")
+        events = provider.stream_text(prompt: "Hi").to_a
+        usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+        expect(usage_done).must_be_nil
+      end
+
+      it "emits UsageDone after TextDone" do
+        provider.stub_response("Hello", usage: usage)
+        events = provider.stream_text(prompt: "Hi").to_a
+        text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+        usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+        expect(usage_done_index).must_be :>, text_done_index
+      end
+    end
+  end
 end

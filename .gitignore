@@ -9,3 +9,4 @@ pkg
 test/reports
 tmp
 vendor
+/.claude/settings.local.json

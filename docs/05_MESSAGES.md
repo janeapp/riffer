@@ -30,7 +30,7 @@ msg.to_h     # => {role: :user, content: "Hello, how are you?"}
 
 ### Assistant
 
-Assistant messages represent LLM responses, potentially including tool calls:
+Assistant messages represent LLM responses, potentially including tool calls and usage data:
 
 ```ruby
 # Text-only response
@@ -38,6 +38,7 @@ msg = Riffer::Messages::Assistant.new("I'm doing well, thank you!")
 msg.role        # => :assistant
 msg.content     # => "I'm doing well, thank you!"
 msg.tool_calls  # => []
+msg.usage       # => nil or Riffer::Usage
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -45,6 +46,13 @@ msg = Riffer::Messages::Assistant.new("", tool_calls: [
 ])
 msg.tool_calls  # => [{id: "call_123", ...}]
 msg.to_h        # => {role: "assistant", content: "", tool_calls: [...]}
+
+# Accessing usage data (when available from provider)
+if msg.usage
+  puts "Input tokens: #{msg.usage.input_tokens}"
+  puts "Output tokens: #{msg.usage.output_tokens}"
+  puts "Total tokens: #{msg.usage.total_tokens}"
+end
 ```
 
 ### Tool

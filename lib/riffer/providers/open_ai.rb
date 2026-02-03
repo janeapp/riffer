@@ -22,7 +22,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     params = build_request_params(messages, model, options)
     response = @client.responses.create(params)
 
-    extract_assistant_message(response.output)
+    extract_assistant_message(response.output, extract_usage(response))
   end
 
   def perform_stream_text(messages, model:, **options)
@@ -93,7 +93,17 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  def extract_assistant_message(output_items)
+  def extract_usage(response)
+    usage = response.usage
+    return nil unless usage
+
+    Riffer::Usage.new(
+      input_tokens: usage.input_tokens,
+      output_tokens: usage.output_tokens
+    )
+  end
+
+  def extract_assistant_message(output_items, usage = nil)
     text_content = ""
     tool_calls = []
 
@@ -116,7 +126,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       raise Riffer::Error, "No output returned from OpenAI API"
     end
 
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls)
+    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, usage: usage)
   end
 
   def process_stream_events(stream, yielder)
@@ -167,6 +177,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         name: tracked[:name],
         arguments: event.arguments
       )
+    when :"response.completed"
+      usage = event.response&.usage
+      if usage
+        Riffer::StreamEvents::UsageDone.new(
+          usage: Riffer::Usage.new(
+            input_tokens: usage.input_tokens,
+            output_tokens: usage.output_tokens
+          )
+        )
+      end
     end
   end
 

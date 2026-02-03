@@ -1,0 +1,85 @@
+# frozen_string_literal: true
+
+# Represents token usage data from an LLM API call.
+#
+# Tracks input tokens, output tokens, and optional cache statistics.
+#
+#   usage = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
+#   usage.total_tokens  # => 150
+#
+#   combined = usage1 + usage2  # Combine multiple usage objects
+#
+class Riffer::Usage
+  # Number of tokens in the input/prompt.
+  #
+  # Returns Integer.
+  attr_reader :input_tokens
+
+  # Number of tokens in the output/response.
+  #
+  # Returns Integer.
+  attr_reader :output_tokens
+
+  # Number of tokens written to cache (Anthropic-specific).
+  #
+  # Returns Integer or nil.
+  attr_reader :cache_creation_tokens
+
+  # Number of tokens read from cache (Anthropic-specific).
+  #
+  # Returns Integer or nil.
+  attr_reader :cache_read_tokens
+
+  # Creates a new Usage instance.
+  #
+  # input_tokens:: Integer - number of input tokens
+  # output_tokens:: Integer - number of output tokens
+  # cache_creation_tokens:: Integer or nil - tokens written to cache
+  # cache_read_tokens:: Integer or nil - tokens read from cache
+  def initialize(input_tokens:, output_tokens:, cache_creation_tokens: nil, cache_read_tokens: nil)
+    @input_tokens = input_tokens
+    @output_tokens = output_tokens
+    @cache_creation_tokens = cache_creation_tokens
+    @cache_read_tokens = cache_read_tokens
+  end
+
+  # Returns the total number of tokens (input + output).
+  #
+  # Returns Integer.
+  def total_tokens
+    input_tokens + output_tokens
+  end
+
+  # Combines two Usage objects for cumulative tracking.
+  #
+  # other:: Riffer::Usage - another usage object to combine with
+  #
+  # Returns Riffer::Usage - a new Usage with summed values.
+  def +(other)
+    Riffer::Usage.new(
+      input_tokens: input_tokens + other.input_tokens,
+      output_tokens: output_tokens + other.output_tokens,
+      cache_creation_tokens: add_nullable(cache_creation_tokens, other.cache_creation_tokens),
+      cache_read_tokens: add_nullable(cache_read_tokens, other.cache_read_tokens)
+    )
+  end
+
+  # Converts the usage to a hash representation.
+  #
+  # Cache tokens are omitted if nil.
+  #
+  # Returns Hash.
+  def to_h
+    hash = {input_tokens: input_tokens, output_tokens: output_tokens}
+    hash[:cache_creation_tokens] = cache_creation_tokens if cache_creation_tokens
+    hash[:cache_read_tokens] = cache_read_tokens if cache_read_tokens
+    hash
+  end
+
+  private
+
+  def add_nullable(a, b)
+    return nil if a.nil? && b.nil?
+    (a || 0) + (b || 0)
+  end
+end

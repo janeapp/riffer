@@ -326,6 +326,45 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "usage" do
+    describe "#generate_text returns usage" do
+      it "includes usage in the response" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/usage/_generate_text/includes_usage") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001")
+          expect(result.usage).wont_be_nil
+          expect(result.usage.input_tokens).must_equal 9
+          expect(result.usage.output_tokens).must_equal 16
+          expect(result.usage.total_tokens).must_equal 25
+        end
+      end
+    end
+
+    describe "#stream_text yields UsageDone" do
+      it "yields UsageDone event with correct token counts" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/usage/_stream_text/yields_usage_done") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001").to_a
+          usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+          expect(usage_done).wont_be_nil
+          expect(usage_done.usage.input_tokens).must_equal 9
+          expect(usage_done.usage.output_tokens).must_equal 16
+          expect(usage_done.usage.total_tokens).must_equal 25
+        end
+      end
+
+      it "yields UsageDone after TextDone" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/usage/_stream_text/yields_usage_done") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001").to_a
+          text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+          usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
+          expect(usage_done_index).must_be :>, text_done_index
+        end
+      end
+    end
+  end
+
   describe "extended thinking" do
     describe "#generate_text with thinking" do
       it "returns an Assistant message with thinking enabled" do
