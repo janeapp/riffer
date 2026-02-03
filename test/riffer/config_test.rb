@@ -22,4 +22,17 @@ describe Riffer::Config do
       expect(config.openai.api_key).must_equal "test-key"
     end
   end
+
+  describe "evals namespace" do
+    it "initializes with nil judge_model" do
+      config = Riffer::Config.new
+      expect(config.evals.judge_model).must_be_nil
+    end
+
+    it "allows setting the judge_model" do
+      config = Riffer::Config.new
+      config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
+      expect(config.evals.judge_model).must_equal "anthropic/claude-sonnet-4-20250514"
+    end
+  end
 end

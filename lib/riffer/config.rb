@@ -11,6 +11,8 @@
 #
 #   Riffer.config.anthropic.api_key = "sk-ant-..."
 #
+#   Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
+#
 class Riffer::Config
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
   #
@@ -27,10 +29,16 @@ class Riffer::Config
   # Returns Struct.
   attr_reader :openai
 
+  # Evals configuration (Struct with +judge_model+).
+  #
+  # Returns Struct.
+  attr_reader :evals
+
   # Initializes the configuration.
   def initialize
     @amazon_bedrock = Struct.new(:api_token, :region).new
     @anthropic = Struct.new(:api_key).new
     @openai = Struct.new(:api_key).new
+    @evals = Struct.new(:judge_model).new
   end
 end

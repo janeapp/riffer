@@ -1,0 +1,52 @@
+# frozen_string_literal: true
+
+# Orchestrates running multiple evaluators against agent output.
+#
+# The Runner takes a set of metrics and runs each evaluator,
+# collecting results into a RunResult.
+#
+#   runner = Riffer::Evals::Runner.new(metrics: [metric1, metric2])
+#   run_result = runner.run(
+#     input: "What is the capital of France?",
+#     output: "The capital of France is Paris.",
+#     context: {}
+#   )
+#
+class Riffer::Evals::Runner
+  # The metrics to evaluate.
+  #
+  # Returns Array of Riffer::Evals::Metric.
+  attr_reader :metrics
+
+  # Initializes a new runner.
+  #
+  # metrics:: Array of Riffer::Evals::Metric - the metrics to evaluate
+  def initialize(metrics:)
+    @metrics = metrics
+  end
+
+  # Runs all evaluators and collects results.
+  #
+  # input:: String - the input given to the agent
+  # output:: String - the output produced by the agent
+  # context:: Hash or nil - optional context (e.g., ground_truth)
+  #
+  # Returns Riffer::Evals::RunResult.
+  def run(input:, output:, context: nil)
+    results = @metrics.map do |metric|
+      evaluator_class = metric.evaluator_class
+      raise Riffer::ArgumentError, "Evaluator not found: #{metric.evaluator_identifier}" unless evaluator_class
+
+      evaluator = evaluator_class.new
+      evaluator.evaluate(input: input, output: output, context: context)
+    end
+
+    Riffer::Evals::RunResult.new(
+      input: input,
+      output: output,
+      context: context,
+      results: results,
+      metrics: @metrics
+    )
+  end
+end
