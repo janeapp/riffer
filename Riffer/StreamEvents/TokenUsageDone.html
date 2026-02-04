@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::StreamEvents::ReasoningDone - Riffer Documentation</title>
+<title>class Riffer::StreamEvents::TokenUsageDone - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::StreamEvents::ReasoningDone"
+    content="ruby,class,Riffer::StreamEvents::TokenUsageDone"
   >
 
     <meta
       name="description"
-      content="class Riffer::StreamEvents::ReasoningDone: Represents completion of reasoning during streaming. thinking content."
+      content="class Riffer::StreamEvents::TokenUsageDone: Represents completion of token usage tracking during streaming. Emitted when the LLM has finished and token usage data is available."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::StreamEvents::ReasoningDone - Riffer Documentation">
+<meta property="og:title" content="class Riffer::StreamEvents::TokenUsageDone - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents completion of reasoning during streaming. thinking content.">
+    <meta property="og:description" content="Represents completion of token usage tracking during streaming. Emitted when the LLM has finished and token usage data is available.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::StreamEvents::ReasoningDone - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::StreamEvents::TokenUsageDone - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents completion of reasoning during streaming. thinking content.">
+    <meta name="twitter:description" content="Represents completion of token usage tracking during streaming. Emitted when the LLM has finished and token usage data is available.">
 
 
 
@@ -622,7 +622,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::StreamEvents::ReasoningDone">
+<main role="main" aria-labelledby="class-Riffer::StreamEvents::TokenUsageDone">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -641,22 +641,24 @@
       
       <li>
         
-        <span>ReasoningDone</span>
+        <span>TokenUsageDone</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::StreamEvents::ReasoningDone" class="anchor-link class">
-    class Riffer::StreamEvents::ReasoningDone
+  <h1 id="class-Riffer::StreamEvents::TokenUsageDone" class="anchor-link class">
+    class Riffer::StreamEvents::TokenUsageDone
   </h1>
 
   <section class="description">
     
-<p>Represents completion of reasoning during streaming.</p>
+<p>Represents completion of token usage tracking during streaming.</p>
 
-<p>Emitted when the LLM has finished producing reasoning/thinking content. Only available with providers that support reasoning (e.g., OpenAI with reasoning option).</p>
+<p>Emitted when the LLM has finished and token usage data is available.</p>
+
+<p>event.token_usage.input_tokens # =&gt; 100 event.token_usage.output_tokens # =&gt; 50 event.token_usage.total_tokens # =&gt; 150</p>
 
   </section>
 
@@ -675,10 +677,10 @@
       </header>
 
 
-      <div id="attribute-i-content" class="method-detail anchor-link">
+      <div id="attribute-i-token_usage" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-content" title="Link to this attribute">
-            <span class="method-name">content</span>
+          <a href="#attribute-i-token_usage" title="Link to this attribute">
+            <span class="method-name">token_usage</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -686,9 +688,9 @@
         <div class="method-description">
 
 
-        <p>The complete reasoning content.</p>
+        <p>The token usage data for this response.</p>
 
-<p>Returns String.</p>
+<p>Returns <a href="../TokenUsage.html"><code>Riffer::TokenUsage</code></a>.</p>
 
         </div>
       </div>
@@ -709,7 +711,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content, role: :assistant)</span>
+                <span class="method-args">(token_usage:, role: :assistant)</span>
               </a>
             </div>
 
@@ -722,10 +724,10 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/reasoning_done.rb, line 17</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">role:</span> <span class="ruby-value">:assistant</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/token_usage_done.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">token_usage:</span>, <span class="ruby-value">role:</span> <span class="ruby-value">:assistant</span>)
   <span class="ruby-keyword">super</span>(<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>)
-  <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
+  <span class="ruby-ivar">@token_usage</span> = <span class="ruby-identifier">token_usage</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -734,9 +736,9 @@
         <div class="method-description">
 
 
-          <p>Creates a new reasoning done event.</p>
+          <p>Creates a new token usage done event.</p>
 
-<p>content:: String - the complete reasoning content role:: Symbol - the message role (defaults to :assistant)</p>
+<p><a href="TokenUsageDone.html#attribute-i-token_usage"><code>token_usage</code></a>:: <a href="../TokenUsage.html"><code>Riffer::TokenUsage</code></a> - the token usage data role:: Symbol - the message role (defaults to :assistant)</p>
 
 
             <div class="method-calls-super">
@@ -780,9 +782,9 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/reasoning_done.rb, line 25</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/token_usage_done.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
-  {<span class="ruby-value">role:</span> <span class="ruby-ivar">@role</span>, <span class="ruby-value">content:</span> <span class="ruby-ivar">@content</span>}
+  {<span class="ruby-value">role:</span> <span class="ruby-ivar">@role</span>, <span class="ruby-value">token_usage:</span> <span class="ruby-ivar">@token_usage</span>.<span class="ruby-identifier">to_h</span>}
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -793,7 +795,7 @@
 
           <p>Converts the event to a hash.</p>
 
-<p>Returns Hash with <code>:role</code> and <code>:content</code> keys.</p>
+<p>Returns Hash with <code>:role</code> and <code>:token_usage</code> keys.</p>
 
 
         </div>

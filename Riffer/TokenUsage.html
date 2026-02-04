@@ -5,25 +5,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>01_OVERVIEW - Riffer Documentation</title>
+<title>class Riffer::TokenUsage - Riffer Documentation</title>
 
 
-  <meta name="keywords" content="ruby,documentation,01_OVERVIEW">
   <meta
-    name="description"
-    content="01_OVERVIEW: Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo"
+    name="keywords"
+    content="ruby,class,Riffer::TokenUsage"
   >
+
+    <meta
+      name="description"
+      content="class Riffer::TokenUsage: Represents token usage data from an LLM API call. Tracks input tokens, output tokens, and optional cache statistics."
+    >
+
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="01_OVERVIEW - Riffer Documentation">
+<meta property="og:title" content="class Riffer::TokenUsage - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo">
+    <meta property="og:description" content="Represents token usage data from an LLM API call. Tracks input tokens, output tokens, and optional cache statistics.">
 
 
 
@@ -31,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="01_OVERVIEW - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::TokenUsage - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo">
+    <meta name="twitter:description" content="Represents token usage data from an LLM API call. Tracks input tokens, output tokens, and optional cache statistics.">
 
 
 
@@ -86,7 +91,7 @@
 
 
 
-<body role="document" class="file has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -364,10 +369,8 @@
 
 
 
-
-
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" open>
+    <details class="nav-section-collapsible" >
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -420,7 +423,7 @@
 
 
           <li>
-            <details  open>
+            <details >
               <summary>
                 
                   docs
@@ -536,6 +539,75 @@
   </div>
 
 
+  
+
+  
+<div id="parent-class-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-ancestors"></use></svg>
+      </span>
+      <span class="nav-section-title">Ancestors</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+    <ul><li>Object</li></ul>
+  </details>
+</div>
+
+
+  
+
+  
+
+  
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
+
+
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-2B">+</a></li>
+
+        <li ><a href="#method-i-to_h">to_h</a></li>
+
+        <li ><a href="#method-i-total_tokens">total_tokens</a></li>
+
+      </ul>
+    </details>
+  </div>
+
+
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -554,125 +626,341 @@
 
 </nav>
 
-<main role="main" aria-label="Page docs/01_OVERVIEW.md">
+<main role="main" aria-labelledby="class-Riffer::TokenUsage">
+  
+  
+    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
+      
+      <li>
+        
+        <a href="../Riffer.html">Riffer</a><span>::</span>
+        
+      </li>
+      
+      <li>
+        
+        <span>TokenUsage</span>
+        
+      </li>
+      
+    </ol>
+  
 
-<h1 id="label-Overview"><a href="#label-Overview">Overview</a></h1>
+  <h1 id="class-Riffer::TokenUsage" class="anchor-link class">
+    class Riffer::TokenUsage
+  </h1>
 
-<p><a href="../Riffer.html"><code>Riffer</code></a> is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Models (LLMs) into your Ruby projects.</p>
+  <section class="description">
+    
+<p>Represents token usage data from an LLM API call.</p>
 
-<h2 id="label-Core+Concepts"><a href="#label-Core+Concepts">Core Concepts</a></h2>
+<p>Tracks input tokens, output tokens, and optional cache statistics.</p>
 
-<h3 id="label-Agent"><a href="#label-Agent">Agent</a></h3>
+<p><a href="../lib/riffer/token_usage_rb.html">token_usage</a> = <a href="TokenUsage.html#method-c-new"><code>Riffer::TokenUsage.new</code></a>(<a href="TokenUsage.html#attribute-i-input_tokens"><code>input_tokens</code></a>: 100, <a href="TokenUsage.html#attribute-i-output_tokens"><code>output_tokens</code></a>: 50) token_usage.total_tokens # =&gt; 150</p>
 
-<p>The Agent is the central orchestrator for AI interactions. It manages messages, calls the LLM provider, and handles tool execution.</p>
+<p>combined = token_usage1 + token_usage2 # Combine multiple token usage objects</p>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
-  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a helpful assistant.&#39;</span>
-<span class="ruby-keyword">end</span>
-</pre>
+  </section>
 
-<p>See <a href="03_AGENTS_md.html">Agents</a> for details.</p>
 
-<h3 id="label-Tool"><a href="#label-Tool">Tool</a></h3>
+  <section id="5Buntitled-5D" class="documentation-section anchor-link">
 
-<p>Tools are callable functions that agents can invoke to interact with external systems. They have structured parameter definitions and automatic validation.</p>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
-  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets the weather for a city&quot;</span>
 
-  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The city name&quot;</span>
-  <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>)
-    <span class="ruby-constant">WeatherAPI</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">city</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-</pre>
 
-<p>See <a href="04_TOOLS_md.html">Tools</a> for details.</p>
 
-<h3 id="label-Provider"><a href="#label-Provider">Provider</a></h3>
 
-<p>Providers are adapters that connect to LLM services. <a href="../Riffer.html"><code>Riffer</code></a> supports:</p>
-<ul><li>
-<p><strong>OpenAI</strong> - GPT models via the OpenAI API</p>
-</li><li>
-<p><strong>Amazon Bedrock</strong> - Claude and other models via AWS Bedrock</p>
-</li><li>
-<p><strong>Test</strong> - Mock provider for testing</p>
-</li></ul>
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
+      </header>
 
-<p>See <a href="providers/01_PROVIDERS_md.html">Providers</a> for details.</p>
 
-<h3 id="label-Messages"><a href="#label-Messages">Messages</a></h3>
+      <div id="attribute-i-cache_creation_tokens" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-cache_creation_tokens" title="Link to this attribute">
+            <span class="method-name">cache_creation_tokens</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
 
-<p>Messages represent the conversation between user and assistant. <a href="../Riffer.html"><code>Riffer</code></a> uses strongly-typed message objects:</p>
-<ul><li>
-<p><a href="../Riffer/Messages/System.html"><code>Riffer::Messages::System</code></a> - System instructions</p>
-</li><li>
-<p><a href="../Riffer/Messages/User.html"><code>Riffer::Messages::User</code></a> - User input</p>
-</li><li>
-<p><a href="../Riffer/Messages/Assistant.html"><code>Riffer::Messages::Assistant</code></a> - LLM responses</p>
-</li><li>
-<p><a href="../Riffer/Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> - Tool execution results</p>
-</li></ul>
+        <div class="method-description">
 
-<p>See <a href="05_MESSAGES_md.html">Messages</a> for details.</p>
 
-<h3 id="label-Stream+Events"><a href="#label-Stream+Events">Stream Events</a></h3>
+        <p>Number of tokens written to cache (Anthropic-specific).</p>
 
-<p>When streaming responses, <a href="../Riffer.html"><code>Riffer</code></a> emits typed events:</p>
-<ul><li>
-<p><code>TextDelta</code> - Incremental text chunks</p>
-</li><li>
-<p><code>TextDone</code> - Complete text</p>
-</li><li>
-<p><code>ToolCallDelta</code> - Incremental tool call arguments</p>
-</li><li>
-<p><code>ToolCallDone</code> - Complete tool call</p>
-</li></ul>
+<p>Returns Integer or nil.</p>
 
-<p>See <a href="06_STREAM_EVENTS_md.html">Stream Events</a> for details.</p>
+        </div>
+      </div>
 
-<h2 id="label-Architecture"><a href="#label-Architecture">Architecture</a></h2>
+      <div id="attribute-i-cache_read_tokens" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-cache_read_tokens" title="Link to this attribute">
+            <span class="method-name">cache_read_tokens</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
 
-<pre>User Request
-     |
-     v
-+------------+
-|   Agent    |  &lt;-- Manages conversation flow
-+------------+
-     |
-     v
-+------------+
-|  Provider  |  &lt;-- Calls LLM API
-+------------+
-     |
-     v
-+------------+
-|    LLM     |  &lt;-- Returns response
-+------------+
-     |
-     v
-+------------+
-|   Tool?    |  &lt;-- Execute if tool call present
-+------------+
-     |
-     v
-Response</pre>
+        <div class="method-description">
 
-<h2 id="label-Next+Steps"><a href="#label-Next+Steps">Next Steps</a></h2>
-<ul><li>
-<p><a href="02_GETTING_STARTED_md.html">Getting Started</a> - Quick start guide</p>
-</li><li>
-<p><a href="03_AGENTS_md.html">Agents</a> - Agent configuration and usage</p>
-</li><li>
-<p><a href="04_TOOLS_md.html">Tools</a> - Creating tools</p>
-</li><li>
-<p><a href="07_CONFIGURATION_md.html">Configuration</a> - Global configuration</p>
-</li></ul>
+
+        <p>Number of tokens read from cache (Anthropic-specific).</p>
+
+<p>Returns Integer or nil.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-input_tokens" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-input_tokens" title="Link to this attribute">
+            <span class="method-name">input_tokens</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Number of tokens in the input/prompt.</p>
+
+<p>Returns Integer.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-output_tokens" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-output_tokens" title="Link to this attribute">
+            <span class="method-name">output_tokens</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Number of tokens in the output/response.</p>
+
+<p>Returns Integer.</p>
+
+        </div>
+      </div>
+
+    </section>
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(input_tokens:, output_tokens:, cache_creation_tokens: nil, cache_read_tokens: nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/token_usage.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">input_tokens:</span>, <span class="ruby-value">output_tokens:</span>, <span class="ruby-value">cache_creation_tokens:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">cache_read_tokens:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@input_tokens</span> = <span class="ruby-identifier">input_tokens</span>
+  <span class="ruby-ivar">@output_tokens</span> = <span class="ruby-identifier">output_tokens</span>
+  <span class="ruby-ivar">@cache_creation_tokens</span> = <span class="ruby-identifier">cache_creation_tokens</span>
+  <span class="ruby-ivar">@cache_read_tokens</span> = <span class="ruby-identifier">cache_read_tokens</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Creates a new <a href="TokenUsage.html"><code>TokenUsage</code></a> instance.</p>
+
+<p><a href="TokenUsage.html#attribute-i-input_tokens"><code>input_tokens</code></a>:: Integer - number of input tokens <a href="TokenUsage.html#attribute-i-output_tokens"><code>output_tokens</code></a>:: Integer - number of output tokens <a href="TokenUsage.html#attribute-i-cache_creation_tokens"><code>cache_creation_tokens</code></a>:: Integer or nil - tokens written to cache <a href="TokenUsage.html#attribute-i-cache_read_tokens"><code>cache_read_tokens</code></a>:: Integer or nil - tokens read from cache</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-2B" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-2B" title="Link to this method">
+                <span class="method-name">+</span>
+                <span class="method-args">(other)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="2B-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/token_usage.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">TokenUsage</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">input_tokens:</span> <span class="ruby-identifier">input_tokens</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">input_tokens</span>,
+    <span class="ruby-value">output_tokens:</span> <span class="ruby-identifier">output_tokens</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">output_tokens</span>,
+    <span class="ruby-value">cache_creation_tokens:</span> <span class="ruby-identifier">add_nullable</span>(<span class="ruby-identifier">cache_creation_tokens</span>, <span class="ruby-identifier">other</span>.<span class="ruby-identifier">cache_creation_tokens</span>),
+    <span class="ruby-value">cache_read_tokens:</span> <span class="ruby-identifier">add_nullable</span>(<span class="ruby-identifier">cache_read_tokens</span>, <span class="ruby-identifier">other</span>.<span class="ruby-identifier">cache_read_tokens</span>)
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Combines two <a href="TokenUsage.html"><code>TokenUsage</code></a> objects for cumulative tracking.</p>
+
+<p>other:: <a href="TokenUsage.html"><code>Riffer::TokenUsage</code></a> - another token usage object to combine with</p>
+
+<p>Returns <a href="TokenUsage.html"><code>Riffer::TokenUsage</code></a> - a new <a href="TokenUsage.html"><code>TokenUsage</code></a> with summed values.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-to_h" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-to_h" title="Link to this method">
+                <span class="method-name">to_h</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="to_h-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/token_usage.rb, line 72</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  <span class="ruby-identifier">hash</span> = {<span class="ruby-value">input_tokens:</span> <span class="ruby-identifier">input_tokens</span>, <span class="ruby-value">output_tokens:</span> <span class="ruby-identifier">output_tokens</span>}
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:cache_creation_tokens</span>] = <span class="ruby-identifier">cache_creation_tokens</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cache_creation_tokens</span>
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:cache_read_tokens</span>] = <span class="ruby-identifier">cache_read_tokens</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cache_read_tokens</span>
+  <span class="ruby-identifier">hash</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Converts the token usage to a hash representation.</p>
+
+<p>Cache tokens are omitted if nil.</p>
+
+<p>Returns Hash.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-total_tokens" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-total_tokens" title="Link to this method">
+                <span class="method-name">total_tokens</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="total_tokens-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/token_usage.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">total_tokens</span>
+  <span class="ruby-identifier">input_tokens</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">output_tokens</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the total number of tokens (input + output).</p>
+
+<p>Returns Integer.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+  </section>
 
 </main>
 

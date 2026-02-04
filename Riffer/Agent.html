@@ -610,6 +610,8 @@
 
         <li ><a href="#method-c-find">find</a></li>
 
+        <li ><a href="#method-c-generate">generate</a></li>
+
         <li ><a href="#method-c-identifier">identifier</a></li>
 
         <li ><a href="#method-c-instructions">instructions</a></li>
@@ -621,6 +623,8 @@
         <li ><a href="#method-c-new">new</a></li>
 
         <li ><a href="#method-c-provider_options">provider_options</a></li>
+
+        <li ><a href="#method-c-stream">stream</a></li>
 
         <li ><a href="#method-c-uses_tools">uses_tools</a></li>
 
@@ -666,7 +670,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -739,6 +743,24 @@
         <p>The message history for the agent.</p>
 
 <p>Returns Array of <a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a>.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-token_usage" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-token_usage" title="Link to this attribute">
+            <span class="method-name">token_usage</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Cumulative token usage across all LLM calls.</p>
+
+<p>Returns <a href="TokenUsage.html"><code>Riffer::TokenUsage</code></a> or nil.</p>
 
         </div>
       </div>
@@ -832,6 +854,50 @@
 <p>identifier:: String - the identifier to search for</p>
 
 <p>Returns Class or nil - the agent class, or nil if not found.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-generate" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-generate" title="Link to this method">
+                <span class="method-name">generate</span>
+                <span class="method-args">(...)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="generate-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 108</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-operator">...</span>)
+  <span class="ruby-identifier">new</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-operator">...</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Generates a response using a new agent instance.</p>
+
+<p>See <a href="Agent.html#method-i-generate"><code>generate</code></a> for parameters and return value.</p>
 
 
         </div>
@@ -1052,10 +1118,11 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 115</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 134</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@messages</span> = []
   <span class="ruby-ivar">@message_callbacks</span> = []
+  <span class="ruby-ivar">@token_usage</span> = <span class="ruby-keyword">nil</span>
   <span class="ruby-ivar">@model_string</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">model</span>
   <span class="ruby-ivar">@instructions_text</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instructions</span>
 
@@ -1123,6 +1190,50 @@
 <p>options:: Hash or nil - the options to set, or nil to get</p>
 
 <p>Returns Hash - the provider options.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-stream" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-stream" title="Link to this method">
+                <span class="method-name">stream</span>
+                <span class="method-args">(...)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="stream-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-operator">...</span>)
+  <span class="ruby-identifier">new</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-operator">...</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Streams a response using a new agent instance.</p>
+
+<p>See <a href="Agent.html#method-i-stream"><code>stream</code></a> for parameters and return value.</p>
 
 
         </div>
@@ -1208,7 +1319,7 @@
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 135</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 155</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt_or_messages</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@tool_context</span> = <span class="ruby-identifier">tool_context</span>
   <span class="ruby-ivar">@resolved_tools</span> = <span class="ruby-keyword">nil</span>
@@ -1217,6 +1328,7 @@
   <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">response</span> = <span class="ruby-identifier">call_llm</span>
     <span class="ruby-identifier">add_message</span>(<span class="ruby-identifier">response</span>)
+    <span class="ruby-identifier">track_token_usage</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">token_usage</span>)
 
     <span class="ruby-keyword">break</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_tool_calls?</span>(<span class="ruby-identifier">response</span>)
 
@@ -1267,7 +1379,7 @@
             </details>
           </div>
           <div class="method-source-code" id="on_message-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 209</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 238</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_message</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;on_message requires a block&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
   <span class="ruby-ivar">@message_callbacks</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">block</span>
@@ -1317,7 +1429,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 158</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 179</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt_or_messages</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@tool_context</span> = <span class="ruby-identifier">tool_context</span>
   <span class="ruby-ivar">@resolved_tools</span> = <span class="ruby-keyword">nil</span>
@@ -1327,6 +1439,7 @@
     <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
       <span class="ruby-identifier">accumulated_content</span> = <span class="ruby-string">&quot;&quot;</span>
       <span class="ruby-identifier">accumulated_tool_calls</span> = []
+      <span class="ruby-identifier">accumulated_token_usage</span> = <span class="ruby-keyword">nil</span>
       <span class="ruby-identifier">current_tool_call</span> = <span class="ruby-keyword">nil</span>
 
       <span class="ruby-identifier">call_llm_stream</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
@@ -1349,11 +1462,18 @@
             <span class="ruby-value">arguments:</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">arguments</span>
           }
           <span class="ruby-identifier">current_tool_call</span> = <span class="ruby-keyword">nil</span>
+        <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TokenUsageDone</span>
+          <span class="ruby-identifier">accumulated_token_usage</span> = <span class="ruby-identifier">event</span>.<span class="ruby-identifier">token_usage</span>
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
 
-      <span class="ruby-identifier">response</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">accumulated_content</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">accumulated_tool_calls</span>)
+      <span class="ruby-identifier">response</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(
+        <span class="ruby-identifier">accumulated_content</span>,
+        <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">accumulated_tool_calls</span>,
+        <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">accumulated_token_usage</span>
+      )
       <span class="ruby-identifier">add_message</span>(<span class="ruby-identifier">response</span>)
+      <span class="ruby-identifier">track_token_usage</span>(<span class="ruby-identifier">accumulated_token_usage</span>)
 
       <span class="ruby-keyword">break</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_tool_calls?</span>(<span class="ruby-identifier">response</span>)
 
