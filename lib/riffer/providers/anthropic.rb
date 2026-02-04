@@ -42,7 +42,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     response = @client.messages.create(**params)
-    extract_assistant_message(response, extract_usage(response))
+    extract_assistant_message(response, extract_token_usage(response))
   end
 
   def perform_stream_text(messages, model:, **options)
@@ -118,13 +118,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           final_message = stream.accumulated_message
           if final_message&.usage
             usage = final_message.usage
-            stream_usage = Riffer::Usage.new(
+            stream_token_usage = Riffer::TokenUsage.new(
               input_tokens: usage.input_tokens,
               output_tokens: usage.output_tokens,
               cache_creation_tokens: usage.cache_creation_input_tokens,
               cache_read_tokens: usage.cache_read_input_tokens
             )
-            yielder << Riffer::StreamEvents::UsageDone.new(usage: stream_usage)
+            yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: stream_token_usage)
           end
         end
       end
@@ -182,11 +182,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
   end
 
-  def extract_usage(response)
+  def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
 
-    Riffer::Usage.new(
+    Riffer::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_creation_tokens: usage.cache_creation_input_tokens,
@@ -194,7 +194,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     )
   end
 
-  def extract_assistant_message(response, usage = nil)
+  def extract_assistant_message(response, token_usage = nil)
     content_blocks = response.content
     raise Riffer::Error, "No content returned from Anthropic API" if content_blocks.nil? || content_blocks.empty?
 
@@ -220,7 +220,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       raise Riffer::Error, "No content returned from Anthropic API"
     end
 
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, usage: usage)
+    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
   def convert_tool_to_anthropic_format(tool)

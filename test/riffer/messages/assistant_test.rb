@@ -10,16 +10,16 @@ describe Riffer::Messages::Assistant do
     end
   end
 
-  describe "#usage" do
+  describe "#token_usage" do
     it "returns nil by default" do
       message = Riffer::Messages::Assistant.new("I can help")
-      expect(message.usage).must_be_nil
+      expect(message.token_usage).must_be_nil
     end
 
     it "returns usage when provided" do
-      usage = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
-      message = Riffer::Messages::Assistant.new("I can help", usage: usage)
-      expect(message.usage).must_equal usage
+      usage = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      message = Riffer::Messages::Assistant.new("I can help", token_usage: usage)
+      expect(message.token_usage).must_equal usage
     end
   end
 
@@ -40,9 +40,9 @@ describe Riffer::Messages::Assistant do
     end
 
     it "includes usage when provided" do
-      usage = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
-      message = Riffer::Messages::Assistant.new("I can help", usage: usage)
-      expect(message.to_h[:usage]).must_equal({input_tokens: 100, output_tokens: 50})
+      usage = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      message = Riffer::Messages::Assistant.new("I can help", token_usage: usage)
+      expect(message.to_h[:token_usage]).must_equal({input_tokens: 100, output_tokens: 50})
     end
 
     it "excludes usage when nil" do

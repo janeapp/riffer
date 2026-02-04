@@ -124,8 +124,8 @@ class Riffer::Agent
 
   # Cumulative token usage across all LLM calls.
   #
-  # Returns Riffer::Usage or nil.
-  attr_reader :total_usage
+  # Returns Riffer::TokenUsage or nil.
+  attr_reader :token_usage
 
   # Initializes a new agent.
   #
@@ -134,8 +134,7 @@ class Riffer::Agent
   def initialize
     @messages = []
     @message_callbacks = []
-    @usage_callbacks = []
-    @total_usage = nil
+    @token_usage = nil
     @model_string = self.class.model
     @instructions_text = self.class.instructions
 
@@ -161,7 +160,7 @@ class Riffer::Agent
     loop do
       response = call_llm
       add_message(response)
-      track_usage(response.usage)
+      track_token_usage(response.token_usage)
 
       break unless has_tool_calls?(response)
 
@@ -186,7 +185,7 @@ class Riffer::Agent
       loop do
         accumulated_content = ""
         accumulated_tool_calls = []
-        accumulated_usage = nil
+        accumulated_token_usage = nil
         current_tool_call = nil
 
         call_llm_stream.each do |event|
@@ -209,18 +208,18 @@ class Riffer::Agent
               arguments: event.arguments
             }
             current_tool_call = nil
-          when Riffer::StreamEvents::UsageDone
-            accumulated_usage = event.usage
+          when Riffer::StreamEvents::TokenUsageDone
+            accumulated_token_usage = event.token_usage
           end
         end
 
         response = Riffer::Messages::Assistant.new(
           accumulated_content,
           tool_calls: accumulated_tool_calls,
-          usage: accumulated_usage
+          token_usage: accumulated_token_usage
         )
         add_message(response)
-        track_usage(accumulated_usage)
+        track_token_usage(accumulated_token_usage)
 
         break unless has_tool_calls?(response)
 
@@ -242,19 +241,6 @@ class Riffer::Agent
     self
   end
 
-  # Registers a callback to be invoked when usage data is available.
-  #
-  # block:: Block - callback receiving a Riffer::Usage
-  #
-  # Raises Riffer::ArgumentError if no block is given.
-  #
-  # Returns self for method chaining.
-  def on_usage(&block)
-    raise Riffer::ArgumentError, "on_usage requires a block" unless block_given?
-    @usage_callbacks << block
-    self
-  end
-
   private
 
   def add_message(message)
@@ -262,11 +248,10 @@ class Riffer::Agent
     @message_callbacks.each { |callback| callback.call(message) }
   end
 
-  def track_usage(usage)
+  def track_token_usage(usage)
     return unless usage
 
-    @total_usage = @total_usage ? @total_usage + usage : usage
-    @usage_callbacks.each { |callback| callback.call(usage) }
+    @token_usage = @token_usage ? @token_usage + usage : usage
   end
 
   def initialize_messages(prompt_or_messages)

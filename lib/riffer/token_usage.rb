@@ -4,12 +4,12 @@
 #
 # Tracks input tokens, output tokens, and optional cache statistics.
 #
-#   usage = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
-#   usage.total_tokens  # => 150
+#   token_usage = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+#   token_usage.total_tokens  # => 150
 #
-#   combined = usage1 + usage2  # Combine multiple usage objects
+#   combined = token_usage1 + token_usage2  # Combine multiple token usage objects
 #
-class Riffer::Usage
+class Riffer::TokenUsage
   # Number of tokens in the input/prompt.
   #
   # Returns Integer.
@@ -30,7 +30,7 @@ class Riffer::Usage
   # Returns Integer or nil.
   attr_reader :cache_read_tokens
 
-  # Creates a new Usage instance.
+  # Creates a new TokenUsage instance.
   #
   # input_tokens:: Integer - number of input tokens
   # output_tokens:: Integer - number of output tokens
@@ -50,13 +50,13 @@ class Riffer::Usage
     input_tokens + output_tokens
   end
 
-  # Combines two Usage objects for cumulative tracking.
+  # Combines two TokenUsage objects for cumulative tracking.
   #
-  # other:: Riffer::Usage - another usage object to combine with
+  # other:: Riffer::TokenUsage - another token usage object to combine with
   #
-  # Returns Riffer::Usage - a new Usage with summed values.
+  # Returns Riffer::TokenUsage - a new TokenUsage with summed values.
   def +(other)
-    Riffer::Usage.new(
+    Riffer::TokenUsage.new(
       input_tokens: input_tokens + other.input_tokens,
       output_tokens: output_tokens + other.output_tokens,
       cache_creation_tokens: add_nullable(cache_creation_tokens, other.cache_creation_tokens),
@@ -64,7 +64,7 @@ class Riffer::Usage
     )
   end
 
-  # Converts the usage to a hash representation.
+  # Converts the token usage to a hash representation.
   #
   # Cache tokens are omitted if nil.
   #

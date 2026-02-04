@@ -86,9 +86,9 @@ describe Riffer::Agent do
       expect(agent.messages).must_equal []
     end
 
-    it "initializes with nil total_usage" do
+    it "initializes with nil token_usage" do
       agent = agent_class.new
-      expect(agent.total_usage).must_be_nil
+      expect(agent.token_usage).must_be_nil
     end
 
     describe "with invalid model format" do
@@ -1350,52 +1350,26 @@ describe Riffer::Agent do
     end
   end
 
-  describe "#on_usage" do
-    it "raises error without block" do
-      agent = agent_class.new
-      error = expect { agent.on_usage }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/on_usage requires a block/)
-    end
+  describe "token usage tracking with #generate" do
+    let(:token_usage) { Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 
-    it "returns self for chaining" do
-      agent = agent_class.new
-      result = agent.on_usage { |_| }
-      expect(result).must_equal agent
-    end
-  end
-
-  describe "usage tracking with #generate" do
-    let(:usage) { Riffer::Usage.new(input_tokens: 100, output_tokens: 50) }
-
-    it "tracks usage from response" do
+    it "tracks token usage from response" do
       agent = agent_class.new
       provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
+      provider.stub_response("Hello!", token_usage: token_usage)
       agent.generate("Hi")
-      expect(agent.total_usage).wont_be_nil
-      expect(agent.total_usage.input_tokens).must_equal 100
-      expect(agent.total_usage.output_tokens).must_equal 50
+      expect(agent.token_usage).wont_be_nil
+      expect(agent.token_usage.input_tokens).must_equal 100
+      expect(agent.token_usage.output_tokens).must_equal 50
     end
 
-    it "calls usage callback" do
-      agent = agent_class.new
-      provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
-
-      received_usage = nil
-      agent.on_usage { |u| received_usage = u }
-      agent.generate("Hi")
-
-      expect(received_usage).must_equal usage
-    end
-
-    it "accumulates usage across tool loops" do
+    it "accumulates token usage across tool loops" do
       tool_class = Class.new(Riffer::Tool) do
         description "Test tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("usage_test_tool") }
+      end.tap { |t| t.identifier("token_usage_test_tool") }
 
       tc = tool_class
       agent_with_tools = Class.new(Riffer::Agent) do
@@ -1405,113 +1379,73 @@ describe Riffer::Agent do
 
       agent = agent_with_tools.new
       provider = agent.send(:provider_instance)
-      usage1 = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
-      usage2 = Riffer::Usage.new(input_tokens: 150, output_tokens: 75)
-      provider.stub_response("", tool_calls: [{name: "usage_test_tool", arguments: "{}"}], usage: usage1)
-      provider.stub_response("Done!", usage: usage2)
+      token_usage1 = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      token_usage2 = Riffer::TokenUsage.new(input_tokens: 150, output_tokens: 75)
+      provider.stub_response("", tool_calls: [{name: "token_usage_test_tool", arguments: "{}"}], token_usage: token_usage1)
+      provider.stub_response("Done!", token_usage: token_usage2)
 
       agent.generate("Call tool")
 
-      expect(agent.total_usage.input_tokens).must_equal 250
-      expect(agent.total_usage.output_tokens).must_equal 125
+      expect(agent.token_usage.input_tokens).must_equal 250
+      expect(agent.token_usage.output_tokens).must_equal 125
     end
 
-    it "calls usage callback for each LLM call" do
-      tool_class = Class.new(Riffer::Tool) do
-        description "Test tool"
-        def call(context:)
-          text("done")
-        end
-      end.tap { |t| t.identifier("usage_callback_test_tool") }
-
-      tc = tool_class
-      agent_with_tools = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
-        uses_tools [tc]
-      end
-
-      agent = agent_with_tools.new
-      provider = agent.send(:provider_instance)
-      usage1 = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
-      usage2 = Riffer::Usage.new(input_tokens: 150, output_tokens: 75)
-      provider.stub_response("", tool_calls: [{name: "usage_callback_test_tool", arguments: "{}"}], usage: usage1)
-      provider.stub_response("Done!", usage: usage2)
-
-      callback_count = 0
-      agent.on_usage { |_| callback_count += 1 }
-      agent.generate("Call tool")
-
-      expect(callback_count).must_equal 2
-    end
-
-    it "does not track nil usage" do
+    it "does not track nil token usage" do
       agent = agent_class.new
       provider = agent.send(:provider_instance)
       provider.stub_response("Hello!")
       agent.generate("Hi")
-      expect(agent.total_usage).must_be_nil
+      expect(agent.token_usage).must_be_nil
     end
 
-    it "attaches usage to assistant messages" do
+    it "attaches token usage to assistant messages" do
       agent = agent_class.new
       provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
+      provider.stub_response("Hello!", token_usage: token_usage)
       agent.generate("Hi")
       assistant = agent.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
-      expect(assistant.usage).must_equal usage
+      expect(assistant.token_usage).must_equal token_usage
     end
   end
 
-  describe "usage tracking with #stream" do
-    let(:usage) { Riffer::Usage.new(input_tokens: 100, output_tokens: 50) }
+  describe "token usage tracking with #stream" do
+    let(:token_usage) { Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 
-    it "tracks usage from UsageDone event" do
+    it "tracks token usage from TokenUsageDone event" do
       agent = agent_class.new
       provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
+      provider.stub_response("Hello!", token_usage: token_usage)
       agent.stream("Hi").each { |_| }
-      expect(agent.total_usage).wont_be_nil
-      expect(agent.total_usage.input_tokens).must_equal 100
-      expect(agent.total_usage.output_tokens).must_equal 50
+      expect(agent.token_usage).wont_be_nil
+      expect(agent.token_usage.input_tokens).must_equal 100
+      expect(agent.token_usage.output_tokens).must_equal 50
     end
 
-    it "calls usage callback" do
+    it "yields TokenUsageDone event" do
       agent = agent_class.new
       provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
-
-      received_usage = nil
-      agent.on_usage { |u| received_usage = u }
-      agent.stream("Hi").each { |_| }
-
-      expect(received_usage).must_equal usage
-    end
-
-    it "yields UsageDone event" do
-      agent = agent_class.new
-      provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
+      provider.stub_response("Hello!", token_usage: token_usage)
       events = agent.stream("Hi").to_a
-      usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::UsageDone) }
-      expect(usage_done).wont_be_nil
+      token_usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+      expect(token_usage_done).wont_be_nil
     end
 
-    it "attaches usage to assistant messages" do
+    it "attaches token usage to assistant messages" do
       agent = agent_class.new
       provider = agent.send(:provider_instance)
-      provider.stub_response("Hello!", usage: usage)
+      provider.stub_response("Hello!", token_usage: token_usage)
       agent.stream("Hi").each { |_| }
       assistant = agent.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
-      expect(assistant.usage).must_equal usage
+      expect(assistant.token_usage).must_equal token_usage
     end
 
-    it "accumulates usage across tool loops" do
+    it "accumulates token usage across tool loops" do
       tool_class = Class.new(Riffer::Tool) do
         description "Test tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("stream_usage_test_tool") }
+      end.tap { |t| t.identifier("stream_token_usage_test_tool") }
 
       tc = tool_class
       agent_with_tools = Class.new(Riffer::Agent) do
@@ -1521,15 +1455,15 @@ describe Riffer::Agent do
 
       agent = agent_with_tools.new
       provider = agent.send(:provider_instance)
-      usage1 = Riffer::Usage.new(input_tokens: 100, output_tokens: 50)
-      usage2 = Riffer::Usage.new(input_tokens: 150, output_tokens: 75)
-      provider.stub_response("", tool_calls: [{name: "stream_usage_test_tool", arguments: "{}"}], usage: usage1)
-      provider.stub_response("Done!", usage: usage2)
+      token_usage1 = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      token_usage2 = Riffer::TokenUsage.new(input_tokens: 150, output_tokens: 75)
+      provider.stub_response("", tool_calls: [{name: "stream_token_usage_test_tool", arguments: "{}"}], token_usage: token_usage1)
+      provider.stub_response("Done!", token_usage: token_usage2)
 
       agent.stream("Call tool").each { |_| }
 
-      expect(agent.total_usage.input_tokens).must_equal 250
-      expect(agent.total_usage.output_tokens).must_equal 125
+      expect(agent.token_usage.input_tokens).must_equal 250
+      expect(agent.token_usage.output_tokens).must_equal 125
     end
   end
 end

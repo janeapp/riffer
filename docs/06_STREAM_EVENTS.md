@@ -109,18 +109,18 @@ event.role     # => "assistant"
 event.content  # => "Let me think about this step by step..."
 ```
 
-### UsageDone
+### TokenUsageDone
 
-Emitted when usage/token data is available at the end of a response:
+Emitted when token usage data is available at the end of a response:
 
 ```ruby
-event = Riffer::StreamEvents::UsageDone.new(usage: usage)
-event.role                    # => :assistant
-event.usage                   # => Riffer::Usage
-event.usage.input_tokens      # => 100
-event.usage.output_tokens     # => 50
-event.usage.total_tokens      # => 150
-event.to_h                    # => {role: :assistant, usage: {input_tokens: 100, output_tokens: 50}}
+event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage)
+event.role                          # => :assistant
+event.token_usage                   # => Riffer::TokenUsage
+event.token_usage.input_tokens      # => 100
+event.token_usage.output_tokens     # => 50
+event.token_usage.total_tokens      # => 150
+event.to_h                          # => {role: :assistant, token_usage: {input_tokens: 100, output_tokens: 50}}
 ```
 
 Use this to track token consumption in real-time during streaming.

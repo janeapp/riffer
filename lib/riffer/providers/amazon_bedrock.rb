@@ -51,7 +51,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
 
     response = @client.converse(**params)
-    extract_assistant_message(response, extract_usage(response))
+    extract_assistant_message(response, extract_token_usage(response))
   end
 
   def perform_stream_text(messages, model:, **options)
@@ -124,8 +124,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         stream.on_metadata_event do |event|
           if event.usage
             usage = event.usage
-            yielder << Riffer::StreamEvents::UsageDone.new(
-              usage: Riffer::Usage.new(
+            yielder << Riffer::StreamEvents::TokenUsageDone.new(
+              token_usage: Riffer::TokenUsage.new(
                 input_tokens: usage.input_tokens,
                 output_tokens: usage.output_tokens,
                 cache_creation_tokens: usage.cache_write_input_tokens,
@@ -199,11 +199,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
   end
 
-  def extract_usage(response)
+  def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
 
-    Riffer::Usage.new(
+    Riffer::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_creation_tokens: usage.cache_write_input_tokens,
@@ -211,7 +211,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
-  def extract_assistant_message(response, usage = nil)
+  def extract_assistant_message(response, token_usage = nil)
     output = response.output
     raise Riffer::Error, "No output returned from Bedrock API" if output.nil? || output.message.nil?
 
@@ -238,7 +238,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       raise Riffer::Error, "No content returned from Bedrock API"
     end
 
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, usage: usage)
+    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
   def convert_tool_to_bedrock_format(tool)
