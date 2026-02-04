@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0](https://github.com/janeapp/riffer/compare/riffer/v0.10.0...riffer/v0.11.0) (2026-02-04)
+
+
+### Features
+
+* add class methods for generate and stream to Riffer::Agent ([#97](https://github.com/janeapp/riffer/issues/97)) ([597636a](https://github.com/janeapp/riffer/commit/597636aef7498fe34c975522930e3fd0939a2ea0))
+
 ## [0.10.0](https://github.com/janeapp/riffer/compare/riffer/v0.9.0...riffer/v0.10.0) (2026-01-30)
 
 
