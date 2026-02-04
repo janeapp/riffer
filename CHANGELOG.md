@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 * add class methods for generate and stream to Riffer::Agent ([#97](https://github.com/janeapp/riffer/issues/97)) ([597636a](https://github.com/janeapp/riffer/commit/597636aef7498fe34c975522930e3fd0939a2ea0))
+* Add token usage tracking in Riffer::Agent ([#102](https://github.com/janeapp/riffer/pull/102)) ([6044914](https://github.com/janeapp/riffer/commit/60449148074e42a8b36f0b6977be005b06993d9c))
 
 ## [0.10.0](https://github.com/janeapp/riffer/compare/riffer/v0.9.0...riffer/v0.10.0) (2026-01-30)
 
