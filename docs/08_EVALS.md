@@ -83,7 +83,6 @@ module QualityEvals
 
   ai_evals do
     metric :answer_relevancy, min: 0.85
-    metric :toxicity, max: 0.10  # For future evaluators
   end
 end
 ```
@@ -97,7 +96,6 @@ end
 ```ruby
 ai_evals do
   metric :answer_relevancy, min: 0.85, weight: 2.0  # Weighted more heavily
-  metric :toxicity, max: 0.05, weight: 1.0
 end
 ```
 
