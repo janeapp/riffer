@@ -89,10 +89,10 @@ module Riffer::Evals::Profile
     #
     # input:: String - the input to send to the agent
     # context:: Hash or nil - optional context for evaluation (e.g., ground_truth)
-    # generate_options:: Hash - options passed to the agent's generate method
+    # tool_context:: Object or nil - optional context passed to tools during generation
     #
     # Returns Riffer::Evals::RunResult.
-    def eval(input:, context: nil, **generate_options)
+    def eval(input:, context: nil, tool_context: nil)
       profile = @eval_profile
       raise Riffer::ArgumentError, "No eval profile configured" unless profile
 
@@ -100,7 +100,7 @@ module Riffer::Evals::Profile
       raise Riffer::ArgumentError, "No metrics configured in eval profile" if metrics.empty?
 
       # Generate output from agent
-      output = generate(input, **generate_options)
+      output = generate(input, tool_context: tool_context)
 
       # Run evaluations
       runner = Riffer::Evals::Runner.new(metrics: metrics)

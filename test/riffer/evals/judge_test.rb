@@ -8,6 +8,14 @@ describe Riffer::Evals::Judge do
       judge = Riffer::Evals::Judge.new(model: "test/eval-model")
       expect(judge.model).must_equal "test/eval-model"
     end
+
+    it "raises error for invalid model string" do
+      error = expect {
+        Riffer::Evals::Judge.new(model: "invalid-format")
+      }.must_raise(Riffer::ArgumentError)
+
+      expect(error.message).must_match(/Invalid model string: invalid-format/)
+    end
   end
 
   describe "#evaluate" do

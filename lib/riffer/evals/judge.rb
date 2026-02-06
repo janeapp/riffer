@@ -42,6 +42,11 @@ class Riffer::Evals::Judge
   # model:: String - the model to use (provider/model format)
   # provider_options:: Hash - options passed to the provider
   def initialize(model:, provider_options: {})
+    provider_name, model_name = model.split("/", 2)
+    unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
+      raise Riffer::ArgumentError, "Invalid model string: #{model}"
+    end
+
     @model = model
     @provider_options = provider_options
   end
