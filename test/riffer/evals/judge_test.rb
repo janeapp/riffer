@@ -14,7 +14,7 @@ describe Riffer::Evals::Judge do
     it "evaluates with system_prompt and user_prompt" do
       judge = Riffer::Evals::Judge.new(model: "test/eval-model")
       provider = judge.send(:provider_instance)
-      provider.stub_response('{"score": 0.85, "reason": "Good response."}')
+      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.85, reason: "Good response."}}])
 
       result = judge.evaluate(system_prompt: "You are a judge.", user_prompt: "Evaluate this.")
 
@@ -24,7 +24,7 @@ describe Riffer::Evals::Judge do
     it "evaluates with messages array" do
       judge = Riffer::Evals::Judge.new(model: "test/eval-model")
       provider = judge.send(:provider_instance)
-      provider.stub_response('{"score": 0.9, "reason": "Excellent."}')
+      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.9, reason: "Excellent."}}])
 
       messages = [
         {role: "system", content: "You are a judge."},

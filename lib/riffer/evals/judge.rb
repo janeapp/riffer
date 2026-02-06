@@ -5,7 +5,8 @@ require "json"
 # Executes LLM-as-judge evaluations using the provider infrastructure.
 #
 # The Judge class handles calling an LLM to evaluate agent outputs
-# and parsing the structured response.
+# and parsing the structured response. It uses tool calling internally
+# to get guaranteed structured output from the judge model.
 #
 #   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-opus-4-5-20251101")
 #   result = judge.evaluate(
@@ -16,6 +17,21 @@ require "json"
 #   result[:reason] # => "The response is relevant..."
 #
 class Riffer::Evals::Judge
+  # Internal tool for structured evaluation output.
+  class EvaluationTool < Riffer::Tool
+    identifier "evaluation"
+    description "Submit your evaluation score and reasoning"
+
+    params do
+      required :score, Float, description: "Evaluation score between 0.0 and 1.0"
+      required :reason, String, description: "Brief explanation for the score"
+    end
+
+    def call(context:, score:, reason:)
+      json({score: score, reason: reason})
+    end
+  end
+
   # The model string (provider/model format).
   #
   # Returns String.
@@ -43,13 +59,13 @@ class Riffer::Evals::Judge
   def evaluate(messages: nil, system_prompt: nil, user_prompt: nil)
     response = if messages
       raise Riffer::ArgumentError, "cannot provide both messages and system_prompt/user_prompt" if system_prompt || user_prompt
-      provider_instance.generate_text(messages: messages, model: model_name)
+      provider_instance.generate_text(messages: messages, model: model_name, tools: [EvaluationTool])
     else
       raise Riffer::ArgumentError, "user_prompt is required when messages is not provided" unless user_prompt
-      provider_instance.generate_text(system: system_prompt, prompt: user_prompt, model: model_name)
+      provider_instance.generate_text(system: system_prompt, prompt: user_prompt, model: model_name, tools: [EvaluationTool])
     end
 
-    parse_response(response.content)
+    parse_tool_response(response)
   end
 
   private
@@ -70,11 +86,11 @@ class Riffer::Evals::Judge
     @model_name ||= @model.split("/", 2).last
   end
 
-  def parse_response(content)
-    json_match = content.match(/\{[^{}]*"score"[^{}]*\}/m)
-    raise Riffer::Error, "Invalid judge response: no JSON found" unless json_match
+  def parse_tool_response(response)
+    tool_call = response.tool_calls.first
+    raise Riffer::Error, "Invalid judge response: no tool call found" unless tool_call
 
-    parsed = JSON.parse(json_match[0])
+    parsed = JSON.parse(tool_call[:arguments])
     score = parsed["score"]
     reason = parsed["reason"]
 

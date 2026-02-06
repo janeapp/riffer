@@ -34,7 +34,7 @@ describe Riffer::Evals::Evaluators::AnswerRelevancy do
 
       evaluator = Riffer::Evals::Evaluators::AnswerRelevancy.new
       provider = evaluator.send(:judge).send(:provider_instance)
-      provider.stub_response('{"score": 0.85, "reason": "Relevant response."}')
+      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.85, reason: "Relevant response."}}])
 
       result = evaluator.evaluate(
         input: "What is the capital of France?",

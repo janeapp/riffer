@@ -28,16 +28,13 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
     3. Does the response provide the type of information requested?
     4. Does the response avoid going off on tangents?
 
-    You must respond with a JSON object containing:
-    - "score": A float between 0.0 and 1.0 where:
+    Use the evaluation tool to submit your score and reasoning. The score should be
+    a float between 0.0 and 1.0 where:
       - 1.0 = Perfectly relevant, directly addresses the question
       - 0.7-0.9 = Mostly relevant with minor tangents
       - 0.4-0.6 = Partially relevant, some off-topic content
       - 0.1-0.3 = Mostly irrelevant
       - 0.0 = Completely irrelevant
-    - "reason": A brief explanation of your score
-
-    Respond ONLY with the JSON object, no other text.
   PROMPT
 
   def evaluate(input:, output:, context: nil)

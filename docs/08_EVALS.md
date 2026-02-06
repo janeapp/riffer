@@ -161,7 +161,7 @@ class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
   SYSTEM_PROMPT = <<~PROMPT
     You are an evaluation assistant that assesses medical accuracy.
 
-    Respond with JSON: {"score": 0.0-1.0, "reason": "explanation"}
+    Use the evaluation tool to submit your score (0.0-1.0) and reasoning.
   PROMPT
 
   def evaluate(input:, output:, context: nil)
@@ -224,6 +224,8 @@ evaluation = judge.evaluate(
   ]
 )
 ```
+
+The Judge uses tool calling internally to get structured output. An `evaluation` tool with `score` (Float) and `reason` (String) parameters is automatically provided to the judge model, so your prompts should instruct the model to use the evaluation tool rather than respond with raw JSON.
 
 ### Rule-Based Evaluators
 
