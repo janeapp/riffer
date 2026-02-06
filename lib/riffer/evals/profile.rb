@@ -19,7 +19,7 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.eval(input: "What is Ruby?")
+#   result = MyAgent.run_eval(input: "What is Ruby?")
 #   result.passed?  # => true/false
 #
 module Riffer::Evals::Profile
@@ -92,7 +92,7 @@ module Riffer::Evals::Profile
     # tool_context:: Object or nil - optional context passed to tools during generation
     #
     # Returns Riffer::Evals::RunResult.
-    def eval(input:, context: nil, tool_context: nil)
+    def run_eval(input:, context: nil, tool_context: nil)
       profile = @eval_profile
       raise Riffer::ArgumentError, "No eval profile configured" unless profile
 

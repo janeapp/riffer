@@ -73,7 +73,7 @@ describe Riffer::Evals::Profile do
       Riffer::Providers::Repository.register("test", Riffer::Providers::Test) unless Riffer::Providers::Repository.find("test")
     end
 
-    it "adds eval method when included in Agent" do
+    it "adds run_eval method when included in Agent" do
       profile_module = Module.new do
         include Riffer::Evals::Profile
 
@@ -89,7 +89,7 @@ describe Riffer::Evals::Profile do
 
       agent_class.include(profile_module)
 
-      expect(agent_class.respond_to?(:eval)).must_equal true
+      expect(agent_class.respond_to?(:run_eval)).must_equal true
     end
 
     it "runs evaluation when eval is called" do
@@ -109,7 +109,7 @@ describe Riffer::Evals::Profile do
       agent_class.include(profile_module)
 
       # The test provider returns "Test response" by default
-      result = agent_class.eval(input: "What is Ruby?")
+      result = agent_class.run_eval(input: "What is Ruby?")
 
       expect(result).must_be_instance_of Riffer::Evals::RunResult
       expect(result.input).must_equal "What is Ruby?"

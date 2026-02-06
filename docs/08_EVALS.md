@@ -36,7 +36,7 @@ class MyAgent < Riffer::Agent
 end
 
 # 4. Run evals
-result = MyAgent.eval(input: "What is Ruby?")
+result = MyAgent.run_evalinput: "What is Ruby?")
 result.passed?         # => true/false
 result.aggregate_score # => 0.91
 ```
@@ -113,7 +113,7 @@ end
 Once a profile is included, call `.eval` on the agent class:
 
 ```ruby
-result = MyAgent.eval(
+result = MyAgent.run_eval(
   input: "What is the capital of France?",
   context: { ground_truth: "Paris" }  # Optional context
 )
@@ -304,7 +304,7 @@ end
 # test/agents/support_agent_test.rb
 class SupportAgentTest < Minitest::Test
   def test_response_quality
-    result = SupportAgent.eval(
+    result = SupportAgent.run_eval
       input: "How do I reset my password?",
       context: {}
     )
