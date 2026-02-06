@@ -166,7 +166,7 @@ class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
     user_prompt = <<~PROMPT
       Question: #{input}
       Response: #{output}
-      Ground truth: #{context&.dig(:ground_truth)}
+      Ground truth: #{context[:ground_truth]}
     PROMPT
 
     evaluation = judge.evaluate(
