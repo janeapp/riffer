@@ -50,7 +50,7 @@ class Riffer::Evals::Metric
   #
   # Returns Class or nil.
   def evaluator_class
-    Riffer::Evals::Evaluators::Registry.find(@evaluator_identifier)
+    Riffer::Evals::Evaluators::Repository.find(@evaluator_identifier)
   end
 
   # Checks if a result passes this metric's thresholds.

@@ -90,7 +90,7 @@ describe Riffer::Evals::Evaluator do
   end
 
   describe "#result (protected)" do
-    it "creates a Result with the correct evaluator identifier" do
+    it "creates a Result with correct attributes" do
       klass = Class.new(Riffer::Evals::Evaluator) do
         identifier "my_evaluator"
         higher_is_better true
@@ -103,11 +103,13 @@ describe Riffer::Evals::Evaluator do
       evaluator = klass.new
       result = evaluator.evaluate(input: "test", output: "test")
 
-      expect(result).must_be_instance_of Riffer::Evals::Result
-      expect(result.evaluator).must_equal "my_evaluator"
-      expect(result.score).must_equal 0.9
-      expect(result.reason).must_equal "Good"
-      expect(result.higher_is_better).must_equal true
+      expect(result.to_h).must_equal({
+        evaluator: "my_evaluator",
+        score: 0.9,
+        reason: "Good",
+        metadata: {},
+        higher_is_better: true
+      })
     end
 
     it "creates a Result with higher_is_better from evaluator" do

@@ -7,7 +7,7 @@ require "json"
 # The Judge class handles calling an LLM to evaluate agent outputs
 # and parsing the structured response.
 #
-#   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-sonnet-4-20250514")
+#   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-opus-4-5-20251101")
 #   result = judge.evaluate(
 #     system_prompt: "You are an evaluation assistant...",
 #     user_prompt: "Evaluate this response..."
@@ -32,16 +32,22 @@ class Riffer::Evals::Judge
 
   # Evaluates using the configured LLM.
   #
+  # messages:: Array - array of message hashes (alternative to system_prompt/user_prompt)
   # system_prompt:: String - the system prompt for the judge
   # user_prompt:: String - the user prompt containing the evaluation request
   #
   # Returns Hash with :score (Float) and :reason (String).
-  def evaluate(system_prompt:, user_prompt:)
-    response = provider_instance.generate_text(
-      system: system_prompt,
-      prompt: user_prompt,
-      model: model_name
-    )
+  #
+  # Raises Riffer::ArgumentError if both messages and system_prompt/user_prompt are provided,
+  # or if user_prompt is missing when messages is not provided.
+  def evaluate(messages: nil, system_prompt: nil, user_prompt: nil)
+    response = if messages
+      raise Riffer::ArgumentError, "cannot provide both messages and system_prompt/user_prompt" if system_prompt || user_prompt
+      provider_instance.generate_text(messages: messages, model: model_name)
+    else
+      raise Riffer::ArgumentError, "user_prompt is required when messages is not provided" unless user_prompt
+      provider_instance.generate_text(system: system_prompt, prompt: user_prompt, model: model_name)
+    end
 
     parse_response(response.content)
   end

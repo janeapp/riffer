@@ -19,17 +19,11 @@ describe Riffer::Evals::Runner do
   end
 
   before do
-    Riffer::Evals::Evaluators::Registry.register("runner_test_evaluator", runner_evaluator_class)
+    Riffer::Evals::Evaluators::Repository.register(:runner_test_evaluator, runner_evaluator_class)
   end
 
   after do
-    # Clean up the registry
-    Riffer::Evals::Evaluators::Registry.clear
-    # Re-register built-in evaluators
-    Riffer::Evals::Evaluators::Registry.register(
-      "answer_relevancy",
-      Riffer::Evals::Evaluators::AnswerRelevancy
-    )
+    Riffer::Evals::Evaluators::Repository.clear
   end
 
   describe "#initialize" do
@@ -79,7 +73,7 @@ describe Riffer::Evals::Runner do
           result(score: score, reason: "From context")
         end
       end
-      Riffer::Evals::Evaluators::Registry.register("context_evaluator", context_evaluator_class)
+      Riffer::Evals::Evaluators::Repository.register(:context_evaluator, context_evaluator_class)
 
       metrics = [Riffer::Evals::Metric.new(evaluator_identifier: "context_evaluator")]
       runner = Riffer::Evals::Runner.new(metrics: metrics)

@@ -19,15 +19,11 @@ describe Riffer::Evals::Profile do
   end
 
   before do
-    Riffer::Evals::Evaluators::Registry.register("profile_test_evaluator", profile_evaluator_class)
+    Riffer::Evals::Evaluators::Repository.register(:profile_test_evaluator, profile_evaluator_class)
   end
 
   after do
-    Riffer::Evals::Evaluators::Registry.clear
-    Riffer::Evals::Evaluators::Registry.register(
-      "answer_relevancy",
-      Riffer::Evals::Evaluators::AnswerRelevancy
-    )
+    Riffer::Evals::Evaluators::Repository.clear
   end
 
   describe "ai_evals DSL" do

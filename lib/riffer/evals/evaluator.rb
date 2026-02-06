@@ -11,7 +11,7 @@
 #     identifier "my_evaluator"
 #     description "Evaluates response quality"
 #     higher_is_better true
-#     judge_model "anthropic/claude-sonnet-4-20250514"
+#     judge_model "anthropic/claude-opus-4-5-20251101"
 #
 #     def evaluate(input:, output:, context: nil)
 #       evaluation = judge.evaluate(
@@ -70,17 +70,9 @@ class Riffer::Evals::Evaluator
 
     def class_name_to_identifier(name)
       return nil if name.nil?
-
-      # Extract just the class name (last part after ::)
       class_name = name.split("::").last
       return nil if class_name.nil?
-
-      # Convert CamelCase to snake_case and remove _evaluator suffix
-      class_name
-        .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-        .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-        .downcase
-        .sub(/_evaluator$/, "")
+      class_name_to_path(class_name).sub(/_evaluator$/, "")
     end
   end
 

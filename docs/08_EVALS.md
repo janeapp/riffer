@@ -17,7 +17,7 @@ Key concepts:
 
 ```ruby
 # 1. Configure the judge model
-Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
+Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 
 # 2. Define an eval profile
 module QualityEvals
@@ -31,7 +31,7 @@ end
 # 3. Include in your agent
 class MyAgent < Riffer::Agent
   include QualityEvals
-  model "openai/gpt-4o"
+  model "anthropic/claude-haiku-4-5-20251001"
   instructions "You are a helpful assistant."
 end
 
@@ -46,7 +46,7 @@ result.aggregate_score # => 0.91
 Before using evals, configure the judge model:
 
 ```ruby
-Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
+Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 ```
 
 The judge model is the LLM that evaluates agent outputs. You can use any configured provider.
@@ -106,7 +106,7 @@ end
 ```ruby
 class MyAgent < Riffer::Agent
   include QualityEvals
-  model "openai/gpt-4o"
+  model "anthropic/claude-haiku-4-5-20251001"
 end
 ```
 
@@ -151,11 +151,12 @@ result.results.first.higher_is_better # => true
 Create evaluators by subclassing `Riffer::Evals::Evaluator`:
 
 ```ruby
+# app/evals/medical_accuracy_evaluator.rb
 class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
   identifier "medical_accuracy"
   description "Evaluates medical information accuracy"
   higher_is_better true
-  judge_model "anthropic/claude-sonnet-4-20250514"  # Optional override
+  judge_model "anthropic/claude-opus-4-5-20251101"  # Optional override
 
   SYSTEM_PROMPT = <<~PROMPT
     You are an evaluation assistant that assesses medical accuracy.
@@ -178,12 +179,15 @@ class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
     result(score: evaluation[:score], reason: evaluation[:reason])
   end
 end
+```
 
-# Register the evaluator
-Riffer::Evals::Evaluators::Registry.register(
-  "medical_accuracy",
-  MedicalAccuracyEvaluator
-)
+### Registering Custom Evaluators
+
+Register custom evaluators in your app initialization. Built-in evaluators are always available.
+
+```ruby
+# config/initializers/riffer.rb
+Riffer::Evals::Evaluators::Repository.register(:medical_accuracy, MedicalAccuracyEvaluator)
 ```
 
 ### Evaluator DSL
@@ -200,6 +204,26 @@ Instance methods:
 - `evaluate(input:, output:, context:)` - Must be implemented, returns a Result
 - `judge` - Returns a Judge instance for LLM-as-judge calls
 - `result(score:, reason:, metadata:)` - Helper to build Result objects
+
+### Judge Options
+
+The `judge.evaluate` method accepts either `system_prompt:` and `user_prompt:` or a `messages:` array:
+
+```ruby
+# Using system_prompt and user_prompt
+evaluation = judge.evaluate(
+  system_prompt: "You are a judge.",
+  user_prompt: "Evaluate this response."
+)
+
+# Using messages array (for more control)
+evaluation = judge.evaluate(
+  messages: [
+    { role: "system", content: "You are a judge." },
+    { role: "user", content: "Evaluate this response." }
+  ]
+)
+```
 
 ### Rule-Based Evaluators
 
@@ -257,7 +281,7 @@ Scores are then weighted:
 # config/initializers/riffer.rb
 Riffer.configure do |config|
   config.anthropic.api_key = ENV["ANTHROPIC_API_KEY"]
-  config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
+  config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 end
 
 # app/evals/quality_evals.rb
@@ -273,7 +297,7 @@ end
 class SupportAgent < Riffer::Agent
   include QualityEvals
 
-  model "anthropic/claude-sonnet-4-20250514"
+  model "anthropic/claude-opus-4-5-20251101"
   instructions "You are a helpful customer support agent."
 end
 

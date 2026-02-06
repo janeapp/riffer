@@ -58,9 +58,3 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
     PROMPT
   end
 end
-
-# Register the evaluator
-Riffer::Evals::Evaluators::Registry.register(
-  "answer_relevancy",
-  Riffer::Evals::Evaluators::AnswerRelevancy
-)
