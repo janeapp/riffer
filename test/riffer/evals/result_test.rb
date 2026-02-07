@@ -43,6 +43,32 @@ describe Riffer::Evals::Result do
       result = Riffer::Evals::Result.new(evaluator: "test_eval", score: 0.8)
       expect(result.higher_is_better).must_equal true
     end
+
+    it "raises an error if score is below 0" do
+      error = expect do
+        Riffer::Evals::Result.new(evaluator: "test_eval", score: -0.1)
+      end.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_match(/score must be between 0.0 and 1.0/)
+    end
+
+    it "raises an error if score is above 1" do
+      error = expect do
+        Riffer::Evals::Result.new(evaluator: "test_eval", score: 1.5)
+      end.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_match(/score must be between 0.0 and 1.0/)
+    end
+
+    it "allows score of exactly 0" do
+      result = Riffer::Evals::Result.new(evaluator: "test_eval", score: 0)
+      expect(result.score).must_equal 0.0
+    end
+
+    it "allows score of exactly 1" do
+      result = Riffer::Evals::Result.new(evaluator: "test_eval", score: 1)
+      expect(result.score).must_equal 1.0
+    end
   end
 
   describe "#to_h" do

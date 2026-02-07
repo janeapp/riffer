@@ -48,9 +48,12 @@ class Riffer::Evals::Result
   # reason:: String or nil - optional explanation
   # metadata:: Hash - optional additional data
   # higher_is_better:: Boolean - whether higher is better (default: true)
+  #
+  # Raises Riffer::ArgumentError if score is not between 0.0 and 1.0.
   def initialize(evaluator:, score:, reason: nil, metadata: {}, higher_is_better: true)
     @evaluator = evaluator
     @score = score.to_f
+    validate_score!
     @reason = reason
     @metadata = metadata
     @higher_is_better = higher_is_better
@@ -67,5 +70,13 @@ class Riffer::Evals::Result
       metadata: metadata,
       higher_is_better: higher_is_better
     }
+  end
+
+  private
+
+  def validate_score!
+    return if score.is_a?(Numeric) && score >= 0.0 && score <= 1.0
+
+    raise Riffer::ArgumentError, "score must be between 0.0 and 1.0, got #{score}"
   end
 end
