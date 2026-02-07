@@ -33,7 +33,7 @@ class Riffer::Evals::Runner
   #
   # Returns Riffer::Evals::RunResult.
   def run(input:, output:, context: nil)
-    results = @metrics.map do |metric|
+    results = metrics.map do |metric|
       evaluator_class = metric.evaluator_class
       raise Riffer::ArgumentError, "Evaluator not found: #{metric.evaluator_identifier}" unless evaluator_class
 
@@ -46,7 +46,7 @@ class Riffer::Evals::Runner
       output: output,
       context: context,
       results: results,
-      metrics: @metrics
+      metrics: metrics
     )
   end
 end

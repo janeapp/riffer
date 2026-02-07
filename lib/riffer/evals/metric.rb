@@ -50,7 +50,7 @@ class Riffer::Evals::Metric
   #
   # Returns Class or nil.
   def evaluator_class
-    Riffer::Evals::Evaluators::Repository.find(@evaluator_identifier)
+    Riffer::Evals::Evaluators::Repository.find(evaluator_identifier)
   end
 
   # Checks if a result passes this metric's thresholds.
@@ -59,8 +59,8 @@ class Riffer::Evals::Metric
   #
   # Returns Boolean.
   def passes?(result)
-    return false if @min && result.score < @min
-    return false if @max && result.score > @max
+    return false if min && result.score < min
+    return false if max && result.score > max
     true
   end
 
@@ -69,10 +69,10 @@ class Riffer::Evals::Metric
   # Returns Hash.
   def to_h
     {
-      evaluator_identifier: @evaluator_identifier,
-      min: @min,
-      max: @max,
-      weight: @weight
+      evaluator_identifier: evaluator_identifier,
+      min: min,
+      max: max,
+      weight: weight
     }
   end
 end

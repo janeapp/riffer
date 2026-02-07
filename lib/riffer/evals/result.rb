@@ -61,11 +61,11 @@ class Riffer::Evals::Result
   # Returns Hash.
   def to_h
     {
-      evaluator: @evaluator,
-      score: @score,
-      reason: @reason,
-      metadata: @metadata,
-      higher_is_better: @higher_is_better
+      evaluator: evaluator,
+      score: score,
+      reason: reason,
+      metadata: metadata,
+      higher_is_better: higher_is_better
     }
   end
 end

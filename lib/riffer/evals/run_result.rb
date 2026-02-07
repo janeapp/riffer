@@ -68,8 +68,8 @@ class Riffer::Evals::RunResult
   #
   # Returns Array of Riffer::Evals::Result.
   def failures
-    @failures ||= @results.select.with_index do |result, index|
-      metric = @metrics[index]
+    @failures ||= results.select.with_index do |result, index|
+      metric = metrics[index]
       !metric.passes?(result)
     end
   end
@@ -82,12 +82,12 @@ class Riffer::Evals::RunResult
   #
   # Returns Float.
   def aggregate_score
-    return 0.0 if @results.empty?
+    return 0.0 if results.empty?
 
-    total_weight = @metrics.sum(&:weight)
+    total_weight = metrics.sum(&:weight)
     return 0.0 if total_weight.zero?
 
-    weighted_sum = @results.zip(@metrics).sum do |result, metric|
+    weighted_sum = results.zip(metrics).sum do |result, metric|
       # Normalize score: for higher_is_better=false, invert so higher is better
       normalized_score = result.higher_is_better ? result.score : (1.0 - result.score)
       normalized_score * metric.weight
@@ -101,10 +101,10 @@ class Riffer::Evals::RunResult
   # Returns Hash.
   def to_h
     {
-      input: @input,
-      output: @output,
-      context: @context,
-      results: @results.map(&:to_h),
+      input: input,
+      output: output,
+      context: context,
+      results: results.map(&:to_h),
       passed: passed?,
       aggregate_score: aggregate_score
     }

@@ -55,7 +55,7 @@ module Riffer::Evals::Profile
     #
     # Returns void.
     def metric(identifier, min: nil, max: nil, weight: 1.0)
-      @metrics << Riffer::Evals::Metric.new(
+      metrics << Riffer::Evals::Metric.new(
         evaluator_identifier: identifier,
         min: min,
         max: max,
