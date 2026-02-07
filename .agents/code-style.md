@@ -8,11 +8,16 @@
 
 ## Required Header
 
-All Ruby files must include:
+All Ruby files in `lib/` must include:
 
 ```ruby
 # frozen_string_literal: true
+# rbs_inline: enabled
 ```
+
+## Class Methods
+
+Use `def self.method_name` instead of `class << self` (rbs-inline does not support singleton class blocks).
 
 ## Error Handling
 

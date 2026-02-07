@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents token usage data from an LLM API call.
 #
@@ -11,31 +12,22 @@
 #
 class Riffer::TokenUsage
   # Number of tokens in the input/prompt.
-  #
-  # Returns Integer.
-  attr_reader :input_tokens
+  attr_reader :input_tokens #: Integer
 
   # Number of tokens in the output/response.
-  #
-  # Returns Integer.
-  attr_reader :output_tokens
+  attr_reader :output_tokens #: Integer
 
   # Number of tokens written to cache (Anthropic-specific).
-  #
-  # Returns Integer or nil.
-  attr_reader :cache_creation_tokens
+  attr_reader :cache_creation_tokens #: Integer?
 
   # Number of tokens read from cache (Anthropic-specific).
-  #
-  # Returns Integer or nil.
-  attr_reader :cache_read_tokens
+  attr_reader :cache_read_tokens #: Integer?
 
-  # Creates a new TokenUsage instance.
-  #
-  # input_tokens:: Integer - number of input tokens
-  # output_tokens:: Integer - number of output tokens
-  # cache_creation_tokens:: Integer or nil - tokens written to cache
-  # cache_read_tokens:: Integer or nil - tokens read from cache
+  #: input_tokens: Integer
+  #: output_tokens: Integer
+  #: cache_creation_tokens: Integer? -- tokens written to cache
+  #: cache_read_tokens: Integer? -- tokens read from cache
+  #: return: void
   def initialize(input_tokens:, output_tokens:, cache_creation_tokens: nil, cache_read_tokens: nil)
     @input_tokens = input_tokens
     @output_tokens = output_tokens
@@ -45,16 +37,15 @@ class Riffer::TokenUsage
 
   # Returns the total number of tokens (input + output).
   #
-  # Returns Integer.
+  #: return: Integer
   def total_tokens
     input_tokens + output_tokens
   end
 
   # Combines two TokenUsage objects for cumulative tracking.
   #
-  # other:: Riffer::TokenUsage - another token usage object to combine with
-  #
-  # Returns Riffer::TokenUsage - a new TokenUsage with summed values.
+  #: other: Riffer::TokenUsage
+  #: return: Riffer::TokenUsage
   def +(other)
     Riffer::TokenUsage.new(
       input_tokens: input_tokens + other.input_tokens,
@@ -68,7 +59,7 @@ class Riffer::TokenUsage
   #
   # Cache tokens are omitted if nil.
   #
-  # Returns Hash.
+  #: return: Hash[Symbol, Integer]
   def to_h
     hash = {input_tokens: input_tokens, output_tokens: output_tokens}
     hash[:cache_creation_tokens] = cache_creation_tokens if cache_creation_tokens
@@ -78,6 +69,9 @@ class Riffer::TokenUsage
 
   private
 
+  #: a: Integer?
+  #: b: Integer?
+  #: return: Integer?
   def add_nullable(a, b)
     return nil if a.nil? && b.nil?
     (a || 0) + (b || 0)

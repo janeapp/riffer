@@ -5,3 +5,5 @@ gemspec
 
 gem "irb"
 gem "dotenv"
+gem "guard"
+gem "guard-shell"

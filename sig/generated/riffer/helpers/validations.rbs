@@ -1,0 +1,13 @@
+# Generated from lib/riffer/helpers/validations.rb with RBS::Inline
+
+# Helper module for input validation.
+module Riffer::Helpers::Validations
+  # Validates that a value is a non-empty string.
+  #
+  # Raises Riffer::ArgumentError if the value is not a string or is empty.
+  #
+  # : value: untyped -- the value to validate
+  # : name: String -- the name of the value for error messages
+  # : return: true
+  def validate_is_string!: (untyped value, ?untyped name) -> untyped
+end

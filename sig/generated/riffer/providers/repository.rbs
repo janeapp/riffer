@@ -1,0 +1,13 @@
+# Generated from lib/riffer/providers/repository.rb with RBS::Inline
+
+# Registry for finding provider classes by identifier.
+class Riffer::Providers::Repository
+  # Mapping of provider identifiers to provider class lambdas.
+  REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
+
+  # Finds a provider class by identifier.
+  #
+  # : identifier: (String | Symbol) -- the identifier to search for
+  # : return: singleton(Riffer::Providers::Base)?
+  def self.find: (untyped identifier) -> untyped
+end

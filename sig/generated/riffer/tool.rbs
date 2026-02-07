@@ -1,0 +1,105 @@
+# Generated from lib/riffer/tool.rb with RBS::Inline
+
+# Riffer::Tool is the base class for all tools in the Riffer framework.
+#
+# Provides a DSL for defining tool description and parameters.
+# Subclasses must implement the +call+ method.
+#
+# See Riffer::Agent.
+#
+#   class WeatherLookupTool < Riffer::Tool
+#     description "Provides current weather information for a specified city."
+#
+#     params do
+#       required :city, String, description: "The city to look up"
+#       optional :units, String, default: "celsius"
+#     end
+#
+#     def call(context:, city:, units: nil)
+#       # Implementation
+#     end
+#   end
+class Riffer::Tool
+  DEFAULT_TIMEOUT: Integer
+
+  # Some providers do not allow "/" in tool names, so we use "__" as separator.
+  TOOL_SEPARATOR: String
+
+  extend Riffer::Helpers::ClassNameConverter
+
+  # Gets or sets the tool description.
+  #
+  # : value: String? -- the description to set, or nil to get
+  # : return: String?
+  def self.description: (?untyped value) -> untyped
+
+  # Gets or sets the tool identifier/name.
+  #
+  # : value: String? -- the identifier to set, or nil to get
+  # : return: String
+  def self.identifier: (?untyped value) -> untyped
+
+  # Alias for identifier - used by providers.
+  #
+  # : value: String? -- the name to set, or nil to get
+  # : return: String
+  def self.name: (?untyped value) -> untyped
+
+  # Gets or sets the tool timeout in seconds.
+  #
+  # : value: (Integer | Float)? -- the timeout to set in seconds, or nil to get
+  # : return: (Integer | Float)
+  def self.timeout: (?untyped value) -> untyped
+
+  # Defines parameters using the Params DSL.
+  #
+  # : &block: () -> void
+  # : return: Riffer::Tools::Params?
+  def self.params: () ?{ (?) -> untyped } -> untyped
+
+  # Returns the JSON Schema for the tool's parameters.
+  #
+  # : return: Hash[Symbol, untyped]
+  def self.parameters_schema: () -> untyped
+
+  def self.empty_schema: () -> untyped
+
+  # Executes the tool with the given arguments.
+  #
+  # Raises NotImplementedError if not implemented by subclass.
+  #
+  # : context: untyped -- optional context passed from the agent
+  # : **kwargs: untyped
+  # : return: Riffer::Tools::Response
+  def call: (context: untyped, **untyped kwargs) -> untyped
+
+  # Creates a text response. Shorthand for Riffer::Tools::Response.text.
+  #
+  # : result: untyped -- the tool result (converted via to_s)
+  # : return: Riffer::Tools::Response
+  def text: (untyped result) -> untyped
+
+  # Creates a JSON response. Shorthand for Riffer::Tools::Response.json.
+  #
+  # : result: untyped -- the tool result (converted via JSON.generate)
+  # : return: Riffer::Tools::Response
+  def json: (untyped result) -> untyped
+
+  # Creates an error response. Shorthand for Riffer::Tools::Response.error.
+  #
+  # : message: String -- the error message
+  # : type: Symbol -- the error type (default: :execution_error)
+  # : return: Riffer::Tools::Response
+  def error: (untyped message, ?type: untyped) -> untyped
+
+  # Executes the tool with validation and timeout (used by Agent).
+  #
+  # Raises Riffer::ValidationError if validation fails.
+  # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
+  # Raises Riffer::Error if the tool does not return a Response object.
+  #
+  # : context: untyped -- context passed from the agent
+  # : **kwargs: untyped
+  # : return: Riffer::Tools::Response
+  def call_with_validation: (context: untyped, **untyped kwargs) -> untyped
+end

@@ -33,3 +33,18 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - run: bundle exec rake test
+
+  rbs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Generate RBS files
+        run: bundle exec rake rbs:generate
+      - name: Check for RBS drift
+        run: git diff --exit-code sig/generated/
+      - name: Run Steep type check
+        run: bundle exec steep check

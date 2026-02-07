@@ -1,0 +1,46 @@
+# Generated from lib/riffer/tools/param.rb with RBS::Inline
+
+# Riffer::Tools::Param represents a single parameter definition for a tool.
+#
+# Handles type validation and JSON Schema generation for individual parameters.
+class Riffer::Tools::Param
+  # Maps Ruby types to JSON Schema type strings
+  TYPE_MAPPINGS: Hash[Class, String]
+
+  attr_reader name: Symbol
+
+  attr_reader type: Class
+
+  attr_reader required: bool
+
+  attr_reader description: String?
+
+  attr_reader enum: Array[untyped]?
+
+  attr_reader default: untyped
+
+  # : name: Symbol -- the parameter name
+  # : type: Class -- the expected Ruby type
+  # : required: bool -- whether the parameter is required
+  # : description: String? -- optional description for the parameter
+  # : enum: Array[untyped]? -- optional list of allowed values
+  # : default: untyped -- optional default value for optional parameters
+  # : return: void
+  def initialize: (name: untyped, type: untyped, required: untyped, ?description: untyped, ?enum: untyped, ?default: untyped) -> untyped
+
+  # Validates that a value matches the expected type.
+  #
+  # : value: untyped
+  # : return: bool
+  def valid_type?: (untyped value) -> untyped
+
+  # Returns the JSON Schema type name for this parameter.
+  #
+  # : return: String
+  def type_name: () -> untyped
+
+  # Converts this parameter to JSON Schema format.
+  #
+  # : return: Hash[Symbol, untyped]
+  def to_json_schema: () -> untyped
+end

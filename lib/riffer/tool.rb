@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 require "timeout"
 
@@ -23,122 +24,121 @@ require "timeout"
 #   end
 #
 class Riffer::Tool
-  DEFAULT_TIMEOUT = 10
+  DEFAULT_TIMEOUT = 10 #: Integer
 
   # Some providers do not allow "/" in tool names, so we use "__" as separator.
-  TOOL_SEPARATOR = "__"
+  TOOL_SEPARATOR = "__" #: String
 
-  class << self
-    include Riffer::Helpers::ClassNameConverter
+  extend Riffer::Helpers::ClassNameConverter
 
-    # Gets or sets the tool description.
-    #
-    # value:: String or nil - the description to set, or nil to get
-    #
-    # Returns String or nil - the tool description.
-    def description(value = nil)
-      return @description if value.nil?
-      @description = value.to_s
-    end
+  #: self.@description: String?
+  #: self.@identifier: String?
+  #: self.@timeout: Float?
+  #: self.@params_builder: Riffer::Tools::Params?
 
-    # Gets or sets the tool identifier/name.
-    #
-    # value:: String or nil - the identifier to set, or nil to get
-    #
-    # Returns String - the tool identifier (defaults to snake_case class name).
-    def identifier(value = nil)
-      return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self), separator: TOOL_SEPARATOR) if value.nil?
-      @identifier = value.to_s
-    end
-
-    # Alias for identifier - used by providers
-    alias_method :name, :identifier
-
-    # Gets or sets the tool timeout in seconds.
-    #
-    # value:: Numeric or nil - the timeout to set in seconds, or nil to get
-    #
-    # Returns Numeric - the tool timeout (defaults to 10).
-    def timeout(value = nil)
-      return @timeout || DEFAULT_TIMEOUT if value.nil?
-      @timeout = value.to_f
-    end
-
-    # Defines parameters using the Params DSL.
-    #
-    # Yields to the parameter definition block.
-    #
-    # Returns Riffer::Tools::Params or nil - the params builder.
-    def params(&block)
-      return @params_builder if block.nil?
-      @params_builder = Riffer::Tools::Params.new
-      @params_builder.instance_eval(&block)
-    end
-
-    # Returns the JSON Schema for the tool's parameters.
-    #
-    # Returns Hash - the JSON Schema.
-    def parameters_schema
-      @params_builder&.to_json_schema || empty_schema
-    end
-
-    private
-
-    def empty_schema
-      {type: "object", properties: {}, required: [], additionalProperties: false}
-    end
+  # Gets or sets the tool description.
+  #
+  #: value: String? -- the description to set, or nil to get
+  #: return: String?
+  def self.description(value = nil)
+    return @description if value.nil?
+    @description = value.to_s
   end
+
+  # Gets or sets the tool identifier/name.
+  #
+  #: value: String? -- the identifier to set, or nil to get
+  #: return: String
+  def self.identifier(value = nil)
+    return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self), separator: TOOL_SEPARATOR) if value.nil?
+    @identifier = value.to_s
+  end
+
+  # Alias for identifier - used by providers.
+  #
+  #: value: String? -- the name to set, or nil to get
+  #: return: String
+  def self.name(value = nil)
+    return identifier(value) unless value.nil?
+    identifier
+  end
+
+  # Gets or sets the tool timeout in seconds.
+  #
+  #: value: (Integer | Float)? -- the timeout to set in seconds, or nil to get
+  #: return: (Integer | Float)
+  def self.timeout(value = nil)
+    return @timeout || DEFAULT_TIMEOUT if value.nil?
+    @timeout = value.to_f
+  end
+
+  # Defines parameters using the Params DSL.
+  #
+  #: &block: () -> void
+  #: return: Riffer::Tools::Params?
+  def self.params(&block)
+    return @params_builder if block.nil?
+    @params_builder = Riffer::Tools::Params.new
+    @params_builder.instance_eval(&block)
+  end
+
+  # Returns the JSON Schema for the tool's parameters.
+  #
+  #: return: Hash[Symbol, untyped]
+  def self.parameters_schema
+    @params_builder&.to_json_schema || empty_schema
+  end
+
+  def self.empty_schema # :nodoc:
+    {type: "object", properties: {}, required: [], additionalProperties: false}
+  end
+  private_class_method :empty_schema
 
   # Executes the tool with the given arguments.
   #
-  # context:: Object or nil - optional context passed from the agent
-  # kwargs:: Hash - the tool arguments
-  #
-  # Returns Object - the tool result.
-  #
   # Raises NotImplementedError if not implemented by subclass.
+  #
+  #: context: untyped -- optional context passed from the agent
+  #: **kwargs: untyped
+  #: return: Riffer::Tools::Response
   def call(context:, **kwargs)
     raise NotImplementedError, "#{self.class} must implement #call"
   end
 
   # Creates a text response. Shorthand for Riffer::Tools::Response.text.
   #
-  # result:: Object - the tool result (converted via to_s)
-  #
-  # Returns Riffer::Tools::Response.
+  #: result: untyped -- the tool result (converted via to_s)
+  #: return: Riffer::Tools::Response
   def text(result)
     Riffer::Tools::Response.text(result)
   end
 
   # Creates a JSON response. Shorthand for Riffer::Tools::Response.json.
   #
-  # result:: Object - the tool result (converted via JSON.generate)
-  #
-  # Returns Riffer::Tools::Response.
+  #: result: untyped -- the tool result (converted via JSON.generate)
+  #: return: Riffer::Tools::Response
   def json(result)
     Riffer::Tools::Response.json(result)
   end
 
   # Creates an error response. Shorthand for Riffer::Tools::Response.error.
   #
-  # message:: String - the error message
-  # type:: Symbol - the error type (default: :execution_error)
-  #
-  # Returns Riffer::Tools::Response.
+  #: message: String -- the error message
+  #: type: Symbol -- the error type (default: :execution_error)
+  #: return: Riffer::Tools::Response
   def error(message, type: :execution_error)
     Riffer::Tools::Response.error(message, type: type)
   end
 
   # Executes the tool with validation and timeout (used by Agent).
   #
-  # context:: Object or nil - context passed from the agent
-  # kwargs:: Hash - the tool arguments
-  #
-  # Returns Riffer::Tools::Response - the tool response.
-  #
   # Raises Riffer::ValidationError if validation fails.
   # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
   # Raises Riffer::Error if the tool does not return a Response object.
+  #
+  #: context: untyped -- context passed from the agent
+  #: **kwargs: untyped
+  #: return: Riffer::Tools::Response
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params
     validated_args = params_builder ? params_builder.validate(kwargs) : kwargs

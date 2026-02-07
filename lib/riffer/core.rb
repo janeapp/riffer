@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 require "logger"
 
@@ -6,12 +7,13 @@ require "logger"
 #
 # Handles logging and configuration for the framework.
 class Riffer::Core
-  # The logger instance for Riffer.
-  #
-  # Returns Logger.
-  attr_reader :logger
+  #: @logger: Logger
+  #: @storage_registry: Hash[String, untyped]
 
-  # Initializes the core object and logger.
+  # The logger instance for Riffer.
+  attr_reader :logger #: Logger
+
+  #: return: void
   def initialize
     @logger = Logger.new($stdout)
     @logger.level = Logger::INFO
@@ -20,8 +22,9 @@ class Riffer::Core
 
   # Yields self for configuration.
   #
-  # Yields core (Riffer::Core) to the block.
-  def configure
+  #: &block: (Riffer::Core) -> void
+  #: return: void
+  def configure(&block)
     yield self if block_given?
   end
 end

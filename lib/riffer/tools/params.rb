@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Riffer::Tools::Params provides a DSL for defining tool parameters.
 #
@@ -10,20 +11,20 @@
 #   end
 #
 class Riffer::Tools::Params
-  attr_reader :parameters
+  attr_reader :parameters #: Array[Riffer::Tools::Param]
 
+  #: return: void
   def initialize
     @parameters = []
   end
 
   # Defines a required parameter.
   #
-  # name:: Symbol - the parameter name
-  # type:: Class - the expected Ruby type
-  # description:: String or nil - optional description
-  # enum:: Array or nil - optional list of allowed values
-  #
-  # Returns void.
+  #: name: Symbol -- the parameter name
+  #: type: Class -- the expected Ruby type
+  #: description: String? -- optional description
+  #: enum: Array[untyped]? -- optional list of allowed values
+  #: return: void
   def required(name, type, description: nil, enum: nil)
     @parameters << Riffer::Tools::Param.new(
       name: name,
@@ -36,13 +37,12 @@ class Riffer::Tools::Params
 
   # Defines an optional parameter.
   #
-  # name:: Symbol - the parameter name
-  # type:: Class - the expected Ruby type
-  # description:: String or nil - optional description
-  # enum:: Array or nil - optional list of allowed values
-  # default:: Object or nil - default value when not provided
-  #
-  # Returns void.
+  #: name: Symbol -- the parameter name
+  #: type: Class -- the expected Ruby type
+  #: description: String? -- optional description
+  #: enum: Array[untyped]? -- optional list of allowed values
+  #: default: untyped -- default value when not provided
+  #: return: void
   def optional(name, type, description: nil, enum: nil, default: nil)
     @parameters << Riffer::Tools::Param.new(
       name: name,
@@ -56,11 +56,10 @@ class Riffer::Tools::Params
 
   # Validates arguments against parameter definitions.
   #
-  # arguments:: Hash - the arguments to validate
-  #
-  # Returns Hash - validated arguments with defaults applied.
-  #
   # Raises Riffer::ValidationError if validation fails.
+  #
+  #: arguments: Hash[Symbol, untyped]
+  #: return: Hash[Symbol, untyped]
   def validate(arguments)
     validated = {}
     errors = []
@@ -98,7 +97,7 @@ class Riffer::Tools::Params
 
   # Converts all parameters to JSON Schema format.
   #
-  # Returns Hash - the JSON Schema representation.
+  #: return: Hash[Symbol, untyped]
   def to_json_schema
     properties = {}
     required_params = []

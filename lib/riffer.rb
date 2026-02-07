@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 require "zeitwerk"
 
@@ -26,31 +27,25 @@ module Riffer
   # Raised when tool execution times out.
   class TimeoutError < Error; end
 
-  class << self
-    # Returns the Riffer configuration.
-    #
-    # Returns Riffer::Config.
-    def config
-      @config ||= Config.new
-    end
+  #: return: Riffer::Config
+  def self.config
+    @config ||= Config.new
+  end
 
-    # Yields the configuration for block-based setup.
-    #
-    # Yields config (Riffer::Config) to the block.
-    #
-    #   Riffer.configure do |config|
-    #     config.openai.api_key = ENV['OPENAI_API_KEY']
-    #   end
-    #
-    def configure
-      yield config if block_given?
-    end
+  # Yields the configuration for block-based setup.
+  #
+  #   Riffer.configure do |config|
+  #     config.openai.api_key = ENV['OPENAI_API_KEY']
+  #   end
+  #
+  #: &block: (Riffer::Config) -> void
+  #: return: void
+  def self.configure(&block)
+    yield config if block_given?
+  end
 
-    # Returns the gem version.
-    #
-    # Returns String.
-    def version
-      VERSION
-    end
+  #: return: String
+  def self.version
+    VERSION
   end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Module for converting hashes to message objects.
 #
@@ -6,11 +7,10 @@
 module Riffer::Messages::Converter
   # Converts a hash or message object to a Riffer::Messages::Base subclass.
   #
-  # msg:: Hash or Riffer::Messages::Base - the message to convert
-  #
-  # Returns Riffer::Messages::Base subclass.
-  #
   # Raises Riffer::ArgumentError if the message format is invalid.
+  #
+  #: msg: (Hash[Symbol | String, untyped] | Riffer::Messages::Base)
+  #: return: Riffer::Messages::Base
   def convert_to_message_object(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
 
@@ -23,6 +23,8 @@ module Riffer::Messages::Converter
 
   private
 
+  #: hash: Hash[Symbol | String, untyped]
+  #: return: Riffer::Messages::Base
   def convert_hash_to_message(hash)
     role = hash[:role] || hash["role"]
     content = hash[:content] || hash["content"]

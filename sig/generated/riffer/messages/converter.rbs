@@ -1,0 +1,20 @@
+# Generated from lib/riffer/messages/converter.rb with RBS::Inline
+
+# Module for converting hashes to message objects.
+#
+# Included in Agent and Provider classes to handle message normalization.
+module Riffer::Messages::Converter
+  # Converts a hash or message object to a Riffer::Messages::Base subclass.
+  #
+  # Raises Riffer::ArgumentError if the message format is invalid.
+  #
+  # : msg: (Hash[Symbol | String, untyped] | Riffer::Messages::Base)
+  # : return: Riffer::Messages::Base
+  def convert_to_message_object: (untyped msg) -> untyped
+
+  private
+
+  # : hash: Hash[Symbol | String, untyped]
+  # : return: Riffer::Messages::Base
+  def convert_hash_to_message: (untyped hash) -> untyped
+end

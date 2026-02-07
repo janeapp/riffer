@@ -1,0 +1,48 @@
+# Generated from lib/riffer/tools/params.rb with RBS::Inline
+
+# Riffer::Tools::Params provides a DSL for defining tool parameters.
+#
+# Used within a Tool's +params+ block to define required and optional parameters.
+#
+#   params do
+#     required :city, String, description: "The city name"
+#     optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
+#   end
+class Riffer::Tools::Params
+  attr_reader parameters: Array[Riffer::Tools::Param]
+
+  # : return: void
+  def initialize: () -> untyped
+
+  # Defines a required parameter.
+  #
+  # : name: Symbol -- the parameter name
+  # : type: Class -- the expected Ruby type
+  # : description: String? -- optional description
+  # : enum: Array[untyped]? -- optional list of allowed values
+  # : return: void
+  def required: (untyped name, untyped type, ?description: untyped, ?enum: untyped) -> untyped
+
+  # Defines an optional parameter.
+  #
+  # : name: Symbol -- the parameter name
+  # : type: Class -- the expected Ruby type
+  # : description: String? -- optional description
+  # : enum: Array[untyped]? -- optional list of allowed values
+  # : default: untyped -- default value when not provided
+  # : return: void
+  def optional: (untyped name, untyped type, ?description: untyped, ?enum: untyped, ?default: untyped) -> untyped
+
+  # Validates arguments against parameter definitions.
+  #
+  # Raises Riffer::ValidationError if validation fails.
+  #
+  # : arguments: Hash[Symbol, untyped]
+  # : return: Hash[Symbol, untyped]
+  def validate: (untyped arguments) -> untyped
+
+  # Converts all parameters to JSON Schema format.
+  #
+  # : return: Hash[Symbol, untyped]
+  def to_json_schema: () -> untyped
+end

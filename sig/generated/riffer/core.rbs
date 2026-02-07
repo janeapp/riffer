@@ -1,0 +1,18 @@
+# Generated from lib/riffer/core.rb with RBS::Inline
+
+# Riffer::Core provides core functionality for the Riffer framework.
+#
+# Handles logging and configuration for the framework.
+class Riffer::Core
+  # The logger instance for Riffer.
+  attr_reader logger: Logger
+
+  # : return: void
+  def initialize: () -> untyped
+
+  # Yields self for configuration.
+  #
+  # : &block: (Riffer::Core) -> void
+  # : return: void
+  def configure: () ?{ (?) -> untyped } -> untyped
+end

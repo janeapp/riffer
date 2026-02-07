@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Namespace for streaming event types in the Riffer framework.
 #

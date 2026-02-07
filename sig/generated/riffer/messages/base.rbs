@@ -1,0 +1,25 @@
+# Generated from lib/riffer/messages/base.rb with RBS::Inline
+
+# Base class for all message types in the Riffer framework.
+#
+# Subclasses must implement the +role+ method.
+class Riffer::Messages::Base
+  # The message content.
+  attr_reader content: String
+
+  # : content: String
+  # : return: void
+  def initialize: (untyped content) -> untyped
+
+  # Converts the message to a hash.
+  #
+  # : return: Hash[Symbol, untyped]
+  def to_h: () -> untyped
+
+  # Returns the message role.
+  #
+  # Raises NotImplementedError if not implemented by subclass.
+  #
+  # : return: Symbol
+  def role: () -> untyped
+end

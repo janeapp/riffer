@@ -1,0 +1,20 @@
+# Generated from lib/riffer/stream_events/base.rb with RBS::Inline
+
+# Base class for all streaming events in the Riffer framework.
+#
+# Subclasses must implement the +to_h+ method.
+class Riffer::StreamEvents::Base
+  # The message role (typically :assistant).
+  attr_reader role: Symbol
+
+  # : role: Symbol -- the message role (defaults to :assistant)
+  # : return: void
+  def initialize: (?role: untyped) -> untyped
+
+  # Converts the event to a hash.
+  #
+  # Raises NotImplementedError if not implemented by subclass.
+  #
+  # : return: Hash[Symbol, untyped]
+  def to_h: () -> untyped
+end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents a tool execution result in a conversation.
 #
@@ -13,32 +14,23 @@
 #
 class Riffer::Messages::Tool < Riffer::Messages::Base
   # The ID of the tool call this result responds to.
-  #
-  # Returns String.
-  attr_reader :tool_call_id
+  attr_reader :tool_call_id #: String
 
   # The name of the tool that was called.
-  #
-  # Returns String.
-  attr_reader :name
+  attr_reader :name #: String
 
   # The error message if the tool execution failed.
-  #
-  # Returns String or nil.
-  attr_reader :error
+  attr_reader :error #: String?
 
   # The type of error (:unknown_tool, :validation_error, :execution_error, :timeout_error).
-  #
-  # Returns Symbol or nil.
-  attr_reader :error_type
+  attr_reader :error_type #: Symbol?
 
-  # Creates a new tool result message.
-  #
-  # content:: String - the tool execution result
-  # tool_call_id:: String - the ID of the tool call
-  # name:: String - the tool name
-  # error:: String or nil - optional error message
-  # error_type:: Symbol or nil - optional error type
+  #: content: String -- the tool execution result
+  #: tool_call_id: String -- the ID of the tool call
+  #: name: String -- the tool name
+  #: error: String? -- optional error message
+  #: error_type: Symbol? -- optional error type
+  #: return: void
   def initialize(content, tool_call_id:, name:, error: nil, error_type: nil)
     super(content)
     @tool_call_id = tool_call_id
@@ -49,19 +41,19 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
 
   # Returns true if the tool execution resulted in an error.
   #
-  # Returns Boolean.
+  #: return: bool
   def error?
     !@error.nil?
   end
 
-  # Returns :tool.
+  #: return: Symbol
   def role
     :tool
   end
 
   # Converts the message to a hash.
   #
-  # Returns Hash with message data including error info if present.
+  #: return: Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content, tool_call_id: tool_call_id, name: name}
     if error?

@@ -16,6 +16,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 - [Code Style](.agents/code-style.md) - StandardRB and comment conventions
 - [RDoc](.agents/rdoc.md) - Documentation format for public APIs
 - [Providers](.agents/providers.md) - Adding new LLM provider adapters
+- [RBS Inline](.agents/rbs-inline.md) - Type annotations with rbs-inline
 
 ## Commands
 
@@ -25,4 +26,6 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 | `bundle exec rake test` | Run tests only |
 | `bundle exec rake standard` | Check code style |
 | `bundle exec rake standard:fix` | Auto-fix style issues |
+| `bundle exec rake rbs:generate` | Generate RBS type signatures |
+| `bundle exec rake rbs:watch` | Watch and regenerate RBS files |
 | `bin/console` | Interactive console |

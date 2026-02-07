@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Configuration for the Riffer framework.
 #
@@ -15,26 +16,18 @@
 #
 class Riffer::Config
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
-  #
-  # Returns Struct.
-  attr_reader :amazon_bedrock
+  attr_reader :amazon_bedrock #: untyped
 
   # Anthropic configuration (Struct with +api_key+).
-  #
-  # Returns Struct.
-  attr_reader :anthropic
+  attr_reader :anthropic #: untyped
 
   # OpenAI configuration (Struct with +api_key+).
-  #
-  # Returns Struct.
-  attr_reader :openai
+  attr_reader :openai #: untyped
 
   # Evals configuration (Struct with +judge_model+).
-  #
-  # Returns Struct.
-  attr_reader :evals
+  attr_reader :evals #: untyped
 
-  # Initializes the configuration.
+  #: return: void
   def initialize
     @amazon_bedrock = Struct.new(:api_token, :region).new
     @anthropic = Struct.new(:api_key).new

@@ -1,0 +1,27 @@
+# Generated from lib/riffer/helpers/dependencies.rb with RBS::Inline
+
+# Helper module for lazy loading gem dependencies.
+#
+# Used by providers to load their required gems only when needed.
+module Riffer::Helpers::Dependencies
+  # Raised when a required gem cannot be loaded.
+  class LoadError < ::LoadError
+  end
+
+  # Raised when a gem version requirement is not satisfied.
+  class VersionError < ScriptError
+  end
+
+  # Declares a dependency on a gem.
+  #
+  # Verifies the gem is installed and satisfies version requirements,
+  # then requires it.
+  #
+  # Raises LoadError if the gem is not installed.
+  # Raises VersionError if the gem version does not satisfy requirements.
+  #
+  # : gem_name: String -- the gem name
+  # : req: (bool | String) -- true to require the gem, false to skip, or String to require a different lib
+  # : return: true
+  def depends_on: (untyped gem_name, ?req: untyped) -> untyped
+end

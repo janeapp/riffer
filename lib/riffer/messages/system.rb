@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents a system message (instructions) in a conversation.
 #
@@ -7,7 +8,7 @@
 #   msg.content  # => "You are a helpful assistant."
 #
 class Riffer::Messages::System < Riffer::Messages::Base
-  # Returns :system.
+  #: return: Symbol
   def role
     :system
   end

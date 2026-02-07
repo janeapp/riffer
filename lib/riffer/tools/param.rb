@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Riffer::Tools::Param represents a single parameter definition for a tool.
 #
@@ -13,18 +14,22 @@ class Riffer::Tools::Param
     FalseClass => "boolean",
     Array => "array",
     Hash => "object"
-  }.freeze
+  }.freeze #: Hash[Class, String]
 
-  attr_reader :name, :type, :required, :description, :enum, :default
+  attr_reader :name #: Symbol
+  attr_reader :type #: Class
+  attr_reader :required #: bool
+  attr_reader :description #: String?
+  attr_reader :enum #: Array[untyped]?
+  attr_reader :default #: untyped
 
-  # Creates a new parameter definition.
-  #
-  # name:: Symbol - the parameter name
-  # type:: Class - the expected Ruby type
-  # required:: Boolean - whether the parameter is required
-  # description:: String or nil - optional description for the parameter
-  # enum:: Array or nil - optional list of allowed values
-  # default:: Object or nil - optional default value for optional parameters
+  #: name: Symbol -- the parameter name
+  #: type: Class -- the expected Ruby type
+  #: required: bool -- whether the parameter is required
+  #: description: String? -- optional description for the parameter
+  #: enum: Array[untyped]? -- optional list of allowed values
+  #: default: untyped -- optional default value for optional parameters
+  #: return: void
   def initialize(name:, type:, required:, description: nil, enum: nil, default: nil)
     @name = name.to_sym
     @type = type
@@ -36,9 +41,8 @@ class Riffer::Tools::Param
 
   # Validates that a value matches the expected type.
   #
-  # value:: Object - the value to validate
-  #
-  # Returns Boolean - true if valid, false otherwise.
+  #: value: untyped
+  #: return: bool
   def valid_type?(value)
     return true if value.nil? && !required
 
@@ -51,14 +55,14 @@ class Riffer::Tools::Param
 
   # Returns the JSON Schema type name for this parameter.
   #
-  # Returns String - the JSON Schema type.
+  #: return: String
   def type_name
     TYPE_MAPPINGS[type] || type.to_s.downcase
   end
 
   # Converts this parameter to JSON Schema format.
   #
-  # Returns Hash - the JSON Schema representation.
+  #: return: Hash[Symbol, untyped]
   def to_json_schema
     schema = {type: type_name}
     schema[:description] = description if description

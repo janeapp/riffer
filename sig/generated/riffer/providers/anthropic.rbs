@@ -1,0 +1,54 @@
+# Generated from lib/riffer/providers/anthropic.rb with RBS::Inline
+
+# Anthropic provider for Claude models via the Anthropic API.
+#
+# Requires the +anthropic+ gem to be installed.
+#
+# See https://github.com/anthropics/anthropic-sdk-ruby
+class Riffer::Providers::Anthropic < Riffer::Providers::Base
+  # Initializes the Anthropic provider.
+  #
+  # : api_key: String? -- Anthropic API key
+  # : **options: untyped
+  # : return: void
+  def initialize: (?api_key: untyped, **untyped options) -> untyped
+
+  private
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String
+  # : **options: untyped
+  # : return: Riffer::Messages::Assistant
+  def perform_generate_text: (untyped messages, model: untyped, **untyped options) -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String
+  # : **options: untyped
+  # : return: Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (untyped messages, model: untyped, **untyped options) -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : return: Hash[Symbol, untyped]
+  def partition_messages: (untyped messages) -> untyped
+
+  # : message: Riffer::Messages::Assistant
+  # : return: Hash[Symbol, untyped]
+  def convert_assistant_to_anthropic_format: (untyped message) -> untyped
+
+  # : arguments: (String | Hash[String, untyped])?
+  # : return: Hash[String, untyped]
+  def parse_tool_arguments: (untyped arguments) -> untyped
+
+  # : response: untyped
+  # : return: Riffer::TokenUsage?
+  def extract_token_usage: (untyped response) -> untyped
+
+  # : response: untyped
+  # : token_usage: Riffer::TokenUsage?
+  # : return: Riffer::Messages::Assistant
+  def extract_assistant_message: (untyped response, ?untyped token_usage) -> untyped
+
+  # : tool: singleton(Riffer::Tool)
+  # : return: Hash[Symbol, untyped]
+  def convert_tool_to_anthropic_format: (untyped tool) -> untyped
+end

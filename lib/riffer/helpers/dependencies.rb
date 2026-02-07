@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Helper module for lazy loading gem dependencies.
 #
@@ -15,13 +16,12 @@ module Riffer::Helpers::Dependencies
   # Verifies the gem is installed and satisfies version requirements,
   # then requires it.
   #
-  # gem_name:: String - the gem name
-  # req:: Boolean or String - true to require the gem, false to skip, or String to require a different lib
-  #
-  # Returns true if successful.
-  #
   # Raises LoadError if the gem is not installed.
   # Raises VersionError if the gem version does not satisfy requirements.
+  #
+  #: gem_name: String -- the gem name
+  #: req: (bool | String) -- true to require the gem, false to skip, or String to require a different lib
+  #: return: true
   def depends_on(gem_name, req: true)
     gem(gem_name)
 

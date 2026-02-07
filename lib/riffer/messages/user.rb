@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents a user message in a conversation.
 #
@@ -7,7 +8,7 @@
 #   msg.content  # => "Hello!"
 #
 class Riffer::Messages::User < Riffer::Messages::Base
-  # Returns :user.
+  #: return: Symbol
   def role
     :user
   end

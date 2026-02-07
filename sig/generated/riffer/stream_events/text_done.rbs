@@ -1,0 +1,17 @@
+# Generated from lib/riffer/stream_events/text_done.rb with RBS::Inline
+
+# Represents completion of text generation during streaming.
+#
+# Emitted when the LLM has finished producing text content.
+class Riffer::StreamEvents::TextDone < Riffer::StreamEvents::Base
+  # The complete text content.
+  attr_reader content: String
+
+  # : content: String -- the complete text content
+  # : role: Symbol -- the message role (defaults to :assistant)
+  # : return: void
+  def initialize: (untyped content, ?role: untyped) -> untyped
+
+  # : return: Hash[Symbol, untyped]
+  def to_h: () -> untyped
+end

@@ -1,24 +1,29 @@
 # RDoc Documentation
 
-Use pure RDoc comments for public APIs (not YARD).
+Use RDoc prose comments for public API descriptions and RBS inline annotations for types.
 
-## Parameters
+## Parameters and Return Types
 
-Use definition list syntax (`::`):
+Use `#:` annotations for parameter types and return types on standalone lines above methods:
 
 ```ruby
 # Creates a new agent.
 #
-# name:: String - the agent name
-# options:: Hash - optional configuration
+#: name: String -- the agent name
+#: options: Hash[Symbol, untyped] -- optional configuration
+#: return: void
+def initialize(name, options: {})
 ```
 
-## Return Values
+## Attributes and Constants
 
-Document with prose:
+Use `#:` inline syntax (on the same line) for attribute and constant types:
 
 ```ruby
-# Returns String - the agent identifier.
+# The agent name.
+attr_reader :name #: String
+
+DEFAULT_TIMEOUT = 10 #: Integer
 ```
 
 ## Exceptions

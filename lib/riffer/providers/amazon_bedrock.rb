@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 require "json"
 
@@ -8,11 +9,14 @@ require "json"
 #
 # See https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
+  #: @client: untyped
+
   # Initializes the Amazon Bedrock provider.
   #
-  # api_token:: String or nil - Bearer token for API authentication
-  # region:: String or nil - AWS region
-  # options:: Hash - additional options passed to Aws::BedrockRuntime::Client
+  #: api_token: String? -- Bearer token for API authentication
+  #: region: String? -- AWS region
+  #: **options: untyped
+  #: return: void
   def initialize(api_token: nil, region: nil, **options)
     depends_on "aws-sdk-bedrockruntime"
 
@@ -33,6 +37,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   private
 
+  #: messages: Array[Riffer::Messages::Base]
+  #: model: String
+  #: **options: untyped
+  #: return: Riffer::Messages::Assistant
   def perform_generate_text(messages, model:, **options)
     partitioned_messages = partition_messages(messages)
     tools = options[:tools]
@@ -54,6 +62,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     extract_assistant_message(response, extract_token_usage(response))
   end
 
+  #: messages: Array[Riffer::Messages::Base]
+  #: model: String
+  #: **options: untyped
+  #: return: Enumerator[Riffer::StreamEvents::Base, void]
   def perform_stream_text(messages, model:, **options)
     Enumerator.new do |yielder|
       partitioned_messages = partition_messages(messages)
@@ -138,6 +150,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  #: messages: Array[Riffer::Messages::Base]
+  #: return: Hash[Symbol, untyped]
   def partition_messages(messages)
     system_prompts = []
     conversation_messages = []
@@ -161,6 +175,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     }
   end
 
+  #: conversation_messages: Array[Hash[Symbol, untyped]]
+  #: message: Riffer::Messages::Tool
+  #: return: void
   def append_tool_result(conversation_messages, message)
     tool_result = {
       tool_result: {
@@ -177,6 +194,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  #: message: Riffer::Messages::Assistant
+  #: return: Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = []
     content << {text: message.content} if message.content && !message.content.empty?
@@ -194,11 +213,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     {role: "assistant", content: content}
   end
 
+  #: arguments: (String | Hash[String, untyped])?
+  #: return: Hash[String, untyped]
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
   end
 
+  #: response: untyped
+  #: return: Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
@@ -211,6 +234,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
+  #: response: untyped
+  #: token_usage: Riffer::TokenUsage?
+  #: return: Riffer::Messages::Assistant
   def extract_assistant_message(response, token_usage = nil)
     output = response.output
     raise Riffer::Error, "No output returned from Bedrock API" if output.nil? || output.message.nil?
@@ -241,6 +267,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
+  #: tool: singleton(Riffer::Tool)
+  #: return: Hash[Symbol, untyped]
   def convert_tool_to_bedrock_format(tool)
     {
       tool_spec: {

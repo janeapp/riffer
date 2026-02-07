@@ -1,0 +1,17 @@
+# Generated from lib/riffer/stream_events/text_delta.rb with RBS::Inline
+
+# Represents an incremental text chunk during streaming.
+#
+# Emitted when the LLM produces text content incrementally.
+class Riffer::StreamEvents::TextDelta < Riffer::StreamEvents::Base
+  # The incremental text content.
+  attr_reader content: String
+
+  # : content: String -- the incremental text content
+  # : role: Symbol -- the message role (defaults to :assistant)
+  # : return: void
+  def initialize: (untyped content, ?role: untyped) -> untyped
+
+  # : return: Hash[Symbol, untyped]
+  def to_h: () -> untyped
+end

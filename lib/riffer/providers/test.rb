@@ -1,19 +1,21 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Test provider for mocking LLM responses in tests.
 #
 # No external gems required.
 class Riffer::Providers::Test < Riffer::Providers::Base
+  #: @responses: Array[Hash[Symbol, untyped]]
+  #: @current_index: Integer
+  #: @stubbed_responses: Array[Hash[Symbol, untyped]]
+
   # Array of recorded method calls for assertions.
-  #
-  # Returns Array of Hash.
-  attr_reader :calls
+  attr_reader :calls #: Array[Hash[Symbol, untyped]]
 
   # Initializes the test provider.
   #
-  # options:: Hash - optional configuration
-  #
-  # Use +:responses+ to pre-configure responses.
+  #: **options: untyped
+  #: return: void
   def initialize(**options)
     @responses = options[:responses] || []
     @current_index = 0
@@ -25,16 +27,14 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   #
   # Can be called multiple times to queue responses.
   #
-  # content:: String - the response content
-  # tool_calls:: Array of Hash - optional tool calls to include
-  # token_usage:: Riffer::TokenUsage or nil - optional token usage data to include
-  #
-  # Returns void.
-  #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
   #   provider.stub_response("Final response", token_usage: Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5))
   #
+  #: content: String -- the response content
+  #: tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls to include
+  #: token_usage: Riffer::TokenUsage? -- optional token usage data to include
+  #: return: void
   def stub_response(content, tool_calls: [], token_usage: nil)
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
       {
@@ -49,13 +49,14 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
   # Clears all stubbed responses.
   #
-  # Returns void.
+  #: return: void
   def clear_stubs
     @stubbed_responses = []
   end
 
   private
 
+  #: return: Hash[Symbol, untyped]
   def next_response
     if @stubbed_responses.any?
       @stubbed_responses.shift
@@ -68,6 +69,10 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     end
   end
 
+  #: messages: Array[Riffer::Messages::Base]
+  #: model: String?
+  #: **options: untyped
+  #: return: Riffer::Messages::Assistant
   def perform_generate_text(messages, model: nil, **options)
     @calls << {messages: messages.map(&:to_h), model: model, **options}
     response = next_response
@@ -83,6 +88,10 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     end
   end
 
+  #: messages: Array[Riffer::Messages::Base]
+  #: model: String?
+  #: **options: untyped
+  #: return: Enumerator[Riffer::StreamEvents::Base, void]
   def perform_stream_text(messages, model: nil, **options)
     @calls << {messages: messages.map(&:to_h), model: model, **options}
     response = next_response

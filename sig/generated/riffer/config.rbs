@@ -1,0 +1,25 @@
+# Generated from lib/riffer/config.rb with RBS::Inline
+
+# Configuration for the Riffer framework.
+#
+# Provides configuration options for AI providers and other settings.
+#
+#   Riffer.config.openai.api_key = "sk-..."
+#
+#   Riffer.config.amazon_bedrock.region = "us-east-1"
+#   Riffer.config.amazon_bedrock.api_token = "..."
+#
+#   Riffer.config.anthropic.api_key = "sk-ant-..."
+class Riffer::Config
+  # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
+  attr_reader amazon_bedrock: untyped
+
+  # Anthropic configuration (Struct with +api_key+).
+  attr_reader anthropic: untyped
+
+  # OpenAI configuration (Struct with +api_key+).
+  attr_reader openai: untyped
+
+  # : return: void
+  def initialize: () -> untyped
+end

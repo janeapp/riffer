@@ -54,6 +54,10 @@ Gem::Specification.new do |spec|
   # Quality / Linting
   spec.add_development_dependency "standard", "~> 1.3"
 
+  # Type checking
+  spec.add_development_dependency "rbs-inline", "~> 0.12"
+  spec.add_development_dependency "steep", "~> 1.10.0"
+
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

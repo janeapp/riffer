@@ -1,0 +1,35 @@
+# Generated from lib/riffer.rb with RBS::Inline
+
+module Riffer
+  # Base error class for Riffer.
+  class Error < StandardError
+  end
+
+  # Raised when invalid arguments are provided.
+  class ArgumentError < ::ArgumentError
+  end
+
+  # Raised when tool parameter validation fails.
+  class ValidationError < Error
+  end
+
+  # Raised when tool execution times out.
+  class TimeoutError < Error
+  end
+
+  # : return: Riffer::Config
+  def self.config: () -> untyped
+
+  # Yields the configuration for block-based setup.
+  #
+  #   Riffer.configure do |config|
+  #     config.openai.api_key = ENV['OPENAI_API_KEY']
+  #   end
+  #
+  # : &block: (Riffer::Config) -> void
+  # : return: void
+  def self.configure: () ?{ (?) -> untyped } -> untyped
+
+  # : return: String
+  def self.version: () -> untyped
+end

@@ -1,0 +1,72 @@
+# Generated from lib/riffer/tools/response.rb with RBS::Inline
+
+# Riffer::Tools::Response represents the result of a tool execution.
+#
+# All tools must return a Response object from their +call+ method.
+# Use +Response.success+ for successful results and +Response.error+ for failures.
+#
+#   class MyTool < Riffer::Tool
+#     def call(context:, **kwargs)
+#       result = perform_operation
+#       Riffer::Tools::Response.success(result)
+#     rescue MyError => e
+#       Riffer::Tools::Response.error(e.message)
+#     end
+#   end
+class Riffer::Tools::Response
+  VALID_FORMATS: Array[Symbol]
+
+  attr_reader content: String
+
+  attr_reader error_message: String?
+
+  attr_reader error_type: Symbol?
+
+  # Creates a success response.
+  #
+  # Raises Riffer::ArgumentError if format is invalid.
+  #
+  # : result: untyped -- the tool result
+  # : format: Symbol -- the format (:text or :json; default: :text)
+  # : return: Riffer::Tools::Response
+  def self.success: (untyped result, ?format: untyped) -> untyped
+
+  # Creates a success response with text format.
+  #
+  # : result: untyped -- the tool result (converted via to_s)
+  # : return: Riffer::Tools::Response
+  def self.text: (untyped result) -> untyped
+
+  # Creates a success response with JSON format.
+  #
+  # : result: untyped -- the tool result (converted via to_json)
+  # : return: Riffer::Tools::Response
+  def self.json: (untyped result) -> untyped
+
+  # Creates an error response.
+  #
+  # : message: String -- the error message
+  # : type: Symbol -- the error type (default: :execution_error)
+  # : return: Riffer::Tools::Response
+  def self.error: (untyped message, ?type: untyped) -> untyped
+
+  # : return: bool
+  def success?: () -> untyped
+
+  # : return: bool
+  def error?: () -> untyped
+
+  # Returns a hash representation of the response.
+  #
+  # : return: Hash[Symbol, untyped]
+  def to_h: () -> untyped
+
+  private
+
+  # : content: String
+  # : success: bool
+  # : error_message: String?
+  # : error_type: Symbol?
+  # : return: void
+  def initialize: (content: untyped, success: untyped, ?error_message: untyped, ?error_type: untyped) -> untyped
+end

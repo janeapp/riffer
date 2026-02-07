@@ -1,0 +1,68 @@
+# Generated from lib/riffer/providers/open_ai.rb with RBS::Inline
+
+# OpenAI provider for GPT models.
+#
+# Requires the +openai+ gem to be installed.
+class Riffer::Providers::OpenAI < Riffer::Providers::Base
+  # Initializes the OpenAI provider.
+  #
+  # : **options: untyped
+  # : return: void
+  def initialize: (**untyped options) -> untyped
+
+  private
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String
+  # : **options: untyped
+  # : return: Riffer::Messages::Assistant
+  def perform_generate_text: (untyped messages, model: untyped, **untyped options) -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String
+  # : **options: untyped
+  # : return: Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (untyped messages, model: untyped, **untyped options) -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String
+  # : options: Hash[Symbol, untyped]
+  # : return: Hash[Symbol, untyped]
+  def build_request_params: (untyped messages, untyped model, untyped options) -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : return: Array[Hash[Symbol, untyped]]
+  def convert_messages_to_openai_format: (untyped messages) -> untyped
+
+  # : message: Riffer::Messages::Assistant
+  # : return: (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
+  def convert_assistant_to_openai_format: (untyped message) -> untyped
+
+  # : response: untyped
+  # : return: Riffer::TokenUsage?
+  def extract_token_usage: (untyped response) -> untyped
+
+  # : output_items: untyped
+  # : token_usage: Riffer::TokenUsage?
+  # : return: Riffer::Messages::Assistant
+  def extract_assistant_message: (untyped output_items, ?untyped token_usage) -> untyped
+
+  # : stream: untyped
+  # : yielder: Enumerator::Yielder
+  # : return: void
+  def process_stream_events: (untyped stream, untyped yielder) -> untyped
+
+  # : event: untyped
+  # : tool_info: Hash[String, Hash[Symbol, untyped]]
+  # : return: void
+  def track_tool_info: (untyped event, untyped tool_info) -> untyped
+
+  # : event: untyped
+  # : tool_info: Hash[String, Hash[Symbol, untyped]]
+  # : return: Riffer::StreamEvents::Base?
+  def convert_event: (untyped event, ?untyped tool_info) -> untyped
+
+  # : tool: singleton(Riffer::Tool)
+  # : return: Hash[Symbol, untyped]
+  def convert_tool_to_openai_format: (untyped tool) -> untyped
+end

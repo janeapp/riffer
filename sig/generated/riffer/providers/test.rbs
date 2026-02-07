@@ -1,0 +1,51 @@
+# Generated from lib/riffer/providers/test.rb with RBS::Inline
+
+# Test provider for mocking LLM responses in tests.
+#
+# No external gems required.
+class Riffer::Providers::Test < Riffer::Providers::Base
+  # Array of recorded method calls for assertions.
+  attr_reader calls: Array[Hash[Symbol, untyped]]
+
+  # Initializes the test provider.
+  #
+  # : **options: untyped
+  # : return: void
+  def initialize: (**untyped options) -> untyped
+
+  # Stubs the next response from the provider.
+  #
+  # Can be called multiple times to queue responses.
+  #
+  #   provider.stub_response("Hello")
+  #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
+  #   provider.stub_response("Final response", token_usage: Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+  #
+  # : content: String -- the response content
+  # : tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls to include
+  # : token_usage: Riffer::TokenUsage? -- optional token usage data to include
+  # : return: void
+  def stub_response: (untyped content, ?tool_calls: untyped, ?token_usage: untyped) -> untyped
+
+  # Clears all stubbed responses.
+  #
+  # : return: void
+  def clear_stubs: () -> untyped
+
+  private
+
+  # : return: Hash[Symbol, untyped]
+  def next_response: () -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String?
+  # : **options: untyped
+  # : return: Riffer::Messages::Assistant
+  def perform_generate_text: (untyped messages, ?model: untyped, **untyped options) -> untyped
+
+  # : messages: Array[Riffer::Messages::Base]
+  # : model: String?
+  # : **options: untyped
+  # : return: Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (untyped messages, ?model: untyped, **untyped options) -> untyped
+end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 require "json"
 
@@ -17,18 +18,19 @@ require "json"
 #   end
 #
 class Riffer::Tools::Response
-  VALID_FORMATS = %i[text json].freeze
+  VALID_FORMATS = %i[text json].freeze #: Array[Symbol]
 
-  attr_reader :content, :error_message, :error_type
+  attr_reader :content #: String
+  attr_reader :error_message #: String?
+  attr_reader :error_type #: Symbol?
 
   # Creates a success response.
   #
-  # result:: Object - the tool result
-  # format:: Symbol - the format (:text or :json; default: :text)
-  #
-  # Returns Riffer::Tools::Response.
-  #
   # Raises Riffer::ArgumentError if format is invalid.
+  #
+  #: result: untyped -- the tool result
+  #: format: Symbol -- the format (:text or :json; default: :text)
+  #: return: Riffer::Tools::Response
   def self.success(result, format: :text)
     unless VALID_FORMATS.include?(format)
       raise Riffer::ArgumentError, "Invalid format: #{format}. Must be one of: #{VALID_FORMATS.join(", ")}"
@@ -40,47 +42,49 @@ class Riffer::Tools::Response
 
   # Creates a success response with text format.
   #
-  # result:: Object - the tool result (converted via to_s)
-  #
-  # Returns Riffer::Tools::Response.
+  #: result: untyped -- the tool result (converted via to_s)
+  #: return: Riffer::Tools::Response
   def self.text(result)
     success(result, format: :text)
   end
 
   # Creates a success response with JSON format.
   #
-  # result:: Object - the tool result (converted via to_json)
-  #
-  # Returns Riffer::Tools::Response.
+  #: result: untyped -- the tool result (converted via to_json)
+  #: return: Riffer::Tools::Response
   def self.json(result)
     success(result, format: :json)
   end
 
   # Creates an error response.
   #
-  # message:: String - the error message
-  # type:: Symbol - the error type (default: :execution_error)
-  #
-  # Returns Riffer::Tools::Response.
+  #: message: String -- the error message
+  #: type: Symbol -- the error type (default: :execution_error)
+  #: return: Riffer::Tools::Response
   def self.error(message, type: :execution_error)
     new(content: message, success: false, error_message: message, error_type: type)
   end
 
-  # Returns true if the response is successful.
+  #: return: bool
   def success? = @success
 
-  # Returns true if the response is an error.
+  #: return: bool
   def error? = !@success
 
   # Returns a hash representation of the response.
   #
-  # Returns Hash with :content, :error, and :error_type keys.
+  #: return: Hash[Symbol, untyped]
   def to_h
     {content: @content, error: @error_message, error_type: @error_type}
   end
 
   private
 
+  #: content: String
+  #: success: bool
+  #: error_message: String?
+  #: error_type: Symbol?
+  #: return: void
   def initialize(content:, success:, error_message: nil, error_type: nil)
     @content = content
     @success = success

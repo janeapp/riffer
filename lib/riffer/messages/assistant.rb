@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents an assistant (LLM) message in a conversation.
 #
@@ -13,34 +14,29 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # Array of tool calls requested by the assistant.
   #
   # Each tool call is a Hash with +:id+, +:call_id+, +:name+, and +:arguments+ keys.
-  #
-  # Returns Array of Hash.
-  attr_reader :tool_calls
+  attr_reader :tool_calls #: Array[Hash[Symbol, untyped]]
 
   # Token usage data for this response.
-  #
-  # Returns Riffer::TokenUsage or nil.
-  attr_reader :token_usage
+  attr_reader :token_usage #: Riffer::TokenUsage?
 
-  # Creates a new assistant message.
-  #
-  # content:: String - the message content
-  # tool_calls:: Array of Hash - optional tool calls
-  # token_usage:: Riffer::TokenUsage or nil - optional token usage data
+  #: content: String
+  #: tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls
+  #: token_usage: Riffer::TokenUsage? -- optional token usage data
+  #: return: void
   def initialize(content, tool_calls: [], token_usage: nil)
     super(content)
     @tool_calls = tool_calls
     @token_usage = token_usage
   end
 
-  # Returns :assistant.
+  #: return: Symbol
   def role
     :assistant
   end
 
   # Converts the message to a hash.
   #
-  # Returns Hash with +:role+, +:content+, and optionally +:tool_calls+ and +:token_usage+.
+  #: return: Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content}
     hash[:tool_calls] = tool_calls unless tool_calls.empty?

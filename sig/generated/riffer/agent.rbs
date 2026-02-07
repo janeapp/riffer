@@ -1,0 +1,173 @@
+# Generated from lib/riffer/agent.rb with RBS::Inline
+
+# Riffer::Agent is the base class for all agents in the Riffer framework.
+#
+# Provides orchestration for LLM calls, tool use, and message management.
+# Subclass this to create your own agents.
+#
+# See Riffer::Messages and Riffer::Providers.
+#
+#   class MyAgent < Riffer::Agent
+#     model 'openai/gpt-4o'
+#     instructions 'You are a helpful assistant.'
+#   end
+#
+#   agent = MyAgent.new
+#   agent.generate('Hello!')
+class Riffer::Agent
+  include Riffer::Messages::Converter
+
+  extend Riffer::Helpers::ClassNameConverter
+
+  extend Riffer::Helpers::Validations
+
+  # Gets or sets the agent identifier.
+  #
+  # : value: String? -- the identifier to set, or nil to get
+  # : return: String
+  def self.identifier: (?untyped value) -> untyped
+
+  # Gets or sets the model string (e.g., "openai/gpt-4o").
+  #
+  # : model_string: String? -- the model string to set, or nil to get
+  # : return: String?
+  def self.model: (?untyped model_string) -> untyped
+
+  # Gets or sets the agent instructions.
+  #
+  # : instructions_text: String? -- the instructions to set, or nil to get
+  # : return: String?
+  def self.instructions: (?untyped instructions_text) -> untyped
+
+  # Gets or sets provider options passed to the provider client.
+  #
+  # : options: Hash[Symbol, untyped]? -- the options to set, or nil to get
+  # : return: Hash[Symbol, untyped]
+  def self.provider_options: (?untyped options) -> untyped
+
+  # Gets or sets model options passed to generate_text/stream_text.
+  #
+  # : options: Hash[Symbol, untyped]? -- the options to set, or nil to get
+  # : return: Hash[Symbol, untyped]
+  def self.model_options: (?untyped options) -> untyped
+
+  # Gets or sets the tools used by this agent.
+  #
+  # : tools_or_lambda: (Array[singleton(Riffer::Tool)] | Proc)? -- tools array or lambda returning tools
+  # : return: (Array[singleton(Riffer::Tool)] | Proc)?
+  def self.uses_tools: (?untyped tools_or_lambda) -> untyped
+
+  # Finds an agent class by identifier.
+  #
+  # : identifier: String -- the identifier to search for
+  # : return: singleton(Riffer::Agent)?
+  def self.find: (untyped identifier) -> untyped
+
+  # Returns all agent subclasses.
+  #
+  # : return: Array[singleton(Riffer::Agent)]
+  def self.all: () -> untyped
+
+  # Generates a response using a new agent instance.
+  #
+  # See #generate for parameters and return value.
+  #
+  # : *args: untyped
+  # : **kwargs: untyped
+  # : return: String
+  def self.generate: () -> untyped
+
+  # Streams a response using a new agent instance.
+  #
+  # See #stream for parameters and return value.
+  #
+  # : *args: untyped
+  # : **kwargs: untyped
+  # : return: Enumerator[Riffer::StreamEvents::Base, void]
+  def self.stream: () -> untyped
+
+  # The message history for the agent.
+  attr_reader messages: Array[Riffer::Messages::Base]
+
+  # Cumulative token usage across all LLM calls.
+  attr_reader token_usage: Riffer::TokenUsage?
+
+  # Initializes a new agent.
+  #
+  # Raises Riffer::ArgumentError if the configured model string is invalid
+  # (must be "provider/model" format).
+  #
+  # : return: void
+  def initialize: () -> untyped
+
+  # Generates a response from the agent.
+  #
+  # : prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
+  # : tool_context: untyped -- optional context object passed to all tool calls
+  # : return: String
+  def generate: (untyped prompt_or_messages, ?tool_context: untyped) -> untyped
+
+  # Streams a response from the agent.
+  #
+  # : prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
+  # : tool_context: untyped -- optional context object passed to all tool calls
+  # : return: Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (untyped prompt_or_messages, ?tool_context: untyped) -> untyped
+
+  # Registers a callback to be invoked when messages are added during generation.
+  #
+  # Raises Riffer::ArgumentError if no block is given.
+  #
+  # : &block: (Riffer::Messages::Base) -> void
+  # : return: self
+  def on_message: () ?{ (?) -> untyped } -> untyped
+
+  private
+
+  # : message: Riffer::Messages::Base
+  # : return: void
+  def add_message: (untyped message) -> untyped
+
+  # : usage: Riffer::TokenUsage?
+  # : return: void
+  def track_token_usage: (untyped usage) -> untyped
+
+  # : prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
+  # : return: void
+  def initialize_messages: (untyped prompt_or_messages) -> untyped
+
+  # : return: Riffer::Messages::Assistant
+  def call_llm: () -> untyped
+
+  # : return: Enumerator[Riffer::StreamEvents::Base, void]
+  def call_llm_stream: () -> untyped
+
+  # : return: Riffer::Providers::Base
+  def provider_instance: () -> untyped
+
+  # : response: Riffer::Messages::Assistant
+  # : return: bool
+  def has_tool_calls?: (untyped response) -> untyped
+
+  # : response: Riffer::Messages::Assistant
+  # : return: void
+  def execute_tool_calls: (untyped response) -> untyped
+
+  # : tool_call: Hash[Symbol, untyped]
+  # : return: Riffer::Tools::Response
+  def execute_tool_call: (untyped tool_call) -> untyped
+
+  # : return: Array[singleton(Riffer::Tool)]
+  def resolved_tools: () -> untyped
+
+  # : name: String
+  # : return: singleton(Riffer::Tool)?
+  def find_tool_class: (untyped name) -> untyped
+
+  # : arguments: (String | Hash[String, untyped])?
+  # : return: Hash[Symbol, untyped]
+  def parse_tool_arguments: (untyped arguments) -> untyped
+
+  # : return: String
+  def extract_final_response: () -> untyped
+end

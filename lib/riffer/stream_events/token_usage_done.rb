@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents completion of token usage tracking during streaming.
 #
@@ -10,22 +11,17 @@
 #
 class Riffer::StreamEvents::TokenUsageDone < Riffer::StreamEvents::Base
   # The token usage data for this response.
-  #
-  # Returns Riffer::TokenUsage.
-  attr_reader :token_usage
+  attr_reader :token_usage #: Riffer::TokenUsage
 
-  # Creates a new token usage done event.
-  #
-  # token_usage:: Riffer::TokenUsage - the token usage data
-  # role:: Symbol - the message role (defaults to :assistant)
+  #: token_usage: Riffer::TokenUsage -- the token usage data
+  #: role: Symbol -- the message role (defaults to :assistant)
+  #: return: void
   def initialize(token_usage:, role: :assistant)
     super(role: role)
     @token_usage = token_usage
   end
 
-  # Converts the event to a hash.
-  #
-  # Returns Hash with +:role+ and +:token_usage+ keys.
+  #: return: Hash[Symbol, untyped]
   def to_h
     {role: @role, token_usage: @token_usage.to_h}
   end
