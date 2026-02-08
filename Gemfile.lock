@@ -9,7 +9,7 @@ GEM
   specs:
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.17.0)
+    anthropic (1.19.0)
       cgi
       connection_pool
     ast (2.4.3)
@@ -127,7 +127,7 @@ PLATFORMS
   x86_64-linux-gnu
 
 DEPENDENCIES
-  anthropic (~> 1.17.0)
+  anthropic (~> 1.19.0)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
   irb
