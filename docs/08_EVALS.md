@@ -36,7 +36,7 @@ class MyAgent < Riffer::Agent
 end
 
 # 4. Run evals
-result = MyAgent.run_evalinput: "What is Ruby?")
+result = MyAgent.run_eval(input: "What is Ruby?")
 result.passed?         # => true/false
 result.aggregate_score # => 0.91
 ```
