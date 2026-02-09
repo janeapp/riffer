@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents a metric configuration with thresholds.
 #
@@ -14,31 +15,24 @@
 #
 class Riffer::Evals::Metric
   # The identifier of the evaluator to use.
-  #
-  # Returns String.
-  attr_reader :evaluator_identifier
+  attr_reader :evaluator_identifier #: String
 
   # Minimum acceptable score (for higher_is_better evaluators).
-  #
-  # Returns Float or nil.
-  attr_reader :min
+  attr_reader :min #: Float?
 
   # Maximum acceptable score (for lower_is_better evaluators).
-  #
-  # Returns Float or nil.
-  attr_reader :max
+  attr_reader :max #: Float?
 
   # Weight for aggregate scoring (default: 1.0).
-  #
-  # Returns Float.
-  attr_reader :weight
+  attr_reader :weight #: Float
 
   # Initializes a new metric.
   #
-  # evaluator_identifier:: String - the evaluator to use
-  # min:: Float or nil - minimum score threshold
-  # max:: Float or nil - maximum score threshold
-  # weight:: Float - weight for aggregation (default: 1.0)
+  #: evaluator_identifier: String -- the evaluator to use
+  #: min: Float? -- minimum score threshold
+  #: max: Float? -- maximum score threshold
+  #: weight: Float -- weight for aggregation (default: 1.0)
+  #: return: void
   def initialize(evaluator_identifier:, min: nil, max: nil, weight: 1.0)
     @evaluator_identifier = evaluator_identifier.to_s
     @min = min&.to_f
@@ -48,16 +42,15 @@ class Riffer::Evals::Metric
 
   # Returns the evaluator class for this metric.
   #
-  # Returns Class or nil.
+  #: return: singleton(Riffer::Evals::Evaluator)?
   def evaluator_class
     Riffer::Evals::Evaluators::Repository.find(evaluator_identifier)
   end
 
   # Checks if a result passes this metric's thresholds.
   #
-  # result:: Riffer::Evals::Result - the evaluation result to check
-  #
-  # Returns Boolean.
+  #: result: Riffer::Evals::Result -- the evaluation result to check
+  #: return: bool
   def passes?(result)
     return false if min && result.score < min
     return false if max && result.score > max
@@ -66,7 +59,7 @@ class Riffer::Evals::Metric
 
   # Returns a hash representation of the metric.
   #
-  # Returns Hash.
+  #: return: Hash[Symbol, untyped]
   def to_h
     {
       evaluator_identifier: evaluator_identifier,

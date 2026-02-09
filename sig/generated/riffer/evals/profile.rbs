@@ -1,0 +1,69 @@
+# Generated from lib/riffer/evals/profile.rb with RBS::Inline
+
+# Module factory providing the ai_evals DSL for defining eval profiles.
+#
+# Include this module in a module to create an eval profile that can be
+# included in agents.
+#
+#   module EvalProfiles::QualityEvals
+#     include Riffer::Evals::Profile
+#
+#     ai_evals do
+#       metric :answer_relevancy, min: 0.85
+#       metric :hallucination, max: 0.10
+#     end
+#   end
+#
+#   class MyAgent < Riffer::Agent
+#     include EvalProfiles::QualityEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What is Ruby?")
+#   result.passed?  # => true/false
+module Riffer::Evals::Profile
+  # : base: Module
+  # : return: void
+  def self.included: (untyped base) -> untyped
+
+  # DSL builder for configuring metrics within ai_evals block.
+  class Builder
+    # The configured metrics.
+    attr_reader metrics: Array[Riffer::Evals::Metric]
+
+    # : return: void
+    def initialize: () -> untyped
+
+    # Defines a metric with thresholds.
+    #
+    # : identifier: (Symbol | String) -- the evaluator identifier
+    # : min: Float? -- minimum score threshold
+    # : max: Float? -- maximum score threshold
+    # : weight: Float -- weight for aggregation (default: 1.0)
+    # : return: void
+    def metric: (untyped identifier, ?min: untyped, ?max: untyped, ?weight: untyped) -> untyped
+  end
+
+  module ClassMethods
+    # Defines the eval metrics for this profile.
+    #
+    # : &block: () -> void
+    # : return: void
+    def ai_evals: () ?{ (?) -> untyped } -> untyped
+
+    # Returns the configured metrics.
+    #
+    # : return: Array[Riffer::Evals::Metric]
+    def eval_metrics: () -> untyped
+  end
+
+  module AgentClassMethods
+    # Runs evaluations against the agent.
+    #
+    # : input: String -- the input to send to the agent
+    # : context: Hash[Symbol, untyped]? -- optional context for evaluation
+    # : tool_context: Hash[Symbol, untyped]? -- optional context passed to tools during generation
+    # : return: Riffer::Evals::RunResult
+    def run_eval: (input: untyped, ?context: untyped, ?tool_context: untyped) -> untyped
+  end
+end

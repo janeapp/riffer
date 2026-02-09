@@ -1,0 +1,29 @@
+# Generated from lib/riffer/evals/evaluators/answer_relevancy.rb with RBS::Inline
+
+# Evaluates how well a response addresses the input question.
+#
+# Uses LLM-as-judge to assess whether the response is relevant,
+# on-topic, and directly addresses what was asked.
+#
+#   evaluator = Riffer::Evals::Evaluators::AnswerRelevancy.new
+#   result = evaluator.evaluate(
+#     input: "What is the capital of France?",
+#     output: "The capital of France is Paris."
+#   )
+#   result.score  # => 0.95
+class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
+  SYSTEM_PROMPT: String
+
+  # : input: String -- the input that was given to the agent
+  # : output: String -- the output produced by the agent
+  # : context: Hash[Symbol, untyped]? -- optional context
+  # : return: Riffer::Evals::Result
+  def evaluate: (input: untyped, output: untyped, ?context: untyped) -> untyped
+
+  private
+
+  # : input: String
+  # : output: String
+  # : return: String
+  def build_user_prompt: (input: untyped, output: untyped) -> untyped
+end

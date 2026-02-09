@@ -1,0 +1,61 @@
+# Generated from lib/riffer/evals/judge.rb with RBS::Inline
+
+# Executes LLM-as-judge evaluations using the provider infrastructure.
+#
+# The Judge class handles calling an LLM to evaluate agent outputs
+# and parsing the structured response. It uses tool calling internally
+# to get guaranteed structured output from the judge model.
+#
+#   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-opus-4-5-20251101")
+#   result = judge.evaluate(
+#     system_prompt: "You are an evaluation assistant...",
+#     user_prompt: "Evaluate this response..."
+#   )
+#   result[:score]  # => 0.85
+#   result[:reason] # => "The response is relevant..."
+class Riffer::Evals::Judge
+  # Internal tool for structured evaluation output.
+  class EvaluationTool < Riffer::Tool
+    # : context: Hash[Symbol, untyped]?
+    # : score: Float
+    # : reason: String
+    # : return: Riffer::Tools::Response
+    def call: (context: untyped, score: untyped, reason: untyped) -> untyped
+  end
+
+  # The model string (provider/model format).
+  attr_reader model: String
+
+  # Initializes a new judge.
+  #
+  # : model: String -- the model to use (provider/model format)
+  # : provider_options: Hash[Symbol, untyped] -- options passed to the provider
+  # : return: void
+  def initialize: (model: untyped, ?provider_options: untyped) -> untyped
+
+  # Evaluates using the configured LLM.
+  #
+  # Raises Riffer::ArgumentError if both messages and system_prompt/user_prompt are provided,
+  # or if user_prompt is missing when messages is not provided.
+  #
+  # : messages: Array[Hash[Symbol, untyped]]? -- array of message hashes
+  # : system_prompt: String? -- the system prompt for the judge
+  # : user_prompt: String? -- the user prompt containing the evaluation request
+  # : return: Hash[Symbol, untyped]
+  def evaluate: (?messages: untyped, ?system_prompt: untyped, ?user_prompt: untyped) -> untyped
+
+  private
+
+  # : return: Riffer::Providers::Base
+  def provider_instance: () -> untyped
+
+  # : return: String
+  def provider_name: () -> untyped
+
+  # : return: String
+  def model_name: () -> untyped
+
+  # : response: Riffer::Messages::Assistant
+  # : return: Hash[Symbol, untyped]
+  def parse_tool_response: (untyped response) -> untyped
+end

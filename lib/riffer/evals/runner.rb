@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Orchestrates running multiple evaluators against agent output.
 #
@@ -14,24 +15,22 @@
 #
 class Riffer::Evals::Runner
   # The metrics to evaluate.
-  #
-  # Returns Array of Riffer::Evals::Metric.
-  attr_reader :metrics
+  attr_reader :metrics #: Array[Riffer::Evals::Metric]
 
   # Initializes a new runner.
   #
-  # metrics:: Array of Riffer::Evals::Metric - the metrics to evaluate
+  #: metrics: Array[Riffer::Evals::Metric] -- the metrics to evaluate
+  #: return: void
   def initialize(metrics:)
     @metrics = metrics
   end
 
   # Runs all evaluators and collects results.
   #
-  # input:: String - the input given to the agent
-  # output:: String - the output produced by the agent
-  # context:: Hash or nil - optional context (e.g., ground_truth)
-  #
-  # Returns Riffer::Evals::RunResult.
+  #: input: String -- the input given to the agent
+  #: output: String -- the output produced by the agent
+  #: context: Hash[Symbol, untyped]? -- optional context (e.g., ground_truth)
+  #: return: Riffer::Evals::RunResult
   def run(input:, output:, context: nil)
     results = metrics.map do |metric|
       evaluator_class = metric.evaluator_class

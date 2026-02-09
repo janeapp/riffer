@@ -1,0 +1,77 @@
+# Generated from lib/riffer/evals/evaluator.rb with RBS::Inline
+
+# Base class for all evaluators in the Riffer framework.
+#
+# Provides a DSL for defining evaluator metadata and the evaluate method.
+# Subclasses must implement the +evaluate+ method.
+#
+# See Riffer::Evals::Evaluators.
+#
+#   class MyEvaluator < Riffer::Evals::Evaluator
+#     identifier "my_evaluator"
+#     description "Evaluates response quality"
+#     higher_is_better true
+#     judge_model "anthropic/claude-opus-4-5-20251101"
+#
+#     def evaluate(input:, output:, context: nil)
+#       evaluation = judge.evaluate(
+#         system_prompt: "...",
+#         user_prompt: "..."
+#       )
+#       result(score: evaluation[:score], reason: evaluation[:reason])
+#     end
+#   end
+class Riffer::Evals::Evaluator
+  include Riffer::Helpers::ClassNameConverter
+
+  # Gets or sets the evaluator identifier.
+  #
+  # : value: String? -- the identifier to set, or nil to get
+  # : return: String
+  def self.identifier: (?untyped value) -> untyped
+
+  # Gets or sets the evaluator description.
+  #
+  # : value: String? -- the description to set, or nil to get
+  # : return: String?
+  def self.description: (?untyped value) -> untyped
+
+  # Gets or sets whether higher scores are better.
+  #
+  # : value: bool? -- the value to set, or nil to get
+  # : return: bool
+  def self.higher_is_better: (?untyped value) -> untyped
+
+  # Gets or sets the judge model for LLM-as-judge evaluations.
+  #
+  # : value: String? -- the model to set (provider/model format), or nil to get
+  # : return: String?
+  def self.judge_model: (?untyped value) -> untyped
+
+  # : name: String?
+  # : return: String?
+  private def self.class_name_to_identifier: (untyped name) -> untyped
+
+  # Evaluates an input/output pair.
+  #
+  # Raises NotImplementedError if not implemented by subclass.
+  #
+  # : input: String -- the input that was given to the agent
+  # : output: String -- the output produced by the agent
+  # : context: Hash[Symbol, untyped]? -- optional context (e.g., ground_truth)
+  # : return: Riffer::Evals::Result
+  def evaluate: (input: untyped, output: untyped, ?context: untyped) -> untyped
+
+  # Returns a Judge instance configured for this evaluator.
+  #
+  # : return: Riffer::Evals::Judge
+  def judge: () -> untyped
+
+  # Helper to build a Result object.
+  #
+  # : score: Float -- the evaluation score (0.0 to 1.0)
+  # : reason: String? -- optional explanation
+  # : metadata: Hash[Symbol, untyped] -- optional additional data
+  # : return: Riffer::Evals::Result
+  def result: (score: untyped, ?reason: untyped, ?metadata: untyped) -> untyped
+end

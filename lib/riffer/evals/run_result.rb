@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents the complete result of an evaluation run.
 #
@@ -17,38 +18,31 @@
 #   run_result.failures         # => [result1] (results that failed thresholds)
 #
 class Riffer::Evals::RunResult
+  #: @failures: Array[Riffer::Evals::Result]?
+
   # The input that was evaluated.
-  #
-  # Returns String.
-  attr_reader :input
+  attr_reader :input #: String
 
   # The output that was evaluated.
-  #
-  # Returns String.
-  attr_reader :output
+  attr_reader :output #: String
 
   # The context used during evaluation.
-  #
-  # Returns Hash or nil.
-  attr_reader :context
+  attr_reader :context #: Hash[Symbol, untyped]?
 
   # Individual evaluation results.
-  #
-  # Returns Array of Riffer::Evals::Result.
-  attr_reader :results
+  attr_reader :results #: Array[Riffer::Evals::Result]
 
   # The metrics that were evaluated.
-  #
-  # Returns Array of Riffer::Evals::Metric.
-  attr_reader :metrics
+  attr_reader :metrics #: Array[Riffer::Evals::Metric]
 
   # Initializes a new run result.
   #
-  # input:: String - the input that was evaluated
-  # output:: String - the output that was evaluated
-  # context:: Hash or nil - the evaluation context
-  # results:: Array of Riffer::Evals::Result - individual results
-  # metrics:: Array of Riffer::Evals::Metric - the metrics evaluated
+  #: input: String -- the input that was evaluated
+  #: output: String -- the output that was evaluated
+  #: context: Hash[Symbol, untyped]? -- the evaluation context
+  #: results: Array[Riffer::Evals::Result] -- individual results
+  #: metrics: Array[Riffer::Evals::Metric] -- the metrics evaluated
+  #: return: void
   def initialize(input:, output:, context:, results:, metrics:)
     @input = input
     @output = output
@@ -59,14 +53,14 @@ class Riffer::Evals::RunResult
 
   # Checks if all metrics passed their thresholds.
   #
-  # Returns Boolean.
+  #: return: bool
   def passed?
     failures.empty?
   end
 
   # Returns results that failed their metric thresholds.
   #
-  # Returns Array of Riffer::Evals::Result.
+  #: return: Array[Riffer::Evals::Result]
   def failures
     @failures ||= results.select.with_index do |result, index|
       metric = metrics[index]
@@ -80,7 +74,7 @@ class Riffer::Evals::RunResult
   # For evaluators where lower is better (e.g., toxicity), the score is
   # inverted (1 - score) before aggregation.
   #
-  # Returns Float.
+  #: return: Float
   def aggregate_score
     return 0.0 if results.empty?
 
@@ -98,7 +92,7 @@ class Riffer::Evals::RunResult
 
   # Returns a hash representation of the run result.
   #
-  # Returns Hash.
+  #: return: Hash[Symbol, untyped]
   def to_h
     {
       input: input,

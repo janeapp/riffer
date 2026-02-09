@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Module factory providing the ai_evals DSL for defining eval profiles.
 #
@@ -23,6 +24,8 @@
 #   result.passed?  # => true/false
 #
 module Riffer::Evals::Profile
+  #: base: Module
+  #: return: void
   def self.included(base)
     base.extend(ClassMethods)
 
@@ -38,22 +41,20 @@ module Riffer::Evals::Profile
   # DSL builder for configuring metrics within ai_evals block.
   class Builder
     # The configured metrics.
-    #
-    # Returns Array of Riffer::Evals::Metric.
-    attr_reader :metrics
+    attr_reader :metrics #: Array[Riffer::Evals::Metric]
 
+    #: return: void
     def initialize
       @metrics = []
     end
 
     # Defines a metric with thresholds.
     #
-    # identifier:: Symbol or String - the evaluator identifier
-    # min:: Float or nil - minimum score threshold
-    # max:: Float or nil - maximum score threshold
-    # weight:: Float - weight for aggregation (default: 1.0)
-    #
-    # Returns void.
+    #: identifier: (Symbol | String) -- the evaluator identifier
+    #: min: Float? -- minimum score threshold
+    #: max: Float? -- maximum score threshold
+    #: weight: Float -- weight for aggregation (default: 1.0)
+    #: return: void
     def metric(identifier, min: nil, max: nil, weight: 1.0)
       metrics << Riffer::Evals::Metric.new(
         evaluator_identifier: identifier,
@@ -67,9 +68,8 @@ module Riffer::Evals::Profile
   module ClassMethods
     # Defines the eval metrics for this profile.
     #
-    # Yields to a block where metrics can be defined using the metric method.
-    #
-    # Returns void.
+    #: &block: () -> void
+    #: return: void
     def ai_evals(&block)
       builder = Builder.new
       builder.instance_eval(&block)
@@ -78,7 +78,7 @@ module Riffer::Evals::Profile
 
     # Returns the configured metrics.
     #
-    # Returns Array of Riffer::Evals::Metric.
+    #: return: Array[Riffer::Evals::Metric]
     def eval_metrics
       @eval_metrics || []
     end
@@ -87,11 +87,10 @@ module Riffer::Evals::Profile
   module AgentClassMethods
     # Runs evaluations against the agent.
     #
-    # input:: String - the input to send to the agent
-    # context:: Hash or nil - optional context for evaluation (e.g., ground_truth)
-    # tool_context:: Object or nil - optional context passed to tools during generation
-    #
-    # Returns Riffer::Evals::RunResult.
+    #: input: String -- the input to send to the agent
+    #: context: Hash[Symbol, untyped]? -- optional context for evaluation
+    #: tool_context: Hash[Symbol, untyped]? -- optional context passed to tools during generation
+    #: return: Riffer::Evals::RunResult
     def run_eval(input:, context: nil, tool_context: nil)
       profile = @eval_profile
       raise Riffer::ArgumentError, "No eval profile configured" unless profile

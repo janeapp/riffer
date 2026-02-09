@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Namespace for built-in evaluators and the evaluator repository.
 #
@@ -20,26 +21,26 @@ module Riffer::Evals::Evaluators
     # Built-in evaluators (always available).
     BUILT_IN = {
       answer_relevancy: -> { Riffer::Evals::Evaluators::AnswerRelevancy }
-    }.freeze
+    }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Evals::Evaluator)]
+
+    #: self.@custom: Hash[Symbol, ^() -> singleton(Riffer::Evals::Evaluator)]
 
     @custom = {}
 
     class << self
       # Registers a custom evaluator class with an identifier.
       #
-      # identifier:: String or Symbol - the identifier to register
-      # evaluator_class:: Class - the evaluator class
-      #
-      # Returns void.
+      #: identifier: (String | Symbol) -- the identifier to register
+      #: evaluator_class: singleton(Riffer::Evals::Evaluator) -- the evaluator class
+      #: return: void
       def register(identifier, evaluator_class)
         @custom[identifier.to_sym] = -> { evaluator_class }
       end
 
       # Finds an evaluator class by identifier.
       #
-      # identifier:: String or Symbol - the identifier to look up
-      #
-      # Returns Class or nil.
+      #: identifier: (String | Symbol) -- the identifier to look up
+      #: return: singleton(Riffer::Evals::Evaluator)?
       def find(identifier)
         id = identifier.to_sym
         (@custom[id] || BUILT_IN[id])&.call
@@ -47,14 +48,14 @@ module Riffer::Evals::Evaluators
 
       # Returns all registered evaluators (built-in and custom).
       #
-      # Returns Hash mapping identifiers to evaluator classes.
+      #: return: Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
       def all
         BUILT_IN.merge(@custom).transform_values(&:call)
       end
 
       # Clears custom registrations (for testing). Built-ins remain.
       #
-      # Returns void.
+      #: return: void
       def clear
         @custom = {}
       end

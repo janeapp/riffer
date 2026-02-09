@@ -1,0 +1,54 @@
+# Generated from lib/riffer/evals/result.rb with RBS::Inline
+
+# Represents the result of a single evaluation.
+#
+# Contains the score, reason, and metadata from running an evaluator.
+#
+#   result = Riffer::Evals::Result.new(
+#     evaluator: "answer_relevancy",
+#     score: 0.85,
+#     reason: "The response addresses the question directly.",
+#     higher_is_better: true
+#   )
+#
+#   result.score           # => 0.85
+#   result.evaluator       # => "answer_relevancy"
+#   result.higher_is_better # => true
+class Riffer::Evals::Result
+  # The identifier of the evaluator that produced this result.
+  attr_reader evaluator: String
+
+  # The evaluation score (0.0 to 1.0).
+  attr_reader score: Float
+
+  # Human-readable explanation of the score.
+  attr_reader reason: String?
+
+  # Additional metadata from the evaluation.
+  attr_reader metadata: Hash[Symbol, untyped]
+
+  # Whether higher scores are better for this evaluator.
+  attr_reader higher_is_better: bool
+
+  # Initializes a new evaluation result.
+  #
+  # Raises Riffer::ArgumentError if score is not between 0.0 and 1.0.
+  #
+  # : evaluator: String -- the evaluator identifier
+  # : score: Float -- the score (0.0 to 1.0)
+  # : reason: String? -- optional explanation
+  # : metadata: Hash[Symbol, untyped] -- optional additional data
+  # : higher_is_better: bool -- whether higher is better (default: true)
+  # : return: void
+  def initialize: (evaluator: untyped, score: untyped, ?reason: untyped, ?metadata: untyped, ?higher_is_better: untyped) -> untyped
+
+  # Returns a hash representation of the result.
+  #
+  # : return: Hash[Symbol, untyped]
+  def to_h: () -> untyped
+
+  private
+
+  # : return: void
+  def validate_score!: () -> untyped
+end

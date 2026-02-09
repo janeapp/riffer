@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Evaluates how well a response addresses the input question.
 #
@@ -17,7 +18,7 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
   description "Evaluates how well the response addresses the input question"
   higher_is_better true
 
-  SYSTEM_PROMPT = <<~PROMPT
+  SYSTEM_PROMPT = <<~PROMPT #: String
     You are an evaluation assistant that assesses answer relevancy.
 
     Your task is to evaluate how well a response addresses the given input/question.
@@ -37,6 +38,10 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
       - 0.0 = Completely irrelevant
   PROMPT
 
+  #: input: String -- the input that was given to the agent
+  #: output: String -- the output produced by the agent
+  #: context: Hash[Symbol, untyped]? -- optional context
+  #: return: Riffer::Evals::Result
   def evaluate(input:, output:, context: nil)
     user_prompt = build_user_prompt(input: input, output: output)
     evaluation = judge.evaluate(system_prompt: SYSTEM_PROMPT, user_prompt: user_prompt)
@@ -45,6 +50,9 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
 
   private
 
+  #: input: String
+  #: output: String
+  #: return: String
   def build_user_prompt(input:, output:)
     <<~PROMPT
       Input/Question:
