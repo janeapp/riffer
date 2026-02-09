@@ -10,15 +10,50 @@
 #   Riffer.config.amazon_bedrock.api_token = "..."
 #
 #   Riffer.config.anthropic.api_key = "sk-ant-..."
+#
+#   Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
 class Riffer::Config
+  class AmazonBedrock < Struct[untyped]
+    attr_accessor api_token(): untyped
+
+    attr_accessor region(): untyped
+
+    def self.new: (?api_token: untyped, ?region: untyped) -> instance
+                | ({ ?api_token: untyped, ?region: untyped }) -> instance
+  end
+
+  class Anthropic < Struct[untyped]
+    attr_accessor api_key(): untyped
+
+    def self.new: (?api_key: untyped) -> instance
+                | ({ ?api_key: untyped }) -> instance
+  end
+
+  class OpenAI < Struct[untyped]
+    attr_accessor api_key(): untyped
+
+    def self.new: (?api_key: untyped) -> instance
+                | ({ ?api_key: untyped }) -> instance
+  end
+
+  class Evals < Struct[untyped]
+    attr_accessor judge_model(): untyped
+
+    def self.new: (?judge_model: untyped) -> instance
+                | ({ ?judge_model: untyped }) -> instance
+  end
+
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
-  attr_reader amazon_bedrock: untyped
+  attr_reader amazon_bedrock: Riffer::Config::AmazonBedrock
 
   # Anthropic configuration (Struct with +api_key+).
-  attr_reader anthropic: untyped
+  attr_reader anthropic: Riffer::Config::Anthropic
 
   # OpenAI configuration (Struct with +api_key+).
-  attr_reader openai: untyped
+  attr_reader openai: Riffer::Config::OpenAI
+
+  # Evals configuration (Struct with +judge_model+).
+  attr_reader evals: Riffer::Config::Evals
 
   # : return: void
   def initialize: () -> untyped

@@ -11,16 +11,16 @@
 #   msg.tool_calls  # => []
 #
 class Riffer::Messages::Assistant < Riffer::Messages::Base
+  ToolCall = Struct.new(:id, :call_id, :name, :arguments, keyword_init: true)
+
   # Array of tool calls requested by the assistant.
-  #
-  # Each tool call is a Hash with +:id+, +:call_id+, +:name+, and +:arguments+ keys.
-  attr_reader :tool_calls #: Array[Hash[Symbol, untyped]]
+  attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
 
   # Token usage data for this response.
   attr_reader :token_usage #: Riffer::TokenUsage?
 
   #: content: String
-  #: tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls
+  #: tool_calls: Array[Riffer::Messages::Assistant::ToolCall] -- optional tool calls
   #: token_usage: Riffer::TokenUsage? -- optional token usage data
   #: return: void
   def initialize(content, tool_calls: [], token_usage: nil)
@@ -39,7 +39,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #: return: Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content}
-    hash[:tool_calls] = tool_calls unless tool_calls.empty?
+    hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
     hash[:token_usage] = token_usage.to_h if token_usage
     hash
   end

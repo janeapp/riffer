@@ -15,23 +15,28 @@
 #   Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
 #
 class Riffer::Config
+  AmazonBedrock = Struct.new(:api_token, :region, keyword_init: true)
+  Anthropic = Struct.new(:api_key, keyword_init: true)
+  OpenAI = Struct.new(:api_key, keyword_init: true)
+  Evals = Struct.new(:judge_model, keyword_init: true)
+
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
-  attr_reader :amazon_bedrock #: untyped
+  attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock
 
   # Anthropic configuration (Struct with +api_key+).
-  attr_reader :anthropic #: untyped
+  attr_reader :anthropic #: Riffer::Config::Anthropic
 
   # OpenAI configuration (Struct with +api_key+).
-  attr_reader :openai #: untyped
+  attr_reader :openai #: Riffer::Config::OpenAI
 
   # Evals configuration (Struct with +judge_model+).
-  attr_reader :evals #: untyped
+  attr_reader :evals #: Riffer::Config::Evals
 
   #: return: void
   def initialize
-    @amazon_bedrock = Struct.new(:api_token, :region).new
-    @anthropic = Struct.new(:api_key).new
-    @openai = Struct.new(:api_key).new
-    @evals = Struct.new(:judge_model).new
+    @amazon_bedrock = AmazonBedrock.new
+    @anthropic = Anthropic.new
+    @openai = OpenAI.new
+    @evals = Evals.new
   end
 end

@@ -77,17 +77,19 @@ describe Riffer::Messages::Converter do
     end
 
     describe "with assistant message with tool_calls" do
+      let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(id: "1", name: "search") }
+
       let(:assistant_message) do
         {
           role: "assistant",
           content: "Let me search",
-          tool_calls: [{id: "1", name: "search"}]
+          tool_calls: [tool_call]
         }
       end
 
       it "preserves tool_calls in assistant messages" do
         result = instance.convert_to_message_object(assistant_message)
-        expect(result.tool_calls).must_equal [{id: "1", name: "search"}]
+        expect(result.tool_calls).must_equal [tool_call]
       end
     end
 

@@ -263,7 +263,7 @@ describe Riffer::Providers::AmazonBedrock do
             model: "anthropic.claude-3-haiku-20240307-v1:0",
             tools: [weather_tool]
           )
-          expect(result.tool_calls.first[:name]).must_equal "get_weather"
+          expect(result.tool_calls.first.name).must_equal "get_weather"
         end
       end
 
@@ -275,7 +275,7 @@ describe Riffer::Providers::AmazonBedrock do
             model: "anthropic.claude-3-haiku-20240307-v1:0",
             tools: [weather_tool]
           )
-          args = JSON.parse(result.tool_calls.first[:arguments])
+          args = JSON.parse(result.tool_calls.first.arguments)
           expect(args["city"]).must_equal "Toronto"
         end
       end
@@ -288,7 +288,7 @@ describe Riffer::Providers::AmazonBedrock do
             model: "anthropic.claude-3-haiku-20240307-v1:0",
             tools: [weather_tool]
           )
-          expect(result.tool_calls.first[:id]).wont_be_nil
+          expect(result.tool_calls.first.id).wont_be_nil
         end
       end
     end
@@ -300,7 +300,7 @@ describe Riffer::Providers::AmazonBedrock do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              {id: "tooluse_123", call_id: "tooluse_123", name: "get_weather", arguments: '{"city":"Toronto"}'}
+              Riffer::Messages::Assistant::ToolCall.new(id: "tooluse_123", call_id: "tooluse_123", name: "get_weather", arguments: '{"city":"Toronto"}')
             ]),
             Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "tooluse_123", name: "get_weather")
           ]
@@ -319,7 +319,7 @@ describe Riffer::Providers::AmazonBedrock do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              {id: "tooluse_123", call_id: "tooluse_123", name: "get_weather", arguments: '{"city":"Toronto"}'}
+              Riffer::Messages::Assistant::ToolCall.new(id: "tooluse_123", call_id: "tooluse_123", name: "get_weather", arguments: '{"city":"Toronto"}')
             ]),
             Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "tooluse_123", name: "get_weather")
           ]
@@ -340,8 +340,8 @@ describe Riffer::Providers::AmazonBedrock do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto and Vancouver?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              {id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather", arguments: '{"city":"Toronto"}'},
-              {id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather", arguments: '{"city":"Vancouver"}'}
+              Riffer::Messages::Assistant::ToolCall.new(id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather", arguments: '{"city":"Toronto"}'),
+              Riffer::Messages::Assistant::ToolCall.new(id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather", arguments: '{"city":"Vancouver"}')
             ]),
             Riffer::Messages::Tool.new("Toronto: 15°C", tool_call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather"),
             Riffer::Messages::Tool.new("Vancouver: 12°C", tool_call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather")
@@ -361,8 +361,8 @@ describe Riffer::Providers::AmazonBedrock do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto and Vancouver?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              {id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather", arguments: '{"city":"Toronto"}'},
-              {id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather", arguments: '{"city":"Vancouver"}'}
+              Riffer::Messages::Assistant::ToolCall.new(id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather", arguments: '{"city":"Toronto"}'),
+              Riffer::Messages::Assistant::ToolCall.new(id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather", arguments: '{"city":"Vancouver"}')
             ]),
             Riffer::Messages::Tool.new("Toronto: 15°C", tool_call_id: "tooluse_bdrk_01JK5WNRW22T9YKB4V02NE2S9M", name: "get_weather"),
             Riffer::Messages::Tool.new("Vancouver: 12°C", tool_call_id: "tooluse_bdrk_01JK5WNRWNN4CR0E4R2ZYDNJYZ", name: "get_weather")

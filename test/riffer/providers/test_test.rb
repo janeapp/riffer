@@ -89,37 +89,37 @@ describe Riffer::Providers::Test do
       it "formats tool_calls with generated id" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first[:id]).must_equal "test_id_0"
+        expect(result.tool_calls.first.id).must_equal "test_id_0"
       end
 
       it "formats tool_calls with generated call_id" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first[:call_id]).must_equal "test_call_0"
+        expect(result.tool_calls.first.call_id).must_equal "test_call_0"
       end
 
       it "preserves the tool name" do
         provider.stub_response("", tool_calls: [{name: "weather_lookup", arguments: "{}"}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first[:name]).must_equal "weather_lookup"
+        expect(result.tool_calls.first.name).must_equal "weather_lookup"
       end
 
       it "preserves string arguments" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"city":"Toronto"}'}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first[:arguments]).must_equal '{"city":"Toronto"}'
+        expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
       end
 
       it "converts hash arguments to JSON" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: {city: "Toronto"}}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first[:arguments]).must_equal '{"city":"Toronto"}'
+        expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
       end
 
       it "uses provided id if specified" do
         provider.stub_response("", tool_calls: [{id: "custom_id", name: "my_tool", arguments: "{}"}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first[:id]).must_equal "custom_id"
+        expect(result.tool_calls.first.id).must_equal "custom_id"
       end
 
       it "handles multiple tool calls count" do
@@ -137,7 +137,7 @@ describe Riffer::Providers::Test do
           {name: "tool_b", arguments: "{}"}
         ])
         result = provider.generate_text(prompt: "Call tools")
-        expect(result.tool_calls[0][:name]).must_equal "tool_a"
+        expect(result.tool_calls[0].name).must_equal "tool_a"
       end
 
       it "handles multiple tool calls second name" do
@@ -146,7 +146,7 @@ describe Riffer::Providers::Test do
           {name: "tool_b", arguments: "{}"}
         ])
         result = provider.generate_text(prompt: "Call tools")
-        expect(result.tool_calls[1][:name]).must_equal "tool_b"
+        expect(result.tool_calls[1].name).must_equal "tool_b"
       end
     end
 

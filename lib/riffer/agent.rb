@@ -37,7 +37,7 @@ class Riffer::Agent
   #: @instructions_text: String?
   #: @provider_name: String
   #: @model_name: String
-  #: @tool_context: untyped
+  #: @tool_context: Hash[Symbol, untyped]?
   #: @resolved_tools: Array[singleton(Riffer::Tool)]?
   #: @provider_instance: Riffer::Providers::Base?
 
@@ -164,7 +164,7 @@ class Riffer::Agent
   # Generates a response from the agent.
   #
   #: prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  #: tool_context: untyped -- optional context object passed to all tool calls
+  #: tool_context: Hash[Symbol, untyped]? -- optional context object passed to all tool calls
   #: return: String
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
@@ -187,7 +187,7 @@ class Riffer::Agent
   # Streams a response from the agent.
   #
   #: prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  #: tool_context: untyped -- optional context object passed to all tool calls
+  #: tool_context: Hash[Symbol, untyped]? -- optional context object passed to all tool calls
   #: return: Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
@@ -214,12 +214,12 @@ class Riffer::Agent
             current_tool_call[:arguments] += event.arguments_delta
             current_tool_call[:name] ||= event.name
           when Riffer::StreamEvents::ToolCallDone
-            accumulated_tool_calls << {
+            accumulated_tool_calls << Riffer::Messages::Assistant::ToolCall.new(
               id: event.item_id,
               call_id: event.call_id,
               name: event.name,
               arguments: event.arguments
-            }
+            )
             current_tool_call = nil
           when Riffer::StreamEvents::TokenUsageDone
             accumulated_token_usage = event.token_usage
@@ -327,28 +327,28 @@ class Riffer::Agent
       result = execute_tool_call(tool_call)
       add_message(Riffer::Messages::Tool.new(
         result.content,
-        tool_call_id: tool_call[:id],
-        name: tool_call[:name],
+        tool_call_id: tool_call.id,
+        name: tool_call.name,
         error: result.error_message,
         error_type: result.error_type
       ))
     end
   end
 
-  #: tool_call: Hash[Symbol, untyped]
+  #: tool_call: Riffer::Messages::Assistant::ToolCall
   #: return: Riffer::Tools::Response
   def execute_tool_call(tool_call)
-    tool_class = find_tool_class(tool_call[:name])
+    tool_class = find_tool_class(tool_call.name)
 
     if tool_class.nil?
       return Riffer::Tools::Response.error(
-        "Unknown tool '#{tool_call[:name]}'",
+        "Unknown tool '#{tool_call.name}'",
         type: :unknown_tool
       )
     end
 
     tool_instance = tool_class.new
-    arguments = parse_tool_arguments(tool_call[:arguments])
+    arguments = parse_tool_arguments(tool_call.arguments)
 
     begin
       tool_instance.call_with_validation(context: @tool_context, **arguments)

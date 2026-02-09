@@ -38,26 +38,26 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : return: (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format: (untyped message) -> untyped
 
-  # : response: untyped
+  # : response: OpenAI::Models::Responses::Response
   # : return: Riffer::TokenUsage?
   def extract_token_usage: (untyped response) -> untyped
 
-  # : output_items: untyped
+  # : output_items: Array[OpenAI::Models::Responses::response_output_item]
   # : token_usage: Riffer::TokenUsage?
   # : return: Riffer::Messages::Assistant
   def extract_assistant_message: (untyped output_items, ?untyped token_usage) -> untyped
 
-  # : stream: untyped
+  # : stream: OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event]
   # : yielder: Enumerator::Yielder
   # : return: void
   def process_stream_events: (untyped stream, untyped yielder) -> untyped
 
-  # : event: untyped
+  # : event: OpenAI::Models::Responses::response_stream_event
   # : tool_info: Hash[String, Hash[Symbol, untyped]]
   # : return: void
   def track_tool_info: (untyped event, untyped tool_info) -> untyped
 
-  # : event: untyped
+  # : event: OpenAI::Models::Responses::response_stream_event
   # : tool_info: Hash[String, Hash[Symbol, untyped]]
   # : return: Riffer::StreamEvents::Base?
   def convert_event: (untyped event, ?untyped tool_info) -> untyped

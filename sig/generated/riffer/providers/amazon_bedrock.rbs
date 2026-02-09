@@ -45,11 +45,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : return: Hash[String, untyped]
   def parse_tool_arguments: (untyped arguments) -> untyped
 
-  # : response: untyped
+  # : response: Aws::BedrockRuntime::Types::ConverseResponse
   # : return: Riffer::TokenUsage?
   def extract_token_usage: (untyped response) -> untyped
 
-  # : response: untyped
+  # : response: Aws::BedrockRuntime::Types::ConverseResponse
   # : token_usage: Riffer::TokenUsage?
   # : return: Riffer::Messages::Assistant
   def extract_assistant_message: (untyped response, ?untyped token_usage) -> untyped

@@ -9,16 +9,27 @@
 #   msg.content     # => "Hello!"
 #   msg.tool_calls  # => []
 class Riffer::Messages::Assistant < Riffer::Messages::Base
+  class ToolCall < Struct[untyped]
+    attr_accessor id(): untyped
+
+    attr_accessor call_id(): untyped
+
+    attr_accessor name(): untyped
+
+    attr_accessor arguments(): untyped
+
+    def self.new: (?id: untyped, ?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
+                | ({ ?id: untyped, ?call_id: untyped, ?name: untyped, ?arguments: untyped }) -> instance
+  end
+
   # Array of tool calls requested by the assistant.
-  #
-  # Each tool call is a Hash with +:id+, +:call_id+, +:name+, and +:arguments+ keys.
-  attr_reader tool_calls: Array[Hash[Symbol, untyped]]
+  attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
 
   # Token usage data for this response.
   attr_reader token_usage: Riffer::TokenUsage?
 
   # : content: String
-  # : tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls
+  # : tool_calls: Array[Riffer::Messages::Assistant::ToolCall] -- optional tool calls
   # : token_usage: Riffer::TokenUsage? -- optional token usage data
   # : return: void
   def initialize: (untyped content, ?tool_calls: untyped, ?token_usage: untyped) -> untyped

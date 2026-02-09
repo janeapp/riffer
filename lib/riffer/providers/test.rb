@@ -37,12 +37,12 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   #: return: void
   def stub_response(content, tool_calls: [], token_usage: nil)
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
-      {
+      Riffer::Messages::Assistant::ToolCall.new(
         id: tc[:id] || "test_id_#{idx}",
         call_id: tc[:call_id] || tc[:id] || "test_call_#{idx}",
         name: tc[:name],
         arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
-      }
+      )
     end
     @stubbed_responses << {role: "assistant", content: content, tool_calls: formatted_tool_calls, token_usage: token_usage}
   end
@@ -109,15 +109,15 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
       tool_calls.each do |tc|
         yielder << Riffer::StreamEvents::ToolCallDelta.new(
-          item_id: tc[:id],
-          name: tc[:name],
-          arguments_delta: tc[:arguments]
+          item_id: tc.id,
+          name: tc.name,
+          arguments_delta: tc.arguments
         )
         yielder << Riffer::StreamEvents::ToolCallDone.new(
-          item_id: tc[:id],
-          call_id: tc[:call_id],
-          name: tc[:name],
-          arguments: tc[:arguments]
+          item_id: tc.id,
+          call_id: tc.call_id,
+          name: tc.name,
+          arguments: tc.arguments
         )
       end
 

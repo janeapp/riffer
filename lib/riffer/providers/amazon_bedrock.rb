@@ -9,7 +9,7 @@ require "json"
 #
 # See https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
-  #: @client: untyped
+  #: @client: Aws::BedrockRuntime::Client
 
   # Initializes the Amazon Bedrock provider.
   #
@@ -203,9 +203,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     message.tool_calls.each do |tc|
       content << {
         tool_use: {
-          tool_use_id: tc[:id] || tc[:call_id],
-          name: tc[:name],
-          input: parse_tool_arguments(tc[:arguments])
+          tool_use_id: tc.id || tc.call_id,
+          name: tc.name,
+          input: parse_tool_arguments(tc.arguments)
         }
       }
     end
@@ -220,7 +220,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
   end
 
-  #: response: untyped
+  #: response: Aws::BedrockRuntime::Types::ConverseResponse
   #: return: Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -234,7 +234,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
-  #: response: untyped
+  #: response: Aws::BedrockRuntime::Types::ConverseResponse
   #: token_usage: Riffer::TokenUsage?
   #: return: Riffer::Messages::Assistant
   def extract_assistant_message(response, token_usage = nil)
@@ -251,12 +251,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       if block.respond_to?(:text) && block.text
         text_content = block.text
       elsif block.respond_to?(:tool_use) && block.tool_use
-        tool_calls << {
+        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           id: block.tool_use.tool_use_id,
           call_id: block.tool_use.tool_use_id,
           name: block.tool_use.name,
           arguments: block.tool_use.input.to_json
-        }
+        )
       end
     end
 

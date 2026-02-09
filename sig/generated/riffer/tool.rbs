@@ -68,7 +68,7 @@ class Riffer::Tool
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  # : context: untyped -- optional context passed from the agent
+  # : context: Hash[Symbol, untyped]? -- optional context passed from the agent
   # : **kwargs: untyped
   # : return: Riffer::Tools::Response
   def call: (context: untyped, **untyped kwargs) -> untyped
@@ -98,7 +98,7 @@ class Riffer::Tool
   # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
   # Raises Riffer::Error if the tool does not return a Response object.
   #
-  # : context: untyped -- context passed from the agent
+  # : context: Hash[Symbol, untyped]? -- context passed from the agent
   # : **kwargs: untyped
   # : return: Riffer::Tools::Response
   def call_with_validation: (context: untyped, **untyped kwargs) -> untyped

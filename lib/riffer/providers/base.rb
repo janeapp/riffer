@@ -58,7 +58,7 @@ class Riffer::Providers::Base
 
   #: prompt: String?
   #: system: String?
-  #: messages: Array[untyped]?
+  #: messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?
   #: return: void
   def validate_input!(prompt:, system:, messages:)
     if messages.nil?

@@ -5,7 +5,7 @@
 #
 # Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
-  #: @client: untyped
+  #: @client: OpenAI::Client
 
   # Initializes the OpenAI provider.
   #
@@ -101,17 +101,17 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       message.tool_calls.each do |tc|
         items << {
           type: "function_call",
-          id: tc[:id],
-          call_id: tc[:call_id] || tc[:id],
-          name: tc[:name],
-          arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
+          id: tc.id,
+          call_id: tc.call_id || tc.id,
+          name: tc.name,
+          arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json
         }
       end
       items
     end
   end
 
-  #: response: untyped
+  #: response: OpenAI::Models::Responses::Response
   #: return: Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -123,7 +123,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
-  #: output_items: untyped
+  #: output_items: Array[OpenAI::Models::Responses::response_output_item]
   #: token_usage: Riffer::TokenUsage?
   #: return: Riffer::Messages::Assistant
   def extract_assistant_message(output_items, token_usage = nil)
@@ -136,12 +136,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         text_block = item.content&.find { |c| c.type == :output_text }
         text_content = text_block&.text || "" if text_block
       when :function_call
-        tool_calls << {
+        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           id: item.id,
           call_id: item.call_id,
           name: item.name,
           arguments: item.arguments
-        }
+        )
       end
     end
 
@@ -152,7 +152,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
-  #: stream: untyped
+  #: stream: OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event]
   #: yielder: Enumerator::Yielder
   #: return: void
   def process_stream_events(stream, yielder)
@@ -168,7 +168,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  #: event: untyped
+  #: event: OpenAI::Models::Responses::response_stream_event
   #: tool_info: Hash[String, Hash[Symbol, untyped]]
   #: return: void
   def track_tool_info(event, tool_info)
@@ -181,7 +181,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     }
   end
 
-  #: event: untyped
+  #: event: OpenAI::Models::Responses::response_stream_event
   #: tool_info: Hash[String, Hash[Symbol, untyped]]
   #: return: Riffer::StreamEvents::Base?
   def convert_event(event, tool_info = {})

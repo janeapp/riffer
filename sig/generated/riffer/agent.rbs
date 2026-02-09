@@ -103,14 +103,14 @@ class Riffer::Agent
   # Generates a response from the agent.
   #
   # : prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  # : tool_context: untyped -- optional context object passed to all tool calls
+  # : tool_context: Hash[Symbol, untyped]? -- optional context object passed to all tool calls
   # : return: String
   def generate: (untyped prompt_or_messages, ?tool_context: untyped) -> untyped
 
   # Streams a response from the agent.
   #
   # : prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  # : tool_context: untyped -- optional context object passed to all tool calls
+  # : tool_context: Hash[Symbol, untyped]? -- optional context object passed to all tool calls
   # : return: Enumerator[Riffer::StreamEvents::Base, void]
   def stream: (untyped prompt_or_messages, ?tool_context: untyped) -> untyped
 
@@ -153,7 +153,7 @@ class Riffer::Agent
   # : return: void
   def execute_tool_calls: (untyped response) -> untyped
 
-  # : tool_call: Hash[Symbol, untyped]
+  # : tool_call: Riffer::Messages::Assistant::ToolCall
   # : return: Riffer::Tools::Response
   def execute_tool_call: (untyped tool_call) -> untyped
 
