@@ -119,7 +119,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-See [Guardrails](08_GUARDRAILS.md) for detailed documentation.
+See [Guardrails](09_GUARDRAILS.md) for detailed documentation.
 
 ## Instance Methods
 

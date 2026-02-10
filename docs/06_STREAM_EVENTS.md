@@ -124,7 +124,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-See [Guardrails](08_GUARDRAILS.md) for more information.
+See [Guardrails](09_GUARDRAILS.md) for more information.
 
 ### TokenUsageDone
 
