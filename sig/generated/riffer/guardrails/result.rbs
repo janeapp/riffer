@@ -15,68 +15,59 @@ class Riffer::Guardrails::Result
   TYPES: Array[Symbol]
 
   # The result type (:pass, :transform, or :block).
-  #
-  # Returns Symbol.
   attr_reader type: Symbol
 
   # The data (for pass/transform) or reason (for block).
-  #
-  # Returns Object.
   attr_reader data: untyped
 
   # Optional metadata for block results.
-  #
-  # Returns Hash or nil.
   attr_reader metadata: Hash[Symbol, untyped]?
 
   # Creates a pass result that continues with unchanged data.
   #
-  # data:: Object - the original data to pass through
+  # +data+ - the original data to pass through.
   #
-  # Returns Result.
   # : (untyped) -> Riffer::Guardrails::Result
   def self.pass: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a transform result that continues with transformed data.
   #
-  # data:: Object - the transformed data
+  # +data+ - the transformed data.
   #
-  # Returns Result.
   # : (untyped) -> Riffer::Guardrails::Result
   def self.transform: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a block result that halts execution.
   #
-  # reason:: String - the reason for blocking
-  # metadata:: Hash or nil - optional additional information
+  # +reason+ - the reason for blocking.
+  # +metadata+ - optional additional information.
   #
-  # Returns Result.
   # : (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
   def self.block: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
 
   # Creates a new result.
   #
-  # type:: Symbol - the result type (:pass, :transform, or :block)
-  # data:: Object - the data or reason
-  # metadata:: Hash or nil - optional metadata for block results
+  # +type+ - the result type (:pass, :transform, or :block).
+  # +data+ - the data or reason.
+  # +metadata+ - optional metadata for block results.
+  #
+  # Raises Riffer::ArgumentError if the result type is invalid.
+  #
   # : (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
 
   # Returns true if this is a pass result.
   #
-  # Returns Boolean.
   # : () -> bool
   def pass?: () -> bool
 
   # Returns true if this is a transform result.
   #
-  # Returns Boolean.
   # : () -> bool
   def transform?: () -> bool
 
   # Returns true if this is a block result.
   #
-  # Returns Boolean.
   # : () -> bool
   def block?: () -> bool
 end

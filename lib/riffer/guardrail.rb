@@ -27,9 +27,8 @@ class Riffer::Guardrail
 
     # Gets or sets the guardrail identifier.
     #
-    # value:: String or nil - the identifier to set, or nil to get
+    # +value+ - the identifier to set, or nil to get.
     #
-    # Returns String - the guardrail identifier.
     #: (?String?) -> String
     def identifier(value = nil)
       return @identifier || class_name_to_path(name) if value.nil?
@@ -38,9 +37,8 @@ class Riffer::Guardrail
 
     # Gets or sets the guardrail description.
     #
-    # value:: String or nil - the description to set, or nil to get
+    # +value+ - the description to set, or nil to get.
     #
-    # Returns String or nil - the guardrail description.
     #: (?String?) -> String?
     def description(value = nil)
       return @description if value.nil?
@@ -50,7 +48,6 @@ class Riffer::Guardrail
 
   # Returns the instance's identifier.
   #
-  # Returns String.
   #: () -> String
   def identifier
     self.class.identifier
@@ -60,10 +57,9 @@ class Riffer::Guardrail
   #
   # Override this method in subclasses to implement input processing.
   #
-  # messages:: Array of Riffer::Messages::Base - the input messages
-  # context:: Object or nil - optional context passed to the agent
+  # +messages+ - the input messages.
+  # +context+ - optional context passed to the agent.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_input(messages, context:)
     pass(messages)
@@ -73,11 +69,10 @@ class Riffer::Guardrail
   #
   # Override this method in subclasses to implement output processing.
   #
-  # response:: Riffer::Messages::Assistant - the LLM response
-  # messages:: Array of Riffer::Messages::Base - the conversation messages
-  # context:: Object or nil - optional context passed to the agent
+  # +response+ - the LLM response.
+  # +messages+ - the conversation messages.
+  # +context+ - optional context passed to the agent.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_output(response, messages:, context:)
     pass(response)
@@ -87,9 +82,8 @@ class Riffer::Guardrail
 
   # Creates a pass result that continues with unchanged data.
   #
-  # data:: Object - the original data to pass through
+  # +data+ - the original data to pass through.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (untyped) -> Riffer::Guardrails::Result
   def pass(data)
     Riffer::Guardrails::Result.pass(data)
@@ -97,9 +91,8 @@ class Riffer::Guardrail
 
   # Creates a transform result that continues with transformed data.
   #
-  # data:: Object - the transformed data
+  # +data+ - the transformed data.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (untyped) -> Riffer::Guardrails::Result
   def transform(data)
     Riffer::Guardrails::Result.transform(data)
@@ -107,10 +100,9 @@ class Riffer::Guardrail
 
   # Creates a block result that halts execution.
   #
-  # reason:: String - the reason for blocking
-  # metadata:: Hash or nil - optional additional information
+  # +reason+ - the reason for blocking.
+  # +metadata+ - optional additional information.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
   def block(reason, metadata: nil)
     Riffer::Guardrails::Result.block(reason, metadata: metadata)

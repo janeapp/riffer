@@ -16,26 +16,19 @@ class Riffer::Guardrails::Result
   TYPES = %i[pass transform block].freeze #: Array[Symbol]
 
   # The result type (:pass, :transform, or :block).
-  #
-  # Returns Symbol.
   attr_reader :type #: Symbol
 
   # The data (for pass/transform) or reason (for block).
-  #
-  # Returns Object.
   attr_reader :data #: untyped
 
   # Optional metadata for block results.
-  #
-  # Returns Hash or nil.
   attr_reader :metadata #: Hash[Symbol, untyped]?
 
   class << self
     # Creates a pass result that continues with unchanged data.
     #
-    # data:: Object - the original data to pass through
+    # +data+ - the original data to pass through.
     #
-    # Returns Result.
     #: (untyped) -> Riffer::Guardrails::Result
     def pass(data)
       new(:pass, data)
@@ -43,9 +36,8 @@ class Riffer::Guardrails::Result
 
     # Creates a transform result that continues with transformed data.
     #
-    # data:: Object - the transformed data
+    # +data+ - the transformed data.
     #
-    # Returns Result.
     #: (untyped) -> Riffer::Guardrails::Result
     def transform(data)
       new(:transform, data)
@@ -53,10 +45,9 @@ class Riffer::Guardrails::Result
 
     # Creates a block result that halts execution.
     #
-    # reason:: String - the reason for blocking
-    # metadata:: Hash or nil - optional additional information
+    # +reason+ - the reason for blocking.
+    # +metadata+ - optional additional information.
     #
-    # Returns Result.
     #: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
     def block(reason, metadata: nil)
       new(:block, reason, metadata: metadata)
@@ -65,9 +56,12 @@ class Riffer::Guardrails::Result
 
   # Creates a new result.
   #
-  # type:: Symbol - the result type (:pass, :transform, or :block)
-  # data:: Object - the data or reason
-  # metadata:: Hash or nil - optional metadata for block results
+  # +type+ - the result type (:pass, :transform, or :block).
+  # +data+ - the data or reason.
+  # +metadata+ - optional metadata for block results.
+  #
+  # Raises Riffer::ArgumentError if the result type is invalid.
+  #
   #: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(type, data, metadata: nil)
     raise Riffer::ArgumentError, "Invalid result type: #{type}" unless TYPES.include?(type)
@@ -79,7 +73,6 @@ class Riffer::Guardrails::Result
 
   # Returns true if this is a pass result.
   #
-  # Returns Boolean.
   #: () -> bool
   def pass?
     type == :pass
@@ -87,7 +80,6 @@ class Riffer::Guardrails::Result
 
   # Returns true if this is a transform result.
   #
-  # Returns Boolean.
   #: () -> bool
   def transform?
     type == :transform
@@ -95,7 +87,6 @@ class Riffer::Guardrails::Result
 
   # Returns true if this is a block result.
   #
-  # Returns Boolean.
   #: () -> bool
   def block?
     type == :block

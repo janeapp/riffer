@@ -5,38 +5,33 @@
 # Emitted when a guardrail blocks execution during the streaming pipeline.
 class Riffer::StreamEvents::Tripwire < Riffer::StreamEvents::Base
   # The tripwire containing block details.
-  #
-  # Returns Riffer::Guardrails::Tripwire.
   attr_reader tripwire: Riffer::Guardrails::Tripwire
 
   # Creates a new tripwire stream event.
   #
-  # tripwire:: Riffer::Guardrails::Tripwire - the tripwire details
-  # role:: Symbol - the message role (defaults to :assistant)
+  # +tripwire+ - the tripwire details.
+  # +role+ - the message role (defaults to :assistant).
+  #
   # : (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
   def initialize: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
 
   # The reason for blocking.
   #
-  # Returns String.
   # : () -> String
   def reason: () -> String
 
   # The phase when blocking occurred.
   #
-  # Returns Symbol.
   # : () -> Symbol
   def phase: () -> Symbol
 
   # The guardrail identifier that triggered the block.
   #
-  # Returns String.
   # : () -> String
   def guardrail_id: () -> String
 
   # Converts the event to a hash.
   #
-  # Returns Hash with tripwire details.
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

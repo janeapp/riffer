@@ -14,19 +14,16 @@
 #   end
 class Riffer::Agent::Response
   # The response content.
-  #
-  # Returns String.
   attr_reader :content #: String
 
   # The tripwire if execution was blocked.
-  #
-  # Returns Riffer::Guardrails::Tripwire or nil.
   attr_reader :tripwire #: Riffer::Guardrails::Tripwire?
 
   # Creates a new response.
   #
-  # content:: String - the response content
-  # tripwire:: Riffer::Guardrails::Tripwire or nil - optional tripwire for blocked responses
+  # +content+ - the response content.
+  # +tripwire+ - optional tripwire for blocked responses.
+  #
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> void
   def initialize(content, tripwire: nil)
     @content = content
@@ -35,7 +32,6 @@ class Riffer::Agent::Response
 
   # Returns true if the response was blocked by a guardrail.
   #
-  # Returns Boolean.
   #: () -> bool
   def blocked?
     !tripwire.nil?

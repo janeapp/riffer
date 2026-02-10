@@ -10,25 +10,20 @@
 #   data, tripwire, result = runner.run(messages)
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
-  #
-  # Returns Array of Hash with :class and :options keys.
   attr_reader guardrail_configs: Array[Hash[Symbol, untyped]]
 
   # The execution phase (:input or :output).
-  #
-  # Returns Symbol.
   attr_reader phase: Symbol
 
   # The context passed to guardrails.
-  #
-  # Returns Object or nil.
   attr_reader context: untyped
 
   # Creates a new runner.
   #
-  # guardrail_configs:: Array of Hash - configs with :class and :options keys
-  # phase:: Symbol - :input or :output
-  # context:: Object or nil - optional context to pass to guardrails
+  # +guardrail_configs+ - configs with :class and :options keys.
+  # +phase+ - :input or :output.
+  # +context+ - optional context to pass to guardrails.
+  #
   # : (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
   def initialize: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
 
@@ -37,13 +32,9 @@ class Riffer::Guardrails::Runner
   # For input phase, data should be an array of messages.
   # For output phase, data should be a response and messages must be provided.
   #
-  # data:: Object - the data to process (messages for input, response for output)
-  # messages:: Array or nil - the conversation messages (required for output phase)
+  # +data+ - the data to process (messages for input, response for output).
+  # +messages+ - the conversation messages (required for output phase).
   #
-  # Returns Array of [processed_data, tripwire, last_result] where:
-  # - processed_data is the final data after all guardrails
-  # - tripwire is a Tripwire if blocked, nil otherwise
-  # - last_result is the final Result object
   # : (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Riffer::Guardrails::Result?]
   def run: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [ untyped, Riffer::Guardrails::Tripwire?, Riffer::Guardrails::Result? ]
 

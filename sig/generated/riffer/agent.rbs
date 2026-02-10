@@ -77,9 +77,9 @@ class Riffer::Agent
 
   # Registers a guardrail for input, output, or both phases.
   #
-  # phase:: Symbol - :input, :output, or :around
-  # with:: Class - the guardrail class (must be subclass of Riffer::Guardrail)
-  # options:: Hash - additional options passed to the guardrail
+  # +phase+ - :input, :output, or :around.
+  # +with+ - the guardrail class (must be subclass of Riffer::Guardrail).
+  # +options+ - additional options passed to the guardrail.
   #
   # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
   # : (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
@@ -87,9 +87,7 @@ class Riffer::Agent
 
   # Returns the registered guardrail configs for a given phase.
   #
-  # phase:: Symbol - :input or :output
-  #
-  # Returns Array of Hash with :class and :options keys.
+  # +phase+ - :input or :output.
   # : (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 

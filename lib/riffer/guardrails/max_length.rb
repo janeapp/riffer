@@ -14,13 +14,12 @@ class Riffer::Guardrails::MaxLength < Riffer::Guardrail
   DEFAULT_MAX = 10_000 #: Integer
 
   # The maximum allowed character length.
-  #
-  # Returns Integer.
   attr_reader :max #: Integer
 
   # Creates a new max length guardrail.
   #
-  # max:: Integer - maximum allowed characters (default: 10_000)
+  # +max+ - maximum allowed characters (default: 10_000).
+  #
   #: (?max: Integer) -> void
   def initialize(max: DEFAULT_MAX)
     super()
@@ -29,10 +28,9 @@ class Riffer::Guardrails::MaxLength < Riffer::Guardrail
 
   # Blocks if any user message exceeds the max length.
   #
-  # messages:: Array of Riffer::Messages::Base - the input messages
-  # context:: Object or nil - optional context
+  # +messages+ - the input messages.
+  # +context+ - optional context.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_input(messages, context:)
     messages.each do |msg|
@@ -51,11 +49,10 @@ class Riffer::Guardrails::MaxLength < Riffer::Guardrail
 
   # Blocks if response exceeds the max length.
   #
-  # response:: Riffer::Messages::Assistant - the LLM response
-  # messages:: Array of Riffer::Messages::Base - the conversation messages
-  # context:: Object or nil - optional context
+  # +response+ - the LLM response.
+  # +messages+ - the conversation messages.
+  # +context+ - optional context.
   #
-  # Returns Riffer::Guardrails::Result.
   #: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_output(response, messages:, context:)
     return pass(response) unless response.respond_to?(:content)
