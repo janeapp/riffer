@@ -9,7 +9,6 @@
 #   guardrail :output, with: Riffer::Guardrails::MaxLength, max: 5000
 class Riffer::Guardrails::MaxLength < Riffer::Guardrail
   identifier "riffer/guardrails/max_length"
-  description "Blocks messages exceeding a maximum character length"
 
   DEFAULT_MAX = 10_000 #: Integer
 

@@ -16,9 +16,6 @@ Create a guardrail by subclassing `Riffer::Guardrail`:
 
 ```ruby
 class ContentFilterGuardrail < Riffer::Guardrail
-  identifier "content_filter"
-  description "Filters inappropriate content"
-
   def process_input(messages, context:)
     if contains_inappropriate_content?(messages)
       block("Content policy violation detected")
@@ -56,16 +53,6 @@ class MyGuardrail < Riffer::Guardrail
 end
 
 MyGuardrail.identifier  # => "my_custom_guardrail"
-```
-
-### description
-
-Sets a description for the guardrail:
-
-```ruby
-class MyGuardrail < Riffer::Guardrail
-  description "Validates and sanitizes user input"
-end
 ```
 
 ## Processing Methods
@@ -144,7 +131,7 @@ Register guardrails with the `guardrail` DSL method. Pass the guardrail class (n
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model "openai/gpt-4o"
+  model "anthropic/claude-haiku-4-5-20251001"
   instructions "You are a helpful assistant."
 
   # Input-only guardrail
@@ -170,7 +157,7 @@ Guardrails execute sequentially in registration order:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model "openai/gpt-4o"
+  model "anthropic/claude-haiku-4-5-20251001"
 
   guardrail :input, with: FirstGuardrail   # Runs first
   guardrail :input, with: SecondGuardrail  # Runs second
@@ -227,7 +214,7 @@ Blocks messages or responses that exceed a maximum character length:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model "openai/gpt-4o"
+  model "anthropic/claude-haiku-4-5-20251001"
 
   # Block input messages over 1000 characters
   guardrail :input, with: Riffer::Guardrails::MaxLength, max: 1000

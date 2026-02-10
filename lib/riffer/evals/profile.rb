@@ -91,11 +91,10 @@ module Riffer::Evals::Profile
 
       # Generate output from agent
       response = generate(input, tool_context: tool_context)
-      output = response.content
 
       # Run evaluations
       runner = Riffer::Evals::Runner.new(metrics: metrics)
-      runner.run(input: input, output: output, context: context)
+      runner.run(input: input, output: response.content, context: context)
     end
   end
 end

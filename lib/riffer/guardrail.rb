@@ -7,7 +7,6 @@
 #
 #   class MyGuardrail < Riffer::Guardrail
 #     identifier "my_guardrail"
-#     description "Validates and transforms messages"
 #
 #     def process_input(messages, context:)
 #       # Return pass(messages), transform(modified_messages), or block(reason)
@@ -33,16 +32,6 @@ class Riffer::Guardrail
     def identifier(value = nil)
       return @identifier || class_name_to_path(name) if value.nil?
       @identifier = value.to_s
-    end
-
-    # Gets or sets the guardrail description.
-    #
-    # +value+ - the description to set, or nil to get.
-    #
-    #: (?String?) -> String?
-    def description(value = nil)
-      return @description if value.nil?
-      @description = value.to_s
     end
   end
 

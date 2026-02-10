@@ -6,7 +6,6 @@
 #
 #   class MyGuardrail < Riffer::Guardrail
 #     identifier "my_guardrail"
-#     description "Validates and transforms messages"
 #
 #     def process_input(messages, context:)
 #       # Return pass(messages), transform(modified_messages), or block(reason)
@@ -29,13 +28,6 @@ class Riffer::Guardrail
   #
   # : (?String?) -> String
   def self.identifier: (?String?) -> String
-
-  # Gets or sets the guardrail description.
-  #
-  # +value+ - the description to set, or nil to get.
-  #
-  # : (?String?) -> String?
-  def self.description: (?String?) -> String?
 
   # Returns the instance's identifier.
   #

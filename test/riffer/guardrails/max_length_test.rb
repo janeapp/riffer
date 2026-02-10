@@ -21,12 +21,6 @@ describe Riffer::Guardrails::MaxLength do
     end
   end
 
-  describe ".description" do
-    it "has a description" do
-      expect(Riffer::Guardrails::MaxLength.description).wont_be_nil
-    end
-  end
-
   describe "#process_input" do
     it "passes messages under the limit" do
       guardrail = Riffer::Guardrails::MaxLength.new(max: 100)

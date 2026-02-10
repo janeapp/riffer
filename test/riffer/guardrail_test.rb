@@ -23,19 +23,6 @@ describe Riffer::Guardrail do
     end
   end
 
-  describe ".description" do
-    it "returns nil when not set" do
-      expect(Riffer::Guardrail.description).must_be_nil
-    end
-
-    it "can be set explicitly" do
-      guardrail_class = Class.new(Riffer::Guardrail) do
-        description "A test guardrail"
-      end
-      expect(guardrail_class.description).must_equal "A test guardrail"
-    end
-  end
-
   describe "#identifier" do
     it "returns the class identifier" do
       guardrail_class = Class.new(Riffer::Guardrail) do
