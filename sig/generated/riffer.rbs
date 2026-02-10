@@ -17,6 +17,8 @@ module Riffer
   class TimeoutError < Error
   end
 
+  # Returns the Riffer configuration.
+  #
   # : () -> Riffer::Config
   def self.config: () -> Riffer::Config
 

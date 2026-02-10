@@ -135,6 +135,7 @@ class Riffer::Agent
   # Returns the registered guardrail configs for a given phase.
   #
   # +phase+ - :input or :output.
+  #
   #: (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for(phase)
     @guardrails ||= {input: [], output: []}
@@ -185,6 +186,7 @@ class Riffer::Agent
       track_token_usage(response.token_usage)
 
       processed_response, tripwire = run_output_guardrails(response)
+
       return build_response("", tripwire: tripwire) if tripwire
 
       add_message(processed_response)
@@ -207,6 +209,7 @@ class Riffer::Agent
 
     Enumerator.new do |yielder|
       tripwire = run_input_guardrails
+
       if tripwire
         yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
         next

@@ -27,6 +27,8 @@ module Riffer
   # Raised when tool execution times out.
   class TimeoutError < Error; end
 
+  # Returns the Riffer configuration.
+  #
   #: () -> Riffer::Config
   def self.config
     @config ||= Config.new
