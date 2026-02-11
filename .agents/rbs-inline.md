@@ -13,20 +13,75 @@ Every `lib/**/*.rb` file must include the `rbs_inline: enabled` comment on line 
 
 ## Annotation Syntax
 
-Two prefixes are used:
-
-- **`#:`** — standalone lines above methods or at the class level (params, return types, instance variables)
-- **`#:`** — inline on the same line as code (attributes, constants)
+The **`#:`** prefix is used — standalone lines above methods (type signatures) or inline on the same line (attributes, constants).
 
 ### Method Parameters and Return Types
 
-Use `#:` on standalone lines above the method:
+Use a single `#:` line above the method with the RBS method signature:
 
 ```ruby
-#: name: String -- the user name
-#: age: Integer
-#: return: bool
+#: (String, Integer) -> bool
 def valid?(name, age)
+```
+
+#### Parameter Mapping
+
+| Ruby param                   | RBS signature            |
+| ---------------------------- | ------------------------ |
+| `def foo(x)`                 | `(Type)`                 |
+| `def foo(x = nil)`           | `(?Type?)`               |
+| `def foo(x = val)`           | `(?Type)`                |
+| `def foo(x:)`                | `(x: Type)`              |
+| `def foo(x: nil)`            | `(?x: Type?)`            |
+| `def foo(x: val)`            | `(?x: Type)`             |
+| `def foo(*args)`             | `(*untyped)`             |
+| `def foo(**kwargs)`          | `(**untyped)`            |
+| `def foo(&block)` (required) | `() { (Type) -> void }`  |
+| `def foo(&block)` (optional) | `() ?{ (Type) -> void }` |
+| `def foo(...)`               | `(*untyped, **untyped)`  |
+
+#### Examples
+
+```ruby
+# No parameters
+#: () -> String
+def name
+
+# Positional parameters
+#: (String, Integer) -> bool
+def valid?(name, age)
+
+# Optional positional parameter
+#: (?String?) -> String
+def self.identifier(value = nil)
+
+# Required keyword parameters
+#: (input: String, output: String) -> Riffer::Evals::Result
+def evaluate(input:, output:)
+
+# Mixed keyword parameters (required + optional)
+#: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+def evaluate(input:, output:, context: nil)
+
+# Positional + keyword parameters
+#: (String, ?tool_context: Hash[Symbol, untyped]?) -> String
+def generate(prompt, tool_context: nil)
+
+# Splat/double-splat
+#: (**untyped) -> void
+def initialize(**options)
+
+# Forward arguments
+#: (*untyped, **untyped) -> String
+def self.generate(...)
+
+# Block parameter (required)
+#: () { (Riffer::Messages::Base) -> void } -> self
+def on_message(&block)
+
+# Block parameter (optional)
+#: () ?{ (Riffer::Config) -> void } -> void
+def configure(&block)
 ```
 
 ### Attributes
@@ -43,22 +98,6 @@ VERSION = "1.0.0" #: String
 DEFAULTS = {}.freeze #: Hash[Symbol, untyped]
 ```
 
-### Instance Variables
-
-Use `#:` on standalone lines at the class level:
-
-```ruby
-#: @name: String
-#: @cache: Hash[String, untyped]
-```
-
-### Class Instance Variables
-
-```ruby
-#: self.@identifier: String?
-#: self.@model: String?
-```
-
 ## Common Type Patterns
 
 | Pattern                   | Meaning                     |
@@ -72,10 +111,6 @@ Use `#:` on standalone lines at the class level:
 | `bool`                    | Boolean (true or false)     |
 | `untyped`                 | Any type                    |
 | `void`                    | No meaningful return        |
-
-## Class Methods
-
-Class methods must use `def self.method_name` syntax. `class << self` blocks are **not supported** by rbs-inline.
 
 ## Workflow
 

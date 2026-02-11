@@ -15,10 +15,6 @@ All Ruby files in `lib/` must include:
 # rbs_inline: enabled
 ```
 
-## Class Methods
-
-Use `def self.method_name` instead of `class << self` (rbs-inline does not support singleton class blocks).
-
 ## Error Handling
 
 Define custom errors as subclasses of `Riffer::Error`:

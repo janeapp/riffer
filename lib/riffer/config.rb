@@ -32,7 +32,7 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader :evals #: Riffer::Config::Evals
 
-  #: return: void
+  #: () -> void
   def initialize
     @amazon_bedrock = AmazonBedrock.new
     @anthropic = Anthropic.new

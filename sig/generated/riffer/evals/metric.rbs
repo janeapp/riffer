@@ -26,26 +26,21 @@ class Riffer::Evals::Metric
 
   # Initializes a new metric.
   #
-  # : evaluator_identifier: String -- the evaluator to use
-  # : min: Float? -- minimum score threshold
-  # : max: Float? -- maximum score threshold
-  # : weight: Float -- weight for aggregation (default: 1.0)
-  # : return: void
-  def initialize: (evaluator_identifier: untyped, ?min: untyped, ?max: untyped, ?weight: untyped) -> untyped
+  # : (evaluator_identifier: String, ?min: Float?, ?max: Float?, ?weight: Float) -> void
+  def initialize: (evaluator_identifier: String, ?min: Float?, ?max: Float?, ?weight: Float) -> void
 
   # Returns the evaluator class for this metric.
   #
-  # : return: singleton(Riffer::Evals::Evaluator)?
-  def evaluator_class: () -> untyped
+  # : () -> singleton(Riffer::Evals::Evaluator)?
+  def evaluator_class: () -> singleton(Riffer::Evals::Evaluator)?
 
   # Checks if a result passes this metric's thresholds.
   #
-  # : result: Riffer::Evals::Result -- the evaluation result to check
-  # : return: bool
-  def passes?: (untyped result) -> untyped
+  # : (Riffer::Evals::Result) -> bool
+  def passes?: (Riffer::Evals::Result) -> bool
 
   # Returns a hash representation of the metric.
   #
-  # : return: Hash[Symbol, untyped]
-  def to_h: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 end

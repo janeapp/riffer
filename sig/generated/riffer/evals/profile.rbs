@@ -22,48 +22,39 @@
 #   result = MyAgent.run_eval(input: "What is Ruby?")
 #   result.passed?  # => true/false
 module Riffer::Evals::Profile
-  # : base: Module
-  # : return: void
-  def self.included: (untyped base) -> untyped
+  # : (Module) -> void
+  def self.included: (Module) -> void
 
   # DSL builder for configuring metrics within ai_evals block.
   class Builder
     # The configured metrics.
     attr_reader metrics: Array[Riffer::Evals::Metric]
 
-    # : return: void
-    def initialize: () -> untyped
+    # : () -> void
+    def initialize: () -> void
 
     # Defines a metric with thresholds.
     #
-    # : identifier: (Symbol | String) -- the evaluator identifier
-    # : min: Float? -- minimum score threshold
-    # : max: Float? -- maximum score threshold
-    # : weight: Float -- weight for aggregation (default: 1.0)
-    # : return: void
-    def metric: (untyped identifier, ?min: untyped, ?max: untyped, ?weight: untyped) -> untyped
+    # : ((Symbol | String), ?min: Float?, ?max: Float?, ?weight: Float) -> void
+    def metric: (Symbol | String, ?min: Float?, ?max: Float?, ?weight: Float) -> void
   end
 
   module ClassMethods
     # Defines the eval metrics for this profile.
     #
-    # : &block: () -> void
-    # : return: void
-    def ai_evals: () ?{ (?) -> untyped } -> untyped
+    # : () { () -> void } -> void
+    def ai_evals: () { () -> void } -> void
 
     # Returns the configured metrics.
     #
-    # : return: Array[Riffer::Evals::Metric]
-    def eval_metrics: () -> untyped
+    # : () -> Array[Riffer::Evals::Metric]
+    def eval_metrics: () -> Array[Riffer::Evals::Metric]
   end
 
   module AgentClassMethods
     # Runs evaluations against the agent.
     #
-    # : input: String -- the input to send to the agent
-    # : context: Hash[Symbol, untyped]? -- optional context for evaluation
-    # : tool_context: Hash[Symbol, untyped]? -- optional context passed to tools during generation
-    # : return: Riffer::Evals::RunResult
-    def run_eval: (input: untyped, ?context: untyped, ?tool_context: untyped) -> untyped
+    # : (input: String, ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+    def run_eval: (input: String, ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   end
 end

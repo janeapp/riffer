@@ -7,13 +7,10 @@ require "logger"
 #
 # Handles logging and configuration for the framework.
 class Riffer::Core
-  #: @logger: Logger
-  #: @storage_registry: Hash[String, untyped]
-
   # The logger instance for Riffer.
   attr_reader :logger #: Logger
 
-  #: return: void
+  #: () -> void
   def initialize
     @logger = Logger.new($stdout)
     @logger.level = Logger::INFO
@@ -22,8 +19,7 @@ class Riffer::Core
 
   # Yields self for configuration.
   #
-  #: &block: (Riffer::Core) -> void
-  #: return: void
+  #: () ?{ (Riffer::Core) -> void } -> void
   def configure(&block)
     yield self if block_given?
   end

@@ -19,18 +19,14 @@ class Riffer::Evals::Runner
 
   # Initializes a new runner.
   #
-  #: metrics: Array[Riffer::Evals::Metric] -- the metrics to evaluate
-  #: return: void
+  #: (metrics: Array[Riffer::Evals::Metric]) -> void
   def initialize(metrics:)
     @metrics = metrics
   end
 
   # Runs all evaluators and collects results.
   #
-  #: input: String -- the input given to the agent
-  #: output: String -- the output produced by the agent
-  #: context: Hash[Symbol, untyped]? -- optional context (e.g., ground_truth)
-  #: return: Riffer::Evals::RunResult
+  #: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   def run(input:, output:, context: nil)
     results = metrics.map do |metric|
       evaluator_class = metric.evaluator_class

@@ -17,8 +17,8 @@ module Riffer
   class TimeoutError < Error
   end
 
-  # : return: Riffer::Config
-  def self.config: () -> untyped
+  # : () -> Riffer::Config
+  def self.config: () -> Riffer::Config
 
   # Yields the configuration for block-based setup.
   #
@@ -26,10 +26,9 @@ module Riffer
   #     config.openai.api_key = ENV['OPENAI_API_KEY']
   #   end
   #
-  # : &block: (Riffer::Config) -> void
-  # : return: void
-  def self.configure: () ?{ (?) -> untyped } -> untyped
+  # : () ?{ (Riffer::Config) -> void } -> void
+  def self.configure: () ?{ (Riffer::Config) -> void } -> void
 
-  # : return: String
-  def self.version: () -> untyped
+  # : () -> String
+  def self.version: () -> String
 end

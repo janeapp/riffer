@@ -27,7 +27,7 @@ module Riffer
   # Raised when tool execution times out.
   class TimeoutError < Error; end
 
-  #: return: Riffer::Config
+  #: () -> Riffer::Config
   def self.config
     @config ||= Config.new
   end
@@ -38,13 +38,12 @@ module Riffer
   #     config.openai.api_key = ENV['OPENAI_API_KEY']
   #   end
   #
-  #: &block: (Riffer::Config) -> void
-  #: return: void
+  #: () ?{ (Riffer::Config) -> void } -> void
   def self.configure(&block)
     yield config if block_given?
   end
 
-  #: return: String
+  #: () -> String
   def self.version
     VERSION
   end

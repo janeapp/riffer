@@ -6,63 +6,41 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # Initializes the OpenAI provider.
   #
-  # : **options: untyped
-  # : return: void
-  def initialize: (**untyped options) -> untyped
+  # : (**untyped) -> void
+  def initialize: (**untyped) -> void
 
   private
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : **options: untyped
-  # : return: Riffer::Messages::Assistant
-  def perform_generate_text: (untyped messages, model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
+  def perform_generate_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : **options: untyped
-  # : return: Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (untyped messages, model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : options: Hash[Symbol, untyped]
-  # : return: Hash[Symbol, untyped]
-  def build_request_params: (untyped messages, untyped model, untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params: (Array[Riffer::Messages::Base], String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : return: Array[Hash[Symbol, untyped]]
-  def convert_messages_to_openai_format: (untyped messages) -> untyped
+  # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
+  def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
 
-  # : message: Riffer::Messages::Assistant
-  # : return: (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
-  def convert_assistant_to_openai_format: (untyped message) -> untyped
+  # : (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
+  def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
 
-  # : response: OpenAI::Models::Responses::Response
-  # : return: Riffer::TokenUsage?
-  def extract_token_usage: (untyped response) -> untyped
+  # : (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
+  def extract_token_usage: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
 
-  # : output_items: Array[OpenAI::Models::Responses::response_output_item]
-  # : token_usage: Riffer::TokenUsage?
-  # : return: Riffer::Messages::Assistant
-  def extract_assistant_message: (untyped output_items, ?untyped token_usage) -> untyped
+  # : (Array[OpenAI::Models::Responses::response_output_item], ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message: (Array[OpenAI::Models::Responses::response_output_item], ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
-  # : stream: OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event]
-  # : yielder: Enumerator::Yielder
-  # : return: void
-  def process_stream_events: (untyped stream, untyped yielder) -> untyped
+  # : (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
+  def process_stream_events: (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
 
-  # : event: OpenAI::Models::Responses::response_stream_event
-  # : tool_info: Hash[String, Hash[Symbol, untyped]]
-  # : return: void
-  def track_tool_info: (untyped event, untyped tool_info) -> untyped
+  # : (OpenAI::Models::Responses::response_stream_event, Hash[String, Hash[Symbol, untyped]]) -> void
+  def track_tool_info: (OpenAI::Models::Responses::response_stream_event, Hash[String, Hash[Symbol, untyped]]) -> void
 
-  # : event: OpenAI::Models::Responses::response_stream_event
-  # : tool_info: Hash[String, Hash[Symbol, untyped]]
-  # : return: Riffer::StreamEvents::Base?
-  def convert_event: (untyped event, ?untyped tool_info) -> untyped
+  # : (OpenAI::Models::Responses::response_stream_event, ?Hash[String, Hash[Symbol, untyped]]) -> Riffer::StreamEvents::Base?
+  def convert_event: (OpenAI::Models::Responses::response_stream_event, ?Hash[String, Hash[Symbol, untyped]]) -> Riffer::StreamEvents::Base?
 
-  # : tool: singleton(Riffer::Tool)
-  # : return: Hash[Symbol, untyped]
-  def convert_tool_to_openai_format: (untyped tool) -> untyped
+  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool_to_openai_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

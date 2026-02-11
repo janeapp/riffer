@@ -10,12 +10,7 @@ class Riffer::Providers::Base
 
   # Generates text using the provider.
   #
-  #: prompt: String? -- the user prompt (required when messages is not provided)
-  #: system: String? -- an optional system message
-  #: messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]? -- optional messages array
-  #: model: String? -- optional model string to override the configured model
-  #: **options: untyped
-  #: return: Riffer::Messages::Assistant
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
@@ -25,12 +20,7 @@ class Riffer::Providers::Base
 
   # Streams text from the provider.
   #
-  #: prompt: String? -- the user prompt (required when messages is not provided)
-  #: system: String? -- an optional system message
-  #: messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]? -- optional messages array
-  #: model: String? -- optional model string to override the configured model
-  #: **options: untyped
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     normalized_messages = normalize_messages(prompt: prompt, system: system, messages: messages)
@@ -40,26 +30,17 @@ class Riffer::Providers::Base
 
   private
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String?
-  #: **options: untyped
-  #: return: Riffer::Messages::Assistant
+  #: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
   def perform_generate_text(messages, model: nil, **options)
     raise NotImplementedError, "Subclasses must implement #perform_generate_text"
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String?
-  #: **options: untyped
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def perform_stream_text(messages, model: nil, **options)
     raise NotImplementedError, "Subclasses must implement #perform_stream_text"
   end
 
-  #: prompt: String?
-  #: system: String?
-  #: messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?
-  #: return: void
+  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
   def validate_input!(prompt:, system:, messages:)
     if messages.nil?
       raise Riffer::ArgumentError, "prompt is required when messages is not provided" if prompt.nil?
@@ -69,10 +50,7 @@ class Riffer::Providers::Base
     end
   end
 
-  #: prompt: String?
-  #: system: String?
-  #: messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?
-  #: return: Array[Riffer::Messages::Base]
+  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?) -> Array[Riffer::Messages::Base]
   def normalize_messages(prompt:, system:, messages:)
     if messages
       return messages.map { |msg| convert_to_message_object(msg) }
@@ -84,8 +62,7 @@ class Riffer::Providers::Base
     result
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: return: void
+  #: (Array[Riffer::Messages::Base]) -> void
   def validate_normalized_messages!(messages)
     has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }
     raise Riffer::ArgumentError, "messages must include at least one user message" unless has_user

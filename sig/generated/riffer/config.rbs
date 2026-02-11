@@ -55,6 +55,6 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader evals: Riffer::Config::Evals
 
-  # : return: void
-  def initialize: () -> untyped
+  # : () -> void
+  def initialize: () -> void
 end

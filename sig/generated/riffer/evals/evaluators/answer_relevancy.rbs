@@ -14,16 +14,11 @@
 class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
   SYSTEM_PROMPT: String
 
-  # : input: String -- the input that was given to the agent
-  # : output: String -- the output produced by the agent
-  # : context: Hash[Symbol, untyped]? -- optional context
-  # : return: Riffer::Evals::Result
-  def evaluate: (input: untyped, output: untyped, ?context: untyped) -> untyped
+  # : (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  def evaluate: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
 
   private
 
-  # : input: String
-  # : output: String
-  # : return: String
-  def build_user_prompt: (input: untyped, output: untyped) -> untyped
+  # : (input: String, output: String) -> String
+  def build_user_prompt: (input: String, output: String) -> String
 end

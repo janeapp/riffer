@@ -29,38 +29,33 @@ class Riffer::Tool
 
   # Gets or sets the tool description.
   #
-  # : value: String? -- the description to set, or nil to get
-  # : return: String?
-  def self.description: (?untyped value) -> untyped
+  # : (?String?) -> String?
+  def self.description: (?String?) -> String?
 
   # Gets or sets the tool identifier/name.
   #
-  # : value: String? -- the identifier to set, or nil to get
-  # : return: String
-  def self.identifier: (?untyped value) -> untyped
+  # : (?String?) -> String
+  def self.identifier: (?String?) -> String
 
   # Alias for identifier - used by providers.
   #
-  # : value: String? -- the name to set, or nil to get
-  # : return: String
-  def self.name: (?untyped value) -> untyped
+  # : (?String?) -> String
+  def self.name: (?String?) -> String
 
   # Gets or sets the tool timeout in seconds.
   #
-  # : value: (Integer | Float)? -- the timeout to set in seconds, or nil to get
-  # : return: (Integer | Float)
-  def self.timeout: (?untyped value) -> untyped
+  # : (?(Integer | Float)?) -> (Integer | Float)
+  def self.timeout: (?(Integer | Float)?) -> (Integer | Float)
 
   # Defines parameters using the Params DSL.
   #
-  # : &block: () -> void
-  # : return: Riffer::Tools::Params?
-  def self.params: () ?{ (?) -> untyped } -> untyped
+  # : () ?{ () -> void } -> Riffer::Tools::Params?
+  def self.params: () ?{ () -> void } -> Riffer::Tools::Params?
 
   # Returns the JSON Schema for the tool's parameters.
   #
-  # : return: Hash[Symbol, untyped]
-  def self.parameters_schema: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def self.parameters_schema: () -> Hash[Symbol, untyped]
 
   def self.empty_schema: () -> untyped
 
@@ -68,29 +63,23 @@ class Riffer::Tool
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  # : context: Hash[Symbol, untyped]? -- optional context passed from the agent
-  # : **kwargs: untyped
-  # : return: Riffer::Tools::Response
-  def call: (context: untyped, **untyped kwargs) -> untyped
+  # : (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
+  def call: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
 
   # Creates a text response. Shorthand for Riffer::Tools::Response.text.
   #
-  # : result: untyped -- the tool result (converted via to_s)
-  # : return: Riffer::Tools::Response
-  def text: (untyped result) -> untyped
+  # : (untyped) -> Riffer::Tools::Response
+  def text: (untyped) -> Riffer::Tools::Response
 
   # Creates a JSON response. Shorthand for Riffer::Tools::Response.json.
   #
-  # : result: untyped -- the tool result (converted via JSON.generate)
-  # : return: Riffer::Tools::Response
-  def json: (untyped result) -> untyped
+  # : (untyped) -> Riffer::Tools::Response
+  def json: (untyped) -> Riffer::Tools::Response
 
   # Creates an error response. Shorthand for Riffer::Tools::Response.error.
   #
-  # : message: String -- the error message
-  # : type: Symbol -- the error type (default: :execution_error)
-  # : return: Riffer::Tools::Response
-  def error: (untyped message, ?type: untyped) -> untyped
+  # : (String, ?type: Symbol) -> Riffer::Tools::Response
+  def error: (String, ?type: Symbol) -> Riffer::Tools::Response
 
   # Executes the tool with validation and timeout (used by Agent).
   #
@@ -98,8 +87,6 @@ class Riffer::Tool
   # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
   # Raises Riffer::Error if the tool does not return a Response object.
   #
-  # : context: Hash[Symbol, untyped]? -- context passed from the agent
-  # : **kwargs: untyped
-  # : return: Riffer::Tools::Response
-  def call_with_validation: (context: untyped, **untyped kwargs) -> untyped
+  # : (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
+  def call_with_validation: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
 end

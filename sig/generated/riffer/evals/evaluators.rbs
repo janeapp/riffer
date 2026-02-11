@@ -21,25 +21,22 @@ module Riffer::Evals::Evaluators
 
     # Registers a custom evaluator class with an identifier.
     #
-    # : identifier: (String | Symbol) -- the identifier to register
-    # : evaluator_class: singleton(Riffer::Evals::Evaluator) -- the evaluator class
-    # : return: void
-    def self.register: (untyped identifier, untyped evaluator_class) -> untyped
+    # : ((String | Symbol), singleton(Riffer::Evals::Evaluator)) -> void
+    def self.register: (String | Symbol, singleton(Riffer::Evals::Evaluator)) -> void
 
     # Finds an evaluator class by identifier.
     #
-    # : identifier: (String | Symbol) -- the identifier to look up
-    # : return: singleton(Riffer::Evals::Evaluator)?
-    def self.find: (untyped identifier) -> untyped
+    # : ((String | Symbol)) -> singleton(Riffer::Evals::Evaluator)?
+    def self.find: (String | Symbol) -> singleton(Riffer::Evals::Evaluator)?
 
     # Returns all registered evaluators (built-in and custom).
     #
-    # : return: Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
-    def self.all: () -> untyped
+    # : () -> Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
+    def self.all: () -> Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
 
     # Clears custom registrations (for testing). Built-ins remain.
     #
-    # : return: void
-    def self.clear: () -> untyped
+    # : () -> void
+    def self.clear: () -> void
   end
 end

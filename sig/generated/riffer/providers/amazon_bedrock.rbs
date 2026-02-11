@@ -8,53 +8,35 @@
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # Initializes the Amazon Bedrock provider.
   #
-  # : api_token: String? -- Bearer token for API authentication
-  # : region: String? -- AWS region
-  # : **options: untyped
-  # : return: void
-  def initialize: (?api_token: untyped, ?region: untyped, **untyped options) -> untyped
+  # : (?api_token: String?, ?region: String?, **untyped) -> void
+  def initialize: (?api_token: String?, ?region: String?, **untyped) -> void
 
   private
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : **options: untyped
-  # : return: Riffer::Messages::Assistant
-  def perform_generate_text: (untyped messages, model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
+  def perform_generate_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : **options: untyped
-  # : return: Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (untyped messages, model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : return: Hash[Symbol, untyped]
-  def partition_messages: (untyped messages) -> untyped
+  # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+  def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
-  # : conversation_messages: Array[Hash[Symbol, untyped]]
-  # : message: Riffer::Messages::Tool
-  # : return: void
-  def append_tool_result: (untyped conversation_messages, untyped message) -> untyped
+  # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
+  def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
-  # : message: Riffer::Messages::Assistant
-  # : return: Hash[Symbol, untyped]
-  def convert_assistant_to_bedrock_format: (untyped message) -> untyped
+  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def convert_assistant_to_bedrock_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
-  # : arguments: (String | Hash[String, untyped])?
-  # : return: Hash[String, untyped]
-  def parse_tool_arguments: (untyped arguments) -> untyped
+  # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 
-  # : response: Aws::BedrockRuntime::Types::ConverseResponse
-  # : return: Riffer::TokenUsage?
-  def extract_token_usage: (untyped response) -> untyped
+  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
+  def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
 
-  # : response: Aws::BedrockRuntime::Types::ConverseResponse
-  # : token_usage: Riffer::TokenUsage?
-  # : return: Riffer::Messages::Assistant
-  def extract_assistant_message: (untyped response, ?untyped token_usage) -> untyped
+  # : (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message: (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
-  # : tool: singleton(Riffer::Tool)
-  # : return: Hash[Symbol, untyped]
-  def convert_tool_to_bedrock_format: (untyped tool) -> untyped
+  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool_to_bedrock_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

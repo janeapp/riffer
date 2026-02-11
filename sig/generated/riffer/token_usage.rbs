@@ -21,35 +21,28 @@ class Riffer::TokenUsage
   # Number of tokens read from cache (Anthropic-specific).
   attr_reader cache_read_tokens: Integer?
 
-  # : input_tokens: Integer
-  # : output_tokens: Integer
-  # : cache_creation_tokens: Integer? -- tokens written to cache
-  # : cache_read_tokens: Integer? -- tokens read from cache
-  # : return: void
-  def initialize: (input_tokens: untyped, output_tokens: untyped, ?cache_creation_tokens: untyped, ?cache_read_tokens: untyped) -> untyped
+  # : (input_tokens: Integer, output_tokens: Integer, ?cache_creation_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
+  def initialize: (input_tokens: Integer, output_tokens: Integer, ?cache_creation_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
 
   # Returns the total number of tokens (input + output).
   #
-  # : return: Integer
-  def total_tokens: () -> untyped
+  # : () -> Integer
+  def total_tokens: () -> Integer
 
   # Combines two TokenUsage objects for cumulative tracking.
   #
-  # : other: Riffer::TokenUsage
-  # : return: Riffer::TokenUsage
-  def +: (untyped other) -> untyped
+  # : (Riffer::TokenUsage) -> Riffer::TokenUsage
+  def +: (Riffer::TokenUsage) -> Riffer::TokenUsage
 
   # Converts the token usage to a hash representation.
   #
   # Cache tokens are omitted if nil.
   #
-  # : return: Hash[Symbol, Integer]
-  def to_h: () -> untyped
+  # : () -> Hash[Symbol, Integer]
+  def to_h: () -> Hash[Symbol, Integer]
 
   private
 
-  # : a: Integer?
-  # : b: Integer?
-  # : return: Integer?
-  def add_nullable: (untyped a, untyped b) -> untyped
+  # : (Integer?, Integer?) -> Integer?
+  def add_nullable: (Integer?, Integer?) -> Integer?
 end

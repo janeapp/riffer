@@ -8,7 +8,7 @@
 #   msg.content  # => "Hello!"
 #
 class Riffer::Messages::User < Riffer::Messages::Base
-  #: return: Symbol
+  #: () -> Symbol
   def role
     :user
   end

@@ -16,11 +16,8 @@
 class Riffer::Evals::Judge
   # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
-    # : context: Hash[Symbol, untyped]?
-    # : score: Float
-    # : reason: String
-    # : return: Riffer::Tools::Response
-    def call: (context: untyped, score: untyped, reason: untyped) -> untyped
+    # : (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
+    def call: (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
   end
 
   # The model string (provider/model format).
@@ -28,34 +25,28 @@ class Riffer::Evals::Judge
 
   # Initializes a new judge.
   #
-  # : model: String -- the model to use (provider/model format)
-  # : provider_options: Hash[Symbol, untyped] -- options passed to the provider
-  # : return: void
-  def initialize: (model: untyped, ?provider_options: untyped) -> untyped
+  # : (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
+  def initialize: (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
 
   # Evaluates using the configured LLM.
   #
   # Raises Riffer::ArgumentError if both messages and system_prompt/user_prompt are provided,
   # or if user_prompt is missing when messages is not provided.
   #
-  # : messages: Array[Hash[Symbol, untyped]]? -- array of message hashes
-  # : system_prompt: String? -- the system prompt for the judge
-  # : user_prompt: String? -- the user prompt containing the evaluation request
-  # : return: Hash[Symbol, untyped]
-  def evaluate: (?messages: untyped, ?system_prompt: untyped, ?user_prompt: untyped) -> untyped
+  # : (?messages: Array[Hash[Symbol, untyped]]?, ?system_prompt: String?, ?user_prompt: String?) -> Hash[Symbol, untyped]
+  def evaluate: (?messages: Array[Hash[Symbol, untyped]]?, ?system_prompt: String?, ?user_prompt: String?) -> Hash[Symbol, untyped]
 
   private
 
-  # : return: Riffer::Providers::Base
-  def provider_instance: () -> untyped
+  # : () -> Riffer::Providers::Base
+  def provider_instance: () -> Riffer::Providers::Base
 
-  # : return: String
-  def provider_name: () -> untyped
+  # : () -> String
+  def provider_name: () -> String
 
-  # : return: String
-  def model_name: () -> untyped
+  # : () -> String
+  def model_name: () -> String
 
-  # : response: Riffer::Messages::Assistant
-  # : return: Hash[Symbol, untyped]
-  def parse_tool_response: (untyped response) -> untyped
+  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def parse_tool_response: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 end

@@ -10,51 +10,28 @@ class Riffer::Providers::Base
 
   # Generates text using the provider.
   #
-  # : prompt: String? -- the user prompt (required when messages is not provided)
-  # : system: String? -- an optional system message
-  # : messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]? -- optional messages array
-  # : model: String? -- optional model string to override the configured model
-  # : **options: untyped
-  # : return: Riffer::Messages::Assistant
-  def generate_text: (?prompt: untyped, ?system: untyped, ?messages: untyped, ?model: untyped, **untyped options) -> untyped
+  # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Riffer::Messages::Assistant
+  def generate_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Riffer::Messages::Assistant
 
   # Streams text from the provider.
   #
-  # : prompt: String? -- the user prompt (required when messages is not provided)
-  # : system: String? -- an optional system message
-  # : messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]? -- optional messages array
-  # : model: String? -- optional model string to override the configured model
-  # : **options: untyped
-  # : return: Enumerator[Riffer::StreamEvents::Base, void]
-  def stream_text: (?prompt: untyped, ?system: untyped, ?messages: untyped, ?model: untyped, **untyped options) -> untyped
+  # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   private
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String?
-  # : **options: untyped
-  # : return: Riffer::Messages::Assistant
-  def perform_generate_text: (untyped messages, ?model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
+  def perform_generate_text: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String?
-  # : **options: untyped
-  # : return: Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (untyped messages, ?model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # : prompt: String?
-  # : system: String?
-  # : messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?
-  # : return: void
-  def validate_input!: (prompt: untyped, system: untyped, messages: untyped) -> untyped
+  # : (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
+  def validate_input!: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
 
-  # : prompt: String?
-  # : system: String?
-  # : messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?
-  # : return: Array[Riffer::Messages::Base]
-  def normalize_messages: (prompt: untyped, system: untyped, messages: untyped) -> untyped
+  # : (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?) -> Array[Riffer::Messages::Base]
+  def normalize_messages: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?) -> Array[Riffer::Messages::Base]
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : return: void
-  def validate_normalized_messages!: (untyped messages) -> untyped
+  # : (Array[Riffer::Messages::Base]) -> void
+  def validate_normalized_messages!: (Array[Riffer::Messages::Base]) -> void
 end

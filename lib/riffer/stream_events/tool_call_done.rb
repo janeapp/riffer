@@ -17,12 +17,7 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
   # The complete arguments JSON string.
   attr_reader :arguments #: String
 
-  #: item_id: String -- the tool call item identifier
-  #: call_id: String -- the call identifier for response matching
-  #: name: String -- the tool name
-  #: arguments: String -- the complete arguments JSON string
-  #: role: Symbol -- the message role (defaults to :assistant)
-  #: return: void
+  #: (item_id: String, call_id: String, name: String, arguments: String, ?role: Symbol) -> void
   def initialize(item_id:, call_id:, name:, arguments:, role: :assistant)
     super(role: role)
     @item_id = item_id
@@ -31,7 +26,7 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
     @arguments = arguments
   end
 
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, item_id: @item_id, call_id: @call_id, name: @name, arguments: @arguments}
   end

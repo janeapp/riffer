@@ -6,8 +6,6 @@ module Riffer::Helpers::Validations
   #
   # Raises Riffer::ArgumentError if the value is not a string or is empty.
   #
-  # : value: untyped -- the value to validate
-  # : name: String -- the name of the value for error messages
-  # : return: true
-  def validate_is_string!: (untyped value, ?untyped name) -> untyped
+  # : (untyped, ?String) -> true
+  def validate_is_string!: (untyped, ?String) -> true
 end

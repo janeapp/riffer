@@ -5,12 +5,9 @@
 #
 # Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
-  #: @client: OpenAI::Client
-
   # Initializes the OpenAI provider.
   #
-  #: **options: untyped
-  #: return: void
+  #: (**untyped) -> void
   def initialize(**options)
     depends_on "openai"
 
@@ -20,10 +17,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   private
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String
-  #: **options: untyped
-  #: return: Riffer::Messages::Assistant
+  #: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
   def perform_generate_text(messages, model:, **options)
     params = build_request_params(messages, model, options)
     response = @client.responses.create(params)
@@ -31,10 +25,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     extract_assistant_message(response.output, extract_token_usage(response))
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String
-  #: **options: untyped
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def perform_stream_text(messages, model:, **options)
     Enumerator.new do |yielder|
       params = build_request_params(messages, model, options)
@@ -44,10 +35,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String
-  #: options: Hash[Symbol, untyped]
-  #: return: Hash[Symbol, untyped]
+  #: (Array[Riffer::Messages::Base], String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     reasoning = options[:reasoning]
     tools = options[:tools]
@@ -69,8 +57,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     params.compact
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: return: Array[Hash[Symbol, untyped]]
+  #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format(messages)
     messages.flat_map do |message|
       case message
@@ -90,8 +77,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  #: message: Riffer::Messages::Assistant
-  #: return: (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
+  #: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format(message)
     if message.tool_calls.empty?
       {role: "assistant", content: message.content}
@@ -111,8 +97,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  #: response: OpenAI::Models::Responses::Response
-  #: return: Riffer::TokenUsage?
+  #: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
@@ -123,9 +108,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
-  #: output_items: Array[OpenAI::Models::Responses::response_output_item]
-  #: token_usage: Riffer::TokenUsage?
-  #: return: Riffer::Messages::Assistant
+  #: (Array[OpenAI::Models::Responses::response_output_item], ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
   def extract_assistant_message(output_items, token_usage = nil)
     text_content = ""
     tool_calls = []
@@ -152,9 +135,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
-  #: stream: OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event]
-  #: yielder: Enumerator::Yielder
-  #: return: void
+  #: (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
   def process_stream_events(stream, yielder)
     tool_info = {}
 
@@ -168,9 +149,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  #: event: OpenAI::Models::Responses::response_stream_event
-  #: tool_info: Hash[String, Hash[Symbol, untyped]]
-  #: return: void
+  #: (OpenAI::Models::Responses::response_stream_event, Hash[String, Hash[Symbol, untyped]]) -> void
   def track_tool_info(event, tool_info)
     return unless event.type == :"response.output_item.added"
     return unless event.item&.type == :function_call
@@ -181,9 +160,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     }
   end
 
-  #: event: OpenAI::Models::Responses::response_stream_event
-  #: tool_info: Hash[String, Hash[Symbol, untyped]]
-  #: return: Riffer::StreamEvents::Base?
+  #: (OpenAI::Models::Responses::response_stream_event, ?Hash[String, Hash[Symbol, untyped]]) -> Riffer::StreamEvents::Base?
   def convert_event(event, tool_info = {})
     case event.type
     when :"response.output_text.delta"
@@ -222,8 +199,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
-  #: tool: singleton(Riffer::Tool)
-  #: return: Hash[Symbol, untyped]
+  #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_openai_format(tool)
     {
       type: "function",

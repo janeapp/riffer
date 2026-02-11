@@ -26,47 +26,37 @@ class Riffer::Tools::Response
   #
   # Raises Riffer::ArgumentError if format is invalid.
   #
-  # : result: untyped -- the tool result
-  # : format: Symbol -- the format (:text or :json; default: :text)
-  # : return: Riffer::Tools::Response
-  def self.success: (untyped result, ?format: untyped) -> untyped
+  # : (untyped, ?format: Symbol) -> Riffer::Tools::Response
+  def self.success: (untyped, ?format: Symbol) -> Riffer::Tools::Response
 
   # Creates a success response with text format.
   #
-  # : result: untyped -- the tool result (converted via to_s)
-  # : return: Riffer::Tools::Response
-  def self.text: (untyped result) -> untyped
+  # : (untyped) -> Riffer::Tools::Response
+  def self.text: (untyped) -> Riffer::Tools::Response
 
   # Creates a success response with JSON format.
   #
-  # : result: untyped -- the tool result (converted via to_json)
-  # : return: Riffer::Tools::Response
-  def self.json: (untyped result) -> untyped
+  # : (untyped) -> Riffer::Tools::Response
+  def self.json: (untyped) -> Riffer::Tools::Response
 
   # Creates an error response.
   #
-  # : message: String -- the error message
-  # : type: Symbol -- the error type (default: :execution_error)
-  # : return: Riffer::Tools::Response
-  def self.error: (untyped message, ?type: untyped) -> untyped
+  # : (String, ?type: Symbol) -> Riffer::Tools::Response
+  def self.error: (String, ?type: Symbol) -> Riffer::Tools::Response
 
-  # : return: bool
-  def success?: () -> untyped
+  # : () -> bool
+  def success?: () -> bool
 
-  # : return: bool
-  def error?: () -> untyped
+  # : () -> bool
+  def error?: () -> bool
 
   # Returns a hash representation of the response.
   #
-  # : return: Hash[Symbol, untyped]
-  def to_h: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 
   private
 
-  # : content: String
-  # : success: bool
-  # : error_message: String?
-  # : error_type: Symbol?
-  # : return: void
-  def initialize: (content: untyped, success: untyped, ?error_message: untyped, ?error_type: untyped) -> untyped
+  # : (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
+  def initialize: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
 end

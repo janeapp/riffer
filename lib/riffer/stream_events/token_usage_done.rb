@@ -13,15 +13,13 @@ class Riffer::StreamEvents::TokenUsageDone < Riffer::StreamEvents::Base
   # The token usage data for this response.
   attr_reader :token_usage #: Riffer::TokenUsage
 
-  #: token_usage: Riffer::TokenUsage -- the token usage data
-  #: role: Symbol -- the message role (defaults to :assistant)
-  #: return: void
+  #: (token_usage: Riffer::TokenUsage, ?role: Symbol) -> void
   def initialize(token_usage:, role: :assistant)
     super(role: role)
     @token_usage = token_usage
   end
 
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, token_usage: @token_usage.to_h}
   end

@@ -8,8 +8,7 @@ class Riffer::StreamEvents::Base
   # The message role (typically :assistant).
   attr_reader :role #: Symbol
 
-  #: role: Symbol -- the message role (defaults to :assistant)
-  #: return: void
+  #: (?role: Symbol) -> void
   def initialize(role: :assistant)
     @role = role
   end
@@ -18,7 +17,7 @@ class Riffer::StreamEvents::Base
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def to_h
     raise NotImplementedError, "Subclasses must implement #to_h"
   end

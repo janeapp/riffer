@@ -7,19 +7,18 @@ class Riffer::Messages::Base
   # The message content.
   attr_reader content: String
 
-  # : content: String
-  # : return: void
-  def initialize: (untyped content) -> untyped
+  # : (String) -> void
+  def initialize: (String) -> void
 
   # Converts the message to a hash.
   #
-  # : return: Hash[Symbol, untyped]
-  def to_h: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 
   # Returns the message role.
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  # : return: Symbol
-  def role: () -> untyped
+  # : () -> Symbol
+  def role: () -> Symbol
 end

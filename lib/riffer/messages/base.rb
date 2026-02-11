@@ -8,15 +8,14 @@ class Riffer::Messages::Base
   # The message content.
   attr_reader :content #: String
 
-  #: content: String
-  #: return: void
+  #: (String) -> void
   def initialize(content)
     @content = content
   end
 
   # Converts the message to a hash.
   #
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def to_h
     {role: role, content: content}
   end
@@ -25,7 +24,7 @@ class Riffer::Messages::Base
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  #: return: Symbol
+  #: () -> Symbol
   def role
     raise NotImplementedError, "Subclasses must implement #role"
   end

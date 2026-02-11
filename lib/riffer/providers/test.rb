@@ -5,17 +5,12 @@
 #
 # No external gems required.
 class Riffer::Providers::Test < Riffer::Providers::Base
-  #: @responses: Array[Hash[Symbol, untyped]]
-  #: @current_index: Integer
-  #: @stubbed_responses: Array[Hash[Symbol, untyped]]
-
   # Array of recorded method calls for assertions.
   attr_reader :calls #: Array[Hash[Symbol, untyped]]
 
   # Initializes the test provider.
   #
-  #: **options: untyped
-  #: return: void
+  #: (**untyped) -> void
   def initialize(**options)
     @responses = options[:responses] || []
     @current_index = 0
@@ -31,10 +26,7 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
   #   provider.stub_response("Final response", token_usage: Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5))
   #
-  #: content: String -- the response content
-  #: tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls to include
-  #: token_usage: Riffer::TokenUsage? -- optional token usage data to include
-  #: return: void
+  #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -> void
   def stub_response(content, tool_calls: [], token_usage: nil)
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
       Riffer::Messages::Assistant::ToolCall.new(
@@ -49,14 +41,14 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
   # Clears all stubbed responses.
   #
-  #: return: void
+  #: () -> void
   def clear_stubs
     @stubbed_responses = []
   end
 
   private
 
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def next_response
     if @stubbed_responses.any?
       @stubbed_responses.shift
@@ -69,10 +61,7 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     end
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String?
-  #: **options: untyped
-  #: return: Riffer::Messages::Assistant
+  #: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
   def perform_generate_text(messages, model: nil, **options)
     @calls << {messages: messages.map(&:to_h), model: model, **options}
     response = next_response
@@ -88,10 +77,7 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     end
   end
 
-  #: messages: Array[Riffer::Messages::Base]
-  #: model: String?
-  #: **options: untyped
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def perform_stream_text(messages, model: nil, **options)
     @calls << {messages: messages.map(&:to_h), model: model, **options}
     response = next_response

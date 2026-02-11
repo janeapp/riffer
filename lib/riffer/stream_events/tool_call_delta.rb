@@ -14,11 +14,7 @@ class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
   # The incremental arguments JSON fragment.
   attr_reader :arguments_delta #: String
 
-  #: item_id: String -- the tool call item identifier
-  #: arguments_delta: String -- the incremental arguments JSON fragment
-  #: name: String? -- the tool name (may only be present in first delta)
-  #: role: Symbol -- the message role (defaults to :assistant)
-  #: return: void
+  #: (item_id: String, arguments_delta: String, ?name: String?, ?role: Symbol) -> void
   def initialize(item_id:, arguments_delta:, name: nil, role: :assistant)
     super(role: role)
     @item_id = item_id
@@ -26,7 +22,7 @@ class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
     @arguments_delta = arguments_delta
   end
 
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, item_id: @item_id, name: @name, arguments_delta: @arguments_delta}.compact
   end

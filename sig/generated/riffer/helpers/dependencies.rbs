@@ -20,8 +20,6 @@ module Riffer::Helpers::Dependencies
   # Raises LoadError if the gem is not installed.
   # Raises VersionError if the gem version does not satisfy requirements.
   #
-  # : gem_name: String -- the gem name
-  # : req: (bool | String) -- true to require the gem, false to skip, or String to require a different lib
-  # : return: true
-  def depends_on: (untyped gem_name, ?req: untyped) -> untyped
+  # : (String, ?req: (bool | String)) -> true
+  def depends_on: (String, ?req: bool | String) -> true
 end

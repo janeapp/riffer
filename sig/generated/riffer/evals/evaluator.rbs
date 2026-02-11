@@ -26,52 +26,41 @@ class Riffer::Evals::Evaluator
 
   # Gets or sets the evaluator identifier.
   #
-  # : value: String? -- the identifier to set, or nil to get
-  # : return: String
-  def self.identifier: (?untyped value) -> untyped
+  # : (?String?) -> String
+  def self.identifier: (?String?) -> String
 
   # Gets or sets the evaluator description.
   #
-  # : value: String? -- the description to set, or nil to get
-  # : return: String?
-  def self.description: (?untyped value) -> untyped
+  # : (?String?) -> String?
+  def self.description: (?String?) -> String?
 
   # Gets or sets whether higher scores are better.
   #
-  # : value: bool? -- the value to set, or nil to get
-  # : return: bool
-  def self.higher_is_better: (?untyped value) -> untyped
+  # : (?bool?) -> bool
+  def self.higher_is_better: (?bool?) -> bool
 
   # Gets or sets the judge model for LLM-as-judge evaluations.
   #
-  # : value: String? -- the model to set (provider/model format), or nil to get
-  # : return: String?
-  def self.judge_model: (?untyped value) -> untyped
+  # : (?String?) -> String?
+  def self.judge_model: (?String?) -> String?
 
-  # : name: String?
-  # : return: String?
-  private def self.class_name_to_identifier: (untyped name) -> untyped
+  # : (String?) -> String?
+  private def self.class_name_to_identifier: (String?) -> String?
 
   # Evaluates an input/output pair.
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  # : input: String -- the input that was given to the agent
-  # : output: String -- the output produced by the agent
-  # : context: Hash[Symbol, untyped]? -- optional context (e.g., ground_truth)
-  # : return: Riffer::Evals::Result
-  def evaluate: (input: untyped, output: untyped, ?context: untyped) -> untyped
+  # : (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  def evaluate: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
 
   # Returns a Judge instance configured for this evaluator.
   #
-  # : return: Riffer::Evals::Judge
-  def judge: () -> untyped
+  # : () -> Riffer::Evals::Judge
+  def judge: () -> Riffer::Evals::Judge
 
   # Helper to build a Result object.
   #
-  # : score: Float -- the evaluation score (0.0 to 1.0)
-  # : reason: String? -- optional explanation
-  # : metadata: Hash[Symbol, untyped] -- optional additional data
-  # : return: Riffer::Evals::Result
-  def result: (score: untyped, ?reason: untyped, ?metadata: untyped) -> untyped
+  # : (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
+  def result: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
 end

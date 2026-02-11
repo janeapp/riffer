@@ -33,23 +33,18 @@ class Riffer::Evals::RunResult
 
   # Initializes a new run result.
   #
-  # : input: String -- the input that was evaluated
-  # : output: String -- the output that was evaluated
-  # : context: Hash[Symbol, untyped]? -- the evaluation context
-  # : results: Array[Riffer::Evals::Result] -- individual results
-  # : metrics: Array[Riffer::Evals::Metric] -- the metrics evaluated
-  # : return: void
-  def initialize: (input: untyped, output: untyped, context: untyped, results: untyped, metrics: untyped) -> untyped
+  # : (input: String, output: String, context: Hash[Symbol, untyped]?, results: Array[Riffer::Evals::Result], metrics: Array[Riffer::Evals::Metric]) -> void
+  def initialize: (input: String, output: String, context: Hash[Symbol, untyped]?, results: Array[Riffer::Evals::Result], metrics: Array[Riffer::Evals::Metric]) -> void
 
   # Checks if all metrics passed their thresholds.
   #
-  # : return: bool
-  def passed?: () -> untyped
+  # : () -> bool
+  def passed?: () -> bool
 
   # Returns results that failed their metric thresholds.
   #
-  # : return: Array[Riffer::Evals::Result]
-  def failures: () -> untyped
+  # : () -> Array[Riffer::Evals::Result]
+  def failures: () -> Array[Riffer::Evals::Result]
 
   # Calculates the weighted aggregate score.
   #
@@ -57,11 +52,11 @@ class Riffer::Evals::RunResult
   # For evaluators where lower is better (e.g., toxicity), the score is
   # inverted (1 - score) before aggregation.
   #
-  # : return: Float
-  def aggregate_score: () -> untyped
+  # : () -> Float
+  def aggregate_score: () -> Float
 
   # Returns a hash representation of the run result.
   #
-  # : return: Hash[Symbol, untyped]
-  def to_h: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 end

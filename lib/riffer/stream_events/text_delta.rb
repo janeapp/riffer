@@ -8,15 +8,13 @@ class Riffer::StreamEvents::TextDelta < Riffer::StreamEvents::Base
   # The incremental text content.
   attr_reader :content #: String
 
-  #: content: String -- the incremental text content
-  #: role: Symbol -- the message role (defaults to :assistant)
-  #: return: void
+  #: (String, ?role: Symbol) -> void
   def initialize(content, role: :assistant)
     super(role: role)
     @content = content
   end
 
-  #: return: Hash[Symbol, untyped]
+  #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, content: @content}
   end

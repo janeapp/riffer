@@ -8,47 +8,32 @@
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # Initializes the Anthropic provider.
   #
-  # : api_key: String? -- Anthropic API key
-  # : **options: untyped
-  # : return: void
-  def initialize: (?api_key: untyped, **untyped options) -> untyped
+  # : (?api_key: String?, **untyped) -> void
+  def initialize: (?api_key: String?, **untyped) -> void
 
   private
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : **options: untyped
-  # : return: Riffer::Messages::Assistant
-  def perform_generate_text: (untyped messages, model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
+  def perform_generate_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String
-  # : **options: untyped
-  # : return: Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (untyped messages, model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : return: Hash[Symbol, untyped]
-  def partition_messages: (untyped messages) -> untyped
+  # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+  def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
-  # : message: Riffer::Messages::Assistant
-  # : return: Hash[Symbol, untyped]
-  def convert_assistant_to_anthropic_format: (untyped message) -> untyped
+  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def convert_assistant_to_anthropic_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
-  # : arguments: (String | Hash[String, untyped])?
-  # : return: Hash[String, untyped]
-  def parse_tool_arguments: (untyped arguments) -> untyped
+  # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 
-  # : response: Anthropic::Models::Message
-  # : return: Riffer::TokenUsage?
-  def extract_token_usage: (untyped response) -> untyped
+  # : (Anthropic::Models::Message) -> Riffer::TokenUsage?
+  def extract_token_usage: (Anthropic::Models::Message) -> Riffer::TokenUsage?
 
-  # : response: Anthropic::Models::Message
-  # : token_usage: Riffer::TokenUsage?
-  # : return: Riffer::Messages::Assistant
-  def extract_assistant_message: (untyped response, ?untyped token_usage) -> untyped
+  # : (Anthropic::Models::Message, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message: (Anthropic::Models::Message, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
-  # : tool: singleton(Riffer::Tool)
-  # : return: Hash[Symbol, untyped]
-  def convert_tool_to_anthropic_format: (untyped tool) -> untyped
+  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool_to_anthropic_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

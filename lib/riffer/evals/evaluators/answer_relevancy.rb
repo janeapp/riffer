@@ -38,10 +38,7 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
       - 0.0 = Completely irrelevant
   PROMPT
 
-  #: input: String -- the input that was given to the agent
-  #: output: String -- the output produced by the agent
-  #: context: Hash[Symbol, untyped]? -- optional context
-  #: return: Riffer::Evals::Result
+  #: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
   def evaluate(input:, output:, context: nil)
     user_prompt = build_user_prompt(input: input, output: output)
     evaluation = judge.evaluate(system_prompt: SYSTEM_PROMPT, user_prompt: user_prompt)
@@ -50,9 +47,7 @@ class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
 
   private
 
-  #: input: String
-  #: output: String
-  #: return: String
+  #: (input: String, output: String) -> String
   def build_user_prompt(input:, output:)
     <<~PROMPT
       Input/Question:

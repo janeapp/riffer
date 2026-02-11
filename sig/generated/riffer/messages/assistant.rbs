@@ -28,17 +28,14 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # Token usage data for this response.
   attr_reader token_usage: Riffer::TokenUsage?
 
-  # : content: String
-  # : tool_calls: Array[Riffer::Messages::Assistant::ToolCall] -- optional tool calls
-  # : token_usage: Riffer::TokenUsage? -- optional token usage data
-  # : return: void
-  def initialize: (untyped content, ?tool_calls: untyped, ?token_usage: untyped) -> untyped
+  # : (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?) -> void
+  def initialize: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?) -> void
 
-  # : return: Symbol
-  def role: () -> untyped
+  # : () -> Symbol
+  def role: () -> Symbol
 
   # Converts the message to a hash.
   #
-  # : return: Hash[Symbol, untyped]
-  def to_h: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 end

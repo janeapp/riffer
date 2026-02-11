@@ -24,20 +24,12 @@
 #   end
 #
 class Riffer::Evals::Evaluator
-  #: self.@identifier: String?
-  #: self.@description: String?
-  #: self.@higher_is_better: bool?
-  #: self.@judge_model: String?
-
-  #: @judge: Riffer::Evals::Judge?
-
   class << self
     include Riffer::Helpers::ClassNameConverter
 
     # Gets or sets the evaluator identifier.
     #
-    #: value: String? -- the identifier to set, or nil to get
-    #: return: String
+    #: (?String?) -> String
     def identifier(value = nil)
       return @identifier || class_name_to_identifier(name) if value.nil?
       @identifier = value.to_s
@@ -45,8 +37,7 @@ class Riffer::Evals::Evaluator
 
     # Gets or sets the evaluator description.
     #
-    #: value: String? -- the description to set, or nil to get
-    #: return: String?
+    #: (?String?) -> String?
     def description(value = nil)
       return @description if value.nil?
       @description = value.to_s
@@ -54,8 +45,7 @@ class Riffer::Evals::Evaluator
 
     # Gets or sets whether higher scores are better.
     #
-    #: value: bool? -- the value to set, or nil to get
-    #: return: bool
+    #: (?bool?) -> bool
     def higher_is_better(value = nil)
       return @higher_is_better.nil? || @higher_is_better if value.nil?
       @higher_is_better = value
@@ -63,8 +53,7 @@ class Riffer::Evals::Evaluator
 
     # Gets or sets the judge model for LLM-as-judge evaluations.
     #
-    #: value: String? -- the model to set (provider/model format), or nil to get
-    #: return: String?
+    #: (?String?) -> String?
     def judge_model(value = nil)
       return @judge_model if value.nil?
       @judge_model = value.to_s
@@ -72,8 +61,7 @@ class Riffer::Evals::Evaluator
 
     private
 
-    #: name: String?
-    #: return: String?
+    #: (String?) -> String?
     def class_name_to_identifier(name)
       return nil if name.nil?
       class_name = name.split("::").last
@@ -86,10 +74,7 @@ class Riffer::Evals::Evaluator
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  #: input: String -- the input that was given to the agent
-  #: output: String -- the output produced by the agent
-  #: context: Hash[Symbol, untyped]? -- optional context (e.g., ground_truth)
-  #: return: Riffer::Evals::Result
+  #: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
   def evaluate(input:, output:, context: nil)
     raise NotImplementedError, "#{self.class} must implement #evaluate"
   end
@@ -98,7 +83,7 @@ class Riffer::Evals::Evaluator
 
   # Returns a Judge instance configured for this evaluator.
   #
-  #: return: Riffer::Evals::Judge
+  #: () -> Riffer::Evals::Judge
   def judge
     @judge ||= begin
       model = self.class.judge_model || Riffer.config.evals.judge_model
@@ -109,10 +94,7 @@ class Riffer::Evals::Evaluator
 
   # Helper to build a Result object.
   #
-  #: score: Float -- the evaluation score (0.0 to 1.0)
-  #: reason: String? -- optional explanation
-  #: metadata: Hash[Symbol, untyped] -- optional additional data
-  #: return: Riffer::Evals::Result
+  #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
   def result(score:, reason: nil, metadata: {})
     Riffer::Evals::Result.new(
       evaluator: self.class.identifier,

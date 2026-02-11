@@ -24,8 +24,7 @@
 #   result.passed?  # => true/false
 #
 module Riffer::Evals::Profile
-  #: base: Module
-  #: return: void
+  #: (Module) -> void
   def self.included(base)
     base.extend(ClassMethods)
 
@@ -43,18 +42,14 @@ module Riffer::Evals::Profile
     # The configured metrics.
     attr_reader :metrics #: Array[Riffer::Evals::Metric]
 
-    #: return: void
+    #: () -> void
     def initialize
       @metrics = []
     end
 
     # Defines a metric with thresholds.
     #
-    #: identifier: (Symbol | String) -- the evaluator identifier
-    #: min: Float? -- minimum score threshold
-    #: max: Float? -- maximum score threshold
-    #: weight: Float -- weight for aggregation (default: 1.0)
-    #: return: void
+    #: ((Symbol | String), ?min: Float?, ?max: Float?, ?weight: Float) -> void
     def metric(identifier, min: nil, max: nil, weight: 1.0)
       metrics << Riffer::Evals::Metric.new(
         evaluator_identifier: identifier,
@@ -68,8 +63,7 @@ module Riffer::Evals::Profile
   module ClassMethods
     # Defines the eval metrics for this profile.
     #
-    #: &block: () -> void
-    #: return: void
+    #: () { () -> void } -> void
     def ai_evals(&block)
       builder = Builder.new
       builder.instance_eval(&block)
@@ -78,7 +72,7 @@ module Riffer::Evals::Profile
 
     # Returns the configured metrics.
     #
-    #: return: Array[Riffer::Evals::Metric]
+    #: () -> Array[Riffer::Evals::Metric]
     def eval_metrics
       @eval_metrics || []
     end
@@ -87,10 +81,7 @@ module Riffer::Evals::Profile
   module AgentClassMethods
     # Runs evaluations against the agent.
     #
-    #: input: String -- the input to send to the agent
-    #: context: Hash[Symbol, untyped]? -- optional context for evaluation
-    #: tool_context: Hash[Symbol, untyped]? -- optional context passed to tools during generation
-    #: return: Riffer::Evals::RunResult
+    #: (input: String, ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
     def run_eval(input:, context: nil, tool_context: nil)
       profile = @eval_profile
       raise Riffer::ArgumentError, "No eval profile configured" unless profile

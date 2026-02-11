@@ -23,28 +23,9 @@ class Riffer::Agent
   extend Riffer::Helpers::ClassNameConverter
   extend Riffer::Helpers::Validations
 
-  #: self.@identifier: String?
-  #: self.@model: String?
-  #: self.@instructions: String?
-  #: self.@provider_options: Hash[Symbol, untyped]?
-  #: self.@model_options: Hash[Symbol, untyped]?
-  #: self.@tools_config: (Array[singleton(Riffer::Tool)] | Proc)?
-
-  #: @messages: Array[Riffer::Messages::Base]
-  #: @message_callbacks: Array[^(Riffer::Messages::Base) -> void]
-  #: @token_usage: Riffer::TokenUsage?
-  #: @model_string: String
-  #: @instructions_text: String?
-  #: @provider_name: String
-  #: @model_name: String
-  #: @tool_context: Hash[Symbol, untyped]?
-  #: @resolved_tools: Array[singleton(Riffer::Tool)]?
-  #: @provider_instance: Riffer::Providers::Base?
-
   # Gets or sets the agent identifier.
   #
-  #: value: String? -- the identifier to set, or nil to get
-  #: return: String
+  #: (?String?) -> String
   def self.identifier(value = nil)
     return @identifier || class_name_to_path(name) if value.nil?
     @identifier = value.to_s
@@ -52,8 +33,7 @@ class Riffer::Agent
 
   # Gets or sets the model string (e.g., "openai/gpt-4o").
   #
-  #: model_string: String? -- the model string to set, or nil to get
-  #: return: String?
+  #: (?String?) -> String?
   def self.model(model_string = nil)
     return @model if model_string.nil?
     validate_is_string!(model_string, "model")
@@ -62,8 +42,7 @@ class Riffer::Agent
 
   # Gets or sets the agent instructions.
   #
-  #: instructions_text: String? -- the instructions to set, or nil to get
-  #: return: String?
+  #: (?String?) -> String?
   def self.instructions(instructions_text = nil)
     return @instructions if instructions_text.nil?
     validate_is_string!(instructions_text, "instructions")
@@ -72,8 +51,7 @@ class Riffer::Agent
 
   # Gets or sets provider options passed to the provider client.
   #
-  #: options: Hash[Symbol, untyped]? -- the options to set, or nil to get
-  #: return: Hash[Symbol, untyped]
+  #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.provider_options(options = nil)
     return @provider_options || {} if options.nil?
     @provider_options = options
@@ -81,8 +59,7 @@ class Riffer::Agent
 
   # Gets or sets model options passed to generate_text/stream_text.
   #
-  #: options: Hash[Symbol, untyped]? -- the options to set, or nil to get
-  #: return: Hash[Symbol, untyped]
+  #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.model_options(options = nil)
     return @model_options || {} if options.nil?
     @model_options = options
@@ -90,8 +67,7 @@ class Riffer::Agent
 
   # Gets or sets the tools used by this agent.
   #
-  #: tools_or_lambda: (Array[singleton(Riffer::Tool)] | Proc)? -- tools array or lambda returning tools
-  #: return: (Array[singleton(Riffer::Tool)] | Proc)?
+  #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools(tools_or_lambda = nil)
     return @tools_config if tools_or_lambda.nil?
     @tools_config = tools_or_lambda
@@ -99,15 +75,14 @@ class Riffer::Agent
 
   # Finds an agent class by identifier.
   #
-  #: identifier: String -- the identifier to search for
-  #: return: singleton(Riffer::Agent)?
+  #: (String) -> singleton(Riffer::Agent)?
   def self.find(identifier)
     subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
   end
 
   # Returns all agent subclasses.
   #
-  #: return: Array[singleton(Riffer::Agent)]
+  #: () -> Array[singleton(Riffer::Agent)]
   def self.all
     subclasses
   end
@@ -116,9 +91,7 @@ class Riffer::Agent
   #
   # See #generate for parameters and return value.
   #
-  #: *args: untyped
-  #: **kwargs: untyped
-  #: return: String
+  #: (*untyped, **untyped) -> String
   def self.generate(...)
     new.generate(...)
   end
@@ -127,9 +100,7 @@ class Riffer::Agent
   #
   # See #stream for parameters and return value.
   #
-  #: *args: untyped
-  #: **kwargs: untyped
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def self.stream(...)
     new.stream(...)
   end
@@ -145,7 +116,7 @@ class Riffer::Agent
   # Raises Riffer::ArgumentError if the configured model string is invalid
   # (must be "provider/model" format).
   #
-  #: return: void
+  #: () -> void
   def initialize
     @messages = []
     @message_callbacks = []
@@ -163,9 +134,7 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  #: tool_context: Hash[Symbol, untyped]? -- optional context object passed to all tool calls
-  #: return: String
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> String
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
@@ -186,9 +155,7 @@ class Riffer::Agent
 
   # Streams a response from the agent.
   #
-  #: prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  #: tool_context: Hash[Symbol, untyped]? -- optional context object passed to all tool calls
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
@@ -245,8 +212,7 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if no block is given.
   #
-  #: &block: (Riffer::Messages::Base) -> void
-  #: return: self
+  #: () { (Riffer::Messages::Base) -> void } -> self
   def on_message(&block)
     raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
     @message_callbacks << block
@@ -255,23 +221,20 @@ class Riffer::Agent
 
   private
 
-  #: message: Riffer::Messages::Base
-  #: return: void
+  #: (Riffer::Messages::Base) -> void
   def add_message(message)
     @messages << message
     @message_callbacks.each { |callback| callback.call(message) }
   end
 
-  #: usage: Riffer::TokenUsage?
-  #: return: void
+  #: (Riffer::TokenUsage?) -> void
   def track_token_usage(usage)
     return unless usage
 
     @token_usage = @token_usage ? @token_usage + usage : usage
   end
 
-  #: prompt_or_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])
-  #: return: void
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])) -> void
   def initialize_messages(prompt_or_messages)
     @messages = []
     @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
@@ -285,7 +248,7 @@ class Riffer::Agent
     end
   end
 
-  #: return: Riffer::Messages::Assistant
+  #: () -> Riffer::Messages::Assistant
   def call_llm
     provider_instance.generate_text(
       messages: @messages,
@@ -295,7 +258,7 @@ class Riffer::Agent
     )
   end
 
-  #: return: Enumerator[Riffer::StreamEvents::Base, void]
+  #: () -> Enumerator[Riffer::StreamEvents::Base, void]
   def call_llm_stream
     provider_instance.stream_text(
       messages: @messages,
@@ -305,7 +268,7 @@ class Riffer::Agent
     )
   end
 
-  #: return: Riffer::Providers::Base
+  #: () -> Riffer::Providers::Base
   def provider_instance
     @provider_instance ||= begin
       provider_class = Riffer::Providers::Repository.find(@provider_name)
@@ -314,14 +277,12 @@ class Riffer::Agent
     end
   end
 
-  #: response: Riffer::Messages::Assistant
-  #: return: bool
+  #: (Riffer::Messages::Assistant) -> bool
   def has_tool_calls?(response)
     response.is_a?(Riffer::Messages::Assistant) && !response.tool_calls.empty?
   end
 
-  #: response: Riffer::Messages::Assistant
-  #: return: void
+  #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
     response.tool_calls.each do |tool_call|
       result = execute_tool_call(tool_call)
@@ -335,8 +296,7 @@ class Riffer::Agent
     end
   end
 
-  #: tool_call: Riffer::Messages::Assistant::ToolCall
-  #: return: Riffer::Tools::Response
+  #: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
   def execute_tool_call(tool_call)
     tool_class = find_tool_class(tool_call.name)
 
@@ -361,7 +321,7 @@ class Riffer::Agent
     end
   end
 
-  #: return: Array[singleton(Riffer::Tool)]
+  #: () -> Array[singleton(Riffer::Tool)]
   def resolved_tools
     @resolved_tools ||= begin
       config = self.class.uses_tools
@@ -375,14 +335,12 @@ class Riffer::Agent
     end
   end
 
-  #: name: String
-  #: return: singleton(Riffer::Tool)?
+  #: (String) -> singleton(Riffer::Tool)?
   def find_tool_class(name)
     resolved_tools.find { |tool_class| tool_class.name == name }
   end
 
-  #: arguments: (String | Hash[String, untyped])?
-  #: return: Hash[Symbol, untyped]
+  #: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
 
@@ -390,7 +348,7 @@ class Riffer::Agent
     args.transform_keys(&:to_sym)
   end
 
-  #: return: String
+  #: () -> String
   def extract_final_response
     last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
     last_assistant_message&.content || ""

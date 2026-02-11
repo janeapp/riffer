@@ -6,6 +6,6 @@
 #   msg.role     # => :user
 #   msg.content  # => "Hello!"
 class Riffer::Messages::User < Riffer::Messages::Base
-  # : return: Symbol
-  def role: () -> untyped
+  # : () -> Symbol
+  def role: () -> Symbol
 end

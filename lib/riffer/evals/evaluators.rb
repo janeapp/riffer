@@ -23,24 +23,19 @@ module Riffer::Evals::Evaluators
       answer_relevancy: -> { Riffer::Evals::Evaluators::AnswerRelevancy }
     }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Evals::Evaluator)]
 
-    #: self.@custom: Hash[Symbol, ^() -> singleton(Riffer::Evals::Evaluator)]
-
     @custom = {}
 
     class << self
       # Registers a custom evaluator class with an identifier.
       #
-      #: identifier: (String | Symbol) -- the identifier to register
-      #: evaluator_class: singleton(Riffer::Evals::Evaluator) -- the evaluator class
-      #: return: void
+      #: ((String | Symbol), singleton(Riffer::Evals::Evaluator)) -> void
       def register(identifier, evaluator_class)
         @custom[identifier.to_sym] = -> { evaluator_class }
       end
 
       # Finds an evaluator class by identifier.
       #
-      #: identifier: (String | Symbol) -- the identifier to look up
-      #: return: singleton(Riffer::Evals::Evaluator)?
+      #: ((String | Symbol)) -> singleton(Riffer::Evals::Evaluator)?
       def find(identifier)
         id = identifier.to_sym
         (@custom[id] || BUILT_IN[id])&.call
@@ -48,14 +43,14 @@ module Riffer::Evals::Evaluators
 
       # Returns all registered evaluators (built-in and custom).
       #
-      #: return: Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
+      #: () -> Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
       def all
         BUILT_IN.merge(@custom).transform_values(&:call)
       end
 
       # Clears custom registrations (for testing). Built-ins remain.
       #
-      #: return: void
+      #: () -> void
       def clear
         @custom = {}
       end

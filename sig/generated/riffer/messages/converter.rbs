@@ -8,13 +8,11 @@ module Riffer::Messages::Converter
   #
   # Raises Riffer::ArgumentError if the message format is invalid.
   #
-  # : msg: (Hash[Symbol | String, untyped] | Riffer::Messages::Base)
-  # : return: Riffer::Messages::Base
-  def convert_to_message_object: (untyped msg) -> untyped
+  # : ((Hash[Symbol | String, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
+  def convert_to_message_object: (Hash[Symbol | String, untyped] | Riffer::Messages::Base) -> Riffer::Messages::Base
 
   private
 
-  # : hash: Hash[Symbol | String, untyped]
-  # : return: Riffer::Messages::Base
-  def convert_hash_to_message: (untyped hash) -> untyped
+  # : (Hash[Symbol | String, untyped]) -> Riffer::Messages::Base
+  def convert_hash_to_message: (Hash[Symbol | String, untyped]) -> Riffer::Messages::Base
 end

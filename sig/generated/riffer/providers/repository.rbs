@@ -7,7 +7,6 @@ class Riffer::Providers::Repository
 
   # Finds a provider class by identifier.
   #
-  # : identifier: (String | Symbol) -- the identifier to search for
-  # : return: singleton(Riffer::Providers::Base)?
-  def self.find: (untyped identifier) -> untyped
+  # : ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
+  def self.find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
 end

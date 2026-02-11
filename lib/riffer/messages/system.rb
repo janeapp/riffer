@@ -8,7 +8,7 @@
 #   msg.content  # => "You are a helpful assistant."
 #
 class Riffer::Messages::System < Riffer::Messages::Base
-  #: return: Symbol
+  #: () -> Symbol
   def role
     :system
   end

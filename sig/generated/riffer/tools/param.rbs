@@ -19,28 +19,21 @@ class Riffer::Tools::Param
 
   attr_reader default: untyped
 
-  # : name: Symbol -- the parameter name
-  # : type: Class -- the expected Ruby type
-  # : required: bool -- whether the parameter is required
-  # : description: String? -- optional description for the parameter
-  # : enum: Array[untyped]? -- optional list of allowed values
-  # : default: untyped -- optional default value for optional parameters
-  # : return: void
-  def initialize: (name: untyped, type: untyped, required: untyped, ?description: untyped, ?enum: untyped, ?default: untyped) -> untyped
+  # : (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped) -> void
+  def initialize: (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped) -> void
 
   # Validates that a value matches the expected type.
   #
-  # : value: untyped
-  # : return: bool
-  def valid_type?: (untyped value) -> untyped
+  # : (untyped) -> bool
+  def valid_type?: (untyped) -> bool
 
   # Returns the JSON Schema type name for this parameter.
   #
-  # : return: String
-  def type_name: () -> untyped
+  # : () -> String
+  def type_name: () -> String
 
   # Converts this parameter to JSON Schema format.
   #
-  # : return: Hash[Symbol, untyped]
-  def to_json_schema: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def to_json_schema: () -> Hash[Symbol, untyped]
 end

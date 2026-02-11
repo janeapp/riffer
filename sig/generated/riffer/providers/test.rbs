@@ -9,9 +9,8 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
   # Initializes the test provider.
   #
-  # : **options: untyped
-  # : return: void
-  def initialize: (**untyped options) -> untyped
+  # : (**untyped) -> void
+  def initialize: (**untyped) -> void
 
   # Stubs the next response from the provider.
   #
@@ -21,31 +20,22 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
   #   provider.stub_response("Final response", token_usage: Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5))
   #
-  # : content: String -- the response content
-  # : tool_calls: Array[Hash[Symbol, untyped]] -- optional tool calls to include
-  # : token_usage: Riffer::TokenUsage? -- optional token usage data to include
-  # : return: void
-  def stub_response: (untyped content, ?tool_calls: untyped, ?token_usage: untyped) -> untyped
+  # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -> void
+  def stub_response: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -> void
 
   # Clears all stubbed responses.
   #
-  # : return: void
-  def clear_stubs: () -> untyped
+  # : () -> void
+  def clear_stubs: () -> void
 
   private
 
-  # : return: Hash[Symbol, untyped]
-  def next_response: () -> untyped
+  # : () -> Hash[Symbol, untyped]
+  def next_response: () -> Hash[Symbol, untyped]
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String?
-  # : **options: untyped
-  # : return: Riffer::Messages::Assistant
-  def perform_generate_text: (untyped messages, ?model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
+  def perform_generate_text: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
 
-  # : messages: Array[Riffer::Messages::Base]
-  # : model: String?
-  # : **options: untyped
-  # : return: Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (untyped messages, ?model: untyped, **untyped options) -> untyped
+  # : (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def perform_stream_text: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 end
