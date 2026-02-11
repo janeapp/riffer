@@ -1502,29 +1502,29 @@ describe Riffer::Agent do
       error = expect do
         Class.new(Riffer::Agent) do
           model "test/riffer-1"
-          guardrail :input, with: String
+          guardrail :before, with: String
         end
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/must be a Riffer::Guardrail subclass/)
     end
 
-    it "registers input guardrails" do
+    it "registers before guardrails" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
         model "test/riffer-1"
       end
-      agent.guardrail(:input, with: gr)
-      configs = agent.guardrails_for(:input)
+      agent.guardrail(:before, with: gr)
+      configs = agent.guardrails_for(:before)
       expect(configs.any? { |c| c[:class] == gr }).must_equal true
     end
 
-    it "registers output guardrails" do
+    it "registers after guardrails" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
         model "test/riffer-1"
       end
-      agent.guardrail(:output, with: gr)
-      configs = agent.guardrails_for(:output)
+      agent.guardrail(:after, with: gr)
+      configs = agent.guardrails_for(:after)
       expect(configs.any? { |c| c[:class] == gr }).must_equal true
     end
 
@@ -1534,7 +1534,7 @@ describe Riffer::Agent do
         model "test/riffer-1"
       end
       agent.guardrail(:around, with: gr)
-      configs = agent.guardrails_for(:input)
+      configs = agent.guardrails_for(:before)
       expect(configs.any? { |c| c[:class] == gr }).must_equal true
     end
 
@@ -1544,7 +1544,7 @@ describe Riffer::Agent do
         model "test/riffer-1"
       end
       agent.guardrail(:around, with: gr)
-      configs = agent.guardrails_for(:output)
+      configs = agent.guardrails_for(:after)
       expect(configs.any? { |c| c[:class] == gr }).must_equal true
     end
 
@@ -1553,8 +1553,8 @@ describe Riffer::Agent do
       agent = Class.new(Riffer::Agent) do
         model "test/riffer-1"
       end
-      agent.guardrail(:input, with: gr, foo: :bar)
-      config = agent.guardrails_for(:input).first
+      agent.guardrail(:before, with: gr, foo: :bar)
+      config = agent.guardrails_for(:before).first
       expect(config[:options]).must_equal({foo: :bar})
     end
   end
@@ -1616,13 +1616,13 @@ describe Riffer::Agent do
       expect(result.content).wont_be_empty
     end
 
-    describe "with input guardrail that blocks" do
+    describe "with before guardrail that blocks" do
       let(:agent_with_blocking_input) do
         gr = block_input_guardrail_class
         klass = Class.new(Riffer::Agent) do
           model "test/riffer-1"
         end
-        klass.guardrail(:input, with: gr)
+        klass.guardrail(:before, with: gr)
         klass
       end
 
@@ -1638,7 +1638,7 @@ describe Riffer::Agent do
 
       it "has tripwire with phase" do
         result = agent_with_blocking_input.generate("Hello")
-        expect(result.tripwire.phase).must_equal :input
+        expect(result.tripwire.phase).must_equal :before
       end
 
       it "has tripwire with guardrail_id" do
@@ -1657,13 +1657,13 @@ describe Riffer::Agent do
       end
     end
 
-    describe "with output guardrail that blocks" do
+    describe "with after guardrail that blocks" do
       let(:agent_with_blocking_output) do
         gr = block_output_guardrail_class
         klass = Class.new(Riffer::Agent) do
           model "test/riffer-1"
         end
-        klass.guardrail(:output, with: gr)
+        klass.guardrail(:after, with: gr)
         klass
       end
 
@@ -1672,9 +1672,9 @@ describe Riffer::Agent do
         expect(result.blocked?).must_equal true
       end
 
-      it "has tripwire with output phase" do
+      it "has tripwire with after phase" do
         result = agent_with_blocking_output.generate("Hello")
-        expect(result.tripwire.phase).must_equal :output
+        expect(result.tripwire.phase).must_equal :after
       end
 
       it "has tripwire with reason" do
@@ -1733,13 +1733,13 @@ describe Riffer::Agent do
       end
     end
 
-    describe "with input guardrail that blocks" do
+    describe "with before guardrail that blocks" do
       let(:agent_with_blocking_input) do
         gr = block_input_guardrail_class
         klass = Class.new(Riffer::Agent) do
           model "test/riffer-1"
         end
-        klass.guardrail(:input, with: gr)
+        klass.guardrail(:before, with: gr)
         klass
       end
 
@@ -1755,20 +1755,20 @@ describe Riffer::Agent do
         expect(tripwire_event.reason).must_equal "Input blocked"
       end
 
-      it "tripwire event has input phase" do
+      it "tripwire event has before phase" do
         events = agent_with_blocking_input.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
-        expect(tripwire_event.phase).must_equal :input
+        expect(tripwire_event.phase).must_equal :before
       end
     end
 
-    describe "with output guardrail that blocks" do
+    describe "with after guardrail that blocks" do
       let(:agent_with_blocking_output) do
         gr = block_output_guardrail_class
         klass = Class.new(Riffer::Agent) do
           model "test/riffer-1"
         end
-        klass.guardrail(:output, with: gr)
+        klass.guardrail(:after, with: gr)
         klass
       end
 
@@ -1778,10 +1778,10 @@ describe Riffer::Agent do
         expect(tripwire_event).wont_be_nil
       end
 
-      it "tripwire event has output phase" do
+      it "tripwire event has after phase" do
         events = agent_with_blocking_output.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
-        expect(tripwire_event.phase).must_equal :output
+        expect(tripwire_event.phase).must_equal :after
       end
 
       it "still yields text events before blocking" do

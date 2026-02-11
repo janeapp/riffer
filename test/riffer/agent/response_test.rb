@@ -18,7 +18,7 @@ describe Riffer::Agent::Response do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail_id: "test",
-        phase: :input
+        phase: :before
       )
       response = Riffer::Agent::Response.new("", tripwire: tripwire)
       expect(response.tripwire).must_equal tripwire
@@ -35,7 +35,7 @@ describe Riffer::Agent::Response do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail_id: "test",
-        phase: :input
+        phase: :before
       )
       response = Riffer::Agent::Response.new("", tripwire: tripwire)
       expect(response.blocked?).must_equal true

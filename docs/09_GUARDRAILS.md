@@ -135,10 +135,10 @@ class MyAgent < Riffer::Agent
   instructions "You are a helpful assistant."
 
   # Input-only guardrail
-  guardrail :input, with: InputValidator
+  guardrail :before, with: InputValidator
 
   # Output-only guardrail
-  guardrail :output, with: ResponseFilter
+  guardrail :after, with: ResponseFilter
 
   # Both input and output (around) with options
   guardrail :around, with: Riffer::Guardrails::MaxLength, max: 1000
@@ -147,9 +147,9 @@ end
 
 ### Phases
 
-- `:input` - Runs before the LLM call on input messages
-- `:output` - Runs after the LLM call on the response
-- `:around` - Runs on both input and output
+- `:before` - Runs before the LLM call on input messages
+- `:after` - Runs after the LLM call on the response
+- `:around` - Runs on both before and after
 
 ### Multiple Guardrails
 
@@ -159,8 +159,8 @@ Guardrails execute sequentially in registration order:
 class MyAgent < Riffer::Agent
   model "anthropic/claude-haiku-4-5-20251001"
 
-  guardrail :input, with: FirstGuardrail   # Runs first
-  guardrail :input, with: SecondGuardrail  # Runs second
+  guardrail :before, with: FirstGuardrail   # Runs first
+  guardrail :before, with: SecondGuardrail  # Runs second
 end
 ```
 
@@ -217,10 +217,10 @@ class MyAgent < Riffer::Agent
   model "anthropic/claude-haiku-4-5-20251001"
 
   # Block input messages over 1000 characters
-  guardrail :input, with: Riffer::Guardrails::MaxLength, max: 1000
+  guardrail :before, with: Riffer::Guardrails::MaxLength, max: 1000
 
   # Block responses over 5000 characters
-  guardrail :output, with: Riffer::Guardrails::MaxLength, max: 5000
+  guardrail :after, with: Riffer::Guardrails::MaxLength, max: 5000
 
   # Apply to both with default limit (10,000 characters)
   guardrail :around, with: Riffer::Guardrails::MaxLength

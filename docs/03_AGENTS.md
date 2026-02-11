@@ -109,10 +109,10 @@ class MyAgent < Riffer::Agent
   model 'openai/gpt-4o'
 
   # Input-only guardrail
-  guardrail :input, with: InputValidator
+  guardrail :before, with: InputValidator
 
   # Output-only guardrail
-  guardrail :output, with: ResponseFilter
+  guardrail :after, with: ResponseFilter
 
   # Both input and output, with options
   guardrail :around, with: Riffer::Guardrails::MaxLength, max: 1000

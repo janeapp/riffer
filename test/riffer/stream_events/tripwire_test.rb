@@ -7,7 +7,7 @@ describe Riffer::StreamEvents::Tripwire do
     Riffer::Guardrails::Tripwire.new(
       reason: "PII detected",
       guardrail_id: "pii_redactor",
-      phase: :input,
+      phase: :before,
       metadata: {types: [:email]}
     )
   end
@@ -39,7 +39,7 @@ describe Riffer::StreamEvents::Tripwire do
   describe "#phase" do
     it "returns the tripwire phase" do
       event = Riffer::StreamEvents::Tripwire.new(guardrails_tripwire)
-      expect(event.phase).must_equal :input
+      expect(event.phase).must_equal :before
     end
   end
 
@@ -68,7 +68,7 @@ describe Riffer::StreamEvents::Tripwire do
 
     it "includes phase in tripwire" do
       event = Riffer::StreamEvents::Tripwire.new(guardrails_tripwire)
-      expect(event.to_h[:tripwire][:phase]).must_equal :input
+      expect(event.to_h[:tripwire][:phase]).must_equal :before
     end
 
     it "includes metadata in tripwire" do

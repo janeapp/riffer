@@ -107,7 +107,7 @@ class Riffer::Agent
 
   # Registers a guardrail for input, output, or both phases.
   #
-  # +phase+ - :input, :output, or :around.
+  # +phase+ - :before, :after, or :around.
   # +with+ - the guardrail class (must be subclass of Riffer::Guardrail).
   # +options+ - additional options passed to the guardrail.
   #
@@ -118,27 +118,27 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
     raise Riffer::ArgumentError, "Guardrail must be a Riffer::Guardrail subclass" unless with.is_a?(Class) && with <= Riffer::Guardrail
 
-    @guardrails ||= {input: [], output: []}
+    @guardrails ||= {before: [], after: []}
     config = {class: with, options: options}
 
     case phase
-    when :input
-      @guardrails[:input] << config
-    when :output
-      @guardrails[:output] << config
+    when :before
+      @guardrails[:before] << config
+    when :after
+      @guardrails[:after] << config
     when :around
-      @guardrails[:input] << config
-      @guardrails[:output] << config
+      @guardrails[:before] << config
+      @guardrails[:after] << config
     end
   end
 
   # Returns the registered guardrail configs for a given phase.
   #
-  # +phase+ - :input or :output.
+  # +phase+ - :before or :after.
   #
   #: (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for(phase)
-    @guardrails ||= {input: [], output: []}
+    @guardrails ||= {before: [], after: []}
     @guardrails[phase] || []
   end
 
@@ -177,7 +177,7 @@ class Riffer::Agent
     @resolved_tools = nil
     initialize_messages(prompt_or_messages)
 
-    tripwire = run_input_guardrails
+    tripwire = run_before_guardrails
     return build_response("", tripwire: tripwire) if tripwire
 
     loop do
@@ -185,7 +185,7 @@ class Riffer::Agent
 
       track_token_usage(response.token_usage)
 
-      processed_response, tripwire = run_output_guardrails(response)
+      processed_response, tripwire = run_after_guardrails(response)
 
       return build_response("", tripwire: tripwire) if tripwire
 
@@ -208,7 +208,7 @@ class Riffer::Agent
     initialize_messages(prompt_or_messages)
 
     Enumerator.new do |yielder|
-      tripwire = run_input_guardrails
+      tripwire = run_before_guardrails
 
       if tripwire
         yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
@@ -254,7 +254,7 @@ class Riffer::Agent
 
         track_token_usage(accumulated_token_usage)
 
-        processed_response, tripwire = run_output_guardrails(response)
+        processed_response, tripwire = run_after_guardrails(response)
 
         if tripwire
           yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
@@ -417,22 +417,22 @@ class Riffer::Agent
   end
 
   #: () -> Riffer::Guardrails::Tripwire?
-  def run_input_guardrails
-    guardrails = self.class.guardrails_for(:input)
+  def run_before_guardrails
+    guardrails = self.class.guardrails_for(:before)
     return nil if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :input, context: @tool_context)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: @tool_context)
     processed_messages, tripwire, _result = runner.run(@messages)
     @messages = processed_messages unless tripwire
     tripwire
   end
 
   #: (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?]
-  def run_output_guardrails(response)
-    guardrails = self.class.guardrails_for(:output)
+  def run_after_guardrails(response)
+    guardrails = self.class.guardrails_for(:after)
     return [response, nil] if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :output, context: @tool_context)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: @tool_context)
     processed_response, tripwire, _result = runner.run(response, messages: @messages)
     [processed_response, tripwire]
   end

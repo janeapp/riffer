@@ -7,13 +7,13 @@
 # to the next. If any guardrail blocks, execution stops and a tripwire
 # is returned.
 #
-#   runner = Runner.new(guardrail_configs, phase: :input, context: tool_context)
+#   runner = Runner.new(guardrail_configs, phase: :before, context: tool_context)
 #   data, tripwire, result = runner.run(messages)
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
   attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]]
 
-  # The execution phase (:input or :output).
+  # The execution phase (:before or :after).
   attr_reader :phase #: Symbol
 
   # The context passed to guardrails.
@@ -22,7 +22,7 @@ class Riffer::Guardrails::Runner
   # Creates a new runner.
   #
   # +guardrail_configs+ - configs with :class and :options keys.
-  # +phase+ - :input or :output.
+  # +phase+ - :before or :after.
   # +context+ - optional context to pass to guardrails.
   #
   #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
@@ -34,11 +34,11 @@ class Riffer::Guardrails::Runner
 
   # Runs the guardrails sequentially.
   #
-  # For input phase, data should be an array of messages.
-  # For output phase, data should be a response and messages must be provided.
+  # For before phase, data should be an array of messages.
+  # For after phase, data should be a response and messages must be provided.
   #
-  # +data+ - the data to process (messages for input, response for output).
-  # +messages+ - the conversation messages (required for output phase).
+  # +data+ - the data to process (messages for before, response for after).
+  # +messages+ - the conversation messages (required for after phase).
   #
   #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Riffer::Guardrails::Result?]
   def run(data, messages: nil)
@@ -76,9 +76,9 @@ class Riffer::Guardrails::Runner
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
     case phase
-    when :input
+    when :before
       guardrail.process_input(data, context: context)
-    when :output
+    when :after
       guardrail.process_output(data, messages: messages, context: context)
     else
       raise Riffer::Error, "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(", ")}"

@@ -119,7 +119,7 @@ agent.stream("Hello").each do |event|
   when Riffer::StreamEvents::Tripwire
     puts "Blocked by: #{event.guardrail_id}"
     puts "Reason: #{event.reason}"
-    puts "Phase: #{event.phase}"  # :input or :output
+    puts "Phase: #{event.phase}"  # :before or :after
   end
 end
 ```

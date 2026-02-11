@@ -9,7 +9,7 @@
 #   tripwire = Tripwire.new(
 #     reason: "PII detected in input",
 #     guardrail_id: "pii_redactor",
-#     phase: :input,
+#     phase: :before,
 #     metadata: { detected_types: [:email, :phone] }
 #   )
 class Riffer::Guardrails::Tripwire
@@ -21,7 +21,7 @@ class Riffer::Guardrails::Tripwire
   # The identifier of the guardrail that triggered the block.
   attr_reader :guardrail_id #: String
 
-  # The phase when the block occurred (:input or :output).
+  # The phase when the block occurred (:before or :after).
   attr_reader :phase #: Symbol
 
   # Optional metadata about the block.
@@ -31,7 +31,7 @@ class Riffer::Guardrails::Tripwire
   #
   # +reason+ - the reason for blocking.
   # +guardrail_id+ - identifier of the guardrail that blocked.
-  # +phase+ - :input or :output.
+  # +phase+ - :before or :after.
   # +metadata+ - optional additional information.
   #
   # Raises Riffer::ArgumentError if the phase is invalid.

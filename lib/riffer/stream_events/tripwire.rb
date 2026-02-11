@@ -26,7 +26,7 @@ class Riffer::StreamEvents::Tripwire < Riffer::StreamEvents::Base
     tripwire.reason
   end
 
-  # The phase when blocking occurred.
+  # The phase when blocking occurred (:before or :after).
   #
   #: () -> Symbol
   def phase
