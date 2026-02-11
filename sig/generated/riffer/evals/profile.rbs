@@ -9,8 +9,7 @@
 #     include Riffer::Evals::Profile
 #
 #     ai_evals do
-#       metric :answer_relevancy, min: 0.85
-#       metric :hallucination, max: 0.10
+#       metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
 #     end
 #   end
 #
@@ -35,8 +34,8 @@ module Riffer::Evals::Profile
 
     # Defines a metric with thresholds.
     #
-    # : ((Symbol | String), ?min: Float?, ?max: Float?, ?weight: Float) -> void
-    def metric: (Symbol | String, ?min: Float?, ?max: Float?, ?weight: Float) -> void
+    # : (singleton(Riffer::Evals::Evaluator), ?min: Float?, ?max: Float?, ?weight: Float) -> void
+    def metric: (singleton(Riffer::Evals::Evaluator), ?min: Float?, ?max: Float?, ?weight: Float) -> void
   end
 
   module ClassMethods

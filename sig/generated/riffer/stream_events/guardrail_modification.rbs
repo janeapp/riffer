@@ -15,10 +15,10 @@ class Riffer::StreamEvents::GuardrailModification < Riffer::StreamEvents::Base
   # : (Riffer::Guardrails::Modification, ?role: Symbol) -> void
   def initialize: (Riffer::Guardrails::Modification, ?role: Symbol) -> void
 
-  # The guardrail identifier that made the transformation.
+  # The guardrail class that made the transformation.
   #
-  # : () -> String
-  def guardrail_id: () -> String
+  # : () -> singleton(Riffer::Guardrail)
+  def guardrail: () -> singleton(Riffer::Guardrail)
 
   # The phase when the transformation occurred.
   #

@@ -3,28 +3,40 @@
 require "test_helper"
 
 describe Riffer::Evals::RunResult do
+  let(:relevancy_class) do
+    Class.new(Riffer::Evals::Evaluator) do
+      higher_is_better true
+    end
+  end
+
+  let(:toxicity_class) do
+    Class.new(Riffer::Evals::Evaluator) do
+      higher_is_better false
+    end
+  end
+
   let(:passing_result) do
-    Riffer::Evals::Result.new(evaluator: "relevancy", score: 0.9, higher_is_better: true)
+    Riffer::Evals::Result.new(evaluator: relevancy_class, score: 0.9, higher_is_better: true)
   end
 
   let(:failing_result) do
-    Riffer::Evals::Result.new(evaluator: "relevancy", score: 0.6, higher_is_better: true)
+    Riffer::Evals::Result.new(evaluator: relevancy_class, score: 0.6, higher_is_better: true)
   end
 
   let(:toxicity_result) do
-    Riffer::Evals::Result.new(evaluator: "toxicity", score: 0.1, higher_is_better: false)
+    Riffer::Evals::Result.new(evaluator: toxicity_class, score: 0.1, higher_is_better: false)
   end
 
   let(:passing_metric) do
-    Riffer::Evals::Metric.new(evaluator_identifier: "relevancy", min: 0.8)
+    Riffer::Evals::Metric.new(evaluator_class: relevancy_class, min: 0.8)
   end
 
   let(:failing_metric) do
-    Riffer::Evals::Metric.new(evaluator_identifier: "relevancy", min: 0.8)
+    Riffer::Evals::Metric.new(evaluator_class: relevancy_class, min: 0.8)
   end
 
   let(:toxicity_metric) do
-    Riffer::Evals::Metric.new(evaluator_identifier: "toxicity", max: 0.2)
+    Riffer::Evals::Metric.new(evaluator_class: toxicity_class, max: 0.2)
   end
 
   describe "#initialize" do
@@ -148,11 +160,14 @@ describe Riffer::Evals::RunResult do
     end
 
     it "calculates weighted average" do
-      metric1 = Riffer::Evals::Metric.new(evaluator_identifier: "a", weight: 2.0)
-      metric2 = Riffer::Evals::Metric.new(evaluator_identifier: "b", weight: 1.0)
+      a_class = Class.new(Riffer::Evals::Evaluator) { higher_is_better true }
+      b_class = Class.new(Riffer::Evals::Evaluator) { higher_is_better true }
 
-      result1 = Riffer::Evals::Result.new(evaluator: "a", score: 0.9, higher_is_better: true)
-      result2 = Riffer::Evals::Result.new(evaluator: "b", score: 0.6, higher_is_better: true)
+      metric1 = Riffer::Evals::Metric.new(evaluator_class: a_class, weight: 2.0)
+      metric2 = Riffer::Evals::Metric.new(evaluator_class: b_class, weight: 1.0)
+
+      result1 = Riffer::Evals::Result.new(evaluator: a_class, score: 0.9, higher_is_better: true)
+      result2 = Riffer::Evals::Result.new(evaluator: b_class, score: 0.6, higher_is_better: true)
 
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
@@ -182,11 +197,11 @@ describe Riffer::Evals::RunResult do
     end
 
     it "combines higher_is_better and lower_is_better scores" do
-      metric1 = Riffer::Evals::Metric.new(evaluator_identifier: "relevancy", weight: 1.0)
-      metric2 = Riffer::Evals::Metric.new(evaluator_identifier: "toxicity", weight: 1.0)
+      metric1 = Riffer::Evals::Metric.new(evaluator_class: relevancy_class, weight: 1.0)
+      metric2 = Riffer::Evals::Metric.new(evaluator_class: toxicity_class, weight: 1.0)
 
-      result1 = Riffer::Evals::Result.new(evaluator: "relevancy", score: 0.8, higher_is_better: true)
-      result2 = Riffer::Evals::Result.new(evaluator: "toxicity", score: 0.2, higher_is_better: false)
+      result1 = Riffer::Evals::Result.new(evaluator: relevancy_class, score: 0.8, higher_is_better: true)
+      result2 = Riffer::Evals::Result.new(evaluator: toxicity_class, score: 0.2, higher_is_better: false)
 
       run_result = Riffer::Evals::RunResult.new(
         input: "test",

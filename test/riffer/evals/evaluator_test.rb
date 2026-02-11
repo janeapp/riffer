@@ -5,7 +5,6 @@ require "test_helper"
 describe Riffer::Evals::Evaluator do
   let(:evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      identifier "test_evaluator"
       description "A test evaluator"
       higher_is_better true
     end
@@ -13,33 +12,8 @@ describe Riffer::Evals::Evaluator do
 
   let(:lower_is_better_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      identifier "toxicity"
       description "Detects toxicity"
       higher_is_better false
-    end
-  end
-
-  describe ".identifier" do
-    it "returns the set identifier" do
-      expect(evaluator_class.identifier).must_equal "test_evaluator"
-    end
-
-    it "generates identifier from class name when not set" do
-      anon_class = Class.new(Riffer::Evals::Evaluator)
-      # Anonymous classes don't have a name, so this returns nil
-      expect(anon_class.identifier).must_be_nil
-    end
-
-    it "strips _evaluator suffix from generated identifier" do
-      # Create a named class to test
-      eval <<~RUBY, binding, __FILE__, __LINE__ + 1
-        class TestNamedEvaluator < Riffer::Evals::Evaluator
-        end
-      RUBY
-
-      expect(TestNamedEvaluator.identifier).must_equal "test_named"
-
-      Object.send(:remove_const, :TestNamedEvaluator)
     end
   end
 
@@ -92,7 +66,6 @@ describe Riffer::Evals::Evaluator do
   describe "#result (protected)" do
     it "creates a Result with correct attributes" do
       klass = Class.new(Riffer::Evals::Evaluator) do
-        identifier "my_evaluator"
         higher_is_better true
 
         def evaluate(input:, output:, context: nil)
@@ -103,18 +76,15 @@ describe Riffer::Evals::Evaluator do
       evaluator = klass.new
       result = evaluator.evaluate(input: "test", output: "test")
 
-      expect(result.to_h).must_equal({
-        evaluator: "my_evaluator",
-        score: 0.9,
-        reason: "Good",
-        metadata: {},
-        higher_is_better: true
-      })
+      expect(result.evaluator).must_equal klass
+      expect(result.score).must_equal 0.9
+      expect(result.reason).must_equal "Good"
+      expect(result.metadata).must_equal({})
+      expect(result.higher_is_better).must_equal true
     end
 
     it "creates a Result with higher_is_better from evaluator" do
       klass = Class.new(Riffer::Evals::Evaluator) do
-        identifier "toxicity"
         higher_is_better false
 
         def evaluate(input:, output:, context: nil)

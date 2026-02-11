@@ -24,7 +24,7 @@ module QualityEvals
   include Riffer::Evals::Profile
 
   ai_evals do
-    metric :answer_relevancy, min: 0.85
+    metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
   end
 end
 
@@ -53,7 +53,7 @@ The judge model is the LLM that evaluates agent outputs. You can use any configu
 
 ## Built-in Evaluators
 
-### answer_relevancy
+### AnswerRelevancy
 
 Evaluates how well a response addresses the input question.
 
@@ -67,7 +67,7 @@ Evaluates how well a response addresses the input question.
 
 ```ruby
 ai_evals do
-  metric :answer_relevancy, min: 0.85
+  metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
 end
 ```
 
@@ -82,7 +82,7 @@ module QualityEvals
   include Riffer::Evals::Profile
 
   ai_evals do
-    metric :answer_relevancy, min: 0.85
+    metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
   end
 end
 ```
@@ -95,7 +95,7 @@ end
 
 ```ruby
 ai_evals do
-  metric :answer_relevancy, min: 0.85, weight: 2.0  # Weighted more heavily
+  metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85, weight: 2.0  # Weighted more heavily
 end
 ```
 
@@ -138,7 +138,7 @@ result.to_h             # => Hash representation
 Individual evaluation results:
 
 ```ruby
-result.results.first.evaluator       # => "answer_relevancy"
+result.results.first.evaluator       # => Riffer::Evals::Evaluators::AnswerRelevancy
 result.results.first.score           # => 0.92
 result.results.first.reason          # => "The response directly addresses..."
 result.results.first.higher_is_better # => true
@@ -151,7 +151,6 @@ Create evaluators by subclassing `Riffer::Evals::Evaluator`:
 ```ruby
 # app/evals/medical_accuracy_evaluator.rb
 class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
-  identifier "medical_accuracy"
   description "Evaluates medical information accuracy"
   higher_is_better true
   judge_model "anthropic/claude-opus-4-5-20251101"  # Optional override
@@ -179,20 +178,20 @@ class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
 end
 ```
 
-### Registering Custom Evaluators
+### Using Custom Evaluators
 
-Register custom evaluators in your app initialization. Built-in evaluators are always available.
+Reference your custom evaluator class directly in eval profiles:
 
 ```ruby
-# config/initializers/riffer.rb
-Riffer::Evals::Evaluators::Repository.register(:medical_accuracy, MedicalAccuracyEvaluator)
+ai_evals do
+  metric MedicalAccuracyEvaluator, min: 0.9
+end
 ```
 
 ### Evaluator DSL
 
 Class methods:
 
-- `identifier(value)` - Set the evaluator identifier (defaults to snake_case class name)
 - `description(value)` - Human-readable description
 - `higher_is_better(value)` - Whether higher scores are better (default: true)
 - `judge_model(value)` - Override the global judge model
@@ -231,7 +230,6 @@ Evaluators don't have to use LLM-as-judge:
 
 ```ruby
 class LengthEvaluator < Riffer::Evals::Evaluator
-  identifier "response_length"
   description "Checks response is within expected length"
   higher_is_better true
 
@@ -289,7 +287,7 @@ module QualityEvals
   include Riffer::Evals::Profile
 
   ai_evals do
-    metric :answer_relevancy, min: 0.85, weight: 2.0
+    metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85, weight: 2.0
   end
 end
 

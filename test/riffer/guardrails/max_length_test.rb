@@ -15,12 +15,6 @@ describe Riffer::Guardrails::MaxLength do
     end
   end
 
-  describe ".identifier" do
-    it "has default identifier" do
-      expect(Riffer::Guardrails::MaxLength.identifier).must_equal "riffer/guardrails/max_length"
-    end
-  end
-
   describe "#process_input" do
     it "passes messages under the limit" do
       guardrail = Riffer::Guardrails::MaxLength.new(max: 100)

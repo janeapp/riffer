@@ -8,7 +8,6 @@
 # See Riffer::Evals::Evaluators.
 #
 #   class MyEvaluator < Riffer::Evals::Evaluator
-#     identifier "my_evaluator"
 #     description "Evaluates response quality"
 #     higher_is_better true
 #     judge_model "anthropic/claude-opus-4-5-20251101"
@@ -22,13 +21,6 @@
 #     end
 #   end
 class Riffer::Evals::Evaluator
-  include Riffer::Helpers::ClassNameConverter
-
-  # Gets or sets the evaluator identifier.
-  #
-  # : (?String?) -> String
-  def self.identifier: (?String?) -> String
-
   # Gets or sets the evaluator description.
   #
   # : (?String?) -> String?
@@ -43,9 +35,6 @@ class Riffer::Evals::Evaluator
   #
   # : (?String?) -> String?
   def self.judge_model: (?String?) -> String?
-
-  # : (String?) -> String?
-  private def self.class_name_to_identifier: (String?) -> String?
 
   # Evaluates an input/output pair.
   #

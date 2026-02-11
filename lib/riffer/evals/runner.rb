@@ -29,10 +29,7 @@ class Riffer::Evals::Runner
   #: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   def run(input:, output:, context: nil)
     results = metrics.map do |metric|
-      evaluator_class = metric.evaluator_class
-      raise Riffer::ArgumentError, "Evaluator not found: #{metric.evaluator_identifier}" unless evaluator_class
-
-      evaluator = evaluator_class.new
+      evaluator = metric.evaluator_class.new
       evaluator.evaluate(input: input, output: output, context: context)
     end
 

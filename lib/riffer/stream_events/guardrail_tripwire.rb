@@ -33,11 +33,11 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
     tripwire.phase
   end
 
-  # The guardrail identifier that triggered the block.
+  # The guardrail class that triggered the block.
   #
-  #: () -> String
-  def guardrail_id
-    tripwire.guardrail_id
+  #: () -> singleton(Riffer::Guardrail)
+  def guardrail
+    tripwire.guardrail
   end
 
   # Converts the event to a hash.

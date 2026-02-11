@@ -3,21 +3,23 @@
 require "test_helper"
 
 describe Riffer::Guardrails::Modification do
-  describe "#guardrail_id" do
-    it "returns the guardrail identifier" do
+  let(:stub_guardrail_class) { Class.new(Riffer::Guardrail) }
+
+  describe "#guardrail" do
+    it "returns the guardrail class" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "pii_redactor",
+        guardrail: stub_guardrail_class,
         phase: :before,
         message_indices: [0, 1]
       )
-      expect(modification.guardrail_id).must_equal "pii_redactor"
+      expect(modification.guardrail).must_equal stub_guardrail_class
     end
   end
 
   describe "#phase" do
     it "returns the phase" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "normalizer",
+        guardrail: stub_guardrail_class,
         phase: :after,
         message_indices: [0]
       )
@@ -28,7 +30,7 @@ describe Riffer::Guardrails::Modification do
   describe "#message_indices" do
     it "returns the message indices" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "normalizer",
+        guardrail: stub_guardrail_class,
         phase: :before,
         message_indices: [1, 3]
       )
@@ -37,18 +39,19 @@ describe Riffer::Guardrails::Modification do
   end
 
   describe "#to_h" do
-    it "returns a hash with guardrail_id" do
+    it "returns a hash with guardrail as string" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "pii_redactor",
+        guardrail: stub_guardrail_class,
         phase: :before,
         message_indices: [0]
       )
-      expect(modification.to_h[:guardrail_id]).must_equal "pii_redactor"
+      expect(modification.to_h[:guardrail]).must_be_kind_of String
+      expect(modification.to_h[:guardrail]).wont_be_empty
     end
 
     it "returns a hash with phase" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "pii_redactor",
+        guardrail: stub_guardrail_class,
         phase: :after,
         message_indices: [0]
       )
@@ -57,7 +60,7 @@ describe Riffer::Guardrails::Modification do
 
     it "returns a hash with message_indices" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "pii_redactor",
+        guardrail: stub_guardrail_class,
         phase: :before,
         message_indices: [0, 2]
       )

@@ -9,7 +9,6 @@
 # See Riffer::Evals::Evaluators.
 #
 #   class MyEvaluator < Riffer::Evals::Evaluator
-#     identifier "my_evaluator"
 #     description "Evaluates response quality"
 #     higher_is_better true
 #     judge_model "anthropic/claude-opus-4-5-20251101"
@@ -25,16 +24,6 @@
 #
 class Riffer::Evals::Evaluator
   class << self
-    include Riffer::Helpers::ClassNameConverter
-
-    # Gets or sets the evaluator identifier.
-    #
-    #: (?String?) -> String
-    def identifier(value = nil)
-      return @identifier || class_name_to_identifier(name) if value.nil?
-      @identifier = value.to_s
-    end
-
     # Gets or sets the evaluator description.
     #
     #: (?String?) -> String?
@@ -57,16 +46,6 @@ class Riffer::Evals::Evaluator
     def judge_model(value = nil)
       return @judge_model if value.nil?
       @judge_model = value.to_s
-    end
-
-    private
-
-    #: (String?) -> String?
-    def class_name_to_identifier(name)
-      return nil if name.nil?
-      class_name = name.split("::").last
-      return nil if class_name.nil?
-      class_name_to_path(class_name).sub(/_evaluator$/, "")
     end
   end
 
@@ -97,7 +76,7 @@ class Riffer::Evals::Evaluator
   #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
   def result(score:, reason: nil, metadata: {})
     Riffer::Evals::Result.new(
-      evaluator: self.class.identifier,
+      evaluator: self.class,
       score: score,
       reason: reason,
       metadata: metadata,

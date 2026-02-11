@@ -6,7 +6,6 @@ describe Riffer::Evals::Profile do
   # Create a simple evaluator for testing
   let(:profile_evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      identifier "profile_test_evaluator"
       description "Test evaluator for profile tests"
       higher_is_better true
 
@@ -18,36 +17,30 @@ describe Riffer::Evals::Profile do
     end
   end
 
-  before do
-    Riffer::Evals::Evaluators::Repository.register(:profile_test_evaluator, profile_evaluator_class)
-  end
-
-  after do
-    Riffer::Evals::Evaluators::Repository.clear
-  end
-
   describe "ai_evals DSL" do
     it "defines metrics" do
+      evaluator = profile_evaluator_class
       profile_module = Module.new do
         include Riffer::Evals::Profile
 
         ai_evals do
-          metric :profile_test_evaluator, min: 0.8
+          metric evaluator, min: 0.8
         end
       end
 
       expect(profile_module.eval_metrics.length).must_equal 1
-      expect(profile_module.eval_metrics.first.evaluator_identifier).must_equal "profile_test_evaluator"
+      expect(profile_module.eval_metrics.first.evaluator_class).must_equal profile_evaluator_class
       expect(profile_module.eval_metrics.first.min).must_equal 0.8
     end
 
     it "supports multiple metrics" do
+      evaluator = profile_evaluator_class
       profile_module = Module.new do
         include Riffer::Evals::Profile
 
         ai_evals do
-          metric :profile_test_evaluator, min: 0.85
-          metric :profile_test_evaluator, max: 0.10
+          metric evaluator, min: 0.85
+          metric evaluator, max: 0.10
         end
       end
 
@@ -55,11 +48,12 @@ describe Riffer::Evals::Profile do
     end
 
     it "supports weight option" do
+      evaluator = profile_evaluator_class
       profile_module = Module.new do
         include Riffer::Evals::Profile
 
         ai_evals do
-          metric :profile_test_evaluator, min: 0.8, weight: 2.0
+          metric evaluator, min: 0.8, weight: 2.0
         end
       end
 
@@ -74,11 +68,12 @@ describe Riffer::Evals::Profile do
     end
 
     it "adds run_eval method when included in Agent" do
+      evaluator = profile_evaluator_class
       profile_module = Module.new do
         include Riffer::Evals::Profile
 
         ai_evals do
-          metric :profile_test_evaluator, min: 0.8
+          metric evaluator, min: 0.8
         end
       end
 
@@ -93,11 +88,12 @@ describe Riffer::Evals::Profile do
     end
 
     it "runs evaluation when eval is called" do
+      evaluator = profile_evaluator_class
       profile_module = Module.new do
         include Riffer::Evals::Profile
 
         ai_evals do
-          metric :profile_test_evaluator, min: 0.8
+          metric evaluator, min: 0.8
         end
       end
 
@@ -120,10 +116,10 @@ describe Riffer::Evals::Profile do
   describe "Builder" do
     it "creates metrics with correct options" do
       builder = Riffer::Evals::Profile::Builder.new
-      builder.metric(:test, min: 0.7, max: 0.95, weight: 1.5)
+      builder.metric(profile_evaluator_class, min: 0.7, max: 0.95, weight: 1.5)
 
       metric = builder.metrics.first
-      expect(metric.evaluator_identifier).must_equal "test"
+      expect(metric.evaluator_class).must_equal profile_evaluator_class
       expect(metric.min).must_equal 0.7
       expect(metric.max).must_equal 0.95
       expect(metric.weight).must_equal 1.5

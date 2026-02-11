@@ -1469,15 +1469,11 @@ describe Riffer::Agent do
 
   describe ".guardrail" do
     let(:pass_guardrail_class) do
-      Class.new(Riffer::Guardrail) do
-        identifier "pass_guardrail"
-      end
+      Class.new(Riffer::Guardrail)
     end
 
     let(:block_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "block_guardrail"
-
         def process_input(messages, context:)
           block("Input blocked")
         end
@@ -1562,8 +1558,6 @@ describe Riffer::Agent do
   describe "#generate with guardrails" do
     let(:transform_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "transform_guardrail"
-
         def process_input(messages, context:)
           transform(messages.map { |m|
             case m
@@ -1583,8 +1577,6 @@ describe Riffer::Agent do
 
     let(:block_input_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "block_input_guardrail"
-
         def process_input(messages, context:)
           block("Input blocked", metadata: {reason: "test"})
         end
@@ -1593,8 +1585,6 @@ describe Riffer::Agent do
 
     let(:block_output_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "block_output_guardrail"
-
         def process_output(response, messages:, context:)
           block("Output blocked", metadata: {reason: "test"})
         end
@@ -1641,9 +1631,9 @@ describe Riffer::Agent do
         expect(result.tripwire.phase).must_equal :before
       end
 
-      it "has tripwire with guardrail_id" do
+      it "has tripwire with guardrail" do
         result = agent_with_blocking_input.generate("Hello")
-        expect(result.tripwire.guardrail_id).must_equal "block_input_guardrail"
+        expect(result.tripwire.guardrail).must_equal block_input_guardrail_class
       end
 
       it "has tripwire with metadata" do
@@ -1715,10 +1705,10 @@ describe Riffer::Agent do
         expect(result.modified?).must_equal true
       end
 
-      it "response has modifications with correct guardrail_id" do
+      it "response has modifications with correct guardrail" do
         result = agent_with_transform.generate("Hello")
-        ids = result.modifications.map(&:guardrail_id)
-        expect(ids).must_include "transform_guardrail"
+        guardrails = result.modifications.map(&:guardrail)
+        expect(guardrails).must_include transform_guardrail_class
       end
 
       it "after phase modifications have remapped message indices" do
@@ -1745,8 +1735,6 @@ describe Riffer::Agent do
   describe "#stream with guardrails" do
     let(:block_input_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "block_input_guardrail"
-
         def process_input(messages, context:)
           block("Input blocked")
         end
@@ -1755,8 +1743,6 @@ describe Riffer::Agent do
 
     let(:block_output_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "block_output_guardrail"
-
         def process_output(response, messages:, context:)
           block("Output blocked")
         end
@@ -1824,8 +1810,6 @@ describe Riffer::Agent do
     describe "with transform guardrails" do
       let(:transform_guardrail_class) do
         Class.new(Riffer::Guardrail) do
-          identifier "stream_transform_guardrail"
-
           def process_input(messages, context:)
             transform(messages.map { |m|
               case m
@@ -1854,10 +1838,10 @@ describe Riffer::Agent do
         expect(mod_events).wont_be_empty
       end
 
-      it "GuardrailModification event has correct guardrail_id" do
+      it "GuardrailModification event has correct guardrail" do
         events = agent_with_stream_transform.stream("Hello").to_a
         mod_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
-        expect(mod_event.guardrail_id).must_equal "stream_transform_guardrail"
+        expect(mod_event.guardrail).must_equal transform_guardrail_class
       end
     end
   end

@@ -14,7 +14,6 @@
 #   result.score  # => 0.95
 #
 class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
-  identifier "answer_relevancy"
   description "Evaluates how well the response addresses the input question"
   higher_is_better true
 

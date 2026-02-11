@@ -5,8 +5,6 @@
 # Subclass this to create custom guardrails:
 #
 #   class MyGuardrail < Riffer::Guardrail
-#     identifier "my_guardrail"
-#
 #     def process_input(messages, context:)
 #       # Return pass(messages), transform(modified_messages), or block(reason)
 #       pass(messages)
@@ -18,22 +16,6 @@
 #     end
 #   end
 class Riffer::Guardrail
-  include Riffer::Helpers::ClassNameConverter
-
-  include Riffer::Helpers::ClassNameConverter
-
-  # Gets or sets the guardrail identifier.
-  #
-  # +value+ - the identifier to set, or nil to get.
-  #
-  # : (?String?) -> String
-  def self.identifier: (?String?) -> String
-
-  # Returns the instance's identifier.
-  #
-  # : () -> String
-  def identifier: () -> String
-
   # Processes input messages before they are sent to the LLM.
   #
   # Override this method in subclasses to implement input processing.

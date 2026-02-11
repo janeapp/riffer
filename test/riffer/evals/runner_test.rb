@@ -6,7 +6,6 @@ describe Riffer::Evals::Runner do
   # Create a simple evaluator that returns a fixed score
   let(:runner_evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      identifier "runner_test_evaluator"
       description "Test evaluator for runner tests"
       higher_is_better true
 
@@ -18,17 +17,9 @@ describe Riffer::Evals::Runner do
     end
   end
 
-  before do
-    Riffer::Evals::Evaluators::Repository.register(:runner_test_evaluator, runner_evaluator_class)
-  end
-
-  after do
-    Riffer::Evals::Evaluators::Repository.clear
-  end
-
   describe "#initialize" do
     it "sets the metrics" do
-      metrics = [Riffer::Evals::Metric.new(evaluator_identifier: "runner_test_evaluator")]
+      metrics = [Riffer::Evals::Metric.new(evaluator_class: runner_evaluator_class)]
       runner = Riffer::Evals::Runner.new(metrics: metrics)
       expect(runner.metrics).must_equal metrics
     end
@@ -36,7 +27,7 @@ describe Riffer::Evals::Runner do
 
   describe "#run" do
     it "returns a RunResult" do
-      metrics = [Riffer::Evals::Metric.new(evaluator_identifier: "runner_test_evaluator", min: 0.5)]
+      metrics = [Riffer::Evals::Metric.new(evaluator_class: runner_evaluator_class, min: 0.5)]
       runner = Riffer::Evals::Runner.new(metrics: metrics)
 
       result = runner.run(
@@ -50,8 +41,8 @@ describe Riffer::Evals::Runner do
 
     it "runs all evaluators" do
       metrics = [
-        Riffer::Evals::Metric.new(evaluator_identifier: "runner_test_evaluator", min: 0.5),
-        Riffer::Evals::Metric.new(evaluator_identifier: "runner_test_evaluator", min: 0.3)
+        Riffer::Evals::Metric.new(evaluator_class: runner_evaluator_class, min: 0.5),
+        Riffer::Evals::Metric.new(evaluator_class: runner_evaluator_class, min: 0.3)
       ]
       runner = Riffer::Evals::Runner.new(metrics: metrics)
 
@@ -66,16 +57,13 @@ describe Riffer::Evals::Runner do
 
     it "passes context to evaluators" do
       context_evaluator_class = Class.new(Riffer::Evals::Evaluator) do
-        identifier "context_evaluator"
-
         def evaluate(input:, output:, context: nil)
           score = context&.dig(:expected_score) || 0.5
           result(score: score, reason: "From context")
         end
       end
-      Riffer::Evals::Evaluators::Repository.register(:context_evaluator, context_evaluator_class)
 
-      metrics = [Riffer::Evals::Metric.new(evaluator_identifier: "context_evaluator")]
+      metrics = [Riffer::Evals::Metric.new(evaluator_class: context_evaluator_class)]
       runner = Riffer::Evals::Runner.new(metrics: metrics)
 
       result = runner.run(
@@ -85,15 +73,6 @@ describe Riffer::Evals::Runner do
       )
 
       expect(result.results.first.score).must_equal 0.95
-    end
-
-    it "raises error for unknown evaluator" do
-      metrics = [Riffer::Evals::Metric.new(evaluator_identifier: "unknown_evaluator")]
-      runner = Riffer::Evals::Runner.new(metrics: metrics)
-
-      expect {
-        runner.run(input: "test", output: "test", context: nil)
-      }.must_raise(Riffer::ArgumentError)
     end
   end
 end

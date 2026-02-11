@@ -3,13 +3,6 @@
 require "test_helper"
 
 describe Riffer::Evals::Evaluators::AnswerRelevancy do
-  describe "repository" do
-    it "is registered in the evaluators repository" do
-      evaluator_class = Riffer::Evals::Evaluators::Repository.find(:answer_relevancy)
-      expect(evaluator_class).must_equal Riffer::Evals::Evaluators::AnswerRelevancy
-    end
-  end
-
   describe "#evaluate" do
     it "requires judge_model to be configured" do
       original_judge_model = Riffer.config.evals.judge_model

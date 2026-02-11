@@ -1,42 +1,5 @@
 # Generated from lib/riffer/evals/evaluators.rb with RBS::Inline
 
-# Namespace for built-in evaluators and the evaluator repository.
-#
-# See Riffer::Evals::Evaluators::Repository for registering custom evaluators.
+# Namespace for built-in evaluators.
 module Riffer::Evals::Evaluators
-  # Repository for looking up evaluators by identifier.
-  #
-  # Built-in evaluators are always available. Custom evaluators
-  # can be registered using Repository.register in your app initialization.
-  #
-  #   # Register a custom evaluator (config/initializers/riffer.rb)
-  #   Riffer::Evals::Evaluators::Repository.register(:my_evaluator, MyEvaluator)
-  #
-  #   # Find an evaluator
-  #   Riffer::Evals::Evaluators::Repository.find(:answer_relevancy)
-  #   # => Riffer::Evals::Evaluators::AnswerRelevancy
-  class Repository
-    # Built-in evaluators (always available).
-    BUILT_IN: Hash[Symbol, ^() -> singleton(Riffer::Evals::Evaluator)]
-
-    # Registers a custom evaluator class with an identifier.
-    #
-    # : ((String | Symbol), singleton(Riffer::Evals::Evaluator)) -> void
-    def self.register: (String | Symbol, singleton(Riffer::Evals::Evaluator)) -> void
-
-    # Finds an evaluator class by identifier.
-    #
-    # : ((String | Symbol)) -> singleton(Riffer::Evals::Evaluator)?
-    def self.find: (String | Symbol) -> singleton(Riffer::Evals::Evaluator)?
-
-    # Returns all registered evaluators (built-in and custom).
-    #
-    # : () -> Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
-    def self.all: () -> Hash[Symbol, singleton(Riffer::Evals::Evaluator)]
-
-    # Clears custom registrations (for testing). Built-ins remain.
-    #
-    # : () -> void
-    def self.clear: () -> void
-  end
 end

@@ -3,29 +3,31 @@
 require "test_helper"
 
 describe Riffer::Guardrails::Tripwire do
+  let(:stub_guardrail_class) { Class.new(Riffer::Guardrail) }
+
   describe "#initialize" do
     it "creates a tripwire with required attributes" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "PII detected",
-        guardrail_id: "pii_redactor",
+        guardrail: stub_guardrail_class,
         phase: :before
       )
       expect(tripwire.reason).must_equal "PII detected"
     end
 
-    it "stores the guardrail_id" do
+    it "stores the guardrail" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "my_guardrail",
+        guardrail: stub_guardrail_class,
         phase: :before
       )
-      expect(tripwire.guardrail_id).must_equal "my_guardrail"
+      expect(tripwire.guardrail).must_equal stub_guardrail_class
     end
 
     it "stores the phase" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :after
       )
       expect(tripwire.phase).must_equal :after
@@ -34,7 +36,7 @@ describe Riffer::Guardrails::Tripwire do
     it "accepts before phase" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :before
       )
       expect(tripwire.phase).must_equal :before
@@ -43,7 +45,7 @@ describe Riffer::Guardrails::Tripwire do
     it "accepts after phase" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :after
       )
       expect(tripwire.phase).must_equal :after
@@ -53,7 +55,7 @@ describe Riffer::Guardrails::Tripwire do
       error = expect do
         Riffer::Guardrails::Tripwire.new(
           reason: "blocked",
-          guardrail_id: "guardrail",
+          guardrail: stub_guardrail_class,
           phase: :invalid
         )
       end.must_raise(Riffer::ArgumentError)
@@ -63,7 +65,7 @@ describe Riffer::Guardrails::Tripwire do
     it "stores metadata" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :before,
         metadata: {detected: [:email]}
       )
@@ -73,7 +75,7 @@ describe Riffer::Guardrails::Tripwire do
     it "allows nil metadata" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :before
       )
       expect(tripwire.metadata).must_be_nil
@@ -84,7 +86,7 @@ describe Riffer::Guardrails::Tripwire do
     it "returns a hash representation" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "PII detected",
-        guardrail_id: "pii_redactor",
+        guardrail: stub_guardrail_class,
         phase: :before,
         metadata: {types: [:email]}
       )
@@ -92,19 +94,20 @@ describe Riffer::Guardrails::Tripwire do
       expect(hash[:reason]).must_equal "PII detected"
     end
 
-    it "includes guardrail_id" do
+    it "includes guardrail as string" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "my_guardrail",
+        guardrail: stub_guardrail_class,
         phase: :after
       )
-      expect(tripwire.to_h[:guardrail_id]).must_equal "my_guardrail"
+      expect(tripwire.to_h[:guardrail]).must_be_kind_of String
+      expect(tripwire.to_h[:guardrail]).wont_be_empty
     end
 
     it "includes phase" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :before
       )
       expect(tripwire.to_h[:phase]).must_equal :before
@@ -113,7 +116,7 @@ describe Riffer::Guardrails::Tripwire do
     it "includes metadata" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "guardrail",
+        guardrail: stub_guardrail_class,
         phase: :before,
         metadata: {key: "value"}
       )

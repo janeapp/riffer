@@ -8,8 +8,6 @@
 #   guardrail :before, with: Riffer::Guardrails::MaxLength, max: 1000
 #   guardrail :after, with: Riffer::Guardrails::MaxLength, max: 5000
 class Riffer::Guardrails::MaxLength < Riffer::Guardrail
-  identifier "riffer/guardrails/max_length"
-
   DEFAULT_MAX = 10_000 #: Integer
 
   # The maximum allowed character length.

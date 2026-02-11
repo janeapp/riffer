@@ -6,19 +6,19 @@
 # Contains the score, reason, and metadata from running an evaluator.
 #
 #   result = Riffer::Evals::Result.new(
-#     evaluator: "answer_relevancy",
+#     evaluator: Riffer::Evals::Evaluators::AnswerRelevancy,
 #     score: 0.85,
 #     reason: "The response addresses the question directly.",
 #     higher_is_better: true
 #   )
 #
 #   result.score           # => 0.85
-#   result.evaluator       # => "answer_relevancy"
+#   result.evaluator       # => Riffer::Evals::Evaluators::AnswerRelevancy
 #   result.higher_is_better # => true
 #
 class Riffer::Evals::Result
-  # The identifier of the evaluator that produced this result.
-  attr_reader :evaluator #: String
+  # The evaluator class that produced this result.
+  attr_reader :evaluator #: singleton(Riffer::Evals::Evaluator)
 
   # The evaluation score (0.0 to 1.0).
   attr_reader :score #: Float
@@ -36,7 +36,7 @@ class Riffer::Evals::Result
   #
   # Raises Riffer::ArgumentError if score is not between 0.0 and 1.0.
   #
-  #: (evaluator: String, score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?higher_is_better: bool) -> void
+  #: (evaluator: singleton(Riffer::Evals::Evaluator), score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?higher_is_better: bool) -> void
   def initialize(evaluator:, score:, reason: nil, metadata: {}, higher_is_better: true)
     @evaluator = evaluator
     @score = score.to_f
@@ -51,7 +51,7 @@ class Riffer::Evals::Result
   #: () -> Hash[Symbol, untyped]
   def to_h
     {
-      evaluator: evaluator,
+      evaluator: evaluator.name || evaluator.inspect,
       score: score,
       reason: reason,
       metadata: metadata,

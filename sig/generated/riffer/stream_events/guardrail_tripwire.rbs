@@ -25,10 +25,10 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
   # : () -> Symbol
   def phase: () -> Symbol
 
-  # The guardrail identifier that triggered the block.
+  # The guardrail class that triggered the block.
   #
-  # : () -> String
-  def guardrail_id: () -> String
+  # : () -> singleton(Riffer::Guardrail)
+  def guardrail: () -> singleton(Riffer::Guardrail)
 
   # Converts the event to a hash.
   #

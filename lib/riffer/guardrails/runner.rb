@@ -52,7 +52,7 @@ class Riffer::Guardrails::Runner
       if result.block?
         tripwire = Riffer::Guardrails::Tripwire.new(
           reason: result.data,
-          guardrail_id: guardrail.identifier,
+          guardrail: guardrail.class,
           phase: phase,
           metadata: result.metadata
         )
@@ -61,7 +61,7 @@ class Riffer::Guardrails::Runner
 
       if result.transform?
         modifications << Riffer::Guardrails::Modification.new(
-          guardrail_id: guardrail.identifier,
+          guardrail: guardrail.class,
           phase: phase,
           message_indices: detect_changed_indices(current_data, result.data)
         )

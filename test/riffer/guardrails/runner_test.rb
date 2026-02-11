@@ -5,8 +5,6 @@ require "test_helper"
 describe Riffer::Guardrails::Runner do
   let(:pass_guardrail_class) do
     Class.new(Riffer::Guardrail) do
-      identifier "pass_guardrail"
-
       def process_input(messages, context:)
         pass(messages)
       end
@@ -19,8 +17,6 @@ describe Riffer::Guardrails::Runner do
 
   let(:transform_guardrail_class) do
     Class.new(Riffer::Guardrail) do
-      identifier "transform_guardrail"
-
       def process_input(messages, context:)
         transform(messages.map { |m|
           Riffer::Messages::User.new("[transformed] #{m.content}")
@@ -35,8 +31,6 @@ describe Riffer::Guardrails::Runner do
 
   let(:block_guardrail_class) do
     Class.new(Riffer::Guardrail) do
-      identifier "block_guardrail"
-
       def process_input(messages, context:)
         block("Input blocked", metadata: {phase: :before})
       end
@@ -101,11 +95,11 @@ describe Riffer::Guardrails::Runner do
       expect(tripwire.phase).must_equal :before
     end
 
-    it "tripwire has correct guardrail_id" do
+    it "tripwire has correct guardrail" do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
-      expect(tripwire.guardrail_id).must_equal "block_guardrail"
+      expect(tripwire.guardrail).must_equal block_guardrail_class
     end
 
     it "tripwire has correct metadata" do
@@ -167,7 +161,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new(configs, phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
-      expect(tripwire.guardrail_id).must_equal "block_guardrail"
+      expect(tripwire.guardrail).must_equal block_guardrail_class
     end
 
     it "returns original data when blocked" do
@@ -181,8 +175,6 @@ describe Riffer::Guardrails::Runner do
   describe "context passing" do
     let(:context_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "context_guardrail"
-
         def process_input(messages, context:)
           if context && context[:block]
             block("Context says block")
@@ -211,8 +203,6 @@ describe Riffer::Guardrails::Runner do
   describe "guardrail options" do
     let(:options_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        identifier "options_guardrail"
-
         attr_reader :prefix
 
         def initialize(prefix: "[default]")
@@ -258,11 +248,11 @@ describe Riffer::Guardrails::Runner do
       expect(modifications.length).must_equal 1
     end
 
-    it "modification has correct guardrail_id" do
+    it "modification has correct guardrail" do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
-      expect(modifications.first.guardrail_id).must_equal "transform_guardrail"
+      expect(modifications.first.guardrail).must_equal transform_guardrail_class
     end
 
     it "modification has correct phase" do
@@ -298,8 +288,6 @@ describe Riffer::Guardrails::Runner do
 
     it "detects correct indices when only some messages change" do
       selective_guardrail_class = Class.new(Riffer::Guardrail) do
-        identifier "selective_guardrail"
-
         def process_input(messages, context:)
           transformed = messages.map.with_index { |m, i|
             (i == 1) ? Riffer::Messages::User.new("[changed] #{m.content}") : m

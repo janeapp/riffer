@@ -17,7 +17,7 @@ describe Riffer::Agent::Response do
     it "stores the tripwire" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "test",
+        guardrail: Riffer::Guardrail,
         phase: :before
       )
       response = Riffer::Agent::Response.new("", tripwire: tripwire)
@@ -33,7 +33,7 @@ describe Riffer::Agent::Response do
 
     it "returns provided modifications" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "test",
+        guardrail: Riffer::Guardrail,
         phase: :before,
         message_indices: [0]
       )
@@ -50,7 +50,7 @@ describe Riffer::Agent::Response do
 
     it "returns true when modifications present" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail_id: "test",
+        guardrail: Riffer::Guardrail,
         phase: :before,
         message_indices: [0]
       )
@@ -68,7 +68,7 @@ describe Riffer::Agent::Response do
     it "returns true when tripwire present" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
-        guardrail_id: "test",
+        guardrail: Riffer::Guardrail,
         phase: :before
       )
       response = Riffer::Agent::Response.new("", tripwire: tripwire)

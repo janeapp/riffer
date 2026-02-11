@@ -41,20 +41,6 @@ class ContentFilterGuardrail < Riffer::Guardrail
 end
 ```
 
-## Configuration Methods
-
-### identifier
-
-Sets a custom identifier (defaults to snake_case class name):
-
-```ruby
-class MyGuardrail < Riffer::Guardrail
-  identifier "my_custom_guardrail"
-end
-
-MyGuardrail.identifier  # => "my_custom_guardrail"
-```
-
 ## Processing Methods
 
 ### process_input
@@ -186,7 +172,7 @@ response = MyAgent.generate("Hello")
 if response.blocked?
   puts "Blocked: #{response.tripwire.reason}"
   puts "Phase: #{response.tripwire.phase}"
-  puts "Guardrail: #{response.tripwire.guardrail_id}"
+  puts "Guardrail: #{response.tripwire.guardrail}"
 else
   puts response.content
 end
@@ -201,7 +187,7 @@ response = MyAgent.generate("Hello")
 
 if response.modified?
   response.modifications.each do |mod|
-    puts "Guardrail: #{mod.guardrail_id}"
+    puts "Guardrail: #{mod.guardrail}"
     puts "Phase: #{mod.phase}"
     puts "Changed indices: #{mod.message_indices}"
   end
@@ -214,7 +200,7 @@ During streaming, `GuardrailModification` events are emitted when transforms occ
 MyAgent.stream("Hello").each do |event|
   case event
   when Riffer::StreamEvents::GuardrailModification
-    puts "Modified by: #{event.guardrail_id} (#{event.phase})"
+    puts "Modified by: #{event.guardrail} (#{event.phase})"
   when Riffer::StreamEvents::TextDelta
     print event.content
   end
@@ -264,8 +250,6 @@ end
 
 ```ruby
 class UnicodeNormalizer < Riffer::Guardrail
-  identifier "unicode_normalizer"
-
   def process_input(messages, context:)
     normalized = messages.map do |msg|
       if msg.respond_to?(:content) && msg.content
@@ -296,8 +280,6 @@ end
 
 ```ruby
 class TokenLimiter < Riffer::Guardrail
-  identifier "token_limiter"
-
   def initialize(limit:, strategy: :truncate)
     super()
     @limit = limit
@@ -339,8 +321,6 @@ end
 
 ```ruby
 class ContentPolicyFilter < Riffer::Guardrail
-  identifier "content_policy"
-
   BLOCKED_PATTERNS = [
     /pattern1/i,
     /pattern2/i

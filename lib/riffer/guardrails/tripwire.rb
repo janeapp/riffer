@@ -8,7 +8,7 @@
 #
 #   tripwire = Tripwire.new(
 #     reason: "PII detected in input",
-#     guardrail_id: "pii_redactor",
+#     guardrail: PiiRedactor,
 #     phase: :before,
 #     metadata: { detected_types: [:email, :phone] }
 #   )
@@ -18,8 +18,8 @@ class Riffer::Guardrails::Tripwire
   # The reason for blocking.
   attr_reader :reason #: String
 
-  # The identifier of the guardrail that triggered the block.
-  attr_reader :guardrail_id #: String
+  # The guardrail class that triggered the block.
+  attr_reader :guardrail #: singleton(Riffer::Guardrail)
 
   # The phase when the block occurred (:before or :after).
   attr_reader :phase #: Symbol
@@ -30,18 +30,18 @@ class Riffer::Guardrails::Tripwire
   # Creates a new tripwire.
   #
   # +reason+ - the reason for blocking.
-  # +guardrail_id+ - identifier of the guardrail that blocked.
+  # +guardrail+ - the guardrail class that blocked.
   # +phase+ - :before or :after.
   # +metadata+ - optional additional information.
   #
   # Raises Riffer::ArgumentError if the phase is invalid.
   #
-  #: (reason: String, guardrail_id: String, phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
-  def initialize(reason:, guardrail_id:, phase:, metadata: nil)
+  #: (reason: String, guardrail: singleton(Riffer::Guardrail), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
+  def initialize(reason:, guardrail:, phase:, metadata: nil)
     raise Riffer::ArgumentError, "Invalid phase: #{phase}" unless PHASES.include?(phase)
 
     @reason = reason
-    @guardrail_id = guardrail_id
+    @guardrail = guardrail
     @phase = phase
     @metadata = metadata
   end
@@ -52,7 +52,7 @@ class Riffer::Guardrails::Tripwire
   def to_h
     {
       reason: reason,
-      guardrail_id: guardrail_id,
+      guardrail: guardrail.name || guardrail.inspect,
       phase: phase,
       metadata: metadata
     }
