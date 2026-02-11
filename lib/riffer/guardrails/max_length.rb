@@ -1,0 +1,69 @@
+# frozen_string_literal: true
+
+# A guardrail that blocks messages exceeding a maximum character length.
+#
+# Demonstrates the guardrail pattern with a simple, practical use case.
+#
+#   guardrail :input, with: Riffer::Guardrails::MaxLength, max: 1000
+#   guardrail :output, with: Riffer::Guardrails::MaxLength, max: 5000
+class Riffer::Guardrails::MaxLength < Riffer::Guardrail
+  identifier "riffer/guardrails/max_length"
+  description "Blocks messages exceeding a maximum character length"
+
+  DEFAULT_MAX = 10_000
+
+  # The maximum allowed character length.
+  #
+  # Returns Integer.
+  attr_reader :max
+
+  # Creates a new max length guardrail.
+  #
+  # max:: Integer - maximum allowed characters (default: 10_000)
+  def initialize(max: DEFAULT_MAX)
+    super()
+    @max = max
+  end
+
+  # Blocks if any user message exceeds the max length.
+  #
+  # messages:: Array of Riffer::Messages::Base - the input messages
+  # context:: Object or nil - optional context
+  #
+  # Returns Riffer::Guardrails::Result.
+  def process_input(messages, context:)
+    messages.each do |msg|
+      next unless msg.respond_to?(:content)
+      next if msg.content.nil?
+
+      if msg.content.length > max
+        return block(
+          "Message exceeds maximum length of #{max} characters",
+          metadata: {length: msg.content.length, max: max}
+        )
+      end
+    end
+    pass(messages)
+  end
+
+  # Blocks if response exceeds the max length.
+  #
+  # response:: Riffer::Messages::Assistant - the LLM response
+  # messages:: Array of Riffer::Messages::Base - the conversation messages
+  # context:: Object or nil - optional context
+  #
+  # Returns Riffer::Guardrails::Result.
+  def process_output(response, messages:, context:)
+    return pass(response) unless response.respond_to?(:content)
+    return pass(response) if response.content.nil?
+
+    if response.content.length > max
+      block(
+        "Response exceeds maximum length of #{max} characters",
+        metadata: {length: response.content.length, max: max}
+      )
+    else
+      pass(response)
+    end
+  end
+end

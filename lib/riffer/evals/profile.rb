@@ -90,7 +90,8 @@ module Riffer::Evals::Profile
       raise Riffer::ArgumentError, "No metrics configured in eval profile" if metrics.empty?
 
       # Generate output from agent
-      output = generate(input, tool_context: tool_context)
+      response = generate(input, tool_context: tool_context)
+      output = response.content
 
       # Run evaluations
       runner = Riffer::Evals::Runner.new(metrics: metrics)

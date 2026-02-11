@@ -132,10 +132,10 @@ describe Riffer::Agent do
     end
 
     describe "with test provider" do
-      it "returns a text response" do
+      it "returns a Response object" do
         agent = agent_class.new
         result = agent.generate("What is the weather?")
-        expect(result).must_be_instance_of String
+        expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
       it "adds system message to messages when instructions are provided" do
@@ -162,7 +162,7 @@ describe Riffer::Agent do
       it "returns the content of the final assistant message" do
         agent = agent_class.new
         result = agent.generate("Hello")
-        expect(result).must_be_instance_of String
+        expect(result.content).must_be_instance_of String
       end
     end
 
@@ -175,7 +175,7 @@ describe Riffer::Agent do
           Riffer::Messages::User.new("How are you?")
         ]
         result = agent.generate(messages)
-        expect(result).must_be_instance_of String
+        expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
       it "adds system message before the provided messages when instructions are present" do
@@ -214,7 +214,7 @@ describe Riffer::Agent do
           {role: "user", content: "How are you?"}
         ]
         result = agent.generate(messages)
-        expect(result).must_be_instance_of String
+        expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
       it "supports mixed hash and message objects" do
@@ -472,9 +472,9 @@ describe Riffer::Agent do
   end
 
   describe ".generate" do
-    it "returns a text response" do
+    it "returns a Response object" do
       result = agent_class.generate("Hello")
-      expect(result).must_be_instance_of String
+      expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
     it "passes tool_context to tools" do
@@ -672,7 +672,7 @@ describe Riffer::Agent do
 
         result = agent.generate("What's the weather in Toronto?")
 
-        expect(result).must_equal "The weather in Toronto is nice!"
+        expect(result.content).must_equal "The weather in Toronto is nice!"
       end
 
       it "passes tool_context to tools" do
@@ -1464,6 +1464,331 @@ describe Riffer::Agent do
 
       expect(agent.token_usage.input_tokens).must_equal 250
       expect(agent.token_usage.output_tokens).must_equal 125
+    end
+  end
+
+  describe ".guardrail" do
+    let(:pass_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "pass_guardrail"
+      end
+    end
+
+    let(:block_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "block_guardrail"
+
+        def process_input(messages, context:)
+          block("Input blocked")
+        end
+
+        def process_output(response, messages:, context:)
+          block("Output blocked")
+        end
+      end
+    end
+
+    it "raises error for invalid phase" do
+      error = expect do
+        Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          guardrail :invalid, with: Riffer::Guardrail
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/Invalid guardrail phase/)
+    end
+
+    it "raises error for non-guardrail class" do
+      error = expect do
+        Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          guardrail :input, with: String
+        end
+      end.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/must be a Riffer::Guardrail subclass/)
+    end
+
+    it "registers input guardrails" do
+      gr = pass_guardrail_class
+      agent = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      agent.guardrail(:input, with: gr)
+      configs = agent.guardrails_for(:input)
+      expect(configs.any? { |c| c[:class] == gr }).must_equal true
+    end
+
+    it "registers output guardrails" do
+      gr = pass_guardrail_class
+      agent = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      agent.guardrail(:output, with: gr)
+      configs = agent.guardrails_for(:output)
+      expect(configs.any? { |c| c[:class] == gr }).must_equal true
+    end
+
+    it "registers around guardrails for both phases" do
+      gr = pass_guardrail_class
+      agent = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      agent.guardrail(:around, with: gr)
+      configs = agent.guardrails_for(:input)
+      expect(configs.any? { |c| c[:class] == gr }).must_equal true
+    end
+
+    it "registers around guardrails for output" do
+      gr = pass_guardrail_class
+      agent = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      agent.guardrail(:around, with: gr)
+      configs = agent.guardrails_for(:output)
+      expect(configs.any? { |c| c[:class] == gr }).must_equal true
+    end
+
+    it "stores options in config" do
+      gr = pass_guardrail_class
+      agent = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      agent.guardrail(:input, with: gr, foo: :bar)
+      config = agent.guardrails_for(:input).first
+      expect(config[:options]).must_equal({foo: :bar})
+    end
+  end
+
+  describe "#generate with guardrails" do
+    let(:transform_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "transform_guardrail"
+
+        def process_input(messages, context:)
+          transform(messages.map { |m|
+            case m
+            when Riffer::Messages::User
+              Riffer::Messages::User.new("[INPUT] #{m.content}")
+            else
+              m
+            end
+          })
+        end
+
+        def process_output(response, messages:, context:)
+          transform(Riffer::Messages::Assistant.new("[OUTPUT] #{response.content}"))
+        end
+      end
+    end
+
+    let(:block_input_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "block_input_guardrail"
+
+        def process_input(messages, context:)
+          block("Input blocked", metadata: {reason: "test"})
+        end
+      end
+    end
+
+    let(:block_output_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "block_output_guardrail"
+
+        def process_output(response, messages:, context:)
+          block("Output blocked", metadata: {reason: "test"})
+        end
+      end
+    end
+
+    it "returns Response object" do
+      result = agent_class.generate("Hello")
+      expect(result).must_be_instance_of Riffer::Agent::Response
+    end
+
+    it "response is not blocked without guardrails" do
+      result = agent_class.generate("Hello")
+      expect(result.blocked?).must_equal false
+    end
+
+    it "response content is accessible" do
+      result = agent_class.generate("Hello")
+      expect(result.content).wont_be_empty
+    end
+
+    describe "with input guardrail that blocks" do
+      let(:agent_with_blocking_input) do
+        gr = block_input_guardrail_class
+        klass = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+        end
+        klass.guardrail(:input, with: gr)
+        klass
+      end
+
+      it "returns blocked response" do
+        result = agent_with_blocking_input.generate("Hello")
+        expect(result.blocked?).must_equal true
+      end
+
+      it "has tripwire with reason" do
+        result = agent_with_blocking_input.generate("Hello")
+        expect(result.tripwire.reason).must_equal "Input blocked"
+      end
+
+      it "has tripwire with phase" do
+        result = agent_with_blocking_input.generate("Hello")
+        expect(result.tripwire.phase).must_equal :input
+      end
+
+      it "has tripwire with guardrail_id" do
+        result = agent_with_blocking_input.generate("Hello")
+        expect(result.tripwire.guardrail_id).must_equal "block_input_guardrail"
+      end
+
+      it "has tripwire with metadata" do
+        result = agent_with_blocking_input.generate("Hello")
+        expect(result.tripwire.metadata).must_equal({reason: "test"})
+      end
+
+      it "has empty content" do
+        result = agent_with_blocking_input.generate("Hello")
+        expect(result.content).must_equal ""
+      end
+    end
+
+    describe "with output guardrail that blocks" do
+      let(:agent_with_blocking_output) do
+        gr = block_output_guardrail_class
+        klass = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+        end
+        klass.guardrail(:output, with: gr)
+        klass
+      end
+
+      it "returns blocked response" do
+        result = agent_with_blocking_output.generate("Hello")
+        expect(result.blocked?).must_equal true
+      end
+
+      it "has tripwire with output phase" do
+        result = agent_with_blocking_output.generate("Hello")
+        expect(result.tripwire.phase).must_equal :output
+      end
+
+      it "has tripwire with reason" do
+        result = agent_with_blocking_output.generate("Hello")
+        expect(result.tripwire.reason).must_equal "Output blocked"
+      end
+    end
+
+    describe "with transform guardrails" do
+      let(:agent_with_transform) do
+        gr = transform_guardrail_class
+        klass = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+        end
+        klass.guardrail(:around, with: gr)
+        klass
+      end
+
+      it "transforms input messages" do
+        agent = agent_with_transform.new
+        agent.generate("Hello")
+        user_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::User) }
+        expect(user_message.content).must_equal "[INPUT] Hello"
+      end
+
+      it "transforms output response" do
+        result = agent_with_transform.generate("Hello")
+        expect(result.content).must_match(/\[OUTPUT\]/)
+      end
+
+      it "returns unblocked response" do
+        result = agent_with_transform.generate("Hello")
+        expect(result.blocked?).must_equal false
+      end
+    end
+  end
+
+  describe "#stream with guardrails" do
+    let(:block_input_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "block_input_guardrail"
+
+        def process_input(messages, context:)
+          block("Input blocked")
+        end
+      end
+    end
+
+    let(:block_output_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        identifier "block_output_guardrail"
+
+        def process_output(response, messages:, context:)
+          block("Output blocked")
+        end
+      end
+    end
+
+    describe "with input guardrail that blocks" do
+      let(:agent_with_blocking_input) do
+        gr = block_input_guardrail_class
+        klass = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+        end
+        klass.guardrail(:input, with: gr)
+        klass
+      end
+
+      it "yields tripwire event" do
+        events = agent_with_blocking_input.stream("Hello").to_a
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        expect(tripwire_event).wont_be_nil
+      end
+
+      it "tripwire event has reason" do
+        events = agent_with_blocking_input.stream("Hello").to_a
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        expect(tripwire_event.reason).must_equal "Input blocked"
+      end
+
+      it "tripwire event has input phase" do
+        events = agent_with_blocking_input.stream("Hello").to_a
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        expect(tripwire_event.phase).must_equal :input
+      end
+    end
+
+    describe "with output guardrail that blocks" do
+      let(:agent_with_blocking_output) do
+        gr = block_output_guardrail_class
+        klass = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+        end
+        klass.guardrail(:output, with: gr)
+        klass
+      end
+
+      it "yields tripwire event" do
+        events = agent_with_blocking_output.stream("Hello").to_a
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        expect(tripwire_event).wont_be_nil
+      end
+
+      it "tripwire event has output phase" do
+        events = agent_with_blocking_output.stream("Hello").to_a
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        expect(tripwire_event.phase).must_equal :output
+      end
+
+      it "still yields text events before blocking" do
+        events = agent_with_blocking_output.stream("Hello").to_a
+        text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        expect(text_events).wont_be_empty
+      end
     end
   end
 end

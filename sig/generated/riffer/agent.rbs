@@ -75,6 +75,22 @@ class Riffer::Agent
   # : (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def self.stream: (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
+  # Registers a guardrail for input, output, or both phases.
+  #
+  # phase:: Symbol - :input, :output, or :around
+  # with:: Class - the guardrail class (must be subclass of Riffer::Guardrail)
+  # options:: Hash - additional options passed to the guardrail
+  #
+  # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
+  def self.guardrail: (untyped phase, with: untyped, **untyped options) -> untyped
+
+  # Returns the registered guardrail configs for a given phase.
+  #
+  # phase:: Symbol - :input or :output
+  #
+  # Returns Array of Hash with :class and :options keys.
+  def self.guardrails_for: (untyped phase) -> untyped
+
   # The message history for the agent.
   attr_reader messages: Array[Riffer::Messages::Base]
 

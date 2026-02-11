@@ -105,6 +105,42 @@ class Riffer::Agent
     new.stream(...)
   end
 
+  # Registers a guardrail for input, output, or both phases.
+  #
+  # phase:: Symbol - :input, :output, or :around
+  # with:: Class - the guardrail class (must be subclass of Riffer::Guardrail)
+  # options:: Hash - additional options passed to the guardrail
+  #
+  # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
+  def self.guardrail(phase, with:, **options)
+    valid_phases = %i[input output around]
+    raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
+    raise Riffer::ArgumentError, "Guardrail must be a Riffer::Guardrail subclass" unless with.is_a?(Class) && with <= Riffer::Guardrail
+
+    @guardrails ||= {input: [], output: []}
+    config = {class: with, options: options}
+
+    case phase
+    when :input
+      @guardrails[:input] << config
+    when :output
+      @guardrails[:output] << config
+    when :around
+      @guardrails[:input] << config
+      @guardrails[:output] << config
+    end
+  end
+
+  # Returns the registered guardrail configs for a given phase.
+  #
+  # phase:: Symbol - :input or :output
+  #
+  # Returns Array of Hash with :class and :options keys.
+  def self.guardrails_for(phase)
+    @guardrails ||= {input: [], output: []}
+    @guardrails[phase] || []
+  end
+
   # The message history for the agent.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 
@@ -140,17 +176,25 @@ class Riffer::Agent
     @resolved_tools = nil
     initialize_messages(prompt_or_messages)
 
+    tripwire = run_input_guardrails
+    return build_response("", tripwire: tripwire) if tripwire
+
     loop do
       response = call_llm
-      add_message(response)
+
       track_token_usage(response.token_usage)
 
-      break unless has_tool_calls?(response)
+      processed_response, tripwire = run_output_guardrails(response)
+      return build_response("", tripwire: tripwire) if tripwire
 
-      execute_tool_calls(response)
+      add_message(processed_response)
+
+      break unless has_tool_calls?(processed_response)
+
+      execute_tool_calls(processed_response)
     end
 
-    extract_final_response
+    build_response(extract_final_response)
   end
 
   # Streams a response from the agent.
@@ -162,6 +206,12 @@ class Riffer::Agent
     initialize_messages(prompt_or_messages)
 
     Enumerator.new do |yielder|
+      tripwire = run_input_guardrails
+      if tripwire
+        yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
+        next
+      end
+
       loop do
         accumulated_content = ""
         accumulated_tool_calls = []
@@ -198,12 +248,21 @@ class Riffer::Agent
           tool_calls: accumulated_tool_calls,
           token_usage: accumulated_token_usage
         )
-        add_message(response)
+
         track_token_usage(accumulated_token_usage)
 
-        break unless has_tool_calls?(response)
+        processed_response, tripwire = run_output_guardrails(response)
 
-        execute_tool_calls(response)
+        if tripwire
+          yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
+          break
+        end
+
+        add_message(processed_response)
+
+        break unless has_tool_calls?(processed_response)
+
+        execute_tool_calls(processed_response)
       end
     end
   end
@@ -352,5 +411,28 @@ class Riffer::Agent
   def extract_final_response
     last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
     last_assistant_message&.content || ""
+  end
+
+  def run_input_guardrails
+    guardrails = self.class.guardrails_for(:input)
+    return nil if guardrails.empty?
+
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :input, context: @tool_context)
+    processed_messages, tripwire, _result = runner.run(@messages)
+    @messages = processed_messages unless tripwire
+    tripwire
+  end
+
+  def run_output_guardrails(response)
+    guardrails = self.class.guardrails_for(:output)
+    return [response, nil] if guardrails.empty?
+
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :output, context: @tool_context)
+    processed_response, tripwire, _result = runner.run(response, messages: @messages)
+    [processed_response, tripwire]
+  end
+
+  def build_response(content, tripwire: nil)
+    Riffer::Agent::Response.new(content, tripwire: tripwire)
   end
 end

@@ -100,15 +100,38 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+### guardrail
+
+Registers guardrails for pre/post processing of messages. Pass the guardrail class and any options:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+
+  # Input-only guardrail
+  guardrail :input, with: InputValidator
+
+  # Output-only guardrail
+  guardrail :output, with: ResponseFilter
+
+  # Both input and output, with options
+  guardrail :around, with: Riffer::Guardrails::MaxLength, max: 1000
+end
+```
+
+See [Guardrails](08_GUARDRAILS.md) for detailed documentation.
+
 ## Instance Methods
 
 ### generate
 
-Generates a response synchronously:
+Generates a response synchronously. Returns a `Riffer::Agent::Response` object:
 
 ```ruby
 # Class method (recommended for simple calls)
 response = MyAgent.generate('Hello')
+puts response.content     # Access the response text
+puts response.blocked?    # Check if guardrail blocked (always false without guardrails)
 
 # Instance method (when you need message history or callbacks)
 agent = MyAgent.new

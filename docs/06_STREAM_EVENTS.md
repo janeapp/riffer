@@ -109,6 +109,23 @@ event.role     # => "assistant"
 event.content  # => "Let me think about this step by step..."
 ```
 
+### Tripwire
+
+Emitted when a guardrail blocks execution during streaming:
+
+```ruby
+agent.stream("Hello").each do |event|
+  case event
+  when Riffer::StreamEvents::Tripwire
+    puts "Blocked by: #{event.guardrail_id}"
+    puts "Reason: #{event.reason}"
+    puts "Phase: #{event.phase}"  # :input or :output
+  end
+end
+```
+
+See [Guardrails](08_GUARDRAILS.md) for more information.
+
 ### TokenUsageDone
 
 Emitted when token usage data is available at the end of a response:
