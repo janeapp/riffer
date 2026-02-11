@@ -8,7 +8,7 @@
 # is returned.
 #
 #   runner = Runner.new(guardrail_configs, phase: :before, context: tool_context)
-#   data, tripwire, result = runner.run(messages)
+#   data, tripwire, modifications = runner.run(messages)
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
   attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]]
@@ -40,15 +40,14 @@ class Riffer::Guardrails::Runner
   # +data+ - the data to process (messages for before, response for after).
   # +messages+ - the conversation messages (required for after phase).
   #
-  #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Riffer::Guardrails::Result?]
+  #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run(data, messages: nil)
     current_data = data
-    last_result = nil
+    modifications = [] #: Array[Riffer::Guardrails::Modification]
 
     guardrail_configs.each do |config|
       guardrail = instantiate_guardrail(config)
       result = execute_guardrail(guardrail, current_data, messages: messages)
-      last_result = result
 
       if result.block?
         tripwire = Riffer::Guardrails::Tripwire.new(
@@ -57,13 +56,21 @@ class Riffer::Guardrails::Runner
           phase: phase,
           metadata: result.metadata
         )
-        return [current_data, tripwire, result]
+        return [current_data, tripwire, modifications]
+      end
+
+      if result.transform?
+        modifications << Riffer::Guardrails::Modification.new(
+          guardrail_id: guardrail.identifier,
+          phase: phase,
+          message_indices: detect_changed_indices(current_data, result.data)
+        )
       end
 
       current_data = result.data
     end
 
-    [current_data, nil, last_result]
+    [current_data, nil, modifications]
   end
 
   private
@@ -71,6 +78,16 @@ class Riffer::Guardrails::Runner
   #: (Hash[Symbol, untyped]) -> Riffer::Guardrail
   def instantiate_guardrail(config)
     config[:class].new(**config[:options])
+  end
+
+  #: (untyped, untyped) -> Array[Integer]
+  def detect_changed_indices(old_data, new_data)
+    if old_data.is_a?(Array) && new_data.is_a?(Array)
+      max_len = [old_data.length, new_data.length].max
+      (0...max_len).select { |i| old_data[i] != new_data[i] }
+    else
+      (old_data == new_data) ? [] : [0]
+    end
   end
 
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result

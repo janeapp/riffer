@@ -19,15 +19,20 @@ class Riffer::Agent::Response
   # The tripwire if execution was blocked.
   attr_reader :tripwire #: Riffer::Guardrails::Tripwire?
 
+  # The modifications made by guardrails during processing.
+  attr_reader :modifications #: Array[Riffer::Guardrails::Modification]
+
   # Creates a new response.
   #
   # +content+ - the response content.
   # +tripwire+ - optional tripwire for blocked responses.
+  # +modifications+ - guardrail modifications applied during processing.
   #
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> void
-  def initialize(content, tripwire: nil)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> void
+  def initialize(content, tripwire: nil, modifications: [])
     @content = content
     @tripwire = tripwire
+    @modifications = modifications
   end
 
   # Returns true if the response was blocked by a guardrail.
@@ -35,5 +40,12 @@ class Riffer::Agent::Response
   #: () -> bool
   def blocked?
     !tripwire.nil?
+  end
+
+  # Returns true if any guardrail modified data during processing.
+  #
+  #: () -> bool
+  def modified?
+    modifications.any?
   end
 end

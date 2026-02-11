@@ -1709,6 +1709,36 @@ describe Riffer::Agent do
         result = agent_with_transform.generate("Hello")
         expect(result.blocked?).must_equal false
       end
+
+      it "response is modified" do
+        result = agent_with_transform.generate("Hello")
+        expect(result.modified?).must_equal true
+      end
+
+      it "response has modifications with correct guardrail_id" do
+        result = agent_with_transform.generate("Hello")
+        ids = result.modifications.map(&:guardrail_id)
+        expect(ids).must_include "transform_guardrail"
+      end
+
+      it "after phase modifications have remapped message indices" do
+        result = agent_with_transform.generate("Hello")
+        after_mods = result.modifications.select { |m| m.phase == :after }
+        expect(after_mods).wont_be_empty
+        after_mods.each { |m| expect(m.message_indices.first).must_be :>, 0 }
+      end
+    end
+
+    describe "without guardrails" do
+      it "response modifications is empty" do
+        result = agent_class.generate("Hello")
+        expect(result.modifications).must_be_empty
+      end
+
+      it "response is not modified" do
+        result = agent_class.generate("Hello")
+        expect(result.modified?).must_equal false
+      end
     end
   end
 
@@ -1788,6 +1818,46 @@ describe Riffer::Agent do
         events = agent_with_blocking_output.stream("Hello").to_a
         text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
         expect(text_events).wont_be_empty
+      end
+    end
+
+    describe "with transform guardrails" do
+      let(:transform_guardrail_class) do
+        Class.new(Riffer::Guardrail) do
+          identifier "stream_transform_guardrail"
+
+          def process_input(messages, context:)
+            transform(messages.map { |m|
+              case m
+              when Riffer::Messages::User
+                Riffer::Messages::User.new("[INPUT] #{m.content}")
+              else
+                m
+              end
+            })
+          end
+        end
+      end
+
+      let(:agent_with_stream_transform) do
+        gr = transform_guardrail_class
+        klass = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+        end
+        klass.guardrail(:before, with: gr)
+        klass
+      end
+
+      it "emits GuardrailModification events on transforms" do
+        events = agent_with_stream_transform.stream("Hello").to_a
+        mod_events = events.select { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
+        expect(mod_events).wont_be_empty
+      end
+
+      it "GuardrailModification event has correct guardrail_id" do
+        events = agent_with_stream_transform.stream("Hello").to_a
+        mod_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
+        expect(mod_event.guardrail_id).must_equal "stream_transform_guardrail"
       end
     end
   end

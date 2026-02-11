@@ -126,6 +126,23 @@ end
 
 See [Guardrails](09_GUARDRAILS.md) for more information.
 
+### GuardrailModification
+
+Emitted when a guardrail transforms data during streaming:
+
+```ruby
+agent.stream("Hello").each do |event|
+  case event
+  when Riffer::StreamEvents::GuardrailModification
+    puts "Modified by: #{event.guardrail_id}"
+    puts "Phase: #{event.phase}"              # :before or :after
+    puts "Changed: #{event.message_indices}"  # Array of affected indices
+  end
+end
+```
+
+See [Guardrails](09_GUARDRAILS.md) for more information.
+
 ### TokenUsageDone
 
 Emitted when token usage data is available at the end of a response:

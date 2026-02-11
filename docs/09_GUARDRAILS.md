@@ -171,9 +171,11 @@ end
 ```ruby
 response = MyAgent.generate("Hello")
 
-response.content   # The response text
-response.blocked?  # true if a guardrail blocked execution
-response.tripwire  # Tripwire object with block details (if blocked)
+response.content        # The response text
+response.blocked?       # true if a guardrail blocked execution
+response.tripwire       # Tripwire object with block details (if blocked)
+response.modified?      # true if any guardrail transformed data
+response.modifications  # Array of Modification records
 ```
 
 ### Handling Blocked Responses
@@ -187,6 +189,35 @@ if response.blocked?
   puts "Guardrail: #{response.tripwire.guardrail_id}"
 else
   puts response.content
+end
+```
+
+### Modification Tracking
+
+When guardrails transform data, modification records track which guardrail made changes and which messages were affected:
+
+```ruby
+response = MyAgent.generate("Hello")
+
+if response.modified?
+  response.modifications.each do |mod|
+    puts "Guardrail: #{mod.guardrail_id}"
+    puts "Phase: #{mod.phase}"
+    puts "Changed indices: #{mod.message_indices}"
+  end
+end
+```
+
+During streaming, `GuardrailModification` events are emitted when transforms occur:
+
+```ruby
+MyAgent.stream("Hello").each do |event|
+  case event
+  when Riffer::StreamEvents::GuardrailModification
+    puts "Modified by: #{event.guardrail_id} (#{event.phase})"
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
 end
 ```
 

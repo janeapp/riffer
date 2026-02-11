@@ -25,6 +25,40 @@ describe Riffer::Agent::Response do
     end
   end
 
+  describe "#modifications" do
+    it "defaults to empty array" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.modifications).must_equal []
+    end
+
+    it "returns provided modifications" do
+      modification = Riffer::Guardrails::Modification.new(
+        guardrail_id: "test",
+        phase: :before,
+        message_indices: [0]
+      )
+      response = Riffer::Agent::Response.new("Hello!", modifications: [modification])
+      expect(response.modifications).must_equal [modification]
+    end
+  end
+
+  describe "#modified?" do
+    it "returns false when no modifications" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.modified?).must_equal false
+    end
+
+    it "returns true when modifications present" do
+      modification = Riffer::Guardrails::Modification.new(
+        guardrail_id: "test",
+        phase: :before,
+        message_indices: [0]
+      )
+      response = Riffer::Agent::Response.new("Hello!", modifications: [modification])
+      expect(response.modified?).must_equal true
+    end
+  end
+
   describe "#blocked?" do
     it "returns false when no tripwire" do
       response = Riffer::Agent::Response.new("Hello!")
