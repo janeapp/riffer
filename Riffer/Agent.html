@@ -475,6 +475,18 @@
                     </a>
                   </li>
 
+                  <li>
+                    <a href="../docs/08_EVALS_md.html">
+                      08_EVALS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../docs/09_GUARDRAILS_md.html">
+                      09_GUARDRAILS
+                    </a>
+                  </li>
+
               </ul>
             </details>
           </li>
@@ -577,20 +589,38 @@
       <li><a class="include" href="Messages/Converter.html">Riffer::Messages::Converter</a></li>
 
 
-
-      <li><a class="include" href="Helpers/ClassNameConverter.html">Riffer::Helpers::ClassNameConverter</a></li>
-
-
-
-      <li><a class="include" href="Helpers/Validations.html">Riffer::Helpers::Validations</a></li>
-
-
     </ul>
   </details>
 </div>
 
 
   
+<div id="extends-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-extends"></use></svg>
+      </span>
+      <span class="nav-section-title">Extended With Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="nav-list">
+
+
+      <li><a class="extend" href="Helpers/ClassNameConverter.html">Riffer::Helpers::ClassNameConverter</a></li>
+
+
+
+      <li><a class="extend" href="Helpers/Validations.html">Riffer::Helpers::Validations</a></li>
+
+
+    </ul>
+  </details>
+</div>
+
 
   
   <div class="nav-section">
@@ -611,6 +641,10 @@
         <li ><a href="#method-c-find">find</a></li>
 
         <li ><a href="#method-c-generate">generate</a></li>
+
+        <li ><a href="#method-c-guardrail">guardrail</a></li>
+
+        <li ><a href="#method-c-guardrails_for">guardrails_for</a></li>
 
         <li ><a href="#method-c-identifier">identifier</a></li>
 
@@ -670,7 +704,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent.html">Agent</a></code></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../Riffer/Config.html">Config</a></code></li><li><code><a href="../Riffer/Core.html">Core</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Evaluators.html">Evaluators</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluators/AnswerRelevancy.html">AnswerRelevancy</a></code></li><li><code><a href="../Riffer/Evals/Evaluators/Repository.html">Repository</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Metric.html">Metric</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Profile.html">Profile</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Profile/AgentClassMethods.html">AgentClassMethods</a></code></li><li><code><a href="../Riffer/Evals/Profile/Builder.html">Builder</a></code></li><li><code><a href="../Riffer/Evals/Profile/ClassMethods.html">ClassMethods</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/Runner.html">Runner</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/MaxLength.html">MaxLength</a></code></li><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -742,8 +776,6 @@
 
         <p>The message history for the agent.</p>
 
-<p>Returns Array of <a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a>.</p>
-
         </div>
       </div>
 
@@ -759,8 +791,6 @@
 
 
         <p>Cumulative token usage across all LLM calls.</p>
-
-<p>Returns <a href="TokenUsage.html"><code>Riffer::TokenUsage</code></a> or nil.</p>
 
         </div>
       </div>
@@ -794,8 +824,8 @@
             </details>
           </div>
           <div class="method-source-code" id="all-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 101</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
   <span class="ruby-identifier">subclasses</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -807,7 +837,7 @@
 
           <p>Returns all agent subclasses.</p>
 
-<p>Returns Array of Class - all agent subclasses.</p>
+<p>: () -&gt; <a href="singleton(Riffer::Agent)">Array</a></p>
 
 
         </div>
@@ -838,8 +868,8 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 94</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 79</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
   <span class="ruby-identifier">subclasses</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">agent_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">agent_class</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span> }
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -851,9 +881,7 @@
 
           <p>Finds an agent class by identifier.</p>
 
-<p>identifier:: String - the identifier to search for</p>
-
-<p>Returns Class or nil - the agent class, or nil if not found.</p>
+<p>: (String) -&gt; singleton(<a href="Agent.html"><code>Riffer::Agent</code></a>)?</p>
 
 
         </div>
@@ -884,8 +912,8 @@
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 108</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-operator">...</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-operator">...</span>)
   <span class="ruby-identifier">new</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-operator">...</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -898,6 +926,116 @@
           <p>Generates a response using a new agent instance.</p>
 
 <p>See <a href="Agent.html#method-i-generate"><code>generate</code></a> for parameters and return value.</p>
+
+<p>: (<em>untyped, </em>*untyped) -&gt; <a href="Agent/Response.html"><code>Riffer::Agent::Response</code></a></p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-guardrail" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-guardrail" title="Link to this method">
+                <span class="method-name">guardrail</span>
+                <span class="method-args">(phase, with:, **options)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="guardrail-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 116</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">with:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">valid_phases</span> = [<span class="ruby-operator">*</span><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Guardrails</span><span class="ruby-operator">::</span><span class="ruby-constant">PHASES</span>, <span class="ruby-value">:around</span>]
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid guardrail phase: #{phase}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid_phases</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">phase</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Guardrail must be a Riffer::Guardrail subclass&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">with</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">with</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Guardrail</span>
+
+  <span class="ruby-ivar">@guardrails</span> <span class="ruby-operator">||=</span> {<span class="ruby-value">before:</span> [], <span class="ruby-value">after:</span> []}
+  <span class="ruby-identifier">config</span> = {<span class="ruby-value">class:</span> <span class="ruby-identifier">with</span>, <span class="ruby-value">options:</span> <span class="ruby-identifier">options</span>}
+
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">phase</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:before</span>
+    <span class="ruby-ivar">@guardrails</span>[<span class="ruby-value">:before</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">config</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:after</span>
+    <span class="ruby-ivar">@guardrails</span>[<span class="ruby-value">:after</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">config</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:around</span>
+    <span class="ruby-ivar">@guardrails</span>[<span class="ruby-value">:before</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">config</span>
+    <span class="ruby-ivar">@guardrails</span>[<span class="ruby-value">:after</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">config</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Registers a guardrail for input, output, or both phases.</p>
+
+<p><code>phase</code> - :before, :after, or :around. <code>with</code> - the guardrail class (must be subclass of <a href="Guardrail.html"><code>Riffer::Guardrail</code></a>). <code>options</code> - additional options passed to the guardrail.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if phase is invalid or guardrail is not a Guardrail class. : (Symbol, with: singleton(<a href="Guardrail.html"><code>Riffer::Guardrail</code></a>), **untyped) -&gt; void</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-guardrails_for" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-guardrails_for" title="Link to this method">
+                <span class="method-name">guardrails_for</span>
+                <span class="method-args">(phase)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="guardrails_for-source">
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 140</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
+  <span class="ruby-ivar">@guardrails</span> <span class="ruby-operator">||=</span> {<span class="ruby-value">before:</span> [], <span class="ruby-value">after:</span> []}
+  <span class="ruby-ivar">@guardrails</span>[<span class="ruby-identifier">phase</span>] <span class="ruby-operator">||</span> []
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the registered guardrail configs for a given phase.</p>
+
+<p><code>phase</code> - :before or :after.</p>
+
+<p>: (Symbol) -&gt; Array[Hash[Symbol, untyped]]</p>
 
 
         </div>
@@ -928,8 +1066,8 @@
             </details>
           </div>
           <div class="method-source-code" id="identifier-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-identifier">name</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -942,9 +1080,7 @@
 
           <p>Gets or sets the agent identifier.</p>
 
-<p>value:: String or nil - the identifier to set, or nil to get</p>
-
-<p>Returns String - the agent identifier.</p>
+<p>: (?String?) -&gt; String</p>
 
 
         </div>
@@ -975,8 +1111,8 @@
             </details>
           </div>
           <div class="method-source-code" id="instructions-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">instructions_text</span> = <span class="ruby-keyword">nil</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">instructions_text</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@instructions</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">instructions_text</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">validate_is_string!</span>(<span class="ruby-identifier">instructions_text</span>, <span class="ruby-string">&quot;instructions&quot;</span>)
   <span class="ruby-ivar">@instructions</span> = <span class="ruby-identifier">instructions_text</span>
@@ -990,9 +1126,7 @@
 
           <p>Gets or sets the agent instructions.</p>
 
-<p>instructions_text:: String or nil - the instructions to set, or nil to get</p>
-
-<p>Returns String - the agent instructions.</p>
+<p>: (?String?) -&gt; String?</p>
 
 
         </div>
@@ -1023,8 +1157,8 @@
             </details>
           </div>
           <div class="method-source-code" id="model-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 42</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">model</span>(<span class="ruby-identifier">model_string</span> = <span class="ruby-keyword">nil</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 37</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model</span>(<span class="ruby-identifier">model_string</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@model</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model_string</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">validate_is_string!</span>(<span class="ruby-identifier">model_string</span>, <span class="ruby-string">&quot;model&quot;</span>)
   <span class="ruby-ivar">@model</span> = <span class="ruby-identifier">model_string</span>
@@ -1038,9 +1172,7 @@
 
           <p>Gets or sets the model string (e.g., “openai/gpt-4o”).</p>
 
-<p>model_string:: String or nil - the model string to set, or nil to get</p>
-
-<p>Returns String - the model string.</p>
+<p>: (?String?) -&gt; String?</p>
 
 
         </div>
@@ -1071,8 +1203,8 @@
             </details>
           </div>
           <div class="method-source-code" id="model_options-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 74</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">model_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 63</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@model_options</span> <span class="ruby-operator">||</span> {} <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@model_options</span> = <span class="ruby-identifier">options</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1085,9 +1217,7 @@
 
           <p>Gets or sets model options passed to generate_text/stream_text.</p>
 
-<p>options:: Hash or nil - the options to set, or nil to get</p>
-
-<p>Returns Hash - the model options.</p>
+<p>: (?Hash[Symbol, untyped]?) -&gt; Hash[Symbol, untyped]</p>
 
 
         </div>
@@ -1118,7 +1248,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 134</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 157</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@messages</span> = []
   <span class="ruby-ivar">@message_callbacks</span> = []
@@ -1143,6 +1273,8 @@
           <p>Initializes a new agent.</p>
 
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if the configured model string is invalid (must be “provider/model” format).</p>
+
+<p>: () -&gt; void</p>
 
 
         </div>
@@ -1173,8 +1305,8 @@
             </details>
           </div>
           <div class="method-source-code" id="provider_options-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 64</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">provider_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">provider_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@provider_options</span> <span class="ruby-operator">||</span> {} <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@provider_options</span> = <span class="ruby-identifier">options</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1187,9 +1319,7 @@
 
           <p>Gets or sets provider options passed to the provider client.</p>
 
-<p>options:: Hash or nil - the options to set, or nil to get</p>
-
-<p>Returns Hash - the provider options.</p>
+<p>: (?Hash[Symbol, untyped]?) -&gt; Hash[Symbol, untyped]</p>
 
 
         </div>
@@ -1220,8 +1350,8 @@
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 115</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-operator">...</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-operator">...</span>)
   <span class="ruby-identifier">new</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-operator">...</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1234,6 +1364,8 @@
           <p>Streams a response using a new agent instance.</p>
 
 <p>See <a href="Agent.html#method-i-stream"><code>stream</code></a> for parameters and return value.</p>
+
+<p>: (<em>untyped, </em>*untyped) -&gt; Enumerator[Riffer::StreamEvents::Base, void]</p>
 
 
         </div>
@@ -1264,8 +1396,8 @@
             </details>
           </div>
           <div class="method-source-code" id="uses_tools-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 84</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">uses_tools</span>(<span class="ruby-identifier">tools_or_lambda</span> = <span class="ruby-keyword">nil</span>)
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">uses_tools</span>(<span class="ruby-identifier">tools_or_lambda</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@tools_config</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">tools_or_lambda</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@tools_config</span> = <span class="ruby-identifier">tools_or_lambda</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1278,9 +1410,7 @@
 
           <p>Gets or sets the tools used by this agent.</p>
 
-<p>tools_or_lambda:: Array of Tool classes, Proc, or nil - tools array or lambda returning tools</p>
-
-<p>Returns Array, Proc, or nil - the tools configuration.</p>
+<p>: (?(<a href="singleton(Riffer::Tool)">Array</a> | Proc)?) -&gt; (<a href="singleton(Riffer::Tool)">Array</a> | Proc)?</p>
 
 
         </div>
@@ -1319,23 +1449,36 @@
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 155</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 175</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt_or_messages</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@tool_context</span> = <span class="ruby-identifier">tool_context</span>
   <span class="ruby-ivar">@resolved_tools</span> = <span class="ruby-keyword">nil</span>
   <span class="ruby-identifier">initialize_messages</span>(<span class="ruby-identifier">prompt_or_messages</span>)
 
+  <span class="ruby-identifier">all_modifications</span> = [] <span class="ruby-comment">#: Array[Riffer::Guardrails::Modification]</span>
+
+  <span class="ruby-identifier">tripwire</span>, <span class="ruby-identifier">modifications</span> = <span class="ruby-identifier">run_before_guardrails</span>
+  <span class="ruby-identifier">all_modifications</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">modifications</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">build_response</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-identifier">tripwire</span>, <span class="ruby-value">modifications:</span> <span class="ruby-identifier">all_modifications</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">tripwire</span>
+
   <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">response</span> = <span class="ruby-identifier">call_llm</span>
-    <span class="ruby-identifier">add_message</span>(<span class="ruby-identifier">response</span>)
+
     <span class="ruby-identifier">track_token_usage</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">token_usage</span>)
 
-    <span class="ruby-keyword">break</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_tool_calls?</span>(<span class="ruby-identifier">response</span>)
+    <span class="ruby-identifier">processed_response</span>, <span class="ruby-identifier">tripwire</span>, <span class="ruby-identifier">modifications</span> = <span class="ruby-identifier">run_after_guardrails</span>(<span class="ruby-identifier">response</span>)
+    <span class="ruby-identifier">all_modifications</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">modifications</span>)
 
-    <span class="ruby-identifier">execute_tool_calls</span>(<span class="ruby-identifier">response</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">build_response</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-identifier">tripwire</span>, <span class="ruby-value">modifications:</span> <span class="ruby-identifier">all_modifications</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">tripwire</span>
+
+    <span class="ruby-identifier">add_message</span>(<span class="ruby-identifier">processed_response</span>)
+
+    <span class="ruby-keyword">break</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_tool_calls?</span>(<span class="ruby-identifier">processed_response</span>)
+
+    <span class="ruby-identifier">execute_tool_calls</span>(<span class="ruby-identifier">processed_response</span>)
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">extract_final_response</span>
+  <span class="ruby-identifier">build_response</span>(<span class="ruby-identifier">extract_final_response</span>, <span class="ruby-value">modifications:</span> <span class="ruby-identifier">all_modifications</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1346,9 +1489,7 @@
 
           <p>Generates a response from the agent.</p>
 
-<p>prompt_or_messages:: String or Array - a string prompt or array of message hashes/objects tool_context:: Object or nil - optional context object passed to all tool calls</p>
-
-<p>Returns String - the final response content.</p>
+<p>: ((String | Array[Hash[Symbol, untyped] | <a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a>]), ?tool_context: Hash[Symbol, untyped]?) -&gt; <a href="Agent/Response.html"><code>Riffer::Agent::Response</code></a></p>
 
 
         </div>
@@ -1379,7 +1520,7 @@
             </details>
           </div>
           <div class="method-source-code" id="on_message-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 238</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 284</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_message</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;on_message requires a block&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
   <span class="ruby-ivar">@message_callbacks</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">block</span>
@@ -1394,11 +1535,9 @@
 
           <p>Registers a callback to be invoked when messages are added during generation.</p>
 
-<p>block:: Block - callback receiving a <a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a> subclass</p>
-
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if no block is given.</p>
 
-<p>Returns self for method chaining.</p>
+<p>: () { (<a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a>) -&gt; void } -&gt; self</p>
 
 
         </div>
@@ -1429,13 +1568,21 @@
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 179</span>
+            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt_or_messages</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@tool_context</span> = <span class="ruby-identifier">tool_context</span>
   <span class="ruby-ivar">@resolved_tools</span> = <span class="ruby-keyword">nil</span>
   <span class="ruby-identifier">initialize_messages</span>(<span class="ruby-identifier">prompt_or_messages</span>)
 
   <span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">yielder</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">tripwire</span>, <span class="ruby-identifier">modifications</span> = <span class="ruby-identifier">run_before_guardrails</span>
+    <span class="ruby-identifier">modifications</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">GuardrailModification</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">m</span>) }
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">tripwire</span>
+      <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">GuardrailTripwire</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tripwire</span>)
+      <span class="ruby-keyword">next</span>
+    <span class="ruby-keyword">end</span>
+
     <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
       <span class="ruby-identifier">accumulated_content</span> = <span class="ruby-string">&quot;&quot;</span>
       <span class="ruby-identifier">accumulated_tool_calls</span> = []
@@ -1455,12 +1602,12 @@
           <span class="ruby-identifier">current_tool_call</span>[<span class="ruby-value">:arguments</span>] <span class="ruby-operator">+=</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">arguments_delta</span>
           <span class="ruby-identifier">current_tool_call</span>[<span class="ruby-value">:name</span>] <span class="ruby-operator">||=</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">name</span>
         <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCallDone</span>
-          <span class="ruby-identifier">accumulated_tool_calls</span> <span class="ruby-operator">&lt;&lt;</span> {
+          <span class="ruby-identifier">accumulated_tool_calls</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCall</span>.<span class="ruby-identifier">new</span>(
             <span class="ruby-value">id:</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">item_id</span>,
             <span class="ruby-value">call_id:</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">call_id</span>,
             <span class="ruby-value">name:</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">name</span>,
             <span class="ruby-value">arguments:</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">arguments</span>
-          }
+          )
           <span class="ruby-identifier">current_tool_call</span> = <span class="ruby-keyword">nil</span>
         <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TokenUsageDone</span>
           <span class="ruby-identifier">accumulated_token_usage</span> = <span class="ruby-identifier">event</span>.<span class="ruby-identifier">token_usage</span>
@@ -1472,12 +1619,22 @@
         <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">accumulated_tool_calls</span>,
         <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">accumulated_token_usage</span>
       )
-      <span class="ruby-identifier">add_message</span>(<span class="ruby-identifier">response</span>)
+
       <span class="ruby-identifier">track_token_usage</span>(<span class="ruby-identifier">accumulated_token_usage</span>)
 
-      <span class="ruby-keyword">break</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_tool_calls?</span>(<span class="ruby-identifier">response</span>)
+      <span class="ruby-identifier">processed_response</span>, <span class="ruby-identifier">tripwire</span>, <span class="ruby-identifier">modifications</span> = <span class="ruby-identifier">run_after_guardrails</span>(<span class="ruby-identifier">response</span>)
+      <span class="ruby-identifier">modifications</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">GuardrailModification</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">m</span>) }
 
-      <span class="ruby-identifier">execute_tool_calls</span>(<span class="ruby-identifier">response</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">tripwire</span>
+        <span class="ruby-identifier">yielder</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">GuardrailTripwire</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tripwire</span>)
+        <span class="ruby-keyword">break</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">add_message</span>(<span class="ruby-identifier">processed_response</span>)
+
+      <span class="ruby-keyword">break</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_tool_calls?</span>(<span class="ruby-identifier">processed_response</span>)
+
+      <span class="ruby-identifier">execute_tool_calls</span>(<span class="ruby-identifier">processed_response</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1490,9 +1647,7 @@
 
           <p>Streams a response from the agent.</p>
 
-<p>prompt_or_messages:: String or Array - a string prompt or array of message hashes/objects tool_context:: Object or nil - optional context object passed to all tool calls</p>
-
-<p>Returns Enumerator - an enumerator yielding stream events.</p>
+<p>: ((String | Array[Hash[Symbol, untyped] | <a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a>]), ?tool_context: Hash[Symbol, untyped]?) -&gt; Enumerator[Riffer::StreamEvents::Base, void]</p>
 
 
         </div>
