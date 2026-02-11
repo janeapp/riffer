@@ -109,14 +109,14 @@ event.role     # => "assistant"
 event.content  # => "Let me think about this step by step..."
 ```
 
-### Tripwire
+### GuardrailTripwire
 
 Emitted when a guardrail blocks execution during streaming:
 
 ```ruby
 agent.stream("Hello").each do |event|
   case event
-  when Riffer::StreamEvents::Tripwire
+  when Riffer::StreamEvents::GuardrailTripwire
     puts "Blocked by: #{event.guardrail_id}"
     puts "Reason: #{event.reason}"
     puts "Phase: #{event.phase}"  # :before or :after

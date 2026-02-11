@@ -216,7 +216,7 @@ class Riffer::Agent
       modifications.each { |m| yielder << Riffer::StreamEvents::GuardrailModification.new(m) }
 
       if tripwire
-        yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
+        yielder << Riffer::StreamEvents::GuardrailTripwire.new(tripwire)
         next
       end
 
@@ -263,7 +263,7 @@ class Riffer::Agent
         modifications.each { |m| yielder << Riffer::StreamEvents::GuardrailModification.new(m) }
 
         if tripwire
-          yielder << Riffer::StreamEvents::Tripwire.new(tripwire)
+          yielder << Riffer::StreamEvents::GuardrailTripwire.new(tripwire)
           break
         end
 

@@ -1775,19 +1775,19 @@ describe Riffer::Agent do
 
       it "yields tripwire event" do
         events = agent_with_blocking_input.stream("Hello").to_a
-        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
         expect(tripwire_event).wont_be_nil
       end
 
       it "tripwire event has reason" do
         events = agent_with_blocking_input.stream("Hello").to_a
-        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
         expect(tripwire_event.reason).must_equal "Input blocked"
       end
 
       it "tripwire event has before phase" do
         events = agent_with_blocking_input.stream("Hello").to_a
-        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
         expect(tripwire_event.phase).must_equal :before
       end
     end
@@ -1804,13 +1804,13 @@ describe Riffer::Agent do
 
       it "yields tripwire event" do
         events = agent_with_blocking_output.stream("Hello").to_a
-        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
         expect(tripwire_event).wont_be_nil
       end
 
       it "tripwire event has after phase" do
         events = agent_with_blocking_output.stream("Hello").to_a
-        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Tripwire) }
+        tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
         expect(tripwire_event.phase).must_equal :after
       end
 

@@ -223,14 +223,14 @@ end
 
 ## Streaming with Guardrails
 
-Guardrails work with streaming. If blocked, a `Riffer::StreamEvents::Tripwire` event is yielded:
+Guardrails work with streaming. If blocked, a `Riffer::StreamEvents::GuardrailTripwire` event is yielded:
 
 ```ruby
 MyAgent.stream("Hello").each do |event|
   case event
   when Riffer::StreamEvents::TextDelta
     print event.content
-  when Riffer::StreamEvents::Tripwire
+  when Riffer::StreamEvents::GuardrailTripwire
     puts "Blocked: #{event.reason}"
     puts "Phase: #{event.phase}"
   end

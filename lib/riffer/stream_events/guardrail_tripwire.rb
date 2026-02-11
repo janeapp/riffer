@@ -4,7 +4,7 @@
 # Represents a guardrail tripwire event during streaming.
 #
 # Emitted when a guardrail blocks execution during the streaming pipeline.
-class Riffer::StreamEvents::Tripwire < Riffer::StreamEvents::Base
+class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
   # The tripwire containing block details.
   attr_reader :tripwire #: Riffer::Guardrails::Tripwire
 
