@@ -4,14 +4,15 @@ Use RDoc prose comments for public API descriptions and RBS inline annotations f
 
 ## Parameters and Return Types
 
-Use `#:` annotations for parameter types and return types on standalone lines above methods:
+Describe parameters in the RDoc prose comment. Use a single `#:` line for the RBS method signature (see [rbs-inline.md](rbs-inline.md) for the full type annotation syntax):
 
 ```ruby
 # Creates a new agent.
 #
-#: name: String -- the agent name
-#: options: Hash[Symbol, untyped] -- optional configuration
-#: return: void
+# +name+ - the agent name.
+# +options+ - optional configuration.
+#
+#: (String, ?options: Hash[Symbol, untyped]) -> void
 def initialize(name, options: {})
 ```
 
