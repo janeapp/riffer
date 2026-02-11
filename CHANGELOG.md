@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0](https://github.com/janeapp/riffer/compare/riffer/v0.11.0...riffer/v0.12.0) (2026-02-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Agent#generate now returns Riffer::Agent::Response instead of String. Use response.content or response.to_s for the text.
+
+### Features
+
+* add Claude Code Review GitHub Action ([#108](https://github.com/janeapp/riffer/issues/108)) ([f4b281c](https://github.com/janeapp/riffer/commit/f4b281c43e6ad50430c38323bcb876b60efc994a))
+* add evals primitive for LLM-as-judge evaluations ([#101](https://github.com/janeapp/riffer/issues/101)) ([8fd7b36](https://github.com/janeapp/riffer/commit/8fd7b369f2bd0236ea4c7d30cc12e71b960211dd))
+* add guardrails primitive for input/output processing ([#100](https://github.com/janeapp/riffer/issues/100)) ([48d8bad](https://github.com/janeapp/riffer/commit/48d8badce98c0bf9110bafebd3097e25f46c8444))
+* add inline RBS type annotations with Steep type checking ([#103](https://github.com/janeapp/riffer/issues/103)) ([02ae559](https://github.com/janeapp/riffer/commit/02ae559fa580ef4353bd969f2e50e056ab538e2d))
+
+
+### Bug Fixes
+
+* correct RBS inline annotations and remove ivar declarations ([#109](https://github.com/janeapp/riffer/issues/109)) ([d59076d](https://github.com/janeapp/riffer/commit/d59076d40b88f581b51ddbb9ee3d50ed57e84451))
+
+
+### Miscellaneous Chores
+
+* set next version ([#111](https://github.com/janeapp/riffer/issues/111)) ([faf41b9](https://github.com/janeapp/riffer/commit/faf41b92032e302c3f0d2d06ab93140137c1b199))
+
 ## [0.11.0](https://github.com/janeapp/riffer/compare/riffer/v0.10.0...riffer/v0.11.0) (2026-02-04)
 
 
