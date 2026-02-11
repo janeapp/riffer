@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Executes guardrails sequentially and manages the processing pipeline.
 #
@@ -12,23 +13,24 @@ class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
   #
   # Returns Array of Hash with :class and :options keys.
-  attr_reader :guardrail_configs
+  attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]]
 
   # The execution phase (:input or :output).
   #
   # Returns Symbol.
-  attr_reader :phase
+  attr_reader :phase #: Symbol
 
   # The context passed to guardrails.
   #
   # Returns Object or nil.
-  attr_reader :context
+  attr_reader :context #: untyped
 
   # Creates a new runner.
   #
   # guardrail_configs:: Array of Hash - configs with :class and :options keys
   # phase:: Symbol - :input or :output
   # context:: Object or nil - optional context to pass to guardrails
+  #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
   def initialize(guardrail_configs, phase:, context: nil)
     @guardrail_configs = guardrail_configs
     @phase = phase
@@ -47,6 +49,7 @@ class Riffer::Guardrails::Runner
   # - processed_data is the final data after all guardrails
   # - tripwire is a Tripwire if blocked, nil otherwise
   # - last_result is the final Result object
+  #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Riffer::Guardrails::Result?]
   def run(data, messages: nil)
     current_data = data
     last_result = nil
@@ -74,10 +77,12 @@ class Riffer::Guardrails::Runner
 
   private
 
+  #: (Hash[Symbol, untyped]) -> Riffer::Guardrail
   def instantiate_guardrail(config)
     config[:class].new(**config[:options])
   end
 
+  #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
     case phase
     when :input

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # Represents the result of a guardrail execution.
 #
@@ -12,22 +13,22 @@
 #   Result.transform(data)
 #   Result.block(reason, metadata: nil)
 class Riffer::Guardrails::Result
-  TYPES = %i[pass transform block].freeze
+  TYPES = %i[pass transform block].freeze #: Array[Symbol]
 
   # The result type (:pass, :transform, or :block).
   #
   # Returns Symbol.
-  attr_reader :type
+  attr_reader :type #: Symbol
 
   # The data (for pass/transform) or reason (for block).
   #
   # Returns Object.
-  attr_reader :data
+  attr_reader :data #: untyped
 
   # Optional metadata for block results.
   #
   # Returns Hash or nil.
-  attr_reader :metadata
+  attr_reader :metadata #: Hash[Symbol, untyped]?
 
   class << self
     # Creates a pass result that continues with unchanged data.
@@ -35,6 +36,7 @@ class Riffer::Guardrails::Result
     # data:: Object - the original data to pass through
     #
     # Returns Result.
+    #: (untyped) -> Riffer::Guardrails::Result
     def pass(data)
       new(:pass, data)
     end
@@ -44,6 +46,7 @@ class Riffer::Guardrails::Result
     # data:: Object - the transformed data
     #
     # Returns Result.
+    #: (untyped) -> Riffer::Guardrails::Result
     def transform(data)
       new(:transform, data)
     end
@@ -54,6 +57,7 @@ class Riffer::Guardrails::Result
     # metadata:: Hash or nil - optional additional information
     #
     # Returns Result.
+    #: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
     def block(reason, metadata: nil)
       new(:block, reason, metadata: metadata)
     end
@@ -64,6 +68,7 @@ class Riffer::Guardrails::Result
   # type:: Symbol - the result type (:pass, :transform, or :block)
   # data:: Object - the data or reason
   # metadata:: Hash or nil - optional metadata for block results
+  #: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(type, data, metadata: nil)
     raise Riffer::ArgumentError, "Invalid result type: #{type}" unless TYPES.include?(type)
 
@@ -75,6 +80,7 @@ class Riffer::Guardrails::Result
   # Returns true if this is a pass result.
   #
   # Returns Boolean.
+  #: () -> bool
   def pass?
     type == :pass
   end
@@ -82,6 +88,7 @@ class Riffer::Guardrails::Result
   # Returns true if this is a transform result.
   #
   # Returns Boolean.
+  #: () -> bool
   def transform?
     type == :transform
   end
@@ -89,6 +96,7 @@ class Riffer::Guardrails::Result
   # Returns true if this is a block result.
   #
   # Returns Boolean.
+  #: () -> bool
   def block?
     type == :block
   end

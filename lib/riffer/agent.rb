@@ -91,7 +91,7 @@ class Riffer::Agent
   #
   # See #generate for parameters and return value.
   #
-  #: (*untyped, **untyped) -> String
+  #: (*untyped, **untyped) -> Riffer::Agent::Response
   def self.generate(...)
     new.generate(...)
   end
@@ -112,6 +112,7 @@ class Riffer::Agent
   # options:: Hash - additional options passed to the guardrail
   #
   # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
+  #: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
   def self.guardrail(phase, with:, **options)
     valid_phases = %i[input output around]
     raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
@@ -136,6 +137,7 @@ class Riffer::Agent
   # phase:: Symbol - :input or :output
   #
   # Returns Array of Hash with :class and :options keys.
+  #: (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for(phase)
     @guardrails ||= {input: [], output: []}
     @guardrails[phase] || []
@@ -170,7 +172,7 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> String
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
@@ -413,6 +415,7 @@ class Riffer::Agent
     last_assistant_message&.content || ""
   end
 
+  #: () -> Riffer::Guardrails::Tripwire?
   def run_input_guardrails
     guardrails = self.class.guardrails_for(:input)
     return nil if guardrails.empty?
@@ -423,6 +426,7 @@ class Riffer::Agent
     tripwire
   end
 
+  #: (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?]
   def run_output_guardrails(response)
     guardrails = self.class.guardrails_for(:output)
     return [response, nil] if guardrails.empty?
@@ -432,6 +436,7 @@ class Riffer::Agent
     [processed_response, tripwire]
   end
 
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> Riffer::Agent::Response
   def build_response(content, tripwire: nil)
     Riffer::Agent::Response.new(content, tripwire: tripwire)
   end

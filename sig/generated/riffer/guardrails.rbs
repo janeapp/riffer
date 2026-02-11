@@ -1,5 +1,4 @@
-# frozen_string_literal: true
-# rbs_inline: enabled
+# Generated from lib/riffer/guardrails.rb with RBS::Inline
 
 # Namespace module for guardrail components.
 #

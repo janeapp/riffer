@@ -1,5 +1,4 @@
-# frozen_string_literal: true
-# rbs_inline: enabled
+# Generated from lib/riffer/stream_events/tripwire.rb with RBS::Inline
 
 # Represents a guardrail tripwire event during streaming.
 #
@@ -8,50 +7,36 @@ class Riffer::StreamEvents::Tripwire < Riffer::StreamEvents::Base
   # The tripwire containing block details.
   #
   # Returns Riffer::Guardrails::Tripwire.
-  attr_reader :tripwire #: Riffer::Guardrails::Tripwire
+  attr_reader tripwire: Riffer::Guardrails::Tripwire
 
   # Creates a new tripwire stream event.
   #
   # tripwire:: Riffer::Guardrails::Tripwire - the tripwire details
   # role:: Symbol - the message role (defaults to :assistant)
-  #: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
-  def initialize(tripwire, role: :assistant)
-    super(role: role)
-    @tripwire = tripwire
-  end
+  # : (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
+  def initialize: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
 
   # The reason for blocking.
   #
   # Returns String.
-  #: () -> String
-  def reason
-    tripwire.reason
-  end
+  # : () -> String
+  def reason: () -> String
 
   # The phase when blocking occurred.
   #
   # Returns Symbol.
-  #: () -> Symbol
-  def phase
-    tripwire.phase
-  end
+  # : () -> Symbol
+  def phase: () -> Symbol
 
   # The guardrail identifier that triggered the block.
   #
   # Returns String.
-  #: () -> String
-  def guardrail_id
-    tripwire.guardrail_id
-  end
+  # : () -> String
+  def guardrail_id: () -> String
 
   # Converts the event to a hash.
   #
   # Returns Hash with tripwire details.
-  #: () -> Hash[Symbol, untyped]
-  def to_h
-    {
-      role: @role,
-      tripwire: tripwire.to_h
-    }
-  end
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
 end

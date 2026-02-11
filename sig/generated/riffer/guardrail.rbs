@@ -1,5 +1,4 @@
-# frozen_string_literal: true
-# rbs_inline: enabled
+# Generated from lib/riffer/guardrail.rb with RBS::Inline
 
 # Base class for guardrails that process input and output in the agent pipeline.
 #
@@ -22,39 +21,29 @@
 class Riffer::Guardrail
   include Riffer::Helpers::ClassNameConverter
 
-  class << self
-    include Riffer::Helpers::ClassNameConverter
+  include Riffer::Helpers::ClassNameConverter
 
-    # Gets or sets the guardrail identifier.
-    #
-    # value:: String or nil - the identifier to set, or nil to get
-    #
-    # Returns String - the guardrail identifier.
-    #: (?String?) -> String
-    def identifier(value = nil)
-      return @identifier || class_name_to_path(name) if value.nil?
-      @identifier = value.to_s
-    end
+  # Gets or sets the guardrail identifier.
+  #
+  # value:: String or nil - the identifier to set, or nil to get
+  #
+  # Returns String - the guardrail identifier.
+  # : (?String?) -> String
+  def self.identifier: (?String?) -> String
 
-    # Gets or sets the guardrail description.
-    #
-    # value:: String or nil - the description to set, or nil to get
-    #
-    # Returns String or nil - the guardrail description.
-    #: (?String?) -> String?
-    def description(value = nil)
-      return @description if value.nil?
-      @description = value.to_s
-    end
-  end
+  # Gets or sets the guardrail description.
+  #
+  # value:: String or nil - the description to set, or nil to get
+  #
+  # Returns String or nil - the guardrail description.
+  # : (?String?) -> String?
+  def self.description: (?String?) -> String?
 
   # Returns the instance's identifier.
   #
   # Returns String.
-  #: () -> String
-  def identifier
-    self.class.identifier
-  end
+  # : () -> String
+  def identifier: () -> String
 
   # Processes input messages before they are sent to the LLM.
   #
@@ -64,10 +53,8 @@ class Riffer::Guardrail
   # context:: Object or nil - optional context passed to the agent
   #
   # Returns Riffer::Guardrails::Result.
-  #: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
-  def process_input(messages, context:)
-    pass(messages)
-  end
+  # : (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
+  def process_input: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
 
   # Processes output response after it is received from the LLM.
   #
@@ -78,32 +65,24 @@ class Riffer::Guardrail
   # context:: Object or nil - optional context passed to the agent
   #
   # Returns Riffer::Guardrails::Result.
-  #: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
-  def process_output(response, messages:, context:)
-    pass(response)
-  end
-
-  protected
+  # : (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
+  def process_output: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
 
   # Creates a pass result that continues with unchanged data.
   #
   # data:: Object - the original data to pass through
   #
   # Returns Riffer::Guardrails::Result.
-  #: (untyped) -> Riffer::Guardrails::Result
-  def pass(data)
-    Riffer::Guardrails::Result.pass(data)
-  end
+  # : (untyped) -> Riffer::Guardrails::Result
+  def pass: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a transform result that continues with transformed data.
   #
   # data:: Object - the transformed data
   #
   # Returns Riffer::Guardrails::Result.
-  #: (untyped) -> Riffer::Guardrails::Result
-  def transform(data)
-    Riffer::Guardrails::Result.transform(data)
-  end
+  # : (untyped) -> Riffer::Guardrails::Result
+  def transform: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a block result that halts execution.
   #
@@ -111,8 +90,6 @@ class Riffer::Guardrail
   # metadata:: Hash or nil - optional additional information
   #
   # Returns Riffer::Guardrails::Result.
-  #: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
-  def block(reason, metadata: nil)
-    Riffer::Guardrails::Result.block(reason, metadata: metadata)
-  end
+  # : (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
+  def block: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
 end

@@ -65,8 +65,8 @@ class Riffer::Agent
   #
   # See #generate for parameters and return value.
   #
-  # : (*untyped, **untyped) -> String
-  def self.generate: (*untyped, **untyped) -> String
+  # : (*untyped, **untyped) -> Riffer::Agent::Response
+  def self.generate: (*untyped, **untyped) -> Riffer::Agent::Response
 
   # Streams a response using a new agent instance.
   #
@@ -82,14 +82,16 @@ class Riffer::Agent
   # options:: Hash - additional options passed to the guardrail
   #
   # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
-  def self.guardrail: (untyped phase, with: untyped, **untyped options) -> untyped
+  # : (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
+  def self.guardrail: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
 
   # Returns the registered guardrail configs for a given phase.
   #
   # phase:: Symbol - :input or :output
   #
   # Returns Array of Hash with :class and :options keys.
-  def self.guardrails_for: (untyped phase) -> untyped
+  # : (Symbol) -> Array[Hash[Symbol, untyped]]
+  def self.guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 
   # The message history for the agent.
   attr_reader messages: Array[Riffer::Messages::Base]
@@ -107,8 +109,8 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> String
-  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?) -> String
+  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
 
   # Streams a response from the agent.
   #
@@ -162,4 +164,13 @@ class Riffer::Agent
 
   # : () -> String
   def extract_final_response: () -> String
+
+  # : () -> Riffer::Guardrails::Tripwire?
+  def run_input_guardrails: () -> Riffer::Guardrails::Tripwire?
+
+  # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?]
+  def run_output_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire? ]
+
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> Riffer::Agent::Response
+  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> Riffer::Agent::Response
 end

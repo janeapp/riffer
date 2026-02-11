@@ -1,5 +1,4 @@
-# frozen_string_literal: true
-# rbs_inline: enabled
+# Generated from lib/riffer/agent/response.rb with RBS::Inline
 
 # Wraps agent generation responses with optional tripwire information.
 #
@@ -16,28 +15,23 @@ class Riffer::Agent::Response
   # The response content.
   #
   # Returns String.
-  attr_reader :content #: String
+  attr_reader content: String
 
   # The tripwire if execution was blocked.
   #
   # Returns Riffer::Guardrails::Tripwire or nil.
-  attr_reader :tripwire #: Riffer::Guardrails::Tripwire?
+  attr_reader tripwire: Riffer::Guardrails::Tripwire?
 
   # Creates a new response.
   #
   # content:: String - the response content
   # tripwire:: Riffer::Guardrails::Tripwire or nil - optional tripwire for blocked responses
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> void
-  def initialize(content, tripwire: nil)
-    @content = content
-    @tripwire = tripwire
-  end
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> void
+  def initialize: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> void
 
   # Returns true if the response was blocked by a guardrail.
   #
   # Returns Boolean.
-  #: () -> bool
-  def blocked?
-    !tripwire.nil?
-  end
+  # : () -> bool
+  def blocked?: () -> bool
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 
 # A guardrail that blocks messages exceeding a maximum character length.
 #
@@ -10,16 +11,17 @@ class Riffer::Guardrails::MaxLength < Riffer::Guardrail
   identifier "riffer/guardrails/max_length"
   description "Blocks messages exceeding a maximum character length"
 
-  DEFAULT_MAX = 10_000
+  DEFAULT_MAX = 10_000 #: Integer
 
   # The maximum allowed character length.
   #
   # Returns Integer.
-  attr_reader :max
+  attr_reader :max #: Integer
 
   # Creates a new max length guardrail.
   #
   # max:: Integer - maximum allowed characters (default: 10_000)
+  #: (?max: Integer) -> void
   def initialize(max: DEFAULT_MAX)
     super()
     @max = max
@@ -31,6 +33,7 @@ class Riffer::Guardrails::MaxLength < Riffer::Guardrail
   # context:: Object or nil - optional context
   #
   # Returns Riffer::Guardrails::Result.
+  #: (Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_input(messages, context:)
     messages.each do |msg|
       next unless msg.respond_to?(:content)
@@ -53,6 +56,7 @@ class Riffer::Guardrails::MaxLength < Riffer::Guardrail
   # context:: Object or nil - optional context
   #
   # Returns Riffer::Guardrails::Result.
+  #: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_output(response, messages:, context:)
     return pass(response) unless response.respond_to?(:content)
     return pass(response) if response.content.nil?
