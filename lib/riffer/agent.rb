@@ -114,7 +114,7 @@ class Riffer::Agent
   # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
   #: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
   def self.guardrail(phase, with:, **options)
-    valid_phases = %i[input output around]
+    valid_phases = [*Riffer::Guardrails::PHASES, :around]
     raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
     raise Riffer::ArgumentError, "Guardrail must be a Riffer::Guardrail subclass" unless with.is_a?(Class) && with <= Riffer::Guardrail
 

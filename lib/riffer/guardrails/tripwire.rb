@@ -13,7 +13,7 @@
 #     metadata: { detected_types: [:email, :phone] }
 #   )
 class Riffer::Guardrails::Tripwire
-  PHASES = %i[input output].freeze #: Array[Symbol]
+  PHASES = Riffer::Guardrails::PHASES #: Array[Symbol]
 
   # The reason for blocking.
   attr_reader :reason #: String

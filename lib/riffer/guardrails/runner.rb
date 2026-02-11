@@ -80,6 +80,8 @@ class Riffer::Guardrails::Runner
       guardrail.process_input(data, context: context)
     when :output
       guardrail.process_output(data, messages: messages, context: context)
+    else
+      raise Riffer::Error, "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(", ")}"
     end
   end
 end
