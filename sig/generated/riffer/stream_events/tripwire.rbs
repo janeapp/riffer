@@ -20,7 +20,7 @@ class Riffer::StreamEvents::Tripwire < Riffer::StreamEvents::Base
   # : () -> String
   def reason: () -> String
 
-  # The phase when blocking occurred.
+  # The phase when blocking occurred (:before or :after).
   #
   # : () -> Symbol
   def phase: () -> Symbol

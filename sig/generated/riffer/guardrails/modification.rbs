@@ -1,0 +1,31 @@
+# Generated from lib/riffer/guardrails/modification.rb with RBS::Inline
+
+# Records a guardrail transformation event.
+#
+# When a guardrail transforms data (via +transform+), a Modification is
+# created to record which guardrail made the change, in which phase, and
+# which message indices were affected.
+class Riffer::Guardrails::Modification
+  # The identifier of the guardrail that transformed data.
+  attr_reader guardrail_id: String
+
+  # The phase when the transformation occurred (:before or :after).
+  attr_reader phase: Symbol
+
+  # The indices of messages that were changed.
+  attr_reader message_indices: Array[Integer]
+
+  # Creates a new modification record.
+  #
+  # +guardrail_id+ - identifier of the guardrail that transformed.
+  # +phase+ - :before or :after.
+  # +message_indices+ - indices of changed messages.
+  #
+  # : (guardrail_id: String, phase: Symbol, message_indices: Array[Integer]) -> void
+  def initialize: (guardrail_id: String, phase: Symbol, message_indices: Array[Integer]) -> void
+
+  # Converts the modification to a hash.
+  #
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end

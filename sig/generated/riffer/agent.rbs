@@ -77,7 +77,7 @@ class Riffer::Agent
 
   # Registers a guardrail for input, output, or both phases.
   #
-  # +phase+ - :input, :output, or :around.
+  # +phase+ - :before, :after, or :around.
   # +with+ - the guardrail class (must be subclass of Riffer::Guardrail).
   # +options+ - additional options passed to the guardrail.
   #
@@ -87,7 +87,7 @@ class Riffer::Agent
 
   # Returns the registered guardrail configs for a given phase.
   #
-  # +phase+ - :input or :output.
+  # +phase+ - :before or :after.
   #
   # : (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
@@ -164,12 +164,12 @@ class Riffer::Agent
   # : () -> String
   def extract_final_response: () -> String
 
-  # : () -> Riffer::Guardrails::Tripwire?
-  def run_input_guardrails: () -> Riffer::Guardrails::Tripwire?
+  # : () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
+  def run_before_guardrails: () -> [ Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
-  # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?]
-  def run_output_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire? ]
+  # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
+  def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
-  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> Riffer::Agent::Response
-  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?) -> Riffer::Agent::Response
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
 end
