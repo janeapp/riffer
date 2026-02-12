@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0](https://github.com/janeapp/riffer/compare/riffer/v0.12.0...riffer/v0.13.0) (2026-02-12)
+
+
+### Features
+
+* remove identifiers from evals and guardrails ([#112](https://github.com/janeapp/riffer/issues/112)) ([7b60707](https://github.com/janeapp/riffer/commit/7b60707206e53451f5bee2faf1c12a75eaf26d98))
+
 ## [0.12.0](https://github.com/janeapp/riffer/compare/riffer/v0.11.0...riffer/v0.12.0) (2026-02-11)
 
 
