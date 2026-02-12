@@ -3,23 +3,21 @@
 require "test_helper"
 
 describe Riffer::Guardrails::Modification do
-  let(:stub_guardrail_class) { Class.new(Riffer::Guardrail) }
-
   describe "#guardrail" do
     it "returns the guardrail class" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail: stub_guardrail_class,
+        guardrail: Riffer::Guardrail,
         phase: :before,
         message_indices: [0, 1]
       )
-      expect(modification.guardrail).must_equal stub_guardrail_class
+      expect(modification.guardrail).must_equal Riffer::Guardrail
     end
   end
 
   describe "#phase" do
     it "returns the phase" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail: stub_guardrail_class,
+        guardrail: Riffer::Guardrail,
         phase: :after,
         message_indices: [0]
       )
@@ -30,7 +28,7 @@ describe Riffer::Guardrails::Modification do
   describe "#message_indices" do
     it "returns the message indices" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail: stub_guardrail_class,
+        guardrail: Riffer::Guardrail,
         phase: :before,
         message_indices: [1, 3]
       )
@@ -41,7 +39,7 @@ describe Riffer::Guardrails::Modification do
   describe "#to_h" do
     it "returns a hash with guardrail as string" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail: stub_guardrail_class,
+        guardrail: Riffer::Guardrail,
         phase: :before,
         message_indices: [0]
       )
@@ -51,7 +49,7 @@ describe Riffer::Guardrails::Modification do
 
     it "returns a hash with phase" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail: stub_guardrail_class,
+        guardrail: Riffer::Guardrail,
         phase: :after,
         message_indices: [0]
       )
@@ -60,7 +58,7 @@ describe Riffer::Guardrails::Modification do
 
     it "returns a hash with message_indices" do
       modification = Riffer::Guardrails::Modification.new(
-        guardrail: stub_guardrail_class,
+        guardrail: Riffer::Guardrail,
         phase: :before,
         message_indices: [0, 2]
       )

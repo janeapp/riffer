@@ -52,7 +52,7 @@ class Riffer::Guardrails::Tripwire
   def to_h
     {
       reason: reason,
-      guardrail: guardrail.name || guardrail.inspect,
+      guardrail: guardrail.name,
       phase: phase,
       metadata: metadata
     }

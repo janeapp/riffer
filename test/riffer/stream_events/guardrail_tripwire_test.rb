@@ -3,12 +3,10 @@
 require "test_helper"
 
 describe Riffer::StreamEvents::GuardrailTripwire do
-  let(:stub_guardrail_class) { Class.new(Riffer::Guardrail) }
-
   let(:guardrails_tripwire) do
     Riffer::Guardrails::Tripwire.new(
       reason: "PII detected",
-      guardrail: stub_guardrail_class,
+      guardrail: Riffer::Guardrail,
       phase: :before,
       metadata: {types: [:email]}
     )
@@ -48,7 +46,7 @@ describe Riffer::StreamEvents::GuardrailTripwire do
   describe "#guardrail" do
     it "returns the guardrail class" do
       event = Riffer::StreamEvents::GuardrailTripwire.new(guardrails_tripwire)
-      expect(event.guardrail).must_equal stub_guardrail_class
+      expect(event.guardrail).must_equal Riffer::Guardrail
     end
   end
 

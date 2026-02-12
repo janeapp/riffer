@@ -33,6 +33,10 @@ class Riffer::Guardrails::Modification
   #
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {guardrail: guardrail.name || guardrail.inspect, phase: phase, message_indices: message_indices}
+    {
+      guardrail: guardrail.name,
+      phase: phase,
+      message_indices: message_indices
+    }
   end
 end

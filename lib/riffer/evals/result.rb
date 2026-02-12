@@ -51,7 +51,7 @@ class Riffer::Evals::Result
   #: () -> Hash[Symbol, untyped]
   def to_h
     {
-      evaluator: evaluator.name || evaluator.inspect,
+      evaluator: evaluator.name,
       score: score,
       reason: reason,
       metadata: metadata,

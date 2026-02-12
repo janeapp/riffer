@@ -3,11 +3,9 @@
 require "test_helper"
 
 describe Riffer::StreamEvents::GuardrailModification do
-  let(:stub_guardrail_class) { Class.new(Riffer::Guardrail) }
-
   let(:modification) do
     Riffer::Guardrails::Modification.new(
-      guardrail: stub_guardrail_class,
+      guardrail: Riffer::Guardrail,
       phase: :before,
       message_indices: [0, 1]
     )
@@ -23,7 +21,7 @@ describe Riffer::StreamEvents::GuardrailModification do
   describe "#guardrail" do
     it "delegates to modification" do
       event = Riffer::StreamEvents::GuardrailModification.new(modification)
-      expect(event.guardrail).must_equal stub_guardrail_class
+      expect(event.guardrail).must_equal Riffer::Guardrail
     end
   end
 
