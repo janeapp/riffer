@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   # Development dependencies
   spec.add_development_dependency "anthropic", "~> 1.19.0"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
-  spec.add_development_dependency "openai", "~> 0.45.0"
+  spec.add_development_dependency "openai", "~> 0.49.0"
 
   # Testing
   spec.add_development_dependency "minitest", "~> 6.0"
