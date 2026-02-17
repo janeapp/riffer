@@ -75,4 +75,16 @@ describe Riffer::Agent::Response do
       expect(response.blocked?).must_equal true
     end
   end
+
+  describe "#interrupted?" do
+    it "returns false by default" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.interrupted?).must_equal false
+    end
+
+    it "returns true when interrupted" do
+      response = Riffer::Agent::Response.new("Hello!", interrupted: true)
+      expect(response.interrupted?).must_equal true
+    end
+  end
 end

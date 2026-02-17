@@ -158,6 +158,7 @@ class Riffer::Agent
     @messages = []
     @message_callbacks = []
     @token_usage = nil
+    @interrupted = false
     @model_string = self.class.model
     @instructions_text = self.class.instructions
 
@@ -175,6 +176,7 @@ class Riffer::Agent
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
+    @interrupted = false
     initialize_messages(prompt_or_messages)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
@@ -183,24 +185,7 @@ class Riffer::Agent
     all_modifications.concat(modifications)
     return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
 
-    loop do
-      response = call_llm
-
-      track_token_usage(response.token_usage)
-
-      processed_response, tripwire, modifications = run_after_guardrails(response)
-      all_modifications.concat(modifications)
-
-      return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
-
-      add_message(processed_response)
-
-      break unless has_tool_calls?(processed_response)
-
-      execute_tool_calls(processed_response)
-    end
-
-    build_response(extract_final_response, modifications: all_modifications)
+    run_generate_loop(all_modifications)
   end
 
   # Streams a response from the agent.
@@ -209,6 +194,7 @@ class Riffer::Agent
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
+    @interrupted = false
     initialize_messages(prompt_or_messages)
 
     Enumerator.new do |yielder|
@@ -220,6 +206,129 @@ class Riffer::Agent
         next
       end
 
+      run_stream_loop(yielder)
+    end
+  end
+
+  # Resumes an interrupted agent loop.
+  #
+  # When called without +messages+, continues using the existing in-memory
+  # message history. When called with +messages+, reconstructs the agent
+  # state from persisted data (useful for cross-process resume).
+  #
+  # Skips message initialization and before guardrails in both cases.
+  #
+  # Raises Riffer::ArgumentError if called without +messages+ and the agent
+  # was not previously interrupted.
+  #
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def resume(messages: nil, tool_context: nil)
+    restore_state(messages: messages, tool_context: tool_context)
+    run_generate_loop
+  end
+
+  # Resumes an interrupted agent loop in streaming mode.
+  #
+  # Same as +resume+ but returns an Enumerator yielding stream events.
+  #
+  # Raises Riffer::ArgumentError if called without +messages+ and the agent
+  # was not previously interrupted.
+  #
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def resume_stream(messages: nil, tool_context: nil)
+    restore_state(messages: messages, tool_context: tool_context)
+
+    Enumerator.new do |yielder|
+      run_stream_loop(yielder)
+    end
+  end
+
+  # Registers a callback to be invoked when messages are added during generation.
+  #
+  # Raises Riffer::ArgumentError if no block is given.
+  #
+  #: () { (Riffer::Messages::Base) -> void } -> self
+  def on_message(&block)
+    raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
+    @message_callbacks << block
+    self
+  end
+
+  private
+
+  #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def run_generate_loop(all_modifications = [])
+    catch(:riffer_interrupt) do
+      loop do
+        response = call_llm
+
+        track_token_usage(response.token_usage)
+
+        processed_response, tripwire, modifications = run_after_guardrails(response)
+        all_modifications.concat(modifications)
+
+        return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
+
+        add_message(processed_response)
+
+        break unless has_tool_calls?(processed_response)
+
+        execute_tool_calls(processed_response)
+      end
+
+      return build_response(extract_final_response, modifications: all_modifications)
+    end
+
+    # catch returns nil when throw :riffer_interrupt fires;
+    # the return above exits on the successful (non-interrupted) path.
+    @interrupted = true
+    build_response(extract_final_response, modifications: all_modifications, interrupted: true)
+  end
+
+  #: (Riffer::Messages::Base) -> void
+  def add_message(message)
+    @messages << message
+    @message_callbacks.each { |callback| callback.call(message) }
+  end
+
+  #: (Riffer::TokenUsage?) -> void
+  def track_token_usage(usage)
+    return unless usage
+
+    @token_usage = @token_usage ? @token_usage + usage : usage
+  end
+
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])) -> void
+  def initialize_messages(prompt_or_messages)
+    @messages = []
+    @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
+
+    if prompt_or_messages.is_a?(Array)
+      prompt_or_messages.each do |item|
+        @messages << convert_to_message_object(item)
+      end
+    else
+      @messages << Riffer::Messages::User.new(prompt_or_messages)
+    end
+  end
+
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
+  def restore_state(messages: nil, tool_context: nil)
+    if messages
+      @tool_context = tool_context
+      @resolved_tools = nil
+      @messages = messages.map { |item| convert_to_message_object(item) }
+    else
+      raise Riffer::ArgumentError, "Cannot resume: tool_context requires messages" if tool_context
+      raise Riffer::ArgumentError, "Cannot resume: agent was not interrupted" unless @interrupted
+    end
+
+    @interrupted = false
+  end
+
+  #: (Enumerator::Yielder) -> void
+  def run_stream_loop(yielder)
+    completed = catch(:riffer_interrupt) do
       loop do
         accumulated_content = ""
         accumulated_tool_calls = []
@@ -273,46 +382,12 @@ class Riffer::Agent
 
         execute_tool_calls(processed_response)
       end
+      :completed
     end
-  end
 
-  # Registers a callback to be invoked when messages are added during generation.
-  #
-  # Raises Riffer::ArgumentError if no block is given.
-  #
-  #: () { (Riffer::Messages::Base) -> void } -> self
-  def on_message(&block)
-    raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
-    @message_callbacks << block
-    self
-  end
-
-  private
-
-  #: (Riffer::Messages::Base) -> void
-  def add_message(message)
-    @messages << message
-    @message_callbacks.each { |callback| callback.call(message) }
-  end
-
-  #: (Riffer::TokenUsage?) -> void
-  def track_token_usage(usage)
-    return unless usage
-
-    @token_usage = @token_usage ? @token_usage + usage : usage
-  end
-
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])) -> void
-  def initialize_messages(prompt_or_messages)
-    @messages = []
-    @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
-
-    if prompt_or_messages.is_a?(Array)
-      prompt_or_messages.each do |item|
-        @messages << convert_to_message_object(item)
-      end
-    else
-      @messages << Riffer::Messages::User.new(prompt_or_messages)
+    unless completed == :completed
+      @interrupted = true
+      yielder << Riffer::StreamEvents::Interrupt.new
     end
   end
 
@@ -447,8 +522,8 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [])
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted)
   end
 end

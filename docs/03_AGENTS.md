@@ -130,8 +130,9 @@ Generates a response synchronously. Returns a `Riffer::Agent::Response` object:
 ```ruby
 # Class method (recommended for simple calls)
 response = MyAgent.generate('Hello')
-puts response.content     # Access the response text
-puts response.blocked?    # Check if guardrail blocked (always false without guardrails)
+puts response.content       # Access the response text
+puts response.blocked?      # Check if guardrail blocked (always false without guardrails)
+puts response.interrupted?  # Check if a callback interrupted the loop
 
 # Instance method (when you need message history or callbacks)
 agent = MyAgent.new
@@ -212,6 +213,113 @@ agent
 ```
 
 Works with both `generate` and `stream`. Only emits agent-generated messages (Assistant, Tool), not inputs (System, User).
+
+#### Interrupting the Agent Loop
+
+Callbacks can interrupt the agent loop using Ruby's `throw`/`catch` pattern. This is useful for human-in-the-loop approval, cost limits, or content filtering.
+
+Use `throw :riffer_interrupt` to stop the loop. The response will have `interrupted?` set to `true` and contain the accumulated content up to the point of interruption:
+
+```ruby
+agent = MyAgent.new
+agent.on_message do |msg|
+  throw :riffer_interrupt if msg.is_a?(Riffer::Messages::Tool)
+end
+
+response = agent.generate('Call the tool')
+response.interrupted?  # => true
+response.content       # => last assistant content before interrupt
+```
+
+**Streaming** — interrupts emit an `Interrupt` event:
+
+```ruby
+agent = MyAgent.new
+agent.on_message { |msg| throw :riffer_interrupt }
+
+agent.stream('Hello').each do |event|
+  case event
+  when Riffer::StreamEvents::Interrupt
+    puts "Loop was interrupted"
+  end
+end
+```
+
+**Resuming** — use `resume` (or `resume_stream`) to continue an interrupted loop:
+
+```ruby
+agent = MyAgent.new
+agent.on_message { |msg| throw :riffer_interrupt if needs_approval?(msg) }
+
+response = agent.generate('Do something risky')
+
+if response.interrupted?
+  approve_action(agent.messages)
+  response = agent.resume
+end
+```
+
+For cross-process resume (e.g., after a process restart or async approval), pass persisted messages via the `messages:` keyword. Accepts both message objects and hashes:
+
+```ruby
+# Persist messages during generation (e.g., via on_message callback)
+# Later, in a new process:
+agent = MyAgent.new
+response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
+
+# Or resume in streaming mode:
+agent.resume_stream(messages: persisted_messages).each do |event|
+  # handle stream events
+end
+```
+
+When called without `messages:`, both methods raise `Riffer::ArgumentError` if the agent was not previously interrupted. When called with `messages:`, no prior interruption is required.
+
+**Note:** If a callback throws during tool execution (after processing some but not all tool calls), the conversation will have partial tool results. To avoid this, check the message type before throwing (e.g., only throw on `Riffer::Messages::Assistant`).
+
+### resume
+
+Continues an interrupted agent loop synchronously. Returns a `Riffer::Agent::Response` object.
+
+When called without arguments, resumes from the agent's in-memory state (requires a prior interruption):
+
+```ruby
+agent = MyAgent.new
+agent.on_message { |msg| throw :riffer_interrupt if needs_approval?(msg) }
+
+response = agent.generate('Do something risky')
+
+if response.interrupted?
+  approve_action(agent.messages)
+  response = agent.resume
+end
+```
+
+For cross-process resume (e.g., after a process restart or async approval), pass persisted messages via the `messages:` keyword. Accepts both message objects and hashes:
+
+```ruby
+agent = MyAgent.new
+response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
+```
+
+When called without `messages:`, raises `Riffer::ArgumentError` if the agent was not previously interrupted. When called with `messages:`, no prior interruption is required.
+
+### resume_stream
+
+Continues an interrupted agent loop as a streaming Enumerator. Accepts the same arguments as `resume`:
+
+```ruby
+# In-memory resume
+agent.resume_stream.each do |event|
+  # handle stream events
+end
+
+# Cross-process resume
+agent = MyAgent.new
+agent.resume_stream(messages: persisted_messages).each do |event|
+  # handle stream events
+end
+```
 
 ### token_usage
 

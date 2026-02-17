@@ -1,0 +1,14 @@
+# Generated from lib/riffer/stream_events/interrupt.rb with RBS::Inline
+
+# Represents an interrupt event during streaming.
+#
+# Emitted when a callback interrupts the agent loop via +throw :riffer_interrupt+.
+class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
+  # : () -> void
+  def initialize: () -> void
+
+  # Converts the event to a hash.
+  #
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end

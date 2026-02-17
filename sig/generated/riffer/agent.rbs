@@ -116,6 +116,30 @@ class Riffer::Agent
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
+  # Resumes an interrupted agent loop.
+  #
+  # When called without +messages+, continues using the existing in-memory
+  # message history. When called with +messages+, reconstructs the agent
+  # state from persisted data (useful for cross-process resume).
+  #
+  # Skips message initialization and before guardrails in both cases.
+  #
+  # Raises Riffer::ArgumentError if called without +messages+ and the agent
+  # was not previously interrupted.
+  #
+  # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def resume: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+
+  # Resumes an interrupted agent loop in streaming mode.
+  #
+  # Same as +resume+ but returns an Enumerator yielding stream events.
+  #
+  # Raises Riffer::ArgumentError if called without +messages+ and the agent
+  # was not previously interrupted.
+  #
+  # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def resume_stream: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+
   # Registers a callback to be invoked when messages are added during generation.
   #
   # Raises Riffer::ArgumentError if no block is given.
@@ -125,6 +149,9 @@ class Riffer::Agent
 
   private
 
+  # : (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def run_generate_loop: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+
   # : (Riffer::Messages::Base) -> void
   def add_message: (Riffer::Messages::Base) -> void
 
@@ -133,6 +160,12 @@ class Riffer::Agent
 
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])) -> void
   def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
+
+  # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
+  def restore_state: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
+
+  # : (Enumerator::Yielder) -> void
+  def run_stream_loop: (Enumerator::Yielder) -> void
 
   # : () -> Riffer::Messages::Assistant
   def call_llm: () -> Riffer::Messages::Assistant
@@ -170,6 +203,6 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
-  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> Riffer::Agent::Response
+  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> Riffer::Agent::Response
 end

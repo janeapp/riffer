@@ -27,12 +27,14 @@ class Riffer::Agent::Response
   # +content+ - the response content.
   # +tripwire+ - optional tripwire for blocked responses.
   # +modifications+ - guardrail modifications applied during processing.
+  # +interrupted+ - whether the agent loop was interrupted by a callback.
   #
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification]) -> void
-  def initialize(content, tripwire: nil, modifications: [])
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
+    @interrupted = interrupted
   end
 
   # Returns true if the response was blocked by a guardrail.
@@ -47,5 +49,13 @@ class Riffer::Agent::Response
   #: () -> bool
   def modified?
     modifications.any?
+  end
+
+  # Returns true if the agent loop was interrupted by a callback
+  # via +throw :riffer_interrupt+.
+  #
+  #: () -> bool
+  def interrupted?
+    @interrupted
   end
 end

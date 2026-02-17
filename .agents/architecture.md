@@ -44,6 +44,24 @@ Structured events for streaming responses:
 - `TextDone` - completion signals
 - `ReasoningDelta` - reasoning process chunks
 - `ReasoningDone` - reasoning completion
+- `Interrupt` - callback interrupted the agent loop
+
+### Interruptible Callbacks
+
+`on_message` callbacks can interrupt the agent loop using Ruby's `throw`/`catch`. Use `throw :riffer_interrupt` to stop the loop. `Response#interrupted?` returns `true` and accumulated content is preserved. In streaming, yields an `Interrupt` event.
+
+```ruby
+agent = MyAgent.new
+agent.on_message do |msg|
+  throw :riffer_interrupt if msg.is_a?(Riffer::Messages::Assistant)
+end
+response = agent.generate("Hello")
+response.interrupted? # => true
+```
+
+Use `agent.resume` or `agent.resume_stream` to continue an interrupted loop — the agent preserves its full message history. Both accept `messages:` for cross-process resume from persisted data.
+
+If a callback throws during `execute_tool_calls` (after processing some but not all tool calls), the conversation will have partial tool results.
 
 ## Key Patterns
 
@@ -84,6 +102,7 @@ lib/
       test.rb            # Test provider
     stream_events/
       base.rb            # Base stream event
+      interrupt.rb       # Interrupt event
       text_delta.rb      # Text delta event
       text_done.rb       # Text done event
       reasoning_delta.rb # Reasoning delta event
