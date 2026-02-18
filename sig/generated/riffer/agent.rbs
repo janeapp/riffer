@@ -21,6 +21,8 @@ class Riffer::Agent
 
   extend Riffer::Helpers::Validations
 
+  DEFAULT_MAX_STEPS: Integer
+
   # Gets or sets the agent identifier.
   #
   # : (?String?) -> String
@@ -45,6 +47,14 @@ class Riffer::Agent
   #
   # : (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.model_options: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
+
+  # Gets or sets the maximum number of LLM call steps in the tool-use loop.
+  #
+  # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
+  # unlimited steps.
+  #
+  # : (?Integer?) -> Integer?
+  def self.max_steps: (?Integer?) -> Integer?
 
   # Gets or sets the tools used by this agent.
   #
@@ -208,6 +218,6 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
-  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> Riffer::Agent::Response
-  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> Riffer::Agent::Response
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?, ?max_steps_reached: bool) -> Riffer::Agent::Response
+  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?, ?max_steps_reached: bool) -> Riffer::Agent::Response
 end

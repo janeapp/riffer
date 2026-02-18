@@ -23,6 +23,8 @@ class Riffer::Agent
   extend Riffer::Helpers::ClassNameConverter
   extend Riffer::Helpers::Validations
 
+  DEFAULT_MAX_STEPS = 16 #: Integer
+
   # Gets or sets the agent identifier.
   #
   #: (?String?) -> String
@@ -63,6 +65,17 @@ class Riffer::Agent
   def self.model_options(options = nil)
     return @model_options || {} if options.nil?
     @model_options = options
+  end
+
+  # Gets or sets the maximum number of LLM call steps in the tool-use loop.
+  #
+  # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
+  # unlimited steps.
+  #
+  #: (?Integer?) -> Integer?
+  def self.max_steps(value = nil)
+    return @max_steps || DEFAULT_MAX_STEPS if value.nil?
+    @max_steps = value
   end
 
   # Gets or sets the tools used by this agent.
@@ -252,11 +265,15 @@ class Riffer::Agent
 
   #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
   def run_generate_loop(all_modifications = [], resume: false)
+    step = 0
+    max_steps_reached = false
+
     reason = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
 
       loop do
         response = call_llm
+        step += 1
 
         track_token_usage(response.token_usage)
 
@@ -269,10 +286,15 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
+        if self.class.max_steps && step >= self.class.max_steps
+          max_steps_reached = true
+          break
+        end
+
         execute_tool_calls(processed_response)
       end
 
-      return build_response(extract_final_response, modifications: all_modifications)
+      return build_response(extract_final_response, modifications: all_modifications, max_steps_reached: max_steps_reached)
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
@@ -318,6 +340,8 @@ class Riffer::Agent
 
   #: (Enumerator::Yielder, ?resume: bool) -> void
   def run_stream_loop(yielder, resume: false)
+    step = 0
+
     completed = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
 
@@ -359,6 +383,7 @@ class Riffer::Agent
         )
 
         track_token_usage(accumulated_token_usage)
+        step += 1
 
         processed_response, tripwire, modifications = run_after_guardrails(response)
         modifications.each { |m| yielder << Riffer::StreamEvents::GuardrailModification.new(m) }
@@ -371,6 +396,11 @@ class Riffer::Agent
         add_message(processed_response)
 
         break unless has_tool_calls?(processed_response)
+
+        if self.class.max_steps && step >= self.class.max_steps
+          yielder << Riffer::StreamEvents::MaxStepsReached.new
+          break
+        end
 
         execute_tool_calls(processed_response)
       end
@@ -552,8 +582,8 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?, ?max_steps_reached: bool) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, max_steps_reached: false)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, max_steps_reached: max_steps_reached)
   end
 end

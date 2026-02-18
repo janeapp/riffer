@@ -22,6 +22,9 @@ class Riffer::Agent::Response
   # The modifications made by guardrails during processing.
   attr_reader :modifications #: Array[Riffer::Guardrails::Modification]
 
+  # Whether the agent loop stopped because max_steps was reached.
+  attr_reader :max_steps_reached #: bool
+
   # The reason provided with the interrupt, if any.
   attr_reader :interrupt_reason #: String?
 
@@ -32,14 +35,16 @@ class Riffer::Agent::Response
   # +modifications+ - guardrail modifications applied during processing.
   # +interrupted+ - whether the agent loop was interrupted by a callback.
   # +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+.
+  # +max_steps_reached+ - whether the loop stopped due to max_steps limit.
   #
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?, ?max_steps_reached: bool) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, max_steps_reached: false)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
     @interrupted = interrupted
     @interrupt_reason = interrupt_reason
+    @max_steps_reached = max_steps_reached
   end
 
   # Returns true if the response was blocked by a guardrail.
@@ -62,5 +67,13 @@ class Riffer::Agent::Response
   #: () -> bool
   def interrupted?
     @interrupted
+  end
+
+  # Returns true if the agent loop stopped because the max_steps limit
+  # was reached.
+  #
+  #: () -> bool
+  def max_steps_reached?
+    @max_steps_reached
   end
 end

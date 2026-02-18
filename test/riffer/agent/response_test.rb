@@ -87,4 +87,16 @@ describe Riffer::Agent::Response do
       expect(response.interrupted?).must_equal true
     end
   end
+
+  describe "#max_steps_reached?" do
+    it "returns false by default" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.max_steps_reached?).must_equal false
+    end
+
+    it "returns true when set" do
+      response = Riffer::Agent::Response.new("Hello!", max_steps_reached: true)
+      expect(response.max_steps_reached?).must_equal true
+    end
+  end
 end

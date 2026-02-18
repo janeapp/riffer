@@ -80,6 +80,17 @@ describe Riffer::Agent do
     end
   end
 
+  describe ".max_steps" do
+    it "returns DEFAULT_MAX_STEPS when not set" do
+      expect(agent_class.max_steps).must_equal Riffer::Agent::DEFAULT_MAX_STEPS
+    end
+
+    it "sets the value" do
+      agent_class.max_steps(5)
+      expect(agent_class.max_steps).must_equal 5
+    end
+  end
+
   describe "#initialize" do
     it "initializes with empty messages" do
       agent = agent_class.new
@@ -128,6 +139,83 @@ describe Riffer::Agent do
         provider = agent.send(:provider_instance)
         agent.generate("Hello")
         expect(provider.calls.last[:temperature]).must_equal 0.7
+      end
+    end
+
+    describe "with max_steps" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "Simple tool"
+          def call(context:)
+            text("done")
+          end
+        end.tap { |t| t.identifier("max_steps_tool") }
+      end
+
+      it "runs unlimited steps by default" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps Float::INFINITY
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        3.times { provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}]) }
+        provider.stub_response("Final answer")
+
+        agent.generate("Do stuff")
+        expect(provider.calls.length).must_equal 4
+      end
+
+      it "limits LLM calls when max_steps is set" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 2
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        3.times { provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}]) }
+        provider.stub_response("Final answer")
+
+        agent.generate("Do stuff")
+        expect(provider.calls.length).must_equal 2
+      end
+
+      it "returns last assistant response content when limit is reached" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 1
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("I need a tool", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
+
+        result = agent.generate("Do stuff")
+        expect(result.content).must_equal "I need a tool"
+      end
+
+      it "sets max_steps_reached? to true when limit is reached" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 1
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
+
+        result = agent.generate("Do stuff")
+        expect(result.max_steps_reached?).must_equal true
       end
     end
 
@@ -281,6 +369,69 @@ describe Riffer::Agent do
         provider = agent.send(:provider_instance)
         agent.stream("Hello").each { |_| }
         expect(provider.calls.last[:temperature]).must_equal 0.5
+      end
+    end
+
+    describe "with max_steps" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "Simple tool"
+          def call(context:)
+            text("done")
+          end
+        end.tap { |t| t.identifier("stream_max_steps_tool") }
+      end
+
+      it "limits LLM calls when max_steps is set" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 2
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        3.times { provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}]) }
+        provider.stub_response("Final answer")
+
+        agent.stream("Do stuff").each { |_| }
+        expect(provider.calls.length).must_equal 2
+      end
+
+      it "emits MaxStepsReached event when limit is reached" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 1
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}])
+
+        events = agent.stream("Do stuff").to_a
+        max_steps_event = events.find { |e| e.is_a?(Riffer::StreamEvents::MaxStepsReached) }
+        expect(max_steps_event).wont_be_nil
+      end
+
+      it "does not emit MaxStepsReached event when limit is not reached" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 10
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}])
+        provider.stub_response("Final answer")
+
+        events = agent.stream("Do stuff").to_a
+        max_steps_event = events.find { |e| e.is_a?(Riffer::StreamEvents::MaxStepsReached) }
+        expect(max_steps_event).must_be_nil
       end
     end
 
