@@ -1289,6 +1289,21 @@ describe Riffer::Agent do
       expect(result.content).must_be_instance_of String
     end
 
+    it "captures interrupt reason" do
+      agent = agent_class.new
+      agent.on_message { |_msg| throw :riffer_interrupt, "needs approval" }
+      result = agent.generate("Hello")
+      expect(result.interrupted?).must_equal true
+      expect(result.interrupt_reason).must_equal "needs approval"
+    end
+
+    it "returns nil interrupt_reason when no reason given" do
+      agent = agent_class.new
+      agent.on_message { |_msg| throw :riffer_interrupt }
+      result = agent.generate("Hello")
+      expect(result.interrupt_reason).must_be_nil
+    end
+
     describe "throw during tool execution" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
@@ -1396,6 +1411,20 @@ describe Riffer::Agent do
       agent.generate("Hello")
       result = agent.resume
       expect(result.interrupted?).must_equal false
+    end
+
+    it "returns nil interrupt_reason on successful resume" do
+      agent = agent_class.new
+      interrupted_once = false
+      agent.on_message do |_msg|
+        unless interrupted_once
+          interrupted_once = true
+          throw :riffer_interrupt, "needs approval"
+        end
+      end
+      agent.generate("Hello")
+      result = agent.resume
+      expect(result.interrupt_reason).must_be_nil
     end
 
     it "preserves messages from original generate" do
@@ -1640,6 +1669,22 @@ describe Riffer::Agent do
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event).wont_be_nil
+    end
+
+    it "yields Interrupt event with reason" do
+      agent = agent_class.new
+      agent.on_message { |_msg| throw :riffer_interrupt, "budget exceeded" }
+      events = agent.stream("Hello").to_a
+      interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+      expect(interrupt_event.reason).must_equal "budget exceeded"
+    end
+
+    it "yields Interrupt event with nil reason when none given" do
+      agent = agent_class.new
+      agent.on_message { |_msg| throw :riffer_interrupt }
+      events = agent.stream("Hello").to_a
+      interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+      expect(interrupt_event.reason).must_be_nil
     end
   end
 

@@ -203,6 +203,6 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
-  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> Riffer::Agent::Response
-  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> Riffer::Agent::Response
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> Riffer::Agent::Response
+  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> Riffer::Agent::Response
 end

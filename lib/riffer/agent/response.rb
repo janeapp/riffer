@@ -22,19 +22,24 @@ class Riffer::Agent::Response
   # The modifications made by guardrails during processing.
   attr_reader :modifications #: Array[Riffer::Guardrails::Modification]
 
+  # The reason provided with the interrupt, if any.
+  attr_reader :interrupt_reason #: String?
+
   # Creates a new response.
   #
   # +content+ - the response content.
   # +tripwire+ - optional tripwire for blocked responses.
   # +modifications+ - guardrail modifications applied during processing.
   # +interrupted+ - whether the agent loop was interrupted by a callback.
+  # +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+.
   #
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
     @interrupted = interrupted
+    @interrupt_reason = interrupt_reason
   end
 
   # Returns true if the response was blocked by a guardrail.

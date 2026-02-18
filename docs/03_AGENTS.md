@@ -218,29 +218,34 @@ Works with both `generate` and `stream`. Only emits agent-generated messages (As
 
 Callbacks can interrupt the agent loop using Ruby's `throw`/`catch` pattern. This is useful for human-in-the-loop approval, cost limits, or content filtering.
 
-Use `throw :riffer_interrupt` to stop the loop. The response will have `interrupted?` set to `true` and contain the accumulated content up to the point of interruption:
+Use `throw :riffer_interrupt` to stop the loop. The response will have `interrupted?` set to `true` and contain the accumulated content up to the point of interruption.
+
+An optional reason can be passed as the second argument to `throw`. It is available via `interrupt_reason` on the response (generate) or `reason` on the `Interrupt` event (stream):
 
 ```ruby
 agent = MyAgent.new
 agent.on_message do |msg|
-  throw :riffer_interrupt if msg.is_a?(Riffer::Messages::Tool)
+  if msg.is_a?(Riffer::Messages::Tool)
+    throw :riffer_interrupt, "needs human approval"
+  end
 end
 
 response = agent.generate('Call the tool')
-response.interrupted?  # => true
-response.content       # => last assistant content before interrupt
+response.interrupted?      # => true
+response.interrupt_reason  # => "needs human approval"
+response.content           # => last assistant content before interrupt
 ```
 
 **Streaming** — interrupts emit an `Interrupt` event:
 
 ```ruby
 agent = MyAgent.new
-agent.on_message { |msg| throw :riffer_interrupt }
+agent.on_message { |msg| throw :riffer_interrupt, "budget exceeded" }
 
 agent.stream('Hello').each do |event|
   case event
   when Riffer::StreamEvents::Interrupt
-    puts "Loop was interrupted"
+    puts "Loop was interrupted: #{event.reason}"
   end
 end
 ```

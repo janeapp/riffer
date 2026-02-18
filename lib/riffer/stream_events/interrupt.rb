@@ -5,15 +5,21 @@
 #
 # Emitted when a callback interrupts the agent loop via +throw :riffer_interrupt+.
 class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
-  #: () -> void
-  def initialize
+  # The reason provided with the interrupt, if any.
+  attr_reader :reason #: String?
+
+  #: (?reason: String?) -> void
+  def initialize(reason: nil)
     super(role: :system)
+    @reason = reason
   end
 
   # Converts the event to a hash.
   #
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, interrupt: true}
+    h = {role: @role, interrupt: true}
+    h[:reason] = @reason if @reason
+    h
   end
 end

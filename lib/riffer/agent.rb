@@ -258,7 +258,7 @@ class Riffer::Agent
 
   #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def run_generate_loop(all_modifications = [])
-    catch(:riffer_interrupt) do
+    reason = catch(:riffer_interrupt) do
       loop do
         response = call_llm
 
@@ -279,10 +279,10 @@ class Riffer::Agent
       return build_response(extract_final_response, modifications: all_modifications)
     end
 
-    # catch returns nil when throw :riffer_interrupt fires;
+    # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
-    build_response(extract_final_response, modifications: all_modifications, interrupted: true)
+    build_response(extract_final_response, modifications: all_modifications, interrupted: true, interrupt_reason: reason)
   end
 
   #: (Riffer::Messages::Base) -> void
@@ -387,7 +387,7 @@ class Riffer::Agent
 
     unless completed == :completed
       @interrupted = true
-      yielder << Riffer::StreamEvents::Interrupt.new
+      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed)
     end
   end
 
@@ -522,8 +522,8 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason)
   end
 end
