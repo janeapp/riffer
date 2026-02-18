@@ -18,10 +18,13 @@ puts agent.generate('Hello world')
 
 ### Providers (`lib/riffer/providers/`)
 
-Adapters for LLM APIs. Each provider extends `Riffer::Providers::Base` and implements:
+Adapters for LLM APIs. The base class uses a template-method pattern — `generate_text` and `stream_text` orchestrate the flow, delegating to five hook methods each provider implements:
 
-- `perform_generate_text(messages, model:)` - returns `Riffer::Messages::Assistant`
-- `perform_stream_text(messages, model:)` - returns an `Enumerator` yielding stream events
+- `build_request_params(messages, model, options)` — convert messages, tools, and options into SDK params
+- `execute_generate(params)` — call the SDK and return the raw response
+- `execute_stream(params, yielder)` — call the streaming SDK, mapping events to the yielder
+- `extract_token_usage(response)` — pull token counts from the SDK response
+- `extract_assistant_message(response, token_usage)` — parse the SDK response into an `Assistant` message
 
 Providers are registered in `Riffer::Providers::Repository::REPO` with identifiers (e.g., `openai`, `amazon_bedrock`).
 
