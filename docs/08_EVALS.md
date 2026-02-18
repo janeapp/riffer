@@ -117,6 +117,15 @@ result = MyAgent.run_eval(
   input: "What is the capital of France?",
   context: { ground_truth: "Paris" }  # Optional context
 )
+
+# You can also pass a messages array as input
+result = MyAgent.run_eval(
+  input: [
+    { role: "user", content: "What is Ruby?" },
+    { role: "assistant", content: "Ruby is a programming language." },
+    { role: "user", content: "What makes it special?" }
+  ]
+)
 ```
 
 ### RunResult Object

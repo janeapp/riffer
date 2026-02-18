@@ -19,7 +19,7 @@
 #
 class Riffer::Evals::RunResult
   # The input that was evaluated.
-  attr_reader :input #: String
+  attr_reader :input #: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]
 
   # The output that was evaluated.
   attr_reader :output #: String
@@ -35,7 +35,7 @@ class Riffer::Evals::RunResult
 
   # Initializes a new run result.
   #
-  #: (input: String, output: String, context: Hash[Symbol, untyped]?, results: Array[Riffer::Evals::Result], metrics: Array[Riffer::Evals::Metric]) -> void
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, context: Hash[Symbol, untyped]?, results: Array[Riffer::Evals::Result], metrics: Array[Riffer::Evals::Metric]) -> void
   def initialize(input:, output:, context:, results:, metrics:)
     @input = input
     @output = output

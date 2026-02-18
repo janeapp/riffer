@@ -80,7 +80,7 @@ module Riffer::Evals::Profile
   module AgentClassMethods
     # Runs evaluations against the agent.
     #
-    #: (input: String, ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+    #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
     def run_eval(input:, context: nil, tool_context: nil)
       profile = @eval_profile
       raise Riffer::ArgumentError, "No eval profile configured" unless profile

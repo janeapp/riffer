@@ -40,8 +40,8 @@ class Riffer::Evals::Evaluator
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  # : (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
-  def evaluate: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  def evaluate: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
 
   # Returns a Judge instance configured for this evaluator.
   #

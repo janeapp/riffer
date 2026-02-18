@@ -53,7 +53,7 @@ class Riffer::Evals::Evaluator
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  #: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
   def evaluate(input:, output:, context: nil)
     raise NotImplementedError, "#{self.class} must implement #evaluate"
   end

@@ -26,7 +26,7 @@ class Riffer::Evals::Runner
 
   # Runs all evaluators and collects results.
   #
-  #: (input: String, output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   def run(input:, output:, context: nil)
     results = metrics.map do |metric|
       evaluator = metric.evaluator_class.new

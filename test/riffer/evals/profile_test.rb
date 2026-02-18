@@ -111,6 +111,43 @@ describe Riffer::Evals::Profile do
       expect(result.input).must_equal "What is Ruby?"
       expect(result.output).must_equal "Test response"
     end
+
+    it "accepts a messages array as input" do
+      evaluator = Class.new(Riffer::Evals::Evaluator) do
+        higher_is_better true
+
+        def evaluate(input:, output:, context: nil)
+          result(score: 0.9, reason: "Test evaluation")
+        end
+      end
+
+      profile_module = Module.new do
+        include Riffer::Evals::Profile
+
+        ai_evals do
+          metric evaluator, min: 0.8
+        end
+      end
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "test/test-model"
+        instructions "You are a helpful assistant."
+      end
+
+      agent_class.include(profile_module)
+
+      messages = [
+        {role: "user", content: "What is Ruby?"},
+        {role: "assistant", content: "Ruby is a programming language."},
+        {role: "user", content: "What makes it special?"}
+      ]
+
+      result = agent_class.run_eval(input: messages)
+
+      expect(result).must_be_instance_of Riffer::Evals::RunResult
+      expect(result.input).must_equal messages
+      expect(result.output).must_equal "Test response"
+    end
   end
 
   describe "Builder" do
