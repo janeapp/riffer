@@ -56,73 +56,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     @client.converse(**params)
   end
 
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream(params, yielder)
-    accumulated_text = ""
-    current_tool_use = nil
-
-    @client.converse_stream(**params) do |stream|
-      stream.on_content_block_start_event do |event|
-        if event.start&.tool_use
-          tool_use = event.start.tool_use
-          current_tool_use = {
-            id: tool_use.tool_use_id,
-            name: tool_use.name,
-            arguments: ""
-          }
-        end
-      end
-
-      stream.on_content_block_delta_event do |event|
-        if event.delta&.text
-          delta_text = event.delta.text
-          accumulated_text += delta_text
-          yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
-        elsif event.delta&.tool_use
-          input_delta = event.delta.tool_use.input
-          if current_tool_use && input_delta
-            current_tool_use[:arguments] += input_delta
-            yielder << Riffer::StreamEvents::ToolCallDelta.new(
-              item_id: current_tool_use[:id],
-              name: current_tool_use[:name],
-              arguments_delta: input_delta
-            )
-          end
-        end
-      end
-
-      stream.on_content_block_stop_event do |_event|
-        if current_tool_use
-          yielder << Riffer::StreamEvents::ToolCallDone.new(
-            item_id: current_tool_use[:id],
-            call_id: current_tool_use[:id],
-            name: current_tool_use[:name],
-            arguments: current_tool_use[:arguments]
-          )
-          current_tool_use = nil
-        end
-      end
-
-      stream.on_message_stop_event do |_event|
-        yielder << Riffer::StreamEvents::TextDone.new(accumulated_text)
-      end
-
-      stream.on_metadata_event do |event|
-        if event.usage
-          usage = event.usage
-          yielder << Riffer::StreamEvents::TokenUsageDone.new(
-            token_usage: Riffer::TokenUsage.new(
-              input_tokens: usage.input_tokens,
-              output_tokens: usage.output_tokens,
-              cache_creation_tokens: usage.cache_write_input_tokens,
-              cache_read_tokens: usage.cache_read_input_tokens
-            )
-          )
-        end
-      end
-    end
-  end
-
   #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -167,6 +100,91 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
+  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream(params, yielder)
+    current_state = {
+      text: nil,
+      tool_call: nil
+    }
+
+    @client.converse_stream(**params) do |stream|
+      stream.on_event do |event|
+        case event.event_type
+        when :content_block_start
+          handle_content_block_start_tool_use(event, state: current_state, yielder: yielder) if event.start&.tool_use
+        when :content_block_delta
+          handle_content_block_delta_text_delta(event, state: current_state, yielder: yielder) if event.delta&.text
+          handle_content_block_delta_tool_use(event, state: current_state, yielder: yielder) if event.delta&.tool_use
+        when :content_block_stop
+          handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
+          handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
+        when :metadata
+          handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
+        end
+      end
+    end
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+  def handle_content_block_start_tool_use(event, state:, yielder: nil)
+    state[:tool_call] = {
+      id: event.start.tool_use.tool_use_id,
+      name: event.start.tool_use.name,
+      arguments: ""
+    }
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_delta_text_delta(event, state:, yielder:)
+    delta_text = event.delta.text
+    state[:text] ||= ""
+    state[:text] += delta_text
+    yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_delta_tool_use(event, state:, yielder:)
+    input_delta = event.delta.tool_use.input
+
+    state[:tool_call][:arguments] += input_delta
+
+    yielder << Riffer::StreamEvents::ToolCallDelta.new(
+      item_id: state[:tool_call][:id],
+      name: state[:tool_call][:name],
+      arguments_delta: input_delta
+    )
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_text_delta(_event, state:, yielder:)
+    yielder << Riffer::StreamEvents::TextDone.new(state[:text])
+    state[:text] = nil
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_tool_use(_event, state:, yielder:)
+    tool_call = state[:tool_call]
+    yielder << Riffer::StreamEvents::ToolCallDone.new(
+      item_id: tool_call[:id],
+      call_id: tool_call[:id],
+      name: tool_call[:name],
+      arguments: tool_call[:arguments]
+    )
+    state[:tool_call] = nil
+  end
+
+  #: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_metadata_usage(event, yielder:, state: nil)
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(
+      token_usage: Riffer::TokenUsage.new(
+        input_tokens: event.usage.input_tokens,
+        output_tokens: event.usage.output_tokens,
+        cache_creation_tokens: event.usage.cache_write_input_tokens,
+        cache_read_tokens: event.usage.cache_read_input_tokens
+      )
+    )
+  end
+
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
     system_prompts = []
@@ -191,23 +209,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     }
   end
 
-  #: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
-  def append_tool_result(conversation_messages, message)
-    tool_result = {
-      tool_result: {
-        tool_use_id: message.tool_call_id,
-        content: [{text: message.content}]
-      }
-    }
-
-    prev = conversation_messages.last
-    if prev && prev[:role] == "user" && prev[:content]&.first&.key?(:tool_result)
-      prev[:content] << tool_result
-    else
-      conversation_messages << {role: "user", content: [tool_result]}
-    end
-  end
-
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = []
@@ -224,6 +225,23 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
 
     {role: "assistant", content: content}
+  end
+
+  #: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
+  def append_tool_result(conversation_messages, message)
+    tool_result = {
+      tool_result: {
+        tool_use_id: message.tool_call_id,
+        content: [{text: message.content}]
+      }
+    }
+
+    prev = conversation_messages.last
+    if prev && prev[:role] == "user" && prev[:content]&.first&.key?(:tool_result)
+      prev[:content] << tool_result
+    else
+      conversation_messages << {role: "user", content: [tool_result]}
+    end
   end
 
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

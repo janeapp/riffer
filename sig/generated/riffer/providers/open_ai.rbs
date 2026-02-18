@@ -17,29 +17,44 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
   def execute_generate: (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
 
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-
   # : (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
   def extract_token_usage: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
 
   # : (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
   def extract_assistant_message: (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+  def handle_output_item_added_function_call: (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_output_text_delta: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_output_text_done: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_reasoning_summary_text_delta: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_reasoning_summary_text_done: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_function_call_arguments_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_function_call_arguments_done: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_response_completed: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+
   # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
 
   # : (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
-
-  # : (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
-  def process_stream_events: (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
-
-  # : (OpenAI::Models::Responses::response_stream_event, Hash[String, Hash[Symbol, untyped]]) -> void
-  def track_tool_info: (OpenAI::Models::Responses::response_stream_event, Hash[String, Hash[Symbol, untyped]]) -> void
-
-  # : (OpenAI::Models::Responses::response_stream_event, ?Hash[String, Hash[Symbol, untyped]]) -> Riffer::StreamEvents::Base?
-  def convert_event: (OpenAI::Models::Responses::response_stream_event, ?Hash[String, Hash[Symbol, untyped]]) -> Riffer::StreamEvents::Base?
 
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_openai_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

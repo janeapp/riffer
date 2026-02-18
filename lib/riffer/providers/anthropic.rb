@@ -48,69 +48,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     @client.messages.create(**params)
   end
 
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream(params, yielder)
-    accumulated_text = ""
-    accumulated_reasoning = ""
-    current_tool_use = nil
-
-    stream = @client.messages.stream(**params)
-    stream.each do |event|
-      case event
-      when Anthropic::Streaming::TextEvent
-        accumulated_text += event.text
-        yielder << Riffer::StreamEvents::TextDelta.new(event.text)
-
-      when Anthropic::Streaming::ThinkingEvent
-        accumulated_reasoning += event.thinking
-        yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
-
-      when Anthropic::Streaming::InputJsonEvent
-        if current_tool_use.nil?
-          current_tool_use = {id: nil, name: nil, arguments: ""}
-        end
-        current_tool_use[:arguments] += event.partial_json
-        yielder << Riffer::StreamEvents::ToolCallDelta.new(
-          item_id: current_tool_use[:id] || "pending",
-          name: current_tool_use[:name],
-          arguments_delta: event.partial_json
-        )
-
-      when Anthropic::Streaming::ContentBlockStopEvent
-        content_block = event.content_block
-        if content_block.respond_to?(:type)
-          block_type = content_block.type.to_s
-          if block_type == "tool_use"
-            arguments = content_block.input.is_a?(String) ? content_block.input : content_block.input.to_json
-            yielder << Riffer::StreamEvents::ToolCallDone.new(
-              item_id: content_block.id,
-              call_id: content_block.id,
-              name: content_block.name,
-              arguments: arguments
-            )
-            current_tool_use = nil
-          elsif block_type == "thinking" && !accumulated_reasoning.empty?
-            yielder << Riffer::StreamEvents::ReasoningDone.new(accumulated_reasoning)
-          end
-        end
-
-      when Anthropic::Streaming::MessageStopEvent
-        yielder << Riffer::StreamEvents::TextDone.new(accumulated_text)
-        final_message = stream.accumulated_message
-        if final_message&.usage
-          usage = final_message.usage
-          stream_token_usage = Riffer::TokenUsage.new(
-            input_tokens: usage.input_tokens,
-            output_tokens: usage.output_tokens,
-            cache_creation_tokens: usage.cache_creation_input_tokens,
-            cache_read_tokens: usage.cache_read_input_tokens
-          )
-          yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: stream_token_usage)
-        end
-      end
-    end
-  end
-
   #: (Anthropic::Models::Message) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -152,6 +89,98 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
+  end
+
+  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream(params, yielder)
+    current_state = {
+      text: nil,
+      reasoning: nil,
+      tool_call: nil,
+      stream: nil
+    }
+
+    stream = @client.messages.stream(**params)
+    current_state[:stream] = stream
+
+    stream.each do |event|
+      case event
+      when Anthropic::Streaming::TextEvent
+        handle_text_event(event, state: current_state, yielder: yielder)
+      when Anthropic::Streaming::ThinkingEvent
+        handle_thinking_event(event, state: current_state, yielder: yielder)
+      when Anthropic::Streaming::InputJsonEvent
+        handle_input_json_event(event, state: current_state, yielder: yielder)
+      when Anthropic::Streaming::ContentBlockStopEvent
+        block_type = event.content_block&.type.to_s
+        handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
+        handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
+      when Anthropic::Streaming::MessageStopEvent
+        handle_message_stop(event, state: current_state, yielder: yielder)
+      end
+    end
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_text_event(event, state:, yielder:)
+    state[:text] ||= ""
+    state[:text] += event.text
+    yielder << Riffer::StreamEvents::TextDelta.new(event.text)
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_thinking_event(event, state:, yielder:)
+    state[:reasoning] ||= ""
+    state[:reasoning] += event.thinking
+    yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_input_json_event(event, state:, yielder:)
+    if state[:tool_call].nil?
+      state[:tool_call] = {id: nil, name: nil, arguments: ""}
+    end
+    state[:tool_call][:arguments] += event.partial_json
+    yielder << Riffer::StreamEvents::ToolCallDelta.new(
+      item_id: state[:tool_call][:id] || "pending",
+      name: state[:tool_call][:name],
+      arguments_delta: event.partial_json
+    )
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_tool_use(event, state:, yielder:)
+    content_block = event.content_block
+    arguments = content_block.input.is_a?(String) ? content_block.input : content_block.input.to_json
+    yielder << Riffer::StreamEvents::ToolCallDone.new(
+      item_id: content_block.id,
+      call_id: content_block.id,
+      name: content_block.name,
+      arguments: arguments
+    )
+    state[:tool_call] = nil
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_thinking(_event, state:, yielder:)
+    yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_message_stop(_event, state:, yielder:)
+    yielder << Riffer::StreamEvents::TextDone.new(state[:text] || "")
+    final_message = state[:stream]&.accumulated_message
+    if final_message&.usage
+      usage = final_message.usage
+      yielder << Riffer::StreamEvents::TokenUsageDone.new(
+        token_usage: Riffer::TokenUsage.new(
+          input_tokens: usage.input_tokens,
+          output_tokens: usage.output_tokens,
+          cache_creation_tokens: usage.cache_creation_input_tokens,
+          cache_read_tokens: usage.cache_read_input_tokens
+        )
+      )
+    end
   end
 
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

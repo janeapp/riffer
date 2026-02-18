@@ -19,23 +19,41 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
   def execute_generate: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
 
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-
   # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
   def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
 
   # : (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
   def extract_assistant_message: (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_delta_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_delta_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  def handle_metadata_usage: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
-  # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
-  def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
-
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
+  def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_bedrock_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

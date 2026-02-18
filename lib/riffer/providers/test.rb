@@ -59,6 +59,24 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     params[:response]
   end
 
+  #: (untyped) -> Riffer::TokenUsage?
+  def extract_token_usage(response)
+    response[:token_usage]
+  end
+
+  #: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message(response, token_usage = nil)
+    if response.is_a?(Hash)
+      Riffer::Messages::Assistant.new(
+        response[:content],
+        tool_calls: response[:tool_calls] || [],
+        token_usage: token_usage
+      )
+    else
+      response
+    end
+  end
+
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream(params, yielder)
     response = params[:response]
@@ -89,24 +107,6 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
     yielder << Riffer::StreamEvents::TextDone.new(full_content)
     yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage) if token_usage
-  end
-
-  #: (untyped) -> Riffer::TokenUsage?
-  def extract_token_usage(response)
-    response[:token_usage]
-  end
-
-  #: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
-    if response.is_a?(Hash)
-      Riffer::Messages::Assistant.new(
-        response[:content],
-        tool_calls: response[:tool_calls] || [],
-        token_usage: token_usage
-      )
-    else
-      response
-    end
   end
 
   #: () -> Hash[Symbol, untyped]

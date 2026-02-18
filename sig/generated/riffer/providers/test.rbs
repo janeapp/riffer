@@ -36,14 +36,14 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-
   # : (untyped) -> Riffer::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::TokenUsage?
 
   # : (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
   def extract_assistant_message: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
   # : () -> Hash[Symbol, untyped]
   def next_response: () -> Hash[Symbol, untyped]
