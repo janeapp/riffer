@@ -28,23 +28,23 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
-  # : (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
-  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+  # : (Aws::BedrockRuntime::Types::ContentBlockStartEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_content_block_start_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_delta_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_content_block_delta_text_delta: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_delta_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_content_block_delta_tool_use: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (Aws::BedrockRuntime::Types::ContentBlockStopEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_content_block_stop_text_delta: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (Aws::BedrockRuntime::Types::ContentBlockStopEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_content_block_stop_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
-  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_metadata_usage: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  # : (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_metadata_usage: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
