@@ -286,7 +286,7 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
-        if self.class.max_steps && step >= self.class.max_steps
+        if step >= self.class.max_steps
           max_steps_reached = true
           break
         end
@@ -397,7 +397,7 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
-        if self.class.max_steps && step >= self.class.max_steps
+        if step >= self.class.max_steps
           yielder << Riffer::StreamEvents::MaxStepsReached.new
           break
         end
