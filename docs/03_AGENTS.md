@@ -250,7 +250,11 @@ agent.stream('Hello').each do |event|
 end
 ```
 
-**Resuming** — use `resume` (or `resume_stream`) to continue an interrupted loop:
+**Partial tool execution** — tool calls are executed one at a time. When an interrupt fires during tool execution, only the completed tool results remain in the message history. For example, if an assistant message requests two tool calls and the callback interrupts after the first tool result, only that first result will be in the message history.
+
+#### Resuming an Interrupted Loop
+
+Use `resume` (or `resume_stream`) to continue after an interrupt. On resume, the agent automatically detects and executes any pending tool calls (tool calls from the last assistant message that lack a corresponding tool result) before re-entering the LLM loop.
 
 ```ruby
 agent = MyAgent.new
@@ -260,7 +264,7 @@ response = agent.generate('Do something risky')
 
 if response.interrupted?
   approve_action(agent.messages)
-  response = agent.resume
+  response = agent.resume   # executes pending tools, then calls the LLM
 end
 ```
 
@@ -278,40 +282,23 @@ agent.resume_stream(messages: persisted_messages).each do |event|
 end
 ```
 
-When called without `messages:`, both methods raise `Riffer::ArgumentError` if the agent was not previously interrupted. When called with `messages:`, no prior interruption is required.
-
-**Note:** If a callback throws during tool execution (after processing some but not all tool calls), the conversation will have partial tool results. To avoid this, check the message type before throwing (e.g., only throw on `Riffer::Messages::Assistant`).
+When called without `messages:`, resumes from in-memory state. When called with `messages:`, reconstructs state from persisted data. No prior interruption is required in either case.
 
 ### resume
 
-Continues an interrupted agent loop synchronously. Returns a `Riffer::Agent::Response` object.
-
-When called without arguments, resumes from the agent's in-memory state (requires a prior interruption):
+Continues an agent loop synchronously. Returns a `Riffer::Agent::Response` object:
 
 ```ruby
-agent = MyAgent.new
-agent.on_message { |msg| throw :riffer_interrupt if needs_approval?(msg) }
+# In-memory resume after an interrupt
+response = agent.resume
 
-response = agent.generate('Do something risky')
-
-if response.interrupted?
-  approve_action(agent.messages)
-  response = agent.resume
-end
-```
-
-For cross-process resume (e.g., after a process restart or async approval), pass persisted messages via the `messages:` keyword. Accepts both message objects and hashes:
-
-```ruby
-agent = MyAgent.new
+# Cross-process resume from persisted messages
 response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
 ```
 
-When called without `messages:`, raises `Riffer::ArgumentError` if the agent was not previously interrupted. When called with `messages:`, no prior interruption is required.
-
 ### resume_stream
 
-Continues an interrupted agent loop as a streaming Enumerator. Accepts the same arguments as `resume`:
+Continues an agent loop as a streaming Enumerator. Accepts the same arguments as `resume`:
 
 ```ruby
 # In-memory resume
@@ -386,3 +373,63 @@ Tool execution errors are captured and sent back to the LLM:
 - `execution_error` - Tool raised an exception
 
 The LLM can use this information to retry or respond appropriately.
+
+## Ways the Agent Loop Can Stop
+
+The agent loop normally runs until the LLM produces a response with no tool calls. There are three mechanisms that can stop it early, each designed for a different use case:
+
+### Guardrail Tripwire (declarative, internal)
+
+Guardrails are registered at class definition time and run automatically on every request. When a guardrail calls `block`, it sets a **tripwire** that stops the loop immediately. The LLM is never called (for `:before` guardrails) or its response is discarded (for `:after` guardrails).
+
+- **When to use:** Policy enforcement that should always apply — content filtering, input validation, length limits.
+- **Response:** `response.blocked?` returns `true`, `response.tripwire` contains the reason and metadata.
+- **Streaming:** Yields a `GuardrailTripwire` event.
+- **Resumable:** No. A tripwire is a hard stop. The caller must change the input and start a new `generate`/`stream` call.
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  guardrail :before, with: ContentPolicy
+end
+
+response = MyAgent.generate('blocked input')
+response.blocked?          # => true
+response.tripwire.reason   # => "Content policy violation"
+```
+
+### Callback Interrupt (imperative, external)
+
+Callbacks registered with `on_message` can call `throw :riffer_interrupt` to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.
+
+- **When to use:** Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.
+- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason.
+- **Streaming:** Yields an `Interrupt` event with a `reason` attribute.
+- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+
+```ruby
+agent = MyAgent.new
+agent.on_message do |msg|
+  throw :riffer_interrupt, "approval needed" if requires_approval?(msg)
+end
+
+response = agent.generate('Do something risky')
+response.interrupted?      # => true
+response.interrupt_reason  # => "approval needed"
+response = agent.resume    # continues where it left off
+```
+
+### Unhandled Exceptions
+
+If a guardrail, provider call, or other internal code raises an exception, it propagates to the caller. Tool execution exceptions are the one exception — they are caught and sent back to the LLM as error messages (see [Error Handling](#error-handling) above).
+
+### Comparison
+
+| | Guardrail Tripwire | Callback Interrupt |
+|---|---|---|
+| Defined | At class level (`guardrail :before`) | At instance level (`on_message`) |
+| Fires | Automatically on every request | When callback logic decides |
+| Resumable | No | Yes (`resume` / `resume_stream`) |
+| Response flag | `blocked?` | `interrupted?` |
+| Stream event | `GuardrailTripwire` | `Interrupt` |
+| Purpose | Policy enforcement | Flow control |

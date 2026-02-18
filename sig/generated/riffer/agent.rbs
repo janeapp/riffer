@@ -176,6 +176,14 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> void
   def execute_tool_calls: (Riffer::Messages::Assistant) -> void
 
+  # Executes tool calls left unfinished by a prior interrupt.
+  #
+  # When an interrupt fires mid-way through tool execution, some tool calls
+  # from the last assistant message may not have been executed yet. This
+  # method detects those gaps by comparing the tool call ids requested by the
+  # last assistant message against the tool result messages that follow it,
+  # then executes any that are missing.
+  #
   # : () -> void
   def execute_pending_tool_calls: () -> void
 
