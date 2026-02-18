@@ -210,7 +210,7 @@ class Riffer::Agent
     end
   end
 
-  # Resumes an interrupted agent loop.
+  # Resumes an agent loop.
   #
   # When called without +messages+, continues using the existing in-memory
   # message history. When called with +messages+, reconstructs the agent
@@ -218,28 +218,22 @@ class Riffer::Agent
   #
   # Skips message initialization and before guardrails in both cases.
   #
-  # Raises Riffer::ArgumentError if called without +messages+ and the agent
-  # was not previously interrupted.
-  #
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def resume(messages: nil, tool_context: nil)
     restore_state(messages: messages, tool_context: tool_context)
-    run_generate_loop
+    run_generate_loop(resume: true)
   end
 
-  # Resumes an interrupted agent loop in streaming mode.
+  # Resumes an agent loop in streaming mode.
   #
   # Same as +resume+ but returns an Enumerator yielding stream events.
-  #
-  # Raises Riffer::ArgumentError if called without +messages+ and the agent
-  # was not previously interrupted.
   #
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def resume_stream(messages: nil, tool_context: nil)
     restore_state(messages: messages, tool_context: tool_context)
 
     Enumerator.new do |yielder|
-      run_stream_loop(yielder)
+      run_stream_loop(yielder, resume: true)
     end
   end
 
@@ -256,9 +250,11 @@ class Riffer::Agent
 
   private
 
-  #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def run_generate_loop(all_modifications = [])
+  #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
+  def run_generate_loop(all_modifications = [], resume: false)
     reason = catch(:riffer_interrupt) do
+      execute_pending_tool_calls if resume
+
       loop do
         response = call_llm
 
@@ -314,21 +310,17 @@ class Riffer::Agent
 
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
   def restore_state(messages: nil, tool_context: nil)
-    if messages
-      @tool_context = tool_context
-      @resolved_tools = nil
-      @messages = messages.map { |item| convert_to_message_object(item) }
-    else
-      raise Riffer::ArgumentError, "Cannot resume: tool_context requires messages" if tool_context
-      raise Riffer::ArgumentError, "Cannot resume: agent was not interrupted" unless @interrupted
-    end
-
+    @messages = messages.map { |item| convert_to_message_object(item) } if messages
+    @tool_context = tool_context if tool_context
     @interrupted = false
+    @resolved_tools = nil
   end
 
-  #: (Enumerator::Yielder) -> void
-  def run_stream_loop(yielder)
+  #: (Enumerator::Yielder, ?resume: bool) -> void
+  def run_stream_loop(yielder, resume: false)
     completed = catch(:riffer_interrupt) do
+      execute_pending_tool_calls if resume
+
       loop do
         accumulated_content = ""
         accumulated_tool_calls = []
@@ -428,6 +420,44 @@ class Riffer::Agent
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
     response.tool_calls.each do |tool_call|
+      result = execute_tool_call(tool_call)
+      add_message(Riffer::Messages::Tool.new(
+        result.content,
+        tool_call_id: tool_call.id,
+        name: tool_call.name,
+        error: result.error_message,
+        error_type: result.error_type
+      ))
+    end
+  end
+
+  # Executes tool calls left unfinished by a prior interrupt.
+  #
+  # When an interrupt fires mid-way through tool execution, some tool calls
+  # from the last assistant message may not have been executed yet. This
+  # method detects those gaps by comparing the tool call ids requested by the
+  # last assistant message against the tool result messages that follow it,
+  # then executes any that are missing.
+  #
+  #: () -> void
+  def execute_pending_tool_calls
+    # Find the most recent assistant message (the one whose tool calls
+    # may be partially executed).
+    last_assistant_idx = @messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
+    return unless last_assistant_idx
+
+    assistant = @messages[last_assistant_idx]
+    return if assistant.tool_calls.empty?
+
+    # Collect ids of tool calls that already have a result message
+    # after the assistant message.
+    executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
+      m.is_a?(Riffer::Messages::Tool)
+    }.map(&:tool_call_id)
+
+    # Execute any tool calls whose id is not in the executed set.
+    assistant.tool_calls.each do |tool_call|
+      next if executed_ids.include?(tool_call.id)
       result = execute_tool_call(tool_call)
       add_message(Riffer::Messages::Tool.new(
         result.content,
