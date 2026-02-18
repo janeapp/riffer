@@ -48,6 +48,67 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
   private
 
+  #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params(messages, model, options)
+    @calls << {messages: messages.map(&:to_h), model: model, **options}
+    {response: next_response}
+  end
+
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def execute_generate(params)
+    params[:response]
+  end
+
+  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream(params, yielder)
+    response = params[:response]
+    full_content = response[:content] || ""
+    tool_calls = response[:tool_calls] || []
+    token_usage = response[:token_usage]
+
+    unless full_content.empty?
+      content_parts = full_content.split(". ").map { |part| part + (part.end_with?(".") ? "" : ".") }
+      content_parts.each do |part|
+        yielder << Riffer::StreamEvents::TextDelta.new(part + " ")
+      end
+    end
+
+    tool_calls.each do |tc|
+      yielder << Riffer::StreamEvents::ToolCallDelta.new(
+        item_id: tc.id,
+        name: tc.name,
+        arguments_delta: tc.arguments
+      )
+      yielder << Riffer::StreamEvents::ToolCallDone.new(
+        item_id: tc.id,
+        call_id: tc.call_id,
+        name: tc.name,
+        arguments: tc.arguments
+      )
+    end
+
+    yielder << Riffer::StreamEvents::TextDone.new(full_content)
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage) if token_usage
+  end
+
+  #: (untyped) -> Riffer::TokenUsage?
+  def extract_token_usage(response)
+    response[:token_usage]
+  end
+
+  #: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message(response, token_usage = nil)
+    if response.is_a?(Hash)
+      Riffer::Messages::Assistant.new(
+        response[:content],
+        tool_calls: response[:tool_calls] || [],
+        token_usage: token_usage
+      )
+    else
+      response
+    end
+  end
+
   #: () -> Hash[Symbol, untyped]
   def next_response
     if @stubbed_responses.any?
@@ -58,57 +119,6 @@ class Riffer::Providers::Test < Riffer::Providers::Base
       response
     else
       {role: "assistant", content: "Test response"}
-    end
-  end
-
-  #: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
-  def perform_generate_text(messages, model: nil, **options)
-    @calls << {messages: messages.map(&:to_h), model: model, **options}
-    response = next_response
-
-    if response.is_a?(Hash)
-      Riffer::Messages::Assistant.new(
-        response[:content],
-        tool_calls: response[:tool_calls] || [],
-        token_usage: response[:token_usage]
-      )
-    else
-      response
-    end
-  end
-
-  #: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text(messages, model: nil, **options)
-    @calls << {messages: messages.map(&:to_h), model: model, **options}
-    response = next_response
-    Enumerator.new do |yielder|
-      full_content = response[:content] || ""
-      tool_calls = response[:tool_calls] || []
-      token_usage = response[:token_usage]
-
-      unless full_content.empty?
-        content_parts = full_content.split(". ").map { |part| part + (part.end_with?(".") ? "" : ".") }
-        content_parts.each do |part|
-          yielder << Riffer::StreamEvents::TextDelta.new(part + " ")
-        end
-      end
-
-      tool_calls.each do |tc|
-        yielder << Riffer::StreamEvents::ToolCallDelta.new(
-          item_id: tc.id,
-          name: tc.name,
-          arguments_delta: tc.arguments
-        )
-        yielder << Riffer::StreamEvents::ToolCallDone.new(
-          item_id: tc.id,
-          call_id: tc.call_id,
-          name: tc.name,
-          arguments: tc.arguments
-        )
-      end
-
-      yielder << Riffer::StreamEvents::TextDone.new(full_content)
-      yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage) if token_usage
     end
   end
 end

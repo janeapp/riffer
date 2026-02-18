@@ -2,7 +2,16 @@
 
 # Base class for all LLM providers in the Riffer framework.
 #
-# Subclasses must implement +perform_generate_text+ and +perform_stream_text+.
+# Provides a template-method flow for text generation and streaming.
+# Subclasses implement five hook methods; the base class orchestrates them.
+#
+# ==== Hook methods
+#
+# - +build_request_params+ — convert messages, tools, and options into SDK params
+# - +execute_generate+ — call the SDK and return the raw response
+# - +execute_stream+ — call the streaming SDK, mapping events to the yielder
+# - +extract_token_usage+ — pull token counts from the SDK response
+# - +extract_assistant_message+ — parse the SDK response into an +Assistant+ message
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
 
@@ -20,11 +29,23 @@ class Riffer::Providers::Base
 
   private
 
-  # : (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
-  def perform_generate_text: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Riffer::Messages::Assistant
+  # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # : (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (Array[Riffer::Messages::Base], ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (Hash[Symbol, untyped]) -> untyped
+  def execute_generate: (Hash[Symbol, untyped]) -> untyped
+
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # : (untyped) -> Riffer::TokenUsage?
+  def extract_token_usage: (untyped) -> Riffer::TokenUsage?
+
+  # : (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+
+  # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 
   # : (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
   def validate_input!: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void

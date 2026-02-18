@@ -11,26 +11,26 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   private
 
-  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
-  def perform_generate_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
+  # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
+  def execute_generate: (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
 
-  # : (Array[Riffer::Messages::Base], String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def build_request_params: (Array[Riffer::Messages::Base], String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # : (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
+  def extract_token_usage: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
+
+  # : (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message: (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
   # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
 
   # : (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
-
-  # : (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
-  def extract_token_usage: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
-
-  # : (Array[OpenAI::Models::Responses::response_output_item], ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (Array[OpenAI::Models::Responses::response_output_item], ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
   # : (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
   def process_stream_events: (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void

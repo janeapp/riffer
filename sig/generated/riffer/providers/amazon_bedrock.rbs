@@ -13,11 +13,20 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   private
 
-  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
-  def perform_generate_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
+  # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # : (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
+  def execute_generate: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
+
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
+  def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
+
+  # : (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message: (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
@@ -27,15 +36,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
-
-  # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
-  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
-
-  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
-  def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
-
-  # : (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
 
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_bedrock_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

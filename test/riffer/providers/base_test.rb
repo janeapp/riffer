@@ -6,9 +6,9 @@ describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
   describe "#generate_text" do
-    it "raises NotImplementedError when perform_generate_text not implemented" do
+    it "raises NotImplementedError when hook methods not implemented" do
       error = expect { provider.generate_text(prompt: "Hello") }.must_raise(NotImplementedError)
-      expect(error.message).must_equal "Subclasses must implement #perform_generate_text"
+      expect(error.message).must_equal "Subclasses must implement #build_request_params"
     end
 
     it "raises ArgumentError when no prompt or messages provided" do
@@ -39,9 +39,9 @@ describe Riffer::Providers::Base do
   end
 
   describe "#stream_text" do
-    it "raises NotImplementedError when perform_stream_text not implemented" do
+    it "raises NotImplementedError when hook methods not implemented" do
       error = expect { provider.stream_text(prompt: "Hello") }.must_raise(NotImplementedError)
-      expect(error.message).must_equal "Subclasses must implement #perform_stream_text"
+      expect(error.message).must_equal "Subclasses must implement #build_request_params"
     end
   end
 

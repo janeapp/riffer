@@ -17,25 +17,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   private
 
-  #: (Array[Riffer::Messages::Base], model: String, **untyped) -> Riffer::Messages::Assistant
-  def perform_generate_text(messages, model:, **options)
-    params = build_request_params(messages, model, options)
-    response = @client.responses.create(params)
-
-    extract_assistant_message(response.output, extract_token_usage(response))
-  end
-
-  #: (Array[Riffer::Messages::Base], model: String, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def perform_stream_text(messages, model:, **options)
-    Enumerator.new do |yielder|
-      params = build_request_params(messages, model, options)
-      stream = @client.responses.stream(params)
-
-      process_stream_events(stream, yielder)
-    end
-  end
-
-  #: (Array[Riffer::Messages::Base], String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     reasoning = options[:reasoning]
     tools = options[:tools]
@@ -55,6 +37,57 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
 
     params.compact
+  end
+
+  #: (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
+  def execute_generate(params)
+    @client.responses.create(params)
+  end
+
+  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream(params, yielder)
+    stream = @client.responses.stream(params)
+    process_stream_events(stream, yielder)
+  end
+
+  #: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
+  def extract_token_usage(response)
+    usage = response.usage
+    return nil unless usage
+
+    Riffer::TokenUsage.new(
+      input_tokens: usage.input_tokens,
+      output_tokens: usage.output_tokens
+    )
+  end
+
+  #: (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  def extract_assistant_message(response, token_usage = nil)
+    output_items = response.output
+
+    text_content = ""
+    tool_calls = []
+
+    output_items.each do |item|
+      case item.type
+      when :message
+        text_block = item.content&.find { |c| c.type == :output_text }
+        text_content = text_block&.text || "" if text_block
+      when :function_call
+        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+          id: item.id,
+          call_id: item.call_id,
+          name: item.name,
+          arguments: item.arguments
+        )
+      end
+    end
+
+    if text_content.empty? && tool_calls.empty?
+      raise Riffer::Error, "No output returned from OpenAI API"
+    end
+
+    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
   #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
@@ -95,44 +128,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       end
       items
     end
-  end
-
-  #: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
-  def extract_token_usage(response)
-    usage = response.usage
-    return nil unless usage
-
-    Riffer::TokenUsage.new(
-      input_tokens: usage.input_tokens,
-      output_tokens: usage.output_tokens
-    )
-  end
-
-  #: (Array[OpenAI::Models::Responses::response_output_item], ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(output_items, token_usage = nil)
-    text_content = ""
-    tool_calls = []
-
-    output_items.each do |item|
-      case item.type
-      when :message
-        text_block = item.content&.find { |c| c.type == :output_text }
-        text_content = text_block&.text || "" if text_block
-      when :function_call
-        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          id: item.id,
-          call_id: item.call_id,
-          name: item.name,
-          arguments: item.arguments
-        )
-      end
-    end
-
-    if text_content.empty? && tool_calls.empty?
-      raise Riffer::Error, "No output returned from OpenAI API"
-    end
-
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
   #: (OpenAI::Internal::Stream[OpenAI::Models::Responses::response_stream_event], Enumerator::Yielder) -> void
