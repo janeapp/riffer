@@ -72,7 +72,7 @@ class Riffer::Agent
   # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
   # unlimited steps.
   #
-  #: (?Integer?) -> Integer?
+  #: (?Numeric?) -> Numeric
   def self.max_steps(value = nil)
     return @max_steps || DEFAULT_MAX_STEPS if value.nil?
     @max_steps = value
