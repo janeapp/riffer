@@ -448,10 +448,6 @@ end
 response = MyAgent.generate('Do a complex task')
 response.interrupted?      # => true (if 8 steps were reached)
 response.interrupt_reason  # => :max_steps
-
-agent = MyAgent.new
-response = agent.generate('Do a complex task')
-response = agent.resume if response.interrupted?  # continues where it left off
 ```
 
 ### Unhandled Exceptions
