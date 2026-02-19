@@ -100,6 +100,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     }
 
     stream = @client.messages.stream(**params)
+    current_state[:stream] = stream
 
     stream.each do |event|
       case event
@@ -114,7 +115,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
         handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
       when Anthropic::Streaming::MessageStopEvent
-        handle_message_stop(event, state: current_state, yielder: yielder, stream: stream)
+        handle_message_stop(event, state: current_state, yielder: yielder)
       end
     end
   end
@@ -162,12 +163,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_thinking(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
+    state[:reasoning] = nil
   end
 
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_message_stop(_event, state:, yielder:, stream:)
+  def handle_message_stop(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text] || "")
-    final_message = stream.accumulated_message
+    final_message = state[:stream].accumulated_message
     if final_message&.usage
       usage = final_message.usage
       yielder << Riffer::StreamEvents::TokenUsageDone.new(

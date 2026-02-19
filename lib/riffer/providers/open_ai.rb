@@ -96,48 +96,48 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       when :"response.output_item.added"
         handle_output_item_added_function_call(event, state: current_state, yielder: yielder) if event.item&.type == :function_call
       when :"response.output_text.delta"
-        handle_output_text_delta(event, yielder: yielder)
+        handle_output_text_delta(event, state: current_state, yielder: yielder)
       when :"response.output_text.done"
-        handle_output_text_done(event, yielder: yielder)
+        handle_output_text_done(event, state: current_state, yielder: yielder)
       when :"response.reasoning_summary_text.delta"
-        handle_reasoning_summary_text_delta(event, yielder: yielder)
+        handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
       when :"response.reasoning_summary_text.done"
-        handle_reasoning_summary_text_done(event, yielder: yielder)
+        handle_reasoning_summary_text_done(event, state: current_state, yielder: yielder)
       when :"response.function_call_arguments.delta"
         handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
       when :"response.function_call_arguments.done"
         handle_function_call_arguments_done(event, state: current_state, yielder: yielder)
       when :"response.completed"
-        handle_response_completed(event, yielder: yielder)
+        handle_response_completed(event, state: current_state, yielder: yielder)
       end
     end
   end
 
-  #: (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
-  def handle_output_item_added_function_call(event, state:, yielder: nil)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_output_item_added_function_call(event, state:, yielder:)
     state[:tool_info][event.item.id] = {
       name: event.item.name,
       call_id: event.item.call_id
     }
   end
 
-  #: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_output_text_delta(event, yielder:, state: nil)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_output_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDelta.new(event.delta)
   end
 
-  #: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_output_text_done(event, yielder:, state: nil)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_output_text_done(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(event.text)
   end
 
-  #: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_reasoning_summary_text_delta(event, yielder:, state: nil)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_reasoning_summary_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.delta)
   end
 
-  #: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_reasoning_summary_text_done(event, yielder:, state: nil)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_reasoning_summary_text_done(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(event.text)
   end
 
@@ -162,8 +162,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
-  #: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_response_completed(event, yielder:, state: nil)
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_response_completed(event, state:, yielder:)
     usage = event.response&.usage
     return unless usage
 

@@ -26,20 +26,20 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
-  # : (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
-  def handle_output_item_added_function_call: (untyped, state: Hash[Symbol, untyped], ?yielder: Enumerator::Yielder?) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_output_item_added_function_call: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
-  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_output_text_delta: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_output_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
-  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_output_text_done: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_output_text_done: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
-  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_reasoning_summary_text_delta: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_reasoning_summary_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
-  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_reasoning_summary_text_done: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_reasoning_summary_text_done: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_function_call_arguments_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
@@ -47,8 +47,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_function_call_arguments_done: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
-  # : (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
-  def handle_response_completed: (untyped, yielder: Enumerator::Yielder, ?state: Hash[Symbol, untyped]?) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_response_completed: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]

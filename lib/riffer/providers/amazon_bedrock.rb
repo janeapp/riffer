@@ -125,8 +125,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
-  #: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
-  def handle_content_block_start_tool_use(event, state:, yielder: nil)
+  #: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_content_block_start_tool_use(event, state:, yielder:)
     state[:tool_call] = {
       id: event.start.tool_use.tool_use_id,
       name: event.start.tool_use.name,
@@ -173,8 +173,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     state[:tool_call] = nil
   end
 
-  #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
-  def handle_metadata_usage(event, yielder:, state: nil)
+  #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  def handle_metadata_usage(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
       token_usage: Riffer::TokenUsage.new(
         input_tokens: event.usage.input_tokens,
