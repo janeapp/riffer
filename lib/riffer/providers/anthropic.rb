@@ -112,6 +112,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         handle_input_json_event(event, state: current_state, yielder: yielder)
       when Anthropic::Streaming::ContentBlockStopEvent
         block_type = event.content_block&.type.to_s
+        handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block_type == "text" && current_state[:text]
         handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
         handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
       when Anthropic::Streaming::MessageStopEvent
@@ -167,8 +168,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_text(_event, state:, yielder:)
+    yielder << Riffer::StreamEvents::TextDone.new(state[:text])
+    state[:text] = nil
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_message_stop(_event, state:, yielder:)
-    yielder << Riffer::StreamEvents::TextDone.new(state[:text] || "")
     final_message = state[:stream].accumulated_message
     if final_message&.usage
       usage = final_message.usage

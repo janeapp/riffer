@@ -134,7 +134,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     }
   end
 
-  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     delta_text = event.delta.text
     state[:text] ||= ""
@@ -142,7 +142,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
   end
 
-  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_delta_tool_use(event, state:, yielder:)
     input_delta = event.delta.tool_use.input
 
@@ -155,13 +155,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
-  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
-  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_stop_tool_use(_event, state:, yielder:)
     tool_call = state[:tool_call]
     yielder << Riffer::StreamEvents::ToolCallDone.new(
