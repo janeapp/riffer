@@ -145,13 +145,23 @@ See [Guardrails](09_GUARDRAILS.md) for more information.
 
 ### Interrupt
 
-Emitted when an `on_message` callback interrupts the agent loop via `throw :riffer_interrupt`. This is the streaming equivalent of `Response#interrupted?` in generate mode.
+Emitted when the agent loop is interrupted. This can happen in two ways:
+
+- An `on_message` callback calls `throw :riffer_interrupt` (reason is a String or `nil`).
+- The `max_steps` limit is reached (reason is the Symbol `:max_steps`).
+
+This is the streaming equivalent of `Response#interrupted?` in generate mode.
 
 ```ruby
+# Callback interrupt with a string reason
 event = Riffer::StreamEvents::Interrupt.new(reason: "needs approval")
 event.role    # => :system
 event.reason  # => "needs approval"
 event.to_h    # => {role: :system, interrupt: true, reason: "needs approval"}
+
+# Max steps interrupt with a symbol reason
+event = Riffer::StreamEvents::Interrupt.new(reason: :max_steps)
+event.reason  # => :max_steps
 ```
 
 The `reason` is `nil` when `throw :riffer_interrupt` is called without a second argument.

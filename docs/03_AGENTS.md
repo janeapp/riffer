@@ -100,6 +100,17 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+### max_steps
+
+Sets the maximum number of LLM call steps in the tool-use loop. When the limit is reached, the loop interrupts with reason `:max_steps`. Defaults to `16`. Set to `Float::INFINITY` for unlimited steps:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  max_steps 8
+end
+```
+
 ### guardrail
 
 Registers guardrails for pre/post processing of messages. Pass the guardrail class and any options:
@@ -376,7 +387,7 @@ The LLM can use this information to retry or respond appropriately.
 
 ## Ways the Agent Loop Can Stop
 
-The agent loop normally runs until the LLM produces a response with no tool calls. There are three mechanisms that can stop it early, each designed for a different use case:
+The agent loop normally runs until the LLM produces a response with no tool calls. There are four mechanisms that can stop it early, each designed for a different use case:
 
 ### Guardrail Tripwire (declarative, internal)
 
@@ -419,17 +430,41 @@ response.interrupt_reason  # => "approval needed"
 response = agent.resume    # continues where it left off
 ```
 
+### Max Steps Limit
+
+The `max_steps` class method caps the number of LLM call steps in the tool-use loop. When the step count reaches the limit, the loop interrupts automatically with reason `:max_steps`.
+
+- **When to use:** Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.
+- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` is `:max_steps`.
+- **Streaming:** Yields an `Interrupt` event with `reason: :max_steps`.
+- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  max_steps 8
+end
+
+response = MyAgent.generate('Do a complex task')
+response.interrupted?      # => true (if 8 steps were reached)
+response.interrupt_reason  # => :max_steps
+
+agent = MyAgent.new
+response = agent.generate('Do a complex task')
+response = agent.resume if response.interrupted?  # continues where it left off
+```
+
 ### Unhandled Exceptions
 
 If a guardrail, provider call, or other internal code raises an exception, it propagates to the caller. Tool execution exceptions are the one exception — they are caught and sent back to the LLM as error messages (see [Error Handling](#error-handling) above).
 
 ### Comparison
 
-| | Guardrail Tripwire | Callback Interrupt |
-|---|---|---|
-| Defined | At class level (`guardrail :before`) | At instance level (`on_message`) |
-| Fires | Automatically on every request | When callback logic decides |
-| Resumable | No | Yes (`resume` / `resume_stream`) |
-| Response flag | `blocked?` | `interrupted?` |
-| Stream event | `GuardrailTripwire` | `Interrupt` |
-| Purpose | Policy enforcement | Flow control |
+| | Guardrail Tripwire | Callback Interrupt | Max Steps Limit |
+|---|---|---|---|
+| Defined | At class level (`guardrail :before`) | At instance level (`on_message`) | At class level (`max_steps 8`) |
+| Fires | Automatically on every request | When callback logic decides | When step count reaches limit |
+| Resumable | No | Yes (`resume` / `resume_stream`) | Yes (`resume` / `resume_stream`) |
+| Response flag | `blocked?` | `interrupted?` | `interrupted?` |
+| Stream event | `GuardrailTripwire` | `Interrupt` | `Interrupt` |
+| Purpose | Policy enforcement | Flow control | Runaway loop prevention |
