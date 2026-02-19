@@ -6,9 +6,9 @@
 # Emitted when a callback interrupts the agent loop via +throw :riffer_interrupt+.
 class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
   # The reason provided with the interrupt, if any.
-  attr_reader :reason #: String?
+  attr_reader :reason #: (String | Symbol)?
 
-  #: (?reason: String?) -> void
+  #: (?reason: (String | Symbol)?) -> void
   def initialize(reason: nil)
     super(role: :system)
     @reason = reason

@@ -24,6 +24,7 @@ class Riffer::Agent
   extend Riffer::Helpers::Validations
 
   DEFAULT_MAX_STEPS = 16 #: Integer
+  INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
   # Gets or sets the agent identifier.
   #
@@ -266,7 +267,6 @@ class Riffer::Agent
   #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
   def run_generate_loop(all_modifications = [], resume: false)
     step = 0
-    max_steps_reached = false
 
     reason = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
@@ -286,15 +286,12 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
-        if step >= self.class.max_steps
-          max_steps_reached = true
-          break
-        end
+        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= self.class.max_steps
 
         execute_tool_calls(processed_response)
       end
 
-      return build_response(extract_final_response, modifications: all_modifications, max_steps_reached: max_steps_reached)
+      return build_response(extract_final_response, modifications: all_modifications)
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
@@ -397,10 +394,7 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
-        if step >= self.class.max_steps
-          yielder << Riffer::StreamEvents::MaxStepsReached.new
-          break
-        end
+        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= self.class.max_steps
 
         execute_tool_calls(processed_response)
       end
@@ -582,8 +576,8 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: String?, ?max_steps_reached: bool) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, max_steps_reached: false)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, max_steps_reached: max_steps_reached)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason)
   end
 end

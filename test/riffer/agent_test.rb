@@ -202,7 +202,7 @@ describe Riffer::Agent do
         expect(result.content).must_equal "I need a tool"
       end
 
-      it "sets max_steps_reached? to true when limit is reached" do
+      it "sets interrupted? to true when limit is reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
           model "test/riffer-1"
@@ -215,7 +215,23 @@ describe Riffer::Agent do
         provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
 
         result = agent.generate("Do stuff")
-        expect(result.max_steps_reached?).must_equal true
+        expect(result.interrupted?).must_equal true
+      end
+
+      it "sets interrupt_reason to :max_steps when limit is reached" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "test/riffer-1"
+          max_steps 1
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
+
+        result = agent.generate("Do stuff")
+        expect(result.interrupt_reason).must_equal :max_steps
       end
     end
 
@@ -399,7 +415,7 @@ describe Riffer::Agent do
         expect(provider.calls.length).must_equal 2
       end
 
-      it "emits MaxStepsReached event when limit is reached" do
+      it "emits Interrupt event with :max_steps reason when limit is reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
           model "test/riffer-1"
@@ -412,11 +428,12 @@ describe Riffer::Agent do
         provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}])
 
         events = agent.stream("Do stuff").to_a
-        max_steps_event = events.find { |e| e.is_a?(Riffer::StreamEvents::MaxStepsReached) }
-        expect(max_steps_event).wont_be_nil
+        interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+        expect(interrupt_event).wont_be_nil
+        expect(interrupt_event.reason).must_equal :max_steps
       end
 
-      it "does not emit MaxStepsReached event when limit is not reached" do
+      it "does not emit Interrupt event when limit is not reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
           model "test/riffer-1"
@@ -430,8 +447,8 @@ describe Riffer::Agent do
         provider.stub_response("Final answer")
 
         events = agent.stream("Do stuff").to_a
-        max_steps_event = events.find { |e| e.is_a?(Riffer::StreamEvents::MaxStepsReached) }
-        expect(max_steps_event).must_be_nil
+        interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+        expect(interrupt_event).must_be_nil
       end
     end
 
