@@ -460,11 +460,11 @@ If a guardrail, provider call, or other internal code raises an exception, it pr
 
 ### Comparison
 
-| | Guardrail Tripwire | Callback Interrupt | Max Steps Limit |
-|---|---|---|---|
-| Defined | At class level (`guardrail :before`) | At instance level (`on_message`) | At class level (`max_steps 8`) |
-| Fires | Automatically on every request | When callback logic decides | When step count reaches limit |
-| Resumable | No | Yes (`resume` / `resume_stream`) | Yes (`resume` / `resume_stream`) |
-| Response flag | `blocked?` | `interrupted?` | `interrupted?` |
-| Stream event | `GuardrailTripwire` | `Interrupt` | `Interrupt` |
-| Purpose | Policy enforcement | Flow control | Runaway loop prevention |
+|               | Guardrail Tripwire                   | Callback Interrupt               | Max Steps Limit                  |
+| ------------- | ------------------------------------ | -------------------------------- | -------------------------------- |
+| Defined       | At class level (`guardrail :before`) | At instance level (`on_message`) | At class level (`max_steps 8`)   |
+| Fires         | Automatically on every request       | When callback logic decides      | When step count reaches limit    |
+| Resumable     | No                                   | Yes (`resume` / `resume_stream`) | Yes (`resume` / `resume_stream`) |
+| Response flag | `blocked?`                           | `interrupted?`                   | `interrupted?`                   |
+| Stream event  | `GuardrailTripwire`                  | `Interrupt`                      | `Interrupt`                      |
+| Purpose       | Policy enforcement                   | Flow control                     | Runaway loop prevention          |
