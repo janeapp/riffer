@@ -65,10 +65,10 @@ class Riffer::Tool
 
   # Defines parameters using the Params DSL.
   #
-  #: () ?{ () -> void } -> Riffer::Tools::Params?
+  #: () ?{ () -> void } -> Riffer::Params?
   def self.params(&block)
     return @params_builder if block.nil?
-    @params_builder = Riffer::Tools::Params.new
+    @params_builder = Riffer::Params.new
     @params_builder.instance_eval(&block)
   end
 

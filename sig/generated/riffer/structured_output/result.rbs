@@ -1,0 +1,31 @@
+# Generated from lib/riffer/structured_output/result.rb with RBS::Inline
+
+# Wraps the result of structured output parsing and validation.
+#
+# On success, +object+ contains the validated Hash and +error+ is nil.
+# On failure, +error+ contains the error message and +object+ is nil.
+#
+#   result = structured_output.parse_and_validate(json_string)
+#   if result.success?
+#     result.object  #=> {sentiment: "positive", score: 0.9}
+#   else
+#     result.error   #=> "JSON parse error: ..."
+#   end
+class Riffer::StructuredOutput::Result
+  attr_reader object: Hash[Symbol, untyped]?
+
+  attr_reader error: String?
+
+  # : (?object: Hash[Symbol, untyped]?, ?error: String?) -> void
+  def initialize: (?object: Hash[Symbol, untyped]?, ?error: String?) -> void
+
+  # Returns true when parsing and validation succeeded.
+  #
+  # : () -> bool
+  def success?: () -> bool
+
+  # Returns true when parsing or validation failed.
+  #
+  # : () -> bool
+  def failure?: () -> bool
+end

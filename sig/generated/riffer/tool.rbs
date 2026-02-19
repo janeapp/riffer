@@ -49,8 +49,8 @@ class Riffer::Tool
 
   # Defines parameters using the Params DSL.
   #
-  # : () ?{ () -> void } -> Riffer::Tools::Params?
-  def self.params: () ?{ () -> void } -> Riffer::Tools::Params?
+  # : () ?{ () -> void } -> Riffer::Params?
+  def self.params: () ?{ () -> void } -> Riffer::Params?
 
   # Returns the JSON Schema for the tool's parameters.
   #

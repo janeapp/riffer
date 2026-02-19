@@ -70,7 +70,7 @@ describe Riffer::Tool do
 
   describe ".params" do
     it "returns the params builder" do
-      expect(weather_tool_class.params).must_be_instance_of Riffer::Tools::Params
+      expect(weather_tool_class.params).must_be_instance_of Riffer::Params
     end
 
     it "returns nil when no params defined" do

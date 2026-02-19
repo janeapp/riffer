@@ -76,6 +76,18 @@ describe Riffer::Agent::Response do
     end
   end
 
+  describe "#object" do
+    it "defaults to nil" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.object).must_be_nil
+    end
+
+    it "stores the object" do
+      response = Riffer::Agent::Response.new("Hello!", object: {sentiment: "positive", score: 0.9})
+      expect(response.object).must_equal({sentiment: "positive", score: 0.9})
+    end
+  end
+
   describe "#interrupted?" do
     it "returns false by default" do
       response = Riffer::Agent::Response.new("Hello!")

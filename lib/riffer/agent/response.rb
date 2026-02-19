@@ -25,6 +25,9 @@ class Riffer::Agent::Response
   # The reason provided with the interrupt, if any.
   attr_reader :interrupt_reason #: (String | Symbol)?
 
+  # The parsed structured output object, if structured output was configured.
+  attr_reader :object #: Hash[Symbol, untyped]?
+
   # Creates a new response.
   #
   # +content+ - the response content.
@@ -32,14 +35,16 @@ class Riffer::Agent::Response
   # +modifications+ - guardrail modifications applied during processing.
   # +interrupted+ - whether the agent loop was interrupted by a callback.
   # +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+.
+  # +object+ - parsed structured output object when structured output is configured.
   #
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?object: Hash[Symbol, untyped]?) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, object: nil)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
     @interrupted = interrupted
     @interrupt_reason = interrupt_reason
+    @object = object
   end
 
   # Returns true if the response was blocked by a guardrail.

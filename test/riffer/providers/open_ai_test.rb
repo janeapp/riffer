@@ -248,6 +248,67 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "structured output" do
+    it "includes text.format in request params" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+
+      expect(params[:text][:format][:type]).must_equal "json_schema"
+    end
+
+    it "sets schema name to response" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+
+      expect(params[:text][:format][:name]).must_equal "response"
+    end
+
+    it "sets strict to true" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+
+      expect(params[:text][:format][:strict]).must_equal true
+    end
+
+    it "includes json_schema in format" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+
+      expect(params[:text][:format][:schema][:type]).must_equal "object"
+    end
+
+    it "does not include text.format when not configured" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      messages = [Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, "gpt-5-nano", {})
+
+      expect(params[:text]).must_be_nil
+    end
+
+    it "does not pass structured_output through to API params" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+
+      expect(params.key?(:structured_output)).must_equal false
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

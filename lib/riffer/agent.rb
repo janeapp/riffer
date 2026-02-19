@@ -73,6 +73,17 @@ class Riffer::Agent
     @model_options = options
   end
 
+  # Gets or sets the structured output schema for this agent.
+  #
+  # Accepts a Hash shorthand (e.g., +{sentiment: String, score: Float}+)
+  # or a Riffer::Params instance.
+  #
+  #: (?(Hash[Symbol, Class] | Riffer::Params)?) -> (Hash[Symbol, Class] | Riffer::Params)?
+  def self.structured_output(schema = nil)
+    return @structured_output if schema.nil?
+    @structured_output = schema
+  end
+
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #
   # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
@@ -191,12 +202,13 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, tool_context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, tool_context: nil, structured_output: nil)
     @tool_context = tool_context
     @resolved_tools = nil
     clear_resolved_model
     @interrupted = false
+    @structured_output = resolve_structured_output(structured_output)
     initialize_messages(prompt_or_messages)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
@@ -210,8 +222,13 @@ class Riffer::Agent
 
   # Streams a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, tool_context: nil)
+  # Raises Riffer::ArgumentError if structured output is configured.
+  #
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, tool_context: nil, structured_output: nil)
+    resolved = structured_output || self.class.structured_output
+    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if resolved
+
     @tool_context = tool_context
     @resolved_tools = nil
     clear_resolved_model
@@ -298,13 +315,17 @@ class Riffer::Agent
         execute_tool_calls(processed_response)
       end
 
-      return build_response(extract_final_response, modifications: all_modifications)
+      content = extract_final_response
+      object = parse_structured_content(content)
+      return build_response(content, modifications: all_modifications, object: object)
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
-    build_response(extract_final_response, modifications: all_modifications, interrupted: true, interrupt_reason: reason)
+    content = extract_final_response
+    object = parse_structured_content(content)
+    build_response(content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, object: object)
   end
 
   #: (Riffer::Messages::Base) -> void
@@ -422,7 +443,7 @@ class Riffer::Agent
       messages: @messages,
       model: @model_name,
       tools: resolved_tools,
-      **self.class.model_options
+      **merged_model_options
     )
   end
 
@@ -614,8 +635,28 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason)
+  #: ((Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::StructuredOutput?
+  def resolve_structured_output(call_level_schema)
+    schema = call_level_schema || self.class.structured_output
+    schema ? Riffer::StructuredOutput.new(schema) : nil
+  end
+
+  #: () -> Hash[Symbol, untyped]
+  def merged_model_options
+    opts = self.class.model_options.dup
+    opts[:structured_output] = @structured_output if @structured_output
+    opts
+  end
+
+  #: (String) -> Hash[Symbol, untyped]?
+  def parse_structured_content(content)
+    return nil unless @structured_output
+    result = @structured_output.parse_and_validate(content)
+    result.object
+  end
+
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?object: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, object: nil)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, object: object)
   end
 end

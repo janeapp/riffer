@@ -219,6 +219,60 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "structured output" do
+    it "includes output_config.text_format in request params" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
+
+      expect(params[:output_config][:text_format][:type]).must_equal "json_schema"
+    end
+
+    it "includes json_schema structure with name" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
+
+      expect(params[:output_config][:text_format][:structure][:json_schema][:name]).must_equal "response"
+    end
+
+    it "serializes schema as JSON string" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
+
+      schema_json = params[:output_config][:text_format][:structure][:json_schema][:schema]
+      expect(schema_json).must_be_instance_of String
+      parsed = JSON.parse(schema_json)
+      expect(parsed["type"]).must_equal "object"
+    end
+
+    it "does not include output_config when not configured" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      messages = [Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {})
+
+      expect(params.key?(:output_config)).must_equal false
+    end
+
+    it "does not pass structured_output through to API params" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
+
+      expect(params.key?(:structured_output)).must_equal false
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

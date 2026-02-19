@@ -156,6 +156,47 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "structured output" do
+    it "includes output_config.format in request params" do
+      provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {structured_output: structured_output})
+
+      expect(params[:output_config][:format][:type]).must_equal "json_schema"
+    end
+
+    it "includes json_schema in format" do
+      provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {structured_output: structured_output})
+
+      expect(params[:output_config][:format][:schema][:type]).must_equal "object"
+    end
+
+    it "does not include output_config when not configured" do
+      provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+      messages = [Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {})
+
+      expect(params.key?(:output_config)).must_equal false
+    end
+
+    it "does not pass structured_output through to API params" do
+      provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {structured_output: structured_output})
+
+      expect(params.key?(:structured_output)).must_equal false
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

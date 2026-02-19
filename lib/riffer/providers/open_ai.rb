@@ -21,6 +21,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def build_request_params(messages, model, options)
     reasoning = options[:reasoning]
     tools = options[:tools]
+    structured_output = options[:structured_output]
 
     params = {
       input: convert_messages_to_openai_format(messages),
@@ -29,11 +30,22 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         effort: reasoning,
         summary: "auto"
       },
-      **options.except(:reasoning, :tools)
+      **options.except(:reasoning, :tools, :structured_output)
     }
 
     if tools && !tools.empty?
       params[:tools] = tools.map { |t| convert_tool_to_openai_format(t) }
+    end
+
+    if structured_output
+      params[:text] = {
+        format: {
+          type: "json_schema",
+          name: "response",
+          schema: structured_output.json_schema,
+          strict: true
+        }
+      }
     end
 
     params.compact

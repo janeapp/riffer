@@ -24,6 +24,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def build_request_params(messages, model, options)
     partitioned_messages = partition_messages(messages)
     tools = options[:tools]
+    structured_output = options[:structured_output]
 
     max_tokens = options.fetch(:max_tokens, 4096)
 
@@ -31,13 +32,22 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       model: model,
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
-      **options.except(:tools, :max_tokens)
+      **options.except(:tools, :max_tokens, :structured_output)
     }
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
 
     if tools && !tools.empty?
       params[:tools] = tools.map { |t| convert_tool_to_anthropic_format(t) }
+    end
+
+    if structured_output
+      params[:output_config] = {
+        format: {
+          type: "json_schema",
+          schema: structured_output.json_schema
+        }
+      }
     end
 
     params

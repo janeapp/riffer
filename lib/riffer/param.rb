@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Tools::Param represents a single parameter definition for a tool.
+# Riffer::Param represents a single parameter definition.
 #
 # Handles type validation and JSON Schema generation for individual parameters.
-class Riffer::Tools::Param
+class Riffer::Param
   # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS = {
     String => "string",

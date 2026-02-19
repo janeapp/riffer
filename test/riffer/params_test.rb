@@ -2,40 +2,73 @@
 
 require "test_helper"
 
-describe Riffer::Tools::Params do
+describe Riffer::Params do
+  describe ".from_hash" do
+    it "creates params with all keys as required" do
+      params = Riffer::Params.from_hash(sentiment: String, score: Float)
+      expect(params.parameters.length).must_equal 2
+    end
+
+    it "marks all params as required" do
+      params = Riffer::Params.from_hash(sentiment: String, score: Float)
+      expect(params.parameters.all?(&:required)).must_equal true
+    end
+
+    it "sets correct names" do
+      params = Riffer::Params.from_hash(sentiment: String, score: Float)
+      expect(params.parameters.map(&:name)).must_equal [:sentiment, :score]
+    end
+
+    it "sets correct types" do
+      params = Riffer::Params.from_hash(sentiment: String, score: Float)
+      expect(params.parameters.map(&:type)).must_equal [String, Float]
+    end
+
+    it "validates successfully with matching input" do
+      params = Riffer::Params.from_hash(sentiment: String, score: Float)
+      result = params.validate(sentiment: "positive", score: 0.9)
+      expect(result).must_equal({sentiment: "positive", score: 0.9})
+    end
+
+    it "raises ValidationError for missing keys" do
+      params = Riffer::Params.from_hash(sentiment: String, score: Float)
+      expect { params.validate(sentiment: "positive") }.must_raise(Riffer::ValidationError)
+    end
+  end
+
   describe "#required" do
     it "adds a parameter" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       expect(params.parameters.length).must_equal 1
     end
 
     it "marks the parameter as required" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       expect(params.parameters.first.required).must_equal true
     end
 
     it "sets the parameter name" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       expect(params.parameters.first.name).must_equal :city
     end
 
     it "sets the parameter type" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       expect(params.parameters.first.type).must_equal String
     end
 
     it "sets the description" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String, description: "The city name")
       expect(params.parameters.first.description).must_equal "The city name"
     end
 
     it "sets the enum" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:unit, String, enum: ["celsius", "fahrenheit"])
       expect(params.parameters.first.enum).must_equal ["celsius", "fahrenheit"]
     end
@@ -43,19 +76,19 @@ describe Riffer::Tools::Params do
 
   describe "#optional" do
     it "adds a parameter" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.optional(:units, String)
       expect(params.parameters.length).must_equal 1
     end
 
     it "marks the parameter as not required" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.optional(:units, String)
       expect(params.parameters.first.required).must_equal false
     end
 
     it "sets the default value" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.optional(:units, String, default: "celsius")
       expect(params.parameters.first.default).must_equal "celsius"
     end
@@ -63,67 +96,67 @@ describe Riffer::Tools::Params do
 
   describe "#validate" do
     it "returns validated arguments for valid input" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       result = params.validate({city: "Toronto"})
       expect(result).must_equal({city: "Toronto"})
     end
 
     it "raises ValidationError for missing required param" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       expect { params.validate({}) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes param name in missing required error" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city is required/)
     end
 
     it "raises ValidationError for wrong type" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       expect { params.validate({city: 123}) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes param name in wrong type error" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       error = expect { params.validate({city: 123}) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city must be a string/)
     end
 
     it "raises ValidationError for enum violation" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:unit, String, enum: ["celsius", "fahrenheit"])
       expect { params.validate({unit: "kelvin"}) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes allowed values in enum violation error" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:unit, String, enum: ["celsius", "fahrenheit"])
       error = expect { params.validate({unit: "kelvin"}) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/must be one of/)
     end
 
     it "applies default for missing optional param" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.optional(:units, String, default: "celsius")
       result = params.validate({})
       expect(result[:units]).must_equal "celsius"
     end
 
     it "uses provided value over default" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.optional(:units, String, default: "celsius")
       result = params.validate({units: "fahrenheit"})
       expect(result[:units]).must_equal "fahrenheit"
     end
 
     it "includes first missing param in multiple errors" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       params.required(:country, String)
       error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
@@ -131,7 +164,7 @@ describe Riffer::Tools::Params do
     end
 
     it "includes second missing param in multiple errors" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       params.required(:country, String)
       error = expect { params.validate({}) }.must_raise(Riffer::ValidationError)
@@ -141,12 +174,12 @@ describe Riffer::Tools::Params do
 
   describe "#to_json_schema" do
     it "returns object type" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       expect(params.to_json_schema[:type]).must_equal "object"
     end
 
     it "includes properties for each parameter" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       params.optional(:units, String)
       schema = params.to_json_schema
@@ -154,7 +187,7 @@ describe Riffer::Tools::Params do
     end
 
     it "includes required array" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       params.required(:city, String)
       params.optional(:units, String)
       schema = params.to_json_schema
@@ -162,18 +195,18 @@ describe Riffer::Tools::Params do
     end
 
     it "sets additionalProperties to false" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       expect(params.to_json_schema[:additionalProperties]).must_equal false
     end
 
     it "returns empty properties for no params" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       schema = params.to_json_schema
       expect(schema[:properties]).must_equal({})
     end
 
     it "returns empty required array for no params" do
-      params = Riffer::Tools::Params.new
+      params = Riffer::Params.new
       schema = params.to_json_schema
       expect(schema[:required]).must_equal([])
     end

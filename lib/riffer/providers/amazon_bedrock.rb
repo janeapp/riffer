@@ -34,17 +34,32 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def build_request_params(messages, model, options)
     partitioned_messages = partition_messages(messages)
     tools = options[:tools]
+    structured_output = options[:structured_output]
 
     params = {
       model_id: model,
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
-      **options.except(:tools)
+      **options.except(:tools, :structured_output)
     }
 
     if tools && !tools.empty?
       params[:tool_config] = {
         tools: tools.map { |t| convert_tool_to_bedrock_format(t) }
+      }
+    end
+
+    if structured_output
+      params[:output_config] = {
+        text_format: {
+          type: "json_schema",
+          structure: {
+            json_schema: {
+              schema: structured_output.json_schema.to_json,
+              name: "response"
+            }
+          }
+        }
       }
     end
 
