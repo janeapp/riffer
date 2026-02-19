@@ -34,13 +34,18 @@ class Riffer::Agent
     @identifier = value.to_s
   end
 
-  # Gets or sets the model string (e.g., "openai/gpt-4o").
+  # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
   #
-  #: (?String?) -> String?
-  def self.model(model_string = nil)
-    return @model if model_string.nil?
-    validate_is_string!(model_string, "model")
-    @model = model_string
+  #: (?(String | Proc)?) -> (String | Proc)?
+  def self.model(model_string_or_proc = nil)
+    return @model if model_string_or_proc.nil?
+
+    if model_string_or_proc.is_a?(Proc)
+      @model = model_string_or_proc
+    else
+      validate_is_string!(model_string_or_proc, "model")
+      @model = model_string_or_proc
+    end
   end
 
   # Gets or sets the agent instructions.
@@ -173,15 +178,15 @@ class Riffer::Agent
     @message_callbacks = []
     @token_usage = nil
     @interrupted = false
-    @model_string = self.class.model
+    @model_config = self.class.model
     @instructions_text = self.class.instructions
 
-    provider_name, model_name = @model_string.split("/", 2)
-
-    raise Riffer::ArgumentError, "Invalid model string: #{@model_string}" unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
-
-    @provider_name = provider_name
-    @model_name = model_name
+    if @model_config.is_a?(Proc)
+      @provider_name = nil
+      @model_name = nil
+    else
+      parse_model_string!(@model_config)
+    end
   end
 
   # Generates a response from the agent.
@@ -190,6 +195,8 @@ class Riffer::Agent
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
+    @resolved_model = nil
+    @provider_instance = nil if @model_config.is_a?(Proc)
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -208,6 +215,8 @@ class Riffer::Agent
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
+    @resolved_model = nil
+    @provider_instance = nil if @model_config.is_a?(Proc)
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -333,6 +342,8 @@ class Riffer::Agent
     @tool_context = tool_context if tool_context
     @interrupted = false
     @resolved_tools = nil
+    @resolved_model = nil
+    @provider_instance = nil if @model_config.is_a?(Proc)
   end
 
   #: (Enumerator::Yielder, ?resume: bool) -> void
@@ -409,6 +420,7 @@ class Riffer::Agent
 
   #: () -> Riffer::Messages::Assistant
   def call_llm
+    resolved_model
     provider_instance.generate_text(
       messages: @messages,
       model: @model_name,
@@ -419,6 +431,7 @@ class Riffer::Agent
 
   #: () -> Enumerator[Riffer::StreamEvents::Base, void]
   def call_llm_stream
+    resolved_model
     provider_instance.stream_text(
       messages: @messages,
       model: @model_name,
@@ -515,6 +528,29 @@ class Riffer::Agent
       Riffer::Tools::Response.error(e.message, type: :validation_error)
     rescue => e
       Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
+    end
+  end
+
+  #: (untyped) -> void
+  def parse_model_string!(model_string)
+    raise Riffer::ArgumentError, "Invalid model string: #{model_string}" unless model_string.is_a?(String)
+    provider_name, model_name = model_string.split("/", 2)
+    raise Riffer::ArgumentError, "Invalid model string: #{model_string}" unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
+    @provider_name = provider_name
+    @model_name = model_name
+  end
+
+  #: () -> String
+  def resolved_model
+    @resolved_model ||= begin
+      config = @model_config
+      if config.is_a?(Proc)
+        model_string = (config.arity == 0) ? config.call : config.call(@tool_context)
+        parse_model_string!(model_string)
+        model_string
+      else
+        config
+      end
     end
   end
 

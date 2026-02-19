@@ -65,7 +65,7 @@ On resume, `execute_pending_tool_calls` detects tool calls from the last assista
 
 ## Key Patterns
 
-- Model strings use `provider/model` format (e.g., `openai/gpt-4`)
+- Model config accepts a `provider/model` string (e.g., `openai/gpt-4`) or a Proc/lambda that returns one
 - Configuration via `Riffer.configure { |c| c.openai.api_key = "..." }`
 - Providers use `depends_on` helper for runtime dependency checking
 - Zeitwerk for autoloading - file structure must match module/class names

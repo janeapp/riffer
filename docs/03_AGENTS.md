@@ -29,6 +29,26 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+Models can also be resolved dynamically with a lambda:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model -> { "anthropic/claude-sonnet-4-20250514" }
+end
+```
+
+When the lambda accepts a parameter, it receives the `tool_context`:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model ->(ctx) {
+    ctx&.dig(:premium) ? "anthropic/claude-sonnet-4-20250514" : "anthropic/claude-haiku-4-5-20251001"
+  }
+end
+```
+
+The lambda is re-evaluated on each `generate` or `stream` call, so the model can change between calls based on runtime context.
+
 ### instructions
 
 Sets system instructions for the agent:

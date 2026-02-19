@@ -40,6 +40,13 @@ describe Riffer::Agent do
       error = expect { agent_class.model("   ") }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/model cannot be empty/)
     end
+
+    it "accepts a Proc" do
+      agent = Class.new(Riffer::Agent) do
+        model -> { "test/riffer-1" }
+      end
+      expect(agent.model).must_be_instance_of Proc
+    end
   end
 
   describe ".instructions" do
@@ -748,6 +755,135 @@ describe Riffer::Agent do
         uses_tools -> { [tool_class] }
       end
       expect(agent.uses_tools).must_be_instance_of Proc
+    end
+  end
+
+  describe "dynamic model selection" do
+    it "resolves lambda for generate" do
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> { "test/riffer-1" }
+      end
+
+      result = dynamic_agent_class.generate("Hello")
+      expect(result).must_be_instance_of Riffer::Agent::Response
+    end
+
+    it "resolves lambda for stream" do
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> { "test/riffer-1" }
+      end
+
+      events = dynamic_agent_class.stream("Hello").to_a
+      expect(events).wont_be_empty
+    end
+
+    it "passes tool_context to lambda with arity 1" do
+      received_context = nil
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model ->(ctx) {
+          received_context = ctx
+          "test/riffer-1"
+        }
+      end
+
+      dynamic_agent_class.generate("Hello", tool_context: {premium: true})
+      expect(received_context).must_equal({premium: true})
+    end
+
+    it "calls lambda with no args when arity is 0" do
+      called = false
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> {
+          called = true
+          "test/riffer-1"
+        }
+      end
+
+      dynamic_agent_class.generate("Hello")
+      expect(called).must_equal true
+    end
+
+    it "uses resolved model for provider lookup" do
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> { "test/riffer-1" }
+      end
+
+      agent = dynamic_agent_class.new
+      agent.generate("Hello")
+      provider = agent.send(:provider_instance)
+      expect(provider).must_be_instance_of Riffer::Providers::Test
+    end
+
+    it "re-evaluates lambda for each generate call" do
+      call_count = 0
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> {
+          call_count += 1
+          "test/riffer-1"
+        }
+      end
+
+      agent = dynamic_agent_class.new
+      agent.generate("Hello")
+      agent.generate("Hello again")
+      expect(call_count).must_equal 2
+    end
+
+    it "can change model between calls based on tool_context" do
+      models_used = []
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model ->(ctx) {
+          model = ctx&.dig(:premium) ? "test/riffer-premium" : "test/riffer-basic"
+          models_used << model
+          model
+        }
+      end
+
+      agent = dynamic_agent_class.new
+      agent.generate("Hello", tool_context: {premium: false})
+      agent.generate("Hello", tool_context: {premium: true})
+      expect(models_used).must_equal ["test/riffer-basic", "test/riffer-premium"]
+    end
+
+    it "passes resolved model name to provider" do
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> { "test/my-model" }
+      end
+
+      agent = dynamic_agent_class.new
+      agent.generate("Hello")
+      provider = agent.send(:provider_instance)
+      expect(provider.calls.last[:model]).must_equal "my-model"
+    end
+
+    it "raises on invalid lambda return without slash" do
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> { "invalid-format" }
+      end
+
+      agent = dynamic_agent_class.new
+      error = expect { agent.generate("Hello") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/Invalid model string: invalid-format/)
+    end
+
+    it "raises on nil lambda return" do
+      value = nil
+      dynamic_agent_class = Class.new(Riffer::Agent) do
+        model -> { value }
+      end
+
+      agent = dynamic_agent_class.new
+      error = expect { agent.generate("Hello") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/Invalid model string/)
+    end
+
+    it "static string still works" do
+      static_agent_class = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+
+      result = static_agent_class.generate("Hello")
+      expect(result).must_be_instance_of Riffer::Agent::Response
     end
   end
 
