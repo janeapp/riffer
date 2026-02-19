@@ -1,0 +1,379 @@
+syntax = "proto3";
+
+package riffer.v1;
+
+option ruby_package = "Riffer::Rpc::V1";
+
+// ═══════════════════════════════════════════
+// Shared value types
+// ═══════════════════════════════════════════
+
+message TokenUsage {
+  int64 input_tokens                   = 1;
+  int64 output_tokens                  = 2;
+  optional int64 cache_creation_tokens = 3;
+  optional int64 cache_read_tokens     = 4;
+}
+
+// ═══════════════════════════════════════════
+// Tool definitions (client → agent server)
+// ═══════════════════════════════════════════
+
+// Mirrors Riffer::Tool.parameters_schema (JSON Schema object).
+// The agent server forwards this to the LLM provider.
+message ToolParametersSchema {
+  string type                                    = 1; // always "object"
+  map<string, ToolParameterProperty> properties  = 2;
+  repeated string required                       = 3;
+  bool additional_properties                     = 4; // always false
+}
+
+message ToolParameterProperty {
+  string type                  = 1; // "string", "integer", "number", "boolean", "array", "object"
+  string description           = 2;
+  repeated string enum_values  = 3;
+}
+
+// Declarative tool descriptor. The server uses this for the LLM;
+// execution always happens on the client via RifferCallback.ExecuteTool.
+message ToolDefinition {
+  string name                            = 1; // Riffer::Tool.name / identifier
+  string description                     = 2;
+  ToolParametersSchema parameters_schema = 3;
+  double timeout_seconds                 = 4; // default: 10
+}
+
+// ═══════════════════════════════════════════
+// Conversation messages
+// ═══════════════════════════════════════════
+
+message ToolCall {
+  string id        = 1;
+  string call_id   = 2;
+  string name      = 3;
+  string arguments = 4; // JSON string
+}
+
+message SystemMessage {
+  string content = 1;
+}
+
+message UserMessage {
+  string content = 1;
+}
+
+message AssistantMessage {
+  string content               = 1;
+  repeated ToolCall tool_calls = 2;
+  optional TokenUsage token_usage = 3;
+}
+
+enum ToolErrorType {
+  TOOL_ERROR_TYPE_UNSPECIFIED  = 0;
+  TOOL_ERROR_TYPE_EXECUTION    = 1;
+  TOOL_ERROR_TYPE_TIMEOUT      = 2;
+  TOOL_ERROR_TYPE_VALIDATION   = 3;
+  TOOL_ERROR_TYPE_UNKNOWN_TOOL = 4;
+}
+
+message ToolMessage {
+  string content                    = 1;
+  string tool_call_id               = 2;
+  string name                       = 3;
+  optional string error             = 4;
+  optional ToolErrorType error_type = 5;
+}
+
+// Union of all message types — used for full conversation history.
+message Message {
+  oneof kind {
+    SystemMessage    system    = 1;
+    UserMessage      user      = 2;
+    AssistantMessage assistant = 3;
+    ToolMessage      tool      = 4;
+  }
+}
+
+message MessageList {
+  repeated Message messages = 1;
+}
+
+// ═══════════════════════════════════════════
+// Guardrail types
+// ═══════════════════════════════════════════
+
+enum GuardrailPhase {
+  GUARDRAIL_PHASE_UNSPECIFIED = 0;
+  GUARDRAIL_PHASE_BEFORE      = 1;
+  GUARDRAIL_PHASE_AFTER       = 2;
+}
+
+message GuardrailTripwire {
+  string         reason         = 1;
+  string         guardrail_name = 2;
+  GuardrailPhase phase          = 3;
+  string         metadata_json  = 4;
+}
+
+message GuardrailModification {
+  string         guardrail_name  = 1;
+  GuardrailPhase phase           = 2;
+  repeated int32 message_indices = 3;
+}
+
+// ═══════════════════════════════════════════
+// Run identification
+// ═══════════════════════════════════════════
+
+// Returned immediately by RifferAgent.StartRun / ResumeRun.
+message RunHandle {
+  string run_id = 1; // opaque identifier for this agent run
+}
+
+// ═══════════════════════════════════════════
+// SERVICE 1: RifferAgent (agent server, non-blocking)
+// ═══════════════════════════════════════════
+
+message StartRunRequest {
+  string agent_identifier                  = 1;
+  oneof input {
+    string      prompt                     = 2;
+    MessageList messages                   = 3;
+  }
+  repeated ToolDefinition tool_definitions = 4;
+  string context_json                      = 5; // opaque, forwarded as tool_context
+  bool streaming                           = 6; // emit stream delta callbacks
+  string model_override                    = 7;
+  // Where the agent server should send callbacks.
+  // e.g. "client-host:50052" or "https://client-host/riffer/callback"
+  string callback_url                      = 8;
+  string identifier                        = 9;
+}
+
+message ResumeRunRequest {
+  string run_id                            = 1;
+  string agent_identifier                  = 2;
+  repeated Message messages                = 3; // full history for state reconstruction
+  repeated ToolDefinition tool_definitions = 4;
+  string context_json                      = 5;
+  bool streaming                           = 6;
+  string model_override                    = 7;
+  string callback_url                      = 8;
+  string identifier                        = 9;
+}
+
+message InterruptRunRequest {
+  string run_id          = 1;
+  optional string reason = 2;
+  string identifier      = 3;
+}
+
+message InterruptRunResponse {}
+
+message GetRunStatusRequest {
+  string run_id     = 1;
+  string identifier = 2;
+}
+
+enum RunStatus {
+  RUN_STATUS_UNSPECIFIED = 0;
+  RUN_STATUS_RUNNING     = 1;
+  RUN_STATUS_WAITING     = 2; // blocked on tool execution callback
+  RUN_STATUS_COMPLETED   = 3;
+  RUN_STATUS_INTERRUPTED = 4;
+  RUN_STATUS_FAILED      = 5;
+}
+
+message GetRunStatusResponse {
+  string    run_id = 1;
+  RunStatus status = 2;
+}
+
+message ListAgentsRequest {
+  string identifier = 1;
+}
+
+message AgentInfo {
+  string agent_identifier = 1;
+  string model            = 2;
+  bool   has_instructions = 3;
+}
+
+message ListAgentsResponse {
+  repeated AgentInfo agents = 1;
+}
+
+service RifferAgent {
+  // Start a new agent run. Returns immediately with a RunHandle.
+  // The agent loop runs in the background and calls RifferCallback
+  // methods on the client synchronously as events occur.
+  rpc StartRun(StartRunRequest) returns (RunHandle);
+
+  // Resume a previously interrupted run. Returns immediately.
+  // The server reconstructs state from the provided messages,
+  // handles pending tool calls, then re-enters the LLM loop.
+  rpc ResumeRun(ResumeRunRequest) returns (RunHandle);
+
+  // Interrupt a running agent loop. Maps to throw(:riffer_interrupt).
+  // The interrupt is delivered asynchronously; the current blocking
+  // callback will complete, then the loop stops.
+  rpc InterruptRun(InterruptRunRequest) returns (InterruptRunResponse);
+
+  // Poll run status (optional, since callbacks are the primary channel).
+  rpc GetRunStatus(GetRunStatusRequest) returns (GetRunStatusResponse);
+
+  // List registered agents.
+  rpc ListAgents(ListAgentsRequest) returns (ListAgentsResponse);
+}
+
+// ═══════════════════════════════════════════
+// SERVICE 2: RifferCallback (client-hosted, sync)
+//
+// The agent server calls these methods synchronously during
+// the agent loop. The loop blocks until each call returns.
+// ═══════════════════════════════════════════
+
+// ── OnMessage: fired whenever a message is added to the conversation ──
+// Maps directly to Riffer's on_message callback.
+
+message OnMessageRequest {
+  string  run_id     = 1;
+  Message message    = 2; // the new message (assistant or tool)
+  string  identifier = 3;
+}
+
+message OnMessageResponse {
+  // The client can request an interrupt by setting this flag.
+  // Equivalent to throw(:riffer_interrupt) inside an on_message callback.
+  bool            interrupt        = 1;
+  optional string interrupt_reason = 2;
+}
+
+// ── OnStreamEvent: fired for each streaming delta/done event ──
+// Only called when streaming=true in StartRunRequest.
+
+message StreamEvent {
+  oneof event {
+    TextDeltaEvent        text_delta        = 1;
+    TextDoneEvent         text_done         = 2;
+    ReasoningDeltaEvent   reasoning_delta   = 3;
+    ReasoningDoneEvent    reasoning_done    = 4;
+    ToolCallDeltaEvent    tool_call_delta   = 5;
+    ToolCallDoneEvent     tool_call_done    = 6;
+    TokenUsageDoneEvent   token_usage_done  = 7;
+  }
+}
+
+message TextDeltaEvent {
+  string content = 1;
+}
+
+message TextDoneEvent {
+  string content = 1;
+}
+
+message ReasoningDeltaEvent {
+  string content = 1;
+}
+
+message ReasoningDoneEvent {
+  string content = 1;
+}
+
+message ToolCallDeltaEvent {
+  string item_id         = 1;
+  optional string name   = 2;
+  string arguments_delta = 3;
+}
+
+message ToolCallDoneEvent {
+  string item_id   = 1;
+  string call_id   = 2;
+  string name      = 3;
+  string arguments = 4;
+}
+
+message TokenUsageDoneEvent {
+  TokenUsage token_usage = 1;
+}
+
+message OnStreamEventRequest {
+  string      run_id     = 1;
+  StreamEvent event      = 2;
+  string      identifier = 3;
+}
+
+message OnStreamEventResponse {}
+
+// ── ExecuteTool: server asks client to run a tool ──
+// The agent loop blocks until this returns with the result.
+
+message ExecuteToolRequest {
+  string run_id          = 1;
+  string tool_call_id    = 2; // correlates with ToolCall.id
+  string name            = 3;
+  string arguments       = 4; // JSON string
+  double timeout_seconds = 5;
+  string context_json    = 6; // forwarded tool_context
+  string identifier      = 7;
+}
+
+message ExecuteToolResponse {
+  string content                    = 1; // result content (text or JSON)
+  bool   success                    = 2;
+  optional string error_message     = 3;
+  optional ToolErrorType error_type = 4;
+}
+
+// ── OnGuardrailEvent: fired when a guardrail modifies or blocks ──
+
+message OnGuardrailEventRequest {
+  string run_id = 1;
+  oneof event {
+    GuardrailModification modification = 2;
+    GuardrailTripwire     tripwire     = 3;
+  }
+  string identifier = 4;
+}
+
+message OnGuardrailEventResponse {}
+
+// ── OnRunComplete: fired when the agent loop finishes ──
+// Delivers the final response with all accumulated state.
+
+message OnRunCompleteRequest {
+  string run_id                            = 1;
+  string content                           = 2;
+  bool   blocked                           = 3;
+  optional GuardrailTripwire tripwire      = 4;
+  bool   modified                          = 5;
+  repeated GuardrailModification modifications = 6;
+  bool   interrupted                       = 7;
+  optional string interrupt_reason         = 8;
+  optional TokenUsage token_usage          = 9; // cumulative
+  repeated Message messages                = 10; // full conversation history
+  string identifier                        = 11;
+}
+
+message OnRunCompleteResponse {}
+
+service RifferCallback {
+  // A new message was added to the conversation.
+  // Called for both assistant messages and tool result messages.
+  // The client can trigger an interrupt via the response.
+  rpc OnMessage(OnMessageRequest) returns (OnMessageResponse);
+
+  // A streaming event occurred during LLM generation.
+  // Only called when streaming=true.
+  rpc OnStreamEvent(OnStreamEventRequest) returns (OnStreamEventResponse);
+
+  // Execute a tool call. The agent loop blocks until this returns.
+  rpc ExecuteTool(ExecuteToolRequest) returns (ExecuteToolResponse);
+
+  // A guardrail modified or blocked the conversation.
+  rpc OnGuardrailEvent(OnGuardrailEventRequest) returns (OnGuardrailEventResponse);
+
+  // The agent run completed (or was interrupted/blocked).
+  // Delivers the final accumulated state.
+  rpc OnRunComplete(OnRunCompleteRequest) returns (OnRunCompleteResponse);
+}

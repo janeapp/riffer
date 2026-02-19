@@ -175,7 +175,7 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
-    @resolved_tools = nil
+    @tool_executor = nil
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -193,7 +193,7 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
-    @resolved_tools = nil
+    @tool_executor = nil
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -313,7 +313,7 @@ class Riffer::Agent
     @messages = messages.map { |item| convert_to_message_object(item) } if messages
     @tool_context = tool_context if tool_context
     @interrupted = false
-    @resolved_tools = nil
+    @tool_executor = nil
   end
 
   #: (Enumerator::Yielder, ?resume: bool) -> void
@@ -388,7 +388,7 @@ class Riffer::Agent
     provider_instance.generate_text(
       messages: @messages,
       model: @model_name,
-      tools: resolved_tools,
+      tools: tool_executor.tools_for_provider,
       **self.class.model_options
     )
   end
@@ -398,7 +398,7 @@ class Riffer::Agent
     provider_instance.stream_text(
       messages: @messages,
       model: @model_name,
-      tools: resolved_tools,
+      tools: tool_executor.tools_for_provider,
       **self.class.model_options
     )
   end
@@ -471,54 +471,22 @@ class Riffer::Agent
 
   #: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
   def execute_tool_call(tool_call)
-    tool_class = find_tool_class(tool_call.name)
-
-    if tool_class.nil?
-      return Riffer::Tools::Response.error(
-        "Unknown tool '#{tool_call.name}'",
-        type: :unknown_tool
-      )
-    end
-
-    tool_instance = tool_class.new
-    arguments = parse_tool_arguments(tool_call.arguments)
-
-    begin
-      tool_instance.call_with_validation(context: @tool_context, **arguments)
-    rescue Riffer::TimeoutError => e
-      Riffer::Tools::Response.error(e.message, type: :timeout_error)
-    rescue Riffer::ValidationError => e
-      Riffer::Tools::Response.error(e.message, type: :validation_error)
-    rescue => e
-      Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
-    end
+    tool_executor.execute(tool_call, context: @tool_context)
   end
 
-  #: () -> Array[singleton(Riffer::Tool)]
-  def resolved_tools
-    @resolved_tools ||= begin
+  #: () -> Riffer::Tools::Executor
+  def tool_executor
+    @tool_executor ||= begin
       config = self.class.uses_tools
-      return [] if config.nil?
-
-      if config.is_a?(Proc)
+      tool_classes = if config.nil?
+        []
+      elsif config.is_a?(Proc)
         (config.arity == 0) ? config.call : config.call(@tool_context)
       else
         config
       end
+      Riffer::Tools::LocalExecutor.new(tool_classes)
     end
-  end
-
-  #: (String) -> singleton(Riffer::Tool)?
-  def find_tool_class(name)
-    resolved_tools.find { |tool_class| tool_class.name == name }
-  end
-
-  #: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
-  def parse_tool_arguments(arguments)
-    return {} if arguments.nil? || arguments.empty?
-
-    args = arguments.is_a?(String) ? JSON.parse(arguments) : arguments
-    args.transform_keys(&:to_sym)
   end
 
   #: () -> String

@@ -1,0 +1,27 @@
+# Generated from lib/riffer/tools/local_executor.rb with RBS::Inline
+
+# Riffer::Tools::LocalExecutor executes tools in-process.
+#
+# Wraps Tool classes, resolves tool calls by name, validates parameters,
+# and invokes the tool with timeout handling. This is the default executor
+# used by Riffer::Agent.
+#
+# See Riffer::Tools::Executor.
+class Riffer::Tools::LocalExecutor < Riffer::Tools::Executor
+  # : (Array[singleton(Riffer::Tool)]) -> void
+  def initialize: (Array[singleton(Riffer::Tool)]) -> void
+
+  # : () -> Array[singleton(Riffer::Tool)]
+  def tools_for_provider: () -> Array[singleton(Riffer::Tool)]
+
+  # : (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
+  def execute: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
+
+  private
+
+  # : (String) -> singleton(Riffer::Tool)?
+  def find_tool_class: (String) -> singleton(Riffer::Tool)?
+
+  # : ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
+  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
+end

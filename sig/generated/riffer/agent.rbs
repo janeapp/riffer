@@ -190,14 +190,8 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
   def execute_tool_call: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
-  # : () -> Array[singleton(Riffer::Tool)]
-  def resolved_tools: () -> Array[singleton(Riffer::Tool)]
-
-  # : (String) -> singleton(Riffer::Tool)?
-  def find_tool_class: (String) -> singleton(Riffer::Tool)?
-
-  # : ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
-  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
+  # : () -> Riffer::Tools::Executor
+  def tool_executor: () -> Riffer::Tools::Executor
 
   # : () -> String
   def extract_final_response: () -> String
