@@ -121,6 +121,30 @@ message GuardrailModification {
   repeated int32 message_indices = 3;
 }
 
+// Declarative guardrail descriptor.
+// The server instantiates the named guardrail with the given phase and options.
+message GuardrailDefinition {
+  string         name         = 1; // Riffer::Guardrail subclass name
+  GuardrailPhase phase        = 2; // :before, :after (AROUND registers both)
+  string         options_json = 3; // arbitrary guardrail options (JSON)
+}
+
+// ═══════════════════════════════════════════
+// Agent definition (client → agent server)
+// ═══════════════════════════════════════════
+
+// Full agent configuration sent by the client.
+// The server uses this to construct and configure the agent
+// when the agent class is not available on the server side.
+message AgentDefinition {
+  string identifier                        = 1; // unique agent identifier
+  string model                             = 2; // "provider/model" format (e.g. "openai/gpt-4o")
+  optional string instructions             = 3; // system prompt
+  string model_options_json                = 4; // JSON for model options (temperature, thinking, etc.)
+  string provider_options_json             = 5; // JSON for provider client options
+  repeated GuardrailDefinition guardrails  = 6;
+}
+
 // ═══════════════════════════════════════════
 // Run identification
 // ═══════════════════════════════════════════
@@ -148,6 +172,7 @@ message StartRunRequest {
   // e.g. "client-host:50052" or "https://client-host/riffer/callback"
   string callback_url                      = 8;
   string identifier                        = 9;
+  AgentDefinition agent                    = 10;
 }
 
 message ResumeRunRequest {
@@ -160,6 +185,7 @@ message ResumeRunRequest {
   string model_override                    = 7;
   string callback_url                      = 8;
   string identifier                        = 9;
+  AgentDefinition agent                    = 10;
 }
 
 message InterruptRunRequest {
@@ -325,6 +351,37 @@ message ExecuteToolResponse {
   optional ToolErrorType error_type = 4;
 }
 
+// ── ExecuteGuardrail: server asks client to run a guardrail ──
+// The agent loop blocks until this returns with the outcome.
+// This allows guardrail logic to live entirely in the client codebase,
+// mirroring how ExecuteTool keeps tool logic client-side.
+
+enum GuardrailAction {
+  GUARDRAIL_ACTION_UNSPECIFIED = 0;
+  GUARDRAIL_ACTION_PASS        = 1; // allow execution to continue unchanged
+  GUARDRAIL_ACTION_TRANSFORM   = 2; // modify messages and continue
+  GUARDRAIL_ACTION_BLOCK       = 3; // stop execution (tripwire)
+}
+
+message ExecuteGuardrailRequest {
+  string           run_id         = 1;
+  string           guardrail_name = 2;
+  GuardrailPhase   phase          = 3;
+  repeated Message messages       = 4; // conversation messages to validate/transform
+  string           options_json   = 5; // guardrail options from GuardrailDefinition
+  string           identifier     = 6;
+}
+
+message ExecuteGuardrailResponse {
+  GuardrailAction action                   = 1;
+  // TRANSFORM: the full modified message list
+  repeated Message messages                = 2;
+  repeated int32   modified_message_indices = 3;
+  // BLOCK: tripwire details
+  optional string  block_reason            = 4;
+  optional string  metadata_json           = 5;
+}
+
 // ── OnGuardrailEvent: fired when a guardrail modifies or blocks ──
 
 message OnGuardrailEventRequest {
@@ -369,6 +426,10 @@ service RifferCallback {
 
   // Execute a tool call. The agent loop blocks until this returns.
   rpc ExecuteTool(ExecuteToolRequest) returns (ExecuteToolResponse);
+
+  // Execute a guardrail. The agent loop blocks until this returns.
+  // The client runs the guardrail logic and returns pass/transform/block.
+  rpc ExecuteGuardrail(ExecuteGuardrailRequest) returns (ExecuteGuardrailResponse);
 
   // A guardrail modified or blocked the conversation.
   rpc OnGuardrailEvent(OnGuardrailEventRequest) returns (OnGuardrailEventResponse);
