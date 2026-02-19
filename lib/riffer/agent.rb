@@ -195,8 +195,7 @@ class Riffer::Agent
   def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
-    @resolved_model = nil
-    @provider_instance = nil if @model_config.is_a?(Proc)
+    clear_resolved_model
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -215,8 +214,7 @@ class Riffer::Agent
   def stream(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
-    @resolved_model = nil
-    @provider_instance = nil if @model_config.is_a?(Proc)
+    clear_resolved_model
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -342,8 +340,7 @@ class Riffer::Agent
     @tool_context = tool_context if tool_context
     @interrupted = false
     @resolved_tools = nil
-    @resolved_model = nil
-    @provider_instance = nil if @model_config.is_a?(Proc)
+    clear_resolved_model
   end
 
   #: (Enumerator::Yielder, ?resume: bool) -> void
@@ -420,7 +417,7 @@ class Riffer::Agent
 
   #: () -> Riffer::Messages::Assistant
   def call_llm
-    resolved_model
+    resolve_model
     provider_instance.generate_text(
       messages: @messages,
       model: @model_name,
@@ -431,7 +428,7 @@ class Riffer::Agent
 
   #: () -> Enumerator[Riffer::StreamEvents::Base, void]
   def call_llm_stream
-    resolved_model
+    resolve_model
     provider_instance.stream_text(
       messages: @messages,
       model: @model_name,
@@ -540,17 +537,22 @@ class Riffer::Agent
     @model_name = model_name
   end
 
+  #: () -> void
+  def clear_resolved_model
+    @resolved_model = nil
+    @provider_instance = nil if @model_config.is_a?(Proc)
+  end
+
+  attr_reader :resolved_model #: String?
+
   #: () -> String
-  def resolved_model
-    @resolved_model ||= begin
-      config = @model_config
-      if config.is_a?(Proc)
-        model_string = (config.arity == 0) ? config.call : config.call(@tool_context)
-        parse_model_string!(model_string)
-        model_string
-      else
-        config
-      end
+  def resolve_model
+    @resolved_model ||= if @model_config.is_a?(Proc)
+      model_string = (@model_config.arity == 0) ? @model_config.call : @model_config.call(@tool_context)
+      parse_model_string!(model_string)
+      model_string
+    else
+      @model_config
     end
   end
 

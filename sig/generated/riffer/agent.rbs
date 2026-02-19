@@ -205,8 +205,13 @@ class Riffer::Agent
   # : (untyped) -> void
   def parse_model_string!: (untyped) -> void
 
+  # : () -> void
+  def clear_resolved_model: () -> void
+
+  attr_reader resolved_model: String?
+
   # : () -> String
-  def resolved_model: () -> String
+  def resolve_model: () -> String
 
   # : () -> Array[singleton(Riffer::Tool)]
   def resolved_tools: () -> Array[singleton(Riffer::Tool)]
