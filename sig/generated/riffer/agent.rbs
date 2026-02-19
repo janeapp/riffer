@@ -30,10 +30,10 @@ class Riffer::Agent
   # : (?String?) -> String
   def self.identifier: (?String?) -> String
 
-  # Gets or sets the model string (e.g., "openai/gpt-4o").
+  # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
   #
-  # : (?String?) -> String?
-  def self.model: (?String?) -> String?
+  # : (?(String | Proc)?) -> (String | Proc)?
+  def self.model: (?(String | Proc)?) -> (String | Proc)?
 
   # Gets or sets the agent instructions.
   #
@@ -201,6 +201,12 @@ class Riffer::Agent
 
   # : (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
   def execute_tool_call: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
+
+  # : (untyped) -> void
+  def parse_model_string!: (untyped) -> void
+
+  # : () -> String
+  def resolved_model: () -> String
 
   # : () -> Array[singleton(Riffer::Tool)]
   def resolved_tools: () -> Array[singleton(Riffer::Tool)]
