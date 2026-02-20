@@ -4,7 +4,7 @@
 #
 # Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
-  WEB_SEARCH_TOOL_TYPE: ::String
+  WEB_SEARCH_TOOL_TYPE: String
 
   # Initializes the OpenAI provider.
   #

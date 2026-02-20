@@ -7,7 +7,7 @@
 #
 # See https://github.com/anthropics/anthropic-sdk-ruby
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
-  WEB_SEARCH_TOOL_TYPE = "web_search_20250305"
+  WEB_SEARCH_TOOL_TYPE = "web_search_20250305" #: String
 
   # Initializes the Anthropic provider.
   #
