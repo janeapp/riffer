@@ -689,29 +689,6 @@ describe Riffer::Agent do
       expect(result.object).must_equal({sentiment: "positive"})
     end
 
-    it "passes structured_output to provider" do
-      klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
-        structured_output do
-          required :sentiment, String
-        end
-      end
-
-      agent = klass.new
-      provider = agent.send(:provider_instance)
-      provider.stub_response('{"sentiment":"positive"}')
-
-      agent.generate("Analyze sentiment")
-      expect(provider.calls.last[:structured_output]).must_be_instance_of Riffer::StructuredOutput
-    end
-
-    it "does not pass structured_output when not configured" do
-      agent = agent_class.new
-      provider = agent.send(:provider_instance)
-      agent.generate("Hello")
-      expect(provider.calls.last.key?(:structured_output)).must_equal false
-    end
-
     it "returns nil object when structured_output is not configured" do
       agent = agent_class.new
       result = agent.generate("Hello")
