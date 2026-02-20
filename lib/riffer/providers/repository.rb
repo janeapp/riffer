@@ -8,7 +8,7 @@ class Riffer::Providers::Repository
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     anthropic: -> { Riffer::Providers::Anthropic },
     openai: -> { Riffer::Providers::OpenAI },
-    test: -> { Riffer::Providers::Test }
+    mock: -> { Riffer::Providers::Mock }
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Finds a provider class by identifier.

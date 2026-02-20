@@ -62,7 +62,7 @@ Providers are adapters that connect to LLM services. Riffer supports:
 
 - **OpenAI** - GPT models via the OpenAI API
 - **Amazon Bedrock** - Claude and other models via AWS Bedrock
-- **Test** - Mock provider for testing
+- **Mock** - Mock provider for testing
 
 See [Providers](providers/01_PROVIDERS.md) for details.
 

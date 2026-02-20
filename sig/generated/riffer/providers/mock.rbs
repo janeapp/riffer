@@ -1,13 +1,13 @@
-# Generated from lib/riffer/providers/test.rb with RBS::Inline
+# Generated from lib/riffer/providers/mock.rb with RBS::Inline
 
-# Test provider for mocking LLM responses in tests.
+# Mock provider for mocking LLM responses in tests.
 #
 # No external gems required.
-class Riffer::Providers::Test < Riffer::Providers::Base
+class Riffer::Providers::Mock < Riffer::Providers::Base
   # Array of recorded method calls for assertions.
   attr_reader calls: Array[Hash[Symbol, untyped]]
 
-  # Initializes the test provider.
+  # Initializes the mock provider.
   #
   # : (**untyped) -> void
   def initialize: (**untyped) -> void

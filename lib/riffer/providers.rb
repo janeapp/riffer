@@ -6,6 +6,6 @@
 # Providers connect Riffer to LLM services:
 # - Riffer::Providers::OpenAI - OpenAI GPT models
 # - Riffer::Providers::AmazonBedrock - AWS Bedrock models
-# - Riffer::Providers::Test - Mock provider for testing
+# - Riffer::Providers::Mock - Mock provider for testing
 module Riffer::Providers
 end

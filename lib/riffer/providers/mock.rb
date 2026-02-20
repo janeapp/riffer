@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Test provider for mocking LLM responses in tests.
+# Mock provider for mocking LLM responses in tests.
 #
 # No external gems required.
-class Riffer::Providers::Test < Riffer::Providers::Base
+class Riffer::Providers::Mock < Riffer::Providers::Base
   # Array of recorded method calls for assertions.
   attr_reader :calls #: Array[Hash[Symbol, untyped]]
 
-  # Initializes the test provider.
+  # Initializes the mock provider.
   #
   #: (**untyped) -> void
   def initialize(**options)
@@ -30,8 +30,8 @@ class Riffer::Providers::Test < Riffer::Providers::Base
   def stub_response(content, tool_calls: [], token_usage: nil)
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
       Riffer::Messages::Assistant::ToolCall.new(
-        id: tc[:id] || "test_id_#{idx}",
-        call_id: tc[:call_id] || tc[:id] || "test_call_#{idx}",
+        id: tc[:id] || "mock_id_#{idx}",
+        call_id: tc[:call_id] || tc[:id] || "mock_call_#{idx}",
         name: tc[:name],
         arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
       )
@@ -90,10 +90,10 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
     if web_search
       yielder << Riffer::StreamEvents::WebSearchStatus.new("in_progress")
-      yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: "test search query")
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: "mock search query")
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: "https://example.com")
       yielder << Riffer::StreamEvents::WebSearchStatus.new("completed")
-      yielder << Riffer::StreamEvents::WebSearchDone.new("test search query", sources: [{title: "Example", url: "https://example.com"}])
+      yielder << Riffer::StreamEvents::WebSearchDone.new("mock search query", sources: [{title: "Example", url: "https://example.com"}])
     end
 
     unless full_content.empty?
@@ -130,7 +130,7 @@ class Riffer::Providers::Test < Riffer::Providers::Base
       @current_index += 1
       response
     else
-      {role: "assistant", content: "Test response"}
+      {role: "assistant", content: "Mock response"}
     end
   end
 end

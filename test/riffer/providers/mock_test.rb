@@ -2,8 +2,8 @@
 
 require "test_helper"
 
-describe Riffer::Providers::Test do
-  let(:provider) { Riffer::Providers::Test.new }
+describe Riffer::Providers::Mock do
+  let(:provider) { Riffer::Providers::Mock.new }
 
   describe "#initialize" do
     it "initializes calls to empty array" do
@@ -33,7 +33,7 @@ describe Riffer::Providers::Test do
 
     it "returns default content when no stubbed response" do
       result = provider.generate_text(prompt: "Hello")
-      expect(result.content).must_equal "Test response"
+      expect(result.content).must_equal "Mock response"
     end
 
     it "stores normalized messages in calls" do
@@ -89,13 +89,13 @@ describe Riffer::Providers::Test do
       it "formats tool_calls with generated id" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first.id).must_equal "test_id_0"
+        expect(result.tool_calls.first.id).must_equal "mock_id_0"
       end
 
       it "formats tool_calls with generated call_id" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
         result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first.call_id).must_equal "test_call_0"
+        expect(result.tool_calls.first.call_id).must_equal "mock_call_0"
       end
 
       it "preserves the tool name" do
@@ -235,7 +235,7 @@ describe Riffer::Providers::Test do
         provider.stub_response("Only response")
         provider.generate_text(prompt: "First")
         result = provider.generate_text(prompt: "Second")
-        expect(result.content).must_equal "Test response"
+        expect(result.content).must_equal "Mock response"
       end
 
       it "first response has tool calls" do
@@ -268,7 +268,7 @@ describe Riffer::Providers::Test do
         provider.stub_response("Stubbed")
         provider.clear_stubs
         result = provider.generate_text(prompt: "Hello")
-        expect(result.content).must_equal "Test response"
+        expect(result.content).must_equal "Mock response"
       end
     end
   end

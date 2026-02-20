@@ -24,12 +24,12 @@ describe Riffer::Providers::Repository do
       expect(result).must_equal Riffer::Providers::AmazonBedrock
     end
 
-    it "returns the Test provider class for :test symbol" do
-      expect(Riffer::Providers::Repository.find(:test)).must_equal Riffer::Providers::Test
+    it "returns the Mock provider class for :mock symbol" do
+      expect(Riffer::Providers::Repository.find(:mock)).must_equal Riffer::Providers::Mock
     end
 
-    it "returns the Test provider class for 'test' string" do
-      expect(Riffer::Providers::Repository.find("test")).must_equal Riffer::Providers::Test
+    it "returns the Mock provider class for 'mock' string" do
+      expect(Riffer::Providers::Repository.find("mock")).must_equal Riffer::Providers::Mock
     end
 
     it "returns nil for unknown identifiers" do

@@ -62,8 +62,8 @@ describe Riffer::Evals::Profile do
 
   describe "Agent integration" do
     before do
-      # Ensure test provider is registered
-      Riffer::Providers::Repository.register("test", Riffer::Providers::Test) unless Riffer::Providers::Repository.find("test")
+      # Ensure mock provider is registered
+      Riffer::Providers::Repository.register("mock", Riffer::Providers::Mock) unless Riffer::Providers::Repository.find("mock")
     end
 
     it "adds run_eval method when included in Agent" do
@@ -77,7 +77,7 @@ describe Riffer::Evals::Profile do
       end
 
       agent_class = Class.new(Riffer::Agent) do
-        model "test/test-model"
+        model "mock/mock-model"
         instructions "You are a helpful assistant."
       end
 
@@ -97,18 +97,18 @@ describe Riffer::Evals::Profile do
       end
 
       agent_class = Class.new(Riffer::Agent) do
-        model "test/test-model"
+        model "mock/mock-model"
         instructions "You are a helpful assistant."
       end
 
       agent_class.include(profile_module)
 
-      # The test provider returns "Test response" by default
+      # The test provider returns "Mock response" by default
       result = agent_class.run_eval(input: "What is Ruby?")
 
       expect(result).must_be_instance_of Riffer::Evals::RunResult
       expect(result.input).must_equal "What is Ruby?"
-      expect(result.output).must_equal "Test response"
+      expect(result.output).must_equal "Mock response"
     end
 
     it "accepts a messages array as input" do
@@ -129,7 +129,7 @@ describe Riffer::Evals::Profile do
       end
 
       agent_class = Class.new(Riffer::Agent) do
-        model "test/test-model"
+        model "mock/mock-model"
         instructions "You are a helpful assistant."
       end
 
@@ -145,7 +145,7 @@ describe Riffer::Evals::Profile do
 
       expect(result).must_be_instance_of Riffer::Evals::RunResult
       expect(result.input).must_equal messages
-      expect(result.output).must_equal "Test response"
+      expect(result.output).must_equal "Mock response"
     end
   end
 

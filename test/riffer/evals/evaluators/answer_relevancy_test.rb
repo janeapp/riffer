@@ -20,10 +20,10 @@ describe Riffer::Evals::Evaluators::AnswerRelevancy do
     end
   end
 
-  describe "integration with test provider" do
+  describe "integration with mock provider" do
     it "evaluates and returns a result" do
       original = Riffer.config.evals.judge_model
-      Riffer.config.evals.judge_model = "test/test-model"
+      Riffer.config.evals.judge_model = "mock/mock-model"
 
       evaluator = Riffer::Evals::Evaluators::AnswerRelevancy.new
       provider = evaluator.send(:judge).send(:provider_instance)

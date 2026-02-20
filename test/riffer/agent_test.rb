@@ -6,7 +6,7 @@ describe Riffer::Agent do
   let(:agent_class) do
     Class.new(Riffer::Agent) do
       identifier "test-agent"
-      model "test/riffer-1"
+      model "mock/riffer-1"
       instructions "You are a helpful assistant."
     end
   end
@@ -28,7 +28,7 @@ describe Riffer::Agent do
 
   describe ".model" do
     it "sets the model" do
-      expect(agent_class.model).must_equal "test/riffer-1"
+      expect(agent_class.model).must_equal "mock/riffer-1"
     end
 
     it "raises error when model is not a string" do
@@ -43,7 +43,7 @@ describe Riffer::Agent do
 
     it "accepts a Proc" do
       agent = Class.new(Riffer::Agent) do
-        model -> { "test/riffer-1" }
+        model -> { "mock/riffer-1" }
       end
       expect(agent.model).must_be_instance_of Proc
     end
@@ -128,7 +128,7 @@ describe Riffer::Agent do
       let(:options_agent_class) do
         Class.new(Riffer::Agent) do
           identifier "options-agent"
-          model "test/riffer-1"
+          model "mock/riffer-1"
           instructions "You are a helpful assistant."
           model_options reasoning: "medium", temperature: 0.7
         end
@@ -162,7 +162,7 @@ describe Riffer::Agent do
       it "runs unlimited steps by default" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps Float::INFINITY
           uses_tools [tc]
         end
@@ -179,7 +179,7 @@ describe Riffer::Agent do
       it "limits LLM calls when max_steps is set" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 2
           uses_tools [tc]
         end
@@ -196,7 +196,7 @@ describe Riffer::Agent do
       it "returns last assistant response content when limit is reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
         end
@@ -212,7 +212,7 @@ describe Riffer::Agent do
       it "sets interrupted? to true when limit is reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
         end
@@ -228,7 +228,7 @@ describe Riffer::Agent do
       it "sets interrupt_reason to :max_steps when limit is reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
         end
@@ -242,7 +242,7 @@ describe Riffer::Agent do
       end
     end
 
-    describe "with test provider" do
+    describe "with mock provider" do
       it "returns a Response object" do
         agent = agent_class.new
         result = agent.generate("What is the weather?")
@@ -344,7 +344,7 @@ describe Riffer::Agent do
     describe "without instructions" do
       let(:no_instructions_agent_class) do
         Class.new(Riffer::Agent) do
-          model "test/gpt-4o"
+          model "mock/gpt-4o"
         end
       end
 
@@ -374,7 +374,7 @@ describe Riffer::Agent do
       let(:options_agent_class) do
         Class.new(Riffer::Agent) do
           identifier "options-stream-agent"
-          model "test/riffer-1"
+          model "mock/riffer-1"
           instructions "You are a helpful assistant."
           model_options reasoning: "high", temperature: 0.5
         end
@@ -408,7 +408,7 @@ describe Riffer::Agent do
       it "limits LLM calls when max_steps is set" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 2
           uses_tools [tc]
         end
@@ -425,7 +425,7 @@ describe Riffer::Agent do
       it "emits Interrupt event with :max_steps reason when limit is reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
         end
@@ -443,7 +443,7 @@ describe Riffer::Agent do
       it "does not emit Interrupt event when limit is not reached" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           max_steps 10
           uses_tools [tc]
         end
@@ -459,7 +459,7 @@ describe Riffer::Agent do
       end
     end
 
-    describe "with test provider" do
+    describe "with mock provider" do
       it "returns an enumerator" do
         agent = agent_class.new
         result = agent.stream("What is the weather?")
@@ -561,7 +561,7 @@ describe Riffer::Agent do
     describe "without instructions" do
       let(:no_instructions_agent_class) do
         Class.new(Riffer::Agent) do
-          model "test/gpt-4o"
+          model "mock/gpt-4o"
         end
       end
 
@@ -595,7 +595,7 @@ describe Riffer::Agent do
       params = Riffer::Params.new
       params.required(:sentiment, String)
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       klass.structured_output(params)
       expect(klass.structured_output).must_equal params
@@ -603,7 +603,7 @@ describe Riffer::Agent do
 
     it "stores Params from block DSL" do
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         structured_output do
           required :sentiment, String, description: "The sentiment"
           optional :score, Float
@@ -615,7 +615,7 @@ describe Riffer::Agent do
 
     it "raises ArgumentError for non-Params argument" do
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       error = expect { klass.structured_output({sentiment: String}) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/structured_output must be a Riffer::Params/)
@@ -625,7 +625,7 @@ describe Riffer::Agent do
   describe "#generate with structured_output" do
     it "returns Response with parsed structured_output from class-level schema" do
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         structured_output do
           required :sentiment, String
           required :score, Float
@@ -642,7 +642,7 @@ describe Riffer::Agent do
 
     it "sets structured_output to nil when LLM returns invalid JSON" do
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         structured_output do
           required :sentiment, String
         end
@@ -658,7 +658,7 @@ describe Riffer::Agent do
 
     it "preserves raw content when structured_output parsing fails" do
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         structured_output do
           required :sentiment, String
         end
@@ -677,7 +677,7 @@ describe Riffer::Agent do
       params.required(:sentiment, String)
 
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         structured_output params
       end
 
@@ -699,7 +699,7 @@ describe Riffer::Agent do
   describe "#stream with structured_output" do
     it "raises ArgumentError when class-level structured_output is configured" do
       klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         structured_output do
           required :sentiment, String
         end
@@ -721,7 +721,7 @@ describe Riffer::Agent do
     it "raises error when instructions is empty string" do
       error = expect do
         Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           instructions "   "
         end
       end.must_raise(Riffer::ArgumentError)
@@ -733,7 +733,7 @@ describe Riffer::Agent do
     before do
       @test_agent_class = Class.new(Riffer::Agent) do
         identifier "findable-agent"
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
     end
 
@@ -752,12 +752,12 @@ describe Riffer::Agent do
     before do
       @agent1 = Class.new(Riffer::Agent) do
         identifier "all-test-agent-1"
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
 
       @agent2 = Class.new(Riffer::Agent) do
         identifier "all-test-agent-2"
-        model "test/riffer-2"
+        model "mock/riffer-2"
       end
     end
 
@@ -798,7 +798,7 @@ describe Riffer::Agent do
       tool = context_tool
       received_context = nil
       custom_agent_class = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools ->(ctx) {
           received_context = ctx
           [tool]
@@ -836,7 +836,7 @@ describe Riffer::Agent do
       tool = context_tool
       received_context = nil
       custom_agent_class = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools ->(ctx) {
           received_context = ctx
           [tool]
@@ -866,7 +866,7 @@ describe Riffer::Agent do
     let(:agent_with_tools_class) do
       tool_class = weather_tool_class
       Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools [tool_class]
       end
     end
@@ -882,7 +882,7 @@ describe Riffer::Agent do
     it "accepts a lambda" do
       tool_class = weather_tool_class
       agent = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools -> { [tool_class] }
       end
       expect(agent.uses_tools).must_be_instance_of Proc
@@ -892,7 +892,7 @@ describe Riffer::Agent do
   describe "dynamic model selection" do
     it "resolves lambda for generate" do
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model -> { "test/riffer-1" }
+        model -> { "mock/riffer-1" }
       end
 
       result = dynamic_agent_class.generate("Hello")
@@ -901,7 +901,7 @@ describe Riffer::Agent do
 
     it "resolves lambda for stream" do
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model -> { "test/riffer-1" }
+        model -> { "mock/riffer-1" }
       end
 
       events = dynamic_agent_class.stream("Hello").to_a
@@ -913,7 +913,7 @@ describe Riffer::Agent do
       dynamic_agent_class = Class.new(Riffer::Agent) do
         model ->(ctx) {
           received_context = ctx
-          "test/riffer-1"
+          "mock/riffer-1"
         }
       end
 
@@ -926,7 +926,7 @@ describe Riffer::Agent do
       dynamic_agent_class = Class.new(Riffer::Agent) do
         model -> {
           called = true
-          "test/riffer-1"
+          "mock/riffer-1"
         }
       end
 
@@ -936,13 +936,13 @@ describe Riffer::Agent do
 
     it "uses resolved model for provider lookup" do
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model -> { "test/riffer-1" }
+        model -> { "mock/riffer-1" }
       end
 
       agent = dynamic_agent_class.new
       agent.generate("Hello")
       provider = agent.send(:provider_instance)
-      expect(provider).must_be_instance_of Riffer::Providers::Test
+      expect(provider).must_be_instance_of Riffer::Providers::Mock
     end
 
     it "re-evaluates lambda for each generate call" do
@@ -950,7 +950,7 @@ describe Riffer::Agent do
       dynamic_agent_class = Class.new(Riffer::Agent) do
         model -> {
           call_count += 1
-          "test/riffer-1"
+          "mock/riffer-1"
         }
       end
 
@@ -964,7 +964,7 @@ describe Riffer::Agent do
       models_used = []
       dynamic_agent_class = Class.new(Riffer::Agent) do
         model ->(ctx) {
-          model = ctx&.dig(:premium) ? "test/riffer-premium" : "test/riffer-basic"
+          model = ctx&.dig(:premium) ? "mock/riffer-premium" : "mock/riffer-basic"
           models_used << model
           model
         }
@@ -973,12 +973,12 @@ describe Riffer::Agent do
       agent = dynamic_agent_class.new
       agent.generate("Hello", tool_context: {premium: false})
       agent.generate("Hello", tool_context: {premium: true})
-      expect(models_used).must_equal ["test/riffer-basic", "test/riffer-premium"]
+      expect(models_used).must_equal ["mock/riffer-basic", "mock/riffer-premium"]
     end
 
     it "passes resolved model name to provider" do
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model -> { "test/my-model" }
+        model -> { "mock/my-model" }
       end
 
       agent = dynamic_agent_class.new
@@ -1010,7 +1010,7 @@ describe Riffer::Agent do
 
     it "static string still works" do
       static_agent_class = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
 
       result = static_agent_class.generate("Hello")
@@ -1052,7 +1052,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1073,7 +1073,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1094,7 +1094,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1114,7 +1114,7 @@ describe Riffer::Agent do
         tool_class = context_tool_class
         tool_class.identifier("context_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1133,7 +1133,7 @@ describe Riffer::Agent do
 
       it "returns error message for unknown tool" do
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools []
         end
 
@@ -1152,7 +1152,7 @@ describe Riffer::Agent do
 
       it "sets error attributes for unknown tool" do
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools []
         end
 
@@ -1175,7 +1175,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1196,7 +1196,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1218,7 +1218,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1241,7 +1241,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1256,7 +1256,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1273,7 +1273,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1294,7 +1294,7 @@ describe Riffer::Agent do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1315,7 +1315,7 @@ describe Riffer::Agent do
         tool_class = context_tool_class
         tool_class.identifier("context_tool")
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1361,7 +1361,7 @@ describe Riffer::Agent do
         tool_class.identifier("slow_tool")
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1383,7 +1383,7 @@ describe Riffer::Agent do
         tool_class.identifier("slow_tool")
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1406,7 +1406,7 @@ describe Riffer::Agent do
         tool_class.identifier("slow_tool")
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1429,7 +1429,7 @@ describe Riffer::Agent do
         tool_class.identifier("fast_tool")
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tool_class]
         end
 
@@ -1455,7 +1455,7 @@ describe Riffer::Agent do
         call_count = 0
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools -> {
             call_count += 1
             [tool_class]
@@ -1474,7 +1474,7 @@ describe Riffer::Agent do
         received_context = nil
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools ->(context) {
             received_context = context
             [tool_class]
@@ -1502,7 +1502,7 @@ describe Riffer::Agent do
         basic_tool_class.identifier("weather_tool")
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools ->(context) {
             tools = [basic_tool_class]
             tools << admin_tool_class if context&.dig(:admin)
@@ -1532,7 +1532,7 @@ describe Riffer::Agent do
         contexts_received = []
 
         agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools ->(context) {
             contexts_received << context
             [tool_class]
@@ -1623,7 +1623,7 @@ describe Riffer::Agent do
       let(:agent) do
         tc = tool_class
         agent_with_tools = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -1682,7 +1682,7 @@ describe Riffer::Agent do
       let(:tool_message) do
         tc = tool_class
         agent_with_tools = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -1752,7 +1752,7 @@ describe Riffer::Agent do
       it "stops tool execution on interrupt and resumes pending tools" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -1787,7 +1787,7 @@ describe Riffer::Agent do
       it "resumes all pending tools when interrupt fires on assistant callback" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -1929,7 +1929,7 @@ describe Riffer::Agent do
       it "completes tool loop after resume" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -2002,7 +2002,7 @@ describe Riffer::Agent do
 
         tc = context_tool
         custom_agent_class = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -2130,7 +2130,7 @@ describe Riffer::Agent do
 
       tc = tool_class
       custom_agent_class = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools [tc]
       end
 
@@ -2159,7 +2159,7 @@ describe Riffer::Agent do
 
       tc = tool_class
       custom_agent_class = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools [tc]
       end
 
@@ -2257,7 +2257,7 @@ describe Riffer::Agent do
       let(:agent) do
         tc = tool_class
         agent_with_tools = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           uses_tools [tc]
         end
 
@@ -2318,7 +2318,7 @@ describe Riffer::Agent do
 
       tc = tool_class
       agent_with_tools = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools [tc]
       end
 
@@ -2394,7 +2394,7 @@ describe Riffer::Agent do
 
       tc = tool_class
       agent_with_tools = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
         uses_tools [tc]
       end
 
@@ -2432,7 +2432,7 @@ describe Riffer::Agent do
     it "raises error for invalid phase" do
       error = expect do
         Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           guardrail :invalid, with: Riffer::Guardrail
         end
       end.must_raise(Riffer::ArgumentError)
@@ -2442,7 +2442,7 @@ describe Riffer::Agent do
     it "raises error for non-guardrail class" do
       error = expect do
         Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
           guardrail :before, with: String
         end
       end.must_raise(Riffer::ArgumentError)
@@ -2452,7 +2452,7 @@ describe Riffer::Agent do
     it "registers before guardrails" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       agent.guardrail(:before, with: gr)
       configs = agent.guardrails_for(:before)
@@ -2462,7 +2462,7 @@ describe Riffer::Agent do
     it "registers after guardrails" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       agent.guardrail(:after, with: gr)
       configs = agent.guardrails_for(:after)
@@ -2472,7 +2472,7 @@ describe Riffer::Agent do
     it "registers around guardrails for both phases" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       agent.guardrail(:around, with: gr)
       configs = agent.guardrails_for(:before)
@@ -2482,7 +2482,7 @@ describe Riffer::Agent do
     it "registers around guardrails for output" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       agent.guardrail(:around, with: gr)
       configs = agent.guardrails_for(:after)
@@ -2492,7 +2492,7 @@ describe Riffer::Agent do
     it "stores options in config" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
+        model "mock/riffer-1"
       end
       agent.guardrail(:before, with: gr, foo: :bar)
       config = agent.guardrails_for(:before).first
@@ -2555,7 +2555,7 @@ describe Riffer::Agent do
       let(:agent_with_blocking_input) do
         gr = block_input_guardrail_class
         klass = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
         end
         klass.guardrail(:before, with: gr)
         klass
@@ -2596,7 +2596,7 @@ describe Riffer::Agent do
       let(:agent_with_blocking_output) do
         gr = block_output_guardrail_class
         klass = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
         end
         klass.guardrail(:after, with: gr)
         klass
@@ -2622,7 +2622,7 @@ describe Riffer::Agent do
       let(:agent_with_transform) do
         gr = transform_guardrail_class
         klass = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
         end
         klass.guardrail(:around, with: gr)
         klass
@@ -2698,7 +2698,7 @@ describe Riffer::Agent do
       let(:agent_with_blocking_input) do
         gr = block_input_guardrail_class
         klass = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
         end
         klass.guardrail(:before, with: gr)
         klass
@@ -2727,7 +2727,7 @@ describe Riffer::Agent do
       let(:agent_with_blocking_output) do
         gr = block_output_guardrail_class
         klass = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
         end
         klass.guardrail(:after, with: gr)
         klass
@@ -2771,7 +2771,7 @@ describe Riffer::Agent do
       let(:agent_with_stream_transform) do
         gr = transform_guardrail_class
         klass = Class.new(Riffer::Agent) do
-          model "test/riffer-1"
+          model "mock/riffer-1"
         end
         klass.guardrail(:before, with: gr)
         klass

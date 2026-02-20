@@ -107,7 +107,7 @@ lib/
       amazon_bedrock.rb  # Amazon Bedrock provider
       anthropic.rb       # Anthropic provider
       repository.rb      # Provider registry
-      test.rb            # Test provider
+      mock.rb            # Mock provider
     stream_events/
       base.rb            # Base stream event
       interrupt.rb       # Interrupt event

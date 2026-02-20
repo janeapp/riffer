@@ -1,14 +1,14 @@
-# Test Provider
+# Mock Provider
 
-The Test provider is a mock provider for testing agents without making real API calls.
+The Mock provider is a mock provider for testing agents without making real API calls.
 
 ## Usage
 
-No additional gems required. Use the `test` provider identifier:
+No additional gems required. Use the `mock` provider identifier:
 
 ```ruby
 class TestableAgent < Riffer::Agent
-  model 'test/any'  # The model name doesn't matter for test provider
+  model 'mock/any'  # The model name doesn't matter for mock provider
   instructions 'You are helpful.'
   uses_tools [MyTool]
 end
@@ -58,7 +58,7 @@ provider.stub_response("Third response")
 agent.generate("Message 1")  # => "First response"
 agent.generate("Message 2")  # => "Second response"
 agent.generate("Message 3")  # => "Third response"
-agent.generate("Message 4")  # => "Test response" (default)
+agent.generate("Message 4")  # => "Mock response" (default)
 ```
 
 ## Inspecting Calls
@@ -130,7 +130,7 @@ end
 
 ## Streaming
 
-The test provider also supports streaming:
+The mock provider also supports streaming:
 
 ```ruby
 provider.stub_response("Hello world.")
@@ -165,7 +165,7 @@ search_done.sources  # => [{title: "Example", url: "https://example.com"}]
 Pass responses during initialization:
 
 ```ruby
-provider = Riffer::Providers::Test.new(responses: [
+provider = Riffer::Providers::Mock.new(responses: [
   {content: "First"},
   {content: "Second"}
 ])
@@ -176,5 +176,5 @@ provider = Riffer::Providers::Test.new(responses: [
 When no stubs are queued and initial responses are exhausted, the provider returns:
 
 ```ruby
-{role: "assistant", content: "Test response"}
+{role: "assistant", content: "Mock response"}
 ```

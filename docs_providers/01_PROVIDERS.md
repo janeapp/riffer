@@ -9,7 +9,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | OpenAI         | `openai`         | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
-| Test           | `test`           | None                     |
+| Mock           | `mock`           | None                     |
 
 ## Model String Format
 
@@ -20,7 +20,7 @@ class MyAgent < Riffer::Agent
   model 'openai/gpt-4o'              # OpenAI
   model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'  # Bedrock
   model 'anthropic/claude-3-5-sonnet-20241022'  # Anthropic
-  model 'test/any'                   # Test provider
+  model 'mock/any'                   # Mock provider
 end
 ```
 
@@ -155,8 +155,8 @@ Riffer::Providers::Repository.find(:amazon_bedrock)
 Riffer::Providers::Repository.find(:anthropic)
 # => Riffer::Providers::Anthropic
 
-Riffer::Providers::Repository.find(:test)
-# => Riffer::Providers::Test
+Riffer::Providers::Repository.find(:mock)
+# => Riffer::Providers::Mock
 ```
 
 ## Provider-Specific Guides
@@ -164,5 +164,5 @@ Riffer::Providers::Repository.find(:test)
 - [Amazon Bedrock](02_AMAZON_BEDROCK.md) - Claude and other models via AWS
 - [Anthropic](03_ANTHROPIC.md) - Claude models via Anthropic API
 - [OpenAI](04_OPENAI.md) - GPT models
-- [Test](05_TEST_PROVIDER.md) - Mock provider for testing
+- [Mock](05_MOCK_PROVIDER.md) - Mock provider for testing
 - [Custom Providers](06_CUSTOM_PROVIDERS.md) - Creating your own provider

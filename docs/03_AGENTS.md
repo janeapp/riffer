@@ -25,7 +25,7 @@ class MyAgent < Riffer::Agent
   # or
   model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'  # Bedrock
   # or
-  model 'test/any'                # Test provider
+  model 'mock/any'                # Mock provider
 end
 ```
 

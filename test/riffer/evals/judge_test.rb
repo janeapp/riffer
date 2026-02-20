@@ -5,8 +5,8 @@ require "test_helper"
 describe Riffer::Evals::Judge do
   describe "#initialize" do
     it "sets the model" do
-      judge = Riffer::Evals::Judge.new(model: "test/eval-model")
-      expect(judge.model).must_equal "test/eval-model"
+      judge = Riffer::Evals::Judge.new(model: "mock/eval-model")
+      expect(judge.model).must_equal "mock/eval-model"
     end
 
     it "raises error for invalid model string" do
@@ -20,7 +20,7 @@ describe Riffer::Evals::Judge do
 
   describe "#evaluate" do
     it "evaluates with instructions, input, and output" do
-      judge = Riffer::Evals::Judge.new(model: "test/eval-model")
+      judge = Riffer::Evals::Judge.new(model: "mock/eval-model")
       provider = judge.send(:provider_instance)
       provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.85, reason: "Good response."}}])
 
@@ -34,7 +34,7 @@ describe Riffer::Evals::Judge do
     end
 
     it "evaluates with ground_truth" do
-      judge = Riffer::Evals::Judge.new(model: "test/eval-model")
+      judge = Riffer::Evals::Judge.new(model: "mock/eval-model")
       provider = judge.send(:provider_instance)
       provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.9, reason: "Matches ground truth."}}])
 
