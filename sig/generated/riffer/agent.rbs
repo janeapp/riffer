@@ -127,15 +127,15 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
 
   # Streams a response from the agent.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # Resumes an agent loop.
   #
@@ -173,8 +173,8 @@ class Riffer::Agent
   # : (Riffer::TokenUsage?) -> void
   def track_token_usage: (Riffer::TokenUsage?) -> void
 
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])) -> void
-  def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
+  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
 
   # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
   def restore_state: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void

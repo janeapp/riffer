@@ -268,7 +268,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       when Riffer::Messages::System
         system_prompts << {type: "text", text: message.content}
       when Riffer::Messages::User
-        conversation_messages << {role: "user", content: message.content}
+        if message.files.empty?
+          conversation_messages << {role: "user", content: message.content}
+        else
+          content = [{type: "text", text: message.content}]
+          message.files.each { |file| content << convert_file_part_to_anthropic_format(file) }
+          conversation_messages << {role: "user", content: content}
+        end
       when Riffer::Messages::Assistant
         conversation_messages << convert_assistant_to_anthropic_format(message)
       when Riffer::Messages::Tool
@@ -304,6 +310,19 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     {role: "assistant", content: content}
+  end
+
+  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_anthropic_format(file)
+    type = file.image? ? "image" : "document"
+
+    source = if file.url?
+      {type: "url", url: file.url}
+    else
+      {type: "base64", media_type: file.media_type, data: file.data}
+    end
+
+    {type: type, source: source}
   end
 
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

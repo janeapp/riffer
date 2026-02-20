@@ -64,6 +64,9 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
 
+  # : (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_openai_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
+
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_openai_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

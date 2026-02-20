@@ -357,6 +357,51 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "file handling" do
+    let(:image_base64) { "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg==" }
+
+    describe "#generate_text with image" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_image") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          result = provider.generate_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001", files: [file])
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns content" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_image") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          result = provider.generate_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001", files: [file])
+          expect(result.content).wont_be_empty
+        end
+      end
+    end
+
+    describe "#stream_text with image" do
+      it "yields stream events" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_image") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          events = provider.stream_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001", files: [file]).to_a
+          expect(events).wont_be_empty
+        end
+      end
+
+      it "yields TextDone event" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_image") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          events = provider.stream_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001", files: [file]).to_a
+          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+          expect(done).wont_be_nil
+        end
+      end
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

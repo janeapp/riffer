@@ -55,6 +55,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
+  # : (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_bedrock_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
+
+  BEDROCK_FORMAT_MAP: Hash[String, String]
+
+  # : (String) -> String
+  def bedrock_format: (String) -> String
+
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_bedrock_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

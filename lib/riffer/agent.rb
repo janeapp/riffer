@@ -208,14 +208,14 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, tool_context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, files: nil, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
     clear_resolved_model
     @interrupted = false
     @structured_output = resolve_structured_output
-    initialize_messages(prompt_or_messages)
+    initialize_messages(prompt_or_messages, files: files)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
 
@@ -230,15 +230,15 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, tool_context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, files: nil, tool_context: nil)
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @tool_context = tool_context
     @resolved_tools = nil
     clear_resolved_model
     @interrupted = false
-    initialize_messages(prompt_or_messages)
+    initialize_messages(prompt_or_messages, files: files)
 
     Enumerator.new do |yielder|
       tripwire, modifications = run_before_guardrails
@@ -346,8 +346,8 @@ class Riffer::Agent
     @token_usage = @token_usage ? @token_usage + usage : usage
   end
 
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base])) -> void
-  def initialize_messages(prompt_or_messages)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  def initialize_messages(prompt_or_messages, files: nil)
     @messages = []
     @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
 
@@ -356,7 +356,8 @@ class Riffer::Agent
         @messages << convert_to_message_object(item)
       end
     else
-      @messages << Riffer::Messages::User.new(prompt_or_messages)
+      file_parts = (files || []).map { |f| convert_to_file_part(f) }
+      @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
     end
   end
 

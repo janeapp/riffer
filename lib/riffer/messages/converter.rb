@@ -20,6 +20,41 @@ module Riffer::Messages::Converter
     convert_hash_to_message(msg)
   end
 
+  # Converts a hash or FilePart object to a Riffer::FilePart.
+  #
+  # Accepts:
+  # - +Riffer::FilePart+ objects (passed through)
+  # - +{path: "image.png"}+ (read from disk)
+  # - +{url: "https://...", media_type: "..."}+ (URL source)
+  # - +{data: "...", media_type: "..."}+ (raw base64)
+  #
+  # Raises Riffer::ArgumentError if the hash format is invalid.
+  #
+  #: ((Hash[Symbol | String, untyped] | Riffer::FilePart)) -> Riffer::FilePart
+  def convert_to_file_part(file)
+    return file if file.is_a?(Riffer::FilePart)
+
+    unless file.is_a?(Hash)
+      raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}"
+    end
+
+    path = file[:path] || file["path"]
+    url = file[:url] || file["url"]
+    data = file[:data] || file["data"]
+    media_type = file[:media_type] || file["media_type"]
+    filename = file[:filename] || file["filename"]
+
+    if path
+      Riffer::FilePart.from_path(path)
+    elsif url
+      Riffer::FilePart.from_url(url, media_type: media_type)
+    elsif data && media_type
+      Riffer::FilePart.new(data: data, media_type: media_type, filename: filename)
+    else
+      raise Riffer::ArgumentError, "File hash must include :path, :url, or :data with :media_type"
+    end
+  end
+
   private
 
   #: (Hash[Symbol | String, untyped]) -> Riffer::Messages::Base
@@ -33,7 +68,8 @@ module Riffer::Messages::Converter
 
     case role.to_sym
     when :user
-      Riffer::Messages::User.new(content)
+      files = (hash[:files] || hash["files"] || []).map { |f| convert_to_file_part(f) }
+      Riffer::Messages::User.new(content, files: files)
     when :assistant
       tool_calls = hash[:tool_calls] || hash["tool_calls"] || []
       Riffer::Messages::Assistant.new(content, tool_calls: tool_calls)

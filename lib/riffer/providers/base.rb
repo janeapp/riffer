@@ -21,10 +21,10 @@ class Riffer::Providers::Base
 
   # Generates text using the provider.
   #
-  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Riffer::Messages::Assistant
-  def generate_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
+  def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    messages = normalize_messages(prompt: prompt, system: system, messages: messages)
+    messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     params = build_request_params(messages, model, options)
     response = execute_generate(params)
@@ -33,10 +33,10 @@ class Riffer::Providers::Base
 
   # Streams text from the provider.
   #
-  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream_text(prompt: nil, system: nil, messages: nil, model: nil, **options)
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    messages = normalize_messages(prompt: prompt, system: system, messages: messages)
+    messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     params = build_request_params(messages, model, options)
     Enumerator.new do |yielder|
@@ -87,15 +87,16 @@ class Riffer::Providers::Base
     end
   end
 
-  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?) -> Array[Riffer::Messages::Base]
-  def normalize_messages(prompt:, system:, messages:)
+  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Array[Riffer::Messages::Base]
+  def normalize_messages(prompt:, system:, messages:, files: nil)
     if messages
       return messages.map { |msg| convert_to_message_object(msg) }
     end
 
     result = []
     result << Riffer::Messages::System.new(system) if system
-    result << Riffer::Messages::User.new(prompt)
+    file_parts = (files || []).map { |f| convert_to_file_part(f) }
+    result << Riffer::Messages::User.new(prompt, files: file_parts)
     result
   end
 

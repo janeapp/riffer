@@ -33,11 +33,13 @@ Providers are registered in `Riffer::Providers::Repository::REPO` with identifie
 Typed message objects that extend `Riffer::Messages::Base`:
 
 - `System` - system instructions
-- `User` - user input
+- `User` - user input (supports file attachments via `Riffer::FilePart`)
 - `Assistant` - AI responses
 - `Tool` - tool execution results
 
-The `Converter` module handles hash-to-object conversion.
+`Riffer::FilePart` represents file attachments (images and documents) that can be included with User messages. Supports file paths, URLs, and raw base64 data.
+
+The `Converter` module handles hash-to-object conversion, including file hash-to-`FilePart` conversion.
 
 ### StreamEvents (`lib/riffer/stream_events/`)
 
@@ -94,6 +96,7 @@ lib/
       class_name_converter.rb  # Class name conversion utilities
       dependencies.rb          # Dependency management
       validations.rb           # Validation helpers
+    file_part.rb         # File attachment (images and documents)
     messages/
       base.rb            # Base message class
       assistant.rb       # Assistant message

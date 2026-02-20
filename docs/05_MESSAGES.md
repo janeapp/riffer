@@ -25,7 +25,17 @@ User messages represent input from the user:
 msg = Riffer::Messages::User.new("Hello, how are you?")
 msg.role     # => :user
 msg.content  # => "Hello, how are you?"
+msg.files    # => []
 msg.to_h     # => {role: :user, content: "Hello, how are you?"}
+```
+
+User messages can include file attachments:
+
+```ruby
+file = Riffer::FilePart.from_path("photo.jpg")
+msg = Riffer::Messages::User.new("Describe this image", files: [file])
+msg.files    # => [#<Riffer::FilePart ...>]
+msg.to_h     # => {role: :user, content: "Describe this image", files: [{...}]}
 ```
 
 ### Assistant
@@ -82,6 +92,58 @@ msg = Riffer::Messages::Tool.new(
 msg.error?      # => true
 msg.error       # => "API rate limit exceeded"
 msg.error_type  # => :execution_error
+```
+
+## File Parts
+
+`Riffer::FilePart` represents a file attachment (image or document) that can be included with user messages.
+
+### Supported Media Types
+
+**Images**: `image/jpeg`, `image/png`, `image/gif`, `image/webp`
+
+**Documents**: `application/pdf`, `text/plain`, `text/csv`, `text/html`
+
+### Creating File Parts
+
+```ruby
+# From a file path (reads eagerly, detects media type from extension)
+file = Riffer::FilePart.from_path("photo.jpg")
+file.media_type  # => "image/jpeg"
+file.filename    # => "photo.jpg"
+file.image?      # => true
+
+# From a URL (stored directly, resolved lazily if provider needs bytes)
+file = Riffer::FilePart.from_url("https://example.com/doc.pdf")
+file.url?        # => true
+file.document?   # => true
+
+# From raw base64 data
+file = Riffer::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
+```
+
+### Hash Shorthand
+
+When passing files to agents or messages, hashes are automatically converted:
+
+```ruby
+# Path shorthand
+{path: "photo.jpg"}
+
+# URL shorthand (media_type auto-detected from extension, or provide explicitly)
+{url: "https://example.com/photo.jpg"}
+{url: "https://example.com/file", media_type: "application/pdf"}
+
+# Data shorthand
+{data: base64_string, media_type: "image/png", filename: "chart.png"}
+```
+
+### Predicates
+
+```ruby
+file.image?     # true for image/* media types
+file.document?  # true for non-image media types
+file.url?       # true when source was a URL
 ```
 
 ## Using Messages with Agents

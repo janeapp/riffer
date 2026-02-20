@@ -98,5 +98,95 @@ describe Riffer::Messages::Converter do
       expect(result).must_be_instance_of Riffer::Messages::User
       expect(result.content).must_equal "Hello"
     end
+
+    describe "with user message with files" do
+      it "converts file hashes to FilePart objects" do
+        result = instance.convert_to_message_object({
+          role: "user",
+          content: "Describe this",
+          files: [{data: "aGVsbG8=", media_type: "image/png"}]
+        })
+        expect(result.files.length).must_equal 1
+      end
+
+      it "converts file hashes to correct type" do
+        result = instance.convert_to_message_object({
+          role: "user",
+          content: "Describe this",
+          files: [{data: "aGVsbG8=", media_type: "image/png"}]
+        })
+        expect(result.files.first).must_be_instance_of Riffer::FilePart
+      end
+
+      it "preserves FilePart objects" do
+        file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+        result = instance.convert_to_message_object({
+          role: "user",
+          content: "Describe this",
+          files: [file]
+        })
+        expect(result.files.first).must_equal file
+      end
+
+      it "defaults to empty files when not provided" do
+        result = instance.convert_to_message_object({role: "user", content: "Hello"})
+        expect(result.files).must_equal []
+      end
+
+      it "handles string keys for files" do
+        result = instance.convert_to_message_object({
+          "role" => "user",
+          "content" => "Describe this",
+          "files" => [{"data" => "aGVsbG8=", "media_type" => "image/png"}]
+        })
+        expect(result.files.length).must_equal 1
+      end
+    end
+  end
+
+  describe "#convert_to_file_part" do
+    it "passes through FilePart objects" do
+      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      result = instance.convert_to_file_part(file)
+      expect(result).must_equal file
+    end
+
+    it "converts path hash" do
+      path = File.expand_path("../../fixtures/test_image.png", __dir__)
+      FileUtils.mkdir_p(File.dirname(path))
+      File.binwrite(path, "fake png data")
+
+      result = instance.convert_to_file_part({path: path})
+      expect(result).must_be_instance_of Riffer::FilePart
+      expect(result.media_type).must_equal "image/png"
+
+      File.delete(path)
+    end
+
+    it "converts url hash" do
+      result = instance.convert_to_file_part({url: "https://example.com/photo.jpg", media_type: "image/jpeg"})
+      expect(result).must_be_instance_of Riffer::FilePart
+      expect(result.url).must_equal "https://example.com/photo.jpg"
+    end
+
+    it "converts data hash" do
+      result = instance.convert_to_file_part({data: "aGVsbG8=", media_type: "image/png"})
+      expect(result).must_be_instance_of Riffer::FilePart
+      expect(result.data).must_equal "aGVsbG8="
+    end
+
+    it "raises for invalid hash" do
+      error = expect {
+        instance.convert_to_file_part({media_type: "image/png"})
+      }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/must include :path, :url, or :data/)
+    end
+
+    it "raises for non-hash non-FilePart" do
+      error = expect {
+        instance.convert_to_file_part("invalid")
+      }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/must be a Hash or FilePart/)
+    end
   end
 end

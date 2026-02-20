@@ -717,6 +717,77 @@ describe Riffer::Agent do
     end
   end
 
+  describe "#generate with files" do
+    it "attaches files to user message" do
+      agent = agent_class.new
+      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      agent.generate("Describe this", files: [file])
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files.length).must_equal 1
+    end
+
+    it "converts file hashes to FilePart objects" do
+      agent = agent_class.new
+      agent.generate("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files.first).must_be_instance_of Riffer::FilePart
+    end
+
+    it "defaults to empty files when not provided" do
+      agent = agent_class.new
+      agent.generate("Hello")
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files).must_equal []
+    end
+
+    it "ignores files when messages array is used" do
+      agent = agent_class.new
+      messages = [{role: "user", content: "Hello"}]
+      agent.generate(messages, files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files).must_equal []
+    end
+
+    it "supports files in messages array" do
+      agent = agent_class.new
+      messages = [{role: "user", content: "Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}]}]
+      agent.generate(messages)
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files.length).must_equal 1
+    end
+  end
+
+  describe "#stream with files" do
+    it "attaches files to user message" do
+      agent = agent_class.new
+      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      agent.stream("Describe this", files: [file]).each { |_| }
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files.length).must_equal 1
+    end
+
+    it "converts file hashes to FilePart objects" do
+      agent = agent_class.new
+      agent.stream("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}]).each { |_| }
+      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      expect(user_message.files.first).must_be_instance_of Riffer::FilePart
+    end
+  end
+
+  describe ".generate with files" do
+    it "passes files to the agent" do
+      result = agent_class.generate("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      expect(result).must_be_instance_of Riffer::Agent::Response
+    end
+  end
+
+  describe ".stream with files" do
+    it "passes files to the agent" do
+      result = agent_class.stream("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      expect(result).must_be_instance_of Enumerator
+    end
+  end
+
   describe "instructions validation" do
     it "raises error when instructions is empty string" do
       error = expect do

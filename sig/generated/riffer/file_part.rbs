@@ -1,0 +1,93 @@
+# Generated from lib/riffer/file_part.rb with RBS::Inline
+
+# Represents a file attachment (image or document) in a conversation.
+#
+# Supports three input sources:
+# - File paths (read from disk via +from_path+)
+# - URLs (stored and passed to providers that support them via +from_url+)
+# - Raw base64 data (via +new+)
+#
+#   file = Riffer::FilePart.from_path("photo.jpg")
+#   file.media_type  # => "image/jpeg"
+#   file.image?      # => true
+#
+#   file = Riffer::FilePart.from_url("https://example.com/doc.pdf", media_type: "application/pdf")
+#   file.url?        # => true
+#   file.document?   # => true
+class Riffer::FilePart
+  MEDIA_TYPES: Hash[String, String]
+
+  SUPPORTED_MEDIA_TYPES: Array[String]
+
+  # The MIME type of the file.
+  attr_reader media_type: String
+
+  # The filename, if available.
+  attr_reader filename: String?
+
+  # Creates a FilePart from raw base64 data or a URL.
+  #
+  # At least one of +data+ or +url+ must be provided.
+  #
+  # Raises Riffer::ArgumentError if neither data nor url is provided,
+  # or if media_type is not supported.
+  #
+  # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
+  def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
+
+  # Creates a FilePart by reading a file from disk.
+  #
+  # Detects media_type from the file extension. Sets filename from the path.
+  #
+  # Raises Riffer::ArgumentError if the file extension is not supported.
+  #
+  # : (String) -> Riffer::FilePart
+  def self.from_path: (String) -> Riffer::FilePart
+
+  # Creates a FilePart from a URL.
+  #
+  # The URL is stored and passed directly to providers that support URL sources.
+  # If +media_type+ is not provided, it is detected from the URL path extension.
+  #
+  # Raises Riffer::ArgumentError if media_type cannot be detected.
+  #
+  # : (String, ?media_type: String?) -> Riffer::FilePart
+  def self.from_url: (String, ?media_type: String?) -> Riffer::FilePart
+
+  # Returns the base64-encoded data.
+  #
+  # If the source was a URL, fetches the content lazily via Net::HTTP.
+  #
+  # : () -> String
+  def data: () -> String
+
+  # Returns the URL if the source was a URL, nil otherwise.
+  #
+  # : () -> String?
+  def url: () -> String?
+
+  # Returns true if the source was a URL.
+  #
+  # : () -> bool
+  def url?: () -> bool
+
+  # Returns true if the file is an image.
+  #
+  # : () -> bool
+  def image?: () -> bool
+
+  # Returns true if the file is a document (not an image).
+  #
+  # : () -> bool
+  def document?: () -> bool
+
+  # Serializes the FilePart to a hash.
+  #
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+
+  private
+
+  # : () -> String
+  def fetch_url_data: () -> String
+end

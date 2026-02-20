@@ -200,6 +200,18 @@ response = MyAgent.generate([
 
 # With tool context
 response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
+
+# With files (string prompt + files shorthand)
+response = MyAgent.generate('What is in this image?', files: [
+  {path: 'photo.jpg'}
+])
+
+# With files in messages array (per-message)
+response = MyAgent.generate([
+  {role: 'user', content: 'Describe this document', files: [
+    {url: 'https://example.com/report.pdf', media_type: 'application/pdf'}
+  ]}
+])
 ```
 
 ### stream
@@ -224,6 +236,11 @@ agent = MyAgent.new
 agent.on_message { |msg| persist_message(msg) }
 agent.stream('Tell me a story').each { |event| handle(event) }
 agent.messages  # Access message history
+
+# With files
+MyAgent.stream('What is in this image?', files: [{path: 'photo.jpg'}]).each do |event|
+  print event.content if event.is_a?(Riffer::StreamEvents::TextDelta)
+end
 ```
 
 ### messages

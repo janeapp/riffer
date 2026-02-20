@@ -163,6 +163,14 @@ end
 - Bedrock requires the schema as a JSON string (`.to_json`), others use the Hash directly
 - The agent handles parsing and validation of the response — providers only need to pass the schema to the SDK
 
+## File Handling
+
+User messages may include `Riffer::FilePart` objects in their `files` array. Each provider's `build_request_params` (or its message conversion helpers) must convert these to provider-specific content blocks:
+
+- **OpenAI**: `input_image` (URLs or data URIs) and `input_file` (data URIs)
+- **Anthropic**: `image` and `document` blocks with `url` or `base64` source
+- **Bedrock**: `image` and `document` blocks with `bytes` source (always base64, URLs are resolved)
+
 ## Shared Utilities
 
 The base class provides `parse_tool_arguments` for converting tool call arguments from JSON strings to hashes:

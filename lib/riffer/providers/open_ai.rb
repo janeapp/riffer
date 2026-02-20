@@ -231,7 +231,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       when Riffer::Messages::System
         {role: "developer", content: message.content}
       when Riffer::Messages::User
-        {role: "user", content: message.content}
+        if message.files.empty?
+          {role: "user", content: message.content}
+        else
+          content = [{type: "input_text", text: message.content}]
+          message.files.each { |file| content << convert_file_part_to_openai_format(file) }
+          {role: "user", content: content}
+        end
       when Riffer::Messages::Assistant
         convert_assistant_to_openai_format(message)
       when Riffer::Messages::Tool
@@ -261,6 +267,19 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         }
       end
       items
+    end
+  end
+
+  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_openai_format(file)
+    if file.image?
+      image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"
+      {type: "input_image", image_url: image_url}
+    else
+      data_uri = "data:#{file.media_type};base64,#{file.data}"
+      block = {type: "input_file", file_data: data_uri}
+      block[:filename] = file.filename if file.filename
+      block
     end
   end
 
