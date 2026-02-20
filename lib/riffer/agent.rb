@@ -87,6 +87,21 @@ class Riffer::Agent
     subclasses
   end
 
+  # Builds an agent instance from runtime params without requiring a Ruby subclass.
+  #
+  # Creates an anonymous +Agent+ subclass, configures it with the given
+  # model, instructions, and options, then returns an instance.
+  #
+  #: (model: String, ?instructions: String?, ?model_options: Hash[Symbol, untyped], ?provider_options: Hash[Symbol, untyped]) -> Riffer::Agent
+  def self.build(model:, instructions: nil, model_options: {}, provider_options: {})
+    Class.new(Riffer::Agent) do
+      self.model(model)
+      self.instructions(instructions) if instructions
+      self.model_options(model_options) unless model_options.empty?
+      self.provider_options(provider_options) unless provider_options.empty?
+    end.new
+  end
+
   # Generates a response using a new agent instance.
   #
   # See #generate for parameters and return value.
@@ -172,10 +187,11 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, tool_context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?tool_executor: Riffer::Tools::Executor?, ?guardrail_runner: Hash[Symbol, Riffer::Guardrails::RpcRunner]?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, tool_context: nil, tool_executor: nil, guardrail_runner: nil)
     @tool_context = tool_context
-    @tool_executor = nil
+    @tool_executor = tool_executor
+    @guardrail_runner = guardrail_runner
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -190,10 +206,11 @@ class Riffer::Agent
 
   # Streams a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, tool_context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?tool_executor: Riffer::Tools::Executor?, ?guardrail_runner: Hash[Symbol, Riffer::Guardrails::RpcRunner]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, tool_context: nil, tool_executor: nil, guardrail_runner: nil)
     @tool_context = tool_context
-    @tool_executor = nil
+    @tool_executor = tool_executor
+    @guardrail_runner = guardrail_runner
     @interrupted = false
     initialize_messages(prompt_or_messages)
 
@@ -218,9 +235,9 @@ class Riffer::Agent
   #
   # Skips message initialization and before guardrails in both cases.
   #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def resume(messages: nil, tool_context: nil)
-    restore_state(messages: messages, tool_context: tool_context)
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?, ?tool_executor: Riffer::Tools::Executor?, ?guardrail_runner: Hash[Symbol, Riffer::Guardrails::RpcRunner]?) -> Riffer::Agent::Response
+  def resume(messages: nil, tool_context: nil, tool_executor: nil, guardrail_runner: nil)
+    restore_state(messages: messages, tool_context: tool_context, tool_executor: tool_executor, guardrail_runner: guardrail_runner)
     run_generate_loop(resume: true)
   end
 
@@ -228,9 +245,9 @@ class Riffer::Agent
   #
   # Same as +resume+ but returns an Enumerator yielding stream events.
   #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def resume_stream(messages: nil, tool_context: nil)
-    restore_state(messages: messages, tool_context: tool_context)
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?, ?tool_executor: Riffer::Tools::Executor?, ?guardrail_runner: Hash[Symbol, Riffer::Guardrails::RpcRunner]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def resume_stream(messages: nil, tool_context: nil, tool_executor: nil, guardrail_runner: nil)
+    restore_state(messages: messages, tool_context: tool_context, tool_executor: tool_executor, guardrail_runner: guardrail_runner)
 
     Enumerator.new do |yielder|
       run_stream_loop(yielder, resume: true)
@@ -308,12 +325,13 @@ class Riffer::Agent
     end
   end
 
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
-  def restore_state(messages: nil, tool_context: nil)
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?, ?tool_executor: Riffer::Tools::Executor?, ?guardrail_runner: Hash[Symbol, Riffer::Guardrails::RpcRunner]?) -> void
+  def restore_state(messages: nil, tool_context: nil, tool_executor: nil, guardrail_runner: nil)
     @messages = messages.map { |item| convert_to_message_object(item) } if messages
     @tool_context = tool_context if tool_context
     @interrupted = false
-    @tool_executor = nil
+    @tool_executor = tool_executor
+    @guardrail_runner = guardrail_runner
   end
 
   #: (Enumerator::Yielder, ?resume: bool) -> void
@@ -497,6 +515,12 @@ class Riffer::Agent
 
   #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_before_guardrails
+    if @guardrail_runner&.dig(:before)
+      processed_messages, tripwire, modifications = @guardrail_runner[:before].run(@messages)
+      @messages = processed_messages unless tripwire
+      return [tripwire, modifications]
+    end
+
     guardrails = self.class.guardrails_for(:before)
     return [nil, []] if guardrails.empty?
 
@@ -508,6 +532,13 @@ class Riffer::Agent
 
   #: (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails(response)
+    if @guardrail_runner&.dig(:after)
+      processed_response, tripwire, modifications = @guardrail_runner[:after].run(response, messages: @messages)
+      response_index = @messages.length
+      modifications.each { |m| m.message_indices.map! { response_index } }
+      return [processed_response, tripwire, modifications]
+    end
+
     guardrails = self.class.guardrails_for(:after)
     return [response, nil, []] if guardrails.empty?
 

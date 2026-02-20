@@ -2242,6 +2242,129 @@ describe Riffer::Agent do
     end
   end
 
+  describe "#generate with custom tool_executor" do
+    it "uses injected executor instead of LocalExecutor" do
+      executed_calls = []
+      proxy = Riffer::Tools::ToolProxy.new(
+        name: "my_tool",
+        description: "A test tool",
+        parameters_schema: {}
+      )
+      custom_executor = Riffer::Tools::RpcExecutor.new(
+        [proxy],
+        callback: ->(tool_call, context:) {
+          executed_calls << tool_call.name
+          Riffer::Tools::Response.text("custom result")
+        }
+      )
+
+      agent = agent_class.new
+      provider = agent.send(:provider_instance)
+      provider.stub_response("", tool_calls: [
+        {name: "my_tool", arguments: "{}"}
+      ])
+      provider.stub_response("Done!")
+
+      agent.generate("Call tool", tool_executor: custom_executor)
+
+      expect(executed_calls).must_equal ["my_tool"]
+      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(tool_messages.first.content).must_equal "custom result"
+    end
+
+    it "passes tools_for_provider from injected executor to LLM" do
+      proxy = Riffer::Tools::ToolProxy.new(
+        name: "proxy_tool",
+        description: "A proxy tool",
+        parameters_schema: {}
+      )
+      custom_executor = Riffer::Tools::RpcExecutor.new(
+        [proxy],
+        callback: ->(tool_call, context:) { Riffer::Tools::Response.text("ok") }
+      )
+
+      agent = agent_class.new
+      provider = agent.send(:provider_instance)
+      agent.generate("Hello", tool_executor: custom_executor)
+
+      expect(provider.calls.last[:tools]).must_equal [proxy]
+    end
+  end
+
+  describe "#stream with custom tool_executor" do
+    it "uses injected executor instead of LocalExecutor" do
+      executed_calls = []
+      proxy = Riffer::Tools::ToolProxy.new(
+        name: "stream_tool",
+        description: "A test tool",
+        parameters_schema: {}
+      )
+      custom_executor = Riffer::Tools::RpcExecutor.new(
+        [proxy],
+        callback: ->(tool_call, context:) {
+          executed_calls << tool_call.name
+          Riffer::Tools::Response.text("streamed result")
+        }
+      )
+
+      agent = agent_class.new
+      provider = agent.send(:provider_instance)
+      provider.stub_response("", tool_calls: [
+        {name: "stream_tool", arguments: "{}"}
+      ])
+      provider.stub_response("Done!")
+
+      agent.stream("Call tool", tool_executor: custom_executor).each { |_| }
+
+      expect(executed_calls).must_equal ["stream_tool"]
+      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(tool_messages.first.content).must_equal "streamed result"
+    end
+  end
+
+  describe ".build" do
+    it "returns a Riffer::Agent instance" do
+      agent = Riffer::Agent.build(model: "test/riffer-1")
+      expect(agent).must_be_kind_of Riffer::Agent
+    end
+
+    it "sets the model" do
+      agent = Riffer::Agent.build(model: "test/riffer-1")
+      expect(agent.class.model).must_equal "test/riffer-1"
+    end
+
+    it "sets instructions when provided" do
+      agent = Riffer::Agent.build(model: "test/riffer-1", instructions: "Be helpful.")
+      expect(agent.class.instructions).must_equal "Be helpful."
+    end
+
+    it "does not set instructions when not provided" do
+      agent = Riffer::Agent.build(model: "test/riffer-1")
+      expect(agent.class.instructions).must_be_nil
+    end
+
+    it "sets model_options when provided" do
+      agent = Riffer::Agent.build(model: "test/riffer-1", model_options: {temperature: 0.5})
+      expect(agent.class.model_options).must_equal({temperature: 0.5})
+    end
+
+    it "sets provider_options when provided" do
+      agent = Riffer::Agent.build(model: "test/riffer-1", provider_options: {api_key: "key"})
+      expect(agent.class.provider_options).must_equal({api_key: "key"})
+    end
+
+    it "raises on invalid model format" do
+      error = expect { Riffer::Agent.build(model: "invalid-format") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/Invalid model string/)
+    end
+
+    it "can generate with the built agent" do
+      agent = Riffer::Agent.build(model: "test/riffer-1", instructions: "Be helpful.")
+      result = agent.generate("Hello")
+      expect(result).must_be_instance_of Riffer::Agent::Response
+    end
+  end
+
   describe "#stream with guardrails" do
     let(:block_input_guardrail_class) do
       Class.new(Riffer::Guardrail) do
@@ -2353,6 +2476,89 @@ describe Riffer::Agent do
         mod_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
         expect(mod_event.guardrail).must_equal transform_guardrail_class
       end
+    end
+  end
+
+  describe "#generate with custom guardrail_runner" do
+    it "uses injected before runner to block" do
+      before_runner = Riffer::Guardrails::RpcRunner.new(
+        [{name: "BlockGuardrail", phase: :before, options_json: nil}],
+        phase: :before,
+        callback: ->(name, phase, data, options_json) {
+          {action: :block, block_reason: "RPC blocked"}
+        }
+      )
+
+      agent = agent_class.new
+      result = agent.generate("Hello", guardrail_runner: {before: before_runner})
+
+      expect(result.blocked?).must_equal true
+      expect(result.tripwire.reason).must_equal "RPC blocked"
+      expect(result.tripwire.guardrail).must_equal "BlockGuardrail"
+    end
+
+    it "uses injected before runner to transform" do
+      before_runner = Riffer::Guardrails::RpcRunner.new(
+        [{name: "TransformGuardrail", phase: :before, options_json: nil}],
+        phase: :before,
+        callback: ->(name, phase, data, options_json) {
+          transformed = data.map { |m|
+            if m.is_a?(Riffer::Messages::User)
+              Riffer::Messages::User.new("[RPC] #{m.content}")
+            else
+              m
+            end
+          }
+          {action: :transform, messages: transformed, modified_message_indices: [0]}
+        }
+      )
+
+      agent = agent_class.new
+      agent.generate("Hello", guardrail_runner: {before: before_runner})
+
+      user_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::User) }
+      expect(user_message.content).must_equal "[RPC] Hello"
+    end
+
+    it "uses injected after runner to block" do
+      after_runner = Riffer::Guardrails::RpcRunner.new(
+        [{name: "OutputBlocker", phase: :after, options_json: nil}],
+        phase: :after,
+        callback: ->(name, phase, data, options_json) {
+          {action: :block, block_reason: "Output blocked by RPC"}
+        }
+      )
+
+      agent = agent_class.new
+      result = agent.generate("Hello", guardrail_runner: {after: after_runner})
+
+      expect(result.blocked?).must_equal true
+      expect(result.tripwire.reason).must_equal "Output blocked by RPC"
+    end
+
+    it "skips local guardrails when runner is injected" do
+      local_guardrail = Class.new(Riffer::Guardrail) do
+        def process_input(messages, context:)
+          block("Should not reach this")
+        end
+      end
+
+      gr = local_guardrail
+      custom_class = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+      end
+      custom_class.guardrail(:before, with: gr)
+
+      before_runner = Riffer::Guardrails::RpcRunner.new(
+        [{name: "PassGuardrail", phase: :before, options_json: nil}],
+        phase: :before,
+        callback: ->(name, phase, data, options_json) { {action: :pass} }
+      )
+
+      agent = custom_class.new
+      result = agent.generate("Hello", guardrail_runner: {before: before_runner})
+
+      expect(result.blocked?).must_equal false
     end
   end
 end

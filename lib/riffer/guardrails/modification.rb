@@ -7,8 +7,8 @@
 # created to record which guardrail made the change, in which phase, and
 # which message indices were affected.
 class Riffer::Guardrails::Modification
-  # The guardrail class that transformed data.
-  attr_reader :guardrail #: singleton(Riffer::Guardrail)
+  # The guardrail class (or name string for RPC) that transformed data.
+  attr_reader :guardrail #: (singleton(Riffer::Guardrail) | String)
 
   # The phase when the transformation occurred (:before or :after).
   attr_reader :phase #: Symbol
@@ -22,7 +22,7 @@ class Riffer::Guardrails::Modification
   # +phase+ - :before or :after.
   # +message_indices+ - indices of changed messages.
   #
-  #: (guardrail: singleton(Riffer::Guardrail), phase: Symbol, message_indices: Array[Integer]) -> void
+  #: (guardrail: (singleton(Riffer::Guardrail) | String), phase: Symbol, message_indices: Array[Integer]) -> void
   def initialize(guardrail:, phase:, message_indices:)
     @guardrail = guardrail
     @phase = phase
@@ -34,7 +34,7 @@ class Riffer::Guardrails::Modification
   #: () -> Hash[Symbol, untyped]
   def to_h
     {
-      guardrail: guardrail.name,
+      guardrail: guardrail.is_a?(String) ? guardrail : guardrail.name,
       phase: phase,
       message_indices: message_indices
     }

@@ -45,6 +45,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
   spec.add_development_dependency "openai", "~> 0.49.0"
 
+  # RPC / Protocol Buffers
+  spec.add_development_dependency "google-protobuf", "~> 4.0"
+  spec.add_development_dependency "grpc", "~> 1.70"
+  spec.add_development_dependency "grpc-tools", "~> 1.70"
+
   # Testing
   spec.add_development_dependency "minitest", "~> 6.0"
   spec.add_development_dependency "rake", "~> 13.0"

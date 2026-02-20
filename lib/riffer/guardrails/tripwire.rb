@@ -18,8 +18,8 @@ class Riffer::Guardrails::Tripwire
   # The reason for blocking.
   attr_reader :reason #: String
 
-  # The guardrail class that triggered the block.
-  attr_reader :guardrail #: singleton(Riffer::Guardrail)
+  # The guardrail class (or name string for RPC) that triggered the block.
+  attr_reader :guardrail #: (singleton(Riffer::Guardrail) | String)
 
   # The phase when the block occurred (:before or :after).
   attr_reader :phase #: Symbol
@@ -30,13 +30,13 @@ class Riffer::Guardrails::Tripwire
   # Creates a new tripwire.
   #
   # +reason+ - the reason for blocking.
-  # +guardrail+ - the guardrail class that blocked.
+  # +guardrail+ - the guardrail class that blocked (or name string for RPC).
   # +phase+ - :before or :after.
   # +metadata+ - optional additional information.
   #
   # Raises Riffer::ArgumentError if the phase is invalid.
   #
-  #: (reason: String, guardrail: singleton(Riffer::Guardrail), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
+  #: (reason: String, guardrail: (singleton(Riffer::Guardrail) | String), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(reason:, guardrail:, phase:, metadata: nil)
     raise Riffer::ArgumentError, "Invalid phase: #{phase}" unless PHASES.include?(phase)
 
@@ -52,7 +52,7 @@ class Riffer::Guardrails::Tripwire
   def to_h
     {
       reason: reason,
-      guardrail: guardrail.name,
+      guardrail: guardrail.is_a?(String) ? guardrail : guardrail.name,
       phase: phase,
       metadata: metadata
     }

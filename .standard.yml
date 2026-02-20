@@ -1,1 +1,3 @@
 # Standard Ruby configuration
+ignore:
+  - "lib/riffer/rpc/**/*_pb.rb"
