@@ -4,7 +4,7 @@
 
 ### Agent (`lib/riffer/agent.rb`)
 
-Base class for AI agents. Subclass and use DSL methods `model` and `instructions` to configure. Orchestrates message flow, LLM calls, and tool execution via a generate/stream loop.
+Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, and `structured_output` to configure. Orchestrates message flow, LLM calls, tool execution, and structured output parsing via a generate/stream loop.
 
 ```ruby
 class EchoAgent < Riffer::Agent
@@ -82,7 +82,12 @@ lib/
     agent.rb             # Agent class
     messages.rb          # Messages namespace/module
     providers.rb         # Providers namespace/module
+    param.rb             # Single parameter definition (shared by tools and structured output)
+    params.rb            # Parameter collection with DSL and validation
+    structured_output.rb # Structured output schema wrapper
     stream_events.rb     # Stream events namespace/module
+    structured_output/
+      result.rb          # Parse/validation result object
     helpers/
       class_name_converter.rb  # Class name conversion utilities
       dependencies.rb          # Dependency management

@@ -37,6 +37,22 @@ end
 
 See [Tools](04_TOOLS.md) for details.
 
+### Structured Output
+
+Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated:
+
+```ruby
+class SentimentAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  structured_output sentiment: String, score: Float
+end
+
+response = SentimentAgent.generate('Analyze: "I love this!"')
+response.object  # => {sentiment: "positive", score: 0.95}
+```
+
+See the [structured output section in Agents](03_AGENTS.md#structured_output) for details.
+
 ### Provider
 
 Providers are adapters that connect to LLM services. Riffer supports:

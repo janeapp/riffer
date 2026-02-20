@@ -85,6 +85,81 @@ class Riffer::Providers::YourProvider < Riffer::Providers::Base
 end
 ```
 
+## Structured Output
+
+When structured output is configured, the agent passes a `Riffer::StructuredOutput` instance via `options[:structured_output]`. Providers must extract it from options (and exclude it from the splat) and convert it to their SDK-specific format.
+
+### Extracting from options
+
+All providers follow the same pattern:
+
+```ruby
+def build_request_params(messages, model, options)
+  structured_output = options[:structured_output]
+
+  params = {
+    # ...
+    **options.except(:tools, :structured_output)
+  }
+
+  # Convert to provider-specific format (see below)
+end
+```
+
+### Provider-specific formats
+
+**OpenAI** — uses `params[:text][:format]`:
+
+```ruby
+if structured_output
+  params[:text] = {
+    format: {
+      type: "json_schema",
+      name: "response",
+      schema: structured_output.json_schema,
+      strict: true
+    }
+  }
+end
+```
+
+**Anthropic** — uses `params[:output_config]`:
+
+```ruby
+if structured_output
+  params[:output_config] = {
+    format: {
+      type: "json_schema",
+      schema: structured_output.json_schema
+    }
+  }
+end
+```
+
+**Amazon Bedrock** — uses `params[:output_config][:text_format]` with stringified schema:
+
+```ruby
+if structured_output
+  params[:output_config] = {
+    text_format: {
+      type: "json_schema",
+      structure: {
+        json_schema: {
+          schema: structured_output.json_schema.to_json,
+          name: "response"
+        }
+      }
+    }
+  }
+end
+```
+
+### Key details
+
+- `structured_output.json_schema` returns a Hash with `type`, `properties`, `required`, and `additionalProperties` keys
+- Bedrock requires the schema as a JSON string (`.to_json`), others use the Hash directly
+- The agent handles parsing and validation of the response — providers only need to pass the schema to the SDK
+
 ## Shared Utilities
 
 The base class provides `parse_tool_arguments` for converting tool call arguments from JSON strings to hashes:

@@ -131,6 +131,33 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+### structured_output
+
+Configures the agent to return structured JSON responses conforming to a schema. Accepts a Hash shorthand or a `Riffer::Params` instance:
+
+```ruby
+# Hash shorthand — all fields are required
+class SentimentAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  instructions 'Analyze the sentiment of the given text.'
+  structured_output sentiment: String, score: Float
+end
+
+# Riffer::Params — supports optional fields, descriptions, and enums
+class AnalysisAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  structured_output Riffer::Params.build {
+    required :sentiment, String, description: "positive, negative, or neutral"
+    required :score, Float, description: "Confidence score between 0 and 1"
+    optional :explanation, String, description: "Brief explanation"
+  }
+end
+```
+
+The LLM response is automatically parsed and validated against the schema. Access the result via `response.object`.
+
+Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
+
 ### guardrail
 
 Registers guardrails for pre/post processing of messages. Pass the guardrail class and any options:
@@ -180,11 +207,22 @@ response = MyAgent.generate([
 
 # With tool context
 response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
+
+# With structured output (per-call)
+response = MyAgent.generate(
+  'Analyze: "I love this!"',
+  structured_output: {sentiment: String, score: Float}
+)
+response.object  # => {sentiment: "positive", score: 0.95}
+
+# With class-level structured output
+response = SentimentAgent.generate('Analyze: "I love this!"')
+response.object  # => {sentiment: "positive", score: 0.95}
 ```
 
 ### stream
 
-Streams a response as an Enumerator:
+Streams a response as an Enumerator. Raises `Riffer::ArgumentError` if structured output is configured (class-level or per-call):
 
 ```ruby
 # Class method (recommended for simple calls)
@@ -360,6 +398,33 @@ end
 ```
 
 Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` object with accumulated totals.
+
+## Response Attributes
+
+`Riffer::Agent::Response` is returned by `generate` and `resume`:
+
+| Attribute          | Type                       | Description                                             |
+| ------------------ | -------------------------- | ------------------------------------------------------- |
+| `content`          | `String`                   | The response text                                       |
+| `object`           | `Hash` / `nil`             | Parsed and validated structured output (see below)      |
+| `blocked?`         | `Boolean`                  | `true` if a guardrail tripwire fired                    |
+| `tripwire`         | `Tripwire` / `nil`         | The guardrail tripwire that blocked the request         |
+| `modified?`        | `Boolean`                  | `true` if a guardrail modified the content              |
+| `modifications`    | `Array`                    | List of guardrail modifications applied                 |
+| `interrupted?`     | `Boolean`                  | `true` if the loop was interrupted                      |
+| `interrupt_reason` | `String` / `Symbol` / `nil`| The reason passed to `throw :riffer_interrupt`          |
+
+### response.object
+
+When structured output is configured (class-level or per-call), the LLM response is parsed as JSON and validated against the schema. The validated result is available as `response.object`:
+
+```ruby
+response = SentimentAgent.generate('Analyze: "I love this!"')
+response.content  # => raw JSON string from the LLM
+response.object   # => {sentiment: "positive", score: 0.95}
+```
+
+Returns `nil` when structured output is not configured or when validation fails.
 
 ## Class Methods
 
