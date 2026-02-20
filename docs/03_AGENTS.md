@@ -200,10 +200,6 @@ response = MyAgent.generate([
 
 # With tool context
 response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
-
-# With structured output (class-level)
-response = SentimentAgent.generate('Analyze: "I love this!"')
-response.object  # => {sentiment: "positive", score: 0.95}
 ```
 
 ### stream
@@ -389,16 +385,16 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 `Riffer::Agent::Response` is returned by `generate` and `resume`:
 
-| Attribute          | Type                       | Description                                             |
-| ------------------ | -------------------------- | ------------------------------------------------------- |
-| `content`          | `String`                   | The response text                                       |
-| `object`           | `Hash` / `nil`             | Parsed and validated structured output (see below)      |
-| `blocked?`         | `Boolean`                  | `true` if a guardrail tripwire fired                    |
-| `tripwire`         | `Tripwire` / `nil`         | The guardrail tripwire that blocked the request         |
-| `modified?`        | `Boolean`                  | `true` if a guardrail modified the content              |
-| `modifications`    | `Array`                    | List of guardrail modifications applied                 |
-| `interrupted?`     | `Boolean`                  | `true` if the loop was interrupted                      |
-| `interrupt_reason` | `String` / `Symbol` / `nil`| The reason passed to `throw :riffer_interrupt`          |
+| Attribute          | Type                        | Description                                        |
+| ------------------ | --------------------------- | -------------------------------------------------- |
+| `content`          | `String`                    | The response text                                  |
+| `object`           | `Hash` / `nil`              | Parsed and validated structured output (see below) |
+| `blocked?`         | `Boolean`                   | `true` if a guardrail tripwire fired               |
+| `tripwire`         | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
+| `modified?`        | `Boolean`                   | `true` if a guardrail modified the content         |
+| `modifications`    | `Array`                     | List of guardrail modifications applied            |
+| `interrupted?`     | `Boolean`                   | `true` if the loop was interrupted                 |
+| `interrupt_reason` | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
 
 ### response.object
 
