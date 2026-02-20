@@ -75,13 +75,19 @@ class Riffer::Agent
 
   # Gets or sets the structured output schema for this agent.
   #
-  # Accepts a Hash shorthand (e.g., +{sentiment: String, score: Float}+)
-  # or a Riffer::Params instance.
+  # Accepts a Hash shorthand (e.g., +{sentiment: String, score: Float}+),
+  # a Riffer::Params instance, or a block evaluated against a new Params.
   #
-  #: (?(Hash[Symbol, Class] | Riffer::Params)?) -> (Hash[Symbol, Class] | Riffer::Params)?
-  def self.structured_output(schema = nil)
-    return @structured_output if schema.nil?
-    @structured_output = schema
+  #: (?(Hash[Symbol, Class] | Riffer::Params)?) ?{ () -> void } -> (Hash[Symbol, Class] | Riffer::Params)?
+  def self.structured_output(schema = nil, &block)
+    if block
+      @structured_output = Riffer::Params.new
+      @structured_output.instance_eval(&block)
+    elsif schema.nil?
+      @structured_output
+    else
+      @structured_output = schema
+    end
   end
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.

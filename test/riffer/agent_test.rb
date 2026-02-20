@@ -608,6 +608,18 @@ describe Riffer::Agent do
       klass.structured_output(params)
       expect(klass.structured_output).must_equal params
     end
+
+    it "stores Params from block DSL" do
+      klass = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+        structured_output do
+          required :sentiment, String, description: "The sentiment"
+          optional :score, Float
+        end
+      end
+      expect(klass.structured_output).must_be_instance_of Riffer::Params
+      expect(klass.structured_output.parameters.size).must_equal 2
+    end
   end
 
   describe "#generate with structured_output" do
