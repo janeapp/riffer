@@ -52,11 +52,10 @@ class Riffer::Agent
 
   # Gets or sets the structured output schema for this agent.
   #
-  # Accepts a Hash shorthand (e.g., +{sentiment: String, score: Float}+),
-  # a Riffer::Params instance, or a block evaluated against a new Params.
+  # Accepts a Riffer::Params instance or a block evaluated against a new Params.
   #
-  # : (?(Hash[Symbol, Class] | Riffer::Params)?) ?{ () -> void } -> (Hash[Symbol, Class] | Riffer::Params)?
-  def self.structured_output: (?(Hash[Symbol, Class] | Riffer::Params)?) ?{ () -> void } -> (Hash[Symbol, Class] | Riffer::Params)?
+  # : (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
+  def self.structured_output: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #
@@ -128,15 +127,15 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::Agent::Response
-  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::Agent::Response
+  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Riffer::Agent::Response
+  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Riffer::Agent::Response
 
   # Streams a response from the agent.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # Resumes an agent loop.
   #
@@ -241,8 +240,8 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
-  # : ((Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::StructuredOutput?
-  def resolve_structured_output: ((Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::StructuredOutput?
+  # : (Riffer::Params?) -> Riffer::StructuredOutput?
+  def resolve_structured_output: (Riffer::Params?) -> Riffer::StructuredOutput?
 
   # : () -> Hash[Symbol, untyped]
   def merged_model_options: () -> Hash[Symbol, untyped]

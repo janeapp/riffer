@@ -44,7 +44,10 @@ Agents can return structured JSON responses that conform to a schema. The respon
 ```ruby
 class SentimentAgent < Riffer::Agent
   model 'openai/gpt-4o'
-  structured_output sentiment: String, score: Float
+  structured_output do
+    required :sentiment, String
+    required :score, Float
+  end
 end
 
 response = SentimentAgent.generate('Analyze: "I love this!"')

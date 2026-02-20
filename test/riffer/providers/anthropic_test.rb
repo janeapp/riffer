@@ -96,7 +96,10 @@ describe Riffer::Providers::Anthropic do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "claude-haiku-4-5-20251001",
@@ -109,7 +112,10 @@ describe Riffer::Providers::Anthropic do
       it "returns non-empty content" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "claude-haiku-4-5-20251001",
@@ -122,7 +128,10 @@ describe Riffer::Providers::Anthropic do
       it "returns valid JSON content" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "claude-haiku-4-5-20251001",
@@ -135,7 +144,10 @@ describe Riffer::Providers::Anthropic do
       it "includes sentiment key" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "claude-haiku-4-5-20251001",
@@ -149,7 +161,10 @@ describe Riffer::Providers::Anthropic do
       it "includes score key" do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "claude-haiku-4-5-20251001",
@@ -227,7 +242,10 @@ describe Riffer::Providers::Anthropic do
   describe "structured output" do
     it "includes output_config.format in request params" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-      structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      params.required(:score, Float)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {structured_output: structured_output})
@@ -237,7 +255,9 @@ describe Riffer::Providers::Anthropic do
 
     it "includes json_schema in format" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {structured_output: structured_output})
@@ -256,7 +276,9 @@ describe Riffer::Providers::Anthropic do
 
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001", {structured_output: structured_output})

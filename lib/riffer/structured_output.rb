@@ -3,12 +3,12 @@
 
 require "json"
 
-# Riffer::StructuredOutput normalizes schema input and provides parse/validate
-# for structured JSON responses from LLM providers.
+# Riffer::StructuredOutput provides parse/validate for structured JSON
+# responses from LLM providers.
 #
-# Accepts either a Hash shorthand or a Params instance as schema.
-#
-#   so = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+#   params = Riffer::Params.new
+#   params.required(:sentiment, String)
+#   so = Riffer::StructuredOutput.new(params)
 #   result = so.parse_and_validate('{"sentiment":"positive","score":0.9}')
 #   result.object  #=> {sentiment: "positive", score: 0.9}
 #
@@ -16,9 +16,9 @@ class Riffer::StructuredOutput
   attr_reader :params #: Riffer::Params
   attr_reader :json_schema #: Hash[Symbol, untyped]
 
-  #: ((Hash[Symbol, Class] | Riffer::Params)) -> void
-  def initialize(schema)
-    @params = schema.is_a?(Riffer::Params) ? schema : Riffer::Params.from_hash(schema)
+  #: (Riffer::Params) -> void
+  def initialize(params)
+    @params = params
     @json_schema = @params.to_json_schema
   end
 

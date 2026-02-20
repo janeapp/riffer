@@ -75,18 +75,18 @@ class Riffer::Agent
 
   # Gets or sets the structured output schema for this agent.
   #
-  # Accepts a Hash shorthand (e.g., +{sentiment: String, score: Float}+),
-  # a Riffer::Params instance, or a block evaluated against a new Params.
+  # Accepts a Riffer::Params instance or a block evaluated against a new Params.
   #
-  #: (?(Hash[Symbol, Class] | Riffer::Params)?) ?{ () -> void } -> (Hash[Symbol, Class] | Riffer::Params)?
-  def self.structured_output(schema = nil, &block)
+  #: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
+  def self.structured_output(params = nil, &block)
     if block
       @structured_output = Riffer::Params.new
       @structured_output.instance_eval(&block)
-    elsif schema.nil?
+    elsif params.nil?
       @structured_output
     else
-      @structured_output = schema
+      raise Riffer::ArgumentError, "structured_output must be a Riffer::Params" unless params.is_a?(Riffer::Params)
+      @structured_output = params
     end
   end
 
@@ -208,7 +208,7 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::Agent::Response
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, tool_context: nil, structured_output: nil)
     @tool_context = tool_context
     @resolved_tools = nil
@@ -230,7 +230,7 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: (Hash[Symbol, Class] | Riffer::Params)?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt_or_messages, tool_context: nil, structured_output: nil)
     resolved = structured_output || self.class.structured_output
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if resolved
@@ -641,10 +641,10 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: ((Hash[Symbol, Class] | Riffer::Params)?) -> Riffer::StructuredOutput?
-  def resolve_structured_output(call_level_schema)
-    schema = call_level_schema || self.class.structured_output
-    schema ? Riffer::StructuredOutput.new(schema) : nil
+  #: (Riffer::Params?) -> Riffer::StructuredOutput?
+  def resolve_structured_output(call_level_params)
+    params = call_level_params || self.class.structured_output
+    params ? Riffer::StructuredOutput.new(params) : nil
   end
 
   #: () -> Hash[Symbol, untyped]

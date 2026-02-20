@@ -120,7 +120,10 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -133,7 +136,10 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns non-empty content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -146,7 +152,10 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns valid JSON content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -159,7 +168,10 @@ describe Riffer::Providers::AmazonBedrock do
       it "includes sentiment key" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -173,7 +185,10 @@ describe Riffer::Providers::AmazonBedrock do
       it "includes score key" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/structured_output/returns_structured_json") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          params = Riffer::Params.new
+          params.required(:sentiment, String)
+          params.required(:score, Float)
+          structured_output = Riffer::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -290,7 +305,10 @@ describe Riffer::Providers::AmazonBedrock do
   describe "structured output" do
     it "includes output_config.text_format in request params" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-      structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      params.required(:score, Float)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
@@ -300,7 +318,9 @@ describe Riffer::Providers::AmazonBedrock do
 
     it "includes json_schema structure with name" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
@@ -310,7 +330,9 @@ describe Riffer::Providers::AmazonBedrock do
 
     it "serializes schema as JSON string" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})
@@ -332,7 +354,9 @@ describe Riffer::Providers::AmazonBedrock do
 
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-      structured_output = Riffer::StructuredOutput.new(sentiment: String)
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "anthropic.claude-3-haiku-20240307-v1:0", {structured_output: structured_output})

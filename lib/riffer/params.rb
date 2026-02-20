@@ -14,17 +14,6 @@
 class Riffer::Params
   attr_reader :parameters #: Array[Riffer::Param]
 
-  # Builds a Params from shorthand Hash where all keys are required.
-  #
-  #   Riffer::Params.from_hash(sentiment: String, score: Float)
-  #
-  #: (Hash[Symbol, Class]) -> Riffer::Params
-  def self.from_hash(hash)
-    params = new
-    hash.each { |name, type| params.required(name, type) }
-    params
-  end
-
   #: () -> void
   def initialize
     @parameters = []

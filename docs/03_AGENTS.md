@@ -133,19 +133,12 @@ end
 
 ### structured_output
 
-Configures the agent to return structured JSON responses conforming to a schema. Accepts a Hash shorthand, a `Riffer::Params` instance, or a block DSL:
+Configures the agent to return structured JSON responses conforming to a schema. Accepts a `Riffer::Params` instance or a block DSL:
 
 ```ruby
-# Hash shorthand — all fields are required
 class SentimentAgent < Riffer::Agent
   model 'openai/gpt-4o'
   instructions 'Analyze the sentiment of the given text.'
-  structured_output sentiment: String, score: Float
-end
-
-# Block DSL — supports optional fields, descriptions, and enums
-class AnalysisAgent < Riffer::Agent
-  model 'openai/gpt-4o'
   structured_output do
     required :sentiment, String, description: "positive, negative, or neutral"
     required :score, Float, description: "Confidence score between 0 and 1"
@@ -209,9 +202,12 @@ response = MyAgent.generate([
 response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
 
 # With structured output (per-call)
+params = Riffer::Params.new
+params.required(:sentiment, String)
+params.required(:score, Float)
 response = MyAgent.generate(
   'Analyze: "I love this!"',
-  structured_output: {sentiment: String, score: Float}
+  structured_output: params
 )
 response.object  # => {sentiment: "positive", score: 0.95}
 

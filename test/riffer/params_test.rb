@@ -3,39 +3,6 @@
 require "test_helper"
 
 describe Riffer::Params do
-  describe ".from_hash" do
-    it "creates params with all keys as required" do
-      params = Riffer::Params.from_hash(sentiment: String, score: Float)
-      expect(params.parameters.length).must_equal 2
-    end
-
-    it "marks all params as required" do
-      params = Riffer::Params.from_hash(sentiment: String, score: Float)
-      expect(params.parameters.all?(&:required)).must_equal true
-    end
-
-    it "sets correct names" do
-      params = Riffer::Params.from_hash(sentiment: String, score: Float)
-      expect(params.parameters.map(&:name)).must_equal [:sentiment, :score]
-    end
-
-    it "sets correct types" do
-      params = Riffer::Params.from_hash(sentiment: String, score: Float)
-      expect(params.parameters.map(&:type)).must_equal [String, Float]
-    end
-
-    it "validates successfully with matching input" do
-      params = Riffer::Params.from_hash(sentiment: String, score: Float)
-      result = params.validate(sentiment: "positive", score: 0.9)
-      expect(result).must_equal({sentiment: "positive", score: 0.9})
-    end
-
-    it "raises ValidationError for missing keys" do
-      params = Riffer::Params.from_hash(sentiment: String, score: Float)
-      expect { params.validate(sentiment: "positive") }.must_raise(Riffer::ValidationError)
-    end
-  end
-
   describe "#required" do
     it "adds a parameter" do
       params = Riffer::Params.new
