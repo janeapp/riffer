@@ -640,38 +640,6 @@ describe Riffer::Agent do
       expect(result.object).must_equal({sentiment: "positive", score: 0.9})
     end
 
-    it "returns Response with parsed object from kwarg" do
-      params = Riffer::Params.new
-      params.required(:sentiment, String)
-      params.required(:score, Float)
-
-      agent = agent_class.new
-      provider = agent.send(:provider_instance)
-      provider.stub_response('{"sentiment":"positive","score":0.9}')
-
-      result = agent.generate("Analyze sentiment", structured_output: params)
-      expect(result.object).must_equal({sentiment: "positive", score: 0.9})
-    end
-
-    it "per-call kwarg overrides class-level default" do
-      klass = Class.new(Riffer::Agent) do
-        model "test/riffer-1"
-        structured_output do
-          required :sentiment, String
-        end
-      end
-
-      mood_params = Riffer::Params.new
-      mood_params.required(:mood, String)
-
-      agent = klass.new
-      provider = agent.send(:provider_instance)
-      provider.stub_response('{"mood":"happy"}')
-
-      result = agent.generate("Analyze", structured_output: mood_params)
-      expect(result.object).must_equal({mood: "happy"})
-    end
-
     it "sets object to nil when LLM returns invalid JSON" do
       klass = Class.new(Riffer::Agent) do
         model "test/riffer-1"
@@ -704,15 +672,20 @@ describe Riffer::Agent do
       expect(result.content).must_equal "This is not JSON"
     end
 
-    it "works with Params instance kwarg" do
+    it "works with Params instance at class level" do
       params = Riffer::Params.new
       params.required(:sentiment, String)
 
-      agent = agent_class.new
+      klass = Class.new(Riffer::Agent) do
+        model "test/riffer-1"
+        structured_output params
+      end
+
+      agent = klass.new
       provider = agent.send(:provider_instance)
       provider.stub_response('{"sentiment":"positive"}')
 
-      result = agent.generate("Analyze", structured_output: params)
+      result = agent.generate("Analyze")
       expect(result.object).must_equal({sentiment: "positive"})
     end
 
@@ -757,15 +730,6 @@ describe Riffer::Agent do
 
       agent = klass.new
       error = expect { agent.stream("Hello") }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/Structured output is not supported with streaming/)
-    end
-
-    it "raises ArgumentError when kwarg structured_output is provided" do
-      params = Riffer::Params.new
-      params.required(:sentiment, String)
-
-      agent = agent_class.new
-      error = expect { agent.stream("Hello", structured_output: params) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/Structured output is not supported with streaming/)
     end
 

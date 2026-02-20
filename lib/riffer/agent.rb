@@ -208,13 +208,13 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, tool_context: nil, structured_output: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
     clear_resolved_model
     @interrupted = false
-    @structured_output = resolve_structured_output(structured_output)
+    @structured_output = resolve_structured_output
     initialize_messages(prompt_or_messages)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
@@ -230,10 +230,9 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?, ?structured_output: Riffer::Params?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, tool_context: nil, structured_output: nil)
-    resolved = structured_output || self.class.structured_output
-    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if resolved
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, tool_context: nil)
+    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @tool_context = tool_context
     @resolved_tools = nil
@@ -641,9 +640,9 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
-  #: (Riffer::Params?) -> Riffer::StructuredOutput?
-  def resolve_structured_output(call_level_params)
-    params = call_level_params || self.class.structured_output
+  #: () -> Riffer::StructuredOutput?
+  def resolve_structured_output
+    params = self.class.structured_output
     params ? Riffer::StructuredOutput.new(params) : nil
   end
 

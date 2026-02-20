@@ -201,24 +201,14 @@ response = MyAgent.generate([
 # With tool context
 response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
 
-# With structured output (per-call)
-params = Riffer::Params.new
-params.required(:sentiment, String)
-params.required(:score, Float)
-response = MyAgent.generate(
-  'Analyze: "I love this!"',
-  structured_output: params
-)
-response.object  # => {sentiment: "positive", score: 0.95}
-
-# With class-level structured output
+# With structured output (class-level)
 response = SentimentAgent.generate('Analyze: "I love this!"')
 response.object  # => {sentiment: "positive", score: 0.95}
 ```
 
 ### stream
 
-Streams a response as an Enumerator. Raises `Riffer::ArgumentError` if structured output is configured (class-level or per-call):
+Streams a response as an Enumerator. Raises `Riffer::ArgumentError` if structured output is configured:
 
 ```ruby
 # Class method (recommended for simple calls)
@@ -412,7 +402,7 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 ### response.object
 
-When structured output is configured (class-level or per-call), the LLM response is parsed as JSON and validated against the schema. The validated result is available as `response.object`:
+When structured output is configured, the LLM response is parsed as JSON and validated against the schema. The validated result is available as `response.object`:
 
 ```ruby
 response = SentimentAgent.generate('Analyze: "I love this!"')
