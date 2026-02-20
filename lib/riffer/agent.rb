@@ -321,16 +321,16 @@ class Riffer::Agent
       end
 
       content = extract_final_response
-      object = parse_structured_content(content)
-      return build_response(content, modifications: all_modifications, object: object)
+      structured_output = parse_structured_content(content)
+      return build_response(content, modifications: all_modifications, structured_output: structured_output)
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
     content = extract_final_response
-    object = parse_structured_content(content)
-    build_response(content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, object: object)
+    structured_output = parse_structured_content(content)
+    build_response(content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: structured_output)
   end
 
   #: (Riffer::Messages::Base) -> void
@@ -660,8 +660,8 @@ class Riffer::Agent
     result.object
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?object: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, object: nil)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, object: object)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output)
   end
 end

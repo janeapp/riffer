@@ -623,7 +623,7 @@ describe Riffer::Agent do
   end
 
   describe "#generate with structured_output" do
-    it "returns Response with parsed object from class-level schema" do
+    it "returns Response with parsed structured_output from class-level schema" do
       klass = Class.new(Riffer::Agent) do
         model "test/riffer-1"
         structured_output do
@@ -637,10 +637,10 @@ describe Riffer::Agent do
       provider.stub_response('{"sentiment":"positive","score":0.9}')
 
       result = agent.generate("Analyze sentiment")
-      expect(result.object).must_equal({sentiment: "positive", score: 0.9})
+      expect(result.structured_output).must_equal({sentiment: "positive", score: 0.9})
     end
 
-    it "sets object to nil when LLM returns invalid JSON" do
+    it "sets structured_output to nil when LLM returns invalid JSON" do
       klass = Class.new(Riffer::Agent) do
         model "test/riffer-1"
         structured_output do
@@ -653,10 +653,10 @@ describe Riffer::Agent do
       provider.stub_response("This is not JSON")
 
       result = agent.generate("Analyze sentiment")
-      expect(result.object).must_be_nil
+      expect(result.structured_output).must_be_nil
     end
 
-    it "preserves raw content when object parsing fails" do
+    it "preserves raw content when structured_output parsing fails" do
       klass = Class.new(Riffer::Agent) do
         model "test/riffer-1"
         structured_output do
@@ -686,13 +686,13 @@ describe Riffer::Agent do
       provider.stub_response('{"sentiment":"positive"}')
 
       result = agent.generate("Analyze")
-      expect(result.object).must_equal({sentiment: "positive"})
+      expect(result.structured_output).must_equal({sentiment: "positive"})
     end
 
-    it "returns nil object when structured_output is not configured" do
+    it "returns nil structured_output when structured_output is not configured" do
       agent = agent_class.new
       result = agent.generate("Hello")
-      expect(result.object).must_be_nil
+      expect(result.structured_output).must_be_nil
     end
   end
 

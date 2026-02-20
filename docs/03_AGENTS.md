@@ -147,7 +147,7 @@ class SentimentAgent < Riffer::Agent
 end
 ```
 
-The LLM response is automatically parsed and validated against the schema. Access the result via `response.object`.
+The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 
@@ -388,7 +388,7 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 | Attribute          | Type                        | Description                                        |
 | ------------------ | --------------------------- | -------------------------------------------------- |
 | `content`          | `String`                    | The response text                                  |
-| `object`           | `Hash` / `nil`              | Parsed and validated structured output (see below) |
+| `structured_output` | `Hash` / `nil`              | Parsed and validated structured output (see below) |
 | `blocked?`         | `Boolean`                   | `true` if a guardrail tripwire fired               |
 | `tripwire`         | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
 | `modified?`        | `Boolean`                   | `true` if a guardrail modified the content         |
@@ -396,14 +396,14 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 | `interrupted?`     | `Boolean`                   | `true` if the loop was interrupted                 |
 | `interrupt_reason` | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
 
-### response.object
+### response.structured_output
 
-When structured output is configured, the LLM response is parsed as JSON and validated against the schema. The validated result is available as `response.object`:
+When structured output is configured, the LLM response is parsed as JSON and validated against the schema. The validated result is available as `response.structured_output`:
 
 ```ruby
 response = SentimentAgent.generate('Analyze: "I love this!"')
-response.content  # => raw JSON string from the LLM
-response.object   # => {sentiment: "positive", score: 0.95}
+response.content            # => raw JSON string from the LLM
+response.structured_output  # => {sentiment: "positive", score: 0.95}
 ```
 
 Returns `nil` when structured output is not configured or when validation fails.

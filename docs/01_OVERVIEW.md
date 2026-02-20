@@ -51,7 +51,7 @@ class SentimentAgent < Riffer::Agent
 end
 
 response = SentimentAgent.generate('Analyze: "I love this!"')
-response.object  # => {sentiment: "positive", score: 0.95}
+response.structured_output  # => {sentiment: "positive", score: 0.95}
 ```
 
 See the [structured output section in Agents](03_AGENTS.md#structured_output) for details.
