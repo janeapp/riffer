@@ -5,6 +5,8 @@
 #
 # Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
+  WEB_SEARCH_TOOL_TYPE = "web_search_preview"
+
   # Initializes the OpenAI provider.
   #
   #: (**untyped) -> void
@@ -22,6 +24,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     reasoning = options[:reasoning]
     tools = options[:tools]
     structured_output = options[:structured_output]
+    web_search = options[:web_search]
 
     params = {
       input: convert_messages_to_openai_format(messages),
@@ -30,11 +33,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         effort: reasoning,
         summary: "auto"
       },
-      **options.except(:reasoning, :tools, :structured_output)
+      **options.except(:reasoning, :tools, :structured_output, :web_search)
     }
 
-    if tools && !tools.empty?
-      params[:tools] = tools.map { |t| convert_tool_to_openai_format(t) }
+    openai_tools = []
+    openai_tools.concat(tools.map { |t| convert_tool_to_openai_format(t) }) if tools && !tools.empty?
+
+    if web_search
+      web_search_tool = {type: WEB_SEARCH_TOOL_TYPE}
+      web_search_tool.merge!(web_search) if web_search.is_a?(Hash)
+      openai_tools << web_search_tool
     end
 
     if structured_output
@@ -47,6 +55,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         }
       }
     end
+
+    params[:tools] = openai_tools unless openai_tools.empty?
 
     params.compact
   end
@@ -119,6 +129,14 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
       when :"response.function_call_arguments.done"
         handle_function_call_arguments_done(event, state: current_state, yielder: yielder)
+      when :"response.web_search_call.in_progress"
+        handle_web_search_status(event, status: "in_progress", yielder: yielder)
+      when :"response.web_search_call.searching"
+        handle_web_search_status(event, status: "searching", yielder: yielder)
+      when :"response.web_search_call.completed"
+        handle_web_search_status(event, status: "completed", yielder: yielder)
+      when :"response.output_item.done"
+        handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
       when :"response.completed"
         handle_response_completed(event, state: current_state, yielder: yielder)
       end
@@ -185,6 +203,25 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         output_tokens: usage.output_tokens
       )
     )
+  end
+
+  #: (untyped, status: String, yielder: Enumerator::Yielder) -> void
+  def handle_web_search_status(_event, status:, yielder:)
+    yielder << Riffer::StreamEvents::WebSearchStatus.new(status)
+  end
+
+  #: (untyped, yielder: Enumerator::Yielder) -> void
+  def handle_output_item_done_web_search(event, yielder:)
+    action = event.item.action
+    case action
+    when OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::OpenPage
+      # OpenPage carries a url but no query or sources, so it doesn't fit
+      # WebSearchDone — emit as a status notification instead.
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: action.url)
+    when OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search
+      sources = (action.sources || []).map { |s| {title: nil, url: s.url} }
+      yielder << Riffer::StreamEvents::WebSearchDone.new(action.query, sources: sources)
+    end
   end
 
   #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]

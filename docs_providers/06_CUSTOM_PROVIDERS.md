@@ -225,6 +225,13 @@ Riffer::StreamEvents::ToolCallDone.new(
 Riffer::StreamEvents::ReasoningDelta.new("thinking...")
 Riffer::StreamEvents::ReasoningDone.new("complete reasoning")
 
+# Web search (if supported)
+Riffer::StreamEvents::WebSearchStatus.new("searching", query: "search query")
+Riffer::StreamEvents::WebSearchDone.new(
+  "search query",
+  sources: [{title: "Result", url: "https://example.com"}]
+)
+
 # Token usage (emit at end of stream)
 Riffer::StreamEvents::TokenUsageDone.new(
   token_usage: Riffer::TokenUsage.new(

@@ -116,7 +116,7 @@ Passes options to each LLM request:
 ```ruby
 class MyAgent < Riffer::Agent
   model 'openai/gpt-4o'
-  model_options reasoning: 'medium', temperature: 0.7
+  model_options reasoning: 'medium', temperature: 0.7, web_search: true
 end
 ```
 

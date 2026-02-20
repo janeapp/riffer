@@ -287,6 +287,76 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "web search" do
+    describe "#generate_text with web_search" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_generate_text/returns_an_Assistant_message") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          result = provider.generate_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: true)
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "accepts hash web_search options" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_generate_text/accepts_hash_web_search_options") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          result = provider.generate_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: {max_uses: 3})
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+    end
+
+    describe "#stream_text with web_search" do
+      it "yields WebSearchStatus events" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_status") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: true).to_a
+          web_search_statuses = events.select { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
+          expect(web_search_statuses).wont_be_empty
+        end
+      end
+
+      it "yields WebSearchDone event" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_result") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: true).to_a
+          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
+          expect(web_search_result).wont_be_nil
+        end
+      end
+
+      it "includes sources in WebSearchDone event" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_result") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: true).to_a
+          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
+          expect(web_search_result.sources).wont_be_empty
+          expect(web_search_result.sources.first[:title]).wont_be_nil
+          expect(web_search_result.sources.first[:url]).wont_be_nil
+        end
+      end
+
+      it "includes query in WebSearchStatus searching event" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_status") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: true).to_a
+          searching_status = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) && e.status == "searching" }
+          expect(searching_status).wont_be_nil
+          expect(searching_status.query).wont_be_empty
+        end
+      end
+
+      it "does not yield ToolCallDelta events" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/no_phantom_tool_call_delta") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001", web_search: true).to_a
+          tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+          expect(tool_deltas).must_be_empty
+        end
+      end
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

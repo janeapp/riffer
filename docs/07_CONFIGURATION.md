@@ -112,6 +112,7 @@ end
 | `max_tokens`  | Maximum tokens in response                       |
 | `top_p`       | Nucleus sampling parameter                       |
 | `reasoning`   | Reasoning effort level (`low`, `medium`, `high`) |
+| `web_search`  | Enable web search (`true` or config hash)        |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -145,6 +146,7 @@ end
 | `top_p`       | Nucleus sampling parameter                  |
 | `top_k`       | Top-k sampling parameter                    |
 | `thinking`    | Extended thinking config hash (Claude 3.7+) |
+| `web_search`  | Enable web search (`true` or config hash)   |
 
 ```ruby
 class MyAgent < Riffer::Agent

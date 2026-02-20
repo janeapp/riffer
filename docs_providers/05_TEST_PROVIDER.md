@@ -143,6 +143,26 @@ text_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
 text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 ```
 
+## Web Search
+
+The test provider emits web search events when the stubbed response includes `web_search`:
+
+```ruby
+provider.stub_response("Here are the latest results.", web_search: {
+  query: "Ruby 3.4 release",
+  sources: [{title: "Ruby Releases", url: "https://www.ruby-lang.org/en/news/"}]
+})
+
+events = []
+agent.stream("What's new in Ruby?").each { |e| events << e }
+
+# Events include WebSearchStatus and WebSearchDone before text events
+search_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
+search_done = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
+search_done.query    # => "Ruby 3.4 release"
+search_done.sources  # => [{title: "Ruby Releases", url: "https://www.ruby-lang.org/en/news/"}]
+```
+
 ## Initial Responses
 
 Pass responses during initialization:

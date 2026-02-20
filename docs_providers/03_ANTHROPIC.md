@@ -82,6 +82,18 @@ Enable extended thinking (reasoning) for supported models. Pass the thinking con
 model_options thinking: {type: "enabled", budget_tokens: 10000}
 ```
 
+### web_search
+
+Enable server-side web search using Anthropic's `web_search_20250305` tool. Pass `true` to use defaults or a hash to merge with the tool definition:
+
+```ruby
+# Enable with defaults
+model_options web_search: true
+
+# With custom configuration
+model_options web_search: {max_uses: 3}
+```
+
 ## Example
 
 ```ruby
@@ -170,6 +182,33 @@ agent.stream("Solve this complex math problem").each do |event|
   end
 end
 ```
+
+## Web Search
+
+Web search allows Claude to search the web for up-to-date information. When enabled, the provider injects the `web_search_20250305` server tool into the request.
+
+```ruby
+class SearchAgent < Riffer::Agent
+  model 'anthropic/claude-4-5-haiku-20251001'
+  model_options web_search: true
+end
+
+agent = SearchAgent.new
+agent.stream("What happened in tech news today?").each do |event|
+  case event
+  when Riffer::StreamEvents::WebSearchStatus
+    puts "[search: #{event.status}]"
+    puts "  query: #{event.query}" if event.query
+  when Riffer::StreamEvents::WebSearchDone
+    puts "[search complete: #{event.query}]"
+    event.sources.each { |s| puts "  - #{s[:title]}: #{s[:url]}" }
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+Anthropic emits sources with `title` and `url` on the `WebSearchDone` event.
 
 ## Message Format
 

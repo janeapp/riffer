@@ -7,6 +7,8 @@
 #
 # See https://github.com/anthropics/anthropic-sdk-ruby
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
+  WEB_SEARCH_TOOL_TYPE = "web_search_20250305"
+
   # Initializes the Anthropic provider.
   #
   #: (?api_key: String?, **untyped) -> void
@@ -25,6 +27,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     partitioned_messages = partition_messages(messages)
     tools = options[:tools]
     structured_output = options[:structured_output]
+    web_search = options[:web_search]
 
     max_tokens = options.fetch(:max_tokens, 4096)
 
@@ -32,13 +35,18 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       model: model,
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
-      **options.except(:tools, :max_tokens, :structured_output)
+      **options.except(:tools, :max_tokens, :structured_output, :web_search)
     }
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
 
-    if tools && !tools.empty?
-      params[:tools] = tools.map { |t| convert_tool_to_anthropic_format(t) }
+    anthropic_tools = []
+    anthropic_tools.concat(tools.map { |t| convert_tool_to_anthropic_format(t) }) if tools && !tools.empty?
+
+    if web_search
+      web_search_tool = {type: WEB_SEARCH_TOOL_TYPE, name: "web_search"}
+      web_search_tool.merge!(web_search) if web_search.is_a?(Hash)
+      anthropic_tools << web_search_tool
     end
 
     if structured_output
@@ -49,6 +57,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         }
       }
     end
+
+    params[:tools] = anthropic_tools unless anthropic_tools.empty?
 
     params
   end
@@ -106,7 +116,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     current_state = {
       text: nil,
       reasoning: nil,
-      tool_call: nil
+      tool_call: nil,
+      web_search_index: nil,
+      web_search_json: nil,
+      web_search_query: nil
     }
 
     stream = @client.messages.stream(**params)
@@ -114,6 +127,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     stream.each do |event|
       case event
+      when Anthropic::Models::RawContentBlockStartEvent
+        handle_raw_content_block_start(event, state: current_state)
+      when Anthropic::Models::RawContentBlockDeltaEvent
+        handle_raw_content_block_delta(event, state: current_state)
       when Anthropic::Streaming::TextEvent
         handle_text_event(event, state: current_state, yielder: yielder)
       when Anthropic::Streaming::ThinkingEvent
@@ -125,10 +142,29 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block_type == "text" && current_state[:text]
         handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
         handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
+        handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block_type == "server_tool_use"
+        handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block_type == "web_search_tool_result"
       when Anthropic::Streaming::MessageStopEvent
         handle_message_stop(event, state: current_state, yielder: yielder)
       end
     end
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped]) -> void
+  def handle_raw_content_block_start(event, state:)
+    content_block = event.content_block
+    if content_block.type.to_s == "server_tool_use" && content_block.name.to_s == "web_search"
+      state[:web_search_index] = event.index
+      state[:web_search_json] = ""
+    end
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped]) -> void
+  def handle_raw_content_block_delta(event, state:)
+    return unless state[:web_search_index] == event.index
+
+    delta = event.delta
+    state[:web_search_json] += delta.partial_json if delta.respond_to?(:partial_json)
   end
 
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
@@ -181,6 +217,29 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def handle_content_block_stop_text(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_server_tool_use(_event, state:, yielder:)
+    return unless state[:web_search_json]
+
+    input = JSON.parse(state[:web_search_json])
+    state[:web_search_query] = input["query"]
+    state[:web_search_index] = nil
+    state[:web_search_json] = nil
+    yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: input["query"])
+  end
+
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_web_search_result(event, state:, yielder:)
+    content_block = event.content_block
+    sources = (content_block.content || []).filter_map do |item|
+      next unless item.type.to_s == "web_search_result"
+      {title: item.title, url: item.url}
+    end
+
+    yielder << Riffer::StreamEvents::WebSearchDone.new(state[:web_search_query] || "", sources: sources)
+    state[:web_search_query] = nil
   end
 
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void

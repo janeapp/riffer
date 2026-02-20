@@ -63,14 +63,14 @@ end
 
 ## Method Parameters
 
-| Parameter   | Description                                               |
-| ----------- | --------------------------------------------------------- |
-| `prompt`    | String prompt (required if `messages` not provided)       |
-| `system`    | Optional system message string                            |
-| `messages`  | Array of message objects/hashes (alternative to `prompt`) |
-| `model`     | Model name string                                         |
-| `tools`     | Array of Tool classes                                     |
-| `**options` | Provider-specific options                                 |
+| Parameter   | Description                                                                 |
+| ----------- | --------------------------------------------------------------------------- |
+| `prompt`    | String prompt (required if `messages` not provided)                         |
+| `system`    | Optional system message string                                              |
+| `messages`  | Array of message objects/hashes (alternative to `prompt`)                   |
+| `model`     | Model name string                                                           |
+| `tools`     | Array of Tool classes                                                       |
+| `**options` | Provider-specific options (including `web_search` if supported by provider) |
 
 You must provide either `prompt` or `messages`, but not both.
 

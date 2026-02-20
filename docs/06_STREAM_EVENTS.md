@@ -19,6 +19,10 @@ agent.stream("Tell me a story").each do |event|
     # Tool call being built
   when Riffer::StreamEvents::ToolCallDone
     puts "[Tool: #{event.name}]"
+  when Riffer::StreamEvents::WebSearchStatus
+    puts "[Searching: #{event.status}]"
+  when Riffer::StreamEvents::WebSearchDone
+    puts "[Search complete: #{event.query}]"
   end
 end
 ```
@@ -108,6 +112,45 @@ event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by
 event.role     # => "assistant"
 event.content  # => "Let me think about this step by step..."
 ```
+
+### WebSearchStatus
+
+Emitted during web search progress with status updates:
+
+```ruby
+event = Riffer::StreamEvents::WebSearchStatus.new("searching", query: "Ruby language")
+event.role    # => :assistant
+event.status  # => "searching"
+event.query   # => "Ruby language"
+event.url     # => nil
+event.to_h    # => {role: :assistant, status: "searching", query: "Ruby language"}
+```
+
+The `url` and `query` attributes are optional and only included in `to_h` when present. Status values include `"in_progress"`, `"searching"`, `"completed"`, and `"open_page"`.
+
+```ruby
+# "open_page" status includes a url
+event = Riffer::StreamEvents::WebSearchStatus.new("open_page", url: "https://example.com")
+event.url   # => "https://example.com"
+event.to_h  # => {role: :assistant, status: "open_page", url: "https://example.com"}
+```
+
+### WebSearchDone
+
+Emitted when web search completes:
+
+```ruby
+event = Riffer::StreamEvents::WebSearchDone.new(
+  "Ruby language",
+  sources: [{title: "Ruby Programming", url: "https://ruby-lang.org"}]
+)
+event.role     # => :assistant
+event.query    # => "Ruby language"
+event.sources  # => [{title: "Ruby Programming", url: "https://ruby-lang.org"}]
+event.to_h     # => {role: :assistant, query: "Ruby language", sources: [...]}
+```
+
+Contains the search query and an array of source hashes with `title` and `url` keys.
 
 ### GuardrailTripwire
 
@@ -204,6 +247,8 @@ When an agent uses tools during streaming, the flow is:
 5. More text events stream in
 6. Repeat until no more tool calls
 
+> **Note:** When `web_search` is enabled, `WebSearchStatus` and `WebSearchDone` events may appear before text events as the provider performs a server-side search.
+
 ```ruby
 agent.stream("What's the weather in Tokyo?").each do |event|
   case event
@@ -252,6 +297,13 @@ agent.stream("What's the weather in Tokyo and New York?").each do |event|
 
   when Riffer::StreamEvents::ReasoningDone
     puts "\n[reasoning complete]"
+
+  when Riffer::StreamEvents::WebSearchStatus
+    puts "[search: #{event.status}]"
+
+  when Riffer::StreamEvents::WebSearchDone
+    puts "[search complete: #{event.query}]"
+    event.sources.each { |s| puts "  - #{s[:title]}: #{s[:url]}" }
 
   when Riffer::StreamEvents::Interrupt
     puts "\n[interrupted]"

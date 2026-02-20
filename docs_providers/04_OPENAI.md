@@ -68,6 +68,18 @@ model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
 
 When reasoning is enabled, you'll receive `ReasoningDelta` and `ReasoningDone` events during streaming.
 
+### web_search
+
+Enable server-side web search using OpenAI's `web_search_preview` tool. Pass `true` to use defaults or a hash to merge with the tool definition:
+
+```ruby
+# Enable with defaults
+model_options web_search: true
+
+# With custom configuration
+model_options web_search: {search_context_size: "medium"}
+```
+
 ## Example
 
 ```ruby
@@ -130,6 +142,35 @@ class MathAgent < Riffer::Agent
   uses_tools [CalculatorTool]
 end
 ```
+
+## Web Search
+
+Web search allows the model to search the web for up-to-date information. When enabled, the provider injects the `web_search_preview` tool into the request.
+
+```ruby
+class SearchAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  model_options web_search: true
+end
+
+agent = SearchAgent.new
+agent.stream("What's the latest Ruby release?").each do |event|
+  case event
+  when Riffer::StreamEvents::WebSearchStatus
+    # OpenAI emits a full status sequence:
+    # "in_progress" → "searching" → "open_page" → "completed"
+    puts "[search: #{event.status}]"
+    puts "  query: #{event.query}" if event.query
+    puts "  url: #{event.url}" if event.url
+  when Riffer::StreamEvents::WebSearchDone
+    puts "[search complete: #{event.query}]"
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+> **Note:** OpenAI sources include `url` but not `title`. Each source in the `sources` array will have `title: nil`.
 
 ## Message Format
 

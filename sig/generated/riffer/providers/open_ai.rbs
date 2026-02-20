@@ -4,6 +4,8 @@
 #
 # Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
+  WEB_SEARCH_TOOL_TYPE: ::String
+
   # Initializes the OpenAI provider.
   #
   # : (**untyped) -> void
@@ -49,6 +51,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_response_completed: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, status: String, yielder: Enumerator::Yielder) -> void
+  def handle_web_search_status: (untyped, status: String, yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, yielder: Enumerator::Yielder) -> void
+  def handle_output_item_done_web_search: (untyped, yielder: Enumerator::Yielder) -> void
 
   # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]

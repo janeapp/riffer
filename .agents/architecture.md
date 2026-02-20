@@ -47,6 +47,8 @@ Structured events for streaming responses:
 - `TextDone` - completion signals
 - `ReasoningDelta` - reasoning process chunks
 - `ReasoningDone` - reasoning completion
+- `WebSearchStatus` - web search status updates
+- `WebSearchDone` - web search completion with query and sources
 - `Interrupt` - callback interrupted the agent loop
 
 ### Stopping the Loop Early
@@ -103,6 +105,7 @@ lib/
       base.rb            # Base provider class
       open_ai.rb         # OpenAI provider
       amazon_bedrock.rb  # Amazon Bedrock provider
+      anthropic.rb       # Anthropic provider
       repository.rb      # Provider registry
       test.rb            # Test provider
     stream_events/
@@ -112,6 +115,8 @@ lib/
       text_done.rb       # Text done event
       reasoning_delta.rb # Reasoning delta event
       reasoning_done.rb  # Reasoning done event
+      web_search_status.rb # Web search status event
+      web_search_done.rb   # Web search done event
 test/
   test_helper.rb         # Minitest configuration with VCR
   riffer_test.rb         # Main module tests

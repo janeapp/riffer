@@ -6,6 +6,8 @@
 #
 # See https://github.com/anthropics/anthropic-sdk-ruby
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
+  WEB_SEARCH_TOOL_TYPE: ::String
+
   # Initializes the Anthropic provider.
   #
   # : (?api_key: String?, **untyped) -> void
@@ -28,6 +30,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
+  # : (untyped, state: Hash[Symbol, untyped]) -> void
+  def handle_raw_content_block_start: (untyped, state: Hash[Symbol, untyped]) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped]) -> void
+  def handle_raw_content_block_delta: (untyped, state: Hash[Symbol, untyped]) -> void
+
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_text_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
@@ -45,6 +53,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_text: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_server_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_web_search_result: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_message_stop: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void

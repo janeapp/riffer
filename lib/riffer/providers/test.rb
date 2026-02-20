@@ -50,8 +50,11 @@ class Riffer::Providers::Test < Riffer::Providers::Base
 
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
-    @calls << {messages: messages.map(&:to_h), model: model, **options}
-    {response: next_response}
+    web_search = options[:web_search]
+    @calls << {messages: messages.map(&:to_h), model: model, **options.except(:web_search)}
+    response = next_response
+    response[:web_search] = web_search if web_search
+    {response: response}
   end
 
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -83,6 +86,15 @@ class Riffer::Providers::Test < Riffer::Providers::Base
     full_content = response[:content] || ""
     tool_calls = response[:tool_calls] || []
     token_usage = response[:token_usage]
+    web_search = response[:web_search]
+
+    if web_search
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("in_progress")
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: "test search query")
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: "https://example.com")
+      yielder << Riffer::StreamEvents::WebSearchStatus.new("completed")
+      yielder << Riffer::StreamEvents::WebSearchDone.new("test search query", sources: [{title: "Example", url: "https://example.com"}])
+    end
 
     unless full_content.empty?
       content_parts = full_content.split(". ").map { |part| part + (part.end_with?(".") ? "" : ".") }

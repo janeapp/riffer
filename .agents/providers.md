@@ -39,6 +39,9 @@ class Riffer::Providers::YourProvider < Riffer::Providers::Base
   private
 
   # Convert messages, tools, and options into SDK-specific params.
+  # If supporting web search, extract `web_search` from options and convert
+  # it to a provider-native tool format (e.g., OpenAI's `web_search_preview`
+  # or Anthropic's `web_search_20250305` server tool).
   #
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)

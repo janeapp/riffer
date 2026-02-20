@@ -404,6 +404,77 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "web search" do
+    describe "#generate_text with web_search" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_generate_text/returns_an_Assistant_message") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: true)
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "accepts hash web_search options" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_generate_text/accepts_hash_web_search_options") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: {search_context_size: "medium"})
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+    end
+
+    describe "#stream_text with web_search" do
+      it "yields WebSearchStatus events" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_status") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: true).to_a
+          web_search_statuses = events.select { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
+          expect(web_search_statuses).wont_be_empty
+        end
+      end
+
+      it "yields WebSearchDone event" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: true).to_a
+          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
+          expect(web_search_result).wont_be_nil
+        end
+      end
+
+      it "includes query in WebSearchDone event" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: true).to_a
+          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
+          expect(web_search_result.query).wont_be_empty
+        end
+      end
+
+      it "includes sources array in WebSearchDone event" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: true).to_a
+          web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
+          expect(web_search_result.sources).must_be_instance_of Array
+        end
+      end
+
+      it "yields web search events before text events" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_before_text") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "gpt-5-nano", web_search: true).to_a
+          first_web_search_index = events.index { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
+          first_text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+
+          if first_web_search_index && first_text_index
+            expect(first_web_search_index).must_be :<, first_text_index
+          end
+        end
+      end
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

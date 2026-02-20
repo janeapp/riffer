@@ -85,6 +85,8 @@ When streaming responses, Riffer emits typed events:
 - `TextDone` - Complete text
 - `ToolCallDelta` - Incremental tool call arguments
 - `ToolCallDone` - Complete tool call
+- `WebSearchStatus` - Web search progress updates
+- `WebSearchDone` - Web search completion with sources
 
 See [Stream Events](06_STREAM_EVENTS.md) for details.
 

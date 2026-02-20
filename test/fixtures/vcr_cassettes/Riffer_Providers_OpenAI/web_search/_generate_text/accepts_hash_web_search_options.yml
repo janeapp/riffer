@@ -1,0 +1,217 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the latest Ruby version?"}],"model":"gpt-5-nano","tools":[{"type":"web_search_preview","search_context_size":"medium"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.49.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.49.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '164'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 20 Feb 2026 22:13:05 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - cloudflare
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179993967'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 2ms
+      Openai-Version:
+      - '2020-10-01'
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      X-Request-Id:
+      - req_0eceb83b505e4ce89f85a4cdaf27f03b
+      Openai-Processing-Ms:
+      - '19357'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=qzhhalcnszmjxiAnlnnwhAoG9JxztTPI5Ncbxoch22g-1771625566.0266614-1.0.1.1-IPdo81nkdvmuqecyqGG1TS5sxusid7lTqFEbaRAaGGew9P4ENq2Jxw_Ex7dyxFdeLoI29zesQbLy8dqUJY.uJ72xOOUFIxcyzblVhcMoM5aTSyNBWQWh3rsBXwwtpHAT;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Fri, 20 Feb 2026
+        22:43:05 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Cf-Ray:
+      - 9d1158eba9f3b872-YVR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0763174d0edc4717016998dc5e4b408190b961c099d423aed9",
+          "object": "response",
+          "created_at": 1771625566,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1771625585,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-nano-2025-08-07",
+          "output": [
+            {
+              "id": "rs_0763174d0edc4717016998dc5ed970819092b943e4fb23a0e4",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "ws_0763174d0edc4717016998dc6268e081908450fbf02c118738",
+              "type": "web_search_call",
+              "status": "completed",
+              "action": {
+                "type": "search",
+                "queries": [
+                  "latest Ruby version",
+                  "Ruby latest stable release",
+                  "Ruby language downloads"
+                ],
+                "query": "latest Ruby version"
+              }
+            },
+            {
+              "id": "rs_0763174d0edc4717016998dc6362d08190ab48386937af1dd8",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "msg_0763174d0edc4717016998dc70393c8190a3effab42936ebb4",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [
+                    {
+                      "type": "url_citation",
+                      "end_index": 314,
+                      "start_index": 212,
+                      "title": "Ruby 4.0.1 Released | Ruby",
+                      "url": "https://www.ruby-lang.org/en/news/2026/01/13/ruby-4-0-1-released/?utm_source=openai"
+                    },
+                    {
+                      "type": "url_citation",
+                      "end_index": 554,
+                      "start_index": 469,
+                      "title": "Ruby Releases | Ruby",
+                      "url": "https://www.ruby-lang.org/en/downloads/releases/?utm_source=openai"
+                    }
+                  ],
+                  "logprobs": [],
+                  "text": "As of today (February 20, 2026), the latest stable Ruby version is 4.0.1, released January 13, 2026. The Ruby project\u2019s releases page shows 4.0.1 as the current stable release, with 4.0.2 planned for March 2026. ([ruby-lang.org](https://www.ruby-lang.org/en/news/2026/01/13/ruby-4-0-1-released/?utm_source=openai))\n\nFor context, the same releases page also lists 3.2.10 (a patch for the 3.2 line) released January 14, 2026, as the latest in the 3.2 maintenance series. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/?utm_source=openai))\n\nIf you\u2019d like, I can help you choose an upgrade path or show how to install 4.0.1 on your system."
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": "medium",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "type": "web_search_preview",
+              "search_context_size": "medium",
+              "user_location": {
+                "type": "approximate",
+                "city": null,
+                "country": "US",
+                "region": null,
+                "timezone": null
+              }
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 8498,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 2378,
+            "output_tokens_details": {
+              "reasoning_tokens": 2176
+            },
+            "total_tokens": 10876
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 20 Feb 2026 22:13:05 GMT
+recorded_with: VCR 6.4.0

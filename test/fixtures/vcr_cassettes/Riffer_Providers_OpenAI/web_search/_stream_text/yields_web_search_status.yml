@@ -1,0 +1,516 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the latest Ruby version?"}],"model":"gpt-5-nano","tools":[{"type":"web_search_preview"}],"stream":true}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.49.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.49.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '147'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 19 Feb 2026 22:47:26 GMT
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - cloudflare
+      Openai-Version:
+      - '2020-10-01'
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      X-Request-Id:
+      - req_d68c6f66b22249fbaab010b815124f80
+      Openai-Processing-Ms:
+      - '194'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=nlpgff_89eG7fuDxQMBMc39nUWReolm6G7EoBzRxxdQ-1771541245.7175298-1.0.1.1-LfyU1bJ8OmA78vgA3leQ31hoEw2s3QQq.zEP4U2k4afbaxfVnkR1tCRx1is2cb2V2Ju6iXMQdCqyKoX.NzVzCmSyjVfpxc0nwnwOq_Or36gv7Tb619u6FVvufvfgxPsQ;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Thu, 19 Feb 2026
+        23:17:26 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Cf-Ray:
+      - 9d094e51bbc6e19b-YVR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: UTF-8
+      string: |+
+        event: response.created
+        data: {"type":"response.created","response":{"id":"resp_066c6eafe9a5beed01699792fe12048194a417336c9c556314","object":"response","created_at":1771541246,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":null,"reasoning":{"effort":"medium","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"web_search_preview","search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+        event: response.in_progress
+        data: {"type":"response.in_progress","response":{"id":"resp_066c6eafe9a5beed01699792fe12048194a417336c9c556314","object":"response","created_at":1771541246,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":null,"reasoning":{"effort":"medium","summary":null},"safety_identifier":null,"service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"web_search_preview","search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"rs_066c6eafe9a5beed01699792fe78f48194836ea0051f71434e","type":"reasoning","summary":[]},"output_index":0,"sequence_number":2}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"rs_066c6eafe9a5beed01699792fe78f48194836ea0051f71434e","type":"reasoning","summary":[]},"output_index":0,"sequence_number":3}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"ws_066c6eafe9a5beed01699793021cc08194ad042f0a741681a1","type":"web_search_call","status":"in_progress"},"output_index":1,"sequence_number":4}
+
+        event: response.web_search_call.in_progress
+        data: {"type":"response.web_search_call.in_progress","item_id":"ws_066c6eafe9a5beed01699793021cc08194ad042f0a741681a1","output_index":1,"sequence_number":5}
+
+        event: response.web_search_call.searching
+        data: {"type":"response.web_search_call.searching","item_id":"ws_066c6eafe9a5beed01699793021cc08194ad042f0a741681a1","output_index":1,"sequence_number":6}
+
+        event: response.web_search_call.completed
+        data: {"type":"response.web_search_call.completed","item_id":"ws_066c6eafe9a5beed01699793021cc08194ad042f0a741681a1","output_index":1,"sequence_number":7}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"ws_066c6eafe9a5beed01699793021cc08194ad042f0a741681a1","type":"web_search_call","status":"completed","action":{"type":"search","queries":["latest Ruby version 2026","Ruby latest stable release","Ruby 3.x latest version"],"query":"latest Ruby version 2026"}},"output_index":1,"sequence_number":8}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"rs_066c6eafe9a5beed01699793032a688194aadc07ef5e5aebba","type":"reasoning","summary":[]},"output_index":2,"sequence_number":9}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"rs_066c6eafe9a5beed01699793032a688194aadc07ef5e5aebba","type":"reasoning","summary":[]},"output_index":2,"sequence_number":10}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"ws_066c6eafe9a5beed016997930506c48194a2328ecf50ff554c","type":"web_search_call","status":"in_progress"},"output_index":3,"sequence_number":11}
+
+        event: response.web_search_call.in_progress
+        data: {"type":"response.web_search_call.in_progress","item_id":"ws_066c6eafe9a5beed016997930506c48194a2328ecf50ff554c","output_index":3,"sequence_number":12}
+
+        event: response.web_search_call.searching
+        data: {"type":"response.web_search_call.searching","item_id":"ws_066c6eafe9a5beed016997930506c48194a2328ecf50ff554c","output_index":3,"sequence_number":13}
+
+        event: response.web_search_call.completed
+        data: {"type":"response.web_search_call.completed","item_id":"ws_066c6eafe9a5beed016997930506c48194a2328ecf50ff554c","output_index":3,"sequence_number":14}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"ws_066c6eafe9a5beed016997930506c48194a2328ecf50ff554c","type":"web_search_call","status":"completed","action":{"type":"open_page","url":"https://www.ruby-lang.org/en/downloads/releases/"}},"output_index":3,"sequence_number":15}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"rs_066c6eafe9a5beed0169979305851c8194abf6db94da2d358e","type":"reasoning","summary":[]},"output_index":4,"sequence_number":16}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"rs_066c6eafe9a5beed0169979305851c8194abf6db94da2d358e","type":"reasoning","summary":[]},"output_index":4,"sequence_number":17}
+
+        event: response.output_item.added
+        data: {"type":"response.output_item.added","item":{"id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","type":"message","status":"in_progress","content":[],"role":"assistant"},"output_index":5,"sequence_number":18}
+
+        event: response.content_part.added
+        data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","output_index":5,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":19}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"As","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"HHrX0UvPArjsl0","output_index":5,"sequence_number":20}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" of","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"ZoV7DtOZSmIAu","output_index":5,"sequence_number":21}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" February","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"3wfbyBT","output_index":5,"sequence_number":22}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"CVy2Ch1j8Hv00Pp","output_index":5,"sequence_number":23}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"19","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"QacOiPJLtwkrTk","output_index":5,"sequence_number":24}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"mzEkKsKt45N5p4U","output_index":5,"sequence_number":25}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"TCGeRHqK3NW0x1r","output_index":5,"sequence_number":26}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"zaHUwJaryiOrR","output_index":5,"sequence_number":27}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"oYlR4y4LLr52F0v","output_index":5,"sequence_number":28}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"OTRYAwZYLxkaq1N","output_index":5,"sequence_number":29}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"kL9ieyOp1UNo","output_index":5,"sequence_number":30}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" latest","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"E7OTvKLlj","output_index":5,"sequence_number":31}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" stable","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"e6fDjOJxk","output_index":5,"sequence_number":32}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" Ruby","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"oxqdFgaSlqB","output_index":5,"sequence_number":33}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" release","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"7bNwryRp","output_index":5,"sequence_number":34}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" is","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Djlu8WkVARQyy","output_index":5,"sequence_number":35}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" Ruby","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"LMdBl1IJ8kz","output_index":5,"sequence_number":36}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"tHPgorkdn7cK87V","output_index":5,"sequence_number":37}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"4","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Oe4yY21HFAFDmVA","output_index":5,"sequence_number":38}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"4FqdTyEyK7ikyyQ","output_index":5,"sequence_number":39}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"0","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"xeCNSFx2siYX82e","output_index":5,"sequence_number":40}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"vqgLRrUgLFbp2HC","output_index":5,"sequence_number":41}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"1","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"6I8V5OUc00dnpkn","output_index":5,"sequence_number":42}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" (","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"uFyItWFV97QvWD","output_index":5,"sequence_number":43}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"released","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"QY4nDhKb","output_index":5,"sequence_number":44}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" January","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"hzt4S1yB","output_index":5,"sequence_number":45}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"ao3Alu3MN1yH4jl","output_index":5,"sequence_number":46}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"13","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"jRpJhcS19AEnUm","output_index":5,"sequence_number":47}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"oobmzr6o2YTHNXu","output_index":5,"sequence_number":48}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"k3Lk8Xb5qtlM08k","output_index":5,"sequence_number":49}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"6I0UOqtLbZS0X","output_index":5,"sequence_number":50}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"eRsGyM56w9tQLyX","output_index":5,"sequence_number":51}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":").","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"dWdFmSTieAPI2D","output_index":5,"sequence_number":52}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" The","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"bo4xg2XlbIj7","output_index":5,"sequence_number":53}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" official","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"G9hcA3j","output_index":5,"sequence_number":54}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" releases","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"ornoO2A","output_index":5,"sequence_number":55}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" page","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"NQkQpEGrU9R","output_index":5,"sequence_number":56}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" lists","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"jWOGB9UX5A","output_index":5,"sequence_number":57}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"MAjuqCsIhsulj9w","output_index":5,"sequence_number":58}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"4","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"ZSWReHxD8qY2JmW","output_index":5,"sequence_number":59}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"AbZ8hDkwI1dMSGD","output_index":5,"sequence_number":60}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"0","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"fmtP9ihCeiVdUxe","output_index":5,"sequence_number":61}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"uVgXFCX0w5EVWI8","output_index":5,"sequence_number":62}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"1","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"s3JoilsID65nu13","output_index":5,"sequence_number":63}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" with","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"i7iJhaUPtQa","output_index":5,"sequence_number":64}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"FfR4FBwyvA6g","output_index":5,"sequence_number":65}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" date","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"aBQjbYt0IMO","output_index":5,"sequence_number":66}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"ANHt2LCUz0dIfsT","output_index":5,"sequence_number":67}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"qjVn097PBAAAQ","output_index":5,"sequence_number":68}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"TfEjXXdWS3YWEDc","output_index":5,"sequence_number":69}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"-","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"vE6dkJmLPhRDeCf","output_index":5,"sequence_number":70}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"01","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"UDmmQFpRbCJpW3","output_index":5,"sequence_number":71}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"-","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"KkhomUd3gZJbm5g","output_index":5,"sequence_number":72}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"13","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"eJhUG0XZ9Qgoqa","output_index":5,"sequence_number":73}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"RhtNNnqjrkJE2VT","output_index":5,"sequence_number":74}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"hRVmMXtoKuwuMVO","output_index":5,"sequence_number":75}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"7nUa7F5nebpfl","output_index":5,"sequence_number":76}
+
+        event: response.output_text.annotation.added
+        data: {"type":"response.output_text.annotation.added","annotation":{"type":"url_citation","end_index":231,"start_index":164,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},"annotation_index":0,"content_index":0,"item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","output_index":5,"sequence_number":77}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\n","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"PwWDd6n0npK9ACz","output_index":5,"sequence_number":78}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\nFor","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"TcoQoAoCOzFq","output_index":5,"sequence_number":79}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" context","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"v56Dkxn7","output_index":5,"sequence_number":80}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Jz3lzi2MBL2WI8n","output_index":5,"sequence_number":81}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"GnJnY2crIZrV","output_index":5,"sequence_number":82}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"09PZGT7CopPYxQO","output_index":5,"sequence_number":83}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"3","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Pd7oDTKzU5c3Umr","output_index":5,"sequence_number":84}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Zc6JUVmfuSI0pg5","output_index":5,"sequence_number":85}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"2","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"qVAcwVyKuiFzDFM","output_index":5,"sequence_number":86}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" line","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"BCwIDJP43DF","output_index":5,"sequence_number":87}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" also","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"FIC5hPXlnmV","output_index":5,"sequence_number":88}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" had","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"7IKd2D7yuyCq","output_index":5,"sequence_number":89}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" a","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"5KtE8KSjm3hWgY","output_index":5,"sequence_number":90}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" latest","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"VcwzRjGyv","output_index":5,"sequence_number":91}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" release","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"LlocB9sq","output_index":5,"sequence_number":92}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"lxQy3GEtxBNg8vc","output_index":5,"sequence_number":93}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" Ruby","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"8dniN6vX6qc","output_index":5,"sequence_number":94}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"IOM3dBep4wj8vCT","output_index":5,"sequence_number":95}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"3","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Bcib5yGCfJvOTZJ","output_index":5,"sequence_number":96}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"GCvNknxGgLDUO5h","output_index":5,"sequence_number":97}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"2","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"EFxHb4lWvD9IyT4","output_index":5,"sequence_number":98}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"zip3ITSFQOqh6rz","output_index":5,"sequence_number":99}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"10","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"ahQEpRmTCjK63P","output_index":5,"sequence_number":100}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"FaG7zEtevHrIdFV","output_index":5,"sequence_number":101}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" released","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"2K9L48v","output_index":5,"sequence_number":102}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" January","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"azea3fUz","output_index":5,"sequence_number":103}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"6Wxk07A4m0IRz3d","output_index":5,"sequence_number":104}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"14","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"4LaVMBnyE7I0FP","output_index":5,"sequence_number":105}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"bCzTdsAYxGUGAeX","output_index":5,"sequence_number":106}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"BWjvxZbO4DBcIkt","output_index":5,"sequence_number":107}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"202","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"yU9OvkH08okbG","output_index":5,"sequence_number":108}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"6","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Kp5zgnZdlooEYOr","output_index":5,"sequence_number":109}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"DWALun2QIOXmBf7","output_index":5,"sequence_number":110}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"svj0TQmCx07HAyR","output_index":5,"sequence_number":111}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"E2grshRGYx4EE","output_index":5,"sequence_number":112}
+
+        event: response.output_text.annotation.added
+        data: {"type":"response.output_text.annotation.added","annotation":{"type":"url_citation","end_index":393,"start_index":326,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},"annotation_index":1,"content_index":0,"item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","output_index":5,"sequence_number":113}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\n","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"6YmqlRxjCf7puSb","output_index":5,"sequence_number":114}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"\nIf","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"WeYtJuWWJsFSu","output_index":5,"sequence_number":115}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" you","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"l8DZZXdZb9HC","output_index":5,"sequence_number":116}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" want","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"8fGY57znWUQ","output_index":5,"sequence_number":117}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" to","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"28LSmniYsQ3xT","output_index":5,"sequence_number":118}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" confirm","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"NXzocxio","output_index":5,"sequence_number":119}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"CDseuJfiOmwq","output_index":5,"sequence_number":120}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" current","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"sZ1llhyy","output_index":5,"sequence_number":121}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" latest","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"uSAJhgHUI","output_index":5,"sequence_number":122}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" yourself","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"tnColIW","output_index":5,"sequence_number":123}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"TtGHM07MvpwLKbC","output_index":5,"sequence_number":124}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" you","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"1MzmsAiZw6bh","output_index":5,"sequence_number":125}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" can","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"5yAgGQtytui6","output_index":5,"sequence_number":126}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" check","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Mv8LbbXD52","output_index":5,"sequence_number":127}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"Mbi5l4Ox4fna","output_index":5,"sequence_number":128}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" Ruby","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"NZWs7bqLxPh","output_index":5,"sequence_number":129}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" releases","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"MSRk5rg","output_index":5,"sequence_number":130}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" page","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"cSpwgvqEYBM","output_index":5,"sequence_number":131}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" on","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"8aKXalIqLpDlm","output_index":5,"sequence_number":132}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ruby","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"vcLZ7VO1Ran","output_index":5,"sequence_number":133}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"-lang","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"mQwrCVPHa7l","output_index":5,"sequence_number":134}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".org","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"mv7BEjRuseyL","output_index":5,"sequence_number":135}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"FMU7ywxqykrTJSB","output_index":5,"sequence_number":136}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"BTaHUG3JvwWE7gA","output_index":5,"sequence_number":137}
+
+        event: response.output_text.delta
+        data: {"type":"response.output_text.delta","content_index":0,"delta":"([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))","item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"obfuscation":"52OG2LI3PKvQF","output_index":5,"sequence_number":138}
+
+        event: response.output_text.annotation.added
+        data: {"type":"response.output_text.annotation.added","annotation":{"type":"url_citation","end_index":569,"start_index":502,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},"annotation_index":2,"content_index":0,"item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","output_index":5,"sequence_number":139}
+
+        event: response.output_text.done
+        data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","logprobs":[],"output_index":5,"sequence_number":140,"text":"As of February 19, 2026, the latest stable Ruby release is Ruby 4.0.1 (released January 13, 2026). The official releases page lists 4.0.1 with the date 2026-01-13. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nFor context, the 3.2 line also had a latest release, Ruby 3.2.10, released January 14, 2026. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nIf you want to confirm the current latest yourself, you can check the Ruby releases page on ruby-lang.org. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))"}
+
+        event: response.content_part.done
+        data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","output_index":5,"part":{"type":"output_text","annotations":[{"type":"url_citation","end_index":231,"start_index":164,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url_citation","end_index":393,"start_index":326,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url_citation","end_index":569,"start_index":502,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"}],"logprobs":[],"text":"As of February 19, 2026, the latest stable Ruby release is Ruby 4.0.1 (released January 13, 2026). The official releases page lists 4.0.1 with the date 2026-01-13. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nFor context, the 3.2 line also had a latest release, Ruby 3.2.10, released January 14, 2026. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nIf you want to confirm the current latest yourself, you can check the Ruby releases page on ruby-lang.org. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))"},"sequence_number":141}
+
+        event: response.output_item.done
+        data: {"type":"response.output_item.done","item":{"id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","type":"message","status":"completed","content":[{"type":"output_text","annotations":[{"type":"url_citation","end_index":231,"start_index":164,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url_citation","end_index":393,"start_index":326,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url_citation","end_index":569,"start_index":502,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"}],"logprobs":[],"text":"As of February 19, 2026, the latest stable Ruby release is Ruby 4.0.1 (released January 13, 2026). The official releases page lists 4.0.1 with the date 2026-01-13. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nFor context, the 3.2 line also had a latest release, Ruby 3.2.10, released January 14, 2026. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nIf you want to confirm the current latest yourself, you can check the Ruby releases page on ruby-lang.org. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))"}],"role":"assistant"},"output_index":5,"sequence_number":142}
+
+        event: response.completed
+        data: {"type":"response.completed","response":{"id":"resp_066c6eafe9a5beed01699792fe12048194a417336c9c556314","object":"response","created_at":1771541246,"status":"completed","background":false,"completed_at":1771541270,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","output":[{"id":"rs_066c6eafe9a5beed01699792fe78f48194836ea0051f71434e","type":"reasoning","summary":[]},{"id":"ws_066c6eafe9a5beed01699793021cc08194ad042f0a741681a1","type":"web_search_call","status":"completed","action":{"type":"search","queries":["latest Ruby version 2026","Ruby latest stable release","Ruby 3.x latest version"],"query":"latest Ruby version 2026"}},{"id":"rs_066c6eafe9a5beed01699793032a688194aadc07ef5e5aebba","type":"reasoning","summary":[]},{"id":"ws_066c6eafe9a5beed016997930506c48194a2328ecf50ff554c","type":"web_search_call","status":"completed","action":{"type":"open_page","url":"https://www.ruby-lang.org/en/downloads/releases/"}},{"id":"rs_066c6eafe9a5beed0169979305851c8194abf6db94da2d358e","type":"reasoning","summary":[]},{"id":"msg_066c6eafe9a5beed0169979314edf88194a98a0d96e9fabb81","type":"message","status":"completed","content":[{"type":"output_text","annotations":[{"type":"url_citation","end_index":231,"start_index":164,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url_citation","end_index":393,"start_index":326,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"},{"type":"url_citation","end_index":569,"start_index":502,"title":"Ruby Releases | Ruby","url":"https://www.ruby-lang.org/en/downloads/releases/"}],"logprobs":[],"text":"As of February 19, 2026, the latest stable Ruby release is Ruby 4.0.1 (released January 13, 2026). The official releases page lists 4.0.1 with the date 2026-01-13. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nFor context, the 3.2 line also had a latest release, Ruby 3.2.10, released January 14, 2026. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nIf you want to confirm the current latest yourself, you can check the Ruby releases page on ruby-lang.org. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))"}],"role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":null,"reasoning":{"effort":"medium","summary":null},"safety_identifier":null,"service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"web_search_preview","search_context_size":"medium","user_location":{"type":"approximate","city":null,"country":"US","region":null,"timezone":null}}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":{"input_tokens":13068,"input_tokens_details":{"cached_tokens":4224},"output_tokens":2530,"output_tokens_details":{"reasoning_tokens":2240},"total_tokens":15598},"user":null,"metadata":{}},"sequence_number":143}
+
+  recorded_at: Thu, 19 Feb 2026 22:47:50 GMT
+recorded_with: VCR 6.4.0
+...
