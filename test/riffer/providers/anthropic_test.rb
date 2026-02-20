@@ -92,6 +92,74 @@ describe Riffer::Providers::Anthropic do
         end
       end
     end
+    describe "structured output" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          result = provider.generate_text(
+            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
+            model: "claude-haiku-4-5-20251001",
+            structured_output: structured_output
+          )
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns non-empty content" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          result = provider.generate_text(
+            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
+            model: "claude-haiku-4-5-20251001",
+            structured_output: structured_output
+          )
+          expect(result.content).wont_be_empty
+        end
+      end
+
+      it "returns valid JSON content" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          result = provider.generate_text(
+            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
+            model: "claude-haiku-4-5-20251001",
+            structured_output: structured_output
+          )
+          JSON.parse(result.content)
+        end
+      end
+
+      it "includes sentiment key" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          result = provider.generate_text(
+            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
+            model: "claude-haiku-4-5-20251001",
+            structured_output: structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed.key?("sentiment")).must_equal true
+        end
+      end
+
+      it "includes score key" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output/returns_structured_json") do
+          provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+          structured_output = Riffer::StructuredOutput.new(sentiment: String, score: Float)
+          result = provider.generate_text(
+            prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
+            model: "claude-haiku-4-5-20251001",
+            structured_output: structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed.key?("score")).must_equal true
+        end
+      end
+    end
   end
 
   describe "#stream_text" do
