@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Analyze the sentiment
+        of the following text: ''I love this product, it is amazing!''"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"sentiment\":{\"type\":\"string\"},\"score\":{\"type\":\"number\"}},\"required\":[\"sentiment\",\"score\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 852bc9d1-98f3-488a-9e95-10cfd891a308
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '436'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 19 Feb 2026 23:53:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '358'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9115c625-562c-4c4c-8195-938d24ed690c
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2061},"output":{"message":{"content":[{"text":"{\"sentiment\":\"positive\",\"score\":0.95}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":189,"outputTokens":14,"serverToolUsage":{},"totalTokens":203}}'
+  recorded_at: Thu, 19 Feb 2026 23:53:05 GMT
+recorded_with: VCR 6.4.0
