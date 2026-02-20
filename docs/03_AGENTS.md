@@ -204,7 +204,7 @@ response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
 
 ### stream
 
-Streams a response as an Enumerator. Raises `Riffer::ArgumentError` if structured output is configured:
+Streams a response as an Enumerator:
 
 ```ruby
 # Class method (recommended for simple calls)
