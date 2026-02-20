@@ -80,8 +80,8 @@ module Riffer::Evals::Profile
   module AgentClassMethods
     # Runs evaluations against the agent.
     #
-    #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-    def run_eval(input:, context: nil, tool_context: nil)
+    #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?ground_truth: String?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+    def run_eval(input:, ground_truth: nil, tool_context: nil)
       profile = @eval_profile
       raise Riffer::ArgumentError, "No eval profile configured" unless profile
 
@@ -93,7 +93,7 @@ module Riffer::Evals::Profile
 
       # Run evaluations
       runner = Riffer::Evals::Runner.new(metrics: metrics)
-      runner.run(input: input, output: response.content, context: context)
+      runner.run(input: input, output: response.content, ground_truth: ground_truth)
     end
   end
 end

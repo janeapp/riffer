@@ -11,8 +11,9 @@ require "json"
 #
 #   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-opus-4-5-20251101")
 #   result = judge.evaluate(
-#     system_prompt: "You are an evaluation assistant...",
-#     user_prompt: "Evaluate this response..."
+#     instructions: "Assess answer relevancy...",
+#     input: "What is Ruby?",
+#     output: "Ruby is a programming language."
 #   )
 #   result[:score]  # => 0.85
 #   result[:reason] # => "The response is relevant..."
@@ -52,23 +53,48 @@ class Riffer::Evals::Judge
 
   # Evaluates using the configured LLM.
   #
-  # Raises Riffer::ArgumentError if both messages and system_prompt/user_prompt are provided,
-  # or if user_prompt is missing when messages is not provided.
+  # Composes system and user messages from the semantic fields:
+  # - +instructions+ — evaluation criteria and scoring rubric
+  # - +input+ — the original input/question
+  # - +output+ — the agent's response to evaluate
+  # - +ground_truth+ — optional reference answer for comparison
   #
-  #: (?messages: Array[Hash[Symbol, untyped]]?, ?system_prompt: String?, ?user_prompt: String?) -> Hash[Symbol, untyped]
-  def evaluate(messages: nil, system_prompt: nil, user_prompt: nil)
-    response = if messages
-      raise Riffer::ArgumentError, "cannot provide both messages and system_prompt/user_prompt" if system_prompt || user_prompt
-      provider_instance.generate_text(messages: messages, model: model_name, tools: [EvaluationTool])
-    else
-      raise Riffer::ArgumentError, "user_prompt is required when messages is not provided" unless user_prompt
-      provider_instance.generate_text(system: system_prompt, prompt: user_prompt, model: model_name, tools: [EvaluationTool])
-    end
+  #: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
+  def evaluate(instructions:, input:, output:, ground_truth: nil)
+    system_message = build_system_message(instructions)
+    user_message = build_user_message(input: input, output: output, ground_truth: ground_truth)
+
+    response = provider_instance.generate_text(
+      system: system_message,
+      prompt: user_message,
+      model: model_name,
+      tools: [EvaluationTool]
+    )
 
     parse_tool_response(response)
   end
 
   private
+
+  #: (String) -> String
+  def build_system_message(instructions)
+    <<~SYSTEM.strip
+      You are an evaluation assistant. Score the output based on the instructions below.
+
+      #{instructions}
+
+      Use the evaluation tool to submit your score and reasoning.
+    SYSTEM
+  end
+
+  #: (input: String, output: String, ground_truth: String?) -> String
+  def build_user_message(input:, output:, ground_truth: nil)
+    parts = []
+    parts << "## Input\n\n#{input}"
+    parts << "## Output\n\n#{output}"
+    parts << "## Ground Truth\n\n#{ground_truth}" if ground_truth
+    parts.join("\n\n")
+  end
 
   #: () -> Riffer::Providers::Base
   def provider_instance

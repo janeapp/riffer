@@ -53,7 +53,7 @@ module Riffer::Evals::Profile
   module AgentClassMethods
     # Runs evaluations against the agent.
     #
-    # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-    def run_eval: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?context: Hash[Symbol, untyped]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+    # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?ground_truth: String?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+    def run_eval: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?ground_truth: String?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   end
 end

@@ -8,7 +8,7 @@
 #   run_result = Riffer::Evals::RunResult.new(
 #     input: "question",
 #     output: "answer",
-#     context: {},
+#     ground_truth: "expected answer",
 #     results: [result1, result2],
 #     metrics: [metric1, metric2]
 #   )
@@ -24,8 +24,8 @@ class Riffer::Evals::RunResult
   # The output that was evaluated.
   attr_reader :output #: String
 
-  # The context used during evaluation.
-  attr_reader :context #: Hash[Symbol, untyped]?
+  # The ground truth used during evaluation.
+  attr_reader :ground_truth #: String?
 
   # Individual evaluation results.
   attr_reader :results #: Array[Riffer::Evals::Result]
@@ -35,11 +35,11 @@ class Riffer::Evals::RunResult
 
   # Initializes a new run result.
   #
-  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, context: Hash[Symbol, untyped]?, results: Array[Riffer::Evals::Result], metrics: Array[Riffer::Evals::Metric]) -> void
-  def initialize(input:, output:, context:, results:, metrics:)
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], metrics: Array[Riffer::Evals::Metric]) -> void
+  def initialize(input:, output:, ground_truth:, results:, metrics:)
     @input = input
     @output = output
-    @context = context
+    @ground_truth = ground_truth
     @results = results
     @metrics = metrics
   end
@@ -90,7 +90,7 @@ class Riffer::Evals::RunResult
     {
       input: input,
       output: output,
-      context: context,
+      ground_truth: ground_truth,
       results: results.map(&:to_h),
       passed: passed?,
       aggregate_score: aggregate_score

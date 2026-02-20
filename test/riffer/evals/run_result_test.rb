@@ -44,14 +44,14 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "question",
         output: "answer",
-        context: {key: "value"},
+        ground_truth: "expected answer",
         results: [passing_result],
         metrics: [passing_metric]
       )
 
       expect(run_result.input).must_equal "question"
       expect(run_result.output).must_equal "answer"
-      expect(run_result.context).must_equal({key: "value"})
+      expect(run_result.ground_truth).must_equal "expected answer"
       expect(run_result.results).must_equal [passing_result]
       expect(run_result.metrics).must_equal [passing_metric]
     end
@@ -62,7 +62,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [passing_result],
         metrics: [passing_metric]
       )
@@ -74,7 +74,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [failing_result],
         metrics: [failing_metric]
       )
@@ -86,7 +86,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [passing_result, failing_result],
         metrics: [passing_metric, failing_metric]
       )
@@ -100,7 +100,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [passing_result],
         metrics: [passing_metric]
       )
@@ -112,7 +112,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [failing_result],
         metrics: [failing_metric]
       )
@@ -124,7 +124,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [passing_result, failing_result],
         metrics: [passing_metric, failing_metric]
       )
@@ -139,7 +139,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [],
         metrics: []
       )
@@ -151,7 +151,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [passing_result],
         metrics: [passing_metric]
       )
@@ -172,7 +172,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [result1, result2],
         metrics: [metric1, metric2]
       )
@@ -186,7 +186,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [toxicity_result],
         metrics: [toxicity_metric]
       )
@@ -206,7 +206,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "test",
         output: "test",
-        context: nil,
+        ground_truth: nil,
         results: [result1, result2],
         metrics: [metric1, metric2]
       )
@@ -223,7 +223,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(
         input: "question",
         output: "answer",
-        context: {key: "value"},
+        ground_truth: "expected",
         results: [passing_result],
         metrics: [passing_metric]
       )
@@ -231,7 +231,7 @@ describe Riffer::Evals::RunResult do
       hash = run_result.to_h
       expect(hash[:input]).must_equal "question"
       expect(hash[:output]).must_equal "answer"
-      expect(hash[:context]).must_equal({key: "value"})
+      expect(hash[:ground_truth]).must_equal "expected"
       expect(hash[:passed]).must_equal true
       expect(hash[:aggregate_score]).must_equal 0.9
       expect(hash[:results].length).must_equal 1

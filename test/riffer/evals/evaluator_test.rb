@@ -5,26 +5,26 @@ require "test_helper"
 describe Riffer::Evals::Evaluator do
   let(:evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      description "A test evaluator"
+      instructions "Test evaluation instructions"
       higher_is_better true
     end
   end
 
   let(:lower_is_better_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      description "Detects toxicity"
+      instructions "Detects toxicity"
       higher_is_better false
     end
   end
 
-  describe ".description" do
-    it "returns the set description" do
-      expect(evaluator_class.description).must_equal "A test evaluator"
+  describe ".instructions" do
+    it "returns the set instructions" do
+      expect(evaluator_class.instructions).must_equal "Test evaluation instructions"
     end
 
     it "returns nil when not set" do
       anon_class = Class.new(Riffer::Evals::Evaluator)
-      expect(anon_class.description).must_be_nil
+      expect(anon_class.instructions).must_be_nil
     end
   end
 
@@ -57,9 +57,46 @@ describe Riffer::Evals::Evaluator do
   end
 
   describe "#evaluate" do
-    it "raises NotImplementedError when not implemented" do
-      evaluator = evaluator_class.new
+    it "raises NotImplementedError when instructions not set and evaluate not overridden" do
+      anon_class = Class.new(Riffer::Evals::Evaluator) do
+        higher_is_better true
+      end
+
+      evaluator = anon_class.new
       expect { evaluator.evaluate(input: "test", output: "test") }.must_raise(NotImplementedError)
+    end
+
+    it "calls judge with instructions when instructions are set" do
+      klass = Class.new(Riffer::Evals::Evaluator) do
+        instructions "Evaluate quality."
+        judge_model "test/eval-model"
+      end
+
+      evaluator = klass.new
+      judge = evaluator.send(:judge)
+      provider = judge.send(:provider_instance)
+      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.8, reason: "Good"}}])
+
+      result = evaluator.evaluate(input: "test input", output: "test output")
+
+      expect(result.score).must_equal 0.8
+      expect(result.reason).must_equal "Good"
+    end
+
+    it "passes ground_truth to judge" do
+      klass = Class.new(Riffer::Evals::Evaluator) do
+        instructions "Compare to ground truth."
+        judge_model "test/eval-model"
+      end
+
+      evaluator = klass.new
+      judge = evaluator.send(:judge)
+      provider = judge.send(:provider_instance)
+      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.95, reason: "Matches"}}])
+
+      result = evaluator.evaluate(input: "question", output: "answer", ground_truth: "expected")
+
+      expect(result.score).must_equal 0.95
     end
   end
 
@@ -68,7 +105,7 @@ describe Riffer::Evals::Evaluator do
       klass = Class.new(Riffer::Evals::Evaluator) do
         higher_is_better true
 
-        def evaluate(input:, output:, context: nil)
+        def evaluate(input:, output:, ground_truth: nil)
           result(score: 0.9, reason: "Good")
         end
       end
@@ -87,7 +124,7 @@ describe Riffer::Evals::Evaluator do
       klass = Class.new(Riffer::Evals::Evaluator) do
         higher_is_better false
 
-        def evaluate(input:, output:, context: nil)
+        def evaluate(input:, output:, ground_truth: nil)
           result(score: 0.1, reason: "Low toxicity")
         end
       end

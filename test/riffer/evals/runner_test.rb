@@ -6,10 +6,9 @@ describe Riffer::Evals::Runner do
   # Create a simple evaluator that returns a fixed score
   let(:runner_evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      description "Test evaluator for runner tests"
       higher_is_better true
 
-      def evaluate(input:, output:, context: nil)
+      def evaluate(input:, output:, ground_truth: nil)
         # Return a score based on output length
         score = [output.length / 100.0, 1.0].min
         result(score: score, reason: "Based on output length")
@@ -33,7 +32,7 @@ describe Riffer::Evals::Runner do
       result = runner.run(
         input: "What is Ruby?",
         output: "Ruby is a programming language designed for programmer happiness. It was created by Yukihiro Matsumoto.",
-        context: nil
+        ground_truth: nil
       )
 
       expect(result).must_be_instance_of Riffer::Evals::RunResult
@@ -49,30 +48,30 @@ describe Riffer::Evals::Runner do
       result = runner.run(
         input: "test",
         output: "This is a test output with enough length to score reasonably well in our test evaluator.",
-        context: nil
+        ground_truth: nil
       )
 
       expect(result.results.length).must_equal 2
     end
 
-    it "passes context to evaluators" do
-      context_evaluator_class = Class.new(Riffer::Evals::Evaluator) do
-        def evaluate(input:, output:, context: nil)
-          score = context&.dig(:expected_score) || 0.5
-          result(score: score, reason: "From context")
+    it "passes ground_truth to evaluators" do
+      ground_truth_evaluator_class = Class.new(Riffer::Evals::Evaluator) do
+        def evaluate(input:, output:, ground_truth: nil)
+          score = (ground_truth == "expected") ? 1.0 : 0.5
+          result(score: score, reason: "From ground_truth")
         end
       end
 
-      metrics = [Riffer::Evals::Metric.new(evaluator_class: context_evaluator_class)]
+      metrics = [Riffer::Evals::Metric.new(evaluator_class: ground_truth_evaluator_class)]
       runner = Riffer::Evals::Runner.new(metrics: metrics)
 
       result = runner.run(
         input: "test",
         output: "test output",
-        context: {expected_score: 0.95}
+        ground_truth: "expected"
       )
 
-      expect(result.results.first.score).must_equal 0.95
+      expect(result.results.first.score).must_equal 1.0
     end
   end
 end

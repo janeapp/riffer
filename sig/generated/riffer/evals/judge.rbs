@@ -8,8 +8,9 @@
 #
 #   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-opus-4-5-20251101")
 #   result = judge.evaluate(
-#     system_prompt: "You are an evaluation assistant...",
-#     user_prompt: "Evaluate this response..."
+#     instructions: "Assess answer relevancy...",
+#     input: "What is Ruby?",
+#     output: "Ruby is a programming language."
 #   )
 #   result[:score]  # => 0.85
 #   result[:reason] # => "The response is relevant..."
@@ -30,13 +31,22 @@ class Riffer::Evals::Judge
 
   # Evaluates using the configured LLM.
   #
-  # Raises Riffer::ArgumentError if both messages and system_prompt/user_prompt are provided,
-  # or if user_prompt is missing when messages is not provided.
+  # Composes system and user messages from the semantic fields:
+  # - +instructions+ — evaluation criteria and scoring rubric
+  # - +input+ — the original input/question
+  # - +output+ — the agent's response to evaluate
+  # - +ground_truth+ — optional reference answer for comparison
   #
-  # : (?messages: Array[Hash[Symbol, untyped]]?, ?system_prompt: String?, ?user_prompt: String?) -> Hash[Symbol, untyped]
-  def evaluate: (?messages: Array[Hash[Symbol, untyped]]?, ?system_prompt: String?, ?user_prompt: String?) -> Hash[Symbol, untyped]
+  # : (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
+  def evaluate: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
 
   private
+
+  # : (String) -> String
+  def build_system_message: (String) -> String
+
+  # : (input: String, output: String, ground_truth: String?) -> String
+  def build_user_message: (input: String, output: String, ground_truth: String?) -> String
 
   # : () -> Riffer::Providers::Base
   def provider_instance: () -> Riffer::Providers::Base

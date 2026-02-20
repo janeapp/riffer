@@ -5,7 +5,6 @@ require "test_helper"
 describe Riffer::Evals::Metric do
   let(:stub_evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      description "Test evaluator"
       higher_is_better true
     end
   end

@@ -9,7 +9,7 @@
 #   run_result = runner.run(
 #     input: "What is the capital of France?",
 #     output: "The capital of France is Paris.",
-#     context: {}
+#     ground_truth: "Paris"
 #   )
 class Riffer::Evals::Runner
   # The metrics to evaluate.
@@ -22,6 +22,6 @@ class Riffer::Evals::Runner
 
   # Runs all evaluators and collects results.
   #
-  # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-  def run: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::RunResult
+  def run: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::RunResult
 end

@@ -4,32 +4,25 @@
 # Base class for all evaluators in the Riffer framework.
 #
 # Provides a DSL for defining evaluator metadata and the evaluate method.
-# Subclasses must implement the +evaluate+ method.
+# Simple evaluators only need to set +instructions+ — the base class
+# handles calling the judge automatically.
 #
 # See Riffer::Evals::Evaluators.
 #
 #   class MyEvaluator < Riffer::Evals::Evaluator
-#     description "Evaluates response quality"
+#     instructions "Assess medical accuracy of the response..."
 #     higher_is_better true
 #     judge_model "anthropic/claude-opus-4-5-20251101"
-#
-#     def evaluate(input:, output:, context: nil)
-#       evaluation = judge.evaluate(
-#         system_prompt: "...",
-#         user_prompt: "..."
-#       )
-#       result(score: evaluation[:score], reason: evaluation[:reason])
-#     end
 #   end
 #
 class Riffer::Evals::Evaluator
   class << self
-    # Gets or sets the evaluator description.
+    # Gets or sets the evaluation instructions (criteria and scoring rubric).
     #
     #: (?String?) -> String?
-    def description(value = nil)
-      return @description if value.nil?
-      @description = value.to_s
+    def instructions(value = nil)
+      return @instructions if value.nil?
+      @instructions = value.to_s
     end
 
     # Gets or sets whether higher scores are better.
@@ -51,11 +44,24 @@ class Riffer::Evals::Evaluator
 
   # Evaluates an input/output pair.
   #
-  # Raises NotImplementedError if not implemented by subclass.
+  # The default implementation calls the judge with the class-level +instructions+.
+  # Override this method for custom evaluation logic (e.g. rule-based evaluators).
   #
-  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::Result
-  def evaluate(input:, output:, context: nil)
-    raise NotImplementedError, "#{self.class} must implement #evaluate"
+  # Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.
+  #
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::Result
+  def evaluate(input:, output:, ground_truth: nil)
+    instr = self.class.instructions
+    raise NotImplementedError, "#{self.class} must set instructions or implement #evaluate" unless instr
+
+    evaluation = judge.evaluate(
+      instructions: instr,
+      input: input.is_a?(String) ? input : input.map(&:to_s).join("\n"),
+      output: output,
+      ground_truth: ground_truth
+    )
+
+    result(score: evaluation[:score], reason: evaluation[:reason])
   end
 
   protected

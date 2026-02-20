@@ -6,10 +6,9 @@ describe Riffer::Evals::Profile do
   # Create a simple evaluator for testing
   let(:profile_evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      description "Test evaluator for profile tests"
       higher_is_better true
 
-      def evaluate(input:, output:, context: nil)
+      def evaluate(input:, output:, ground_truth: nil)
         # Simple scoring based on output containing the word from input
         score = output.downcase.include?(input.downcase.split.first) ? 0.9 : 0.5
         result(score: score, reason: "Test evaluation")
@@ -116,7 +115,7 @@ describe Riffer::Evals::Profile do
       evaluator = Class.new(Riffer::Evals::Evaluator) do
         higher_is_better true
 
-        def evaluate(input:, output:, context: nil)
+        def evaluate(input:, output:, ground_truth: nil)
           result(score: 0.9, reason: "Test evaluation")
         end
       end

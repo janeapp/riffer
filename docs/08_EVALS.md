@@ -110,12 +110,12 @@ end
 
 ## Running Evals
 
-Once a profile is included, call `.eval` on the agent class:
+Once a profile is included, call `.run_eval` on the agent class:
 
 ```ruby
 result = MyAgent.run_eval(
   input: "What is the capital of France?",
-  context: { ground_truth: "Paris" }  # Optional context
+  ground_truth: "Paris"  # Optional reference answer
 )
 
 # You can also pass a messages array as input
@@ -139,6 +139,7 @@ result.failures         # => Array of Result objects that failed
 result.results          # => Array of all Result objects
 result.input            # => The input that was evaluated
 result.output           # => The agent's output
+result.ground_truth     # => The ground truth (if provided)
 result.to_h             # => Hash representation
 ```
 
@@ -155,37 +156,29 @@ result.results.first.higher_is_better # => true
 
 ## Defining Custom Evaluators
 
-Create evaluators by subclassing `Riffer::Evals::Evaluator`:
+Create evaluators by subclassing `Riffer::Evals::Evaluator`. The simplest approach uses the `instructions` DSL — the base class handles calling the judge automatically:
 
 ```ruby
-# app/evals/medical_accuracy_evaluator.rb
 class MedicalAccuracyEvaluator < Riffer::Evals::Evaluator
-  description "Evaluates medical information accuracy"
   higher_is_better true
   judge_model "anthropic/claude-opus-4-5-20251101"  # Optional override
 
-  SYSTEM_PROMPT = <<~PROMPT
-    You are an evaluation assistant that assesses medical accuracy.
+  instructions <<~TEXT
+    Assess the medical accuracy of the response.
 
-    Use the evaluation tool to submit your score (0.0-1.0) and reasoning.
-  PROMPT
+    Score between 0.0 and 1.0 where:
+      - 1.0 = Medically accurate and complete
+      - 0.7-0.9 = Mostly accurate with minor omissions
+      - 0.4-0.6 = Partially accurate
+      - 0.1-0.3 = Mostly inaccurate
+      - 0.0 = Completely inaccurate
 
-  def evaluate(input:, output:, context: nil)
-    user_prompt = <<~PROMPT
-      Question: #{input}
-      Response: #{output}
-      Ground truth: #{context[:ground_truth]}
-    PROMPT
-
-    evaluation = judge.evaluate(
-      system_prompt: SYSTEM_PROMPT,
-      user_prompt: user_prompt
-    )
-
-    result(score: evaluation[:score], reason: evaluation[:reason])
-  end
+    When ground truth is provided, compare the response against it.
+  TEXT
 end
 ```
+
+The judge receives `input`, `output`, and optionally `ground_truth` alongside your instructions. No manual prompt composition needed.
 
 ### Using Custom Evaluators
 
@@ -201,37 +194,37 @@ end
 
 Class methods:
 
-- `description(value)` - Human-readable description
+- `instructions(value)` - Evaluation criteria and scoring rubric (enables default `evaluate`)
 - `higher_is_better(value)` - Whether higher scores are better (default: true)
 - `judge_model(value)` - Override the global judge model
 
 Instance methods:
 
-- `evaluate(input:, output:, context:)` - Must be implemented, returns a Result
+- `evaluate(input:, output:, ground_truth:)` - Override for custom logic; default calls judge with `instructions`
 - `judge` - Returns a Judge instance for LLM-as-judge calls
 - `result(score:, reason:, metadata:)` - Helper to build Result objects
 
-### Judge Options
+### Advanced: Custom Evaluate Override
 
-The `judge.evaluate` method accepts either `system_prompt:` and `user_prompt:` or a `messages:` array:
+For evaluators that need full control over the evaluation logic, override `evaluate` directly:
 
 ```ruby
-# Using system_prompt and user_prompt
-evaluation = judge.evaluate(
-  system_prompt: "You are a judge.",
-  user_prompt: "Evaluate this response."
-)
+class CustomEvaluator < Riffer::Evals::Evaluator
+  higher_is_better true
+  judge_model "anthropic/claude-opus-4-5-20251101"
 
-# Using messages array (for more control)
-evaluation = judge.evaluate(
-  messages: [
-    { role: "system", content: "You are a judge." },
-    { role: "user", content: "Evaluate this response." }
-  ]
-)
+  def evaluate(input:, output:, ground_truth: nil)
+    evaluation = judge.evaluate(
+      instructions: "Custom evaluation criteria...",
+      input: input,
+      output: output,
+      ground_truth: ground_truth
+    )
+
+    result(score: evaluation[:score], reason: evaluation[:reason])
+  end
+end
 ```
-
-The Judge uses tool calling internally to get structured output. An `evaluation` tool with `score` (Float) and `reason` (String) parameters is automatically provided to the judge model, so your prompts should instruct the model to use the evaluation tool rather than respond with raw JSON.
 
 ### Rule-Based Evaluators
 
@@ -239,12 +232,11 @@ Evaluators don't have to use LLM-as-judge:
 
 ```ruby
 class LengthEvaluator < Riffer::Evals::Evaluator
-  description "Checks response is within expected length"
   higher_is_better true
 
-  def evaluate(input:, output:, context: nil)
-    min_length = context&.dig(:min_length) || 50
-    max_length = context&.dig(:max_length) || 500
+  def evaluate(input:, output:, ground_truth: nil)
+    min_length = 50
+    max_length = 500
 
     length = output.length
 
@@ -311,9 +303,9 @@ end
 # test/agents/support_agent_test.rb
 class SupportAgentTest < Minitest::Test
   def test_response_quality
-    result = SupportAgent.run_eval
+    result = SupportAgent.run_eval(
       input: "How do I reset my password?",
-      context: {}
+      ground_truth: "Navigate to Settings > Security > Reset Password"
     )
 
     assert result.passed?, "Expected eval to pass: #{result.failures.map(&:reason)}"
