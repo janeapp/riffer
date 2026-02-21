@@ -87,7 +87,7 @@ class Riffer::Evals::Judge
     SYSTEM
   end
 
-  #: (input: String, output: String, ground_truth: String?) -> String
+  #: (input: String, output: String, ?ground_truth: String?) -> String
   def build_user_message(input:, output:, ground_truth: nil)
     parts = []
     parts << "## Input\n\n#{input}"

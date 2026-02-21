@@ -45,8 +45,8 @@ class Riffer::Evals::Judge
   # : (String) -> String
   def build_system_message: (String) -> String
 
-  # : (input: String, output: String, ground_truth: String?) -> String
-  def build_user_message: (input: String, output: String, ground_truth: String?) -> String
+  # : (input: String, output: String, ?ground_truth: String?) -> String
+  def build_user_message: (input: String, output: String, ?ground_truth: String?) -> String
 
   # : () -> Riffer::Providers::Base
   def provider_instance: () -> Riffer::Providers::Base
