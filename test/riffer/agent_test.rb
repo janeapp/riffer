@@ -2363,6 +2363,20 @@ describe Riffer::Agent do
       result = agent.generate("Hello")
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
+
+    it "stores guardrail definitions when provided" do
+      definitions = [
+        {name: "PiiRedactor", phase: :before, options_json: '{"types":["email"]}'},
+        {name: "ToxicityFilter", phase: :after, options_json: nil}
+      ]
+      agent = Riffer::Agent.build(model: "test/riffer-1", guardrails: definitions)
+      expect(agent.class.guardrail_definitions).must_equal definitions
+    end
+
+    it "returns empty guardrail definitions when not provided" do
+      agent = Riffer::Agent.build(model: "test/riffer-1")
+      expect(agent.class.guardrail_definitions).must_equal []
+    end
   end
 
   describe "#stream with guardrails" do

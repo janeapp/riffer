@@ -327,6 +327,7 @@ message OnStreamEventRequest {
   string      run_id     = 1;
   StreamEvent event      = 2;
   string      identifier = 3;
+  optional int32 index   = 4; // sequence number of this event within the run
 }
 
 message OnStreamEventResponse {}
@@ -410,6 +411,8 @@ message OnRunCompleteRequest {
   optional TokenUsage token_usage          = 9; // cumulative
   repeated Message messages                = 10; // full conversation history
   string identifier                        = 11;
+  bool   error                             = 12;
+  optional string error_message            = 13;
 }
 
 message OnRunCompleteResponse {}

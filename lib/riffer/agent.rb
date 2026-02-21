@@ -73,6 +73,17 @@ class Riffer::Agent
     @tools_config = tools_or_lambda
   end
 
+  # Gets or sets declarative guardrail definitions for RPC use.
+  #
+  # Each definition is a hash with :name, :phase, and :options_json keys,
+  # matching the proto GuardrailDefinition format.
+  #
+  #: (?Array[Hash[Symbol, untyped]]?) -> Array[Hash[Symbol, untyped]]
+  def self.guardrail_definitions(definitions = nil)
+    return @guardrail_definitions || [] if definitions.nil?
+    @guardrail_definitions = definitions
+  end
+
   # Finds an agent class by identifier.
   #
   #: (String) -> singleton(Riffer::Agent)?
@@ -92,13 +103,14 @@ class Riffer::Agent
   # Creates an anonymous +Agent+ subclass, configures it with the given
   # model, instructions, and options, then returns an instance.
   #
-  #: (model: String, ?instructions: String?, ?model_options: Hash[Symbol, untyped], ?provider_options: Hash[Symbol, untyped]) -> Riffer::Agent
-  def self.build(model:, instructions: nil, model_options: {}, provider_options: {})
+  #: (model: String, ?instructions: String?, ?model_options: Hash[Symbol, untyped], ?provider_options: Hash[Symbol, untyped], ?guardrails: Array[Hash[Symbol, untyped]]) -> Riffer::Agent
+  def self.build(model:, instructions: nil, model_options: {}, provider_options: {}, guardrails: [])
     Class.new(Riffer::Agent) do
       self.model(model)
       self.instructions(instructions) if instructions
       self.model_options(model_options) unless model_options.empty?
       self.provider_options(provider_options) unless provider_options.empty?
+      guardrail_definitions(guardrails) unless guardrails.empty?
     end.new
   end
 
