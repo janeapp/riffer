@@ -56,12 +56,31 @@ class Riffer::Evals::Evaluator
 
     evaluation = judge.evaluate(
       instructions: instr,
-      input: input.is_a?(String) ? input : input.map(&:to_s).join("\n"),
+      input: format_input(input),
       output: output,
       ground_truth: ground_truth
     )
 
     result(score: evaluation[:score], reason: evaluation[:reason])
+  end
+
+  private
+
+  # Formats the input for the judge.
+  #
+  # String inputs are passed through as-is.
+  # Array inputs (message hashes or Message objects) are formatted
+  # as labeled role/content pairs separated by blank lines.
+  #
+  #: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
+  def format_input(input)
+    return input if input.is_a?(String)
+
+    input.map do |msg|
+      role = msg.is_a?(Hash) ? (msg[:role] || msg["role"]) : msg.role
+      content = msg.is_a?(Hash) ? (msg[:content] || msg["content"]) : msg.content
+      "#{role}: #{content}"
+    end.join("\n\n")
   end
 
   protected

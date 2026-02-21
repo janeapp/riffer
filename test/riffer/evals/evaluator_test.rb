@@ -83,6 +83,28 @@ describe Riffer::Evals::Evaluator do
       expect(result.reason).must_equal "Good"
     end
 
+    it "formats array input as labeled messages" do
+      klass = Class.new(Riffer::Evals::Evaluator) do
+        instructions "Evaluate quality."
+        judge_model "test/eval-model"
+      end
+
+      evaluator = klass.new
+      judge = evaluator.send(:judge)
+      provider = judge.send(:provider_instance)
+      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.8, reason: "Good"}}])
+
+      messages = [
+        {role: "user", content: "What is Ruby?"},
+        {role: "assistant", content: "Ruby is a programming language."},
+        {role: "user", content: "Tell me more."}
+      ]
+
+      result = evaluator.evaluate(input: messages, output: "test output")
+
+      expect(result.score).must_equal 0.8
+    end
+
     it "passes ground_truth to judge" do
       klass = Class.new(Riffer::Evals::Evaluator) do
         instructions "Compare to ground truth."

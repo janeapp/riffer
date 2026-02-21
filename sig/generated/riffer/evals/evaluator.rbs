@@ -39,6 +39,17 @@ class Riffer::Evals::Evaluator
   # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::Result
   def evaluate: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::Result
 
+  private
+
+  # Formats the input for the judge.
+  #
+  # String inputs are passed through as-is.
+  # Array inputs (message hashes or Message objects) are formatted
+  # as labeled role/content pairs separated by blank lines.
+  #
+  # : (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
+  def format_input: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
+
   # Returns a Judge instance configured for this evaluator.
   #
   # : () -> Riffer::Evals::Judge
