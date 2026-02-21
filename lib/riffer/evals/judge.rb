@@ -54,10 +54,10 @@ class Riffer::Evals::Judge
   # Evaluates using the configured LLM.
   #
   # Composes system and user messages from the semantic fields:
-  # - +instructions+ — evaluation criteria and scoring rubric
-  # - +input+ — the original input/question
-  # - +output+ — the agent's response to evaluate
-  # - +ground_truth+ — optional reference answer for comparison
+  # +instructions+ - evaluation criteria and scoring rubric.
+  # +input+ - the original input/question.
+  # +output+ - the agent's response to evaluate.
+  # +ground_truth+ - optional reference answer for comparison.
   #
   #: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
   def evaluate(instructions:, input:, output:, ground_truth: nil)

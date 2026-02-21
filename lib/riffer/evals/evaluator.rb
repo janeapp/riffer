@@ -47,6 +47,10 @@ class Riffer::Evals::Evaluator
   # The default implementation calls the judge with the class-level +instructions+.
   # Override this method for custom evaluation logic (e.g. rule-based evaluators).
   #
+  # +input+ - the input to evaluate; String or Array of message hashes/Message objects.
+  # +output+ - the agent's response to evaluate.
+  # +ground_truth+ - optional reference answer for comparison.
+  #
   # Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.
   #
   #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::Result
