@@ -123,17 +123,17 @@ end
 
 ### Amazon Bedrock
 
-| Option        | Description                |
-| ------------- | -------------------------- |
-| `temperature` | Sampling temperature       |
-| `max_tokens`  | Maximum tokens in response |
-| `top_p`       | Nucleus sampling parameter |
-| `top_k`       | Top-k sampling parameter   |
+Options are passed through to the [Bedrock Converse API](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#converse-instance_method).
+
+| Option                               | Description                                                       |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| `inference_config`                   | Hash with `max_tokens`, `temperature`, `top_p`, `stop_sequences`  |
+| `additional_model_request_fields`    | Hash for model-specific params (e.g., `top_k` for Claude)        |
 
 ```ruby
 class MyAgent < Riffer::Agent
   model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
-  model_options temperature: 0.7, max_tokens: 4096
+  model_options inference_config: {temperature: 0.7, max_tokens: 4096}
 end
 ```
 

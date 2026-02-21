@@ -58,36 +58,29 @@ model 'amazon_bedrock/amazon.titan-text-express-v1'
 
 ## Model Options
 
-### temperature
+Options are passed through to the [Bedrock Converse API](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#converse-instance_method). Use the nested structures the API expects.
 
-Controls randomness:
+### inference_config
+
+Controls generation parameters:
 
 ```ruby
-model_options temperature: 0.7
+model_options inference_config: {
+  max_tokens: 4096,
+  temperature: 0.7,
+  top_p: 0.95,
+  stop_sequences: ["\n\nHuman:"]
+}
 ```
 
-### max_tokens
+### additional_model_request_fields
 
-Maximum tokens in response:
-
-```ruby
-model_options max_tokens: 4096
-```
-
-### top_p
-
-Nucleus sampling parameter:
+Model-specific parameters (e.g., `top_k` for Claude):
 
 ```ruby
-model_options top_p: 0.95
-```
-
-### top_k
-
-Top-k sampling parameter:
-
-```ruby
-model_options top_k: 250
+model_options additional_model_request_fields: {
+  top_k: 250
+}
 ```
 
 ## Example
@@ -100,7 +93,7 @@ end
 class AssistantAgent < Riffer::Agent
   model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
   instructions 'You are a helpful assistant.'
-  model_options temperature: 0.7, max_tokens: 4096
+  model_options inference_config: {temperature: 0.7, max_tokens: 4096}
 end
 
 agent = AssistantAgent.new
