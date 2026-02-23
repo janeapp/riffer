@@ -127,7 +127,7 @@ class MyAgent < Riffer::Agent
   guardrail :after, with: ResponseFilter
 
   # Both input and output (around) with options
-  guardrail :around, with: Riffer::Guardrails::MaxLength, max: 1000
+  guardrail :around, with: MaxLengthGuardrail, max: 1000
 end
 ```
 
@@ -209,6 +209,8 @@ end
 
 ## Streaming with Guardrails
 
+> **Tip:** See `examples/guardrails/` for ready-to-use reference implementations you can copy into your project.
+
 Guardrails work with streaming. If blocked, a `Riffer::StreamEvents::GuardrailTripwire` event is yielded:
 
 ```ruby
@@ -220,27 +222,6 @@ MyAgent.stream("Hello").each do |event|
     puts "Blocked: #{event.reason}"
     puts "Phase: #{event.phase}"
   end
-end
-```
-
-## Built-in Guardrails
-
-### MaxLength
-
-Blocks messages or responses that exceed a maximum character length:
-
-```ruby
-class MyAgent < Riffer::Agent
-  model "anthropic/claude-haiku-4-5-20251001"
-
-  # Block input messages over 1000 characters
-  guardrail :before, with: Riffer::Guardrails::MaxLength, max: 1000
-
-  # Block responses over 5000 characters
-  guardrail :after, with: Riffer::Guardrails::MaxLength, max: 5000
-
-  # Apply to both with default limit (10,000 characters)
-  guardrail :around, with: Riffer::Guardrails::MaxLength
 end
 ```
 

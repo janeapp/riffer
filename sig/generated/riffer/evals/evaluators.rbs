@@ -1,5 +1,0 @@
-# Generated from lib/riffer/evals/evaluators.rb with RBS::Inline
-
-# Namespace for built-in evaluators.
-module Riffer::Evals::Evaluators
-end

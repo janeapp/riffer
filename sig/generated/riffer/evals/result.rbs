@@ -5,14 +5,14 @@
 # Contains the score, reason, and metadata from running an evaluator.
 #
 #   result = Riffer::Evals::Result.new(
-#     evaluator: Riffer::Evals::Evaluators::AnswerRelevancy,
+#     evaluator: AnswerRelevancyEvaluator,
 #     score: 0.85,
 #     reason: "The response addresses the question directly.",
 #     higher_is_better: true
 #   )
 #
 #   result.score           # => 0.85
-#   result.evaluator       # => Riffer::Evals::Evaluators::AnswerRelevancy
+#   result.evaluator       # => AnswerRelevancyEvaluator
 #   result.higher_is_better # => true
 class Riffer::Evals::Result
   # The evaluator class that produced this result.

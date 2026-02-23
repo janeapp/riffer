@@ -9,7 +9,7 @@
 #     include Riffer::Evals::Profile
 #
 #     ai_evals do
-#       metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
+#       metric AnswerRelevancyEvaluator, min: 0.85
 #     end
 #   end
 #

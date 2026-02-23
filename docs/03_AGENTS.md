@@ -166,7 +166,7 @@ class MyAgent < Riffer::Agent
   guardrail :after, with: ResponseFilter
 
   # Both input and output, with options
-  guardrail :around, with: Riffer::Guardrails::MaxLength, max: 1000
+  guardrail :around, with: MaxLengthGuardrail, max: 1000
 end
 ```
 

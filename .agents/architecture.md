@@ -77,6 +77,9 @@ On resume, `execute_pending_tool_calls` detects tool calls from the last assista
 ## Project Structure
 
 ```
+examples/
+  evaluators/            # Reference evaluator implementations (copy-paste)
+  guardrails/            # Reference guardrail implementations (copy-paste)
 lib/
   riffer.rb              # Main entry point, uses Zeitwerk for autoloading
   riffer/

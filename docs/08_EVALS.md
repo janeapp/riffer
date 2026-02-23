@@ -24,7 +24,7 @@ module QualityEvals
   include Riffer::Evals::Profile
 
   ai_evals do
-    metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
+    metric AnswerRelevancyEvaluator, min: 0.85
   end
 end
 
@@ -51,25 +51,7 @@ Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 
 The judge model is the LLM that evaluates agent outputs. You can use any configured provider.
 
-## Built-in Evaluators
-
-### AnswerRelevancy
-
-Evaluates how well a response addresses the input question.
-
-- **higher_is_better**: true
-- **Score range**: 0.0 to 1.0
-- **1.0**: Perfectly relevant, directly addresses the question
-- **0.7-0.9**: Mostly relevant with minor tangents
-- **0.4-0.6**: Partially relevant, some off-topic content
-- **0.1-0.3**: Mostly irrelevant
-- **0.0**: Completely irrelevant
-
-```ruby
-ai_evals do
-  metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
-end
-```
+> **Tip:** See `examples/evaluators/` for ready-to-use reference implementations you can copy into your project.
 
 ## Eval Profiles
 
@@ -82,7 +64,7 @@ module QualityEvals
   include Riffer::Evals::Profile
 
   ai_evals do
-    metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85
+    metric AnswerRelevancyEvaluator, min: 0.85
   end
 end
 ```
@@ -95,7 +77,7 @@ end
 
 ```ruby
 ai_evals do
-  metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85, weight: 2.0  # Weighted more heavily
+  metric AnswerRelevancyEvaluator, min: 0.85, weight: 2.0  # Weighted more heavily
 end
 ```
 
@@ -148,7 +130,7 @@ result.to_h             # => Hash representation
 Individual evaluation results:
 
 ```ruby
-result.results.first.evaluator       # => Riffer::Evals::Evaluators::AnswerRelevancy
+result.results.first.evaluator       # => AnswerRelevancyEvaluator
 result.results.first.score           # => 0.92
 result.results.first.reason          # => "The response directly addresses..."
 result.results.first.higher_is_better # => true
@@ -288,7 +270,7 @@ module QualityEvals
   include Riffer::Evals::Profile
 
   ai_evals do
-    metric Riffer::Evals::Evaluators::AnswerRelevancy, min: 0.85, weight: 2.0
+    metric AnswerRelevancyEvaluator, min: 0.85, weight: 2.0
   end
 end
 

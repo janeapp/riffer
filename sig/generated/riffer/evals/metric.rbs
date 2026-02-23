@@ -5,7 +5,7 @@
 # Metrics define which evaluator to use and what thresholds determine pass/fail.
 #
 #   metric = Riffer::Evals::Metric.new(
-#     evaluator_class: Riffer::Evals::Evaluators::AnswerRelevancy,
+#     evaluator_class: AnswerRelevancyEvaluator,
 #     min: 0.85,
 #     weight: 1.0
 #   )

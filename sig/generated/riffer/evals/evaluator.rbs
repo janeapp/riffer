@@ -6,7 +6,7 @@
 # Simple evaluators only need to set +instructions+ — the base class
 # handles calling the judge automatically.
 #
-# See Riffer::Evals::Evaluators.
+# See examples/evaluators/ for reference implementations.
 #
 #   class MyEvaluator < Riffer::Evals::Evaluator
 #     instructions "Assess medical accuracy of the response..."

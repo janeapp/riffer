@@ -1,19 +1,27 @@
 # frozen_string_literal: true
-# rbs_inline: enabled
 
+# Answer Relevancy Evaluator
+#
 # Evaluates how well a response addresses the input question.
 #
-# Uses LLM-as-judge to assess whether the response is relevant,
-# on-topic, and directly addresses what was asked.
+# Type: LLM judge
+# higher_is_better: true
 #
-#   evaluator = Riffer::Evals::Evaluators::AnswerRelevancy.new
-#   result = evaluator.evaluate(
-#     input: "What is the capital of France?",
-#     output: "The capital of France is Paris."
-#   )
+# Usage:
+#
+#   evaluator = AnswerRelevancyEvaluator.new
+#   result = evaluator.evaluate(input: "What is Ruby?", output: "Ruby is a programming language.")
 #   result.score  # => 0.95
 #
-class Riffer::Evals::Evaluators::AnswerRelevancy < Riffer::Evals::Evaluator
+#   # In an eval profile:
+#   module QualityEvals
+#     include Riffer::Evals::Profile
+#     ai_evals do
+#       metric AnswerRelevancyEvaluator, min: 0.85
+#     end
+#   end
+#
+class AnswerRelevancyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 
   instructions <<~TEXT
