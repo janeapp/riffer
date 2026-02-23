@@ -6,14 +6,14 @@ Evals let you measure the quality of agent outputs using LLM-as-judge evaluation
 
 ## Overview
 
-Riffer Evals provides a framework for evaluating agent responses against configurable quality metrics. It uses an LLM-as-judge approach where a separate model evaluates the outputs of your agents.
+Riffer Evals provides a framework for evaluating agent responses against configurable quality evaluators. It uses an LLM-as-judge approach where a separate model evaluates the outputs of your agents.
 
 Key concepts:
 
 - **Evaluators** - Classes that evaluate input/output pairs and return scores
-- **Metrics** - Evaluator configurations with pass/fail thresholds
-- **Profiles** - Collections of metrics that can be included in agents
-- **Results** - Individual evaluation scores and aggregate pass/fail status
+- **Scenarios** - Input/ground-truth pairs that define what to test
+- **EvaluatorRunner** - Orchestrates running evaluators across scenarios
+- **Results** - Per-scenario and aggregate evaluation scores
 
 ## Quick Start
 
@@ -21,26 +21,24 @@ Key concepts:
 # 1. Configure the judge model
 Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 
-# 2. Define an eval profile
-module QualityEvals
-  include Riffer::Evals::Profile
-
-  ai_evals do
-    metric AnswerRelevancyEvaluator, min: 0.85
-  end
-end
-
-# 3. Include in your agent
+# 2. Define your agent
 class MyAgent < Riffer::Agent
-  include QualityEvals
   model "anthropic/claude-haiku-4-5-20251001"
   instructions "You are a helpful assistant."
 end
 
-# 4. Run evals
-result = MyAgent.run_eval(input: "What is Ruby?")
-result.passed?         # => true/false
-result.aggregate_score # => 0.91
+# 3. Run evals
+result = Riffer::Evals::EvaluatorRunner.run(
+  agent: MyAgent,
+  scenarios: [
+    { input: "What is Ruby?", ground_truth: "A programming language" },
+    { input: "What is Python?" }
+  ],
+  evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
+)
+
+result.scores   # => { Riffer::Evals::Evaluators::AnswerRelevancy => 0.85 }
+result.summary  # => { total_scenarios: 2 }
 ```
 
 ## Configuration
@@ -53,87 +51,70 @@ Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 
 The judge model is the LLM that evaluates agent outputs. You can use any configured provider.
 
-## Eval Profiles
+## Built-in Evaluators
 
-Eval profiles define which evaluators to run and their pass/fail thresholds.
+### AnswerRelevancy
 
-### Defining a Profile
+Evaluates how well a response addresses the input question.
 
-```ruby
-module QualityEvals
-  include Riffer::Evals::Profile
-
-  ai_evals do
-    metric AnswerRelevancyEvaluator, min: 0.85
-  end
-end
-```
-
-### Metric Options
-
-- `min` - Minimum score to pass (for higher_is_better evaluators)
-- `max` - Maximum score to pass (for lower_is_better evaluators)
-- `weight` - Weight for aggregate scoring (default: 1.0)
-
-```ruby
-ai_evals do
-  metric AnswerRelevancyEvaluator, min: 0.85, weight: 2.0  # Weighted more heavily
-end
-```
-
-### Including in Agents
-
-```ruby
-class MyAgent < Riffer::Agent
-  include QualityEvals
-  model "anthropic/claude-haiku-4-5-20251001"
-end
-```
+- **higher_is_better**: true
+- **Score range**: 0.0 to 1.0
+- **1.0**: Perfectly relevant, directly addresses the question
+- **0.7-0.9**: Mostly relevant with minor tangents
+- **0.4-0.6**: Partially relevant, some off-topic content
+- **0.1-0.3**: Mostly irrelevant
+- **0.0**: Completely irrelevant
 
 ## Running Evals
 
-Once a profile is included, call `.run_eval` on the agent class:
+Use `EvaluatorRunner.run` with an agent class, scenarios, and evaluator classes:
 
 ```ruby
-result = MyAgent.run_eval(
-  input: "What is the capital of France?",
-  ground_truth: "Paris"  # Optional reference answer
-)
-
-# You can also pass a messages array as input
-result = MyAgent.run_eval(
-  input: [
-    { role: "user", content: "What is Ruby?" },
-    { role: "assistant", content: "Ruby is a programming language." },
-    { role: "user", content: "What makes it special?" }
-  ]
+result = Riffer::Evals::EvaluatorRunner.run(
+  agent: MyAgent,
+  scenarios: [
+    { input: "What is the capital of France?", ground_truth: "Paris" },
+    { input: "Explain Ruby blocks." }
+  ],
+  evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
 )
 ```
 
-### RunResult Object
+### RunResult
 
-The eval method returns a `Riffer::Evals::RunResult`:
+The runner returns a `Riffer::Evals::RunResult`:
 
 ```ruby
-result.passed?          # => true if all metrics pass thresholds
-result.aggregate_score  # => Weighted average of normalized scores (0.0-1.0)
-result.failures         # => Array of Result objects that failed
-result.results          # => Array of all Result objects
-result.input            # => The input that was evaluated
-result.output           # => The agent's output
-result.ground_truth     # => The ground truth (if provided)
-result.to_h             # => Hash representation
+result.scores             # => { EvaluatorClass => avg_score } across all scenarios
+result.summary            # => { total_scenarios: N }
+result.scenario_results   # => Array of ScenarioResult objects
+result.to_h               # => Hash representation
 ```
 
-### Result Object
+### ScenarioResult
+
+Each scenario produces a `Riffer::Evals::ScenarioResult`:
+
+```ruby
+scenario = result.scenario_results.first
+scenario.input        # => "What is the capital of France?"
+scenario.output       # => "The capital of France is Paris."
+scenario.ground_truth # => "Paris"
+scenario.scores       # => { EvaluatorClass => score } for this scenario
+scenario.results      # => Array of Result objects
+scenario.to_h         # => Hash representation
+```
+
+### Result
 
 Individual evaluation results:
 
 ```ruby
-result.results.first.evaluator       # => AnswerRelevancyEvaluator
-result.results.first.score           # => 0.92
-result.results.first.reason          # => "The response directly addresses..."
-result.results.first.higher_is_better # => true
+r = scenario.results.first
+r.evaluator        # => Riffer::Evals::Evaluators::AnswerRelevancy
+r.score            # => 0.92
+r.reason           # => "The response directly addresses..."
+r.higher_is_better # => true
 ```
 
 ## Defining Custom Evaluators
@@ -164,12 +145,14 @@ The judge receives `input`, `output`, and optionally `ground_truth` alongside yo
 
 ### Using Custom Evaluators
 
-Reference your custom evaluator class directly in eval profiles:
+Pass your custom evaluator class to the runner:
 
 ```ruby
-ai_evals do
-  metric MedicalAccuracyEvaluator, min: 0.9
-end
+result = Riffer::Evals::EvaluatorRunner.run(
+  agent: MyAgent,
+  scenarios: [{ input: "What are symptoms of flu?" }],
+  evals: [MedicalAccuracyEvaluator]
+)
 ```
 
 ### Evaluator DSL
@@ -238,25 +221,7 @@ class LengthEvaluator < Riffer::Evals::Evaluator
 end
 ```
 
-## Aggregate Scoring
-
-The `aggregate_score` normalizes all scores so higher is always better:
-
-- For `higher_is_better` evaluators: score is used directly
-- For `lower_is_better` evaluators: score is inverted (1.0 - score)
-
-Scores are then weighted:
-
-```ruby
-# With weights: relevancy=2.0, toxicity=1.0
-# relevancy score: 0.9 (higher_is_better)
-# toxicity score: 0.1 (lower_is_better)
-
-# Normalized: relevancy=0.9, toxicity=0.9 (1.0 - 0.1)
-# Weighted average: (0.9 * 2.0 + 0.9 * 1.0) / (2.0 + 1.0) = 0.9
-```
-
-## Example: Full Integration
+## Example: CI Integration
 
 ```ruby
 # config/initializers/riffer.rb
@@ -265,33 +230,29 @@ Riffer.configure do |config|
   config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 end
 
-# app/evals/quality_evals.rb
-module QualityEvals
-  include Riffer::Evals::Profile
-
-  ai_evals do
-    metric AnswerRelevancyEvaluator, min: 0.85, weight: 2.0
-  end
-end
-
 # app/agents/support_agent.rb
 class SupportAgent < Riffer::Agent
-  include QualityEvals
-
   model "anthropic/claude-opus-4-5-20251101"
   instructions "You are a helpful customer support agent."
 end
 
-# test/agents/support_agent_test.rb
-class SupportAgentTest < Minitest::Test
+# test/evals/support_agent_eval_test.rb
+class SupportAgentEvalTest < Minitest::Test
   def test_response_quality
-    result = SupportAgent.run_eval(
-      input: "How do I reset my password?",
-      ground_truth: "Navigate to Settings > Security > Reset Password"
+    result = Riffer::Evals::EvaluatorRunner.run(
+      agent: SupportAgent,
+      scenarios: [
+        { input: "How do I reset my password?", ground_truth: "Navigate to Settings > Security > Reset Password" },
+        { input: "What are your business hours?" }
+      ],
+      evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
     )
 
-    assert result.passed?, "Expected eval to pass: #{result.failures.map(&:reason)}"
-    assert result.aggregate_score >= 0.85
+    assert_equal 2, result.summary[:total_scenarios]
+
+    result.scores.each do |evaluator, score|
+      assert score >= 0.85, "#{evaluator.name} scored #{score}, expected >= 0.85"
+    end
   end
 end
 ```

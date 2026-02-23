@@ -1,0 +1,41 @@
+# Generated from lib/riffer/evals/evaluator_runner.rb with RBS::Inline
+
+# Orchestrates running evaluators against an agent across multiple scenarios.
+#
+# Accepts an agent class, a list of scenarios, and evaluator classes.
+# Generates agent output for each scenario and runs all evaluators,
+# returning a RunResult with per-scenario details and aggregate scores.
+#
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [
+#       { input: "What is Ruby?", ground_truth: "A programming language" },
+#       { input: "What is Python?" }
+#     ],
+#     evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
+#   )
+#
+#   result.scores   # => { Riffer::Evals::Evaluators::AnswerRelevancy => 0.85 }
+#   result.summary  # => { total_scenarios: 2 }
+class Riffer::Evals::EvaluatorRunner
+  # Runs evaluators against an agent for the given scenarios.
+  #
+  # +agent+ - an Agent subclass (not an instance).
+  # +scenarios+ - array of hashes with +:input+ and optional +:ground_truth+.
+  # +evals+ - array of Evaluator subclasses to run against each scenario.
+  #
+  # Raises Riffer::ArgumentError if agent is not a Riffer::Agent subclass
+  # or any eval is not a Riffer::Evals::Evaluator subclass.
+  #
+  # : (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evals: Array[singleton(Riffer::Evals::Evaluator)]) -> Riffer::Evals::RunResult
+  def self.run: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evals: Array[singleton(Riffer::Evals::Evaluator)]) -> Riffer::Evals::RunResult
+
+  # : (singleton(Riffer::Agent)) -> void
+  def self.validate_agent!: (singleton(Riffer::Agent)) -> void
+
+  # : (Array[singleton(Riffer::Evals::Evaluator)]) -> void
+  def self.validate_evals!: (Array[singleton(Riffer::Evals::Evaluator)]) -> void
+
+  # : (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evals: Array[singleton(Riffer::Evals::Evaluator)]) -> Riffer::Evals::ScenarioResult
+  def self.run_scenario: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evals: Array[singleton(Riffer::Evals::Evaluator)]) -> Riffer::Evals::ScenarioResult
+end

@@ -3,238 +3,94 @@
 require "test_helper"
 
 describe Riffer::Evals::RunResult do
-  let(:relevancy_class) do
+  let(:evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
       higher_is_better true
     end
   end
 
-  let(:toxicity_class) do
+  let(:other_evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
-      higher_is_better false
+      higher_is_better true
     end
   end
 
-  let(:passing_result) do
-    Riffer::Evals::Result.new(evaluator: relevancy_class, score: 0.9, higher_is_better: true)
+  let(:scenario_a) do
+    Riffer::Evals::ScenarioResult.new(
+      input: "What is Ruby?",
+      output: "A programming language.",
+      ground_truth: nil,
+      results: [
+        Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9),
+        Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.8)
+      ]
+    )
   end
 
-  let(:failing_result) do
-    Riffer::Evals::Result.new(evaluator: relevancy_class, score: 0.6, higher_is_better: true)
-  end
-
-  let(:toxicity_result) do
-    Riffer::Evals::Result.new(evaluator: toxicity_class, score: 0.1, higher_is_better: false)
-  end
-
-  let(:passing_metric) do
-    Riffer::Evals::Metric.new(evaluator_class: relevancy_class, min: 0.8)
-  end
-
-  let(:failing_metric) do
-    Riffer::Evals::Metric.new(evaluator_class: relevancy_class, min: 0.8)
-  end
-
-  let(:toxicity_metric) do
-    Riffer::Evals::Metric.new(evaluator_class: toxicity_class, max: 0.2)
+  let(:scenario_b) do
+    Riffer::Evals::ScenarioResult.new(
+      input: "What is Python?",
+      output: "A snake.",
+      ground_truth: nil,
+      results: [
+        Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.3),
+        Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.6)
+      ]
+    )
   end
 
   describe "#initialize" do
-    it "sets all attributes" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "question",
-        output: "answer",
-        ground_truth: "expected answer",
-        results: [passing_result],
-        metrics: [passing_metric]
-      )
+    it "sets scenario_results" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a])
 
-      expect(run_result.input).must_equal "question"
-      expect(run_result.output).must_equal "answer"
-      expect(run_result.ground_truth).must_equal "expected answer"
-      expect(run_result.results).must_equal [passing_result]
-      expect(run_result.metrics).must_equal [passing_metric]
+      expect(run_result.scenario_results).must_equal [scenario_a]
     end
   end
 
-  describe "#passed?" do
-    it "returns true when all metrics pass" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [passing_result],
-        metrics: [passing_metric]
-      )
+  describe "#scores" do
+    it "returns average scores across scenarios" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, scenario_b])
 
-      expect(run_result.passed?).must_equal true
+      expect(run_result.scores[evaluator_class]).must_be_close_to 0.6, 0.0001
+      expect(run_result.scores[other_evaluator_class]).must_be_close_to 0.7, 0.0001
     end
 
-    it "returns false when any metric fails" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [failing_result],
-        metrics: [failing_metric]
-      )
+    it "returns scores for single scenario" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a])
 
-      expect(run_result.passed?).must_equal false
+      expect(run_result.scores[evaluator_class]).must_equal 0.9
+      expect(run_result.scores[other_evaluator_class]).must_equal 0.8
     end
 
-    it "handles mixed results" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [passing_result, failing_result],
-        metrics: [passing_metric, failing_metric]
-      )
+    it "returns empty hash when no scenarios" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [])
 
-      expect(run_result.passed?).must_equal false
+      expect(run_result.scores).must_be_empty
     end
   end
 
-  describe "#failures" do
-    it "returns empty array when all pass" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [passing_result],
-        metrics: [passing_metric]
-      )
+  describe "#summary" do
+    it "returns total scenario count" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, scenario_b])
 
-      expect(run_result.failures).must_be_empty
+      expect(run_result.summary).must_equal({total_scenarios: 2})
     end
 
-    it "returns failing results" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [failing_result],
-        metrics: [failing_metric]
-      )
+    it "returns zero for empty results" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [])
 
-      expect(run_result.failures).must_equal [failing_result]
-    end
-
-    it "filters to only failing results" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [passing_result, failing_result],
-        metrics: [passing_metric, failing_metric]
-      )
-
-      expect(run_result.failures.length).must_equal 1
-      expect(run_result.failures.first).must_equal failing_result
-    end
-  end
-
-  describe "#aggregate_score" do
-    it "returns 0.0 for empty results" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [],
-        metrics: []
-      )
-
-      expect(run_result.aggregate_score).must_equal 0.0
-    end
-
-    it "returns the score for single result" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [passing_result],
-        metrics: [passing_metric]
-      )
-
-      expect(run_result.aggregate_score).must_equal 0.9
-    end
-
-    it "calculates weighted average" do
-      a_class = Class.new(Riffer::Evals::Evaluator) { higher_is_better true }
-      b_class = Class.new(Riffer::Evals::Evaluator) { higher_is_better true }
-
-      metric1 = Riffer::Evals::Metric.new(evaluator_class: a_class, weight: 2.0)
-      metric2 = Riffer::Evals::Metric.new(evaluator_class: b_class, weight: 1.0)
-
-      result1 = Riffer::Evals::Result.new(evaluator: a_class, score: 0.9, higher_is_better: true)
-      result2 = Riffer::Evals::Result.new(evaluator: b_class, score: 0.6, higher_is_better: true)
-
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [result1, result2],
-        metrics: [metric1, metric2]
-      )
-
-      # (0.9 * 2.0 + 0.6 * 1.0) / (2.0 + 1.0) = 2.4 / 3.0 = 0.8
-      expect(run_result.aggregate_score).must_be_close_to 0.8, 0.0001
-    end
-
-    it "normalizes lower_is_better scores" do
-      # For toxicity (lower is better), a score of 0.1 should become 0.9 for aggregation
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [toxicity_result],
-        metrics: [toxicity_metric]
-      )
-
-      # Toxicity score of 0.1, higher_is_better=false
-      # Normalized: 1.0 - 0.1 = 0.9
-      expect(run_result.aggregate_score).must_equal 0.9
-    end
-
-    it "combines higher_is_better and lower_is_better scores" do
-      metric1 = Riffer::Evals::Metric.new(evaluator_class: relevancy_class, weight: 1.0)
-      metric2 = Riffer::Evals::Metric.new(evaluator_class: toxicity_class, weight: 1.0)
-
-      result1 = Riffer::Evals::Result.new(evaluator: relevancy_class, score: 0.8, higher_is_better: true)
-      result2 = Riffer::Evals::Result.new(evaluator: toxicity_class, score: 0.2, higher_is_better: false)
-
-      run_result = Riffer::Evals::RunResult.new(
-        input: "test",
-        output: "test",
-        ground_truth: nil,
-        results: [result1, result2],
-        metrics: [metric1, metric2]
-      )
-
-      # relevancy: 0.8 (already normalized)
-      # toxicity: 1.0 - 0.2 = 0.8 (inverted)
-      # Average: (0.8 + 0.8) / 2 = 0.8
-      expect(run_result.aggregate_score).must_equal 0.8
+      expect(run_result.summary).must_equal({total_scenarios: 0})
     end
   end
 
   describe "#to_h" do
     it "returns a hash representation" do
-      run_result = Riffer::Evals::RunResult.new(
-        input: "question",
-        output: "answer",
-        ground_truth: "expected",
-        results: [passing_result],
-        metrics: [passing_metric]
-      )
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a])
 
       hash = run_result.to_h
-      expect(hash[:input]).must_equal "question"
-      expect(hash[:output]).must_equal "answer"
-      expect(hash[:ground_truth]).must_equal "expected"
-      expect(hash[:passed]).must_equal true
-      expect(hash[:aggregate_score]).must_equal 0.9
-      expect(hash[:results].length).must_equal 1
+      expect(hash[:summary]).must_equal({total_scenarios: 1})
+      expect(hash[:scores]).must_be_instance_of Hash
+      expect(hash[:scenario_results].length).must_equal 1
     end
   end
 end
