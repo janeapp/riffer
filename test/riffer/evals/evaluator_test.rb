@@ -69,7 +69,7 @@ describe Riffer::Evals::Evaluator do
     it "calls judge with instructions when instructions are set" do
       klass = Class.new(Riffer::Evals::Evaluator) do
         instructions "Evaluate quality."
-        judge_model "test/eval-model"
+        judge_model "mock/eval-model"
       end
 
       evaluator = klass.new
@@ -86,7 +86,7 @@ describe Riffer::Evals::Evaluator do
     it "formats array input as labeled messages" do
       klass = Class.new(Riffer::Evals::Evaluator) do
         instructions "Evaluate quality."
-        judge_model "test/eval-model"
+        judge_model "mock/eval-model"
       end
 
       evaluator = klass.new
@@ -108,7 +108,7 @@ describe Riffer::Evals::Evaluator do
     it "passes ground_truth to judge" do
       klass = Class.new(Riffer::Evals::Evaluator) do
         instructions "Compare to ground truth."
-        judge_model "test/eval-model"
+        judge_model "mock/eval-model"
       end
 
       evaluator = klass.new
