@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = ContextPrecisionEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What is the capital of France?",
-#     output: "The capital of France is Paris.",
-#     ground_truth: "Paris is the capital and most populous city of France."
-#   )
-#   result.score  # => 0.95
-#
-#   # In an eval profile:
 #   module RetrievalEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric ContextPrecisionEvaluator, min: 0.8
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include RetrievalEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What is the capital of France?")
+#   result.passed?  # => true/false
 #
 class ContextPrecisionEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = KeywordCoverageEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What is Ruby?",
-#     output: "Ruby is a dynamic programming language focused on simplicity.",
-#     ground_truth: "Ruby is a dynamic, open-source programming language focused on simplicity and productivity."
-#   )
-#   result.score  # => 0.71
-#
-#   # In an eval profile:
 #   module CoverageEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric KeywordCoverageEvaluator, min: 0.6
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include CoverageEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What is Ruby?")
+#   result.passed?  # => true/false
 #
 class KeywordCoverageEvaluator < Riffer::Evals::Evaluator
   STOP_WORDS = %w[

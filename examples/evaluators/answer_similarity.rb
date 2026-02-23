@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = AnswerSimilarityEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What is the capital of France?",
-#     output: "Paris is the capital of France.",
-#     ground_truth: "The capital of France is Paris."
-#   )
-#   result.score  # => 0.95
-#
-#   # In an eval profile:
 #   module SimilarityEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric AnswerSimilarityEvaluator, min: 0.8
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include SimilarityEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What is the capital of France?")
+#   result.passed?  # => true/false
 #
 class AnswerSimilarityEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

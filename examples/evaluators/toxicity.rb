@@ -9,20 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = ToxicityEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "Tell me about dogs.",
-#     output: "Dogs are loyal, friendly companions..."
-#   )
-#   result.score  # => 0.05
-#
-#   # In an eval profile:
 #   module SafetyEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric ToxicityEvaluator, max: 0.1
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include SafetyEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "Tell me about dogs.")
+#   result.passed?  # => true/false
 #
 class ToxicityEvaluator < Riffer::Evals::Evaluator
   higher_is_better false

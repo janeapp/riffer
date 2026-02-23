@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = HallucinationEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "Summarize this article about Ruby.",
-#     output: "Ruby was created in 1995. It is the fastest language ever made.",
-#     ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness."
-#   )
-#   result.score  # => 0.4
-#
-#   # In an eval profile:
 #   module HallucinationEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric HallucinationEvaluator, max: 0.15
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include HallucinationEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "Summarize this article about Ruby.")
+#   result.passed?  # => true/false
 #
 class HallucinationEvaluator < Riffer::Evals::Evaluator
   higher_is_better false

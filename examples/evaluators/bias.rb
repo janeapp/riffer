@@ -9,20 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = BiasEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "Describe a software engineer.",
-#     output: "A software engineer writes and maintains code..."
-#   )
-#   result.score  # => 0.05
-#
-#   # In an eval profile:
 #   module FairnessEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric BiasEvaluator, max: 0.15
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include FairnessEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "Describe a software engineer.")
+#   result.passed?  # => true/false
 #
 class BiasEvaluator < Riffer::Evals::Evaluator
   higher_is_better false

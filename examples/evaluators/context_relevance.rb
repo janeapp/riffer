@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = ContextRelevanceEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What are the health benefits of green tea?",
-#     output: "Green tea contains antioxidants and may reduce the risk of heart disease.",
-#     ground_truth: "Green tea is rich in catechins. Studies show it may lower cholesterol and blood pressure."
-#   )
-#   result.score  # => 0.85
-#
-#   # In an eval profile:
 #   module RetrievalEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric ContextRelevanceEvaluator, min: 0.75
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include RetrievalEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What are the health benefits of green tea?")
+#   result.passed?  # => true/false
 #
 class ContextRelevanceEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

@@ -9,17 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = AnswerRelevancyEvaluator.new
-#   result = evaluator.evaluate(input: "What is Ruby?", output: "Ruby is a programming language.")
-#   result.score  # => 0.95
-#
-#   # In an eval profile:
 #   module QualityEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric AnswerRelevancyEvaluator, min: 0.85
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include QualityEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What is Ruby?")
+#   result.passed?  # => true/false
 #
 class AnswerRelevancyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

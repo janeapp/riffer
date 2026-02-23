@@ -12,21 +12,20 @@
 #
 # Usage:
 #
-#   evaluator = ToolCallAccuracyEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What's the weather in Paris?",
-#     output: "get_weather,get_location",
-#     ground_truth: "get_weather,get_location"
-#   )
-#   result.score  # => 1.0
-#
-#   # In an eval profile:
 #   module ToolEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric ToolCallAccuracyEvaluator, min: 0.8
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include ToolEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What's the weather in Paris?")
+#   result.passed?  # => true/false
 #
 class ToolCallAccuracyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

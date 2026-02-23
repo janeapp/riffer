@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = CompletenessEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What are the three primary colors?",
-#     output: "The three primary colors are red, blue, and yellow.",
-#     ground_truth: "Red, blue, and yellow are the three primary colors used in traditional color theory."
-#   )
-#   result.score  # => 0.95
-#
-#   # In an eval profile:
 #   module CompletenessEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric CompletenessEvaluator, min: 0.8
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include CompletenessEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What are the three primary colors?")
+#   result.passed?  # => true/false
 #
 class CompletenessEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

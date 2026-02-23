@@ -9,21 +9,20 @@
 #
 # Usage:
 #
-#   evaluator = FaithfulnessEvaluator.new
-#   result = evaluator.evaluate(
-#     input: "What year was Ruby created?",
-#     output: "Ruby was created in 1995 by Yukihiro Matsumoto.",
-#     ground_truth: "Ruby was first released in 1995. It was designed by Yukihiro 'Matz' Matsumoto."
-#   )
-#   result.score  # => 0.95
-#
-#   # In an eval profile:
 #   module FaithfulnessEvals
 #     include Riffer::Evals::Profile
 #     ai_evals do
 #       metric FaithfulnessEvaluator, min: 0.9
 #     end
 #   end
+#
+#   class MyAgent < Riffer::Agent
+#     include FaithfulnessEvals
+#     model "openai/gpt-4o"
+#   end
+#
+#   result = MyAgent.run_eval(input: "What year was Ruby created?")
+#   result.passed?  # => true/false
 #
 class FaithfulnessEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
