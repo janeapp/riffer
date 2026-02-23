@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "What is the capital of France?")
+#   result = MyAgent.run_eval(
+#     input: "What is the capital of France?",
+#     ground_truth: "The capital of France is Paris."
+#   )
 #   result.passed?  # => true/false
 #
 class AnswerSimilarityEvaluator < Riffer::Evals::Evaluator

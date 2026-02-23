@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "Summarize this article about Ruby.")
+#   result = MyAgent.run_eval(
+#     input: "Summarize this article about Ruby.",
+#     ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness."
+#   )
 #   result.passed?  # => true/false
 #
 class HallucinationEvaluator < Riffer::Evals::Evaluator

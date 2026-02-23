@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "What are the health benefits of green tea?")
+#   result = MyAgent.run_eval(
+#     input: "What are the health benefits of green tea?",
+#     ground_truth: "Green tea is rich in catechins and may lower cholesterol."
+#   )
 #   result.passed?  # => true/false
 #
 class ContextRelevanceEvaluator < Riffer::Evals::Evaluator

@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "What is Ruby?")
+#   result = MyAgent.run_eval(
+#     input: "What is Ruby?",
+#     ground_truth: "Ruby is a dynamic, open-source programming language focused on simplicity and productivity."
+#   )
 #   result.passed?  # => true/false
 #
 class KeywordCoverageEvaluator < Riffer::Evals::Evaluator

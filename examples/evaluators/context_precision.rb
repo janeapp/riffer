@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "What is the capital of France?")
+#   result = MyAgent.run_eval(
+#     input: "What is the capital of France?",
+#     ground_truth: "Paris is the capital and most populous city of France."
+#   )
 #   result.passed?  # => true/false
 #
 class ContextPrecisionEvaluator < Riffer::Evals::Evaluator

@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "What are the three primary colors?")
+#   result = MyAgent.run_eval(
+#     input: "What are the three primary colors?",
+#     ground_truth: "Red, blue, and yellow are the primary colors in traditional color theory."
+#   )
 #   result.passed?  # => true/false
 #
 class CompletenessEvaluator < Riffer::Evals::Evaluator

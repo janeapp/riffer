@@ -21,7 +21,10 @@
 #     model "openai/gpt-4o"
 #   end
 #
-#   result = MyAgent.run_eval(input: "What year was Ruby created?")
+#   result = MyAgent.run_eval(
+#     input: "What year was Ruby created?",
+#     ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto."
+#   )
 #   result.passed?  # => true/false
 #
 class FaithfulnessEvaluator < Riffer::Evals::Evaluator
