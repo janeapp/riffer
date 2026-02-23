@@ -151,18 +151,6 @@ describe Riffer::Messages::Converter do
       expect(result).must_equal file
     end
 
-    it "converts path hash" do
-      path = File.expand_path("../../fixtures/test_image.png", __dir__)
-      FileUtils.mkdir_p(File.dirname(path))
-      File.binwrite(path, "fake png data")
-
-      result = instance.convert_to_file_part({path: path})
-      expect(result).must_be_instance_of Riffer::FilePart
-      expect(result.media_type).must_equal "image/png"
-
-      File.delete(path)
-    end
-
     it "converts url hash" do
       result = instance.convert_to_file_part({url: "https://example.com/photo.jpg", media_type: "image/jpeg"})
       expect(result).must_be_instance_of Riffer::FilePart
@@ -179,7 +167,7 @@ describe Riffer::Messages::Converter do
       error = expect {
         instance.convert_to_file_part({media_type: "image/png"})
       }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/must include :path, :url, or :data/)
+      expect(error.message).must_match(/must include :url or :data/)
     end
 
     it "raises for non-hash non-FilePart" do

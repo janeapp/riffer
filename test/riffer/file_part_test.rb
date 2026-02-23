@@ -36,44 +36,6 @@ describe Riffer::FilePart do
     end
   end
 
-  describe ".from_path" do
-    let(:fixture_path) { File.expand_path("../fixtures/test_image.png", __dir__) }
-
-    before do
-      FileUtils.mkdir_p(File.dirname(fixture_path))
-      File.binwrite(fixture_path, "fake png data")
-    end
-
-    after do
-      File.delete(fixture_path) if File.exist?(fixture_path)
-    end
-
-    it "reads the file and detects media type" do
-      file = Riffer::FilePart.from_path(fixture_path)
-      expect(file.media_type).must_equal "image/png"
-    end
-
-    it "sets the filename" do
-      file = Riffer::FilePart.from_path(fixture_path)
-      expect(file.filename).must_equal "test_image.png"
-    end
-
-    it "base64 encodes the file data" do
-      file = Riffer::FilePart.from_path(fixture_path)
-      expect(Base64.strict_decode64(file.data)).must_equal "fake png data"
-    end
-
-    it "raises for unsupported extension" do
-      path = File.expand_path("../fixtures/test.xyz", __dir__)
-      File.write(path, "data")
-      error = expect {
-        Riffer::FilePart.from_path(path)
-      }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/Unsupported file extension/)
-      File.delete(path)
-    end
-  end
-
   describe ".from_url" do
     it "stores the url and detects media type from extension" do
       file = Riffer::FilePart.from_url("https://example.com/photo.jpg")
@@ -166,22 +128,14 @@ describe Riffer::FilePart do
   end
 
   describe "#data with url source" do
-    it "fetches data from url lazily" do
-      stub_request(:get, "https://example.com/image.png")
-        .to_return(status: 200, body: "image bytes")
-
+    it "returns nil for url-only parts" do
       file = Riffer::FilePart.from_url("https://example.com/image.png")
-      expect(Base64.strict_decode64(file.data)).must_equal "image bytes"
+      expect(file.data).must_be_nil
     end
 
-    it "raises on fetch failure" do
-      stub_request(:get, "https://example.com/image.png")
-        .to_return(status: 404)
-
-      file = Riffer::FilePart.from_url("https://example.com/image.png")
-      expect {
-        file.data
-      }.must_raise(Riffer::Error)
+    it "returns data when both url and data are provided" do
+      file = Riffer::FilePart.new(url: "https://example.com/image.png", data: "aGVsbG8=", media_type: "image/png")
+      expect(file.data).must_equal "aGVsbG8="
     end
   end
 

@@ -740,12 +740,13 @@ describe Riffer::Agent do
       expect(user_message.files).must_equal []
     end
 
-    it "ignores files when messages array is used" do
+    it "raises when files and messages array are both provided" do
       agent = agent_class.new
       messages = [{role: "user", content: "Hello"}]
-      agent.generate(messages, files: [{data: "aGVsbG8=", media_type: "image/png"}])
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
-      expect(user_message.files).must_equal []
+      error = expect {
+        agent.generate(messages, files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/cannot provide both files and messages/)
     end
 
     it "supports files in messages array" do

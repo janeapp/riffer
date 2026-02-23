@@ -203,7 +203,7 @@ response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
 
 # With files (string prompt + files shorthand)
 response = MyAgent.generate('What is in this image?', files: [
-  {path: 'photo.jpg'}
+  {data: base64_data, media_type: 'image/jpeg'}
 ])
 
 # With files in messages array (per-message)
@@ -238,7 +238,7 @@ agent.stream('Tell me a story').each { |event| handle(event) }
 agent.messages  # Access message history
 
 # With files
-MyAgent.stream('What is in this image?', files: [{path: 'photo.jpg'}]).each do |event|
+MyAgent.stream('What is in this image?', files: [{data: base64_data, media_type: 'image/jpeg'}]).each do |event|
   print event.content if event.is_a?(Riffer::StreamEvents::TextDelta)
 end
 ```

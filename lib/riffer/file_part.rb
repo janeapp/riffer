@@ -2,19 +2,13 @@
 # rbs_inline: enabled
 
 require "base64"
-require "net/http"
 require "uri"
 
 # Represents a file attachment (image or document) in a conversation.
 #
-# Supports three input sources:
-# - File paths (read from disk via +from_path+)
+# Supports two input sources:
 # - URLs (stored and passed to providers that support them via +from_url+)
 # - Raw base64 data (via +new+)
-#
-#   file = Riffer::FilePart.from_path("photo.jpg")
-#   file.media_type  # => "image/jpeg"
-#   file.image?      # => true
 #
 #   file = Riffer::FilePart.from_url("https://example.com/doc.pdf", media_type: "application/pdf")
 #   file.url?        # => true
@@ -60,22 +54,6 @@ class Riffer::FilePart
     @url_string = url
   end
 
-  # Creates a FilePart by reading a file from disk.
-  #
-  # Detects media_type from the file extension. Sets filename from the path.
-  #
-  # Raises Riffer::ArgumentError if the file extension is not supported.
-  #
-  #: (String) -> Riffer::FilePart
-  def self.from_path(path)
-    ext = ::File.extname(path).downcase
-    media_type = MEDIA_TYPES[ext]
-    raise Riffer::ArgumentError, "Unsupported file extension: #{ext}" unless media_type
-
-    data = Base64.strict_encode64(::File.binread(path))
-    new(data: data, media_type: media_type, filename: ::File.basename(path))
-  end
-
   # Creates a FilePart from a URL.
   #
   # The URL is stored and passed directly to providers that support URL sources.
@@ -94,14 +72,8 @@ class Riffer::FilePart
     new(url: url, media_type: media_type)
   end
 
-  # Returns the base64-encoded data.
-  #
-  # If the source was a URL, fetches the content lazily via Net::HTTP.
-  #
-  #: () -> String
-  def data
-    @data ||= fetch_url_data
-  end
+  # Returns the base64-encoded data, or nil for URL-only sources.
+  attr_reader :data #: String?
 
   # Returns the URL if the source was a URL, nil otherwise.
   #
@@ -140,16 +112,5 @@ class Riffer::FilePart
     hash[:url] = @url_string if @url_string
     hash[:filename] = filename if filename
     hash
-  end
-
-  private
-
-  #: () -> String
-  def fetch_url_data
-    uri = URI.parse(@url_string)
-    response = Net::HTTP.get_response(uri)
-    raise Riffer::Error, "Failed to fetch URL #{@url_string}: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
-
-    Base64.strict_encode64(response.body)
   end
 end

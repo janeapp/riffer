@@ -15,7 +15,6 @@ module Riffer::Messages::Converter
   #
   # Accepts:
   # - +Riffer::FilePart+ objects (passed through)
-  # - +{path: "image.png"}+ (read from disk)
   # - +{url: "https://...", media_type: "..."}+ (URL source)
   # - +{data: "...", media_type: "..."}+ (raw base64)
   #

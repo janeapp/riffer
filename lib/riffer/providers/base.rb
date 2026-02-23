@@ -89,6 +89,10 @@ class Riffer::Providers::Base
 
   #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Array[Riffer::Messages::Base]
   def normalize_messages(prompt:, system:, messages:, files: nil)
+    if messages && files && !files.empty?
+      raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
+    end
+
     if messages
       return messages.map { |msg| convert_to_message_object(msg) }
     end

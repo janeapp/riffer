@@ -352,6 +352,10 @@ class Riffer::Agent
     @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
 
     if prompt_or_messages.is_a?(Array)
+      if files && !files.empty?
+        raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
+      end
+
       prompt_or_messages.each do |item|
         @messages << convert_to_message_object(item)
       end

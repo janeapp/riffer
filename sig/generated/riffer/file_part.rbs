@@ -2,14 +2,9 @@
 
 # Represents a file attachment (image or document) in a conversation.
 #
-# Supports three input sources:
-# - File paths (read from disk via +from_path+)
+# Supports two input sources:
 # - URLs (stored and passed to providers that support them via +from_url+)
 # - Raw base64 data (via +new+)
-#
-#   file = Riffer::FilePart.from_path("photo.jpg")
-#   file.media_type  # => "image/jpeg"
-#   file.image?      # => true
 #
 #   file = Riffer::FilePart.from_url("https://example.com/doc.pdf", media_type: "application/pdf")
 #   file.url?        # => true
@@ -35,15 +30,6 @@ class Riffer::FilePart
   # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
   def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
 
-  # Creates a FilePart by reading a file from disk.
-  #
-  # Detects media_type from the file extension. Sets filename from the path.
-  #
-  # Raises Riffer::ArgumentError if the file extension is not supported.
-  #
-  # : (String) -> Riffer::FilePart
-  def self.from_path: (String) -> Riffer::FilePart
-
   # Creates a FilePart from a URL.
   #
   # The URL is stored and passed directly to providers that support URL sources.
@@ -54,12 +40,8 @@ class Riffer::FilePart
   # : (String, ?media_type: String?) -> Riffer::FilePart
   def self.from_url: (String, ?media_type: String?) -> Riffer::FilePart
 
-  # Returns the base64-encoded data.
-  #
-  # If the source was a URL, fetches the content lazily via Net::HTTP.
-  #
-  # : () -> String
-  def data: () -> String
+  # Returns the base64-encoded data, or nil for URL-only sources.
+  attr_reader data: String?
 
   # Returns the URL if the source was a URL, nil otherwise.
   #
@@ -85,9 +67,4 @@ class Riffer::FilePart
   #
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
-
-  private
-
-  # : () -> String
-  def fetch_url_data: () -> String
 end

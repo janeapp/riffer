@@ -24,7 +24,6 @@ module Riffer::Messages::Converter
   #
   # Accepts:
   # - +Riffer::FilePart+ objects (passed through)
-  # - +{path: "image.png"}+ (read from disk)
   # - +{url: "https://...", media_type: "..."}+ (URL source)
   # - +{data: "...", media_type: "..."}+ (raw base64)
   #
@@ -38,20 +37,17 @@ module Riffer::Messages::Converter
       raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}"
     end
 
-    path = file[:path] || file["path"]
     url = file[:url] || file["url"]
     data = file[:data] || file["data"]
     media_type = file[:media_type] || file["media_type"]
     filename = file[:filename] || file["filename"]
 
-    if path
-      Riffer::FilePart.from_path(path)
-    elsif url
+    if url
       Riffer::FilePart.from_url(url, media_type: media_type)
     elsif data && media_type
       Riffer::FilePart.new(data: data, media_type: media_type, filename: filename)
     else
-      raise Riffer::ArgumentError, "File hash must include :path, :url, or :data with :media_type"
+      raise Riffer::ArgumentError, "File hash must include :url or :data with :media_type"
     end
   end
 

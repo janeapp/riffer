@@ -388,6 +388,51 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
+    describe "#generate_text with document" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          result = provider.generate_text(prompt: "What is in this document?", model: "anthropic.claude-3-haiku-20240307-v1:0", files: [file])
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns content" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          result = provider.generate_text(prompt: "What is in this document?", model: "anthropic.claude-3-haiku-20240307-v1:0", files: [file])
+          expect(result.content).wont_be_empty
+        end
+      end
+    end
+
+    describe "#stream_text with document" do
+      it "yields stream events" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          events = provider.stream_text(prompt: "What is in this document?", model: "anthropic.claude-3-haiku-20240307-v1:0", files: [file]).to_a
+          expect(events).wont_be_empty
+        end
+      end
+
+      it "yields TextDone event" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          events = provider.stream_text(prompt: "What is in this document?", model: "anthropic.claude-3-haiku-20240307-v1:0", files: [file]).to_a
+          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+          expect(done).wont_be_nil
+        end
+      end
+    end
+
     describe "#stream_text with image" do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
