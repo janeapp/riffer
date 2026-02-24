@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Evals::Metric - Riffer Documentation</title>
+<title>class Riffer::StructuredOutput::Result - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Evals::Metric"
+    content="ruby,class,Riffer::StructuredOutput::Result"
   >
 
     <meta
       name="description"
-      content="class Riffer::Evals::Metric: Represents a metric configuration with thresholds. fail."
+      content="class Riffer::StructuredOutput::Result: Wraps the result of structured output parsing and validation. On success, +object+ contains the validated Hash and +error+ is nil."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Evals::Metric - Riffer Documentation">
+<meta property="og:title" content="class Riffer::StructuredOutput::Result - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents a metric configuration with thresholds. fail.">
+    <meta property="og:description" content="Wraps the result of structured output parsing and validation. On success, +object+ contains the validated Hash and +error+ is nil.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Evals::Metric - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::StructuredOutput::Result - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents a metric configuration with thresholds. fail.">
+    <meta name="twitter:description" content="Wraps the result of structured output parsing and validation. On success, +object+ contains the validated Hash and +error+ is nil.">
 
 
 
@@ -50,41 +50,46 @@
 </script>
 
 <script
-  src="../../js/theme-toggle.js?v=7.0.1"
+  src="../../js/theme-toggle.js?v=7.2.0"
 ></script>
 
 <script
-  src="../../js/search_navigation.js?v=7.0.1"
+  src="../../js/search_navigation.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_data.js?v=7.0.1"
+  src="../../js/search_data.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_ranker.js?v=7.0.1"
+  src="../../js/search_ranker.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_controller.js?v=7.0.1"
+  src="../../js/search_controller.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/c_highlighter.js?v=7.0.1"
+  src="../../js/c_highlighter.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/aliki.js?v=7.0.1"
+  src="../../js/bash_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../../js/aliki.js?v=7.2.0"
   defer
 ></script>
 
 <link
-  href="../../css/rdoc.css?v=7.0.1"
+  href="../../css/rdoc.css?v=7.2.0"
   rel="stylesheet"
 >
 
@@ -363,7 +368,7 @@
 </div>
 
 
-<nav id="navigation" role="navigation">
+<nav id="navigation" role="navigation" hidden>
   
 
 
@@ -531,8 +536,8 @@
                   </li>
 
                   <li>
-                    <a href="../../docs_providers/05_TEST_PROVIDER_md.html">
-                      05_TEST_PROVIDER
+                    <a href="../../docs_providers/05_MOCK_PROVIDER_md.html">
+                      05_MOCK_PROVIDER
                     </a>
                   </li>
 
@@ -609,9 +614,9 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-passes-3F">passes?</a></li>
+        <li ><a href="#method-i-failure-3F">failure?</a></li>
 
-        <li ><a href="#method-i-to_h">to_h</a></li>
+        <li ><a href="#method-i-success-3F">success?</a></li>
 
       </ul>
     </details>
@@ -630,13 +635,13 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Evaluators.html">Evaluators</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluators/AnswerRelevancy.html">AnswerRelevancy</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Metric.html">Metric</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Profile.html">Profile</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Profile/AgentClassMethods.html">AgentClassMethods</a></code></li><li><code><a href="../../Riffer/Evals/Profile/Builder.html">Builder</a></code></li><li><code><a href="../../Riffer/Evals/Profile/ClassMethods.html">ClassMethods</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/Runner.html">Runner</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/MaxLength.html">MaxLength</a></code></li><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><code><a href="../../Riffer/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Params.html">Params</a></code></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StructuredOutput/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Evals::Metric">
+<main role="main" aria-labelledby="class-riffer-structuredoutput-result">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -649,37 +654,37 @@
       
       <li>
         
-        <a href="../../Riffer/Evals.html">Evals</a><span>::</span>
+        <a href="../../Riffer/StructuredOutput.html">StructuredOutput</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Metric</span>
+        <span>Result</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Evals::Metric" class="anchor-link class">
-    class Riffer::Evals::Metric
+  <span id="class-Riffer::StructuredOutput::Result" class="legacy-anchor"></span>
+  <h1 id="class-riffer-structuredoutput-result" class="anchor-link class">
+    class Riffer::StructuredOutput::Result
   </h1>
 
   <section class="description">
     
-<p>Represents a metric configuration with thresholds.</p>
+<p>Wraps the result of structured output parsing and validation.</p>
 
-<p>Metrics define which evaluator to use and what thresholds determine pass/fail.</p>
+<p>On success, +object+ contains the validated Hash and +error+ is nil. On failure, +error+ contains the error message and +object+ is nil.</p>
 
-<p>metric = <a href="Metric.html#method-c-new"><code>Riffer::Evals::Metric.new</code></a>( <a href="Metric.html#attribute-i-evaluator_class"><code>evaluator_class</code></a>: <a href="Evaluators/AnswerRelevancy.html"><code>Riffer::Evals::Evaluators::AnswerRelevancy</code></a>, min: 0.85, weight: 1.0 )</p>
-
-<p>metric.passes?(result) # =&gt; true/false based on thresholds</p>
+<p>result = structured_output.parse_and_validate(json_string) if result.success? result.object #=&gt; {sentiment: “positive”, score: 0.9} else result.error #=&gt; “JSON parse error: …” end</p>
 
   </section>
 
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+  <span id="5Buntitled-5D" class="legacy-anchor"></span>
+  <section class="documentation-section anchor-link">
 
 
 
@@ -689,14 +694,14 @@
 
     <section class="attribute-method-details method-section">
       <header>
-        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
       </header>
 
 
-      <div id="attribute-i-evaluator_class" class="method-detail anchor-link">
+      <div id="attribute-i-error" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-evaluator_class" title="Link to this attribute">
-            <span class="method-name">evaluator_class</span>
+          <a href="#attribute-i-error" title="Link to this attribute">
+            <span class="method-name">error</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -704,15 +709,15 @@
         <div class="method-description">
 
 
-        <p>The evaluator class to use.</p>
+        
 
         </div>
       </div>
 
-      <div id="attribute-i-max" class="method-detail anchor-link">
+      <div id="attribute-i-object" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-max" title="Link to this attribute">
-            <span class="method-name">max</span>
+          <a href="#attribute-i-object" title="Link to this attribute">
+            <span class="method-name">object</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -720,39 +725,7 @@
         <div class="method-description">
 
 
-        <p>Maximum acceptable score (for lower_is_better evaluators).</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-min" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-min" title="Link to this attribute">
-            <span class="method-name">min</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>Minimum acceptable score (for higher_is_better evaluators).</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-weight" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-weight" title="Link to this attribute">
-            <span class="method-name">weight</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>Weight for aggregate scoring (default: 1.0).</p>
+        
 
         </div>
       </div>
@@ -761,9 +734,12 @@
 
 
 
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
        </header>
 
 
@@ -773,7 +749,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(evaluator_class:, min: nil, max: nil, weight: 1.0)</span>
+                <span class="method-args">(object: nil, error: nil)</span>
               </a>
             </div>
 
@@ -786,16 +762,10 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/evals/metric.rb, line 34</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">evaluator_class:</span>, <span class="ruby-value">min:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">max:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">weight:</span> <span class="ruby-value">1.0</span>)
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">evaluator_class</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">evaluator_class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">Evaluator</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;evaluator_class must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}&quot;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-ivar">@evaluator_class</span> = <span class="ruby-identifier">evaluator_class</span>
-  <span class="ruby-ivar">@min</span> = <span class="ruby-identifier">min</span>&amp;.<span class="ruby-identifier">to_f</span>
-  <span class="ruby-ivar">@max</span> = <span class="ruby-identifier">max</span>&amp;.<span class="ruby-identifier">to_f</span>
-  <span class="ruby-ivar">@weight</span> = <span class="ruby-identifier">weight</span>.<span class="ruby-identifier">to_f</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/structured_output/result.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">object:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@object</span> = <span class="ruby-identifier">object</span>
+  <span class="ruby-ivar">@error</span> = <span class="ruby-identifier">error</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -804,11 +774,7 @@
         <div class="method-description">
 
 
-          <p>Initializes a new metric.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if <a href="Metric.html#attribute-i-evaluator_class"><code>evaluator_class</code></a> is not a subclass of <a href="Evaluator.html"><code>Riffer::Evals::Evaluator</code></a>.</p>
-
-<p>: (<a href="Metric.html#attribute-i-evaluator_class"><code>evaluator_class</code></a>: singleton(<a href="Evaluator.html"><code>Riffer::Evals::Evaluator</code></a>), ?min: Float?, ?max: Float?, ?weight: Float) -&gt; void</p>
+          <p>: (?object: Hash[Symbol, untyped]?, ?error: String?) -&gt; void</p>
 
 
         </div>
@@ -822,19 +788,25 @@
 
     </section>
 
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
        </header>
 
 
-      <div id="method-i-passes-3F" class="method-detail anchor-link ">
+      <div id="method-i-failure-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-passes-3F" title="Link to this method">
-                <span class="method-name">passes?</span>
-                <span class="method-args">(result)</span>
+              <a href="#method-i-failure-3F" title="Link to this method">
+                <span class="method-name">failure?</span>
+                <span class="method-args">(= !success?)</span>
               </a>
             </div>
 
@@ -846,12 +818,9 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="passes-3F-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/evals/metric.rb, line 48</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">passes?</span>(<span class="ruby-identifier">result</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">score</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">min</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">score</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">max</span>
-  <span class="ruby-keyword">true</span>
+          <div class="method-source-code" id="failure-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/structured_output/result.rb, line 34</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">failure?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">success?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -860,9 +829,9 @@
         <div class="method-description">
 
 
-          <p>Checks if a result passes this metric’s thresholds.</p>
+          <p>Returns true when parsing or validation failed.</p>
 
-<p>: (<a href="Result.html"><code>Riffer::Evals::Result</code></a>) -&gt; bool</p>
+<p>: () -&gt; bool</p>
 
 
         </div>
@@ -874,13 +843,13 @@
       </div>
 
 
-      <div id="method-i-to_h" class="method-detail anchor-link ">
+      <div id="method-i-success-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-to_h" title="Link to this method">
-                <span class="method-name">to_h</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-success-3F" title="Link to this method">
+                <span class="method-name">success?</span>
+                <span class="method-args">(= @error.nil?)</span>
               </a>
             </div>
 
@@ -892,16 +861,14 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="to_h-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/evals/metric.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
-  {
-    <span class="ruby-value">evaluator_class:</span> <span class="ruby-identifier">evaluator_class</span>,
-    <span class="ruby-value">min:</span> <span class="ruby-identifier">min</span>,
-    <span class="ruby-value">max:</span> <span class="ruby-identifier">max</span>,
-    <span class="ruby-value">weight:</span> <span class="ruby-identifier">weight</span>
-  }
-<span class="ruby-keyword">end</span></pre>
+          <div class="method-source-code" id="success-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/structured_output/result.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">success?</span> = <span class="ruby-ivar">@error</span>.<span class="ruby-identifier">nil?</span>
+
+<span class="ruby-comment"># Returns true when parsing or validation failed.</span>
+<span class="ruby-comment">#</span>
+<span class="ruby-comment">#: () -&gt; bool</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">failure?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">success?</span></pre>
           </div>
 
 
@@ -909,9 +876,9 @@
         <div class="method-description">
 
 
-          <p>Returns a hash representation of the metric.</p>
+          <p>Returns true when parsing and validation succeeded.</p>
 
-<p>: () -&gt; Hash[Symbol, untyped]</p>
+<p>: () -&gt; bool</p>
 
 
         </div>
@@ -924,6 +891,9 @@
 
 
     </section>
+
+
+
 
   </section>
 
@@ -944,7 +914,7 @@
 
   <div class="footer-bottom">
     <p>
-      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.0.1</a>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.2.0</a>
       using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
     </p>
   </div>

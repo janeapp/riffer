@@ -5,25 +5,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>01_PROVIDERS - Riffer Documentation</title>
+<title>class Riffer::FilePart - Riffer Documentation</title>
 
 
-  <meta name="keywords" content="ruby,documentation,01_PROVIDERS">
   <meta
-    name="description"
-    content="01_PROVIDERS: Providers Overview Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming."
+    name="keywords"
+    content="ruby,class,Riffer::FilePart"
   >
+
+    <meta
+      name="description"
+      content="class Riffer::FilePart: Represents a file attachment (image or document) in a conversation. FilePart."
+    >
+
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="01_PROVIDERS - Riffer Documentation">
+<meta property="og:title" content="class Riffer::FilePart - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Providers Overview Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming.">
+    <meta property="og:description" content="Represents a file attachment (image or document) in a conversation. FilePart.">
 
 
 
@@ -31,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="01_PROVIDERS - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::FilePart - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Providers Overview Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming.">
+    <meta name="twitter:description" content="Represents a file attachment (image or document) in a conversation. FilePart.">
 
 
 
@@ -91,7 +96,7 @@
 
 
 
-<body role="document" class="file has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -369,10 +374,8 @@
 
 
 
-
-
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" open>
+    <details class="nav-section-collapsible" >
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -498,7 +501,7 @@
 
 
           <li>
-            <details  open>
+            <details >
               <summary>
                 
                   docs_providers
@@ -553,6 +556,81 @@
   </div>
 
 
+  
+
+  
+<div id="parent-class-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-ancestors"></use></svg>
+      </span>
+      <span class="nav-section-title">Ancestors</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+    <ul><li>Object</li></ul>
+  </details>
+</div>
+
+
+  
+
+  
+
+  
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-from_url">from_url</a></li>
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
+
+
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-document-3F">document?</a></li>
+
+        <li ><a href="#method-i-image-3F">image?</a></li>
+
+        <li ><a href="#method-i-to_h">to_h</a></li>
+
+        <li ><a href="#method-i-url">url</a></li>
+
+        <li ><a href="#method-i-url-3F">url?</a></li>
+
+      </ul>
+    </details>
+  </div>
+
+
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -571,237 +649,495 @@
 
 </nav>
 
-<main role="main" aria-label="Page docs_providers/01_PROVIDERS.md">
+<main role="main" aria-labelledby="class-riffer-filepart">
+  
+  
+    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
+      
+      <li>
+        
+        <a href="../Riffer.html">Riffer</a><span>::</span>
+        
+      </li>
+      
+      <li>
+        
+        <span>FilePart</span>
+        
+      </li>
+      
+    </ol>
+  
 
-<span id="label-Providers+Overview" class="legacy-anchor"></span>
-<h1 id="providers-overview"><a href="#providers-overview">Providers Overview</a></h1>
+  <span id="class-Riffer::FilePart" class="legacy-anchor"></span>
+  <h1 id="class-riffer-filepart" class="anchor-link class">
+    class Riffer::FilePart
+  </h1>
 
-<p>Providers are adapters that connect <a href="../Riffer.html"><code>Riffer</code></a> to LLM services. They implement a common interface for text generation and streaming.</p>
+  <section class="description">
+    
+<p>Represents a file attachment (image or document) in a conversation.</p>
 
-<span id="label-Available+Providers" class="legacy-anchor"></span>
-<h2 id="available-providers"><a href="#available-providers">Available Providers</a></h2>
+<p>Supports two input sources: - URLs (stored and passed to providers that support them via +from_url+) - Raw base64 data (via +new+)</p>
 
-<table role="table">
-<thead>
-<tr>
-<th>Provider</th>
-<th>Identifier</th>
-<th>Gem Required</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>OpenAI</td>
-<td><code>openai</code></td>
-<td><code>openai</code></td>
-</tr>
-<tr>
-<td>Amazon Bedrock</td>
-<td><a href="../lib/riffer/providers/amazon_bedrock_rb.html">amazon_bedrock</a></td>
-<td><code>aws-sdk-bedrockruntime</code></td>
-</tr>
-<tr>
-<td>Anthropic</td>
-<td><code>anthropic</code></td>
-<td><code>anthropic</code></td>
-</tr>
-<tr>
-<td>Mock</td>
-<td><code>mock</code></td>
-<td>None</td>
-</tr>
-</tbody>
-</table>
+<p>file = <a href="FilePart.html#method-c-from_url"><code>Riffer::FilePart.from_url</code></a>(“<a href="https://example.com/doc.pdf">example.com/doc.pdf</a>”, <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a>: “application/pdf”) file.url? # =&gt; true file.document? # =&gt; true</p>
 
-<span id="label-Model+String+Format" class="legacy-anchor"></span>
-<h2 id="model-string-format"><a href="#model-string-format">Model String Format</a></h2>
+  </section>
 
-<p>Agents specify providers using the <code>provider/model</code> format:</p>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>              <span class="ruby-comment"># OpenAI</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0&#39;</span>  <span class="ruby-comment"># Bedrock</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;anthropic/claude-3-5-sonnet-20241022&#39;</span>  <span class="ruby-comment"># Anthropic</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;mock/any&#39;</span>                   <span class="ruby-comment"># Mock provider</span>
-<span class="ruby-keyword">end</span>
-</pre>
+  <span id="5Buntitled-5D" class="legacy-anchor"></span>
+  <section class="documentation-section anchor-link">
 
-<span id="label-Provider+Interface" class="legacy-anchor"></span>
-<h2 id="provider-interface"><a href="#provider-interface">Provider Interface</a></h2>
 
-<p>All providers inherit from <a href="../Riffer/Providers/Base.html"><code>Riffer::Providers::Base</code></a> and implement:</p>
 
-<span id="label-generate_text" class="legacy-anchor"></span>
-<h3 id="generatetext"><a href="#generatetext">generate_text</a></h3>
 
-<p>Generates a response synchronously:</p>
 
-<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-string">&quot;...&quot;</span>)
+    <section class="constants-list">
+      <header>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
+      </header>
+      <dl>
 
-<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
-  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Hello!&quot;</span>,
-  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
-)
-<span class="ruby-comment"># =&gt; Riffer::Messages::Assistant</span>
+        <dt id="MEDIA_TYPES">MEDIA_TYPES</dt>
 
-<span class="ruby-comment"># Or with messages</span>
-<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
-  <span class="ruby-value">messages:</span> [<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello!&quot;</span>)],
-  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
-)
-</pre>
+        <dd>
 
-<span id="label-stream_text" class="legacy-anchor"></span>
-<h3 id="streamtext"><a href="#streamtext">stream_text</a></h3>
+          
+        </dd>
 
-<p>Streams a response as an Enumerator:</p>
 
-<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Tell me a story&quot;</span>, <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
-  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
-  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
-    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+        <dt id="SUPPORTED_MEDIA_TYPES">SUPPORTED_MEDIA_TYPES</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
+
+
+
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
+      </header>
+
+
+      <div id="attribute-i-data" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-data" title="Link to this attribute">
+            <span class="method-name">data</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Returns the base64-encoded data, or nil for URL-only sources.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-filename" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-filename" title="Link to this attribute">
+            <span class="method-name">filename</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The filename, if available.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-media_type" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-media_type" title="Link to this attribute">
+            <span class="method-name">media_type</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The MIME type of the file.</p>
+
+        </div>
+      </div>
+
+    </section>
+
+
+
+
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-from_url" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-from_url" title="Link to this method">
+                <span class="method-name">from_url</span>
+                <span class="method-args">(url, media_type: nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="from_url-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 65</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_url</span>(<span class="ruby-identifier">url</span>, <span class="ruby-value">media_type:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">media_type</span>
+    <span class="ruby-identifier">ext</span> = <span class="ruby-operator">::</span><span class="ruby-constant">File</span>.<span class="ruby-identifier">extname</span>(<span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">url</span>).<span class="ruby-identifier">path</span>).<span class="ruby-identifier">downcase</span>
+    <span class="ruby-identifier">media_type</span> = <span class="ruby-constant">MEDIA_TYPES</span>[<span class="ruby-identifier">ext</span>]
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Cannot detect media type from URL; provide media_type explicitly&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">media_type</span>
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-</pre>
 
-<span id="label-Method+Parameters" class="legacy-anchor"></span>
-<h2 id="method-parameters"><a href="#method-parameters">Method Parameters</a></h2>
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">url:</span> <span class="ruby-identifier">url</span>, <span class="ruby-value">media_type:</span> <span class="ruby-identifier">media_type</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
 
-<table role="table">
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>prompt</code></td>
-<td>String prompt (required if <code>messages</code> not provided)</td>
-</tr>
-<tr>
-<td><code>system</code></td>
-<td>Optional system message string</td>
-</tr>
-<tr>
-<td><code>messages</code></td>
-<td>Array of message objects/hashes (alternative to <code>prompt</code>)</td>
-</tr>
-<tr>
-<td><code>model</code></td>
-<td>Model name string</td>
-</tr>
-<tr>
-<td><code>tools</code></td>
-<td>Array of Tool classes</td>
-</tr>
-<tr>
-<td><code>**options</code></td>
-<td>Provider-specific options (including <code>web_search</code> if supported by provider)</td>
-</tr>
-</tbody>
-</table>
 
-<p>You must provide either <code>prompt</code> or <code>messages</code>, but not both.</p>
 
-<span id="label-Using+Providers+Directly" class="legacy-anchor"></span>
-<h2 id="using-providers-directly"><a href="#using-providers-directly">Using Providers Directly</a></h2>
+        <div class="method-description">
 
-<p>While agents abstract provider usage, you can use providers directly:</p>
 
-<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;riffer&#39;</span>
+          <p>Creates a <a href="FilePart.html"><code>FilePart</code></a> from a URL.</p>
 
-<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
-  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
-<span class="ruby-keyword">end</span>
+<p>The URL is stored and passed directly to providers that support URL sources. If +media_type+ is not provided, it is detected from the URL path extension.</p>
 
-<span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> cannot be detected.</p>
 
-<span class="ruby-comment"># Simple prompt</span>
-<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
-  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;What is Ruby?&quot;</span>,
-  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
-)
-<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+<p>: (String, ?media_type: String?) -&gt; <a href="FilePart.html"><code>Riffer::FilePart</code></a></p>
 
-<span class="ruby-comment"># With system message</span>
-<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
-  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Explain recursion&quot;</span>,
-  <span class="ruby-value">system:</span> <span class="ruby-string">&quot;You are a programming tutor. Use simple language.&quot;</span>,
-  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
-)
 
-<span class="ruby-comment"># With message history</span>
-<span class="ruby-identifier">messages</span> = [
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">System</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;You are helpful.&quot;</span>),
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hi!&quot;</span>),
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello!&quot;</span>),
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;How are you?&quot;</span>)
-]
+        </div>
 
-<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
-  <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>,
-  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>
-)
-</pre>
 
-<span id="label-Tool+Support" class="legacy-anchor"></span>
-<h2 id="tool-support"><a href="#tool-support">Tool Support</a></h2>
 
-<p>Providers convert tools to their native format:</p>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
-  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets weather&quot;</span>
-  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>)
-    <span class="ruby-node">&quot;Sunny in #{city}&quot;</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
 
-<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
-  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;What&#39;s the weather in Tokyo?&quot;</span>,
-  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-4o&quot;</span>,
-  <span class="ruby-value">tools:</span> [<span class="ruby-constant">WeatherTool</span>]
-)
+      </div>
 
-<span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">any?</span>
-  <span class="ruby-comment"># Handle tool calls</span>
-<span class="ruby-keyword">end</span>
-</pre>
 
-<span id="label-Provider+Registry" class="legacy-anchor"></span>
-<h2 id="provider-registry"><a href="#provider-registry">Provider Registry</a></h2>
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
 
-<p><a href="../Riffer.html"><code>Riffer</code></a> uses a registry to find providers by identifier:</p>
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(media_type:, data: nil, filename: nil, url: nil)</span>
+              </a>
+            </div>
 
-<pre class="ruby"><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:openai</span>)
-<span class="ruby-comment"># =&gt; Riffer::Providers::OpenAI</span>
+        </div>
 
-<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:amazon_bedrock</span>)
-<span class="ruby-comment"># =&gt; Riffer::Providers::AmazonBedrock</span>
 
-<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:anthropic</span>)
-<span class="ruby-comment"># =&gt; Riffer::Providers::Anthropic</span>
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">media_type:</span>, <span class="ruby-value">data:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">filename:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">url:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Either data or url must be provided&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">url</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unsupported media type: #{media_type}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">SUPPORTED_MEDIA_TYPES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">media_type</span>)
 
-<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:mock</span>)
-<span class="ruby-comment"># =&gt; Riffer::Providers::Mock</span>
-</pre>
+  <span class="ruby-ivar">@data</span> = <span class="ruby-identifier">data</span>
+  <span class="ruby-ivar">@media_type</span> = <span class="ruby-identifier">media_type</span>
+  <span class="ruby-ivar">@filename</span> = <span class="ruby-identifier">filename</span>
+  <span class="ruby-ivar">@url_string</span> = <span class="ruby-identifier">url</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
 
-<span id="label-Provider-Specific+Guides" class="legacy-anchor"></span>
-<h2 id="provider-specific-guides"><a href="#provider-specific-guides">Provider-Specific Guides</a></h2>
-<ul><li>
-<p><a href="02_AMAZON_BEDROCK_md.html">Amazon Bedrock</a> - Claude and other models via AWS</p>
-</li><li>
-<p><a href="03_ANTHROPIC_md.html">Anthropic</a> - Claude models via Anthropic API</p>
-</li><li>
-<p><a href="04_OPENAI_md.html">OpenAI</a> - GPT models</p>
-</li><li>
-<p><a href="05_MOCK_PROVIDER_md.html">Mock</a> - Mock provider for testing</p>
-</li><li>
-<p><a href="06_CUSTOM_PROVIDERS_md.html">Custom Providers</a> - Creating your own provider</p>
-</li></ul>
+
+
+        <div class="method-description">
+
+
+          <p>Creates a <a href="FilePart.html"><code>FilePart</code></a> from raw base64 data or a URL.</p>
+
+<p>At least one of +data+ or +url+ must be provided.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if neither data nor url is provided, or if <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> is not supported.</p>
+
+<p>: (<a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a>: String, ?data: String?, ?filename: String?, ?url: String?) -&gt; void</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-document-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-document-3F" title="Link to this method">
+                <span class="method-name">document?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="document-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 102</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">document?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">image?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns true if the file is a document (not an image).</p>
+
+<p>: () -&gt; bool</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-image-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-image-3F" title="Link to this method">
+                <span class="method-name">image?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="image-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">image?</span>
+  <span class="ruby-identifier">media_type</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-string">&quot;image/&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns true if the file is an image.</p>
+
+<p>: () -&gt; bool</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-to_h" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-to_h" title="Link to this method">
+                <span class="method-name">to_h</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="to_h-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 109</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  <span class="ruby-identifier">hash</span> = {<span class="ruby-value">media_type:</span> <span class="ruby-identifier">media_type</span>}
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:data</span>] = <span class="ruby-ivar">@data</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@data</span>
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:url</span>] = <span class="ruby-ivar">@url_string</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@url_string</span>
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:filename</span>] = <span class="ruby-identifier">filename</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">filename</span>
+  <span class="ruby-identifier">hash</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Serializes the <a href="FilePart.html"><code>FilePart</code></a> to a hash.</p>
+
+<p>: () -&gt; Hash[Symbol, untyped]</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-url" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-url" title="Link to this method">
+                <span class="method-name">url</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="url-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 81</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">url</span>
+  <span class="ruby-ivar">@url_string</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the URL if the source was a URL, nil otherwise.</p>
+
+<p>: () -&gt; String?</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-url-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-url-3F" title="Link to this method">
+                <span class="method-name">url?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="url-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/file_part.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">url?</span>
+  <span class="ruby-operator">!</span><span class="ruby-ivar">@url_string</span>.<span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns true if the source was a URL.</p>
+
+<p>: () -&gt; bool</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+
+
+
+  </section>
 
 </main>
 

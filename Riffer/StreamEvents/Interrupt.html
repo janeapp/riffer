@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Guardrails::MaxLength - Riffer Documentation</title>
+<title>class Riffer::StreamEvents::Interrupt - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Guardrails::MaxLength"
+    content="ruby,class,Riffer::StreamEvents::Interrupt"
   >
 
     <meta
       name="description"
-      content="class Riffer::Guardrails::MaxLength: A guardrail that blocks messages exceeding a maximum character length. Demonstrates the guardrail pattern with a simple, practical use case."
+      content="class Riffer::StreamEvents::Interrupt: Represents an interrupt event during streaming. riffer_interrupt+."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Guardrails::MaxLength - Riffer Documentation">
+<meta property="og:title" content="class Riffer::StreamEvents::Interrupt - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="A guardrail that blocks messages exceeding a maximum character length. Demonstrates the guardrail pattern with a simple, practical use case.">
+    <meta property="og:description" content="Represents an interrupt event during streaming. riffer_interrupt+.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Guardrails::MaxLength - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::StreamEvents::Interrupt - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="A guardrail that blocks messages exceeding a maximum character length. Demonstrates the guardrail pattern with a simple, practical use case.">
+    <meta name="twitter:description" content="Represents an interrupt event during streaming. riffer_interrupt+.">
 
 
 
@@ -50,41 +50,46 @@
 </script>
 
 <script
-  src="../../js/theme-toggle.js?v=7.0.1"
+  src="../../js/theme-toggle.js?v=7.2.0"
 ></script>
 
 <script
-  src="../../js/search_navigation.js?v=7.0.1"
+  src="../../js/search_navigation.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_data.js?v=7.0.1"
+  src="../../js/search_data.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_ranker.js?v=7.0.1"
+  src="../../js/search_ranker.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_controller.js?v=7.0.1"
+  src="../../js/search_controller.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/c_highlighter.js?v=7.0.1"
+  src="../../js/c_highlighter.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/aliki.js?v=7.0.1"
+  src="../../js/bash_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../../js/aliki.js?v=7.2.0"
   defer
 ></script>
 
 <link
-  href="../../css/rdoc.css?v=7.0.1"
+  href="../../css/rdoc.css?v=7.2.0"
   rel="stylesheet"
 >
 
@@ -363,7 +368,7 @@
 </div>
 
 
-<nav id="navigation" role="navigation">
+<nav id="navigation" role="navigation" hidden>
   
 
 
@@ -531,8 +536,8 @@
                   </li>
 
                   <li>
-                    <a href="../../docs_providers/05_TEST_PROVIDER_md.html">
-                      05_TEST_PROVIDER
+                    <a href="../../docs_providers/05_MOCK_PROVIDER_md.html">
+                      05_MOCK_PROVIDER
                     </a>
                   </li>
 
@@ -565,7 +570,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="../Guardrail.html">Riffer::Guardrail</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="Base.html">Riffer::StreamEvents::Base</a><ul><li>Object</li></ul></li></ul>
   </details>
 </div>
 
@@ -609,9 +614,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-process_input">process_input</a></li>
-
-        <li ><a href="#method-i-process_output">process_output</a></li>
+        <li ><a href="#method-i-to_h">to_h</a></li>
 
       </ul>
     </details>
@@ -630,13 +633,13 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Evaluators.html">Evaluators</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluators/AnswerRelevancy.html">AnswerRelevancy</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Metric.html">Metric</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Profile.html">Profile</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Profile/AgentClassMethods.html">AgentClassMethods</a></code></li><li><code><a href="../../Riffer/Evals/Profile/Builder.html">Builder</a></code></li><li><code><a href="../../Riffer/Evals/Profile/ClassMethods.html">ClassMethods</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/Runner.html">Runner</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/MaxLength.html">MaxLength</a></code></li><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><code><a href="../../Riffer/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Params.html">Params</a></code></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StructuredOutput/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Guardrails::MaxLength">
+<main role="main" aria-labelledby="class-riffer-streamevents-interrupt">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -649,69 +652,52 @@
       
       <li>
         
-        <a href="../../Riffer/Guardrails.html">Guardrails</a><span>::</span>
+        <a href="../../Riffer/StreamEvents.html">StreamEvents</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>MaxLength</span>
+        <span>Interrupt</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Guardrails::MaxLength" class="anchor-link class">
-    class Riffer::Guardrails::MaxLength
+  <span id="class-Riffer::StreamEvents::Interrupt" class="legacy-anchor"></span>
+  <h1 id="class-riffer-streamevents-interrupt" class="anchor-link class">
+    class Riffer::StreamEvents::Interrupt
   </h1>
 
   <section class="description">
     
-<p>A guardrail that blocks messages exceeding a maximum character length.</p>
+<p>Represents an interrupt event during streaming.</p>
 
-<p>Demonstrates the guardrail pattern with a simple, practical use case.</p>
-
-<p>guardrail :before, with: <a href="MaxLength.html"><code>Riffer::Guardrails::MaxLength</code></a>, max: 1000 guardrail :after, with: <a href="MaxLength.html"><code>Riffer::Guardrails::MaxLength</code></a>, max: 5000</p>
+<p>Emitted when a callback interrupts the agent loop via +throw :riffer_interrupt+.</p>
 
   </section>
 
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+  <span id="5Buntitled-5D" class="legacy-anchor"></span>
+  <section class="documentation-section anchor-link">
 
 
 
 
-
-    <section class="constants-list">
-      <header>
-        <h3 id="constants"><a href="#constants">Constants</a></h3>
-      </header>
-      <dl>
-
-        <dt id="DEFAULT_MAX">DEFAULT_MAX</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-      </dl>
-    </section>
 
 
 
     <section class="attribute-method-details method-section">
       <header>
-        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
       </header>
 
 
-      <div id="attribute-i-max" class="method-detail anchor-link">
+      <div id="attribute-i-reason" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-max" title="Link to this attribute">
-            <span class="method-name">max</span>
+          <a href="#attribute-i-reason" title="Link to this attribute">
+            <span class="method-name">reason</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -719,7 +705,7 @@
         <div class="method-description">
 
 
-        <p>The maximum allowed character length.</p>
+        <p>The reason provided with the interrupt, if any.</p>
 
         </div>
       </div>
@@ -728,9 +714,12 @@
 
 
 
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
        </header>
 
 
@@ -740,7 +729,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(max: DEFAULT_MAX)</span>
+                <span class="method-args">(reason: nil)</span>
               </a>
             </div>
 
@@ -753,10 +742,10 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/max_length.rb, line 21</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">max:</span> <span class="ruby-constant">DEFAULT_MAX</span>)
-  <span class="ruby-keyword">super</span>()
-  <span class="ruby-ivar">@max</span> = <span class="ruby-identifier">max</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/interrupt.rb, line 12</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">super</span>(<span class="ruby-value">role:</span> <span class="ruby-value">:system</span>)
+  <span class="ruby-ivar">@reason</span> = <span class="ruby-identifier">reason</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -765,16 +754,12 @@
         <div class="method-description">
 
 
-          <p>Creates a new max length guardrail.</p>
-
-<p><code>max</code> - maximum allowed characters (default: 10_000).</p>
-
-<p>: (?max: Integer) -&gt; void</p>
+          <p>: (?reason: (String | Symbol)?) -&gt; void</p>
 
 
             <div class="method-calls-super">
               Calls superclass method
-              
+              <a href="Base.html#method-c-new"><code>Riffer::StreamEvents::Base::new</code></a>
             </div>
 
         </div>
@@ -788,19 +773,25 @@
 
     </section>
 
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
        </header>
 
 
-      <div id="method-i-process_input" class="method-detail anchor-link ">
+      <div id="method-i-to_h" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-process_input" title="Link to this method">
-                <span class="method-name">process_input</span>
-                <span class="method-args">(messages, context:)</span>
+              <a href="#method-i-to_h" title="Link to this method">
+                <span class="method-name">to_h</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -812,21 +803,12 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="process_input-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/max_length.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">process_input</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-value">context:</span>)
-  <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:content</span>)
-    <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">nil?</span>
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">max</span>
-      <span class="ruby-keyword">return</span> <span class="ruby-identifier">block</span>(
-        <span class="ruby-node">&quot;Message exceeds maximum length of #{max} characters&quot;</span>,
-        <span class="ruby-value">metadata:</span> {<span class="ruby-value">length:</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">length</span>, <span class="ruby-value">max:</span> <span class="ruby-identifier">max</span>}
-      )
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">pass</span>(<span class="ruby-identifier">messages</span>)
+          <div class="method-source-code" id="to_h-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/interrupt.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  <span class="ruby-identifier">h</span> = {<span class="ruby-value">role:</span> <span class="ruby-ivar">@role</span>, <span class="ruby-value">interrupt:</span> <span class="ruby-keyword">true</span>}
+  <span class="ruby-identifier">h</span>[<span class="ruby-value">:reason</span>] = <span class="ruby-ivar">@reason</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@reason</span>
+  <span class="ruby-identifier">h</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -835,67 +817,9 @@
         <div class="method-description">
 
 
-          <p>Blocks if any user message exceeds the max length.</p>
+          <p>Converts the event to a hash.</p>
 
-<p><code>messages</code> - the input messages. <code>context</code> - optional context.</p>
-
-<p>: (<a href="Riffer::Messages::Base">Array</a>, context: untyped) -&gt; <a href="Result.html"><code>Riffer::Guardrails::Result</code></a></p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-process_output" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-process_output" title="Link to this method">
-                <span class="method-name">process_output</span>
-                <span class="method-args">(response, messages:, context:)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="process_output-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/max_length.rb, line 54</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">process_output</span>(<span class="ruby-identifier">response</span>, <span class="ruby-value">messages:</span>, <span class="ruby-value">context:</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">pass</span>(<span class="ruby-identifier">response</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:content</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">pass</span>(<span class="ruby-identifier">response</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">max</span>
-    <span class="ruby-identifier">block</span>(
-      <span class="ruby-node">&quot;Response exceeds maximum length of #{max} characters&quot;</span>,
-      <span class="ruby-value">metadata:</span> {<span class="ruby-value">length:</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">length</span>, <span class="ruby-value">max:</span> <span class="ruby-identifier">max</span>}
-    )
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">pass</span>(<span class="ruby-identifier">response</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Blocks if response exceeds the max length.</p>
-
-<p><code>response</code> - the LLM response. <code>messages</code> - the conversation messages. <code>context</code> - optional context.</p>
-
-<p>: (<a href="../Messages/Assistant.html"><code>Riffer::Messages::Assistant</code></a>, messages: <a href="Riffer::Messages::Base">Array</a>, context: untyped) -&gt; <a href="Result.html"><code>Riffer::Guardrails::Result</code></a></p>
+<p>: () -&gt; Hash[Symbol, untyped]</p>
 
 
         </div>
@@ -908,6 +832,9 @@
 
 
     </section>
+
+
+
 
   </section>
 
@@ -928,7 +855,7 @@
 
   <div class="footer-bottom">
     <p>
-      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.0.1</a>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.2.0</a>
       using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
     </p>
   </div>

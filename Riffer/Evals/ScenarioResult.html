@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Providers::Test - Riffer Documentation</title>
+<title>class Riffer::Evals::ScenarioResult - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Providers::Test"
+    content="ruby,class,Riffer::Evals::ScenarioResult"
   >
 
     <meta
       name="description"
-      content="class Riffer::Providers::Test: Test provider for mocking LLM responses in tests. No external gems required."
+      content="class Riffer::Evals::ScenarioResult: Represents the result of evaluating a single scenario. Contains the input, output, ground truth, and individual evaluator results."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Providers::Test - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Evals::ScenarioResult - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Test provider for mocking LLM responses in tests. No external gems required.">
+    <meta property="og:description" content="Represents the result of evaluating a single scenario. Contains the input, output, ground truth, and individual evaluator results.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Providers::Test - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Evals::ScenarioResult - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Test provider for mocking LLM responses in tests. No external gems required.">
+    <meta name="twitter:description" content="Represents the result of evaluating a single scenario. Contains the input, output, ground truth, and individual evaluator results.">
 
 
 
@@ -50,41 +50,46 @@
 </script>
 
 <script
-  src="../../js/theme-toggle.js?v=7.0.1"
+  src="../../js/theme-toggle.js?v=7.2.0"
 ></script>
 
 <script
-  src="../../js/search_navigation.js?v=7.0.1"
+  src="../../js/search_navigation.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_data.js?v=7.0.1"
+  src="../../js/search_data.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_ranker.js?v=7.0.1"
+  src="../../js/search_ranker.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_controller.js?v=7.0.1"
+  src="../../js/search_controller.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/c_highlighter.js?v=7.0.1"
+  src="../../js/c_highlighter.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/aliki.js?v=7.0.1"
+  src="../../js/bash_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../../js/aliki.js?v=7.2.0"
   defer
 ></script>
 
 <link
-  href="../../css/rdoc.css?v=7.0.1"
+  href="../../css/rdoc.css?v=7.2.0"
   rel="stylesheet"
 >
 
@@ -363,7 +368,7 @@
 </div>
 
 
-<nav id="navigation" role="navigation">
+<nav id="navigation" role="navigation" hidden>
   
 
 
@@ -531,8 +536,8 @@
                   </li>
 
                   <li>
-                    <a href="../../docs_providers/05_TEST_PROVIDER_md.html">
-                      05_TEST_PROVIDER
+                    <a href="../../docs_providers/05_MOCK_PROVIDER_md.html">
+                      05_MOCK_PROVIDER
                     </a>
                   </li>
 
@@ -565,7 +570,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::Providers::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -609,9 +614,9 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-clear_stubs">clear_stubs</a></li>
+        <li ><a href="#method-i-scores">scores</a></li>
 
-        <li ><a href="#method-i-stub_response">stub_response</a></li>
+        <li ><a href="#method-i-to_h">to_h</a></li>
 
       </ul>
     </details>
@@ -630,13 +635,13 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Evaluators.html">Evaluators</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluators/AnswerRelevancy.html">AnswerRelevancy</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Metric.html">Metric</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Profile.html">Profile</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Profile/AgentClassMethods.html">AgentClassMethods</a></code></li><li><code><a href="../../Riffer/Evals/Profile/Builder.html">Builder</a></code></li><li><code><a href="../../Riffer/Evals/Profile/ClassMethods.html">ClassMethods</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/Runner.html">Runner</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/MaxLength.html">MaxLength</a></code></li><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><code><a href="../../Riffer/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Params.html">Params</a></code></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StructuredOutput/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Providers::Test">
+<main role="main" aria-labelledby="class-riffer-evals-scenarioresult">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -649,33 +654,39 @@
       
       <li>
         
-        <a href="../../Riffer/Providers.html">Providers</a><span>::</span>
+        <a href="../../Riffer/Evals.html">Evals</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Test</span>
+        <span>ScenarioResult</span>
         
       </li>
       
     </ol>
   
 
-  <h1 id="class-Riffer::Providers::Test" class="anchor-link class">
-    class Riffer::Providers::Test
+  <span id="class-Riffer::Evals::ScenarioResult" class="legacy-anchor"></span>
+  <h1 id="class-riffer-evals-scenarioresult" class="anchor-link class">
+    class Riffer::Evals::ScenarioResult
   </h1>
 
   <section class="description">
     
-<p><a href="Test.html"><code>Test</code></a> provider for mocking LLM responses in tests.</p>
+<p>Represents the result of evaluating a single scenario.</p>
 
-<p>No external gems required.</p>
+<p>Contains the input, output, ground truth, and individual evaluator results.</p>
+
+<p><a href="../../lib/riffer/evals/scenario_result_rb.html">scenario_result</a> = <a href="ScenarioResult.html#method-c-new"><code>Riffer::Evals::ScenarioResult.new</code></a>( input: “What is Ruby?”, output: “A programming language.”, <a href="ScenarioResult.html#attribute-i-ground_truth"><code>ground_truth</code></a>: “A programming language”, results: [result1, result2] )</p>
+
+<p>scenario_result.scores # =&gt; { MyEvaluator =&gt; 0.85 }</p>
 
   </section>
 
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+  <span id="5Buntitled-5D" class="legacy-anchor"></span>
+  <section class="documentation-section anchor-link">
 
 
 
@@ -685,14 +696,14 @@
 
     <section class="attribute-method-details method-section">
       <header>
-        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
       </header>
 
 
-      <div id="attribute-i-calls" class="method-detail anchor-link">
+      <div id="attribute-i-ground_truth" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-calls" title="Link to this attribute">
-            <span class="method-name">calls</span>
+          <a href="#attribute-i-ground_truth" title="Link to this attribute">
+            <span class="method-name">ground_truth</span>
             <span class="attribute-access-type">[R]</span>
           </a>
         </div>
@@ -700,7 +711,55 @@
         <div class="method-description">
 
 
-        <p>Array of recorded method calls for assertions.</p>
+        <p>The ground truth used during evaluation.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-input" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-input" title="Link to this attribute">
+            <span class="method-name">input</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The input that was evaluated.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-output" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-output" title="Link to this attribute">
+            <span class="method-name">output</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The agent output for this scenario.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-results" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-results" title="Link to this attribute">
+            <span class="method-name">results</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Individual evaluation results.</p>
 
         </div>
       </div>
@@ -709,9 +768,12 @@
 
 
 
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
        </header>
 
 
@@ -721,7 +783,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(**options)</span>
+                <span class="method-args">(input:, output:, ground_truth:, results:)</span>
               </a>
             </div>
 
@@ -734,12 +796,12 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/providers/test.rb, line 14</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
-  <span class="ruby-ivar">@responses</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:responses</span>] <span class="ruby-operator">||</span> []
-  <span class="ruby-ivar">@current_index</span> = <span class="ruby-value">0</span>
-  <span class="ruby-ivar">@calls</span> = []
-  <span class="ruby-ivar">@stubbed_responses</span> = []
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">input:</span>, <span class="ruby-value">output:</span>, <span class="ruby-value">ground_truth:</span>, <span class="ruby-value">results:</span>)
+  <span class="ruby-ivar">@input</span> = <span class="ruby-identifier">input</span>
+  <span class="ruby-ivar">@output</span> = <span class="ruby-identifier">output</span>
+  <span class="ruby-ivar">@ground_truth</span> = <span class="ruby-identifier">ground_truth</span>
+  <span class="ruby-ivar">@results</span> = <span class="ruby-identifier">results</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -748,9 +810,9 @@
         <div class="method-description">
 
 
-          <p>Initializes the test provider.</p>
+          <p>Initializes a new scenario result.</p>
 
-<p>: (**untyped) -&gt; void</p>
+<p>: (input: String, output: String, <a href="ScenarioResult.html#attribute-i-ground_truth"><code>ground_truth</code></a>: String?, results: <a href="Riffer::Evals::Result">Array</a>) -&gt; void</p>
 
 
         </div>
@@ -764,18 +826,24 @@
 
     </section>
 
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
        </header>
 
 
-      <div id="method-i-clear_stubs" class="method-detail anchor-link ">
+      <div id="method-i-scores" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-clear_stubs" title="Link to this method">
-                <span class="method-name">clear_stubs</span>
+              <a href="#method-i-scores" title="Link to this method">
+                <span class="method-name">scores</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -788,10 +856,12 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="clear_stubs-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/providers/test.rb, line 45</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clear_stubs</span>
-  <span class="ruby-ivar">@stubbed_responses</span> = []
+          <div class="method-source-code" id="scores-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scores</span>
+  <span class="ruby-identifier">results</span>.<span class="ruby-identifier">each_with_object</span>({}) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">result</span>, <span class="ruby-identifier">hash</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">result</span>.<span class="ruby-identifier">evaluator</span>] = <span class="ruby-identifier">result</span>.<span class="ruby-identifier">score</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -800,9 +870,9 @@
         <div class="method-description">
 
 
-          <p>Clears all stubbed responses.</p>
+          <p>Returns scores keyed by evaluator class.</p>
 
-<p>: () -&gt; void</p>
+<p>: () -&gt; Hash[singleton(<a href="Evaluator.html"><code>Riffer::Evals::Evaluator</code></a>), Float]</p>
 
 
         </div>
@@ -814,13 +884,13 @@
       </div>
 
 
-      <div id="method-i-stub_response" class="method-detail anchor-link ">
+      <div id="method-i-to_h" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-stub_response" title="Link to this method">
-                <span class="method-name">stub_response</span>
-                <span class="method-args">(content, tool_calls: [], token_usage: nil)</span>
+              <a href="#method-i-to_h" title="Link to this method">
+                <span class="method-name">to_h</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -832,18 +902,16 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="stub_response-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/providers/test.rb, line 30</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stub_response</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> [], <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">formatted_tool_calls</span> = <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">map</span>.<span class="ruby-identifier">with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tc</span>, <span class="ruby-identifier">idx</span><span class="ruby-operator">|</span>
-    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCall</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">id:</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:id</span>] <span class="ruby-operator">||</span> <span class="ruby-node">&quot;test_id_#{idx}&quot;</span>,
-      <span class="ruby-value">call_id:</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:call_id</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:id</span>] <span class="ruby-operator">||</span> <span class="ruby-node">&quot;test_call_#{idx}&quot;</span>,
-      <span class="ruby-value">name:</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:name</span>],
-      <span class="ruby-value">arguments:</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:arguments</span>].<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:arguments</span>] <span class="ruby-operator">:</span> <span class="ruby-identifier">tc</span>[<span class="ruby-value">:arguments</span>].<span class="ruby-identifier">to_json</span>
-    )
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-ivar">@stubbed_responses</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-value">role:</span> <span class="ruby-string">&quot;assistant&quot;</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">formatted_tool_calls</span>, <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>}
+          <div class="method-source-code" id="to_h-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 52</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  {
+    <span class="ruby-value">input:</span> <span class="ruby-identifier">input</span>,
+    <span class="ruby-value">output:</span> <span class="ruby-identifier">output</span>,
+    <span class="ruby-value">ground_truth:</span> <span class="ruby-identifier">ground_truth</span>,
+    <span class="ruby-value">scores:</span> <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">transform_keys</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:name</span>),
+    <span class="ruby-value">results:</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_h</span>)
+  }
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -852,13 +920,9 @@
         <div class="method-description">
 
 
-          <p>Stubs the next response from the provider.</p>
+          <p>Returns a hash representation of the scenario result.</p>
 
-<p>Can be called multiple times to queue responses.</p>
-
-<p>provider.stub_response(“Hello”) provider.stub_response(“”, tool_calls: [{name: “my_tool”, arguments: ‘{“key”:“value”}’}]) provider.stub_response(“Final response”, <a href="../../lib/riffer/token_usage_rb.html">token_usage</a>: <a href="../TokenUsage.html#method-c-new"><code>Riffer::TokenUsage.new</code></a>(input_tokens: 10, output_tokens: 5))</p>
-
-<p>: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -&gt; void</p>
+<p>: () -&gt; Hash[Symbol, untyped]</p>
 
 
         </div>
@@ -871,6 +935,9 @@
 
 
     </section>
+
+
+
 
   </section>
 
@@ -891,7 +958,7 @@
 
   <div class="footer-bottom">
     <p>
-      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.0.1</a>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.2.0</a>
       using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
     </p>
   </div>

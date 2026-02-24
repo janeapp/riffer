@@ -50,41 +50,46 @@
 </script>
 
 <script
-  src="../../js/theme-toggle.js?v=7.0.1"
+  src="../../js/theme-toggle.js?v=7.2.0"
 ></script>
 
 <script
-  src="../../js/search_navigation.js?v=7.0.1"
+  src="../../js/search_navigation.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_data.js?v=7.0.1"
+  src="../../js/search_data.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_ranker.js?v=7.0.1"
+  src="../../js/search_ranker.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/search_controller.js?v=7.0.1"
+  src="../../js/search_controller.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/c_highlighter.js?v=7.0.1"
+  src="../../js/c_highlighter.js?v=7.2.0"
   defer
 ></script>
 
 <script
-  src="../../js/aliki.js?v=7.0.1"
+  src="../../js/bash_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../../js/aliki.js?v=7.2.0"
   defer
 ></script>
 
 <link
-  href="../../css/rdoc.css?v=7.0.1"
+  href="../../css/rdoc.css?v=7.2.0"
   rel="stylesheet"
 >
 
@@ -363,7 +368,7 @@
 </div>
 
 
-<nav id="navigation" role="navigation">
+<nav id="navigation" role="navigation" hidden>
   
 
 
@@ -531,8 +536,8 @@
                   </li>
 
                   <li>
-                    <a href="../../docs_providers/05_TEST_PROVIDER_md.html">
-                      05_TEST_PROVIDER
+                    <a href="../../docs_providers/05_MOCK_PROVIDER_md.html">
+                      05_MOCK_PROVIDER
                     </a>
                   </li>
 
@@ -611,6 +616,8 @@
 
         <li ><a href="#method-i-blocked-3F">blocked?</a></li>
 
+        <li ><a href="#method-i-interrupted-3F">interrupted?</a></li>
+
         <li ><a href="#method-i-modified-3F">modified?</a></li>
 
       </ul>
@@ -630,13 +637,13 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Evaluators.html">Evaluators</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluators/AnswerRelevancy.html">AnswerRelevancy</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Metric.html">Metric</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Profile.html">Profile</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Profile/AgentClassMethods.html">AgentClassMethods</a></code></li><li><code><a href="../../Riffer/Evals/Profile/Builder.html">Builder</a></code></li><li><code><a href="../../Riffer/Evals/Profile/ClassMethods.html">ClassMethods</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/Runner.html">Runner</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/MaxLength.html">MaxLength</a></code></li><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/Test.html">Test</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Tools/Params.html">Params</a></code></li><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><code><a href="../../Riffer/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Core.html">Core</a></code></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li><li><code><a href="../../Riffer/Helpers/Dependencies/VersionError.html">VersionError</a></code></li></ul></details></li><li><code><a href="../../Riffer/Helpers/Validations.html">Validations</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><code><a href="../../Riffer/Param.html">Param</a></code></li><li><code><a href="../../Riffer/Params.html">Params</a></code></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StructuredOutput/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/TokenUsage.html">TokenUsage</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
 </nav>
 
-<main role="main" aria-labelledby="class-Riffer::Agent::Response">
+<main role="main" aria-labelledby="class-riffer-agent-response">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -662,7 +669,8 @@
     </ol>
   
 
-  <h1 id="class-Riffer::Agent::Response" class="anchor-link class">
+  <span id="class-Riffer::Agent::Response" class="legacy-anchor"></span>
+  <h1 id="class-riffer-agent-response" class="anchor-link class">
     class Riffer::Agent::Response
   </h1>
 
@@ -677,7 +685,8 @@
   </section>
 
 
-  <section id="5Buntitled-5D" class="documentation-section anchor-link">
+  <span id="5Buntitled-5D" class="legacy-anchor"></span>
+  <section class="documentation-section anchor-link">
 
 
 
@@ -687,7 +696,7 @@
 
     <section class="attribute-method-details method-section">
       <header>
-        <h3 id="attributes"><a href="#attributes">Attributes</a></h3>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
       </header>
 
 
@@ -707,6 +716,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-interrupt_reason" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-interrupt_reason" title="Link to this attribute">
+            <span class="method-name">interrupt_reason</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The reason provided with the interrupt, if any.</p>
+
+        </div>
+      </div>
+
       <div id="attribute-i-modifications" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-modifications" title="Link to this attribute">
@@ -719,6 +744,22 @@
 
 
         <p>The modifications made by guardrails during processing.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-structured_output" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-structured_output" title="Link to this attribute">
+            <span class="method-name">structured_output</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The parsed structured output, if structured output was configured.</p>
 
         </div>
       </div>
@@ -743,9 +784,12 @@
 
 
 
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
        </header>
 
 
@@ -755,7 +799,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content, tripwire: nil, modifications: [])</span>
+                <span class="method-args">(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)</span>
               </a>
             </div>
 
@@ -768,11 +812,14 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">modifications:</span> [])
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">modifications:</span> [], <span class="ruby-value">interrupted:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">interrupt_reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
   <span class="ruby-ivar">@tripwire</span> = <span class="ruby-identifier">tripwire</span>
   <span class="ruby-ivar">@modifications</span> = <span class="ruby-identifier">modifications</span>
+  <span class="ruby-ivar">@interrupted</span> = <span class="ruby-identifier">interrupted</span>
+  <span class="ruby-ivar">@interrupt_reason</span> = <span class="ruby-identifier">interrupt_reason</span>
+  <span class="ruby-ivar">@structured_output</span> = <span class="ruby-identifier">structured_output</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -783,9 +830,9 @@
 
           <p>Creates a new response.</p>
 
-<p><code>content</code> - the response content. <code>tripwire</code> - optional tripwire for blocked responses. <code>modifications</code> - guardrail modifications applied during processing.</p>
+<p>+content+ - the response content. +tripwire+ - optional tripwire for blocked responses. +modifications+ - guardrail modifications applied during processing. +interrupted+ - whether the agent loop was interrupted by a callback. +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+. +structured_output+ - parsed structured output when structured output is configured.</p>
 
-<p>: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: <a href="Riffer::Guardrails::Modification">Array</a>) -&gt; void</p>
+<p>: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: <a href="Riffer::Guardrails::Modification">Array</a>, ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -&gt; void</p>
 
 
         </div>
@@ -799,9 +846,15 @@
 
     </section>
 
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section anchor-link">
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
        </header>
 
 
@@ -824,7 +877,7 @@
             </details>
           </div>
           <div class="method-source-code" id="blocked-3F-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 41</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blocked?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">tripwire</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -836,6 +889,50 @@
 
 
           <p>Returns true if the response was blocked by a guardrail.</p>
+
+<p>: () -&gt; bool</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-interrupted-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-interrupted-3F" title="Link to this method">
+                <span class="method-name">interrupted?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="interrupted-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupted?</span>
+  <span class="ruby-ivar">@interrupted</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns true if the agent loop was interrupted by a callback via +throw :riffer_interrupt+.</p>
 
 <p>: () -&gt; bool</p>
 
@@ -868,7 +965,7 @@
             </details>
           </div>
           <div class="method-source-code" id="modified-3F-source">
-            <pre class="ruby" data-language="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 48</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">modified?</span>
   <span class="ruby-identifier">modifications</span>.<span class="ruby-identifier">any?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -895,6 +992,9 @@
 
     </section>
 
+
+
+
   </section>
 
 </main>
@@ -914,7 +1014,7 @@
 
   <div class="footer-bottom">
     <p>
-      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.0.1</a>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.2.0</a>
       using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
     </p>
   </div>

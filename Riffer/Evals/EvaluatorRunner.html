@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Evals::Evaluator - Riffer Documentation</title>
+<title>class Riffer::Evals::EvaluatorRunner - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Evals::Evaluator"
+    content="ruby,class,Riffer::Evals::EvaluatorRunner"
   >
 
     <meta
       name="description"
-      content="class Riffer::Evals::Evaluator: Base class for all evaluators in the Riffer framework. Provides a DSL for defining evaluator metadata and the evaluate method."
+      content="class Riffer::Evals::EvaluatorRunner: Orchestrates running evaluators against an agent across multiple scenarios. Accepts an agent class, a list of scenarios, and evaluator classes."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Evals::Evaluator - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Evals::EvaluatorRunner - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Base class for all evaluators in the Riffer framework. Provides a DSL for defining evaluator metadata and the evaluate method.">
+    <meta property="og:description" content="Orchestrates running evaluators against an agent across multiple scenarios. Accepts an agent class, a list of scenarios, and evaluator classes.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Evals::Evaluator - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Evals::EvaluatorRunner - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Base class for all evaluators in the Riffer framework. Provides a DSL for defining evaluator metadata and the evaluate method.">
+    <meta name="twitter:description" content="Orchestrates running evaluators against an agent across multiple scenarios. Accepts an agent class, a list of scenarios, and evaluator classes.">
 
 
 
@@ -593,40 +593,19 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-c-higher_is_better">higher_is_better</a></li>
+        <li ><a href="#method-c-run">run</a></li>
 
-        <li ><a href="#method-c-instructions">instructions</a></li>
+        <li ><a href="#method-c-run_scenario">run_scenario</a></li>
 
-        <li ><a href="#method-c-judge_model">judge_model</a></li>
+        <li ><a href="#method-c-validate_agent-21">validate_agent!</a></li>
 
-      </ul>
-    </details>
-  </div>
-
-
-
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-evaluate">evaluate</a></li>
-
-        <li ><a href="#method-i-judge">judge</a></li>
-
-        <li ><a href="#method-i-result">result</a></li>
+        <li ><a href="#method-c-validate_evaluators-21">validate_evaluators!</a></li>
 
       </ul>
     </details>
   </div>
+
+
 
 
   <div id="classindex-section" class="nav-section">
@@ -647,7 +626,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-evals-evaluator">
+<main role="main" aria-labelledby="class-riffer-evals-evaluatorrunner">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -666,27 +645,27 @@
       
       <li>
         
-        <span>Evaluator</span>
+        <span>EvaluatorRunner</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Evals::Evaluator" class="legacy-anchor"></span>
-  <h1 id="class-riffer-evals-evaluator" class="anchor-link class">
-    class Riffer::Evals::Evaluator
+  <span id="class-Riffer::Evals::EvaluatorRunner" class="legacy-anchor"></span>
+  <h1 id="class-riffer-evals-evaluatorrunner" class="anchor-link class">
+    class Riffer::Evals::EvaluatorRunner
   </h1>
 
   <section class="description">
     
-<p>Base class for all evaluators in the <a href="../../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p>Orchestrates running evaluators against an agent across multiple scenarios.</p>
 
-<p>Provides a DSL for defining evaluator metadata and the evaluate method. Simple evaluators only need to set +instructions+ — the base class handles calling the judge automatically.</p>
+<p>Accepts an agent class, a list of scenarios, and evaluator classes. Generates agent output for each scenario and runs all evaluators, returning a RunResult with per-scenario details and aggregate scores.</p>
 
-<p>See examples/evaluators/ for reference implementations.</p>
+<p>result = <a href="EvaluatorRunner.html#method-c-run"><code>Riffer::Evals::EvaluatorRunner.run</code></a>( agent: MyAgent, scenarios: [ { input: “What is Ruby?”, ground_truth: “A programming language” }, { input: “What is Python?” } ], evaluators: [AnswerRelevancyEvaluator] )</p>
 
-<p>class MyEvaluator &lt; <a href="Evaluator.html"><code>Riffer::Evals::Evaluator</code></a> instructions “Assess medical accuracy of the response…” <a href="Evaluator.html#method-c-higher_is_better"><code>higher_is_better</code></a> true <a href="Evaluator.html#method-c-judge_model"><code>judge_model</code></a> “anthropic/claude-opus-4-5-20251101” end</p>
+<p>result.scores # =&gt; { AnswerRelevancyEvaluator =&gt; 0.85 }</p>
 
   </section>
 
@@ -711,13 +690,13 @@
        </header>
 
 
-      <div id="method-c-higher_is_better" class="method-detail anchor-link ">
+      <div id="method-c-run" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-higher_is_better" title="Link to this method">
-                <span class="method-name">higher_is_better</span>
-                <span class="method-args">(value = nil)</span>
+              <a href="#method-c-run" title="Link to this method">
+                <span class="method-name">run</span>
+                <span class="method-args">(agent:, scenarios:, evaluators:, tool_context: nil)</span>
               </a>
             </div>
 
@@ -729,11 +708,17 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="higher_is_better-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 31</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">higher_is_better</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@higher_is_better</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@higher_is_better</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@higher_is_better</span> = <span class="ruby-identifier">value</span>
+          <div class="method-source-code" id="run-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator_runner.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">run</span>(<span class="ruby-value">agent:</span>, <span class="ruby-value">scenarios:</span>, <span class="ruby-value">evaluators:</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">validate_agent!</span>(<span class="ruby-identifier">agent</span>)
+  <span class="ruby-identifier">validate_evaluators!</span>(<span class="ruby-identifier">evaluators</span>)
+
+  <span class="ruby-identifier">scenario_results</span> = <span class="ruby-identifier">scenarios</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">scenario</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">run_scenario</span>(<span class="ruby-value">agent:</span> <span class="ruby-identifier">agent</span>, <span class="ruby-value">scenario:</span> <span class="ruby-identifier">scenario</span>, <span class="ruby-value">evaluators:</span> <span class="ruby-identifier">evaluators</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-identifier">tool_context</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">RunResult</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">scenario_results:</span> <span class="ruby-identifier">scenario_results</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -742,9 +727,13 @@
         <div class="method-description">
 
 
-          <p>Gets or sets whether higher scores are better.</p>
+          <p>Runs evaluators against an agent for the given scenarios.</p>
 
-<p>: (?bool?) -&gt; bool</p>
+<p>+agent+ - an Agent subclass (not an instance). +scenarios+ - array of hashes with +:input+, optional +:ground_truth+, and optional +:tool_context+. +evaluators+ - array of Evaluator subclasses to run against each scenario. +tool_context+ - optional hash passed to +agent.generate+. Per-scenario +:tool_context+ takes precedence.</p>
+
+<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if agent is not a <a href="../Agent.html"><code>Riffer::Agent</code></a> subclass or any eval is not a <a href="Evaluator.html"><code>Riffer::Evals::Evaluator</code></a> subclass.</p>
+
+<p>: (agent: singleton(<a href="../Agent.html"><code>Riffer::Agent</code></a>), scenarios: Array[Hash[Symbol, untyped]], evaluators: <a href="singleton(Riffer::Evals::Evaluator)">Array</a>, ?tool_context: Hash[Symbol, untyped]?) -&gt; <a href="RunResult.html"><code>Riffer::Evals::RunResult</code></a></p>
 
 
         </div>
@@ -756,13 +745,13 @@
       </div>
 
 
-      <div id="method-c-instructions" class="method-detail anchor-link ">
+      <div id="method-c-run_scenario" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-instructions" title="Link to this method">
-                <span class="method-name">instructions</span>
-                <span class="method-args">(value = nil)</span>
+              <a href="#method-c-run_scenario" title="Link to this method">
+                <span class="method-name">run_scenario</span>
+                <span class="method-args">(agent:, scenario:, evaluators:, tool_context: nil)</span>
               </a>
             </div>
 
@@ -774,124 +763,26 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="instructions-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 23</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@instructions</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@instructions</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
+          <div class="method-source-code" id="run_scenario-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator_runner.rb, line 61</span>
+                     <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">run_scenario</span>(<span class="ruby-value">agent:</span>, <span class="ruby-value">scenario:</span>, <span class="ruby-value">evaluators:</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">input</span> = <span class="ruby-identifier">scenario</span>[<span class="ruby-value">:input</span>]
+  <span class="ruby-identifier">ground_truth</span> = <span class="ruby-identifier">scenario</span>[<span class="ruby-value">:ground_truth</span>]
+  <span class="ruby-identifier">context</span> = <span class="ruby-identifier">scenario</span>[<span class="ruby-value">:tool_context</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">tool_context</span>
 
+  <span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">input</span>, <span class="ruby-value">tool_context:</span> <span class="ruby-identifier">context</span>)
+  <span class="ruby-identifier">output</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
 
+  <span class="ruby-identifier">results</span> = <span class="ruby-identifier">evaluators</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">evaluator_class</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">evaluator_class</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">evaluate</span>(<span class="ruby-value">input:</span> <span class="ruby-identifier">input</span>, <span class="ruby-value">output:</span> <span class="ruby-identifier">output</span>, <span class="ruby-value">ground_truth:</span> <span class="ruby-identifier">ground_truth</span>)
+  <span class="ruby-keyword">end</span>
 
-        <div class="method-description">
-
-
-          <p>Gets or sets the evaluation instructions (criteria and scoring rubric).</p>
-
-<p>: (?String?) -&gt; String?</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-c-judge_model" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-judge_model" title="Link to this method">
-                <span class="method-name">judge_model</span>
-                <span class="method-args">(value = nil)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="judge_model-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 39</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">judge_model</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@judge_model</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@judge_model</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Gets or sets the judge model for LLM-as-judge evaluations.</p>
-
-<p>: (?String?) -&gt; String?</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
-
-
-
-
-
-
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-evaluate" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-evaluate" title="Link to this method">
-                <span class="method-name">evaluate</span>
-                <span class="method-args">(input:, output:, ground_truth: nil)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="evaluate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">evaluate</span>(<span class="ruby-value">input:</span>, <span class="ruby-value">output:</span>, <span class="ruby-value">ground_truth:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">instr</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instructions</span>
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} must set instructions or implement #evaluate&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">instr</span>
-
-  <span class="ruby-identifier">evaluation</span> = <span class="ruby-identifier">judge</span>.<span class="ruby-identifier">evaluate</span>(
-    <span class="ruby-value">instructions:</span> <span class="ruby-identifier">instr</span>,
-    <span class="ruby-value">input:</span> <span class="ruby-identifier">format_input</span>(<span class="ruby-identifier">input</span>),
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">ScenarioResult</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">input:</span> <span class="ruby-identifier">input</span>,
     <span class="ruby-value">output:</span> <span class="ruby-identifier">output</span>,
-    <span class="ruby-value">ground_truth:</span> <span class="ruby-identifier">ground_truth</span>
+    <span class="ruby-value">ground_truth:</span> <span class="ruby-identifier">ground_truth</span>,
+    <span class="ruby-value">results:</span> <span class="ruby-identifier">results</span>
   )
-
-  <span class="ruby-identifier">result</span>(<span class="ruby-value">score:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:score</span>], <span class="ruby-value">reason:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:reason</span>])
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -900,15 +791,7 @@
         <div class="method-description">
 
 
-          <p>Evaluates an input/output pair.</p>
-
-<p>The default implementation calls the judge with the class-level +instructions+. Override this method for custom evaluation logic (e.g. rule-based evaluators).</p>
-
-<p>+input+ - the input to evaluate; String or Array of message hashes/Message objects. +output+ - the agent’s response to evaluate. +ground_truth+ - optional reference answer for comparison.</p>
-
-<p>Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.</p>
-
-<p>: (input: String | Array[Hash[Symbol, untyped] | <a href="../Messages/Base.html"><code>Riffer::Messages::Base</code></a>], output: String, ?ground_truth: String?) -&gt; <a href="Result.html"><code>Riffer::Evals::Result</code></a></p>
+          <p>: (agent: singleton(<a href="../Agent.html"><code>Riffer::Agent</code></a>), scenario: Hash[Symbol, untyped], evaluators: <a href="singleton(Riffer::Evals::Evaluator)">Array</a>, ?tool_context: Hash[Symbol, untyped]?) -&gt; <a href="ScenarioResult.html"><code>Riffer::Evals::ScenarioResult</code></a></p>
 
 
         </div>
@@ -920,22 +803,13 @@
       </div>
 
 
-    </section>
-
-
-     <section id="protected-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="protected-instance-untitled-methods"><a href="#protected-instance-untitled-methods">Protected Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-judge" class="method-detail anchor-link ">
+      <div id="method-c-validate_agent-21" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-judge" title="Link to this method">
-                <span class="method-name">judge</span>
-                <span class="method-args">()</span>
+              <a href="#method-c-validate_agent-21" title="Link to this method">
+                <span class="method-name">validate_agent!</span>
+                <span class="method-args">(agent)</span>
               </a>
             </div>
 
@@ -947,13 +821,57 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="judge-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 95</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">judge</span>
-  <span class="ruby-ivar">@judge</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">model</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">judge_model</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">evals</span>.<span class="ruby-identifier">judge_model</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;No judge model configured. Set judge_model on the evaluator or Riffer.config.evals.judge_model&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span>
-    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">Judge</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">model:</span> <span class="ruby-identifier">model</span>)
+          <div class="method-source-code" id="validate_agent-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator_runner.rb, line 45</span>
+                     <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">validate_agent!</span>(<span class="ruby-identifier">agent</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">agent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;agent must be a subclass of Riffer::Agent, got #{agent.inspect}&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>: (singleton(<a href="../Agent.html"><code>Riffer::Agent</code></a>)) -&gt; void</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-validate_evaluators-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-validate_evaluators-21" title="Link to this method">
+                <span class="method-name">validate_evaluators!</span>
+                <span class="method-args">(evaluators)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="validate_evaluators-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator_runner.rb, line 52</span>
+                     <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">validate_evaluators!</span>(<span class="ruby-identifier">evaluators</span>)
+  <span class="ruby-identifier">evaluators</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">evaluator_class</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">evaluator_class</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">evaluator_class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">Evaluator</span>
+
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;each evaluator must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}&quot;</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -963,59 +881,7 @@
         <div class="method-description">
 
 
-          <p>Returns a Judge instance configured for this evaluator.</p>
-
-<p>: () -&gt; <a href="Judge.html"><code>Riffer::Evals::Judge</code></a></p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-result" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-result" title="Link to this method">
-                <span class="method-name">result</span>
-                <span class="method-args">(score:, reason: nil, metadata: {})</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="result-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 106</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">result</span>(<span class="ruby-value">score:</span>, <span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">metadata:</span> {})
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(
-    <span class="ruby-value">evaluator:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>,
-    <span class="ruby-value">score:</span> <span class="ruby-identifier">score</span>,
-    <span class="ruby-value">reason:</span> <span class="ruby-identifier">reason</span>,
-    <span class="ruby-value">metadata:</span> <span class="ruby-identifier">metadata</span>,
-    <span class="ruby-value">higher_is_better:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">higher_is_better</span>
-  )
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Helper to build a Result object.</p>
-
-<p>: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -&gt; <a href="Result.html"><code>Riffer::Evals::Result</code></a></p>
+          <p>: (<a href="singleton(Riffer::Evals::Evaluator)">Array</a>) -&gt; void</p>
 
 
         </div>
@@ -1028,6 +894,13 @@
 
 
     </section>
+
+
+
+
+
+
+
 
 
 
