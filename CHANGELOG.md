@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0](https://github.com/janeapp/riffer/compare/riffer/v0.13.0...riffer/v0.14.0) (2026-02-24)
+
+
+### Features
+
+* add file attachment support for user messages ([#129](https://github.com/janeapp/riffer/issues/129)) ([0d08eb1](https://github.com/janeapp/riffer/commit/0d08eb140e4094a729b1da5e3fddb57b251bf6f3))
+* add max_steps option to Agent ([#121](https://github.com/janeapp/riffer/issues/121)) ([fbc0391](https://github.com/janeapp/riffer/commit/fbc0391d157db587c0293255587a70141a7b588f))
+* add structured output support for agents ([#128](https://github.com/janeapp/riffer/issues/128)) ([99be155](https://github.com/janeapp/riffer/commit/99be15567747427830fdb75b585715f013857f6f))
+* add web_search option for OpenAI and Anthropic providers ([#126](https://github.com/janeapp/riffer/issues/126)) ([7e7e793](https://github.com/janeapp/riffer/commit/7e7e793a4ff746d7238074a21b9cd62a846e7c99))
+* interruptible callbacks via throw/catch ([#119](https://github.com/janeapp/riffer/issues/119)) ([f5985e6](https://github.com/janeapp/riffer/commit/f5985e627737b28ebbf7ed7262e62496836acf1f))
+* replace eval prompt API with semantic fields ([#132](https://github.com/janeapp/riffer/issues/132)) ([5d99d5a](https://github.com/janeapp/riffer/commit/5d99d5af408e4e70ae66c975d1b40d60a209f5a6))
+* replace Profile/Metric eval system with EvaluatorRunner ([#138](https://github.com/janeapp/riffer/issues/138)) ([ebf2696](https://github.com/janeapp/riffer/commit/ebf2696dfce814be43278aa9857285c21b3894bf))
+* support dynamic model selection via lambda ([#127](https://github.com/janeapp/riffer/issues/127)) ([c59cf96](https://github.com/janeapp/riffer/commit/c59cf96efb5a4f5d0bc947441fa3aeeea3b4e5f3))
+
+
+### Bug Fixes
+
+* add --comment flag to claude code review prompt ([#122](https://github.com/janeapp/riffer/issues/122)) ([534bd59](https://github.com/janeapp/riffer/commit/534bd59c389233466824090b7bdfed976870d9f1))
+* add RBS annotations to web search constants and fix test provider docs ([#130](https://github.com/janeapp/riffer/issues/130)) ([7cebe05](https://github.com/janeapp/riffer/commit/7cebe0506eafaa35abe2de74997af479a3776a7d))
+* correct Amazon Bedrock model options to use Converse API structure ([#133](https://github.com/janeapp/riffer/issues/133)) ([3af4562](https://github.com/janeapp/riffer/commit/3af45620fc47d1b98961eb45d79a905a7d2cac82))
+* widen run_eval input type to accept String or messages array ([#124](https://github.com/janeapp/riffer/issues/124)) ([f96214c](https://github.com/janeapp/riffer/commit/f96214c5b602c3469edca2ac9d0b856d1e23c630))
+
 ## [0.13.0](https://github.com/janeapp/riffer/compare/riffer/v0.12.0...riffer/v0.13.0) (2026-02-12)
 
 
