@@ -2,6 +2,8 @@
 
 Evals let you measure the quality of agent outputs using LLM-as-judge evaluations.
 
+> **Tip:** See `examples/evaluators/` for ready-to-use reference implementations you can copy into your project.
+
 ## Overview
 
 Riffer Evals provides a framework for evaluating agent responses against configurable quality metrics. It uses an LLM-as-judge approach where a separate model evaluates the outputs of your agents.
@@ -50,8 +52,6 @@ Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 ```
 
 The judge model is the LLM that evaluates agent outputs. You can use any configured provider.
-
-> **Tip:** See `examples/evaluators/` for ready-to-use reference implementations you can copy into your project.
 
 ## Eval Profiles
 

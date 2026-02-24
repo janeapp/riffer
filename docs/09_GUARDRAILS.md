@@ -2,6 +2,8 @@
 
 Guardrails provide pre-processing of input messages (before LLM calls) and post-processing of output responses (after LLM responses). They enable validation, transformation, and content filtering in the agent pipeline.
 
+> **Tip:** See `examples/guardrails/` for ready-to-use reference implementations you can copy into your project.
+
 ## Overview
 
 Guardrails can:
@@ -208,8 +210,6 @@ end
 ```
 
 ## Streaming with Guardrails
-
-> **Tip:** See `examples/guardrails/` for ready-to-use reference implementations you can copy into your project.
 
 Guardrails work with streaming. If blocked, a `Riffer::StreamEvents::GuardrailTripwire` event is yielded:
 

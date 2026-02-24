@@ -40,7 +40,7 @@ class KeywordCoverageEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 
   def evaluate(input:, output:, ground_truth: nil)
-    return result(score: 1.0, reason: "No ground truth provided for comparison") unless ground_truth
+    raise ArgumentError, "ground_truth is required for KeywordCoverageEvaluator" unless ground_truth
 
     truth_keywords = extract_keywords(ground_truth)
     return result(score: 1.0, reason: "No keywords found in ground truth") if truth_keywords.empty?
