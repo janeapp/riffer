@@ -114,6 +114,52 @@ describe Riffer::Evals::EvaluatorRunner do
     end
   end
 
+  describe "tool_context" do
+    it "passes tool_context to agent" do
+      received_context = nil
+      context_agent = Class.new(Riffer::Agent) do
+        model ->(ctx) {
+          received_context = ctx
+          "mock/mock-model"
+        }
+        instructions "You are a helpful assistant."
+      end
+
+      Riffer::Evals::EvaluatorRunner.run(
+        agent: context_agent,
+        scenarios: [{input: "Hello"}],
+        evals: [evaluator_class],
+        tool_context: {user_id: 42}
+      )
+
+      expect(received_context).must_equal({user_id: 42})
+    end
+
+    it "allows per-scenario tool_context to override top-level" do
+      received_contexts = []
+      context_agent = Class.new(Riffer::Agent) do
+        model ->(ctx) {
+          received_contexts << ctx
+          "mock/mock-model"
+        }
+        instructions "You are a helpful assistant."
+      end
+
+      Riffer::Evals::EvaluatorRunner.run(
+        agent: context_agent,
+        scenarios: [
+          {input: "Hello", tool_context: {user_id: 99}},
+          {input: "Hi"}
+        ],
+        evals: [evaluator_class],
+        tool_context: {user_id: 42}
+      )
+
+      expect(received_contexts[0]).must_equal({user_id: 99})
+      expect(received_contexts[1]).must_equal({user_id: 42})
+    end
+  end
+
   describe "validation" do
     it "raises error when agent is not an Agent subclass" do
       expect {

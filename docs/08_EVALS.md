@@ -82,6 +82,24 @@ result = Riffer::Evals::EvaluatorRunner.run(
 )
 ```
 
+### Tool Context
+
+Pass `tool_context:` to provide context that agents use for dynamic model selection, tool resolution, or tool execution:
+
+```ruby
+result = Riffer::Evals::EvaluatorRunner.run(
+  agent: MyAgent,
+  scenarios: [
+    { input: "What is Ruby?" },
+    { input: "Premium question", tool_context: { premium: true } }
+  ],
+  evals: [AnswerRelevancyEvaluator],
+  tool_context: { premium: false }
+)
+```
+
+Per-scenario `tool_context` overrides the top-level value. Scenarios without their own `tool_context` inherit the top-level value.
+
 ### RunResult
 
 The runner returns a `Riffer::Evals::RunResult`:

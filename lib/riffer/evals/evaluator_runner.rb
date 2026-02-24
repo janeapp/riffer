@@ -23,19 +23,20 @@ class Riffer::Evals::EvaluatorRunner
   # Runs evaluators against an agent for the given scenarios.
   #
   # +agent+ - an Agent subclass (not an instance).
-  # +scenarios+ - array of hashes with +:input+ and optional +:ground_truth+.
+  # +scenarios+ - array of hashes with +:input+, optional +:ground_truth+, and optional +:tool_context+.
   # +evals+ - array of Evaluator subclasses to run against each scenario.
+  # +tool_context+ - optional hash passed to +agent.generate+. Per-scenario +:tool_context+ takes precedence.
   #
   # Raises Riffer::ArgumentError if agent is not a Riffer::Agent subclass
   # or any eval is not a Riffer::Evals::Evaluator subclass.
   #
-  #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evals: Array[singleton(Riffer::Evals::Evaluator)]) -> Riffer::Evals::RunResult
-  def self.run(agent:, scenarios:, evals:)
+  #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evals: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  def self.run(agent:, scenarios:, evals:, tool_context: nil)
     validate_agent!(agent)
     validate_evals!(evals)
 
     scenario_results = scenarios.map do |scenario|
-      run_scenario(agent: agent, scenario: scenario, evals: evals)
+      run_scenario(agent: agent, scenario: scenario, evals: evals, tool_context: tool_context)
     end
 
     Riffer::Evals::RunResult.new(scenario_results: scenario_results)
@@ -57,12 +58,13 @@ class Riffer::Evals::EvaluatorRunner
     end
   end
 
-  #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evals: Array[singleton(Riffer::Evals::Evaluator)]) -> Riffer::Evals::ScenarioResult
-  private_class_method def self.run_scenario(agent:, scenario:, evals:)
+  #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evals: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
+  private_class_method def self.run_scenario(agent:, scenario:, evals:, tool_context: nil)
     input = scenario[:input]
     ground_truth = scenario[:ground_truth]
+    context = scenario[:tool_context] || tool_context
 
-    response = agent.generate(input)
+    response = agent.generate(input, tool_context: context)
     output = response.content
 
     results = evals.map do |eval_class|
