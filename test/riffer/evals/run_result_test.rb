@@ -69,26 +69,11 @@ describe Riffer::Evals::RunResult do
     end
   end
 
-  describe "#summary" do
-    it "returns total scenario count" do
-      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, scenario_b])
-
-      expect(run_result.summary).must_equal({total_scenarios: 2})
-    end
-
-    it "returns zero for empty results" do
-      run_result = Riffer::Evals::RunResult.new(scenario_results: [])
-
-      expect(run_result.summary).must_equal({total_scenarios: 0})
-    end
-  end
-
   describe "#to_h" do
     it "returns a hash representation" do
       run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a])
 
       hash = run_result.to_h
-      expect(hash[:summary]).must_equal({total_scenarios: 1})
       expect(hash[:scores]).must_be_instance_of Hash
       expect(hash[:scenario_results].length).must_equal 1
     end

@@ -10,7 +10,6 @@
 #   )
 #
 #   run_result.scores   # => { MyEvaluator => 0.85 }
-#   run_result.summary  # => { total_scenarios: 2 }
 #
 class Riffer::Evals::RunResult
   # Per-scenario evaluation results.
@@ -44,20 +43,12 @@ class Riffer::Evals::RunResult
     end
   end
 
-  # Returns summary statistics for the run.
-  #
-  #: () -> Hash[Symbol, untyped]
-  def summary
-    {total_scenarios: scenario_results.length}
-  end
-
   # Returns a hash representation of the run result.
   #
   #: () -> Hash[Symbol, untyped]
   def to_h
     {
       scores: scores.transform_keys(&:name),
-      summary: summary,
       scenario_results: scenario_results.map(&:to_h)
     }
   end

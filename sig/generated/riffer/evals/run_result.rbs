@@ -9,7 +9,6 @@
 #   )
 #
 #   run_result.scores   # => { MyEvaluator => 0.85 }
-#   run_result.summary  # => { total_scenarios: 2 }
 class Riffer::Evals::RunResult
   # Per-scenario evaluation results.
   attr_reader scenario_results: Array[Riffer::Evals::ScenarioResult]
@@ -23,11 +22,6 @@ class Riffer::Evals::RunResult
   #
   # : () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
-
-  # Returns summary statistics for the run.
-  #
-  # : () -> Hash[Symbol, untyped]
-  def summary: () -> Hash[Symbol, untyped]
 
   # Returns a hash representation of the run result.
   #

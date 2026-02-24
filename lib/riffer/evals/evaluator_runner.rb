@@ -13,30 +13,29 @@
 #       { input: "What is Ruby?", ground_truth: "A programming language" },
 #       { input: "What is Python?" }
 #     ],
-#     evals: [AnswerRelevancyEvaluator]
+#     evaluators: [AnswerRelevancyEvaluator]
 #   )
 #
 #   result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
-#   result.summary  # => { total_scenarios: 2 }
 #
 class Riffer::Evals::EvaluatorRunner
   # Runs evaluators against an agent for the given scenarios.
   #
   # +agent+ - an Agent subclass (not an instance).
   # +scenarios+ - array of hashes with +:input+, optional +:ground_truth+, and optional +:tool_context+.
-  # +evals+ - array of Evaluator subclasses to run against each scenario.
+  # +evaluators+ - array of Evaluator subclasses to run against each scenario.
   # +tool_context+ - optional hash passed to +agent.generate+. Per-scenario +:tool_context+ takes precedence.
   #
   # Raises Riffer::ArgumentError if agent is not a Riffer::Agent subclass
   # or any eval is not a Riffer::Evals::Evaluator subclass.
   #
-  #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evals: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-  def self.run(agent:, scenarios:, evals:, tool_context: nil)
+  #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  def self.run(agent:, scenarios:, evaluators:, tool_context: nil)
     validate_agent!(agent)
-    validate_evals!(evals)
+    validate_evaluators!(evaluators)
 
     scenario_results = scenarios.map do |scenario|
-      run_scenario(agent: agent, scenario: scenario, evals: evals, tool_context: tool_context)
+      run_scenario(agent: agent, scenario: scenario, evaluators: evaluators, tool_context: tool_context)
     end
 
     Riffer::Evals::RunResult.new(scenario_results: scenario_results)
@@ -50,16 +49,16 @@ class Riffer::Evals::EvaluatorRunner
   end
 
   #: (Array[singleton(Riffer::Evals::Evaluator)]) -> void
-  private_class_method def self.validate_evals!(evals)
-    evals.each do |eval_class|
-      next if eval_class.is_a?(Class) && eval_class < Riffer::Evals::Evaluator
+  private_class_method def self.validate_evaluators!(evaluators)
+    evaluators.each do |evaluator_class|
+      next if evaluator_class.is_a?(Class) && evaluator_class < Riffer::Evals::Evaluator
 
-      raise Riffer::ArgumentError, "each eval must be a subclass of Riffer::Evals::Evaluator, got #{eval_class.inspect}"
+      raise Riffer::ArgumentError, "each evaluator must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}"
     end
   end
 
-  #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evals: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
-  private_class_method def self.run_scenario(agent:, scenario:, evals:, tool_context: nil)
+  #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
+  private_class_method def self.run_scenario(agent:, scenario:, evaluators:, tool_context: nil)
     input = scenario[:input]
     ground_truth = scenario[:ground_truth]
     context = scenario[:tool_context] || tool_context
@@ -67,8 +66,8 @@ class Riffer::Evals::EvaluatorRunner
     response = agent.generate(input, tool_context: context)
     output = response.content
 
-    results = evals.map do |eval_class|
-      eval_class.new.evaluate(input: input, output: output, ground_truth: ground_truth)
+    results = evaluators.map do |evaluator_class|
+      evaluator_class.new.evaluate(input: input, output: output, ground_truth: ground_truth)
     end
 
     Riffer::Evals::ScenarioResult.new(

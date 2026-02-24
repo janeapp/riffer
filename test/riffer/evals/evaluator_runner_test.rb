@@ -41,7 +41,7 @@ describe Riffer::Evals::EvaluatorRunner do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
         scenarios: [{input: "What is Ruby?"}],
-        evals: [evaluator_class]
+        evaluators: [evaluator_class]
       )
 
       expect(result).must_be_instance_of Riffer::Evals::RunResult
@@ -54,7 +54,7 @@ describe Riffer::Evals::EvaluatorRunner do
           {input: "What is Ruby?"},
           {input: "What is Python?"}
         ],
-        evals: [evaluator_class]
+        evaluators: [evaluator_class]
       )
 
       expect(result.scenario_results.length).must_equal 2
@@ -64,7 +64,7 @@ describe Riffer::Evals::EvaluatorRunner do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
         scenarios: [{input: "What is Ruby?"}],
-        evals: [evaluator_class, ground_truth_evaluator_class]
+        evaluators: [evaluator_class, ground_truth_evaluator_class]
       )
 
       expect(result.scenario_results.first.results.length).must_equal 2
@@ -74,7 +74,7 @@ describe Riffer::Evals::EvaluatorRunner do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
         scenarios: [{input: "test", ground_truth: "Mock response"}],
-        evals: [ground_truth_evaluator_class]
+        evaluators: [ground_truth_evaluator_class]
       )
 
       expect(result.scenario_results.first.results.first.score).must_equal 1.0
@@ -84,7 +84,7 @@ describe Riffer::Evals::EvaluatorRunner do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
         scenarios: [{input: "Hello"}],
-        evals: [evaluator_class]
+        evaluators: [evaluator_class]
       )
 
       expect(result.scenario_results.first.output).must_equal "Mock response"
@@ -97,20 +97,10 @@ describe Riffer::Evals::EvaluatorRunner do
           {input: "What is Ruby?"},
           {input: "What is Python?"}
         ],
-        evals: [evaluator_class]
+        evaluators: [evaluator_class]
       )
 
       expect(result.scores[evaluator_class]).must_be_instance_of Float
-    end
-
-    it "returns summary" do
-      result = Riffer::Evals::EvaluatorRunner.run(
-        agent: agent_class,
-        scenarios: [{input: "test"}, {input: "test2"}],
-        evals: [evaluator_class]
-      )
-
-      expect(result.summary).must_equal({total_scenarios: 2})
     end
   end
 
@@ -128,7 +118,7 @@ describe Riffer::Evals::EvaluatorRunner do
       Riffer::Evals::EvaluatorRunner.run(
         agent: context_agent,
         scenarios: [{input: "Hello"}],
-        evals: [evaluator_class],
+        evaluators: [evaluator_class],
         tool_context: {user_id: 42}
       )
 
@@ -151,7 +141,7 @@ describe Riffer::Evals::EvaluatorRunner do
           {input: "Hello", tool_context: {user_id: 99}},
           {input: "Hi"}
         ],
-        evals: [evaluator_class],
+        evaluators: [evaluator_class],
         tool_context: {user_id: 42}
       )
 
@@ -166,7 +156,7 @@ describe Riffer::Evals::EvaluatorRunner do
         Riffer::Evals::EvaluatorRunner.run(
           agent: String,
           scenarios: [{input: "test"}],
-          evals: [evaluator_class]
+          evaluators: [evaluator_class]
         )
       }.must_raise(Riffer::ArgumentError)
     end
@@ -176,7 +166,7 @@ describe Riffer::Evals::EvaluatorRunner do
         Riffer::Evals::EvaluatorRunner.run(
           agent: agent_class,
           scenarios: [{input: "test"}],
-          evals: [String]
+          evaluators: [String]
         )
       }.must_raise(Riffer::ArgumentError)
     end

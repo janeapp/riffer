@@ -34,11 +34,10 @@ result = Riffer::Evals::EvaluatorRunner.run(
     { input: "What is Ruby?", ground_truth: "A programming language" },
     { input: "What is Python?" }
   ],
-  evals: [AnswerRelevancyEvaluator]
+  evaluators: [AnswerRelevancyEvaluator]
 )
 
 result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
-result.summary  # => { total_scenarios: 2 }
 ```
 
 ## Configuration
@@ -78,7 +77,7 @@ result = Riffer::Evals::EvaluatorRunner.run(
     { input: "What is the capital of France?", ground_truth: "Paris" },
     { input: "Explain Ruby blocks." }
   ],
-  evals: [AnswerRelevancyEvaluator]
+  evaluators: [AnswerRelevancyEvaluator]
 )
 ```
 
@@ -93,7 +92,7 @@ result = Riffer::Evals::EvaluatorRunner.run(
     { input: "What is Ruby?" },
     { input: "Premium question", tool_context: { premium: true } }
   ],
-  evals: [AnswerRelevancyEvaluator],
+  evaluators: [AnswerRelevancyEvaluator],
   tool_context: { premium: false }
 )
 ```
@@ -106,7 +105,6 @@ The runner returns a `Riffer::Evals::RunResult`:
 
 ```ruby
 result.scores             # => { EvaluatorClass => avg_score } across all scenarios
-result.summary            # => { total_scenarios: N }
 result.scenario_results   # => Array of ScenarioResult objects
 result.to_h               # => Hash representation
 ```
@@ -171,7 +169,7 @@ Pass your custom evaluator class to the runner:
 result = Riffer::Evals::EvaluatorRunner.run(
   agent: MyAgent,
   scenarios: [{ input: "What are symptoms of flu?" }],
-  evals: [MedicalAccuracyEvaluator]
+  evaluators: [MedicalAccuracyEvaluator]
 )
 ```
 
@@ -265,10 +263,8 @@ class SupportAgentEvalTest < Minitest::Test
         { input: "How do I reset my password?", ground_truth: "Navigate to Settings > Security > Reset Password" },
         { input: "What are your business hours?" }
       ],
-      evals: [AnswerRelevancyEvaluator]
+      evaluators: [AnswerRelevancyEvaluator]
     )
-
-    assert_equal 2, result.summary[:total_scenarios]
 
     result.scores.each do |evaluator, score|
       assert score >= 0.85, "#{evaluator.name} scored #{score}, expected >= 0.85"
