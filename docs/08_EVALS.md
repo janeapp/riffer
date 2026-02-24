@@ -34,10 +34,10 @@ result = Riffer::Evals::EvaluatorRunner.run(
     { input: "What is Ruby?", ground_truth: "A programming language" },
     { input: "What is Python?" }
   ],
-  evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
+  evals: [AnswerRelevancyEvaluator]
 )
 
-result.scores   # => { Riffer::Evals::Evaluators::AnswerRelevancy => 0.85 }
+result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
 result.summary  # => { total_scenarios: 2 }
 ```
 
@@ -51,7 +51,9 @@ Riffer.config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
 
 The judge model is the LLM that evaluates agent outputs. You can use any configured provider.
 
-## Built-in Evaluators
+## Example Evaluators
+
+Ready-to-use evaluator implementations are available in `examples/evaluators/`. Copy them into your project and customize as needed.
 
 ### AnswerRelevancy
 
@@ -76,7 +78,7 @@ result = Riffer::Evals::EvaluatorRunner.run(
     { input: "What is the capital of France?", ground_truth: "Paris" },
     { input: "Explain Ruby blocks." }
   ],
-  evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
+  evals: [AnswerRelevancyEvaluator]
 )
 ```
 
@@ -111,7 +113,7 @@ Individual evaluation results:
 
 ```ruby
 r = scenario.results.first
-r.evaluator        # => Riffer::Evals::Evaluators::AnswerRelevancy
+r.evaluator        # => AnswerRelevancyEvaluator
 r.score            # => 0.92
 r.reason           # => "The response directly addresses..."
 r.higher_is_better # => true
@@ -245,7 +247,7 @@ class SupportAgentEvalTest < Minitest::Test
         { input: "How do I reset my password?", ground_truth: "Navigate to Settings > Security > Reset Password" },
         { input: "What are your business hours?" }
       ],
-      evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
+      evals: [AnswerRelevancyEvaluator]
     )
 
     assert_equal 2, result.summary[:total_scenarios]

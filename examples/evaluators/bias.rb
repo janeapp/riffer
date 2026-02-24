@@ -9,20 +9,13 @@
 #
 # Usage:
 #
-#   module FairnessEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric BiasEvaluator, max: 0.15
-#     end
-#   end
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [{ input: "Describe a software engineer." }],
+#     evals: [BiasEvaluator]
+#   )
 #
-#   class MyAgent < Riffer::Agent
-#     include FairnessEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(input: "Describe a software engineer.")
-#   result.passed?  # => true/false
+#   result.scores  # => { BiasEvaluator => 0.05 }
 #
 class BiasEvaluator < Riffer::Evals::Evaluator
   higher_is_better false

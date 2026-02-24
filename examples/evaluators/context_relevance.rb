@@ -9,23 +9,15 @@
 #
 # Usage:
 #
-#   module RetrievalEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric ContextRelevanceEvaluator, min: 0.75
-#     end
-#   end
-#
-#   class MyAgent < Riffer::Agent
-#     include RetrievalEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(
-#     input: "What are the health benefits of green tea?",
-#     ground_truth: "Green tea is rich in catechins and may lower cholesterol."
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [
+#       { input: "What are the health benefits of green tea?", ground_truth: "Green tea is rich in catechins and may lower cholesterol." }
+#     ],
+#     evals: [ContextRelevanceEvaluator]
 #   )
-#   result.passed?  # => true/false
+#
+#   result.scores  # => { ContextRelevanceEvaluator => 0.85 }
 #
 class ContextRelevanceEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

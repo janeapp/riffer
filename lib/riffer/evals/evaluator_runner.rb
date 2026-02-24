@@ -13,10 +13,10 @@
 #       { input: "What is Ruby?", ground_truth: "A programming language" },
 #       { input: "What is Python?" }
 #     ],
-#     evals: [Riffer::Evals::Evaluators::AnswerRelevancy]
+#     evals: [AnswerRelevancyEvaluator]
 #   )
 #
-#   result.scores   # => { Riffer::Evals::Evaluators::AnswerRelevancy => 0.85 }
+#   result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
 #   result.summary  # => { total_scenarios: 2 }
 #
 class Riffer::Evals::EvaluatorRunner

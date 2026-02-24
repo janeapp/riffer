@@ -9,23 +9,15 @@
 #
 # Usage:
 #
-#   module CompletenessEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric CompletenessEvaluator, min: 0.8
-#     end
-#   end
-#
-#   class MyAgent < Riffer::Agent
-#     include CompletenessEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(
-#     input: "What are the three primary colors?",
-#     ground_truth: "Red, blue, and yellow are the primary colors in traditional color theory."
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [
+#       { input: "What are the three primary colors?", ground_truth: "Red, blue, and yellow are the primary colors in traditional color theory." }
+#     ],
+#     evals: [CompletenessEvaluator]
 #   )
-#   result.passed?  # => true/false
+#
+#   result.scores  # => { CompletenessEvaluator => 0.9 }
 #
 class CompletenessEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

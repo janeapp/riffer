@@ -9,20 +9,13 @@
 #
 # Usage:
 #
-#   module ToneEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric ToneConsistencyEvaluator, min: 0.8
-#     end
-#   end
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [{ input: "Explain quantum computing in a professional tone." }],
+#     evals: [ToneConsistencyEvaluator]
+#   )
 #
-#   class MyAgent < Riffer::Agent
-#     include ToneEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(input: "Explain quantum computing in a professional tone.")
-#   result.passed?  # => true/false
+#   result.scores  # => { ToneConsistencyEvaluator => 0.9 }
 #
 class ToneConsistencyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

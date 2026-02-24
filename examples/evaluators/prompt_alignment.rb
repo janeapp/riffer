@@ -9,20 +9,13 @@
 #
 # Usage:
 #
-#   module AlignmentEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric PromptAlignmentEvaluator, min: 0.85
-#     end
-#   end
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [{ input: "Write a haiku about spring." }],
+#     evals: [PromptAlignmentEvaluator]
+#   )
 #
-#   class MyAgent < Riffer::Agent
-#     include AlignmentEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(input: "Write a haiku about spring.")
-#   result.passed?  # => true/false
+#   result.scores  # => { PromptAlignmentEvaluator => 0.9 }
 #
 class PromptAlignmentEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

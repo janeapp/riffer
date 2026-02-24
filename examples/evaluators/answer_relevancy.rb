@@ -9,20 +9,13 @@
 #
 # Usage:
 #
-#   module QualityEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric AnswerRelevancyEvaluator, min: 0.85
-#     end
-#   end
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [{ input: "What is Ruby?" }],
+#     evals: [AnswerRelevancyEvaluator]
+#   )
 #
-#   class MyAgent < Riffer::Agent
-#     include QualityEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(input: "What is Ruby?")
-#   result.passed?  # => true/false
+#   result.scores  # => { AnswerRelevancyEvaluator => 0.85 }
 #
 class AnswerRelevancyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true

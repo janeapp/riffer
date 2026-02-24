@@ -9,23 +9,15 @@
 #
 # Usage:
 #
-#   module HallucinationEvals
-#     include Riffer::Evals::Profile
-#     ai_evals do
-#       metric HallucinationEvaluator, max: 0.15
-#     end
-#   end
-#
-#   class MyAgent < Riffer::Agent
-#     include HallucinationEvals
-#     model "openai/gpt-4o"
-#   end
-#
-#   result = MyAgent.run_eval(
-#     input: "Summarize this article about Ruby.",
-#     ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness."
+#   result = Riffer::Evals::EvaluatorRunner.run(
+#     agent: MyAgent,
+#     scenarios: [
+#       { input: "Summarize this article about Ruby.", ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness." }
+#     ],
+#     evals: [HallucinationEvaluator]
 #   )
-#   result.passed?  # => true/false
+#
+#   result.scores  # => { HallucinationEvaluator => 0.1 }
 #
 class HallucinationEvaluator < Riffer::Evals::Evaluator
   higher_is_better false
