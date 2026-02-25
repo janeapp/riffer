@@ -324,14 +324,15 @@ class Riffer::Agent
 
       response = extract_final_response
 
-      return build_response(response.content, modifications: all_modifications, structured_output: response.structured_output)
+      return build_response(response.content, modifications: all_modifications, structured_output: validate_structured_output(response))
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
     response = extract_final_response
-    build_response(response.content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: response.structured_output)
+
+    build_response(response.content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response))
   end
 
   #: (Riffer::Messages::Base) -> void
@@ -643,6 +644,14 @@ class Riffer::Agent
     modifications.each { |m| m.message_indices.map! { response_index } }
 
     [processed_response, tripwire, modifications]
+  end
+
+  #: (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+  def validate_structured_output(response)
+    return unless response&.is_structured_output && @structured_output
+
+    result = @structured_output.parse_and_validate(response.content)
+    result.object
   end
 
   #: () -> Riffer::StructuredOutput?
