@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0](https://github.com/janeapp/riffer/compare/riffer/v0.14.0...riffer/v0.15.0) (2026-02-25)
+
+
+### Features
+
+* store structured output in assistant messages ([#140](https://github.com/janeapp/riffer/issues/140)) ([9cdb2e2](https://github.com/janeapp/riffer/commit/9cdb2e2adad5eab6745212e573534d3369528ccb))
+
 ## [0.14.0](https://github.com/janeapp/riffer/compare/riffer/v0.13.0...riffer/v0.14.0) (2026-02-24)
 
 
