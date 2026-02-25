@@ -10,14 +10,15 @@
 
 ## Architecture
 
-The base class uses the **template method** pattern. The public methods `generate_text` and `stream_text` orchestrate the flow, delegating to five hook methods that each provider implements:
+The base class uses the **template method** pattern. The public methods `generate_text` and `stream_text` orchestrate the flow, delegating to hook methods that each provider implements:
 
 ```
 generate_text
   ├─ build_request_params
   ├─ execute_generate
-  ├─ extract_token_usage
-  └─ extract_assistant_message
+  ├─ extract_content
+  ├─ extract_tool_calls
+  └─ extract_token_usage
 
 stream_text
   ├─ build_request_params
@@ -78,12 +79,18 @@ class Riffer::Providers::YourProvider < Riffer::Providers::Base
     )
   end
 
-  # Parse the SDK response into an Assistant message.
+  # Extract text content from the SDK response.
   #
-  #: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
-    # Extract text and tool_calls from the response
-    Riffer::Messages::Assistant.new(text, tool_calls: tool_calls, token_usage: token_usage)
+  #: (untyped) -> String
+  def extract_content(response)
+    # Return the text content from the response
+  end
+
+  # Extract tool calls from the SDK response.
+  #
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    # Return an array of ToolCall structs
   end
 end
 ```

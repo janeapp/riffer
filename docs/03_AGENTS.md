@@ -425,14 +425,14 @@ response.structured_output  # => {sentiment: "positive", score: 0.95}
 
 Returns `nil` when structured output is not configured or when validation fails.
 
-The assistant message in the message history is also flagged, so you can access structured output directly from persisted messages:
+The assistant message in the message history stores the parsed hash, so you can access structured output directly from persisted messages:
 
 ```ruby
 agent = SentimentAgent.new
 agent.generate('Analyze: "I love this!"')
 
 msg = agent.messages.last
-msg.is_structured_output  # => true
+msg.structured_output?    # => true
 msg.structured_output     # => {sentiment: "positive", score: 0.95}
 ```
 

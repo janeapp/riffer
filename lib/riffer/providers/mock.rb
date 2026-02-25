@@ -67,17 +67,14 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     response[:token_usage]
   end
 
-  #: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
-    if response.is_a?(Hash)
-      Riffer::Messages::Assistant.new(
-        response[:content],
-        tool_calls: response[:tool_calls] || [],
-        token_usage: token_usage
-      )
-    else
-      response
-    end
+  #: (untyped) -> String
+  def extract_content(response)
+    response.is_a?(Hash) ? (response[:content] || "") : response.content
+  end
+
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    response.is_a?(Hash) ? (response[:tool_calls] || []) : response.tool_calls
   end
 
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

@@ -311,8 +311,6 @@ class Riffer::Agent
 
         return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
 
-        processed_response.is_structured_output = true if @structured_output && !has_tool_calls?(processed_response)
-
         add_message(processed_response)
 
         break unless has_tool_calls?(processed_response)
@@ -648,10 +646,9 @@ class Riffer::Agent
 
   #: (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
   def validate_structured_output(response)
-    return unless response&.is_structured_output && @structured_output
+    return unless response&.structured_output? && @structured_output
 
-    result = @structured_output.parse_and_validate(response.content)
-    result.object
+    @structured_output.parse_and_validate(response.content).object
   end
 
   #: () -> Riffer::StructuredOutput?

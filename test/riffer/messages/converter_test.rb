@@ -76,20 +76,23 @@ describe Riffer::Messages::Converter do
       expect(result).must_equal msg
     end
 
-    describe "with assistant message with is_structured_output" do
-      it "preserves is_structured_output from hash with symbol keys" do
-        result = instance.convert_to_message_object({role: "assistant", content: '{"sentiment":"positive"}', is_structured_output: true})
-        expect(result.is_structured_output).must_equal true
+    describe "with assistant message with structured_output" do
+      it "preserves structured_output from hash with symbol keys" do
+        result = instance.convert_to_message_object({role: "assistant", content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}})
+        expect(result.structured_output?).must_equal true
+        expect(result.structured_output).must_equal({sentiment: "positive"})
       end
 
-      it "handles string keys for is_structured_output" do
-        result = instance.convert_to_message_object({"role" => "assistant", "content" => '{"sentiment":"positive"}', "is_structured_output" => true})
-        expect(result.is_structured_output).must_equal true
+      it "handles string keys for structured_output" do
+        result = instance.convert_to_message_object({"role" => "assistant", "content" => '{"sentiment":"positive"}', "structured_output" => {sentiment: "positive"}})
+        expect(result.structured_output?).must_equal true
+        expect(result.structured_output).must_equal({sentiment: "positive"})
       end
 
-      it "defaults to false when not provided" do
+      it "defaults to nil when not provided" do
         result = instance.convert_to_message_object({role: "assistant", content: "Hello"})
-        expect(result.is_structured_output).must_equal false
+        expect(result.structured_output?).must_equal false
+        expect(result.structured_output).must_be_nil
       end
     end
 

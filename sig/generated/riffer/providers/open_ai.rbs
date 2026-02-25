@@ -22,8 +22,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
   def extract_token_usage: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
 
-  # : (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  # : (OpenAI::Models::Responses::Response) -> String
+  def extract_content: (OpenAI::Models::Responses::Response) -> String
+
+  # : (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

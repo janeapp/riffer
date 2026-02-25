@@ -695,7 +695,7 @@ describe Riffer::Agent do
       expect(result.structured_output).must_be_nil
     end
 
-    it "stores is_structured_output on the assistant message in agent.messages" do
+    it "stores structured_output hash on the assistant message in agent.messages" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         structured_output do
@@ -709,7 +709,8 @@ describe Riffer::Agent do
 
       agent.generate("Analyze sentiment")
       last_assistant = agent.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) }
-      expect(last_assistant.is_structured_output).must_equal true
+      expect(last_assistant.structured_output?).must_equal true
+      expect(last_assistant.structured_output).must_equal({sentiment: "positive"})
     end
 
     it "makes structured_output available via on_message callback" do
@@ -729,7 +730,7 @@ describe Riffer::Agent do
         callback_msg = msg if msg.is_a?(Riffer::Messages::Assistant)
       end
       agent.generate("Analyze sentiment")
-      expect(callback_msg.is_structured_output).must_equal true
+      expect(callback_msg.structured_output?).must_equal true
       expect(callback_msg.structured_output).must_equal({sentiment: "positive"})
     end
   end

@@ -81,20 +81,29 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     )
   end
 
-  #: (Anthropic::Models::Message, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
+  #: (Anthropic::Models::Message) -> String
+  def extract_content(response)
     content_blocks = response.content
-    raise Riffer::Error, "No content returned from Anthropic API" if content_blocks.nil? || content_blocks.empty?
+    return "" if content_blocks.nil? || content_blocks.empty?
 
     text_content = ""
+
+    content_blocks.each do |block|
+      text_content = block.text if block.type.to_s == "text"
+    end
+
+    text_content
+  end
+
+  #: (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    content_blocks = response.content
+    return [] if content_blocks.nil? || content_blocks.empty?
+
     tool_calls = []
 
     content_blocks.each do |block|
-      block_type = block.type.to_s
-      case block_type
-      when "text"
-        text_content = block.text
-      when "tool_use"
+      if block.type.to_s == "tool_use"
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           id: block.id,
           call_id: block.id,
@@ -104,11 +113,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       end
     end
 
-    if text_content.empty? && tool_calls.empty?
-      raise Riffer::Error, "No content returned from Anthropic API"
-    end
-
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
+    tool_calls
   end
 
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

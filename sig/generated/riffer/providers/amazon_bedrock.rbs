@@ -22,8 +22,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
   def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
 
-  # : (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> String
+  def extract_content: (Aws::BedrockRuntime::Types::ConverseResponse) -> String
+
+  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

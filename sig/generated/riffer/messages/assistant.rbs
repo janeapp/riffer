@@ -28,22 +28,17 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # Token usage data for this response.
   attr_reader token_usage: Riffer::TokenUsage?
 
-  # Whether this response contains structured output.
-  attr_accessor is_structured_output: bool
+  # Parsed structured output hash, or nil when not applicable.
+  attr_reader structured_output: Hash[Symbol, untyped]?
 
-  # : (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?is_structured_output: bool) -> void
-  def initialize: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?is_structured_output: bool) -> void
-
-  # Parses content as structured output JSON.
-  #
-  # Returns the parsed hash when +is_structured_output+ is true and
-  # content is valid JSON, +nil+ otherwise.
-  #
-  # : () -> Hash[Symbol, untyped]?
-  def structured_output: () -> Hash[Symbol, untyped]?
+  # : (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  def initialize: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
 
   # : () -> Symbol
   def role: () -> Symbol
+
+  # @rbs () -> bool
+  def structured_output?: () -> bool
 
   # Converts the message to a hash.
   #

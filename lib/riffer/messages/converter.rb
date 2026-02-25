@@ -68,8 +68,8 @@ module Riffer::Messages::Converter
       Riffer::Messages::User.new(content, files: files)
     when :assistant
       tool_calls = hash[:tool_calls] || hash["tool_calls"] || []
-      is_structured_output = hash[:is_structured_output] || hash["is_structured_output"] || false
-      Riffer::Messages::Assistant.new(content, tool_calls: tool_calls, is_structured_output: is_structured_output)
+      structured_output = hash[:structured_output] || hash["structured_output"]
+      Riffer::Messages::Assistant.new(content, tool_calls: tool_calls, structured_output: structured_output)
     when :system
       Riffer::Messages::System.new(content)
     when :tool

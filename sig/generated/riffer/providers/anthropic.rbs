@@ -24,8 +24,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # : (Anthropic::Models::Message) -> Riffer::TokenUsage?
   def extract_token_usage: (Anthropic::Models::Message) -> Riffer::TokenUsage?
 
-  # : (Anthropic::Models::Message, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (Anthropic::Models::Message, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  # : (Anthropic::Models::Message) -> String
+  def extract_content: (Anthropic::Models::Message) -> String
+
+  # : (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

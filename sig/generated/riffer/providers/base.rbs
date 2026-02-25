@@ -11,7 +11,8 @@
 # - +execute_generate+ — call the SDK and return the raw response
 # - +execute_stream+ — call the streaming SDK, mapping events to the yielder
 # - +extract_token_usage+ — pull token counts from the SDK response
-# - +extract_assistant_message+ — parse the SDK response into an +Assistant+ message
+# - +extract_content+ — extract text content from the SDK response
+# - +extract_tool_calls+ — extract tool calls from the SDK response
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
 
@@ -41,8 +42,11 @@ class Riffer::Providers::Base
   # : (untyped) -> Riffer::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::TokenUsage?
 
-  # : (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  # : (untyped) -> String
+  def extract_content: (untyped) -> String
+
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]

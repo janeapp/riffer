@@ -14,7 +14,8 @@ require "json"
 # - +execute_generate+ — call the SDK and return the raw response
 # - +execute_stream+ — call the streaming SDK, mapping events to the yielder
 # - +extract_token_usage+ — pull token counts from the SDK response
-# - +extract_assistant_message+ — parse the SDK response into an +Assistant+ message
+# - +extract_content+ — extract text content from the SDK response
+# - +extract_tool_calls+ — extract tool calls from the SDK response
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
@@ -28,7 +29,25 @@ class Riffer::Providers::Base
     validate_normalized_messages!(messages)
     params = build_request_params(messages, model, options)
     response = execute_generate(params)
-    extract_assistant_message(response, extract_token_usage(response))
+
+    content = extract_content(response)
+    tool_calls = extract_tool_calls(response)
+    token_usage = extract_token_usage(response)
+
+    structured_output = if options[:structured_output] && tool_calls.empty? && !content.empty?
+      begin
+        JSON.parse(content, symbolize_names: true)
+      rescue JSON::ParserError
+        nil
+      end
+    end
+
+    Riffer::Messages::Assistant.new(
+      content,
+      tool_calls: tool_calls,
+      token_usage: token_usage,
+      structured_output: structured_output
+    )
   end
 
   # Streams text from the provider.
@@ -66,9 +85,14 @@ class Riffer::Providers::Base
     raise NotImplementedError, "Subclasses must implement #extract_token_usage"
   end
 
-  #: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
-    raise NotImplementedError, "Subclasses must implement #extract_assistant_message"
+  #: (untyped) -> String
+  def extract_content(response)
+    raise NotImplementedError, "Subclasses must implement #extract_content"
+  end
+
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    raise NotImplementedError, "Subclasses must implement #extract_tool_calls"
   end
 
   #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]

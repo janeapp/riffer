@@ -84,21 +84,29 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
-  #: (Aws::BedrockRuntime::Types::ConverseResponse, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
-    output = response.output
-    raise Riffer::Error, "No output returned from Bedrock API" if output.nil? || output.message.nil?
-
-    content_blocks = output.message.content
-    raise Riffer::Error, "No content returned from Bedrock API" if content_blocks.nil? || content_blocks.empty?
+  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> String
+  def extract_content(response)
+    content_blocks = response.output&.message&.content
+    return "" if content_blocks.nil? || content_blocks.empty?
 
     text_content = ""
+
+    content_blocks.each do |block|
+      text_content = block.text if block.respond_to?(:text) && block.text
+    end
+
+    text_content
+  end
+
+  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    content_blocks = response.output&.message&.content
+    return [] if content_blocks.nil? || content_blocks.empty?
+
     tool_calls = []
 
     content_blocks.each do |block|
-      if block.respond_to?(:text) && block.text
-        text_content = block.text
-      elsif block.respond_to?(:tool_use) && block.tool_use
+      if block.respond_to?(:tool_use) && block.tool_use
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           id: block.tool_use.tool_use_id,
           call_id: block.tool_use.tool_use_id,
@@ -108,11 +116,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       end
     end
 
-    if text_content.empty? && tool_calls.empty?
-      raise Riffer::Error, "No content returned from Bedrock API"
-    end
-
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
+    tool_calls
   end
 
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

@@ -240,6 +240,9 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 
+  # : (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+  def validate_structured_output: (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+
   # : () -> Riffer::StructuredOutput?
   def resolve_structured_output: () -> Riffer::StructuredOutput?
 

@@ -77,19 +77,26 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
-  #: (OpenAI::Models::Responses::Response, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message(response, token_usage = nil)
-    output_items = response.output
-
+  #: (OpenAI::Models::Responses::Response) -> String
+  def extract_content(response)
     text_content = ""
-    tool_calls = []
 
-    output_items.each do |item|
-      case item.type
-      when :message
+    response.output.each do |item|
+      if item.type == :message
         text_block = item.content&.find { |c| c.type == :output_text }
         text_content = text_block&.text || "" if text_block
-      when :function_call
+      end
+    end
+
+    text_content
+  end
+
+  #: (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    tool_calls = []
+
+    response.output.each do |item|
+      if item.type == :function_call
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           id: item.id,
           call_id: item.call_id,
@@ -99,11 +106,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       end
     end
 
-    if text_content.empty? && tool_calls.empty?
-      raise Riffer::Error, "No output returned from OpenAI API"
-    end
-
-    Riffer::Messages::Assistant.new(text_content, tool_calls: tool_calls, token_usage: token_usage)
+    tool_calls
   end
 
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

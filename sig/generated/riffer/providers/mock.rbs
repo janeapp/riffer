@@ -39,8 +39,11 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   # : (untyped) -> Riffer::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::TokenUsage?
 
-  # : (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
-  def extract_assistant_message: (untyped, ?Riffer::TokenUsage?) -> Riffer::Messages::Assistant
+  # : (untyped) -> String
+  def extract_content: (untyped) -> String
+
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void

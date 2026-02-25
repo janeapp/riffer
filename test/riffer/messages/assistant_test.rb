@@ -23,32 +23,27 @@ describe Riffer::Messages::Assistant do
     end
   end
 
-  describe "#is_structured_output" do
+  describe "#structured_output?" do
     it "returns false by default" do
       message = Riffer::Messages::Assistant.new("I can help")
-      expect(message.is_structured_output).must_equal false
+      expect(message.structured_output?).must_equal false
     end
 
-    it "returns true when set" do
-      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', is_structured_output: true)
-      expect(message.is_structured_output).must_equal true
+    it "returns true when structured_output is provided" do
+      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_output: {sentiment: "positive"})
+      expect(message.structured_output?).must_equal true
     end
   end
 
   describe "#structured_output" do
-    it "returns nil when is_structured_output is false" do
+    it "returns nil when not provided" do
       message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}')
       expect(message.structured_output).must_be_nil
     end
 
-    it "returns parsed hash when is_structured_output is true" do
-      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', is_structured_output: true)
+    it "returns the stored hash" do
+      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_output: {sentiment: "positive"})
       expect(message.structured_output).must_equal({sentiment: "positive"})
-    end
-
-    it "returns nil when content is not valid JSON" do
-      message = Riffer::Messages::Assistant.new("not json", is_structured_output: true)
-      expect(message.structured_output).must_be_nil
     end
   end
 
@@ -80,14 +75,14 @@ describe Riffer::Messages::Assistant do
       expect(message.to_h.key?(:usage)).must_equal false
     end
 
-    it "includes is_structured_output when true" do
-      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', is_structured_output: true)
-      expect(message.to_h[:is_structured_output]).must_equal true
+    it "includes structured_output when present" do
+      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_output: {sentiment: "positive"})
+      expect(message.to_h[:structured_output]).must_equal({sentiment: "positive"})
     end
 
-    it "excludes is_structured_output when false" do
+    it "excludes structured_output when nil" do
       message = Riffer::Messages::Assistant.new("No structured output")
-      expect(message.to_h.key?(:is_structured_output)).must_equal false
+      expect(message.to_h.key?(:structured_output)).must_equal false
     end
   end
 end
