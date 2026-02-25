@@ -37,7 +37,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # : () -> Symbol
   def role: () -> Symbol
 
-  # @rbs () -> bool
+  # : () -> bool
   def structured_output?: () -> bool
 
   # Converts the message to a hash.

@@ -35,7 +35,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     :assistant
   end
 
-  # @rbs () -> bool
+  #: () -> bool
   def structured_output?
     !@structured_output.nil?
   end

@@ -24,7 +24,8 @@ Adapters for LLM APIs. The base class uses a template-method pattern — `genera
 - `execute_generate(params)` — call the SDK and return the raw response
 - `execute_stream(params, yielder)` — call the streaming SDK, mapping events to the yielder
 - `extract_token_usage(response)` — pull token counts from the SDK response
-- `extract_assistant_message(response, token_usage)` — parse the SDK response into an `Assistant` message
+- `extract_content(response)` — extract text content from the SDK response
+- `extract_tool_calls(response)` — extract tool calls from the SDK response
 
 Providers are registered in `Riffer::Providers::Repository::REPO` with identifiers (e.g., `openai`, `amazon_bedrock`).
 

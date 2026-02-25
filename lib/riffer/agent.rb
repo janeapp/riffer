@@ -322,7 +322,7 @@ class Riffer::Agent
 
       response = extract_final_response
 
-      return build_response(response.content, modifications: all_modifications, structured_output: validate_structured_output(response))
+      return build_response(response&.content || "", modifications: all_modifications, structured_output: validate_structured_output(response))
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
@@ -330,7 +330,7 @@ class Riffer::Agent
     @interrupted = true
     response = extract_final_response
 
-    build_response(response.content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response))
+    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response))
   end
 
   #: (Riffer::Messages::Base) -> void
