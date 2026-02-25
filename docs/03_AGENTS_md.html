@@ -1039,6 +1039,18 @@
 
 <p>Returns <code>nil</code> when structured output is not configured or when validation fails.</p>
 
+<p>The assistant message in the message history stores the parsed hash, so you can access structured output directly from persisted messages:</p>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span> = <span class="ruby-constant">SentimentAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Analyze: &quot;I love this!&quot;&#39;</span>)
+
+<span class="ruby-identifier">msg</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">last</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">structured_output?</span>    <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">structured_output</span>     <span class="ruby-comment"># =&gt; {sentiment: &quot;positive&quot;, score: 0.95}</span>
+</pre>
+
+<p>See <a href="05_MESSAGES_md.html#structured-output-on-messages">Messages — Structured Output on Messages</a> for details.</p>
+
 <span id="label-Class+Methods" class="legacy-anchor"></span>
 <h2 id="class-methods"><a href="#class-methods">Class Methods</a></h2>
 

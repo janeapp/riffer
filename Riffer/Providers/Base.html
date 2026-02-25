@@ -695,7 +695,9 @@
 </li><li>
 <p>+extract_token_usage+ — pull token counts from the SDK response</p>
 </li><li>
-<p>+extract_assistant_message+ — parse the SDK response into an +Assistant+ message</p>
+<p>+extract_content+ — extract text content from the SDK response</p>
+</li><li>
+<p>+extract_tool_calls+ — extract tool calls from the SDK response</p>
 </li></ul>
 
   </section>
@@ -746,14 +748,25 @@
             </details>
           </div>
           <div class="method-source-code" id="generate_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">normalize_messages</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
   <span class="ruby-identifier">validate_normalized_messages!</span>(<span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">params</span> = <span class="ruby-identifier">build_request_params</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-identifier">model</span>, <span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">response</span> = <span class="ruby-identifier">execute_generate</span>(<span class="ruby-identifier">params</span>)
-  <span class="ruby-identifier">extract_assistant_message</span>(<span class="ruby-identifier">response</span>, <span class="ruby-identifier">extract_token_usage</span>(<span class="ruby-identifier">response</span>))
+
+  <span class="ruby-identifier">content</span> = <span class="ruby-identifier">extract_content</span>(<span class="ruby-identifier">response</span>)
+  <span class="ruby-identifier">tool_calls</span> = <span class="ruby-identifier">extract_tool_calls</span>(<span class="ruby-identifier">response</span>)
+  <span class="ruby-identifier">token_usage</span> = <span class="ruby-identifier">extract_token_usage</span>(<span class="ruby-identifier">response</span>)
+  <span class="ruby-identifier">structured_output</span> = <span class="ruby-identifier">parse_structured_output</span>(<span class="ruby-identifier">content</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:structured_output</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-identifier">content</span>,
+    <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">tool_calls</span>,
+    <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>,
+    <span class="ruby-value">structured_output:</span> <span class="ruby-identifier">structured_output</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -795,7 +808,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">normalize_messages</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)

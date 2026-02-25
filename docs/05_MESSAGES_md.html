@@ -641,6 +641,27 @@
 <span class="ruby-keyword">end</span>
 </pre>
 
+<span id="label-Structured+Output+on+Messages" class="legacy-anchor"></span>
+<h4 id="structured-output-on-messages"><a href="#structured-output-on-messages">Structured Output on Messages</a></h4>
+
+<p>When an agent has <a href="../lib/riffer/structured_output_rb.html">structured_output</a> configured, the final assistant message stores the parsed hash directly. The <code>structured_output?</code> predicate checks for a non-nil value:</p>
+
+<pre class="ruby"><span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;{&quot;sentiment&quot;:&quot;positive&quot;}&#39;</span>, <span class="ruby-value">structured_output:</span> {<span class="ruby-value">sentiment:</span> <span class="ruby-string">&quot;positive&quot;</span>})
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">structured_output?</span>    <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">structured_output</span>     <span class="ruby-comment"># =&gt; {sentiment: &quot;positive&quot;}</span>
+
+<span class="ruby-comment"># When not provided, structured_output returns nil</span>
+<span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;{&quot;sentiment&quot;:&quot;positive&quot;}&#39;</span>)
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">structured_output?</span>    <span class="ruby-comment"># =&gt; false</span>
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">structured_output</span>     <span class="ruby-comment"># =&gt; nil</span>
+</pre>
+
+<p>The <code>to_h</code> representation includes <a href="../lib/riffer/structured_output_rb.html">structured_output</a> only when present:</p>
+
+<pre class="ruby"><span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;{&quot;sentiment&quot;:&quot;positive&quot;}&#39;</span>, <span class="ruby-value">structured_output:</span> {<span class="ruby-value">sentiment:</span> <span class="ruby-string">&quot;positive&quot;</span>})
+<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">to_h</span>  <span class="ruby-comment"># =&gt; {role: :assistant, content: &#39;{&quot;sentiment&quot;:&quot;positive&quot;}&#39;, structured_output: {sentiment: &quot;positive&quot;}}</span>
+</pre>
+
 <span id="label-Tool" class="legacy-anchor"></span>
 <h3 id="tool"><a href="#tool">Tool</a></h3>
 
