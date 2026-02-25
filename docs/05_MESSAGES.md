@@ -65,6 +65,28 @@ if msg.token_usage
 end
 ```
 
+#### Structured Output on Messages
+
+When an agent has `structured_output` configured, the final assistant message is flagged with `is_structured_output`. The `structured_output` method parses the raw JSON content on demand:
+
+```ruby
+msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', is_structured_output: true)
+msg.is_structured_output  # => true
+msg.structured_output     # => {sentiment: "positive"}
+
+# When the flag is false, structured_output returns nil
+msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}')
+msg.is_structured_output  # => false
+msg.structured_output     # => nil
+```
+
+The `to_h` representation includes `is_structured_output: true` only when the flag is set:
+
+```ruby
+msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', is_structured_output: true)
+msg.to_h  # => {role: :assistant, content: '{"sentiment":"positive"}', is_structured_output: true}
+```
+
 ### Tool
 
 Tool messages contain the results of tool executions:

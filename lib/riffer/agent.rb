@@ -311,6 +311,8 @@ class Riffer::Agent
 
         return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
 
+        processed_response.is_structured_output = true if @structured_output && !has_tool_calls?(processed_response)
+
         add_message(processed_response)
 
         break unless has_tool_calls?(processed_response)
@@ -320,17 +322,16 @@ class Riffer::Agent
         execute_tool_calls(processed_response)
       end
 
-      content = extract_final_response
-      structured_output = parse_structured_content(content)
-      return build_response(content, modifications: all_modifications, structured_output: structured_output)
+      response = extract_final_response
+
+      return build_response(response.content, modifications: all_modifications, structured_output: response.structured_output)
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
-    content = extract_final_response
-    structured_output = parse_structured_content(content)
-    build_response(content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: structured_output)
+    response = extract_final_response
+    build_response(response.content, modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: response.structured_output)
   end
 
   #: (Riffer::Messages::Base) -> void
@@ -614,10 +615,9 @@ class Riffer::Agent
     args.transform_keys(&:to_sym)
   end
 
-  #: () -> String
+  #: () -> Riffer::Messages::Assistant?
   def extract_final_response
-    last_assistant_message = @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
-    last_assistant_message&.content || ""
+    @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
   end
 
   #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
@@ -656,13 +656,6 @@ class Riffer::Agent
     opts = self.class.model_options.dup
     opts[:structured_output] = @structured_output if @structured_output
     opts
-  end
-
-  #: (String) -> Hash[Symbol, untyped]?
-  def parse_structured_content(content)
-    return nil unless @structured_output
-    result = @structured_output.parse_and_validate(content)
-    result.object
   end
 
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response

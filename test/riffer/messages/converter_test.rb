@@ -76,6 +76,23 @@ describe Riffer::Messages::Converter do
       expect(result).must_equal msg
     end
 
+    describe "with assistant message with is_structured_output" do
+      it "preserves is_structured_output from hash with symbol keys" do
+        result = instance.convert_to_message_object({role: "assistant", content: '{"sentiment":"positive"}', is_structured_output: true})
+        expect(result.is_structured_output).must_equal true
+      end
+
+      it "handles string keys for is_structured_output" do
+        result = instance.convert_to_message_object({"role" => "assistant", "content" => '{"sentiment":"positive"}', "is_structured_output" => true})
+        expect(result.is_structured_output).must_equal true
+      end
+
+      it "defaults to false when not provided" do
+        result = instance.convert_to_message_object({role: "assistant", content: "Hello"})
+        expect(result.is_structured_output).must_equal false
+      end
+    end
+
     describe "with assistant message with tool_calls" do
       let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(id: "1", name: "search") }
 

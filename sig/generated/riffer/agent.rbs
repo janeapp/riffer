@@ -231,8 +231,8 @@ class Riffer::Agent
   # : ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
   def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
 
-  # : () -> String
-  def extract_final_response: () -> String
+  # : () -> Riffer::Messages::Assistant?
+  def extract_final_response: () -> Riffer::Messages::Assistant?
 
   # : () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_before_guardrails: () -> [ Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
@@ -245,9 +245,6 @@ class Riffer::Agent
 
   # : () -> Hash[Symbol, untyped]
   def merged_model_options: () -> Hash[Symbol, untyped]
-
-  # : (String) -> Hash[Symbol, untyped]?
-  def parse_structured_content: (String) -> Hash[Symbol, untyped]?
 
   # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
