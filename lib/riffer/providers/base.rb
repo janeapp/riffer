@@ -33,14 +33,7 @@ class Riffer::Providers::Base
     content = extract_content(response)
     tool_calls = extract_tool_calls(response)
     token_usage = extract_token_usage(response)
-
-    structured_output = if options[:structured_output] && tool_calls.empty? && !content.empty?
-      begin
-        JSON.parse(content, symbolize_names: true)
-      rescue JSON::ParserError
-        nil
-      end
-    end
+    structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
 
     Riffer::Messages::Assistant.new(
       content,
@@ -93,6 +86,13 @@ class Riffer::Providers::Base
   #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     raise NotImplementedError, "Subclasses must implement #extract_tool_calls"
+  end
+
+  #: (String) -> Hash[Symbol, untyped]?
+  def parse_structured_output(content)
+    JSON.parse(content, symbolize_names: true)
+  rescue JSON::ParserError
+    nil
   end
 
   #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]

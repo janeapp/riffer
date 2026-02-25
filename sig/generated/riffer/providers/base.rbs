@@ -48,6 +48,9 @@ class Riffer::Providers::Base
   # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
+  # : (String) -> Hash[Symbol, untyped]?
+  def parse_structured_output: (String) -> Hash[Symbol, untyped]?
+
   # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 
