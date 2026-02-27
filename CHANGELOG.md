@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0](https://github.com/janeapp/riffer/compare/riffer/v0.15.1...riffer/v0.16.0) (2026-02-27)
+
+
+### Features
+
+* add Riffer::Boolean sentinel type for boolean params ([#147](https://github.com/janeapp/riffer/issues/147)) ([5337cf3](https://github.com/janeapp/riffer/commit/5337cf3820d54cf9e03a630ca32b8a7f59347221))
+* nested params DSL and strict schema for all providers ([#144](https://github.com/janeapp/riffer/issues/144)) ([2984855](https://github.com/janeapp/riffer/commit/2984855c64a1d0b421497aa81c5e0a393d443e46))
+
 ## [0.15.1](https://github.com/janeapp/riffer/compare/riffer/v0.15.0...riffer/v0.15.1) (2026-02-25)
 
 
