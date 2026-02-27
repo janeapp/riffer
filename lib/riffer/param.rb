@@ -10,11 +10,12 @@ class Riffer::Param
     String => "string",
     Integer => "integer",
     Float => "number",
+    Riffer::Boolean => "boolean",
     TrueClass => "boolean",
     FalseClass => "boolean",
     Array => "array",
     Hash => "object"
-  }.freeze #: Hash[Class, String]
+  }.freeze #: Hash[Module, String]
 
   # Primitive types allowed for the +of:+ keyword on Array params
   PRIMITIVE_TYPES = (TYPE_MAPPINGS.keys - [Array, Hash]).freeze #: Array[Class]
@@ -46,7 +47,7 @@ class Riffer::Param
   def valid_type?(value)
     return true if value.nil? && !required
 
-    if type == TrueClass || type == FalseClass
+    if type == Riffer::Boolean || type == TrueClass || type == FalseClass
       value == true || value == false
     else
       value.is_a?(type)

@@ -193,7 +193,7 @@ class Riffer::Params
   def validate_typed_array(param, value, errors)
     type_name = Riffer::Param::TYPE_MAPPINGS[param.item_type]
     value.each_with_index do |item, i|
-      valid = if param.item_type == TrueClass || param.item_type == FalseClass
+      valid = if param.item_type == Riffer::Boolean || param.item_type == TrueClass || param.item_type == FalseClass
         item == true || item == false
       else
         item.is_a?(param.item_type)

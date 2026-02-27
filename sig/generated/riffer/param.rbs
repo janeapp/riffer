@@ -5,7 +5,7 @@
 # Handles type validation and JSON Schema generation for individual parameters.
 class Riffer::Param
   # Maps Ruby types to JSON Schema type strings
-  TYPE_MAPPINGS: Hash[Class, String]
+  TYPE_MAPPINGS: Hash[Module, String]
 
   # Primitive types allowed for the +of:+ keyword on Array params
   PRIMITIVE_TYPES: Array[Class]

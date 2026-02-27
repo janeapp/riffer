@@ -104,9 +104,12 @@ Options:
 | `String`                   | `string`         |
 | `Integer`                  | `integer`        |
 | `Float`                    | `number`         |
+| `Riffer::Boolean`          | `boolean`        |
 | `TrueClass` / `FalseClass` | `boolean`        |
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
+
+`Riffer::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
 
 ### Nested Parameters
 

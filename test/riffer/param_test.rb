@@ -66,6 +66,21 @@ describe Riffer::Param do
       expect(param.valid_type?(false)).must_equal true
     end
 
+    it "returns true for true with Riffer::Boolean type" do
+      param = Riffer::Param.new(name: :enabled, type: Riffer::Boolean, required: true)
+      expect(param.valid_type?(true)).must_equal true
+    end
+
+    it "returns true for false with Riffer::Boolean type" do
+      param = Riffer::Param.new(name: :enabled, type: Riffer::Boolean, required: true)
+      expect(param.valid_type?(false)).must_equal true
+    end
+
+    it "returns false for non-boolean with Riffer::Boolean type" do
+      param = Riffer::Param.new(name: :enabled, type: Riffer::Boolean, required: true)
+      expect(param.valid_type?("true")).must_equal false
+    end
+
     it "returns true for nil on optional params" do
       param = Riffer::Param.new(name: :city, type: String, required: false)
       expect(param.valid_type?(nil)).must_equal true
@@ -100,6 +115,11 @@ describe Riffer::Param do
 
     it "returns 'boolean' for TrueClass" do
       param = Riffer::Param.new(name: :enabled, type: TrueClass, required: true)
+      expect(param.type_name).must_equal "boolean"
+    end
+
+    it "returns 'boolean' for Riffer::Boolean" do
+      param = Riffer::Param.new(name: :enabled, type: Riffer::Boolean, required: true)
       expect(param.type_name).must_equal "boolean"
     end
 
