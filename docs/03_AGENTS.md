@@ -149,6 +149,74 @@ end
 
 The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
 
+#### Nested Objects
+
+Use `Hash` with a block to define nested object schemas:
+
+```ruby
+structured_output do
+  required :name, String, description: "Person name"
+  required :address, Hash, description: "Mailing address" do
+    required :street, String, description: "Street address"
+    required :city, String, description: "City"
+    optional :postal_code, String, description: "Postal or zip code"
+  end
+end
+```
+
+Validation errors use dot-path notation: `address.city is required`.
+
+#### Typed Arrays
+
+Use `Array` with the `of:` keyword for arrays of primitive types:
+
+```ruby
+structured_output do
+  required :tags, Array, of: String, description: "Tags"
+  required :scores, Array, of: Float, description: "Scores"
+end
+```
+
+Only primitive types are allowed with `of:`: `String`, `Integer`, `Float`, `TrueClass`, `FalseClass`.
+
+#### Arrays of Objects
+
+Use `Array` with a block to define arrays of objects:
+
+```ruby
+structured_output do
+  required :items, Array, description: "Line items" do
+    required :name, String, description: "Product name"
+    required :price, Float, description: "Price"
+    optional :quantity, Integer, description: "Quantity"
+  end
+end
+```
+
+Validation errors include the array index: `items[1].price is required`.
+
+#### Deep Nesting
+
+Blocks can be nested arbitrarily deep:
+
+```ruby
+structured_output do
+  required :orders, Array, description: "Orders" do
+    required :id, String, description: "Order ID"
+    required :shipping, Hash, description: "Shipping info" do
+      required :address, Hash, description: "Address" do
+        required :street, String
+        required :city, String
+      end
+    end
+  end
+end
+```
+
+#### Guard Rails
+
+Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`.
+
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 
 ### guardrail

@@ -116,9 +116,19 @@ def build_request_params(messages, model, options)
 end
 ```
 
+### Strict schema
+
+All providers apply `strict_schema` (defined in `Providers::Base`) to schemas sent to LLMs — both structured output and tool parameters. This transformation:
+
+- Moves all properties into `required`
+- Makes originally-optional properties nullable (`[type, "null"]`)
+- Recurses into nested objects and array items
+
+This ensures all providers return proper `null` for optional fields instead of empty strings or garbage.
+
 ### Provider-specific formats
 
-**OpenAI** — uses `params[:text][:format]`:
+**OpenAI** — uses `params[:text][:format]` with `strict: true`:
 
 ```ruby
 if structured_output
@@ -126,7 +136,7 @@ if structured_output
     format: {
       type: "json_schema",
       name: "response",
-      schema: structured_output.json_schema,
+      schema: strict_schema(structured_output.json_schema),
       strict: true
     }
   }
@@ -140,7 +150,7 @@ if structured_output
   params[:output_config] = {
     format: {
       type: "json_schema",
-      schema: structured_output.json_schema
+      schema: strict_schema(structured_output.json_schema)
     }
   }
 end
@@ -155,7 +165,7 @@ if structured_output
       type: "json_schema",
       structure: {
         json_schema: {
-          schema: structured_output.json_schema.to_json,
+          schema: strict_schema(structured_output.json_schema).to_json,
           name: "response"
         }
       }
@@ -167,6 +177,7 @@ end
 ### Key details
 
 - `structured_output.json_schema` returns a Hash with `type`, `properties`, `required`, and `additionalProperties` keys
+- All providers wrap schemas with `strict_schema` to ensure proper null handling
 - Bedrock requires the schema as a JSON string (`.to_json`), others use the Hash directly
 - The agent handles parsing and validation of the response — providers only need to pass the schema to the SDK
 

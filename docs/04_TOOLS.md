@@ -108,6 +108,34 @@ Options:
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
 
+### Nested Parameters
+
+Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](03_AGENTS.md#nested-objects) for full syntax.
+
+```ruby
+class CreateOrderTool < Riffer::Tool
+  description "Creates an order"
+
+  params do
+    required :items, Array, description: "Line items" do
+      required :product_id, Integer
+      required :quantity, Integer
+      optional :notes, String
+    end
+    required :shipping, Hash, description: "Shipping address" do
+      required :street, String
+      required :city, String
+      optional :zip, String
+    end
+  end
+
+  def call(context:, items:, shipping:)
+    # items is an Array of Hashes with symbolized keys
+    # shipping is a Hash with symbolized keys
+  end
+end
+```
+
 ## The call Method
 
 Every tool must implement the `call` method and return a `Riffer::Tools::Response`:

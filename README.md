@@ -93,6 +93,28 @@ Run the interactive console:
 bin/console
 ```
 
+### Recording VCR Cassettes
+
+Integration tests use [VCR](https://github.com/vcr/vcr) to record and replay HTTP interactions. When adding new tests that hit provider APIs, you need to record cassettes with real API keys.
+
+Create a `.env` file in the project root (it is gitignored):
+
+```bash
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+AWS_BEDROCK_API_TOKEN=...
+```
+
+The test helper loads this file automatically via `dotenv`. Then run the specific tests that need new cassettes:
+
+```bash
+bundle exec ruby -Itest test/riffer/providers/open_ai_test.rb
+bundle exec ruby -Itest test/riffer/providers/anthropic_test.rb
+bundle exec ruby -Itest test/riffer/providers/amazon_bedrock_test.rb
+```
+
+VCR records the HTTP interactions to `test/fixtures/vcr_cassettes/` on the first run. Subsequent runs replay from the cassettes without hitting the API. API keys are automatically filtered from recorded cassettes.
+
 ## Contributing
 
 1. Fork the repository and create your branch: `git checkout -b feature/foo`
