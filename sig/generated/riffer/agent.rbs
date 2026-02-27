@@ -228,8 +228,8 @@ class Riffer::Agent
   # : (String) -> singleton(Riffer::Tool)?
   def find_tool_class: (String) -> singleton(Riffer::Tool)?
 
-  # : ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
-  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
+  # : (String?) -> Hash[Symbol, untyped]
+  def parse_tool_arguments: (String?) -> Hash[Symbol, untyped]
 
   # : () -> Riffer::Messages::Assistant?
   def extract_final_response: () -> Riffer::Messages::Assistant?

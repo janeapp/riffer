@@ -120,9 +120,9 @@ class Riffer::Evals::Judge
     tool_call = response.tool_calls.first
     raise Riffer::Error, "Invalid judge response: no tool call found" unless tool_call
 
-    parsed = JSON.parse(tool_call[:arguments])
-    score = parsed["score"]
-    reason = parsed["reason"]
+    parsed = JSON.parse(tool_call[:arguments], symbolize_names: true)
+    score = parsed[:score]
+    reason = parsed[:reason]
 
     raise Riffer::Error, "Invalid judge response: missing score" if score.nil?
 

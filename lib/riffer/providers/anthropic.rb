@@ -231,11 +231,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def handle_content_block_stop_server_tool_use(_event, state:, yielder:)
     return unless state[:web_search_json]
 
-    input = JSON.parse(state[:web_search_json])
-    state[:web_search_query] = input["query"]
+    input = JSON.parse(state[:web_search_json], symbolize_names: true)
+    state[:web_search_query] = input[:query]
     state[:web_search_index] = nil
     state[:web_search_json] = nil
-    yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: input["query"])
+    yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: input[:query])
   end
 
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void

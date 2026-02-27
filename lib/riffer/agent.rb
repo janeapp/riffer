@@ -606,12 +606,11 @@ class Riffer::Agent
     resolved_tools.find { |tool_class| tool_class.name == name }
   end
 
-  #: ((String | Hash[String, untyped])?) -> Hash[Symbol, untyped]
+  #: (String?) -> Hash[Symbol, untyped]
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
 
-    args = arguments.is_a?(String) ? JSON.parse(arguments) : arguments
-    args.transform_keys(&:to_sym)
+    JSON.parse(arguments, symbolize_names: true)
   end
 
   #: () -> Riffer::Messages::Assistant?

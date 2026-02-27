@@ -57,7 +57,4 @@ class Riffer::Params
 
   # : (Riffer::Param, Array[untyped], Array[String]) -> void
   def validate_typed_array: (Riffer::Param, Array[untyped], Array[String]) -> void
-
-  # : (Hash[untyped, untyped]) -> Hash[Symbol, untyped]
-  def deep_symbolize_keys: (Hash[untyped, untyped]) -> Hash[Symbol, untyped]
 end
