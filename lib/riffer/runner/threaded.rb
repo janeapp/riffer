@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Processes items concurrently using threads.
+# Processes items concurrently using a thread pool.
 #
-# Items are executed in batches of +max_concurrency+ threads.
+# Maintains up to +max_concurrency+ worker threads that pull items from
+# a shared queue. When a worker finishes one item it immediately picks
+# up the next, so a single slow item does not block other workers.
 #
 #   runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
 #   runner.map(items) { |item| expensive_operation(item) }
@@ -20,9 +22,27 @@ class Riffer::Runner::Threaded < Riffer::Runner
 
   #: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
   def map(items, &block)
-    items.each_slice(@max_concurrency).flat_map do |batch|
-      threads = batch.map { |item| Thread.new { block.call(item) } }
-      threads.map(&:value)
+    return [] if items.empty?
+
+    results = Array.new(items.size)
+    queue = Queue.new
+    items.each_with_index { |item, i| queue << [item, i] }
+
+    workers = [items.size, @max_concurrency].min.times.map do
+      Thread.new do
+        loop do
+          pair = begin
+            queue.pop(true)
+          rescue ThreadError
+            break
+          end
+          item, index = pair
+          results[index] = block.call(item)
+        end
+      end
     end
+
+    workers.each(&:join)
+    results
   end
 end
