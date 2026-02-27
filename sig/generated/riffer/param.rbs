@@ -41,6 +41,10 @@ class Riffer::Param
 
   # Converts this parameter to JSON Schema format.
   #
-  # : () -> Hash[Symbol, untyped]
-  def to_json_schema: () -> Hash[Symbol, untyped]
+  # When +strict+ is true, optional parameters are made nullable
+  # (+["type", "null"]+) so that strict mode providers can distinguish
+  # "absent" from "present" without rejecting the schema.
+  #
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 end

@@ -74,9 +74,9 @@ class Riffer::Tool
 
   # Returns the JSON Schema for the tool's parameters.
   #
-  #: () -> Hash[Symbol, untyped]
-  def self.parameters_schema
-    @params_builder&.to_json_schema || empty_schema
+  #: (?strict: bool) -> Hash[Symbol, untyped]
+  def self.parameters_schema(strict: false)
+    @params_builder&.to_json_schema(strict: strict) || empty_schema
   end
 
   def self.empty_schema # :nodoc:

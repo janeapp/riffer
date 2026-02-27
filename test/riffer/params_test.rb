@@ -220,6 +220,20 @@ describe Riffer::Params do
       }.must_raise(Riffer::ArgumentError)
     end
 
+    it "raises ArgumentError when block is used on String type" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:name, String) { required :foo, String }
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "raises ArgumentError when block is used on Integer type" do
+      params = Riffer::Params.new
+      expect {
+        params.optional(:count, Integer) { required :foo, String }
+      }.must_raise(Riffer::ArgumentError)
+    end
+
     it "supports deep nesting with blocks within blocks" do
       params = Riffer::Params.new
       params.required(:orders, Array) do
@@ -379,6 +393,58 @@ describe Riffer::Params do
       params = Riffer::Params.new
       schema = params.to_json_schema
       expect(schema[:required]).must_equal([])
+    end
+  end
+
+  describe "#to_json_schema(strict: true)" do
+    it "makes optional properties nullable and required" do
+      params = Riffer::Params.new
+      params.required(:name, String)
+      params.optional(:age, Integer)
+      schema = params.to_json_schema(strict: true)
+
+      expect(schema[:required]).must_include "name"
+      expect(schema[:required]).must_include "age"
+      expect(schema[:properties]["name"][:type]).must_equal "string"
+      expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
+    end
+
+    it "recurses into nested objects" do
+      params = Riffer::Params.new
+      params.required(:address, Hash) do
+        required :city, String
+        optional :zip, String
+      end
+      schema = params.to_json_schema(strict: true)
+      address = schema[:properties]["address"]
+
+      expect(address[:required]).must_include "city"
+      expect(address[:required]).must_include "zip"
+      expect(address[:properties]["city"][:type]).must_equal "string"
+      expect(address[:properties]["zip"][:type]).must_equal ["string", "null"]
+    end
+
+    it "recurses into array items" do
+      params = Riffer::Params.new
+      params.required(:items, Array) do
+        required :name, String
+        optional :note, String
+      end
+      schema = params.to_json_schema(strict: true)
+      items_schema = schema[:properties]["items"][:items]
+
+      expect(items_schema[:required]).must_include "name"
+      expect(items_schema[:required]).must_include "note"
+      expect(items_schema[:properties]["name"][:type]).must_equal "string"
+      expect(items_schema[:properties]["note"][:type]).must_equal ["string", "null"]
+    end
+
+    it "keeps required properties non-nullable" do
+      params = Riffer::Params.new
+      params.required(:name, String)
+      schema = params.to_json_schema(strict: true)
+
+      expect(schema[:properties]["name"][:type]).must_equal "string"
     end
   end
 end

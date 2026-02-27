@@ -54,8 +54,8 @@ class Riffer::Tool
 
   # Returns the JSON Schema for the tool's parameters.
   #
-  # : () -> Hash[Symbol, untyped]
-  def self.parameters_schema: () -> Hash[Symbol, untyped]
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def self.parameters_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
   def self.empty_schema: () -> untyped
 

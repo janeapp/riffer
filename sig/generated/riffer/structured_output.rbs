@@ -11,10 +11,13 @@
 class Riffer::StructuredOutput
   attr_reader params: Riffer::Params
 
-  attr_reader json_schema: Hash[Symbol, untyped]
-
   # : (Riffer::Params) -> void
   def initialize: (Riffer::Params) -> void
+
+  # Returns the JSON Schema for this structured output.
+  #
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
   # Parses a JSON string and validates it against the schema.
   #

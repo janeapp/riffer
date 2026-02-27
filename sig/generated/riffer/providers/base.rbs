@@ -51,21 +51,6 @@ class Riffer::Providers::Base
   # : (String) -> Hash[Symbol, untyped]?
   def parse_structured_output: (String) -> Hash[Symbol, untyped]?
 
-  # Transforms a JSON Schema for strict mode compliance.
-  #
-  # Strict mode requires every property to appear in +required+.
-  # Properties that were optional are made nullable instead.
-  #
-  # See https://platform.openai.com/docs/guides/structured-outputs#all-fields-must-be-required
-  #
-  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def strict_schema: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-
-  # Wraps a property schema in a nullable type.
-  #
-  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-  def make_nullable: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-
   # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 

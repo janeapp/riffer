@@ -14,12 +14,17 @@ require "json"
 #
 class Riffer::StructuredOutput
   attr_reader :params #: Riffer::Params
-  attr_reader :json_schema #: Hash[Symbol, untyped]
 
   #: (Riffer::Params) -> void
   def initialize(params)
     @params = params
-    @json_schema = @params.to_json_schema
+  end
+
+  # Returns the JSON Schema for this structured output.
+  #
+  #: (?strict: bool) -> Hash[Symbol, untyped]
+  def json_schema(strict: false)
+    @params.to_json_schema(strict: strict)
   end
 
   # Parses a JSON string and validates it against the schema.

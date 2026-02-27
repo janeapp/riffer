@@ -62,18 +62,25 @@ class Riffer::Param
 
   # Converts this parameter to JSON Schema format.
   #
-  #: () -> Hash[Symbol, untyped]
-  def to_json_schema
-    schema = {type: type_name}
+  # When +strict+ is true, optional parameters are made nullable
+  # (+["type", "null"]+) so that strict mode providers can distinguish
+  # "absent" from "present" without rejecting the schema.
+  #
+  #: (?strict: bool) -> Hash[Symbol, untyped]
+  def to_json_schema(strict: false)
+    type = type_name
+    type = [type, "null"] if strict && !required
+
+    schema = {type: type}
     schema[:description] = description if description
     schema[:enum] = enum if enum
 
-    if type == Array && nested_params
-      schema[:items] = nested_params.to_json_schema
-    elsif type == Array && item_type
+    if self.type == Array && nested_params
+      schema[:items] = nested_params.to_json_schema(strict: strict)
+    elsif self.type == Array && item_type
       schema[:items] = {type: TYPE_MAPPINGS[item_type]}
-    elsif type == Hash && nested_params
-      schema.merge!(nested_params.to_json_schema.except(:type))
+    elsif self.type == Hash && nested_params
+      schema.merge!(nested_params.to_json_schema(strict: strict))
     end
 
     schema

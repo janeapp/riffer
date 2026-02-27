@@ -21,7 +21,7 @@ class Riffer::Params
 
   # Defines a required parameter.
   #
-  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?, ?nested_params: Riffer::Params?) { () -> void } -> void
+  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
     @parameters << Riffer::Param.new(
@@ -37,7 +37,7 @@ class Riffer::Params
 
   # Defines an optional parameter.
   #
-  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) { () -> void } -> void
+  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
     @parameters << Riffer::Param.new(
@@ -96,14 +96,18 @@ class Riffer::Params
 
   # Converts all parameters to JSON Schema format.
   #
-  #: () -> Hash[Symbol, untyped]
-  def to_json_schema
+  # When +strict+ is true, every property appears in +required+ and
+  # optional properties are made nullable instead. This satisfies
+  # providers that enforce strict structured output schemas.
+  #
+  #: (?strict: bool) -> Hash[Symbol, untyped]
+  def to_json_schema(strict: false)
     properties = {}
     required_params = []
 
     @parameters.each do |param|
-      properties[param.name.to_s] = param.to_json_schema
-      required_params << param.name.to_s if param.required
+      properties[param.name.to_s] = param.to_json_schema(strict: strict)
+      required_params << param.name.to_s if strict || param.required
     end
 
     {
@@ -116,7 +120,7 @@ class Riffer::Params
 
   private
 
-  #: (Class, Class?) { () -> void } -> Riffer::Params?
+  #: (Class, Class?) ?{ () -> void } -> Riffer::Params?
   def build_nested(type, of, &block)
     if of && block
       raise Riffer::ArgumentError, "cannot use both of: and a block"
@@ -134,6 +138,9 @@ class Riffer::Params
     end
 
     if block
+      unless type == Hash || type == Array
+        raise Riffer::ArgumentError, "block can only be used with Hash or Array type, got #{type}"
+      end
       nested = Riffer::Params.new
       nested.instance_eval(&block)
       nested

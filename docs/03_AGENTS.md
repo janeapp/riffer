@@ -213,7 +213,7 @@ structured_output do
 end
 ```
 
-#### Guard Rails
+#### Limitations
 
 Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`.
 

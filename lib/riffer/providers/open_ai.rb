@@ -46,14 +46,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
 
     if structured_output
-      # OpenAI strict mode requires all properties in required and optional
-      # fields made nullable. See:
+      # OpenAI requires strict mode schemas.
       # https://platform.openai.com/docs/guides/structured-outputs#all-fields-must-be-required
       params[:text] = {
         format: {
           type: "json_schema",
           name: "response",
-          schema: strict_schema(structured_output.json_schema),
+          schema: structured_output.json_schema(strict: true),
           strict: true
         }
       }
@@ -295,7 +294,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       type: "function",
       name: tool.name,
       description: tool.description,
-      parameters: strict_schema(tool.parameters_schema),
+      parameters: tool.parameters_schema(strict: true),
       strict: true
     }
   end
