@@ -1,0 +1,201 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"List 3 tags and 3 scores (0.0-1.0)
+        for: ''Ruby is a great programming language''"}],"model":"gpt-5-nano","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"tags":{"type":"array","description":"Descriptive
+        tags","items":{"type":"string"}},"scores":{"type":"array","description":"Relevance
+        scores between 0 and 1","items":{"type":"number"}}},"required":["tags","scores"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.49.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.49.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '496'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Feb 2026 23:07:34 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - cloudflare
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999520'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      Openai-Version:
+      - '2020-10-01'
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      X-Request-Id:
+      - req_1fa6876742084cabbca9e9a2f8734da2
+      Openai-Processing-Ms:
+      - '5404'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=a6YsLlW76cvbH48VvaAHT8AMGjBJ2SvyWRdMgJ9.FfM-1772147248.7799454-1.0.1.1-UPQPhvuf8VosOUlFO10L9lnkbEEVkZh.tTRDNqm4CPGnXsrWSW1GMttbSbQ637_D7Yg3r5R_Z_gUEsp.JZoVvBdv7mgONBhmgy91vk62zTnmOathDtMgV0bcsO9j_8UO;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Thu, 26 Feb 2026
+        23:37:34 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Cf-Ray:
+      - 9d431950dd4f70f4-YVR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0b2670c3b4f51f5d0169a0d2311af8819097d9bc5af821afe2",
+          "object": "response",
+          "created_at": 1772147249,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1772147254,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-nano-2025-08-07",
+          "output": [
+            {
+              "id": "rs_0b2670c3b4f51f5d0169a0d2317b288190a115d4f96c9c5b5a",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "msg_0b2670c3b4f51f5d0169a0d23603cc81909a1624928495db98",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"tags\":[\"Ruby\",\"programming-language\",\"positive\"],\"scores\":[0.92,0.89,0.97]}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": "medium",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "description": "Descriptive tags",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "scores": {
+                    "type": "array",
+                    "description": "Relevance scores between 0 and 1",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "required": [
+                  "tags",
+                  "scores"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 91,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 698,
+            "output_tokens_details": {
+              "reasoning_tokens": 640
+            },
+            "total_tokens": 789
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Thu, 26 Feb 2026 23:07:34 GMT
+recorded_with: VCR 6.4.0

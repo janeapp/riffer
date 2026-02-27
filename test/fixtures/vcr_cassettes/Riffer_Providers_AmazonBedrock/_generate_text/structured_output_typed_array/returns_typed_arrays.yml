@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"List 3 tags and 3 scores
+        (0.0-1.0) for: ''Ruby is a great programming language''"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"description\":\"Descriptive
+        tags\",\"items\":{\"type\":\"string\"}},\"scores\":{\"type\":\"array\",\"description\":\"Relevance
+        scores between 0 and 1\",\"items\":{\"type\":\"number\"}}},\"required\":[\"tags\",\"scores\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 76af9831-6473-4405-ae7f-d4990e672cab
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '576'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Feb 2026 23:26:25 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '419'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9f2f5854-4402-4bea-9c5a-cf39231b3370
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1852},"output":{"message":{"content":[{"text":"{\"tags\":
+        [\"programming language\", \"Ruby\", \"positive sentiment\"], \"scores\":
+        [0.95, 0.92, 0.88]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":262,"outputTokens":35,"serverToolUsage":{},"totalTokens":297}}'
+  recorded_at: Thu, 26 Feb 2026 23:26:25 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,97 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract info from:
+        Jane works at 42 King St in Vancouver. No other details are known. Return
+        null for any unknown fields."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 93cf5197-c64e-401e-ab5e-409502a4d9d2
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '883'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 27 Feb 2026 00:02:34 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '425'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 379d55b5-65cc-41ff-8c2d-5925e5c98918
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1702},"output":{"message":{"content":[{"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42
+        King St\",\"city\":\"Vancouver\",\"postal_code\":\": null,\"}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":360,"outputTokens":35,"serverToolUsage":{},"totalTokens":395}}'
+  recorded_at: Fri, 27 Feb 2026 00:02:34 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract info from:
+        Jane works at 42 King St in Vancouver. No other details are known. Return
+        null for any unknown fields."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":[\"string\",\"null\"],\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":[\"string\",\"null\"],\"description\":\"Country\"}},\"required\":[\"street\",\"city\",\"postal_code\",\"country\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 1a18d2da-b600-47d8-9b2d-76cd0bc37a77
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '933'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 27 Feb 2026 02:57:13 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '435'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - c35a2a27-4d2f-4201-897a-9cf54c1a0b55
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":3804},"output":{"message":{"content":[{"text":"{\"name\":\"Jane\",\"address\":{\"street\":\"42
+        King St\",\"city\":\"Vancouver\",\"postal_code\":null,\"country\":null}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":394,"outputTokens":32,"serverToolUsage":{},"totalTokens":426}}'
+  recorded_at: Fri, 27 Feb 2026 02:57:14 GMT
+recorded_with: VCR 6.4.0

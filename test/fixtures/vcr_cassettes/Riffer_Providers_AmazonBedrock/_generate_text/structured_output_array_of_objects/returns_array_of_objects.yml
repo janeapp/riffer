@@ -1,0 +1,93 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"List 2 items from an
+        order: a book costing $12.99 and a pen costing $1.50"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order
+        identifier\"},\"items\":{\"type\":\"array\",\"description\":\"Line items\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Product
+        name\"},\"price\":{\"type\":\"number\",\"description\":\"Price in dollars\"},\"quantity\":{\"type\":\"integer\",\"description\":\"Quantity
+        ordered\"}},\"required\":[\"name\",\"price\"],\"additionalProperties\":false}}},\"required\":[\"order_id\",\"items\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - fa5203e9-8c34-485e-9541-42f2fe38f7f4
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '812'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Feb 2026 23:26:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '453'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 5ad00c17-672e-4100-96c2-7830acdfb337
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2320},"output":{"message":{"content":[{"text":"{\"order_id\":\"ORD-001\",\"items\":[{\"name\":\"book\",\"price\":12.99,\"quantity\":1},{\"name\":\"pen\",\"price\":1.50,\"quantity\":1}]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":351,"outputTokens":48,"serverToolUsage":{},"totalTokens":399}}'
+  recorded_at: Thu, 26 Feb 2026 23:26:23 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"List 2 items from an
+        order: a book costing $12.99 and a pen costing $1.50"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"description\":\"Order
+        identifier\"},\"items\":{\"type\":\"array\",\"description\":\"Line items\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Product
+        name\"},\"price\":{\"type\":\"number\",\"description\":\"Price in dollars\"},\"quantity\":{\"type\":[\"integer\",\"null\"],\"description\":\"Quantity
+        ordered\"}},\"required\":[\"name\",\"price\",\"quantity\"],\"additionalProperties\":false}}},\"required\":[\"order_id\",\"items\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a026860a-1562-46fe-ac49-0a9e280679ba
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '836'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 27 Feb 2026 02:57:18 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '453'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 056e1d55-1b99-4304-959d-60a614a5c0ca
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2307},"output":{"message":{"content":[{"text":"{\"order_id\":\"ORD-001\",\"items\":[{\"name\":\"book\",\"price\":12.99,\"quantity\":1},{\"name\":\"pen\",\"price\":1.50,\"quantity\":1}]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":367,"outputTokens":48,"serverToolUsage":{},"totalTokens":415}}'
+  recorded_at: Fri, 27 Feb 2026 02:57:18 GMT
+recorded_with: VCR 6.4.0

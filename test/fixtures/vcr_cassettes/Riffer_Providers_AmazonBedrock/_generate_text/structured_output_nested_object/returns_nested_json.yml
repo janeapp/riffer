@@ -1,0 +1,95 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract the address
+        from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":\"string\",\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":\"string\",\"description\":\"Country\"}},\"required\":[\"street\",\"city\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - d7a9b798-2e65-45a0-befb-a2f51fd38154
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '842'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 26 Feb 2026 23:26:21 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '447'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9f34deff-7516-4e4f-90c5-953d9097ea73
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":4907},"output":{"message":{"content":[{"text":"{\"name\":\"John\",\"address\":{\"street\":\"123
+        Main St\",\"city\":\"Toronto\",\"postal_code\":\"M5V 2T6\",\"country\":\"Canada\"}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":358,"outputTokens":39,"serverToolUsage":{},"totalTokens":397}}'
+  recorded_at: Thu, 26 Feb 2026 23:26:21 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Extract the address
+        from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Person
+        name\"},\"address\":{\"type\":\"object\",\"description\":\"Mailing address\",\"properties\":{\"street\":{\"type\":\"string\",\"description\":\"Street
+        address\"},\"city\":{\"type\":\"string\",\"description\":\"City\"},\"postal_code\":{\"type\":[\"string\",\"null\"],\"description\":\"Postal
+        or zip code\"},\"country\":{\"type\":[\"string\",\"null\"],\"description\":\"Country\"}},\"required\":[\"street\",\"city\",\"postal_code\",\"country\"],\"additionalProperties\":false}},\"required\":[\"name\",\"address\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 64d30ef8-6587-4e19-a2eb-84b5cbbcc840
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '892'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 27 Feb 2026 02:57:15 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '447'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 8e683334-c42d-44c4-ade2-a5447a835400
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1152},"output":{"message":{"content":[{"text":"{\"name\":\"John\",\"address\":{\"street\":\"123
+        Main St\",\"city\":\"Toronto\",\"postal_code\":\"M5V 2T6\",\"country\":\"Canada\"}}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":392,"outputTokens":39,"serverToolUsage":{},"totalTokens":431}}'
+  recorded_at: Fri, 27 Feb 2026 02:57:15 GMT
+recorded_with: VCR 6.4.0

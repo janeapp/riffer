@@ -187,6 +187,131 @@ describe Riffer::Providers::OpenAI do
       end
     end
 
+    describe "structured output with nested object" do
+      let(:nested_object_prompt) { "Extract the address from: John lives at 123 Main St, Toronto, ON M5V 2T6, Canada" }
+
+      let(:nested_object_structured_output) do
+        params = Riffer::Params.new
+        params.required(:name, String, description: "Person name")
+        params.required(:address, Hash, description: "Mailing address") do
+          required :street, String, description: "Street address"
+          required :city, String, description: "City"
+          optional :postal_code, String, description: "Postal or zip code"
+          optional :country, String, description: "Country"
+        end
+        Riffer::StructuredOutput.new(params)
+      end
+
+      it "returns valid JSON with nested object content" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_nested_object/returns_nested_json") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: nested_object_prompt,
+            model: "gpt-5-nano",
+            structured_output: nested_object_structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed["name"]).must_include "John"
+          expect(parsed["address"]).must_be_instance_of Hash
+          expect(parsed["address"]["street"]).must_include "123 Main"
+          expect(parsed["address"]["city"]).must_include "Toronto"
+        end
+      end
+    end
+
+    describe "structured output with null optional fields" do
+      let(:null_optional_prompt) { "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. Return null for any unknown fields." }
+
+      let(:null_optional_structured_output) do
+        params = Riffer::Params.new
+        params.required(:name, String, description: "Person name")
+        params.required(:address, Hash, description: "Mailing address") do
+          required :street, String, description: "Street address"
+          required :city, String, description: "City"
+          optional :postal_code, String, description: "Postal or zip code"
+          optional :country, String, description: "Country"
+        end
+        Riffer::StructuredOutput.new(params)
+      end
+
+      it "returns null for optional fields when info is unavailable" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_null_optionals/returns_null_for_optional_fields") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: null_optional_prompt,
+            model: "gpt-5-nano",
+            structured_output: null_optional_structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed["name"]).must_include "Jane"
+          expect(parsed["address"]["street"]).must_include "42 King"
+          expect(parsed["address"]["city"]).must_include "Vancouver"
+          expect(parsed["address"]["postal_code"]).must_be_nil
+          expect(parsed["address"]["country"]).must_be_nil
+        end
+      end
+    end
+
+    describe "structured output with typed array" do
+      let(:typed_array_prompt) { "List 3 tags and 3 scores (0.0-1.0) for: 'Ruby is a great programming language'" }
+
+      let(:typed_array_structured_output) do
+        params = Riffer::Params.new
+        params.required(:tags, Array, of: String, description: "Descriptive tags")
+        params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
+        Riffer::StructuredOutput.new(params)
+      end
+
+      it "returns valid JSON with typed array content" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_typed_array/returns_typed_arrays") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: typed_array_prompt,
+            model: "gpt-5-nano",
+            structured_output: typed_array_structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed["tags"].length).must_equal 3
+          expect(parsed["scores"].length).must_equal 3
+          parsed["tags"].each { |tag| expect(tag).must_be_instance_of String }
+          parsed["scores"].each { |score| expect(score).must_be_instance_of Float }
+        end
+      end
+    end
+
+    describe "structured output with array of objects" do
+      let(:array_of_objects_prompt) { "List 2 items from an order: a book costing $12.99 and a pen costing $1.50" }
+
+      let(:array_of_objects_structured_output) do
+        params = Riffer::Params.new
+        params.required(:order_id, String, description: "Order identifier")
+        params.required(:items, Array, description: "Line items") do
+          required :name, String, description: "Product name"
+          required :price, Float, description: "Price in dollars"
+          optional :quantity, Integer, description: "Quantity ordered"
+        end
+        Riffer::StructuredOutput.new(params)
+      end
+
+      it "returns valid JSON with array of objects content" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_array_of_objects/returns_array_of_objects") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: array_of_objects_prompt,
+            model: "gpt-5-nano",
+            structured_output: array_of_objects_structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed["order_id"]).must_be_instance_of String
+          expect(parsed["items"].length).must_equal 2
+          parsed["items"].each do |item|
+            expect(item["name"]).must_be_instance_of String
+            expect(item["price"]).must_be_instance_of Float
+          end
+        end
+      end
+    end
+
     describe "without reasoning parameter" do
       it "does not include reasoning in request params" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/without_reasoning_parameter/does_not_include_reasoning") do
