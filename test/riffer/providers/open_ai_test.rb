@@ -775,7 +775,7 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "tool schema strict mode" do
-    it "makes optional tool params nullable and required" do
+    it "applies strict_schema to tool parameters" do
       tool = Class.new(Riffer::Tool) do
         identifier "test_tool"
         description "A test tool"
@@ -789,53 +789,8 @@ describe Riffer::Providers::OpenAI do
       format = provider.send(:convert_tool_to_openai_format, tool)
       schema = format[:parameters]
 
-      expect(schema[:required]).must_include "name"
       expect(schema[:required]).must_include "age"
-      expect(schema[:properties]["name"][:type]).must_equal "string"
       expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
-    end
-
-    it "applies strict_schema to nested tool params" do
-      tool = Class.new(Riffer::Tool) do
-        identifier "nested_tool"
-        description "A tool with nested params"
-        params do
-          required :address, Hash do
-            required :city, String
-            optional :zip, String
-          end
-        end
-      end
-
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
-      format = provider.send(:convert_tool_to_openai_format, tool)
-      address = format[:parameters][:properties]["address"]
-
-      expect(address[:required]).must_include "city"
-      expect(address[:required]).must_include "zip"
-      expect(address[:properties]["zip"][:type]).must_equal ["string", "null"]
-      expect(address[:properties]["city"][:type]).must_equal "string"
-    end
-
-    it "applies strict_schema to array-of-objects tool params" do
-      tool = Class.new(Riffer::Tool) do
-        identifier "array_tool"
-        description "A tool with array of objects params"
-        params do
-          required :items, Array do
-            required :name, String
-            optional :note, String
-          end
-        end
-      end
-
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
-      format = provider.send(:convert_tool_to_openai_format, tool)
-      items_schema = format[:parameters][:properties]["items"][:items]
-
-      expect(items_schema[:required]).must_include "name"
-      expect(items_schema[:required]).must_include "note"
-      expect(items_schema[:properties]["note"][:type]).must_equal ["string", "null"]
     end
   end
 

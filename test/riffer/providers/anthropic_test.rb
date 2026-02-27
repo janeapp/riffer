@@ -573,6 +573,26 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "tool schema strict mode" do
+    it "applies strict_schema to tool parameters" do
+      tool = Class.new(Riffer::Tool) do
+        identifier "test_tool"
+        description "A test tool"
+        params do
+          required :name, String
+          optional :age, Integer
+        end
+      end
+
+      provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+      format = provider.send(:convert_tool_to_anthropic_format, tool)
+      schema = format[:input_schema]
+
+      expect(schema[:required]).must_include "age"
+      expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

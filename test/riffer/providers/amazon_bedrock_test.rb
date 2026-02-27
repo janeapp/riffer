@@ -261,7 +261,8 @@ describe Riffer::Providers::AmazonBedrock do
           expect(parsed["address"]["city"]).must_include "Vancouver"
           so = null_optional_structured_output.parse_and_validate(result.content)
           expect(so.success?).must_equal true
-          expect(so.object[:address][:city]).must_include "Vancouver"
+          expect(so.object[:address][:postal_code]).must_be_nil
+          expect(so.object[:address][:country]).must_be_nil
         end
       end
     end
@@ -578,6 +579,26 @@ describe Riffer::Providers::AmazonBedrock do
           expect(done).wont_be_nil
         end
       end
+    end
+  end
+
+  describe "tool schema strict mode" do
+    it "applies strict_schema to tool parameters" do
+      tool = Class.new(Riffer::Tool) do
+        identifier "test_tool"
+        description "A test tool"
+        params do
+          required :name, String
+          optional :age, Integer
+        end
+      end
+
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      format = provider.send(:convert_tool_to_bedrock_format, tool)
+      schema = format[:tool_spec][:input_schema][:json]
+
+      expect(schema[:required]).must_include "age"
+      expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
     end
   end
 

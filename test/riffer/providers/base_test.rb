@@ -70,4 +70,103 @@ describe Riffer::Providers::Base do
       end
     end
   end
+
+  describe "#strict_schema" do
+    it "makes optional properties nullable and required" do
+      schema = {
+        type: "object",
+        properties: {
+          "name" => {type: "string"},
+          "age" => {type: "integer"}
+        },
+        required: ["name"],
+        additionalProperties: false
+      }
+
+      result = provider.send(:strict_schema, schema)
+
+      expect(result[:required]).must_include "name"
+      expect(result[:required]).must_include "age"
+      expect(result[:properties]["name"][:type]).must_equal "string"
+      expect(result[:properties]["age"][:type]).must_equal ["integer", "null"]
+    end
+
+    it "recurses into nested objects" do
+      schema = {
+        type: "object",
+        properties: {
+          "address" => {
+            type: "object",
+            properties: {
+              "city" => {type: "string"},
+              "zip" => {type: "string"}
+            },
+            required: ["city"],
+            additionalProperties: false
+          }
+        },
+        required: ["address"],
+        additionalProperties: false
+      }
+
+      result = provider.send(:strict_schema, schema)
+      address = result[:properties]["address"]
+
+      expect(address[:required]).must_include "city"
+      expect(address[:required]).must_include "zip"
+      expect(address[:properties]["city"][:type]).must_equal "string"
+      expect(address[:properties]["zip"][:type]).must_equal ["string", "null"]
+    end
+
+    it "recurses into array items" do
+      schema = {
+        type: "object",
+        properties: {
+          "items" => {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                "name" => {type: "string"},
+                "note" => {type: "string"}
+              },
+              required: ["name"],
+              additionalProperties: false
+            }
+          }
+        },
+        required: ["items"],
+        additionalProperties: false
+      }
+
+      result = provider.send(:strict_schema, schema)
+      items_schema = result[:properties]["items"][:items]
+
+      expect(items_schema[:required]).must_include "name"
+      expect(items_schema[:required]).must_include "note"
+      expect(items_schema[:properties]["name"][:type]).must_equal "string"
+      expect(items_schema[:properties]["note"][:type]).must_equal ["string", "null"]
+    end
+
+    it "preserves already-nullable types" do
+      schema = {
+        type: "object",
+        properties: {
+          "field" => {type: ["string", "null"]}
+        },
+        required: [],
+        additionalProperties: false
+      }
+
+      result = provider.send(:strict_schema, schema)
+
+      expect(result[:properties]["field"][:type]).must_equal ["string", "null"]
+    end
+
+    it "returns non-object schemas unchanged" do
+      schema = {type: "string"}
+      result = provider.send(:strict_schema, schema)
+      expect(result).must_equal schema
+    end
+  end
 end
