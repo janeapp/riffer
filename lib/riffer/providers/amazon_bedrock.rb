@@ -50,12 +50,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
 
     if structured_output
+      # Use strict_schema to make optional fields nullable. Without this,
+      # Bedrock may return string literals like ": null," instead of actual
+      # null values for optional fields that the model has no value for.
       params[:output_config] = {
         text_format: {
           type: "json_schema",
           structure: {
             json_schema: {
-              schema: structured_output.json_schema.to_json,
+              schema: strict_schema(structured_output.json_schema).to_json,
               name: "response"
             }
           }
@@ -302,7 +305,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         name: tool.name,
         description: tool.description,
         input_schema: {
-          json: tool.parameters_schema
+          json: strict_schema(tool.parameters_schema)
         }
       }
     }

@@ -95,6 +95,53 @@ class Riffer::Providers::Base
     nil
   end
 
+  # Transforms a JSON Schema for strict mode compliance.
+  #
+  # Strict mode requires every property to appear in +required+.
+  # Properties that were optional are made nullable instead.
+  #
+  # See https://platform.openai.com/docs/guides/structured-outputs#all-fields-must-be-required
+  #
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def strict_schema(schema)
+    if schema[:type] == "array" && schema[:items]
+      return schema.merge(items: strict_schema(schema[:items]))
+    end
+
+    return schema unless schema[:type] == "object" && schema[:properties]
+
+    required_set = (schema[:required] || []).map(&:to_s)
+    properties = {}
+
+    schema[:properties].each do |key, prop|
+      prop = strict_schema(prop)
+
+      unless required_set.include?(key.to_s)
+        prop = make_nullable(prop)
+      end
+
+      properties[key] = prop
+    end
+
+    schema.merge(
+      properties: properties,
+      required: schema[:properties].keys.map(&:to_s)
+    )
+  end
+
+  # Wraps a property schema in a nullable type.
+  #
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def make_nullable(prop)
+    type = prop[:type]
+
+    if type.is_a?(String) && !type.include?("null")
+      prop.merge(type: [type, "null"])
+    else
+      prop
+    end
+  end
+
   #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?

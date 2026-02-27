@@ -64,11 +64,6 @@ class Riffer::Params
     @parameters.each do |param|
       value = arguments[param.name]
 
-      # Providers without strict mode (Anthropic, Bedrock) may return blank
-      # strings instead of null for optional fields. Normalize to nil so
-      # optional params get their default and required params fail cleanly.
-      value = nil if value.is_a?(String) && value.strip.empty?
-
       if value.nil? && param.required
         errors << "#{param.name} is required"
         next

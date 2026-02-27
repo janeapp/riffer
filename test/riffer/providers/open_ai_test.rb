@@ -402,6 +402,90 @@ describe Riffer::Providers::OpenAI do
 
       expect(params.key?(:structured_output)).must_equal false
     end
+
+    it "puts all properties in required for strict mode" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      p = Riffer::Params.new
+      p.required(:name, String)
+      p.optional(:age, Integer)
+      structured_output = Riffer::StructuredOutput.new(p)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      result = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+      schema = result[:text][:format][:schema]
+
+      expect(schema[:required]).must_equal ["name", "age"]
+    end
+
+    it "makes optional properties nullable for strict mode" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      p = Riffer::Params.new
+      p.required(:name, String)
+      p.optional(:age, Integer)
+      structured_output = Riffer::StructuredOutput.new(p)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      result = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+      schema = result[:text][:format][:schema]
+
+      expect(schema[:properties]["name"][:type]).must_equal "string"
+      expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
+    end
+
+    it "makes nested optional properties nullable for strict mode" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      p = Riffer::Params.new
+      p.required(:address, Hash) do
+        required :city, String
+        optional :zip, String
+      end
+      structured_output = Riffer::StructuredOutput.new(p)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      result = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+      address = result[:text][:format][:schema][:properties]["address"]
+
+      expect(address[:required]).must_equal ["city", "zip"]
+      expect(address[:properties]["city"][:type]).must_equal "string"
+      expect(address[:properties]["zip"][:type]).must_equal ["string", "null"]
+    end
+
+    it "makes optional properties in array items nullable for strict mode" do
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      p = Riffer::Params.new
+      p.required(:items, Array) do
+        required :sku, String
+        optional :notes, String
+      end
+      structured_output = Riffer::StructuredOutput.new(p)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      result = provider.send(:build_request_params, messages, "gpt-5-nano", {structured_output: structured_output})
+      items_schema = result[:text][:format][:schema][:properties]["items"][:items]
+
+      expect(items_schema[:required]).must_equal ["sku", "notes"]
+      expect(items_schema[:properties]["sku"][:type]).must_equal "string"
+      expect(items_schema[:properties]["notes"][:type]).must_equal ["string", "null"]
+    end
+
+    it "validates successfully when nullable optional fields return null" do
+      p = Riffer::Params.new
+      p.required(:name, String)
+      p.optional(:age, Integer)
+      p.required(:address, Hash) do
+        required :city, String
+        optional :zip, String
+      end
+      structured_output = Riffer::StructuredOutput.new(p)
+
+      result = structured_output.parse_and_validate('{"name":"John","age":null,"address":{"city":"Toronto","zip":null}}')
+
+      expect(result.success?).must_equal true
+      expect(result.object[:name]).must_equal "John"
+      expect(result.object[:age]).must_be_nil
+      expect(result.object[:address][:city]).must_equal "Toronto"
+      expect(result.object[:address][:zip]).must_be_nil
+    end
   end
 
   describe "web search" do
@@ -562,6 +646,71 @@ describe Riffer::Providers::OpenAI do
           expect(done).wont_be_nil
         end
       end
+    end
+  end
+
+  describe "tool schema strict mode" do
+    it "makes optional tool params nullable and required" do
+      tool = Class.new(Riffer::Tool) do
+        identifier "test_tool"
+        description "A test tool"
+        params do
+          required :name, String
+          optional :age, Integer
+        end
+      end
+
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      format = provider.send(:convert_tool_to_openai_format, tool)
+      schema = format[:parameters]
+
+      expect(schema[:required]).must_include "name"
+      expect(schema[:required]).must_include "age"
+      expect(schema[:properties]["name"][:type]).must_equal "string"
+      expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
+    end
+
+    it "applies strict_schema to nested tool params" do
+      tool = Class.new(Riffer::Tool) do
+        identifier "nested_tool"
+        description "A tool with nested params"
+        params do
+          required :address, Hash do
+            required :city, String
+            optional :zip, String
+          end
+        end
+      end
+
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      format = provider.send(:convert_tool_to_openai_format, tool)
+      address = format[:parameters][:properties]["address"]
+
+      expect(address[:required]).must_include "city"
+      expect(address[:required]).must_include "zip"
+      expect(address[:properties]["zip"][:type]).must_equal ["string", "null"]
+      expect(address[:properties]["city"][:type]).must_equal "string"
+    end
+
+    it "applies strict_schema to array-of-objects tool params" do
+      tool = Class.new(Riffer::Tool) do
+        identifier "array_tool"
+        description "A tool with array of objects params"
+        params do
+          required :items, Array do
+            required :name, String
+            optional :note, String
+          end
+        end
+      end
+
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      format = provider.send(:convert_tool_to_openai_format, tool)
+      items_schema = format[:parameters][:properties]["items"][:items]
+
+      expect(items_schema[:required]).must_include "name"
+      expect(items_schema[:required]).must_include "note"
+      expect(items_schema[:properties]["note"][:type]).must_equal ["string", "null"]
     end
   end
 
