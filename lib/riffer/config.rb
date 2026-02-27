@@ -32,11 +32,18 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader :evals #: Riffer::Config::Evals
 
+  # Global tool runtime configuration (experimental).
+  #
+  # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance,
+  # or a Proc. Defaults to +Riffer::ToolRuntime::Inline.new+.
+  attr_accessor :tool_runtime #: (Symbol | Riffer::ToolRuntime | Proc)
+
   #: () -> void
   def initialize
     @amazon_bedrock = AmazonBedrock.new
     @anthropic = Anthropic.new
     @openai = OpenAI.new
     @evals = Evals.new
+    @tool_runtime = Riffer::ToolRuntime::Inline.new
   end
 end

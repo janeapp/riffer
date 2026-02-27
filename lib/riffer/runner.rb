@@ -1,0 +1,24 @@
+# frozen_string_literal: true
+# rbs_inline: enabled
+
+# Generic concurrency primitive for batch execution.
+#
+# Subclasses implement +map+ to control how items are processed
+# (sequentially, threaded, etc.).
+#
+#   runner = Riffer::Runner::Sequential.new
+#   runner.map([1, 2, 3]) { |n| n * 2 }
+#   # => [2, 4, 6]
+#
+class Riffer::Runner
+  # Maps over items using the provided block.
+  #
+  # +items+ - the items to process.
+  #
+  # Raises NotImplementedError if not implemented by subclass.
+  #
+  #: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+  def map(items, &block)
+    raise NotImplementedError, "#{self.class} must implement #map"
+  end
+end

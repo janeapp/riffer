@@ -23,6 +23,19 @@ describe Riffer::Config do
     end
   end
 
+  describe "tool_runtime" do
+    it "defaults to Inline instance" do
+      config = Riffer::Config.new
+      expect(config.tool_runtime).must_be_instance_of Riffer::ToolRuntime::Inline
+    end
+
+    it "allows setting tool_runtime" do
+      config = Riffer::Config.new
+      config.tool_runtime = :threaded
+      expect(config.tool_runtime).must_equal :threaded
+    end
+  end
+
   describe "evals namespace" do
     it "initializes with nil judge_model" do
       config = Riffer::Config.new

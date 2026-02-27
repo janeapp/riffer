@@ -1,0 +1,19 @@
+# Generated from lib/riffer/runner/threaded.rb with RBS::Inline
+
+# Processes items concurrently using threads.
+#
+# Items are executed in batches of +max_concurrency+ threads.
+#
+#   runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
+#   runner.map(items) { |item| expensive_operation(item) }
+class Riffer::Runner::Threaded < Riffer::Runner
+  DEFAULT_MAX_CONCURRENCY: Integer
+
+  # +max_concurrency+ - maximum number of threads to run simultaneously.
+  #
+  # : (?max_concurrency: Integer) -> void
+  def initialize: (?max_concurrency: Integer) -> void
+
+  # : (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+  def map: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+end
