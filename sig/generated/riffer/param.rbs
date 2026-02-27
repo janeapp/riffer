@@ -7,6 +7,9 @@ class Riffer::Param
   # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS: Hash[Class, String]
 
+  # Primitive types allowed for the +of:+ keyword on Array params
+  PRIMITIVE_TYPES: Array[Class]
+
   attr_reader name: Symbol
 
   attr_reader type: Class
@@ -19,8 +22,12 @@ class Riffer::Param
 
   attr_reader default: untyped
 
-  # : (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped) -> void
-  def initialize: (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped) -> void
+  attr_reader item_type: Class?
+
+  attr_reader nested_params: Riffer::Params?
+
+  # : (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Class?, ?nested_params: Riffer::Params?) -> void
+  def initialize: (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Class?, ?nested_params: Riffer::Params?) -> void
 
   # Validates that a value matches the expected type.
   #

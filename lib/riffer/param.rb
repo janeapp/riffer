@@ -16,21 +16,28 @@ class Riffer::Param
     Hash => "object"
   }.freeze #: Hash[Class, String]
 
+  # Primitive types allowed for the +of:+ keyword on Array params
+  PRIMITIVE_TYPES = (TYPE_MAPPINGS.keys - [Array, Hash]).freeze #: Array[Class]
+
   attr_reader :name #: Symbol
   attr_reader :type #: Class
   attr_reader :required #: bool
   attr_reader :description #: String?
   attr_reader :enum #: Array[untyped]?
   attr_reader :default #: untyped
+  attr_reader :item_type #: Class?
+  attr_reader :nested_params #: Riffer::Params?
 
-  #: (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped) -> void
-  def initialize(name:, type:, required:, description: nil, enum: nil, default: nil)
+  #: (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Class?, ?nested_params: Riffer::Params?) -> void
+  def initialize(name:, type:, required:, description: nil, enum: nil, default: nil, item_type: nil, nested_params: nil)
     @name = name.to_sym
     @type = type
     @required = required
     @description = description
     @enum = enum
     @default = default
+    @item_type = item_type
+    @nested_params = nested_params
   end
 
   # Validates that a value matches the expected type.
@@ -60,6 +67,15 @@ class Riffer::Param
     schema = {type: type_name}
     schema[:description] = description if description
     schema[:enum] = enum if enum
+
+    if type == Array && nested_params
+      schema[:items] = nested_params.to_json_schema
+    elsif type == Array && item_type
+      schema[:items] = {type: TYPE_MAPPINGS[item_type]}
+    elsif type == Hash && nested_params
+      schema.merge!(nested_params.to_json_schema.except(:type))
+    end
+
     schema
   end
 end

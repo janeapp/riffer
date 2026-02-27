@@ -139,5 +139,39 @@ describe Riffer::Param do
       param = Riffer::Param.new(name: :city, type: String, required: true)
       expect(param.to_json_schema.key?(:enum)).must_equal false
     end
+
+    it "includes items with type for Array with item_type" do
+      param = Riffer::Param.new(name: :tags, type: Array, required: true, item_type: String)
+      schema = param.to_json_schema
+      expect(schema[:type]).must_equal "array"
+      expect(schema[:items]).must_equal({type: "string"})
+    end
+
+    it "includes nested object schema for Hash with nested_params" do
+      nested = Riffer::Params.new
+      nested.required(:street, String)
+      nested.optional(:zip, String)
+      param = Riffer::Param.new(name: :address, type: Hash, required: true, nested_params: nested)
+      schema = param.to_json_schema
+      expect(schema[:type]).must_equal "object"
+      expect(schema[:properties]).must_equal(
+        "street" => {type: "string"},
+        "zip" => {type: "string"}
+      )
+      expect(schema[:required]).must_equal ["street"]
+      expect(schema[:additionalProperties]).must_equal false
+    end
+
+    it "includes items with object schema for Array with nested_params" do
+      nested = Riffer::Params.new
+      nested.required(:product, String)
+      nested.required(:quantity, Integer)
+      param = Riffer::Param.new(name: :line_items, type: Array, required: true, nested_params: nested)
+      schema = param.to_json_schema
+      expect(schema[:type]).must_equal "array"
+      expect(schema[:items][:type]).must_equal "object"
+      expect(schema[:items][:properties].keys).must_equal ["product", "quantity"]
+      expect(schema[:items][:required]).must_equal ["product", "quantity"]
+    end
   end
 end

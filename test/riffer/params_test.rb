@@ -139,6 +139,209 @@ describe Riffer::Params do
     end
   end
 
+  describe "nested DSL" do
+    it "supports of: keyword for typed arrays" do
+      params = Riffer::Params.new
+      params.required(:tags, Array, of: String)
+      schema = params.to_json_schema
+      expect(schema[:properties]["tags"][:items]).must_equal({type: "string"})
+    end
+
+    it "supports block on Hash for nested objects" do
+      params = Riffer::Params.new
+      params.required(:address, Hash) do
+        required :street, String
+        required :city, String
+        optional :zip, String
+      end
+      schema = params.to_json_schema
+      address = schema[:properties]["address"]
+      expect(address[:type]).must_equal "object"
+      expect(address[:properties].keys).must_equal ["street", "city", "zip"]
+      expect(address[:required]).must_equal ["street", "city"]
+      expect(address[:additionalProperties]).must_equal false
+    end
+
+    it "supports block on Array for array of objects" do
+      params = Riffer::Params.new
+      params.required(:line_items, Array) do
+        required :product, String
+        required :quantity, Integer
+        optional :note, String
+      end
+      schema = params.to_json_schema
+      items = schema[:properties]["line_items"][:items]
+      expect(items[:type]).must_equal "object"
+      expect(items[:properties].keys).must_equal ["product", "quantity", "note"]
+      expect(items[:required]).must_equal ["product", "quantity"]
+    end
+
+    it "raises ArgumentError when both of: and block are given" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:tags, Array, of: String) do
+          required :name, String
+        end
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "raises ArgumentError when of: is Hash" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:items, Array, of: Hash)
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "raises ArgumentError when of: is Array" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:items, Array, of: Array)
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "raises ArgumentError when of: is a non-JSON-Schema type" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:items, Array, of: Regexp)
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "raises ArgumentError when of: is used on Hash type" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:data, Hash, of: String)
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "raises ArgumentError when of: is used on String type" do
+      params = Riffer::Params.new
+      expect {
+        params.required(:name, String, of: String)
+      }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "supports deep nesting with blocks within blocks" do
+      params = Riffer::Params.new
+      params.required(:orders, Array) do
+        required :shipping, Hash do
+          required :address, Hash do
+            required :street, String
+          end
+        end
+      end
+      schema = params.to_json_schema
+      street = schema.dig(
+        :properties, "orders",
+        :items, :properties, "shipping",
+        :properties, "address",
+        :properties, "street"
+      )
+      expect(street).must_equal({type: "string"})
+    end
+  end
+
+  describe "#validate with nested params" do
+    it "validates typed array accepts valid items" do
+      params = Riffer::Params.new
+      params.required(:tags, Array, of: String)
+      result = params.validate({tags: ["a", "b"]})
+      expect(result[:tags]).must_equal ["a", "b"]
+    end
+
+    it "validates typed array rejects invalid items" do
+      params = Riffer::Params.new
+      params.required(:tags, Array, of: String)
+      error = expect { params.validate({tags: ["a", 123]}) }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_match(/tags\[1\] must be a string/)
+    end
+
+    it "validates nested Hash recursively with dot-path errors" do
+      params = Riffer::Params.new
+      params.required(:address, Hash) do
+        required :street, String
+        required :city, String
+      end
+      error = expect {
+        params.validate({address: {street: "123 Main"}})
+      }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_match(/address\.city is required/)
+    end
+
+    it "validates array of objects with indexed errors" do
+      params = Riffer::Params.new
+      params.required(:items, Array) do
+        required :name, String
+        required :qty, Integer
+      end
+      error = expect {
+        params.validate({items: [{name: "A", qty: 1}, {name: "B"}]})
+      }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_match(/items\[1\]\.qty is required/)
+    end
+
+    it "validates deep nesting with correct dot-path errors" do
+      params = Riffer::Params.new
+      params.required(:orders, Array) do
+        required :shipping, Hash do
+          required :address, Hash do
+            required :street, String
+          end
+        end
+      end
+      error = expect {
+        params.validate({orders: [{shipping: {address: {}}}]})
+      }.must_raise(Riffer::ValidationError)
+      expect(error.message).must_match(/orders\[0\]\.shipping\.address\.street is required/)
+    end
+
+    it "accepts valid nested Hash" do
+      params = Riffer::Params.new
+      params.required(:address, Hash) do
+        required :city, String
+      end
+      result = params.validate({address: {city: "Toronto"}})
+      expect(result[:address]).must_equal({city: "Toronto"})
+    end
+
+    it "deep symbolizes string keys in nested Hash" do
+      params = Riffer::Params.new
+      params.required(:address, Hash) do
+        required :city, String
+      end
+      result = params.validate({address: {"city" => "Toronto"}})
+      expect(result[:address]).must_equal({city: "Toronto"})
+    end
+
+    it "accepts valid array of objects" do
+      params = Riffer::Params.new
+      params.required(:items, Array) do
+        required :name, String
+      end
+      result = params.validate({items: [{name: "A"}, {name: "B"}]})
+      expect(result[:items]).must_equal [{name: "A"}, {name: "B"}]
+    end
+
+    it "deep symbolizes string keys in array of objects" do
+      params = Riffer::Params.new
+      params.required(:items, Array) do
+        required :name, String
+      end
+      result = params.validate({items: [{"name" => "A"}, {"name" => "B"}]})
+      expect(result[:items]).must_equal [{name: "A"}, {name: "B"}]
+    end
+
+    it "deep symbolizes keys in deeply nested structures" do
+      params = Riffer::Params.new
+      params.required(:order, Hash) do
+        required :shipping, Hash do
+          required :city, String
+        end
+      end
+      result = params.validate({order: {"shipping" => {"city" => "Toronto"}}})
+      expect(result[:order]).must_equal({shipping: {city: "Toronto"}})
+    end
+  end
+
   describe "#to_json_schema" do
     it "returns object type" do
       params = Riffer::Params.new
