@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::ValidationError - Riffer Documentation</title>
+<title>module Riffer::Boolean - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::ValidationError"
+    content="ruby,module,Riffer::Boolean"
   >
 
     <meta
       name="description"
-      content="class Riffer::ValidationError: Raised when tool parameter validation fails."
+      content="module Riffer::Boolean: Boolean is a sentinel type for declaring boolean parameters. Ruby has no +Boolean+ class (+true+ is +TrueClass+, +false+ is +FalseClass+)."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::ValidationError - Riffer Documentation">
+<meta property="og:title" content="module Riffer::Boolean - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Raised when tool parameter validation fails.">
+    <meta property="og:description" content="Boolean is a sentinel type for declaring boolean parameters. Ruby has no +Boolean+ class (+true+ is +TrueClass+, +false+ is +FalseClass+).">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::ValidationError - Riffer Documentation">
+<meta name="twitter:title" content="module Riffer::Boolean - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Raised when tool parameter validation fails.">
+    <meta name="twitter:description" content="Boolean is a sentinel type for declaring boolean parameters. Ruby has no +Boolean+ class (+true+ is +TrueClass+, +false+ is +FalseClass+).">
 
 
 
@@ -96,7 +96,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="module has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -559,21 +559,6 @@
   
 
   
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li><a href="Error.html">Riffer::Error</a><ul><li>StandardError</li></ul></li></ul>
-  </details>
-</div>
-
 
   
 
@@ -601,7 +586,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-validationerror">
+<main role="main" aria-labelledby="module-riffer-boolean">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -614,21 +599,25 @@
       
       <li>
         
-        <span>ValidationError</span>
+        <span>Boolean</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::ValidationError" class="legacy-anchor"></span>
-  <h1 id="class-riffer-validationerror" class="anchor-link class">
-    class Riffer::ValidationError
+  <span id="module-Riffer::Boolean" class="legacy-anchor"></span>
+  <h1 id="module-riffer-boolean" class="anchor-link module">
+    module Riffer::Boolean
   </h1>
 
   <section class="description">
     
-<p>Raised when tool parameter validation fails.</p>
+<p><a href="Boolean.html"><code>Riffer::Boolean</code></a> is a sentinel type for declaring boolean parameters.</p>
+
+<p>Ruby has no +Boolean+ class (+true+ is +TrueClass+, +false+ is +FalseClass+). Use this module wherever you need a single type that means “boolean”:</p>
+
+<p>required :verbose, <a href="Boolean.html"><code>Riffer::Boolean</code></a></p>
 
   </section>
 
