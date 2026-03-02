@@ -142,6 +142,25 @@ class Riffer::Agent
     end
   end
 
+  # Configures skills for this agent via a block DSL.
+  #
+  # Returns the current Riffer::Skills::Config when called without a block.
+  #
+  #   skills do
+  #     backend Riffer::Skills::FilesystemBackend.new(".skills")
+  #     adapter Riffer::Skills::XmlAdapter
+  #     activate ["code-review"]
+  #   end
+  #
+  #: () ?{ () -> void } -> Riffer::Skills::Config?
+  def self.skills(&block)
+    if block
+      @skills_config = Riffer::Skills::Config.new
+      @skills_config.instance_eval(&block)
+    end
+    @skills_config
+  end
+
   # Finds an agent class by identifier.
   #
   #: (String) -> singleton(Riffer::Agent)?
@@ -393,8 +412,13 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages(prompt_or_messages, files: nil)
     @messages = []
-    instructions_text = generate_instructions
-    @messages << Riffer::Messages::System.new(instructions_text) if instructions_text
+
+    system_content = [
+      generate_instructions,
+      @skills_state&.system_prompt
+    ].compact.join("\n\n")
+
+    @messages << Riffer::Messages::System.new(system_content) unless system_content.empty?
 
     if prompt_or_messages.is_a?(Array)
       if files && !files.empty?
@@ -588,6 +612,7 @@ class Riffer::Agent
     clear_resolved_model
     @interrupted = false
     resolve_model
+    @skills_state = resolve_skills
   end
 
   #: (untyped) -> void
@@ -631,12 +656,21 @@ class Riffer::Agent
   def resolved_tools
     @resolved_tools ||= begin
       config = self.class.uses_tools
-      return [] if config.nil?
 
-      if config.is_a?(Proc)
+      tools = if config.nil?
+        []
+      elsif config.is_a?(Proc)
         (config.arity == 0) ? config.call : config.call(@context)
       else
         config
+      end
+
+      if @skills_state
+        activate_tool = @skills_state.adapter.activate_tool
+        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{activate_tool.name}" if tools.any? { |t| t.name == activate_tool.name }
+        tools + [activate_tool]
+      else
+        tools
       end
     end
   end
@@ -658,6 +692,36 @@ class Riffer::Agent
       else raise Riffer::ArgumentError, "Invalid tool_runtime: #{runtime.inspect}"
       end
     end
+  end
+
+  # Resolves the skills backend, lists skills, and selects an adapter.
+  #
+  # Returns nil if skills are not configured or empty.
+  #
+  #: () -> Riffer::Skills::Context?
+  def resolve_skills
+    return nil unless self.class.skills
+
+    backend = self.class.skills.backend
+    return nil unless backend
+
+    backend = backend.is_a?(Proc) ? backend.call(@context) : backend
+    skills_list = backend.list_skills
+    return nil if skills_list.empty?
+
+    skills = skills_list.to_h { |s| [s.name, s] }
+    adapter_class = self.class.skills.adapter || provider_class.skills_adapter
+
+    skills_context = Riffer::Skills::Context.new(backend: backend, skills: skills, adapter: adapter_class.new)
+    @context = (@context || {}).merge(skills: skills_context)
+
+    activate = self.class.skills.activate
+    if activate
+      names = activate.is_a?(Proc) ? activate.call(@context) : Array(activate)
+      names.each { |name| skills_context.activate(name) }
+    end
+
+    skills_context
   end
 
   #: () -> singleton(Riffer::Providers::Base)
