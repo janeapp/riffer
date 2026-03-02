@@ -271,22 +271,28 @@ class Riffer::Agent
   #
   # Skips message initialization and before guardrails in both cases.
   #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def resume(messages: nil, tool_context: nil)
+  # +step+ - optional step offset so max_steps is enforced across the full
+  #   session. Typically the +step+ value from a prior interrupted Response.
+  #
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?, ?step: Integer) -> Riffer::Agent::Response
+  def resume(messages: nil, tool_context: nil, step: 0)
     restore_state(messages: messages, tool_context: tool_context)
-    run_generate_loop(resume: true)
+    run_generate_loop(resume: true, step_offset: step)
   end
 
   # Resumes an agent loop in streaming mode.
   #
   # Same as +resume+ but returns an Enumerator yielding stream events.
   #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def resume_stream(messages: nil, tool_context: nil)
+  # +step+ - optional step offset so max_steps is enforced across the full
+  #   session.
+  #
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?, ?step: Integer) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def resume_stream(messages: nil, tool_context: nil, step: 0)
     restore_state(messages: messages, tool_context: tool_context)
 
     Enumerator.new do |yielder|
-      run_stream_loop(yielder, resume: true)
+      run_stream_loop(yielder, resume: true, step_offset: step)
     end
   end
 
@@ -303,9 +309,9 @@ class Riffer::Agent
 
   private
 
-  #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
-  def run_generate_loop(all_modifications = [], resume: false)
-    step = 0
+  #: (?Array[Riffer::Guardrails::Modification], ?resume: bool, ?step_offset: Integer) -> Riffer::Agent::Response
+  def run_generate_loop(all_modifications = [], resume: false, step_offset: 0)
+    step = step_offset
 
     reason = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
@@ -384,9 +390,9 @@ class Riffer::Agent
     clear_resolved_model
   end
 
-  #: (Enumerator::Yielder, ?resume: bool) -> void
-  def run_stream_loop(yielder, resume: false)
-    step = 0
+  #: (Enumerator::Yielder, ?resume: bool, ?step_offset: Integer) -> void
+  def run_stream_loop(yielder, resume: false, step_offset: 0)
+    step = step_offset
 
     completed = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume

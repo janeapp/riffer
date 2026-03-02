@@ -420,16 +420,27 @@ if response.interrupted?
 end
 ```
 
+Pass `step:` to carry the step count across resume calls so `max_steps` is enforced across the full session:
+
+```ruby
+response = agent.generate('Do a long task')
+
+if response.interrupted?
+  response = agent.resume(step: response.step)
+  # max_steps budget now accounts for steps from the original generate
+end
+```
+
 For cross-process resume (e.g., after a process restart or async approval), pass persisted messages via the `messages:` keyword. Accepts both message objects and hashes:
 
 ```ruby
-# Persist messages during generation (e.g., via on_message callback)
+# Persist messages and step count during generation
 # Later, in a new process:
 agent = MyAgent.new
-response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
+response = agent.resume(messages: persisted_messages, step: persisted_step, tool_context: {user_id: 123})
 
 # Or resume in streaming mode:
-agent.resume_stream(messages: persisted_messages).each do |event|
+agent.resume_stream(messages: persisted_messages, step: persisted_step).each do |event|
   # handle stream events
 end
 ```
@@ -444,8 +455,11 @@ Continues an agent loop synchronously. Returns a `Riffer::Agent::Response` objec
 # In-memory resume after an interrupt
 response = agent.resume
 
+# With step offset for max_steps enforcement across sessions
+response = agent.resume(step: prior_response.step)
+
 # Cross-process resume from persisted messages
-response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
+response = agent.resume(messages: persisted_messages, step: persisted_step, tool_context: {user_id: 123})
 ```
 
 ### resume_stream
@@ -458,9 +472,9 @@ agent.resume_stream.each do |event|
   # handle stream events
 end
 
-# Cross-process resume
+# Cross-process resume with step offset
 agent = MyAgent.new
-agent.resume_stream(messages: persisted_messages).each do |event|
+agent.resume_stream(messages: persisted_messages, step: persisted_step).each do |event|
   # handle stream events
 end
 ```

@@ -2293,6 +2293,68 @@ describe Riffer::Agent do
         expect(system_messages.first.content).must_equal "Custom instructions."
       end
     end
+
+    describe "with step offset" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "Simple tool"
+          def call(context:)
+            text("done")
+          end
+        end.tap { |t| t.identifier("resume_step_tool") }
+      end
+
+      it "enforces max_steps across sessions" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          max_steps 3
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        3.times { provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}]) }
+
+        # First generate: runs 2 steps then gets interrupted by callback
+        interrupted_once = false
+        agent.on_message do |msg|
+          if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
+            interrupted_once = true
+            throw :riffer_interrupt
+          end
+        end
+
+        result = agent.generate("Do stuff")
+        expect(result.interrupted?).must_equal true
+        prior_step = result.step
+
+        # Resume with step offset: should hit max_steps sooner
+        result = agent.resume(step: prior_step)
+        expect(result.interrupted?).must_equal true
+        expect(result.interrupt_reason).must_equal :max_steps
+      end
+
+      it "includes cumulative step count in response" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          max_steps 5
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}])
+        provider.stub_response("Done!")
+
+        result = agent.resume(
+          messages: [Riffer::Messages::User.new("Continue")],
+          step: 3
+        )
+        expect(result.step).must_equal 5
+      end
+    end
   end
 
   describe "#resume_stream" do
