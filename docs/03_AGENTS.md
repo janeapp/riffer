@@ -368,17 +368,17 @@ Works with both `generate` and `stream`. Only emits agent-generated messages (As
 
 #### Interrupting the Agent Loop
 
-Callbacks can interrupt the agent loop using Ruby's `throw`/`catch` pattern. This is useful for human-in-the-loop approval, cost limits, or content filtering.
+Callbacks can interrupt the agent loop. This is useful for human-in-the-loop approval, cost limits, or content filtering.
 
-Use `throw :riffer_interrupt` to stop the loop. The response will have `interrupted?` set to `true` and contain the accumulated content up to the point of interruption.
+Use `agent.interrupt!` (or the lower-level `throw :riffer_interrupt`) to stop the loop. The response will have `interrupted?` set to `true` and contain the accumulated content up to the point of interruption.
 
-An optional reason can be passed as the second argument to `throw`. It is available via `interrupt_reason` on the response (generate) or `reason` on the `Interrupt` event (stream):
+An optional reason can be passed to `interrupt!`. It is available via `interrupt_reason` on the response (generate) or `reason` on the `Interrupt` event (stream):
 
 ```ruby
 agent = MyAgent.new
 agent.on_message do |msg|
   if msg.is_a?(Riffer::Messages::Tool)
-    throw :riffer_interrupt, "needs human approval"
+    agent.interrupt!("needs human approval")
   end
 end
 
@@ -386,6 +386,7 @@ response = agent.generate('Call the tool')
 response.interrupted?      # => true
 response.interrupt_reason  # => "needs human approval"
 response.content           # => last assistant content before interrupt
+response.step              # => number of LLM calls completed
 ```
 
 **Streaming** — interrupts emit an `Interrupt` event:
@@ -476,6 +477,16 @@ end
 agent = MyAgent.new
 agent.resume_stream(messages: persisted_messages, step: persisted_step).each do |event|
   # handle stream events
+end
+```
+
+### interrupt!
+
+Interrupts the agent loop from an `on_message` callback. Equivalent to `throw :riffer_interrupt, reason`:
+
+```ruby
+agent.on_message do |msg|
+  agent.interrupt!(:needs_approval) if requires_approval?(msg)
 end
 ```
 
@@ -607,23 +618,23 @@ response.tripwire.reason   # => "Content policy violation"
 
 ### Callback Interrupt (imperative, external)
 
-Callbacks registered with `on_message` can call `throw :riffer_interrupt` to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.
+Callbacks registered with `on_message` can call `agent.interrupt!` (or `throw :riffer_interrupt`) to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.
 
 - **When to use:** Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.
-- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason.
-- **Streaming:** Yields an `Interrupt` event with a `reason` attribute.
-- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason, `response.step` contains the step count at interruption.
+- **Streaming:** Yields an `Interrupt` event with `reason` and `step` attributes.
+- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pass `step:` to enforce `max_steps` across the full session. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 agent = MyAgent.new
 agent.on_message do |msg|
-  throw :riffer_interrupt, "approval needed" if requires_approval?(msg)
+  agent.interrupt!("approval needed") if requires_approval?(msg)
 end
 
 response = agent.generate('Do something risky')
 response.interrupted?      # => true
 response.interrupt_reason  # => "approval needed"
-response = agent.resume    # continues where it left off
+response = agent.resume(step: response.step)  # continues where it left off
 ```
 
 ### Max Steps Limit

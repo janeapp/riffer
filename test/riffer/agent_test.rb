@@ -2091,6 +2091,29 @@ describe Riffer::Agent do
         expect(first_called).must_equal true
       end
     end
+
+    describe "#interrupt!" do
+      it "interrupts the agent loop" do
+        agent = agent_class.new
+        agent.on_message { |_msg| agent.interrupt! }
+        result = agent.generate("Hello")
+        expect(result.interrupted?).must_equal true
+      end
+
+      it "passes reason to interrupt_reason" do
+        agent = agent_class.new
+        agent.on_message { |_msg| agent.interrupt!(:needs_approval) }
+        result = agent.generate("Hello")
+        expect(result.interrupt_reason).must_equal :needs_approval
+      end
+
+      it "defaults reason to nil" do
+        agent = agent_class.new
+        agent.on_message { |_msg| agent.interrupt! }
+        result = agent.generate("Hello")
+        expect(result.interrupt_reason).must_be_nil
+      end
+    end
   end
 
   describe "#resume" do

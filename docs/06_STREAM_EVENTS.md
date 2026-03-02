@@ -190,7 +190,7 @@ See [Guardrails](09_GUARDRAILS.md) for more information.
 
 Emitted when the agent loop is interrupted. This can happen in two ways:
 
-- An `on_message` callback calls `throw :riffer_interrupt` (reason is a String or `nil`).
+- An `on_message` callback calls `agent.interrupt!` or `throw :riffer_interrupt` (reason is a String or `nil`).
 - The `max_steps` limit is reached (reason is the Symbol `:max_steps`).
 
 This is the streaming equivalent of `Response#interrupted?` in generate mode. The `step` attribute contains the number of LLM call steps completed when the interrupt fired.
