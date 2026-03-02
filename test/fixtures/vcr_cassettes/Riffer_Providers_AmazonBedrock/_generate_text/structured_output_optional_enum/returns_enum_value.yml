@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Classify the session:
+        yoga class, in-person format. Return session_type from the enum."}]}],"system":[],"outputConfig":{"textFormat":{"type":"json_schema","structure":{"jsonSchema":{"schema":"{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Session
+        name\"},\"session_type\":{\"anyOf\":[{\"type\":\"string\",\"enum\":[\"in_person\",\"online\",\"both\"]},{\"type\":\"null\"}],\"description\":\"Type
+        of session\"}},\"required\":[\"name\",\"session_type\"],\"additionalProperties\":false}","name":"response"}}}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 6d4e04ce-96d7-43b4-8be3-a8b3c72c2ef1
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.242.0 ua/2.1 api/bedrock_runtime#1.73.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '592'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 02 Mar 2026 22:56:37 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '371'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 9e0ff700-b734-4c6d-b75a-04e21b3936b2
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1682},"output":{"message":{"content":[{"text":"{\"name\":\"yoga
+        class\",\"session_type\":\"in_person\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":269,"outputTokens":17,"serverToolUsage":{},"totalTokens":286}}'
+  recorded_at: Mon, 02 Mar 2026 22:56:37 GMT
+recorded_with: VCR 6.4.0

@@ -45,6 +45,10 @@ class Riffer::Param
   # (+["type", "null"]+) so that strict mode providers can distinguish
   # "absent" from "present" without rejecting the schema.
   #
+  # Optional parameters with an +enum+ use +anyOf+ to separate the enum
+  # constraint from the null type, since providers like Anthropic reject
+  # +{"type": ["string", "null"], "enum": [...]}+.
+  #
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 end
