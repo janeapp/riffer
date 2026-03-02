@@ -319,7 +319,7 @@ class Riffer::Agent
         processed_response, tripwire, modifications = run_after_guardrails(response)
         all_modifications.concat(modifications)
 
-        return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
+        return build_response("", tripwire: tripwire, modifications: all_modifications, step: step) if tripwire
 
         add_message(processed_response)
 
@@ -332,7 +332,7 @@ class Riffer::Agent
 
       response = extract_final_response
 
-      return build_response(response&.content || "", modifications: all_modifications, structured_output: validate_structured_output(response))
+      return build_response(response&.content || "", modifications: all_modifications, structured_output: validate_structured_output(response), step: step)
     end
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
@@ -340,7 +340,7 @@ class Riffer::Agent
     @interrupted = true
     response = extract_final_response
 
-    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response))
+    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), step: step)
   end
 
   #: (Riffer::Messages::Base) -> void
@@ -452,7 +452,7 @@ class Riffer::Agent
 
     unless completed == :completed
       @interrupted = true
-      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed)
+      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, step: step)
     end
   end
 
@@ -659,8 +659,8 @@ class Riffer::Agent
     opts
   end
 
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?step: Integer) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, step: 0)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, step: step)
   end
 end

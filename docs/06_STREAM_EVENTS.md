@@ -193,27 +193,29 @@ Emitted when the agent loop is interrupted. This can happen in two ways:
 - An `on_message` callback calls `throw :riffer_interrupt` (reason is a String or `nil`).
 - The `max_steps` limit is reached (reason is the Symbol `:max_steps`).
 
-This is the streaming equivalent of `Response#interrupted?` in generate mode.
+This is the streaming equivalent of `Response#interrupted?` in generate mode. The `step` attribute contains the number of LLM call steps completed when the interrupt fired.
 
 ```ruby
 # Callback interrupt with a string reason
-event = Riffer::StreamEvents::Interrupt.new(reason: "needs approval")
+event = Riffer::StreamEvents::Interrupt.new(reason: "needs approval", step: 3)
 event.role    # => :system
 event.reason  # => "needs approval"
-event.to_h    # => {role: :system, interrupt: true, reason: "needs approval"}
+event.step    # => 3
+event.to_h    # => {role: :system, interrupt: true, step: 3, reason: "needs approval"}
 
 # Max steps interrupt with a symbol reason
-event = Riffer::StreamEvents::Interrupt.new(reason: :max_steps)
+event = Riffer::StreamEvents::Interrupt.new(reason: :max_steps, step: 8)
 event.reason  # => :max_steps
+event.step    # => 8
 ```
 
-The `reason` is `nil` when `throw :riffer_interrupt` is called without a second argument.
+The `reason` is `nil` when `throw :riffer_interrupt` is called without a reason. The `step` defaults to `0`.
 
 ```ruby
 agent.stream("Hello").each do |event|
   case event
   when Riffer::StreamEvents::Interrupt
-    puts "Loop was interrupted: #{event.reason}"
+    puts "Loop was interrupted at step #{event.step}: #{event.reason}"
   end
 end
 ```

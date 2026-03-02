@@ -240,6 +240,52 @@ describe Riffer::Agent do
         result = agent.generate("Do stuff")
         expect(result.interrupt_reason).must_equal :max_steps
       end
+
+      it "includes step count in response" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          max_steps 2
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        3.times { provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}]) }
+
+        result = agent.generate("Do stuff")
+        expect(result.step).must_equal 2
+      end
+    end
+
+    describe "response step count" do
+      it "returns step count of 1 for a single LLM call" do
+        agent = agent_class.new
+        result = agent.generate("Hello")
+        expect(result.step).must_equal 1
+      end
+
+      it "counts steps across tool loops" do
+        tc = Class.new(Riffer::Tool) do
+          description "Simple tool"
+          def call(context:)
+            text("done")
+          end
+        end.tap { |t| t.identifier("step_count_tool") }
+
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        2.times { provider.stub_response("", tool_calls: [{name: "step_count_tool", arguments: "{}"}]) }
+        provider.stub_response("Final answer")
+
+        result = agent.generate("Do stuff")
+        expect(result.step).must_equal 3
+      end
     end
 
     describe "with mock provider" do

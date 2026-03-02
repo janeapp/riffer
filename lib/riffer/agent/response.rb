@@ -25,6 +25,9 @@ class Riffer::Agent::Response
   # The reason provided with the interrupt, if any.
   attr_reader :interrupt_reason #: (String | Symbol)?
 
+  # The number of LLM call steps completed during this generation.
+  attr_reader :step #: Integer
+
   # The parsed structured output, if structured output was configured.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
 
@@ -36,15 +39,17 @@ class Riffer::Agent::Response
   # +interrupted+ - whether the agent loop was interrupted by a callback.
   # +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+.
   # +structured_output+ - parsed structured output when structured output is configured.
+  # +step+ - the number of LLM call steps completed.
   #
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?step: Integer) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, step: 0)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
     @interrupted = interrupted
     @interrupt_reason = interrupt_reason
     @structured_output = structured_output
+    @step = step
   end
 
   # Returns true if the response was blocked by a guardrail.

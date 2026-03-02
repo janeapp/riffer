@@ -88,6 +88,18 @@ describe Riffer::Agent::Response do
     end
   end
 
+  describe "#step" do
+    it "defaults to 0" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.step).must_equal 0
+    end
+
+    it "stores the step count" do
+      response = Riffer::Agent::Response.new("Hello!", step: 5)
+      expect(response.step).must_equal 5
+    end
+  end
+
   describe "#interrupted?" do
     it "returns false by default" do
       response = Riffer::Agent::Response.new("Hello!")
