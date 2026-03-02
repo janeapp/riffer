@@ -291,6 +291,16 @@ class Riffer::Agent
     self
   end
 
+  # Interrupts the agent loop.
+  #
+  # Call from an +on_message+ callback to cleanly interrupt the loop.
+  # Equivalent to +throw :riffer_interrupt, reason+.
+  #
+  #: (?(String | Symbol)?) -> void
+  def interrupt!(reason = nil)
+    throw :riffer_interrupt, reason
+  end
+
   private
 
   #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
