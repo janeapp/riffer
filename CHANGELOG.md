@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.1](https://github.com/janeapp/riffer/compare/riffer/v0.16.0...riffer/v0.16.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* use anyOf for optional enum params in strict JSON Schema ([#152](https://github.com/janeapp/riffer/issues/152)) ([2c7fc4d](https://github.com/janeapp/riffer/commit/2c7fc4db4eda33f6fbcbe4b3799b602050af058d))
+
 ## [0.16.0](https://github.com/janeapp/riffer/compare/riffer/v0.15.1...riffer/v0.16.0) (2026-02-27)
 
 
