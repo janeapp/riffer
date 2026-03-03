@@ -252,6 +252,45 @@ describe Riffer::Providers::OpenAI do
       end
     end
 
+    describe "structured output with optional enum" do
+      let(:session_types) { ["in_person", "online", "both"] }
+
+      let(:optional_enum_structured_output) do
+        params = Riffer::Params.new
+        params.required(:name, String, description: "Session name")
+        params.optional(:session_type, String, enum: session_types, description: "Type of session")
+        Riffer::StructuredOutput.new(params)
+      end
+
+      it "returns an enum value when present" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_optional_enum/returns_enum_value") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "Classify the session: yoga class, in-person format. Return session_type from the enum.",
+            model: "gpt-5-nano",
+            structured_output: optional_enum_structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed["name"]).must_be_instance_of String
+          expect(session_types).must_include parsed["session_type"]
+        end
+      end
+
+      it "returns null when the enum value is unknown" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_optional_enum/returns_null") do
+          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          result = provider.generate_text(
+            prompt: "Classify the session: yoga class, underwater format. The session_type enum does not cover this, return null for session_type.",
+            model: "gpt-5-nano",
+            structured_output: optional_enum_structured_output
+          )
+          parsed = JSON.parse(result.content)
+          expect(parsed["name"]).must_be_instance_of String
+          expect(parsed["session_type"]).must_be_nil
+        end
+      end
+    end
+
     describe "structured output with typed array" do
       let(:typed_array_prompt) { "List 3 tags and 3 scores (0.0-1.0) for: 'Ruby is a great programming language'" }
 

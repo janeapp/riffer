@@ -1,0 +1,208 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"Classify the session: yoga class,
+        underwater format. The session_type enum does not cover this, return null
+        for session_type."}],"model":"gpt-5-nano","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
+        of session"}},"required":["name","session_type"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.49.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.49.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '549'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 02 Mar 2026 22:54:57 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - cloudflare
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999565'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      Openai-Version:
+      - '2020-10-01'
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      X-Request-Id:
+      - req_a4b0cb3c4bf645b8b06cbb730644c9ca
+      Openai-Processing-Ms:
+      - '7075'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=LK54soYCAW8nE3PofZkpfxhXmO5fmdQlUM0sK0jWX1c-1772492090.4266157-1.0.1.1-wehxv6ynV3fcjEhc6KMvBVLQcbeNyxhea.w2qOtnWTnzHX5xTFDcwufiraYZvbAc1Q2rFOg13922Ig67kz2_cziLupzyLOpKKlFad0WoMMjEbHSCjrR.c2PVKu077YzE;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 02 Mar 2026
+        23:24:57 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Cf-Ray:
+      - 9d63fc4d2eb9cb95-YVR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_07be166def3e18ef0169a6153aa7e08190a1f3ce38ede58149",
+          "object": "response",
+          "created_at": 1772492090,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1772492097,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-nano-2025-08-07",
+          "output": [
+            {
+              "id": "rs_07be166def3e18ef0169a6153ae9cc8190abe85ee74e8b9103",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "msg_07be166def3e18ef0169a61541492081909bae3fcee93160f0",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Underwater yoga class\",\"session_type\":null}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": "medium",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Session name"
+                  },
+                  "session_type": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "in_person",
+                          "online",
+                          "both"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Type of session"
+                  }
+                },
+                "required": [
+                  "name",
+                  "session_type"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 91,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 654,
+            "output_tokens_details": {
+              "reasoning_tokens": 576
+            },
+            "total_tokens": 745
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Mon, 02 Mar 2026 22:54:57 GMT
+recorded_with: VCR 6.4.0
