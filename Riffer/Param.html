@@ -940,10 +940,18 @@
             </details>
           </div>
           <div class="method-source-code" id="to_json_schema-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/param.rb, line 71</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/param.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
+  <span class="ruby-identifier">nullable</span> = <span class="ruby-identifier">strict</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">required</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">nullable</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">enum</span>
+    <span class="ruby-identifier">schema</span> = {<span class="ruby-value">anyOf:</span> [{<span class="ruby-value">type:</span> <span class="ruby-identifier">type_name</span>, <span class="ruby-value">enum:</span> <span class="ruby-identifier">enum</span>}, {<span class="ruby-value">type:</span> <span class="ruby-string">&quot;null&quot;</span>}]}
+    <span class="ruby-identifier">schema</span>[<span class="ruby-value">:description</span>] = <span class="ruby-identifier">description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">description</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">schema</span>
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">type</span> = <span class="ruby-identifier">type_name</span>
-  <span class="ruby-identifier">type</span> = [<span class="ruby-identifier">type</span>, <span class="ruby-string">&quot;null&quot;</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">strict</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">required</span>
+  <span class="ruby-identifier">type</span> = [<span class="ruby-identifier">type</span>, <span class="ruby-string">&quot;null&quot;</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">nullable</span>
 
   <span class="ruby-identifier">schema</span> = {<span class="ruby-value">type:</span> <span class="ruby-identifier">type</span>}
   <span class="ruby-identifier">schema</span>[<span class="ruby-value">:description</span>] = <span class="ruby-identifier">description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">description</span>
@@ -969,6 +977,8 @@
           <p>Converts this parameter to JSON Schema format.</p>
 
 <p>When +strict+ is true, optional parameters are made nullable (+[“type”, “null”]+) so that strict mode providers can distinguish “absent” from “present” without rejecting the schema.</p>
+
+<p>Optional parameters with an +enum+ use +anyOf+ to separate the enum constraint from the null type, since providers like Anthropic reject +{“type”: [“string”, “null”], “enum”: […]}+.</p>
 
 <p>: (?strict: bool) -&gt; Hash[Symbol, untyped]</p>
 
