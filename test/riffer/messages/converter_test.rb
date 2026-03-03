@@ -83,12 +83,6 @@ describe Riffer::Messages::Converter do
         expect(result.structured_output).must_equal({sentiment: "positive"})
       end
 
-      it "handles string keys for structured_output" do
-        result = instance.convert_to_message_object({"role" => "assistant", "content" => '{"sentiment":"positive"}', "structured_output" => {sentiment: "positive"}})
-        expect(result.structured_output?).must_equal true
-        expect(result.structured_output).must_equal({sentiment: "positive"})
-      end
-
       it "defaults to nil when not provided" do
         result = instance.convert_to_message_object({role: "assistant", content: "Hello"})
         expect(result.structured_output?).must_equal false
@@ -111,12 +105,6 @@ describe Riffer::Messages::Converter do
         result = instance.convert_to_message_object(assistant_message)
         expect(result.tool_calls).must_equal [tool_call]
       end
-    end
-
-    it "handles string keys in hashes" do
-      result = instance.convert_to_message_object({"role" => "user", "content" => "Hello"})
-      expect(result).must_be_instance_of Riffer::Messages::User
-      expect(result.content).must_equal "Hello"
     end
 
     describe "with user message with files" do
@@ -151,15 +139,6 @@ describe Riffer::Messages::Converter do
       it "defaults to empty files when not provided" do
         result = instance.convert_to_message_object({role: "user", content: "Hello"})
         expect(result.files).must_equal []
-      end
-
-      it "handles string keys for files" do
-        result = instance.convert_to_message_object({
-          "role" => "user",
-          "content" => "Describe this",
-          "files" => [{"data" => "aGVsbG8=", "media_type" => "image/png"}]
-        })
-        expect(result.files.length).must_equal 1
       end
     end
   end

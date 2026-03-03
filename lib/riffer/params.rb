@@ -163,13 +163,12 @@ class Riffer::Params
 
   #: (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
   def validate_nested_hash(param, value, errors)
-    sym_value = deep_symbolize_keys(value)
-    param.nested_params.validate(sym_value)
+    param.nested_params.validate(value)
   rescue Riffer::ValidationError => e
     e.message.split("; ").each do |msg|
       errors << "#{param.name}.#{msg}"
     end
-    sym_value
+    value
   end
 
   #: (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
@@ -179,13 +178,12 @@ class Riffer::Params
         errors << "#{param.name}[#{i}] must be an object"
         next item
       end
-      sym_item = deep_symbolize_keys(item)
-      param.nested_params.validate(sym_item)
+      param.nested_params.validate(item)
     rescue Riffer::ValidationError => e
       e.message.split("; ").each do |msg|
         errors << "#{param.name}[#{i}].#{msg}"
       end
-      sym_item
+      item
     end
   end
 
@@ -199,17 +197,6 @@ class Riffer::Params
         item.is_a?(param.item_type)
       end
       errors << "#{param.name}[#{i}] must be a #{type_name}" unless valid
-    end
-  end
-
-  #: (Hash[untyped, untyped]) -> Hash[Symbol, untyped]
-  def deep_symbolize_keys(hash)
-    hash.each_with_object({}) do |(key, value), result|
-      result[key.to_sym] = case value
-      when Hash then deep_symbolize_keys(value)
-      when Array then value.map { |v| v.is_a?(Hash) ? deep_symbolize_keys(v) : v }
-      else value
-      end
     end
   end
 end

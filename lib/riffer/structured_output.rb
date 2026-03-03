@@ -33,8 +33,8 @@ class Riffer::StructuredOutput
   #
   #: (String) -> Riffer::StructuredOutput::Result
   def parse_and_validate(json_string)
-    parsed = JSON.parse(json_string)
-    validated = @params.validate(parsed.transform_keys(&:to_sym))
+    parsed = JSON.parse(json_string, symbolize_names: true)
+    validated = @params.validate(parsed)
     Result.new(object: validated)
   rescue JSON::ParserError => e
     Result.new(error: "JSON parse error: #{e.message}")

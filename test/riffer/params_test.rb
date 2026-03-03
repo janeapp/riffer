@@ -317,15 +317,6 @@ describe Riffer::Params do
       expect(result[:address]).must_equal({city: "Toronto"})
     end
 
-    it "deep symbolizes string keys in nested Hash" do
-      params = Riffer::Params.new
-      params.required(:address, Hash) do
-        required :city, String
-      end
-      result = params.validate({address: {"city" => "Toronto"}})
-      expect(result[:address]).must_equal({city: "Toronto"})
-    end
-
     it "accepts valid array of objects" do
       params = Riffer::Params.new
       params.required(:items, Array) do
@@ -333,26 +324,6 @@ describe Riffer::Params do
       end
       result = params.validate({items: [{name: "A"}, {name: "B"}]})
       expect(result[:items]).must_equal [{name: "A"}, {name: "B"}]
-    end
-
-    it "deep symbolizes string keys in array of objects" do
-      params = Riffer::Params.new
-      params.required(:items, Array) do
-        required :name, String
-      end
-      result = params.validate({items: [{"name" => "A"}, {"name" => "B"}]})
-      expect(result[:items]).must_equal [{name: "A"}, {name: "B"}]
-    end
-
-    it "deep symbolizes keys in deeply nested structures" do
-      params = Riffer::Params.new
-      params.required(:order, Hash) do
-        required :shipping, Hash do
-          required :city, String
-        end
-      end
-      result = params.validate({order: {"shipping" => {"city" => "Toronto"}}})
-      expect(result[:order]).must_equal({shipping: {city: "Toronto"}})
     end
   end
 
