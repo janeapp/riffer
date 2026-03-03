@@ -370,7 +370,6 @@ response = agent.generate('Call the tool')
 response.interrupted?      # => true
 response.interrupt_reason  # => "needs human approval"
 response.content           # => last assistant content before interrupt
-response.step              # => number of LLM calls completed
 ```
 
 **Streaming** — interrupts emit an `Interrupt` event:
@@ -590,9 +589,9 @@ response.tripwire.reason   # => "Content policy violation"
 Callbacks registered with `on_message` can call `agent.interrupt!` (or `throw :riffer_interrupt`) to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.
 
 - **When to use:** Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.
-- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason, `response.step` contains the step count at interruption.
-- **Streaming:** Yields an `Interrupt` event with `reason` and `step` attributes.
-- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pass `step:` to enforce `max_steps` across the full session. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason.
+- **Streaming:** Yields an `Interrupt` event with a `reason` attribute.
+- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 agent = MyAgent.new
@@ -603,7 +602,7 @@ end
 response = agent.generate('Do something risky')
 response.interrupted?      # => true
 response.interrupt_reason  # => "approval needed"
-response = agent.resume(step: response.step)  # continues where it left off
+response = agent.resume    # continues where it left off
 ```
 
 ### Max Steps Limit
