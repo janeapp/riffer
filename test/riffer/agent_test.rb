@@ -2166,6 +2166,73 @@ describe Riffer::Agent do
         expect(system_messages.first.content).must_equal "Custom instructions."
       end
     end
+
+    describe "auto-derived step offset" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          description "Simple tool"
+          def call(context:)
+            text("done")
+          end
+        end.tap { |t| t.identifier("resume_step_tool") }
+      end
+
+      it "enforces max_steps across sessions" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          max_steps 3
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        3.times { provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}]) }
+
+        # First generate: runs 2 steps then gets interrupted by callback
+        interrupted_once = false
+        agent.on_message do |msg|
+          if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
+            interrupted_once = true
+            throw :riffer_interrupt
+          end
+        end
+
+        result = agent.generate("Do stuff")
+        expect(result.interrupted?).must_equal true
+
+        # Resume: step offset is auto-derived from assistant messages
+        result = agent.resume
+        expect(result.interrupted?).must_equal true
+        expect(result.interrupt_reason).must_equal :max_steps
+      end
+
+      it "enforces max_steps on cross-process resume via message counting" do
+        tc = tool_class
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          max_steps 4
+          uses_tools [tc]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        # Only 1 more step fits before max_steps (3 prior + 1 = 4)
+        provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}])
+
+        result = agent.resume(
+          messages: [
+            Riffer::Messages::User.new("Original prompt"),
+            Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
+            Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
+            Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
+            Riffer::Messages::User.new("Continue")
+          ]
+        )
+        expect(result.interrupted?).must_equal true
+        expect(result.interrupt_reason).must_equal :max_steps
+      end
+    end
   end
 
   describe "#resume_stream" do

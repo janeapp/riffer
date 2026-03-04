@@ -260,6 +260,8 @@ class Riffer::Agent
   # state from persisted data (useful for cross-process resume).
   #
   # Skips message initialization and before guardrails in both cases.
+  # The step offset is derived automatically from the number of assistant
+  # messages so +max_steps+ is enforced across the full session.
   #
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def resume(messages: nil, tool_context: nil)
@@ -305,7 +307,7 @@ class Riffer::Agent
 
   #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
   def run_generate_loop(all_modifications = [], resume: false)
-    step = 0
+    step = resume ? count_assistant_messages : 0
 
     reason = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
@@ -384,9 +386,14 @@ class Riffer::Agent
     clear_resolved_model
   end
 
+  #: () -> Integer
+  def count_assistant_messages
+    @messages.count { |m| m.is_a?(Riffer::Messages::Assistant) }
+  end
+
   #: (Enumerator::Yielder, ?resume: bool) -> void
   def run_stream_loop(yielder, resume: false)
-    step = 0
+    step = resume ? count_assistant_messages : 0
 
     completed = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
