@@ -476,41 +476,18 @@ end
 
 ### Around-Call Hook
 
-Each tool call is wrapped by the `around_tool_call` instance method, which yields by default. Use the `around_tool_call` class method DSL to define custom behavior via a symbol or block:
+Each tool call is wrapped by the `around_tool_call` method, which yields by default. Override it in a subclass to add instrumentation, logging, or other cross-cutting concerns:
 
 ```ruby
-# Symbol — delegates to a named instance method (recommended for non-trivial logic):
-class InstrumentedRuntime < Riffer::ToolRuntime
-  around_tool_call :instrument
-
-  private
-
-  def instrument(tool_call, context:, &block)
-    start = Time.now
-    result = block.call
-    duration = Time.now - start
-    Rails.logger.info("Tool #{tool_call.name} took #{duration}s")
-    result
-  end
-end
-
-# Block — for simple inline hooks:
-class LoggingRuntime < Riffer::ToolRuntime
-  around_tool_call do |tool_call, context:, &block|
-    puts "Executing #{tool_call.name}"
-    block.call
-  end
-end
-```
-
-You can also override `around_tool_call` directly as an instance method:
-
-```ruby
-class CustomRuntime < Riffer::ToolRuntime
+class InstrumentedRuntime < Riffer::ToolRuntime::Inline
   private
 
   def around_tool_call(tool_call, context:)
-    yield
+    start = Time.now
+    result = yield
+    duration = Time.now - start
+    Rails.logger.info("Tool #{tool_call.name} took #{duration}s")
+    result
   end
 end
 ```

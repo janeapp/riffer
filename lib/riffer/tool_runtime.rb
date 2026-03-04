@@ -43,64 +43,24 @@ class Riffer::ToolRuntime
   end
 
   # Hook that wraps each tool call execution. Override in subclasses
-  # or use the +around_tool_call+ class method DSL to customize.
-  # Must +yield+ to continue execution.
+  # to customize. Must +yield+ to continue execution.
   #
   # The default implementation simply yields.
   #
-  #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
-  def around_tool_call(tool_call, context:)
-    yield
-  end
-
-  # Class-level DSL to define the +around_tool_call+ hook via a symbol
-  # or block. Both forms use +define_method+ to override the instance
-  # method, so inheritance works naturally.
-  #
-  # Accepts a symbol (naming an instance method to delegate to) or a
-  # block. Raises +Riffer::ArgumentError+ if both are given or if
-  # neither is given.
-  #
-  # Note: when overriding +around_tool_call+ directly you can use +yield+,
-  # but both DSL forms (symbol and block) receive the continuation as an
-  # explicit +&block+ parameter that must be called with +block.call+.
-  #
-  #   # Symbol — delegates to a named instance method:
   #   class InstrumentedRuntime < Riffer::ToolRuntime::Inline
-  #     around_tool_call :instrument
-  #
   #     private
   #
-  #     def instrument(tool_call, context:, &block)
-  #       result = block.call
-  #       Rails.logger.info("Tool #{tool_call.name} completed")
+  #     def around_tool_call(tool_call, context:)
+  #       start = Time.now
+  #       result = yield
+  #       Rails.logger.info("Tool #{tool_call.name} took #{Time.now - start}s")
   #       result
   #     end
   #   end
   #
-  #   # Block — for simple inline hooks:
-  #   class LoggingRuntime < Riffer::ToolRuntime::Inline
-  #     around_tool_call do |tool_call, context:, &block|
-  #       puts "Executing #{tool_call.name}"
-  #       block.call
-  #     end
-  #   end
-  #
-  #: (?Symbol?) { (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response } -> void
-  def self.around_tool_call(method_name = nil, &block)
-    if method_name && block
-      raise Riffer::ArgumentError, "around_tool_call accepts a symbol or a block, not both"
-    end
-
-    if method_name
-      define_method(:around_tool_call) do |tool_call, context:, &blk|
-        send(method_name, tool_call, context: context, &blk)
-      end
-    elsif block
-      define_method(:around_tool_call, block)
-    else
-      raise Riffer::ArgumentError, "around_tool_call requires a symbol or a block"
-    end
+  #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  def around_tool_call(tool_call, context:)
+    yield
   end
 
   private

@@ -182,7 +182,7 @@ describe Riffer::ToolRuntime do
       expect(results[0][1].content).must_equal "Weather in Toronto: 20 degrees"
     end
 
-    it "can be overridden directly" do
+    it "can be overridden in a subclass" do
       log = []
       runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
         define_method(:around_tool_call) do |tool_call, context:, &block|
@@ -202,7 +202,7 @@ describe Riffer::ToolRuntime do
     it "is inherited by subclasses" do
       log = []
       parent = Class.new(Riffer::ToolRuntime::Inline) do
-        around_tool_call do |tool_call, context:, &block|
+        define_method(:around_tool_call) do |tool_call, context:, &block|
           log << "parent"
           block.call
         end
@@ -218,14 +218,14 @@ describe Riffer::ToolRuntime do
     it "allows subclass to override" do
       log = []
       parent = Class.new(Riffer::ToolRuntime::Inline) do
-        around_tool_call do |_, context:, &block|
+        define_method(:around_tool_call) do |_, context:, &block|
           log << "parent"
           block.call
         end
       end
 
       child = Class.new(parent) do
-        around_tool_call do |_, context:, &block|
+        define_method(:around_tool_call) do |_, context:, &block|
           log << "child"
           block.call
         end
@@ -235,62 +235,6 @@ describe Riffer::ToolRuntime do
       child.new.execute([tool_call], tools: tools, context: context)
 
       expect(log).must_equal ["child"]
-    end
-  end
-
-  describe ".around_tool_call" do
-    it "defines around_tool_call with a block" do
-      log = []
-      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
-        around_tool_call do |tool_call, context:, &block|
-          log << "before:#{tool_call.name}"
-          result = block.call
-          log << "after:#{tool_call.name}"
-          result
-        end
-      end
-
-      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
-      runtime_class.new.execute([tool_call], tools: tools, context: context)
-
-      expect(log).must_equal ["before:weather_tool", "after:weather_tool"]
-    end
-
-    it "defines around_tool_call with a symbol" do
-      log = []
-      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
-        around_tool_call :instrument
-
-        define_method(:instrument) do |tool_call, context:, &block|
-          log << "before:#{tool_call.name}"
-          result = block.call
-          log << "after:#{tool_call.name}"
-          result
-        end
-      end
-
-      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
-      runtime_class.new.execute([tool_call], tools: tools, context: context)
-
-      expect(log).must_equal ["before:weather_tool", "after:weather_tool"]
-    end
-
-    it "raises when given both a symbol and a block" do
-      expect {
-        Class.new(Riffer::ToolRuntime) do
-          around_tool_call(:instrument) do |_, context:, &block|
-            block.call
-          end
-        end
-      }.must_raise Riffer::ArgumentError
-    end
-
-    it "raises when given neither a symbol nor a block" do
-      expect {
-        Class.new(Riffer::ToolRuntime) do
-          around_tool_call
-        end
-      }.must_raise Riffer::ArgumentError
     end
   end
 end
