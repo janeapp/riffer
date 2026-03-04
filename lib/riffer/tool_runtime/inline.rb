@@ -6,4 +6,8 @@
 # This is the default tool runtime used when no runtime is configured.
 #
 class Riffer::ToolRuntime::Inline < Riffer::ToolRuntime
+  #: () -> void
+  def initialize
+    super(runner: Riffer::Runner::Sequential.new)
+  end
 end

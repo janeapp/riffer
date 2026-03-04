@@ -48,9 +48,17 @@ describe Riffer::ToolRuntime do
     results[0][1]
   end
 
+  describe "#initialize" do
+    it "raises NotImplementedError when instantiated directly" do
+      expect {
+        Riffer::ToolRuntime.new(runner: Riffer::Runner::Sequential.new)
+      }.must_raise NotImplementedError
+    end
+  end
+
   describe "#execute" do
     it "dispatches to correct tool and returns response" do
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
 
       result = execute_single(runtime, tool_call, tools: tools, context: context)
@@ -61,7 +69,7 @@ describe Riffer::ToolRuntime do
     end
 
     it "returns error response for unknown tool" do
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "nonexistent", arguments: "{}")
 
       result = execute_single(runtime, tool_call, tools: tools, context: context)
@@ -72,7 +80,7 @@ describe Riffer::ToolRuntime do
     end
 
     it "returns error response for validation failure" do
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "weather_tool", arguments: "{}")
 
       result = execute_single(runtime, tool_call, tools: tools, context: context)
@@ -82,7 +90,7 @@ describe Riffer::ToolRuntime do
     end
 
     it "returns error response for timeout" do
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "slow_tool", arguments: "{}")
 
       result = execute_single(runtime, tool_call, tools: [slow_tool_class], context: context)
@@ -101,7 +109,7 @@ describe Riffer::ToolRuntime do
         end
       end
 
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "error_tool", arguments: "{}")
 
       result = execute_single(runtime, tool_call, tools: [error_tool], context: context)
@@ -121,7 +129,7 @@ describe Riffer::ToolRuntime do
         end
       end
 
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "tool_exec_error_tool", arguments: "{}")
 
       result = execute_single(runtime, tool_call, tools: [error_tool], context: context)
@@ -141,7 +149,7 @@ describe Riffer::ToolRuntime do
         end
       end
 
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "buggy_tool", arguments: "{}")
 
       expect {
@@ -150,7 +158,7 @@ describe Riffer::ToolRuntime do
     end
 
     it "returns [tool_call, response] pairs in order" do
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tc1 = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}', id: "1")
       tc2 = make_tool_call(name: "weather_tool", arguments: '{"city":"London"}', id: "2")
 
@@ -166,7 +174,7 @@ describe Riffer::ToolRuntime do
 
   describe "#around_tool_call" do
     it "yields by default" do
-      runtime = Riffer::ToolRuntime.new
+      runtime = Riffer::ToolRuntime::Inline.new
       tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
 
       results = runtime.execute([tool_call], tools: tools, context: context)
@@ -176,7 +184,7 @@ describe Riffer::ToolRuntime do
 
     it "can be overridden directly" do
       log = []
-      runtime_class = Class.new(Riffer::ToolRuntime) do
+      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
         define_method(:around_tool_call) do |tool_call, context:, &block|
           log << "before:#{tool_call.name}"
           result = block.call
@@ -193,7 +201,7 @@ describe Riffer::ToolRuntime do
 
     it "is inherited by subclasses" do
       log = []
-      parent = Class.new(Riffer::ToolRuntime) do
+      parent = Class.new(Riffer::ToolRuntime::Inline) do
         around_tool_call do |tool_call, context:, &block|
           log << "parent"
           block.call
@@ -209,7 +217,7 @@ describe Riffer::ToolRuntime do
 
     it "allows subclass to override" do
       log = []
-      parent = Class.new(Riffer::ToolRuntime) do
+      parent = Class.new(Riffer::ToolRuntime::Inline) do
         around_tool_call do |_, context:, &block|
           log << "parent"
           block.call
@@ -233,7 +241,7 @@ describe Riffer::ToolRuntime do
   describe ".around_tool_call" do
     it "defines around_tool_call with a block" do
       log = []
-      runtime_class = Class.new(Riffer::ToolRuntime) do
+      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
         around_tool_call do |tool_call, context:, &block|
           log << "before:#{tool_call.name}"
           result = block.call
@@ -250,7 +258,7 @@ describe Riffer::ToolRuntime do
 
     it "defines around_tool_call with a symbol" do
       log = []
-      runtime_class = Class.new(Riffer::ToolRuntime) do
+      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
         around_tool_call :instrument
 
         define_method(:instrument) do |tool_call, context:, &block|

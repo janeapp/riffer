@@ -17,8 +17,12 @@ require "json"
 class Riffer::ToolRuntime
   # +runner+ - the concurrency runner to use for batch execution.
   #
-  #: (?runner: Riffer::Runner) -> void
-  def initialize(runner: Riffer::Runner::Sequential.new)
+  # Subclasses must provide a runner; instantiating ToolRuntime directly
+  # raises +NotImplementedError+.
+  #
+  #: (runner: Riffer::Runner) -> void
+  def initialize(runner:)
+    raise NotImplementedError, "#{self.class} is abstract — use a subclass like Riffer::ToolRuntime::Inline" if instance_of?(Riffer::ToolRuntime)
     @runner = runner
   end
 
@@ -62,7 +66,7 @@ class Riffer::ToolRuntime
   # explicit +&block+ parameter that must be called with +block.call+.
   #
   #   # Symbol — delegates to a named instance method:
-  #   class InstrumentedRuntime < Riffer::ToolRuntime
+  #   class InstrumentedRuntime < Riffer::ToolRuntime::Inline
   #     around_tool_call :instrument
   #
   #     private
@@ -75,7 +79,7 @@ class Riffer::ToolRuntime
   #   end
   #
   #   # Block — for simple inline hooks:
-  #   class LoggingRuntime < Riffer::ToolRuntime
+  #   class LoggingRuntime < Riffer::ToolRuntime::Inline
   #     around_tool_call do |tool_call, context:, &block|
   #       puts "Executing #{tool_call.name}"
   #       block.call
