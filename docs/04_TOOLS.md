@@ -368,6 +368,161 @@ rescue => e
 end
 ```
 
-Unhandled exceptions are caught by Riffer and converted to error responses with type `:execution_error`. However, it's recommended to handle expected errors explicitly for better error messages.
+Unhandled `RuntimeError` exceptions are caught by Riffer and converted to error responses with type `:execution_error`. For expected execution errors, raise `Riffer::ToolExecutionError` — these are also caught and returned to the LLM. Programming bugs (`NoMethodError`, `NameError`, `TypeError`, etc.) propagate to the caller. It's recommended to handle expected errors explicitly for better error messages.
 
 The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).
+
+## Tool Runtime (Experimental)
+
+> **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
+
+By default, tool calls are executed sequentially in the current thread using `Riffer::ToolRuntime::Inline`. You can change how tool calls are executed by configuring a different tool runtime.
+
+### Built-in Runtimes
+
+| Runtime | Description |
+|---------|-------------|
+| `Riffer::ToolRuntime::Inline` | Executes tool calls sequentially (default) |
+| `Riffer::ToolRuntime::Threaded` | Executes tool calls concurrently using threads |
+
+### Per-Agent Configuration
+
+Use the `tool_runtime` class method on your agent:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  uses_tools [WeatherTool, SearchTool]
+  tool_runtime :threaded
+end
+```
+
+Accepted values:
+
+- `:inline` — sequential execution (default)
+- `:threaded` — concurrent execution using threads
+- A `Riffer::ToolRuntime` instance — for custom runtimes
+- A `Proc` — evaluated at runtime (see below)
+
+### Dynamic Resolution
+
+Use a lambda for context-aware runtime selection:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  uses_tools [WeatherTool, SearchTool]
+
+  tool_runtime ->(context) {
+    context&.dig(:parallel) ? :threaded : :inline
+  }
+end
+
+agent.generate("Do work", tool_context: {parallel: true})
+```
+
+When the lambda accepts a parameter, it receives the `tool_context`. Zero-arity lambdas are also supported.
+
+### Global Configuration
+
+Set a default tool runtime for all agents:
+
+```ruby
+Riffer.configure do |config|
+  config.tool_runtime = :threaded
+end
+```
+
+Per-agent configuration overrides the global default.
+
+### Threaded Runtime Considerations
+
+When using `:threaded`, each tool call runs in its own thread. The `around_tool_call` hook also runs inside that thread. Be mindful of thread-local state — for example, `ActiveRecord::Base.connection`, `RequestStore`, or any `Thread.current[]` values may not be available or may behave differently across threads. Ensure your tools and hooks are thread-safe.
+
+### Threaded Runtime Options
+
+The threaded runtime accepts a `max_concurrency` option (default: 5):
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  uses_tools [WeatherTool, SearchTool]
+  tool_runtime Riffer::ToolRuntime::Threaded.new(max_concurrency: 3)
+end
+```
+
+### Custom Runtimes
+
+Create a custom runtime by subclassing `Riffer::ToolRuntime` and overriding the private `dispatch_tool_call` method:
+
+```ruby
+class HttpToolRuntime < Riffer::ToolRuntime
+  private
+
+  def dispatch_tool_call(tool_call, tools:, context:)
+    # Dispatch tool execution to an external service
+    response = HttpClient.post("/tools/execute", {
+      name: tool_call.name,
+      arguments: tool_call.arguments
+    })
+    Riffer::Tools::Response.text(response.body)
+  rescue Riffer::ToolExecutionError => e
+    Riffer::Tools::Response.error(e.message, type: :execution_error)
+  rescue RuntimeError => e
+    Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
+  end
+end
+```
+
+You can also compose with a custom `Riffer::Runner` for concurrency control:
+
+```ruby
+class HttpToolRuntime < Riffer::ToolRuntime
+  def initialize
+    super(runner: Riffer::Runner::Threaded.new(max_concurrency: 10))
+  end
+end
+```
+
+### Around-Call Hook
+
+Each tool call is wrapped by the `around_tool_call` instance method, which yields by default. Use the `around_tool_call` class method DSL to define custom behavior via a symbol or block:
+
+```ruby
+# Symbol — delegates to a named instance method (recommended for non-trivial logic):
+class InstrumentedRuntime < Riffer::ToolRuntime
+  around_tool_call :instrument
+
+  private
+
+  def instrument(tool_call, context:, &block)
+    start = Time.now
+    result = block.call
+    duration = Time.now - start
+    Rails.logger.info("Tool #{tool_call.name} took #{duration}s")
+    result
+  end
+end
+
+# Block — for simple inline hooks:
+class LoggingRuntime < Riffer::ToolRuntime
+  around_tool_call do |tool_call, context:, &block|
+    puts "Executing #{tool_call.name}"
+    block.call
+  end
+end
+```
+
+You can also override `around_tool_call` directly as an instance method:
+
+```ruby
+class CustomRuntime < Riffer::ToolRuntime
+  private
+
+  def around_tool_call(tool_call, context:)
+    yield
+  end
+end
+```
+
+Subclasses inherit the hook and can override it further.

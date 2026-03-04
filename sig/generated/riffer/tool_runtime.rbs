@@ -1,0 +1,87 @@
+# Generated from lib/riffer/tool_runtime.rb with RBS::Inline
+
+# Riffer::ToolRuntime handles tool call execution for an agent.
+#
+# Composes with a Riffer::Runner for concurrency control and provides
+# +execute+ as the sole public entry point.
+#
+# Subclass and override +dispatch_tool_call+ to customize how individual
+# tool calls are dispatched (e.g., HTTP, gRPC).
+#
+#   runtime = Riffer::ToolRuntime::Inline.new
+#   results = runtime.execute(tool_calls, tools: tools, context: ctx)
+class Riffer::ToolRuntime
+  # +runner+ - the concurrency runner to use for batch execution.
+  #
+  # : (?runner: Riffer::Runner) -> void
+  def initialize: (?runner: Riffer::Runner) -> void
+
+  # Executes a batch of tool calls, returning +[tool_call, response]+ pairs.
+  #
+  # +tool_calls+ - the tool calls to execute.
+  # +tools+ - the resolved tool classes.
+  # +context+ - the tool context hash.
+  #
+  # : (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  def execute: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]
+
+  # Hook that wraps each tool call execution. Override in subclasses
+  # or use the +around_tool_call+ class method DSL to customize.
+  # Must +yield+ to continue execution.
+  #
+  # The default implementation simply yields.
+  #
+  # : (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  def around_tool_call: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+
+  # Class-level DSL to define the +around_tool_call+ hook via a symbol
+  # or block. Both forms use +define_method+ to override the instance
+  # method, so inheritance works naturally.
+  #
+  # Accepts a symbol (naming an instance method to delegate to) or a
+  # block. Raises +Riffer::ArgumentError+ if both are given or if
+  # neither is given.
+  #
+  # Note: when overriding +around_tool_call+ directly you can use +yield+,
+  # but both DSL forms (symbol and block) receive the continuation as an
+  # explicit +&block+ parameter that must be called with +block.call+.
+  #
+  #   # Symbol — delegates to a named instance method:
+  #   class InstrumentedRuntime < Riffer::ToolRuntime
+  #     around_tool_call :instrument
+  #
+  #     private
+  #
+  #     def instrument(tool_call, context:, &block)
+  #       result = block.call
+  #       Rails.logger.info("Tool #{tool_call.name} completed")
+  #       result
+  #     end
+  #   end
+  #
+  #   # Block — for simple inline hooks:
+  #   class LoggingRuntime < Riffer::ToolRuntime
+  #     around_tool_call do |tool_call, context:, &block|
+  #       puts "Executing #{tool_call.name}"
+  #       block.call
+  #     end
+  #   end
+  #
+  # : (?Symbol?) { (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response } -> void
+  def self.around_tool_call: (?Symbol?) { (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response } -> void
+
+  private
+
+  # Dispatches a single tool call. Override in subclasses to change
+  # how individual tools are invoked (e.g., HTTP, gRPC).
+  #
+  # +tool_call+ - the tool call to execute.
+  # +tools+ - the resolved tool classes.
+  # +context+ - the tool context hash.
+  #
+  # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
+  def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
+
+  # : (String?) -> Hash[Symbol, untyped]
+  def parse_arguments: (String?) -> Hash[Symbol, untyped]
+end

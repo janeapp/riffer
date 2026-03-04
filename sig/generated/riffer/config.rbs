@@ -55,6 +55,20 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader evals: Riffer::Config::Evals
 
+  # Global tool runtime configuration (experimental).
+  #
+  # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance,
+  # or a Proc. Defaults to +Riffer::ToolRuntime::Inline.new+.
+  attr_reader tool_runtime: Symbol | Riffer::ToolRuntime | Proc
+
+  # Sets the global tool runtime.
+  #
+  # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
+  # (Symbol, ToolRuntime instance, or Proc).
+  #
+  # : ((Symbol | Riffer::ToolRuntime | Proc)) -> void
+  def tool_runtime=: (Symbol | Riffer::ToolRuntime | Proc) -> void
+
   # : () -> void
   def initialize: () -> void
 end

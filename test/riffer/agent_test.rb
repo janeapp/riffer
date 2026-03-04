@@ -1000,6 +1000,132 @@ describe Riffer::Agent do
     end
   end
 
+  describe ".tool_runtime" do
+    it "returns nil when not set" do
+      expect(agent_class.tool_runtime).must_be_nil
+    end
+
+    it "sets the tool_runtime symbol" do
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime :threaded
+      end
+      expect(agent.tool_runtime).must_equal :threaded
+    end
+
+    it "defaults to inline when no config" do
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+      end
+      runtime = agent.new.send(:resolve_tool_runtime)
+      expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
+    end
+
+    it "uses threaded runtime with :threaded symbol" do
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime :threaded
+      end
+      runtime = agent.new.send(:resolve_tool_runtime)
+      expect(runtime).must_be_instance_of Riffer::ToolRuntime::Threaded
+    end
+
+    it "uses lambda resolution with zero arity" do
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime -> { :inline }
+      end
+      runtime = agent.new.send(:resolve_tool_runtime)
+      expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
+    end
+
+    it "passes tool_context to lambda with arity 1" do
+      received_context = nil
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime ->(ctx) {
+          received_context = ctx
+          :inline
+        }
+      end
+
+      instance = agent.new
+      instance.instance_variable_set(:@tool_context, {user_id: 42})
+      instance.send(:resolve_tool_runtime)
+
+      expect(received_context).must_equal({user_id: 42})
+    end
+
+    it "uses global config as fallback" do
+      original = Riffer.config.tool_runtime
+      begin
+        Riffer.config.tool_runtime = :threaded
+        agent = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+        end
+        runtime = agent.new.send(:resolve_tool_runtime)
+        expect(runtime).must_be_instance_of Riffer::ToolRuntime::Threaded
+      ensure
+        Riffer.config.tool_runtime = original
+      end
+    end
+
+    it "per-agent config overrides global config" do
+      original = Riffer.config.tool_runtime
+      begin
+        Riffer.config.tool_runtime = :threaded
+        agent = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          tool_runtime :inline
+        end
+        runtime = agent.new.send(:resolve_tool_runtime)
+        expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
+      ensure
+        Riffer.config.tool_runtime = original
+      end
+    end
+
+    it "accepts a ToolRuntime instance" do
+      custom_runtime = Riffer::ToolRuntime::Inline.new
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime custom_runtime
+      end
+      runtime = agent.new.send(:resolve_tool_runtime)
+      expect(runtime).must_equal custom_runtime
+    end
+
+    it "raises for invalid tool_runtime" do
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime "invalid"
+      end
+      expect { agent.new.send(:resolve_tool_runtime) }.must_raise Riffer::ArgumentError
+    end
+
+    it "clears resolved tool runtime between generate calls" do
+      received_contexts = []
+      agent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime ->(ctx) {
+          received_contexts << ctx
+          :inline
+        }
+      end
+
+      instance = agent.new
+      instance.instance_variable_set(:@tool_context, {a: 1})
+      instance.send(:resolve_tool_runtime)
+
+      # Simulate what generate does: reset and resolve again
+      instance.instance_variable_set(:@resolved_tool_runtime, nil)
+      instance.instance_variable_set(:@tool_context, {b: 2})
+      instance.send(:resolve_tool_runtime)
+
+      expect(received_contexts).must_equal [{a: 1}, {b: 2}]
+    end
+  end
+
   describe "dynamic model selection" do
     it "resolves lambda for generate" do
       dynamic_agent_class = Class.new(Riffer::Agent) do

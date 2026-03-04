@@ -32,11 +32,31 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader :evals #: Riffer::Config::Evals
 
+  # Global tool runtime configuration (experimental).
+  #
+  # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance,
+  # or a Proc. Defaults to +Riffer::ToolRuntime::Inline.new+.
+  attr_reader :tool_runtime #: (Symbol | Riffer::ToolRuntime | Proc)
+
+  # Sets the global tool runtime.
+  #
+  # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
+  # (Symbol, ToolRuntime instance, or Proc).
+  #
+  #: ((Symbol | Riffer::ToolRuntime | Proc)) -> void
+  def tool_runtime=(value)
+    unless value.is_a?(Symbol) || value.is_a?(Riffer::ToolRuntime) || value.is_a?(Proc)
+      raise Riffer::ArgumentError, "tool_runtime must be a Symbol (:inline, :threaded), a Riffer::ToolRuntime instance, or a Proc"
+    end
+    @tool_runtime = value
+  end
+
   #: () -> void
   def initialize
     @amazon_bedrock = AmazonBedrock.new
     @anthropic = Anthropic.new
     @openai = OpenAI.new
     @evals = Evals.new
+    @tool_runtime = Riffer::ToolRuntime::Inline.new
   end
 end

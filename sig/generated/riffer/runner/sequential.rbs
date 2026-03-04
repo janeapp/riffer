@@ -1,0 +1,9 @@
+# Generated from lib/riffer/runner/sequential.rb with RBS::Inline
+
+# Processes items sequentially in the current thread.
+#
+# This is the default runner used when no concurrency is needed.
+class Riffer::Runner::Sequential < Riffer::Runner
+  # : (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+  def map: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+end
