@@ -474,16 +474,6 @@ class HttpToolRuntime < Riffer::ToolRuntime
 end
 ```
 
-You can also compose with a custom `Riffer::Runner` for concurrency control:
-
-```ruby
-class HttpToolRuntime < Riffer::ToolRuntime
-  def initialize
-    super(runner: Riffer::Runner::Threaded.new(max_concurrency: 10))
-  end
-end
-```
-
 ### Around-Call Hook
 
 Each tool call is wrapped by the `around_tool_call` instance method, which yields by default. Use the `around_tool_call` class method DSL to define custom behavior via a symbol or block:
