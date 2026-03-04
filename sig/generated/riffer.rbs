@@ -17,6 +17,10 @@ module Riffer
   class TimeoutError < Error
   end
 
+  # Raised when a tool encounters an expected execution error.
+  class ToolExecutionError < Error
+  end
+
   # Returns the Riffer configuration.
   #
   # : () -> Riffer::Config

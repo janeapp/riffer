@@ -109,6 +109,24 @@ class Riffer::Agent
     @tools_config = tools_or_lambda
   end
 
+  # Gets or sets the tool runtime for this agent.
+  #
+  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
+  # or a Proc.
+  #
+  # Inherited by subclasses. When unset, walks the ancestor chain and
+  # falls back to the global +Riffer.config.tool_runtime+.
+  #
+  #: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
+  def self.tool_runtime(value = nil)
+    if value.nil?
+      return @tool_runtime if instance_variable_defined?(:@tool_runtime)
+      superclass.respond_to?(:tool_runtime) ? superclass.tool_runtime : nil
+    else
+      @tool_runtime = value
+    end
+  end
+
   # Finds an agent class by identifier.
   #
   #: (String) -> singleton(Riffer::Agent)?
@@ -212,6 +230,7 @@ class Riffer::Agent
   def generate(prompt_or_messages, files: nil, tool_context: nil)
     @tool_context = tool_context
     @resolved_tools = nil
+    @resolved_tool_runtime = nil
     clear_resolved_model
     @interrupted = false
     @structured_output = resolve_structured_output
@@ -236,6 +255,7 @@ class Riffer::Agent
 
     @tool_context = tool_context
     @resolved_tools = nil
+    @resolved_tool_runtime = nil
     clear_resolved_model
     @interrupted = false
     initialize_messages(prompt_or_messages, files: files)
@@ -383,6 +403,7 @@ class Riffer::Agent
     @tool_context = tool_context if tool_context
     @interrupted = false
     @resolved_tools = nil
+    @resolved_tool_runtime = nil
     clear_resolved_model
   end
 
@@ -501,8 +522,10 @@ class Riffer::Agent
 
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
-    response.tool_calls.each do |tool_call|
-      result = execute_tool_call(tool_call)
+    runtime = resolve_tool_runtime
+    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @tool_context)
+
+    results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
         result.content,
         tool_call_id: tool_call.id,
@@ -537,10 +560,13 @@ class Riffer::Agent
       m.is_a?(Riffer::Messages::Tool)
     }.map(&:tool_call_id)
 
-    # Execute any tool calls whose id is not in the executed set.
-    assistant.tool_calls.each do |tool_call|
-      next if executed_ids.include?(tool_call.id)
-      result = execute_tool_call(tool_call)
+    pending = assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
+    return if pending.empty?
+
+    runtime = resolve_tool_runtime
+    results = runtime.execute(pending, tools: resolved_tools, context: @tool_context)
+
+    results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
         result.content,
         tool_call_id: tool_call.id,
@@ -548,31 +574,6 @@ class Riffer::Agent
         error: result.error_message,
         error_type: result.error_type
       ))
-    end
-  end
-
-  #: (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
-  def execute_tool_call(tool_call)
-    tool_class = find_tool_class(tool_call.name)
-
-    if tool_class.nil?
-      return Riffer::Tools::Response.error(
-        "Unknown tool '#{tool_call.name}'",
-        type: :unknown_tool
-      )
-    end
-
-    tool_instance = tool_class.new
-    arguments = parse_tool_arguments(tool_call.arguments)
-
-    begin
-      tool_instance.call_with_validation(context: @tool_context, **arguments)
-    rescue Riffer::TimeoutError => e
-      Riffer::Tools::Response.error(e.message, type: :timeout_error)
-    rescue Riffer::ValidationError => e
-      Riffer::Tools::Response.error(e.message, type: :validation_error)
-    rescue => e
-      Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
     end
   end
 
@@ -618,16 +619,23 @@ class Riffer::Agent
     end
   end
 
-  #: (String) -> singleton(Riffer::Tool)?
-  def find_tool_class(name)
-    resolved_tools.find { |tool_class| tool_class.name == name }
-  end
+  #: () -> Riffer::ToolRuntime
+  def resolve_tool_runtime
+    @resolved_tool_runtime ||= begin
+      config = self.class.tool_runtime || Riffer.config.tool_runtime
 
-  #: (String?) -> Hash[Symbol, untyped]
-  def parse_tool_arguments(arguments)
-    return {} if arguments.nil? || arguments.empty?
+      runtime = if config.is_a?(Proc)
+        (config.arity == 0) ? config.call : config.call(@tool_context)
+      else
+        config
+      end
 
-    JSON.parse(arguments, symbolize_names: true)
+      case runtime
+      when Class then runtime.new
+      when Riffer::ToolRuntime then runtime
+      else raise Riffer::ArgumentError, "Invalid tool_runtime: #{runtime.inspect}"
+      end
+    end
   end
 
   #: () -> Riffer::Messages::Assistant?
