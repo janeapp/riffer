@@ -393,15 +393,14 @@ Use the `tool_runtime` class method on your agent:
 class MyAgent < Riffer::Agent
   model 'openai/gpt-4o'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime :threaded
+  tool_runtime Riffer::ToolRuntime::Threaded
 end
 ```
 
 Accepted values:
 
-- `:inline` — sequential execution (default)
-- `:threaded` — concurrent execution using threads
-- A `Riffer::ToolRuntime` instance — for custom runtimes
+- A `Riffer::ToolRuntime` subclass — instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`)
+- A `Riffer::ToolRuntime` instance — for custom runtimes with specific options
 - A `Proc` — evaluated at runtime (see below)
 
 ### Dynamic Resolution
@@ -414,7 +413,7 @@ class MyAgent < Riffer::Agent
   uses_tools [WeatherTool, SearchTool]
 
   tool_runtime ->(context) {
-    context&.dig(:parallel) ? :threaded : :inline
+    context&.dig(:parallel) ? Riffer::ToolRuntime::Threaded.new : Riffer::ToolRuntime::Inline.new
   }
 end
 
@@ -429,7 +428,7 @@ Set a default tool runtime for all agents:
 
 ```ruby
 Riffer.configure do |config|
-  config.tool_runtime = :threaded
+  config.tool_runtime = Riffer::ToolRuntime::Threaded
 end
 ```
 
@@ -437,7 +436,7 @@ Per-agent configuration overrides the global default.
 
 ### Threaded Runtime Considerations
 
-When using `:threaded`, each tool call runs in its own thread. The `around_tool_call` hook also runs inside that thread. Be mindful of thread-local state — for example, `ActiveRecord::Base.connection`, `RequestStore`, or any `Thread.current[]` values may not be available or may behave differently across threads. Ensure your tools and hooks are thread-safe.
+When using `Riffer::ToolRuntime::Threaded`, each tool call runs in its own thread. The `around_tool_call` hook also runs inside that thread. Be mindful of thread-local state — for example, `ActiveRecord::Base.connection`, `RequestStore`, or any `Thread.current[]` values may not be available or may behave differently across threads. Ensure your tools and hooks are thread-safe.
 
 ### Threaded Runtime Options
 

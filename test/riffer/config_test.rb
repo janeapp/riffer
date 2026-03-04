@@ -31,8 +31,8 @@ describe Riffer::Config do
 
     it "allows setting tool_runtime" do
       config = Riffer::Config.new
-      config.tool_runtime = :threaded
-      expect(config.tool_runtime).must_equal :threaded
+      config.tool_runtime = Riffer::ToolRuntime::Threaded
+      expect(config.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
     end
 
     it "raises for invalid tool_runtime" do

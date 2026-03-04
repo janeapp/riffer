@@ -111,12 +111,13 @@ class Riffer::Agent
 
   # Gets or sets the tool runtime for this agent.
   #
-  # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance, or a Proc.
+  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
+  # or a Proc.
   #
   # Inherited by subclasses. When unset, walks the ancestor chain and
   # falls back to the global +Riffer.config.tool_runtime+.
   #
-  #: (?(Symbol | Riffer::ToolRuntime | Proc)?) -> (Symbol | Riffer::ToolRuntime | Proc)?
+  #: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
   def self.tool_runtime(value = nil)
     if value.nil?
       return @tool_runtime if instance_variable_defined?(:@tool_runtime)
@@ -630,8 +631,7 @@ class Riffer::Agent
       end
 
       case runtime
-      when :inline then Riffer::ToolRuntime::Inline.new
-      when :threaded then Riffer::ToolRuntime::Threaded.new
+      when Class then runtime.new
       when Riffer::ToolRuntime then runtime
       else raise Riffer::ArgumentError, "Invalid tool_runtime: #{runtime.inspect}"
       end

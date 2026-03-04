@@ -34,20 +34,19 @@ class Riffer::Config
 
   # Global tool runtime configuration (experimental).
   #
-  # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance,
+  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
   # or a Proc. Defaults to +Riffer::ToolRuntime::Inline.new+.
-  attr_reader :tool_runtime #: (Symbol | Riffer::ToolRuntime | Proc)
+  attr_reader :tool_runtime #: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
 
   # Sets the global tool runtime.
   #
   # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
-  # (Symbol, ToolRuntime instance, or Proc).
+  # (ToolRuntime subclass, ToolRuntime instance, or Proc).
   #
-  #: ((Symbol | Riffer::ToolRuntime | Proc)) -> void
+  #: ((singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)) -> void
   def tool_runtime=(value)
-    unless value.is_a?(Symbol) || value.is_a?(Riffer::ToolRuntime) || value.is_a?(Proc)
-      raise Riffer::ArgumentError, "tool_runtime must be a Symbol (:inline, :threaded), a Riffer::ToolRuntime instance, or a Proc"
-    end
+    valid = (value.is_a?(Class) && value < Riffer::ToolRuntime) || value.is_a?(Riffer::ToolRuntime) || value.is_a?(Proc)
+    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::ToolRuntime subclass, instance, or a Proc" unless valid
     @tool_runtime = value
   end
 

@@ -1005,35 +1005,35 @@ describe Riffer::Agent do
       expect(agent_class.tool_runtime).must_be_nil
     end
 
-    it "sets the tool_runtime symbol" do
+    it "sets the tool_runtime class" do
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime :threaded
+        tool_runtime Riffer::ToolRuntime::Threaded
       end
-      expect(agent.tool_runtime).must_equal :threaded
+      expect(agent.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
     end
 
     it "inherits tool_runtime from parent class" do
       parent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime :threaded
+        tool_runtime Riffer::ToolRuntime::Threaded
       end
       child = Class.new(parent)
 
-      expect(child.tool_runtime).must_equal :threaded
+      expect(child.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
     end
 
     it "allows subclass to override inherited tool_runtime" do
       parent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime :threaded
+        tool_runtime Riffer::ToolRuntime::Threaded
       end
       child = Class.new(parent) do
-        tool_runtime :inline
+        tool_runtime Riffer::ToolRuntime::Inline
       end
 
-      expect(child.tool_runtime).must_equal :inline
-      expect(parent.tool_runtime).must_equal :threaded
+      expect(child.tool_runtime).must_equal Riffer::ToolRuntime::Inline
+      expect(parent.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
     end
 
     it "defaults to inline when no config" do
@@ -1044,10 +1044,10 @@ describe Riffer::Agent do
       expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
     end
 
-    it "uses threaded runtime with :threaded symbol" do
+    it "resolves a ToolRuntime class to an instance" do
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime :threaded
+        tool_runtime Riffer::ToolRuntime::Threaded
       end
       runtime = agent.new.send(:resolve_tool_runtime)
       expect(runtime).must_be_instance_of Riffer::ToolRuntime::Threaded
@@ -1056,7 +1056,7 @@ describe Riffer::Agent do
     it "uses lambda resolution with zero arity" do
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime -> { :inline }
+        tool_runtime -> { Riffer::ToolRuntime::Inline.new }
       end
       runtime = agent.new.send(:resolve_tool_runtime)
       expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
@@ -1068,7 +1068,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         tool_runtime ->(ctx) {
           received_context = ctx
-          :inline
+          Riffer::ToolRuntime::Inline.new
         }
       end
 
@@ -1082,7 +1082,7 @@ describe Riffer::Agent do
     it "uses global config as fallback" do
       original = Riffer.config.tool_runtime
       begin
-        Riffer.config.tool_runtime = :threaded
+        Riffer.config.tool_runtime = Riffer::ToolRuntime::Threaded
         agent = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
         end
@@ -1096,10 +1096,10 @@ describe Riffer::Agent do
     it "per-agent config overrides global config" do
       original = Riffer.config.tool_runtime
       begin
-        Riffer.config.tool_runtime = :threaded
+        Riffer.config.tool_runtime = Riffer::ToolRuntime::Threaded
         agent = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          tool_runtime :inline
+          tool_runtime Riffer::ToolRuntime::Inline
         end
         runtime = agent.new.send(:resolve_tool_runtime)
         expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
@@ -1132,7 +1132,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         tool_runtime ->(ctx) {
           received_contexts << ctx
-          :inline
+          Riffer::ToolRuntime::Inline.new
         }
       end
 

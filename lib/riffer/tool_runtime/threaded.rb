@@ -4,7 +4,7 @@
 # Executes tool calls concurrently using threads.
 #
 #   class MyAgent < Riffer::Agent
-#     tool_runtime :threaded
+#     tool_runtime Riffer::ToolRuntime::Threaded
 #   end
 #
 class Riffer::ToolRuntime::Threaded < Riffer::ToolRuntime

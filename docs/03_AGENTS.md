@@ -229,11 +229,11 @@ Configures how tool calls are executed. Defaults to sequential (inline) executio
 class MyAgent < Riffer::Agent
   model 'openai/gpt-4o'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime :threaded
+  tool_runtime Riffer::ToolRuntime::Threaded
 end
 ```
 
-Accepts `:inline`, `:threaded`, a `Riffer::ToolRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.tool_runtime`. See [Tools — Tool Runtime](04_TOOLS.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::ToolRuntime` subclass, a `Riffer::ToolRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.tool_runtime`. See [Tools — Tool Runtime](04_TOOLS.md#tool-runtime-experimental) for details.
 
 ### guardrail
 
@@ -558,7 +558,7 @@ end
 When an agent receives a response with tool calls:
 
 1. Agent detects `tool_calls` in the assistant message
-2. The configured tool runtime executes the tool calls (sequentially by default, or concurrently with `:threaded`):
+2. The configured tool runtime executes the tool calls (sequentially by default, or concurrently with `Riffer::ToolRuntime::Threaded`):
    - Finds the matching tool class
    - Validates arguments against the tool's parameter schema
    - Calls the tool's `call` method with `context` and arguments

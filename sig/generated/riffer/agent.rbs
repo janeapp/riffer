@@ -72,13 +72,14 @@ class Riffer::Agent
 
   # Gets or sets the tool runtime for this agent.
   #
-  # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance, or a Proc.
+  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
+  # or a Proc.
   #
   # Inherited by subclasses. When unset, walks the ancestor chain and
   # falls back to the global +Riffer.config.tool_runtime+.
   #
-  # : (?(Symbol | Riffer::ToolRuntime | Proc)?) -> (Symbol | Riffer::ToolRuntime | Proc)?
-  def self.tool_runtime: (?(Symbol | Riffer::ToolRuntime | Proc)?) -> (Symbol | Riffer::ToolRuntime | Proc)?
+  # : (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
+  def self.tool_runtime: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
 
   # Finds an agent class by identifier.
   #
