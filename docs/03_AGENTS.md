@@ -233,7 +233,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-Accepts `:inline`, `:threaded`, a `Riffer::ToolRuntime` instance, or a `Proc`. This setting is **not inherited** by subclasses — each agent class must configure its own tool runtime explicitly. When unset, falls back to `Riffer.config.tool_runtime`. See [Tools — Tool Runtime](04_TOOLS.md#tool-runtime-experimental) for details.
+Accepts `:inline`, `:threaded`, a `Riffer::ToolRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.tool_runtime`. See [Tools — Tool Runtime](04_TOOLS.md#tool-runtime-experimental) for details.
 
 ### guardrail
 

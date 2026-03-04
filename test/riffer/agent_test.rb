@@ -1013,6 +1013,29 @@ describe Riffer::Agent do
       expect(agent.tool_runtime).must_equal :threaded
     end
 
+    it "inherits tool_runtime from parent class" do
+      parent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime :threaded
+      end
+      child = Class.new(parent)
+
+      expect(child.tool_runtime).must_equal :threaded
+    end
+
+    it "allows subclass to override inherited tool_runtime" do
+      parent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime :threaded
+      end
+      child = Class.new(parent) do
+        tool_runtime :inline
+      end
+
+      expect(child.tool_runtime).must_equal :inline
+      expect(parent.tool_runtime).must_equal :threaded
+    end
+
     it "defaults to inline when no config" do
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"

@@ -113,14 +113,17 @@ class Riffer::Agent
   #
   # Accepts +:inline+, +:threaded+, a Riffer::ToolRuntime instance, or a Proc.
   #
-  # This setting is not inherited by subclasses — each agent class must
-  # configure its own tool runtime explicitly. When unset, falls back to
-  # the global +Riffer.config.tool_runtime+.
+  # Inherited by subclasses. When unset, walks the ancestor chain and
+  # falls back to the global +Riffer.config.tool_runtime+.
   #
   #: (?(Symbol | Riffer::ToolRuntime | Proc)?) -> (Symbol | Riffer::ToolRuntime | Proc)?
   def self.tool_runtime(value = nil)
-    return @tool_runtime if value.nil?
-    @tool_runtime = value
+    if value.nil?
+      return @tool_runtime if instance_variable_defined?(:@tool_runtime)
+      superclass.respond_to?(:tool_runtime) ? superclass.tool_runtime : nil
+    else
+      @tool_runtime = value
+    end
   end
 
   # Finds an agent class by identifier.
