@@ -63,6 +63,14 @@ describe Riffer::Agent do
       error = expect { agent_class.instructions("   ") }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/instructions cannot be empty/)
     end
+
+    it "accepts a Proc" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        instructions -> { "Dynamic instructions" }
+      end
+      expect(klass.instructions).must_be_instance_of Proc
+    end
   end
 
   describe ".provider_options" do
@@ -356,6 +364,57 @@ describe Riffer::Agent do
       end
     end
 
+    describe "with dynamic instructions" do
+      it "resolves the Proc at generate time" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions -> { "Dynamic instructions" }
+        end
+
+        agent = klass.new
+        agent.generate("Hello")
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "Dynamic instructions"
+      end
+
+      it "passes context to the Proc" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions ->(context) { "You are assisting #{context[:name]}" }
+        end
+
+        agent = klass.new
+        agent.generate("Hello", context: {name: "Jane"})
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "You are assisting Jane"
+      end
+
+      it "passes nil context when not provided" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions ->(context) { context ? "With context" : "No context" }
+        end
+
+        agent = klass.new
+        agent.generate("Hello")
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "No context"
+      end
+
+      it "does not add system message when Proc returns nil" do
+        returner = ->(_tool_context) {}
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions returner
+        end
+
+        agent = klass.new
+        agent.generate("Hello")
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message).must_be_nil
+      end
+    end
+
     describe "with invalid provider" do
       it "raises error when provider is not found" do
         invalid_agent_class = Class.new(Riffer::Agent) do
@@ -570,6 +629,20 @@ describe Riffer::Agent do
         agent.stream("Hello").each { |_| }
         system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).must_be_nil
+      end
+    end
+
+    describe "with dynamic instructions" do
+      it "resolves the Proc with context" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions ->(context) { "You are assisting #{context[:name]}" }
+        end
+
+        agent = klass.new
+        agent.stream("Hello", context: {name: "Jane"}).each { |_| }
+        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "You are assisting Jane"
       end
     end
 

@@ -50,11 +50,26 @@ class Riffer::Agent
 
   # Gets or sets the agent instructions.
   #
-  #: (?String?) -> String?
-  def self.instructions(instructions_text = nil)
-    return @instructions if instructions_text.nil?
-    validate_is_string!(instructions_text, "instructions")
-    @instructions = instructions_text
+  # Accepts a static string or a Proc for dynamic instructions.
+  # When a Proc is given, it is called at generate time and receives
+  # the +context+ hash (which may be +nil+).
+  #
+  #   instructions "You are a helpful assistant."
+  #
+  #   instructions -> (context) {
+  #     "You are assisting #{context[:name]}"
+  #   }
+  #
+  #: (?(String | Proc)?) -> (String | Proc)?
+  def self.instructions(instructions_or_proc = nil)
+    return @instructions if instructions_or_proc.nil?
+
+    if instructions_or_proc.is_a?(Proc)
+      @instructions = instructions_or_proc
+    else
+      validate_is_string!(instructions_or_proc, "instructions")
+      @instructions = instructions_or_proc
+    end
   end
 
   # Gets or sets provider options passed to the provider client.
@@ -214,7 +229,7 @@ class Riffer::Agent
     @token_usage = nil
     @interrupted = false
     @model_config = self.class.model
-    @instructions_text = self.class.instructions
+    @instructions_config = self.class.instructions
 
     if @model_config.is_a?(Proc)
       @provider_name = nil
@@ -381,7 +396,8 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages(prompt_or_messages, files: nil)
     @messages = []
-    @messages << Riffer::Messages::System.new(@instructions_text) if @instructions_text
+    instructions_text = generate_instructions
+    @messages << Riffer::Messages::System.new(instructions_text) if instructions_text
 
     if prompt_or_messages.is_a?(Array)
       if files && !files.empty?
@@ -590,6 +606,15 @@ class Riffer::Agent
   def clear_resolved_model
     @resolved_model = nil
     @provider_instance = nil if @model_config.is_a?(Proc)
+  end
+
+  #: () -> String?
+  def generate_instructions
+    if @instructions_config.is_a?(Proc)
+      (@instructions_config.arity == 0) ? @instructions_config.call : @instructions_config.call(@context)
+    else
+      @instructions_config
+    end
   end
 
   attr_reader :resolved_model #: String?
