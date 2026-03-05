@@ -226,9 +226,9 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, files: nil, tool_context: nil)
-    @tool_context = tool_context
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, files: nil, context: nil)
+    @context = context
     @resolved_tools = nil
     @resolved_tool_runtime = nil
     clear_resolved_model
@@ -249,11 +249,11 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, files: nil, tool_context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, files: nil, context: nil)
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
-    @tool_context = tool_context
+    @context = context
     @resolved_tools = nil
     @resolved_tool_runtime = nil
     clear_resolved_model
@@ -283,9 +283,9 @@ class Riffer::Agent
   # The step offset is derived automatically from the number of assistant
   # messages so +max_steps+ is enforced across the full session.
   #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def resume(messages: nil, tool_context: nil)
-    restore_state(messages: messages, tool_context: tool_context)
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def resume(messages: nil, context: nil)
+    restore_state(messages: messages, context: context)
     run_generate_loop(resume: true)
   end
 
@@ -293,9 +293,9 @@ class Riffer::Agent
   #
   # Same as +resume+ but returns an Enumerator yielding stream events.
   #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def resume_stream(messages: nil, tool_context: nil)
-    restore_state(messages: messages, tool_context: tool_context)
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def resume_stream(messages: nil, context: nil)
+    restore_state(messages: messages, context: context)
 
     Enumerator.new do |yielder|
       run_stream_loop(yielder, resume: true)
@@ -397,10 +397,10 @@ class Riffer::Agent
     end
   end
 
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?tool_context: Hash[Symbol, untyped]?) -> void
-  def restore_state(messages: nil, tool_context: nil)
+  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> void
+  def restore_state(messages: nil, context: nil)
     @messages = messages.map { |item| convert_to_message_object(item) } if messages
-    @tool_context = tool_context if tool_context
+    @context = context if context
     @interrupted = false
     @resolved_tools = nil
     @resolved_tool_runtime = nil
@@ -523,7 +523,7 @@ class Riffer::Agent
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
     runtime = resolve_tool_runtime
-    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @tool_context)
+    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @context)
 
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
@@ -564,7 +564,7 @@ class Riffer::Agent
     return if pending.empty?
 
     runtime = resolve_tool_runtime
-    results = runtime.execute(pending, tools: resolved_tools, context: @tool_context)
+    results = runtime.execute(pending, tools: resolved_tools, context: @context)
 
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
@@ -597,7 +597,7 @@ class Riffer::Agent
   #: () -> String
   def resolve_model
     @resolved_model ||= if @model_config.is_a?(Proc)
-      model_string = (@model_config.arity == 0) ? @model_config.call : @model_config.call(@tool_context)
+      model_string = (@model_config.arity == 0) ? @model_config.call : @model_config.call(@context)
       parse_model_string!(model_string)
       model_string
     else
@@ -612,7 +612,7 @@ class Riffer::Agent
       return [] if config.nil?
 
       if config.is_a?(Proc)
-        (config.arity == 0) ? config.call : config.call(@tool_context)
+        (config.arity == 0) ? config.call : config.call(@context)
       else
         config
       end
@@ -625,7 +625,7 @@ class Riffer::Agent
       config = self.class.tool_runtime || Riffer.config.tool_runtime
 
       runtime = if config.is_a?(Proc)
-        (config.arity == 0) ? config.call : config.call(@tool_context)
+        (config.arity == 0) ? config.call : config.call(@context)
       else
         config
       end
@@ -648,7 +648,7 @@ class Riffer::Agent
     guardrails = self.class.guardrails_for(:before)
     return [nil, []] if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: @tool_context)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: @context)
     processed_messages, tripwire, modifications = runner.run(@messages)
     @messages = processed_messages unless tripwire
     [tripwire, modifications]
@@ -659,7 +659,7 @@ class Riffer::Agent
     guardrails = self.class.guardrails_for(:after)
     return [response, nil, []] if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: @tool_context)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: @context)
     processed_response, tripwire, modifications = runner.run(response, messages: @messages)
 
     response_index = @messages.length

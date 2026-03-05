@@ -64,8 +64,8 @@ def evaluate(input:, output:)
 def evaluate(input:, output:, context: nil)
 
 # Positional + keyword parameters
-#: (String, ?tool_context: Hash[Symbol, untyped]?) -> String
-def generate(prompt, tool_context: nil)
+#: (String, ?context: Hash[Symbol, untyped]?) -> String
+def generate(prompt, context: nil)
 
 # Splat/double-splat
 #: (**untyped) -> void

@@ -37,12 +37,12 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-When the lambda accepts a parameter, it receives the `tool_context`:
+When the lambda accepts a parameter, it receives the `context`:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model ->(ctx) {
-    ctx&.dig(:premium) ? "anthropic/claude-sonnet-4-20250514" : "anthropic/claude-haiku-4-5-20251001"
+  model ->(context) {
+    context&.dig(:premium) ? "anthropic/claude-sonnet-4-20250514" : "anthropic/claude-haiku-4-5-20251001"
   }
 end
 ```
@@ -282,8 +282,8 @@ response = MyAgent.generate([
   {role: 'user', content: 'How are you?'}
 ])
 
-# With tool context
-response = MyAgent.generate('Look up my orders', tool_context: {user_id: 123})
+# With context
+response = MyAgent.generate('Look up my orders', context: {user_id: 123})
 
 # With files (string prompt + files shorthand)
 response = MyAgent.generate('What is in this image?', files: [
@@ -426,7 +426,7 @@ For cross-process resume (e.g., after a process restart or async approval), pass
 # Persist messages during generation (e.g., via on_message callback)
 # Later, in a new process:
 agent = MyAgent.new
-response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
+response = agent.resume(messages: persisted_messages, context: {user_id: 123})
 
 # Or resume in streaming mode:
 agent.resume_stream(messages: persisted_messages).each do |event|
@@ -445,7 +445,7 @@ Continues an agent loop synchronously. Returns a `Riffer::Agent::Response` objec
 response = agent.resume
 
 # Cross-process resume from persisted messages
-response = agent.resume(messages: persisted_messages, tool_context: {user_id: 123})
+response = agent.resume(messages: persisted_messages, context: {user_id: 123})
 ```
 
 ### resume_stream

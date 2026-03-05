@@ -12,7 +12,7 @@ require "json"
 # tool calls are dispatched (e.g., HTTP, gRPC).
 #
 #   runtime = Riffer::ToolRuntime::Inline.new
-#   results = runtime.execute(tool_calls, tools: tools, context: ctx)
+#   results = runtime.execute(tool_calls, tools: tools, context: context)
 #
 class Riffer::ToolRuntime
   # +runner+ - the concurrency runner to use for batch execution.
@@ -30,7 +30,7 @@ class Riffer::ToolRuntime
   #
   # +tool_calls+ - the tool calls to execute.
   # +tools+ - the resolved tool classes.
-  # +context+ - the tool context hash.
+  # +context+ - the context hash.
   #
   #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:)
@@ -70,7 +70,7 @@ class Riffer::ToolRuntime
   #
   # +tool_call+ - the tool call to execute.
   # +tools+ - the resolved tool classes.
-  # +context+ - the tool context hash.
+  # +context+ - the context hash.
   #
   #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
   def dispatch_tool_call(tool_call, tools:, context:)
