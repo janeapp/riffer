@@ -244,10 +244,7 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, files: nil, context: nil)
     @context = context
-    @resolved_tools = nil
-    @resolved_tool_runtime = nil
-    clear_resolved_model
-    @interrupted = false
+    prepare_run
     @structured_output = resolve_structured_output
     initialize_messages(prompt_or_messages, files: files)
 
@@ -269,10 +266,7 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @context = context
-    @resolved_tools = nil
-    @resolved_tool_runtime = nil
-    clear_resolved_model
-    @interrupted = false
+    prepare_run
     initialize_messages(prompt_or_messages, files: files)
 
     Enumerator.new do |yielder|
@@ -417,10 +411,7 @@ class Riffer::Agent
   def restore_state(messages: nil, context: nil)
     @messages = messages.map { |item| convert_to_message_object(item) } if messages
     @context = context if context
-    @interrupted = false
-    @resolved_tools = nil
-    @resolved_tool_runtime = nil
-    clear_resolved_model
+    prepare_run
   end
 
   #: () -> Integer
@@ -502,7 +493,6 @@ class Riffer::Agent
 
   #: () -> Riffer::Messages::Assistant
   def call_llm
-    resolve_model
     provider_instance.generate_text(
       messages: @messages,
       model: @model_name,
@@ -513,7 +503,6 @@ class Riffer::Agent
 
   #: () -> Enumerator[Riffer::StreamEvents::Base, void]
   def call_llm_stream
-    resolve_model
     provider_instance.stream_text(
       messages: @messages,
       model: @model_name,
@@ -524,11 +513,7 @@ class Riffer::Agent
 
   #: () -> Riffer::Providers::Base
   def provider_instance
-    @provider_instance ||= begin
-      provider_class = Riffer::Providers::Repository.find(@provider_name)
-      raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
-      provider_class.new(**self.class.provider_options)
-    end
+    @provider_instance ||= provider_class.new(**self.class.provider_options)
   end
 
   #: (Riffer::Messages::Assistant) -> bool
@@ -591,6 +576,15 @@ class Riffer::Agent
         error_type: result.error_type
       ))
     end
+  end
+
+  #: () -> void
+  def prepare_run
+    @resolved_tools = nil
+    @resolved_tool_runtime = nil
+    clear_resolved_model
+    @interrupted = false
+    resolve_model
   end
 
   #: (untyped) -> void
@@ -661,6 +655,13 @@ class Riffer::Agent
       else raise Riffer::ArgumentError, "Invalid tool_runtime: #{runtime.inspect}"
       end
     end
+  end
+
+  #: () -> singleton(Riffer::Providers::Base)
+  def provider_class
+    klass = Riffer::Providers::Repository.find(@provider_name)
+    raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless klass
+    klass
   end
 
   #: () -> Riffer::Messages::Assistant?

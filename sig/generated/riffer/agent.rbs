@@ -242,6 +242,9 @@ class Riffer::Agent
   # : () -> void
   def execute_pending_tool_calls: () -> void
 
+  # : () -> void
+  def prepare_run: () -> void
+
   # : (untyped) -> void
   def parse_model_string!: (untyped) -> void
 
@@ -261,6 +264,9 @@ class Riffer::Agent
 
   # : () -> Riffer::ToolRuntime
   def resolve_tool_runtime: () -> Riffer::ToolRuntime
+
+  # : () -> singleton(Riffer::Providers::Base)
+  def provider_class: () -> singleton(Riffer::Providers::Base)
 
   # : () -> Riffer::Messages::Assistant?
   def extract_final_response: () -> Riffer::Messages::Assistant?
