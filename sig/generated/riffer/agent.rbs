@@ -37,8 +37,18 @@ class Riffer::Agent
 
   # Gets or sets the agent instructions.
   #
-  # : (?String?) -> String?
-  def self.instructions: (?String?) -> String?
+  # Accepts a static string or a Proc for dynamic instructions.
+  # When a Proc is given, it is called at generate time and receives
+  # the +context+ hash (which may be +nil+).
+  #
+  #   instructions "You are a helpful assistant."
+  #
+  #   instructions -> (context) {
+  #     "You are assisting #{context[:name]}"
+  #   }
+  #
+  # : (?(String | Proc)?) -> (String | Proc)?
+  def self.instructions: (?(String | Proc)?) -> (String | Proc)?
 
   # Gets or sets provider options passed to the provider client.
   #
@@ -237,6 +247,9 @@ class Riffer::Agent
 
   # : () -> void
   def clear_resolved_model: () -> void
+
+  # : () -> String?
+  def generate_instructions: () -> String?
 
   attr_reader resolved_model: String?
 

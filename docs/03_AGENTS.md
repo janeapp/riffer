@@ -60,6 +60,28 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+Instructions can also be resolved dynamically with a lambda:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  instructions -> { "Today is #{Date.today}. You are a helpful assistant." }
+end
+```
+
+When the lambda accepts a parameter, it receives the `context`:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-4o'
+  instructions ->(ctx) { "You are assisting #{ctx[:name]}" }
+end
+
+MyAgent.generate('Hello!', context: { name: 'Jane' })
+```
+
+The lambda is re-evaluated on each `generate` or `stream` call, so instructions can change between calls based on runtime context.
+
 ### identifier
 
 Sets a custom identifier (defaults to snake_case class name):

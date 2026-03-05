@@ -16,6 +16,17 @@ agent = EchoAgent.new
 puts agent.generate('Hello world')
 ```
 
+`instructions` also accepts a Proc for dynamic instructions resolved at generate time. The Proc receives the `context` hash:
+
+```ruby
+class PersonalAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  instructions ->(context) { "You are assisting #{context[:name]}" }
+end
+
+PersonalAgent.generate('Hello!', context: { name: 'Jane' })
+```
+
 ### Providers (`lib/riffer/providers/`)
 
 Adapters for LLM APIs. The base class uses a template-method pattern — `generate_text` and `stream_text` orchestrate the flow, delegating to five hook methods each provider implements:
