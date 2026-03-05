@@ -894,7 +894,7 @@ describe Riffer::Agent do
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
-    it "passes tool_context to tools" do
+    it "passes context to tools" do
       context_tool = Class.new(Riffer::Tool) do
         description "Gets user info"
         params do
@@ -910,13 +910,13 @@ describe Riffer::Agent do
       received_context = nil
       custom_agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        uses_tools ->(ctx) {
-          received_context = ctx
+        uses_tools ->(context) {
+          received_context = context
           [tool]
         }
       end
 
-      custom_agent_class.generate("Hello", tool_context: {user_name: "Bob"})
+      custom_agent_class.generate("Hello", context: {user_name: "Bob"})
       expect(received_context).must_equal({user_name: "Bob"})
     end
   end
@@ -932,7 +932,7 @@ describe Riffer::Agent do
       expect(events).wont_be_empty
     end
 
-    it "passes tool_context to tools" do
+    it "passes context to tools" do
       context_tool = Class.new(Riffer::Tool) do
         description "Gets user info"
         params do
@@ -948,13 +948,13 @@ describe Riffer::Agent do
       received_context = nil
       custom_agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        uses_tools ->(ctx) {
-          received_context = ctx
+        uses_tools ->(context) {
+          received_context = context
           [tool]
         }
       end
 
-      custom_agent_class.stream("Hello", tool_context: {user_id: "42"}).each { |_| }
+      custom_agent_class.stream("Hello", context: {user_id: "42"}).each { |_| }
       expect(received_context).must_equal({user_id: "42"})
     end
   end
@@ -1062,18 +1062,18 @@ describe Riffer::Agent do
       expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
     end
 
-    it "passes tool_context to lambda with arity 1" do
+    it "passes context to lambda with arity 1" do
       received_context = nil
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime ->(ctx) {
-          received_context = ctx
+        tool_runtime ->(context) {
+          received_context = context
           Riffer::ToolRuntime::Inline.new
         }
       end
 
       instance = agent.new
-      instance.instance_variable_set(:@tool_context, {user_id: 42})
+      instance.instance_variable_set(:@context, {user_id: 42})
       instance.send(:resolve_tool_runtime)
 
       expect(received_context).must_equal({user_id: 42})
@@ -1130,19 +1130,19 @@ describe Riffer::Agent do
       received_contexts = []
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime ->(ctx) {
-          received_contexts << ctx
+        tool_runtime ->(context) {
+          received_contexts << context
           Riffer::ToolRuntime::Inline.new
         }
       end
 
       instance = agent.new
-      instance.instance_variable_set(:@tool_context, {a: 1})
+      instance.instance_variable_set(:@context, {a: 1})
       instance.send(:resolve_tool_runtime)
 
       # Simulate what generate does: reset and resolve again
       instance.instance_variable_set(:@resolved_tool_runtime, nil)
-      instance.instance_variable_set(:@tool_context, {b: 2})
+      instance.instance_variable_set(:@context, {b: 2})
       instance.send(:resolve_tool_runtime)
 
       expect(received_contexts).must_equal [{a: 1}, {b: 2}]
@@ -1168,16 +1168,16 @@ describe Riffer::Agent do
       expect(events).wont_be_empty
     end
 
-    it "passes tool_context to lambda with arity 1" do
+    it "passes context to lambda with arity 1" do
       received_context = nil
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model ->(ctx) {
-          received_context = ctx
+        model ->(context) {
+          received_context = context
           "mock/riffer-1"
         }
       end
 
-      dynamic_agent_class.generate("Hello", tool_context: {premium: true})
+      dynamic_agent_class.generate("Hello", context: {premium: true})
       expect(received_context).must_equal({premium: true})
     end
 
@@ -1220,19 +1220,19 @@ describe Riffer::Agent do
       expect(call_count).must_equal 2
     end
 
-    it "can change model between calls based on tool_context" do
+    it "can change model between calls based on context" do
       models_used = []
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model ->(ctx) {
-          model = ctx&.dig(:premium) ? "mock/riffer-premium" : "mock/riffer-basic"
+        model ->(context) {
+          model = context&.dig(:premium) ? "mock/riffer-premium" : "mock/riffer-basic"
           models_used << model
           model
         }
       end
 
       agent = dynamic_agent_class.new
-      agent.generate("Hello", tool_context: {premium: false})
-      agent.generate("Hello", tool_context: {premium: true})
+      agent.generate("Hello", context: {premium: false})
+      agent.generate("Hello", context: {premium: true})
       expect(models_used).must_equal ["mock/riffer-basic", "mock/riffer-premium"]
     end
 
@@ -1370,7 +1370,7 @@ describe Riffer::Agent do
         expect(result.content).must_equal "The weather in Toronto is nice!"
       end
 
-      it "passes tool_context to tools" do
+      it "passes context to tools" do
         tool_class = context_tool_class
         tool_class.identifier("context_tool")
         agent_class = Class.new(Riffer::Agent) do
@@ -1385,7 +1385,7 @@ describe Riffer::Agent do
         ])
         provider.stub_response("Your name is Alice!")
 
-        agent.generate("Get my name", tool_context: {user_name: "Alice"})
+        agent.generate("Get my name", context: {user_name: "Alice"})
 
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "Alice"
@@ -1571,7 +1571,7 @@ describe Riffer::Agent do
         expect(tool_messages.length).must_equal 1
       end
 
-      it "passes tool_context in streaming mode" do
+      it "passes context in streaming mode" do
         tool_class = context_tool_class
         tool_class.identifier("context_tool")
         agent_class = Class.new(Riffer::Agent) do
@@ -1586,7 +1586,7 @@ describe Riffer::Agent do
         ])
         provider.stub_response("Your ID is 12345!")
 
-        agent.stream("Get my id", tool_context: {user_id: "12345"}).each { |_| }
+        agent.stream("Get my id", context: {user_id: "12345"}).each { |_| }
 
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "12345"
@@ -1728,7 +1728,7 @@ describe Riffer::Agent do
         expect(call_count).must_be :>, 0
       end
 
-      it "passes tool_context to lambda when it accepts a parameter" do
+      it "passes context to lambda when it accepts a parameter" do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         received_context = nil
@@ -1743,7 +1743,7 @@ describe Riffer::Agent do
 
         agent = agent_class.new
         context = {user_id: 123, admin: true}
-        agent.generate("Hello", tool_context: context)
+        agent.generate("Hello", context: context)
 
         expect(received_context).must_equal context
       end
@@ -1773,13 +1773,13 @@ describe Riffer::Agent do
         admin_agent = agent_class.new
         provider = admin_agent.send(:provider_instance)
         provider.stub_response("Done")
-        admin_agent.generate("Hello", tool_context: {admin: true})
+        admin_agent.generate("Hello", context: {admin: true})
         admin_tools = provider.calls.last[:tools]
 
         regular_agent = agent_class.new
         provider2 = regular_agent.send(:provider_instance)
         provider2.stub_response("Done")
-        regular_agent.generate("Hello", tool_context: {admin: false})
+        regular_agent.generate("Hello", context: {admin: false})
         regular_tools = provider2.calls.last[:tools]
 
         expect(admin_tools.length).must_equal 2
@@ -1800,8 +1800,8 @@ describe Riffer::Agent do
         end
 
         agent = agent_class.new
-        agent.generate("Hello", tool_context: {call: 1})
-        agent.generate("Hello again", tool_context: {call: 2})
+        agent.generate("Hello", context: {call: 1})
+        agent.generate("Hello again", context: {call: 2})
 
         expect(contexts_received.length).must_equal 2
         expect(contexts_received[0]).must_equal({call: 1})
@@ -2272,7 +2272,7 @@ describe Riffer::Agent do
         expect(result.interrupted?).must_equal false
       end
 
-      it "sets tool_context" do
+      it "sets context" do
         context_tool = Class.new(Riffer::Tool) do
           description "Gets user info"
           params do
@@ -2297,7 +2297,7 @@ describe Riffer::Agent do
         provider.stub_response("Your name is Alice!")
 
         messages = [Riffer::Messages::User.new("Get my name")]
-        agent.resume(messages: messages, tool_context: {user_name: "Alice"})
+        agent.resume(messages: messages, context: {user_name: "Alice"})
 
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "Alice"

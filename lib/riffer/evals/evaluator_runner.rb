@@ -22,20 +22,20 @@ class Riffer::Evals::EvaluatorRunner
   # Runs evaluators against an agent for the given scenarios.
   #
   # +agent+ - an Agent subclass (not an instance).
-  # +scenarios+ - array of hashes with +:input+, optional +:ground_truth+, and optional +:tool_context+.
+  # +scenarios+ - array of hashes with +:input+, optional +:ground_truth+, and optional +:context+.
   # +evaluators+ - array of Evaluator subclasses to run against each scenario.
-  # +tool_context+ - optional hash passed to +agent.generate+. Per-scenario +:tool_context+ takes precedence.
+  # +context+ - optional hash passed to +agent.generate+. Per-scenario +:context+ takes precedence.
   #
   # Raises Riffer::ArgumentError if agent is not a Riffer::Agent subclass
   # or any eval is not a Riffer::Evals::Evaluator subclass.
   #
-  #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-  def self.run(agent:, scenarios:, evaluators:, tool_context: nil)
+  #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  def self.run(agent:, scenarios:, evaluators:, context: nil)
     validate_agent!(agent)
     validate_evaluators!(evaluators)
 
     scenario_results = scenarios.map do |scenario|
-      run_scenario(agent: agent, scenario: scenario, evaluators: evaluators, tool_context: tool_context)
+      run_scenario(agent: agent, scenario: scenario, evaluators: evaluators, context: context)
     end
 
     Riffer::Evals::RunResult.new(scenario_results: scenario_results)
@@ -57,13 +57,13 @@ class Riffer::Evals::EvaluatorRunner
     end
   end
 
-  #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?tool_context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
-  private_class_method def self.run_scenario(agent:, scenario:, evaluators:, tool_context: nil)
+  #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
+  private_class_method def self.run_scenario(agent:, scenario:, evaluators:, context: nil)
     input = scenario[:input]
     ground_truth = scenario[:ground_truth]
-    context = scenario[:tool_context] || tool_context
+    resolved_context = scenario[:context] || context
 
-    response = agent.generate(input, tool_context: context)
+    response = agent.generate(input, context: resolved_context)
     output = response.content
 
     results = evaluators.map do |evaluator_class|

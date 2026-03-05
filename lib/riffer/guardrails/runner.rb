@@ -7,7 +7,7 @@
 # to the next. If any guardrail blocks, execution stops and a tripwire
 # is returned.
 #
-#   runner = Runner.new(guardrail_configs, phase: :before, context: tool_context)
+#   runner = Runner.new(guardrail_configs, phase: :before, context: context)
 #   data, tripwire, modifications = runner.run(messages)
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.

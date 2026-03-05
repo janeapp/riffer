@@ -145,7 +145,7 @@ Every tool must implement the `call` method and return a `Riffer::Tools::Respons
 
 ```ruby
 def call(context:, **kwargs)
-  # context - The tool_context passed to agent.generate()
+  # context - The context passed to agent.generate()
   # kwargs  - Validated parameters
   #
   # Must return a Riffer::Tools::Response
@@ -154,7 +154,7 @@ end
 
 ### Accessing Context
 
-The `context` argument receives whatever was passed to `tool_context`:
+The `context` argument receives whatever was passed as `context:` to `generate`:
 
 ```ruby
 class UserOrdersTool < Riffer::Tool
@@ -172,7 +172,7 @@ class UserOrdersTool < Riffer::Tool
 end
 
 # Usage
-agent.generate("Show my orders", tool_context: {user_id: 123})
+agent.generate("Show my orders", context: {user_id: 123})
 ```
 
 ## Response Objects
@@ -417,10 +417,10 @@ class MyAgent < Riffer::Agent
   }
 end
 
-agent.generate("Do work", tool_context: {parallel: true})
+agent.generate("Do work", context: {parallel: true})
 ```
 
-When the lambda accepts a parameter, it receives the `tool_context`. Zero-arity lambdas are also supported.
+When the lambda accepts a parameter, it receives the `context`. Zero-arity lambdas are also supported.
 
 ### Global Configuration
 
