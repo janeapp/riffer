@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0](https://github.com/janeapp/riffer/compare/riffer/v0.16.1...riffer/v1.0.0) (2026-03-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename `tool_context` to `context` ([#159](https://github.com/janeapp/riffer/issues/159))
+
+### Features
+
+* add experimental ToolRuntime abstraction for tool execution ([#156](https://github.com/janeapp/riffer/issues/156)) ([0ca7563](https://github.com/janeapp/riffer/commit/0ca7563df9f0a555e5fa6a1f3065d5f072abbf7e))
+* add interrupt! public method for clean loop interrupts ([#155](https://github.com/janeapp/riffer/issues/155)) ([a4cc877](https://github.com/janeapp/riffer/commit/a4cc8778b754e3932748454446eebd71795ad5e1))
+* add support for dynamic instructions ([#158](https://github.com/janeapp/riffer/issues/158)) ([408e09c](https://github.com/janeapp/riffer/commit/408e09c585142caca173a232ec20dde012553dc0))
+* auto-derive step offset on resume for max_steps enforcement ([#154](https://github.com/janeapp/riffer/issues/154)) ([fb97dbe](https://github.com/janeapp/riffer/commit/fb97dbec4a0edf5ea1e46bf44b93170663db04ef))
+
+
+### Bug Fixes
+
+* resolve edge cases in generate/resume and streaming methods ([#162](https://github.com/janeapp/riffer/issues/162)) ([f74d373](https://github.com/janeapp/riffer/commit/f74d373fb3cb8bb2d6c4617dd29ba3b30a3a8177))
+
+
+### Code Refactoring
+
+* rename `tool_context` to `context` ([#159](https://github.com/janeapp/riffer/issues/159)) ([5be7214](https://github.com/janeapp/riffer/commit/5be7214934866dfa24062b248c59324178f9956a))
+
 ## [0.16.1](https://github.com/janeapp/riffer/compare/riffer/v0.16.0...riffer/v0.16.1) (2026-03-03)
 
 
