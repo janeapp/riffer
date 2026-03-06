@@ -105,6 +105,20 @@ describe Riffer::Messages::Converter do
         result = instance.convert_to_message_object(assistant_message)
         expect(result.tool_calls).must_equal [tool_call]
       end
+
+      it "converts tool_call hashes to ToolCall structs" do
+        result = instance.convert_to_message_object({
+          role: "assistant",
+          content: "Let me search",
+          tool_calls: [{id: "1", call_id: "c1", name: "search", arguments: "{}"}]
+        })
+        tc = result.tool_calls.first
+        expect(tc).must_be_instance_of Riffer::Messages::Assistant::ToolCall
+        expect(tc.id).must_equal "1"
+        expect(tc.call_id).must_equal "c1"
+        expect(tc.name).must_equal "search"
+        expect(tc.arguments).must_equal "{}"
+      end
     end
 
     describe "with user message with files" do

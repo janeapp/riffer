@@ -67,7 +67,9 @@ module Riffer::Messages::Converter
       files = (hash[:files] || []).map { |f| convert_to_file_part(f) }
       Riffer::Messages::User.new(content, files: files)
     when :assistant
-      tool_calls = hash[:tool_calls] || []
+      tool_calls = (hash[:tool_calls] || []).map { |tc|
+        tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
+      }
       structured_output = hash[:structured_output]
       Riffer::Messages::Assistant.new(content, tool_calls: tool_calls, structured_output: structured_output)
     when :system
