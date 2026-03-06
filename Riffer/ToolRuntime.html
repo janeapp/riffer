@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::TimeoutError - Riffer Documentation</title>
+<title>class Riffer::ToolRuntime - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::TimeoutError"
+    content="ruby,class,Riffer::ToolRuntime"
   >
 
     <meta
       name="description"
-      content="class Riffer::TimeoutError: Raised when tool execution times out."
+      content="class Riffer::ToolRuntime: ToolRuntime handles tool call execution for an agent. Runner for concurrency control and provides +execute+ as the sole public entry point."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::TimeoutError - Riffer Documentation">
+<meta property="og:title" content="class Riffer::ToolRuntime - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Raised when tool execution times out.">
+    <meta property="og:description" content="ToolRuntime handles tool call execution for an agent. Runner for concurrency control and provides +execute+ as the sole public entry point.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::TimeoutError - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::ToolRuntime - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Raised when tool execution times out.">
+    <meta name="twitter:description" content="ToolRuntime handles tool call execution for an agent. Runner for concurrency control and provides +execute+ as the sole public entry point.">
 
 
 
@@ -570,7 +570,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Error.html">Riffer::Error</a><ul><li>StandardError</li></ul></li></ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -580,7 +580,47 @@
   
 
   
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
+
+
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-around_tool_call">around_tool_call</a></li>
+
+        <li ><a href="#method-i-execute">execute</a></li>
+
+      </ul>
+    </details>
+  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -601,7 +641,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-timeouterror">
+<main role="main" aria-labelledby="class-riffer-toolruntime">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -614,21 +654,27 @@
       
       <li>
         
-        <span>TimeoutError</span>
+        <span>ToolRuntime</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::TimeoutError" class="legacy-anchor"></span>
-  <h1 id="class-riffer-timeouterror" class="anchor-link class">
-    class Riffer::TimeoutError
+  <span id="class-Riffer::ToolRuntime" class="legacy-anchor"></span>
+  <h1 id="class-riffer-toolruntime" class="anchor-link class">
+    class Riffer::ToolRuntime
   </h1>
 
   <section class="description">
     
-<p>Raised when tool execution times out.</p>
+<p><a href="ToolRuntime.html"><code>Riffer::ToolRuntime</code></a> handles tool call execution for an agent.</p>
+
+<p>Composes with a <a href="Runner.html"><code>Riffer::Runner</code></a> for concurrency control and provides +execute+ as the sole public entry point.</p>
+
+<p>Subclass and override +dispatch_tool_call+ to customize how individual tool calls are dispatched (e.g., HTTP, gRPC).</p>
+
+<p>runtime = <a href="ToolRuntime/Inline.html#method-c-new"><code>Riffer::ToolRuntime::Inline.new</code></a> results = runtime.execute(tool_calls, tools: tools, context: context)</p>
 
   </section>
 
@@ -647,11 +693,183 @@
 
 
 
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(runner:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool_runtime.rb, line 24</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">runner:</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} is abstract — use a subclass like Riffer::ToolRuntime::Inline&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">instance_of?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span>)
+  <span class="ruby-ivar">@runner</span> = <span class="ruby-identifier">runner</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>+runner+ - the concurrency runner to use for batch execution.</p>
+
+<p>Subclasses must provide a runner; instantiating <a href="ToolRuntime.html"><code>ToolRuntime</code></a> directly raises +NotImplementedError+.</p>
+
+<p>: (runner: <a href="Runner.html"><code>Riffer::Runner</code></a>) -&gt; void</p>
+
+
+        </div>
 
 
 
 
 
+      </div>
+
+
+    </section>
+
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-around_tool_call" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-around_tool_call" title="Link to this method">
+                <span class="method-name">around_tool_call</span>
+                <span class="method-args">(tool_call, context:) { || ... }</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="around_tool_call-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool_runtime.rb, line 62</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span>)
+  <span class="ruby-keyword">yield</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Hook that wraps each tool call execution. Override in subclasses to customize. Must +yield+ to continue execution.</p>
+
+<p>The default implementation simply yields.</p>
+
+<p>class InstrumentedRuntime &lt; <a href="ToolRuntime/Inline.html"><code>Riffer::ToolRuntime::Inline</code></a> private</p>
+
+<pre class="ruby"> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span>)
+   <span class="ruby-identifier">start</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+   <span class="ruby-identifier">result</span> = <span class="ruby-keyword">yield</span>
+   <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Tool #{tool_call.name} took #{Time.now - start}s&quot;</span>)
+   <span class="ruby-identifier">result</span>
+ <span class="ruby-keyword">end</span>
+</pre>
+
+<p>end</p>
+
+<p>: (<a href="Messages/Assistant.html#ToolCall"><code>Riffer::Messages::Assistant::ToolCall</code></a>, context: Hash[Symbol, untyped]?) { () -&gt; <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a> } -&gt; <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a></p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-execute" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-execute" title="Link to this method">
+                <span class="method-name">execute</span>
+                <span class="method-args">(tool_calls, tools:, context:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="execute-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool_runtime.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">execute</span>(<span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">tools:</span>, <span class="ruby-value">context:</span>)
+  <span class="ruby-ivar">@runner</span>.<span class="ruby-identifier">map</span>(<span class="ruby-identifier">tool_calls</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tool_call</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>) <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">dispatch_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">tools:</span> <span class="ruby-identifier">tools</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>)
+    <span class="ruby-keyword">end</span>
+    [<span class="ruby-identifier">tool_call</span>, <span class="ruby-identifier">result</span>]
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Executes a batch of tool calls, returning +[tool_call, response]+ pairs.</p>
+
+<p>+tool_calls+ - the tool calls to execute. +tools+ - the resolved tool classes. +context+ - the context hash.</p>
+
+<p>: (<a href="Riffer::Messages::Assistant::ToolCall">Array</a>, tools: <a href="singleton(Riffer::Tool)">Array</a>, context: Hash[Symbol, untyped]?) -&gt; Array[[Riffer::Messages::Assistant::ToolCall, <a href="Tools/Response.html"><code>Riffer::Tools::Response</code></a>]]</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
 
 

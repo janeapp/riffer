@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Messages::System - Riffer Documentation</title>
+<title>class Riffer::Runner::Threaded - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Messages::System"
+    content="ruby,class,Riffer::Runner::Threaded"
   >
 
     <meta
       name="description"
-      content="class Riffer::Messages::System: Represents a system message (instructions) in a conversation. System."
+      content="class Riffer::Runner::Threaded: Processes items concurrently using a thread pool. Maintains up to +max_concurrency+ worker threads that pull items from a shared queue."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Messages::System - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Runner::Threaded - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents a system message (instructions) in a conversation. System.">
+    <meta property="og:description" content="Processes items concurrently using a thread pool. Maintains up to +max_concurrency+ worker threads that pull items from a shared queue.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Messages::System - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Runner::Threaded - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents a system message (instructions) in a conversation. System.">
+    <meta name="twitter:description" content="Processes items concurrently using a thread pool. Maintains up to +max_concurrency+ worker threads that pull items from a shared queue.">
 
 
 
@@ -570,7 +570,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::Messages::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="../Runner.html">Riffer::Runner</a><ul><li>Object</li></ul></li></ul>
   </details>
 </div>
 
@@ -580,6 +580,25 @@
   
 
   
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
 
   <div class="nav-section">
@@ -595,7 +614,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-role">role</a></li>
+        <li ><a href="#method-i-map">map</a></li>
 
       </ul>
     </details>
@@ -620,7 +639,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-messages-system">
+<main role="main" aria-labelledby="class-riffer-runner-threaded">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -633,29 +652,33 @@
       
       <li>
         
-        <a href="../../Riffer/Messages.html">Messages</a><span>::</span>
+        <a href="../../Riffer/Runner.html">Runner</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>System</span>
+        <span>Threaded</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Messages::System" class="legacy-anchor"></span>
-  <h1 id="class-riffer-messages-system" class="anchor-link class">
-    class Riffer::Messages::System
+  <span id="class-Riffer::Runner::Threaded" class="legacy-anchor"></span>
+  <h1 id="class-riffer-runner-threaded" class="anchor-link class">
+    class Riffer::Runner::Threaded
   </h1>
 
   <section class="description">
     
-<p>Represents a system message (instructions) in a conversation.</p>
+<p>Processes items concurrently using a thread pool.</p>
 
-<p>msg = <a href="Base.html#method-c-new"><code>Riffer::Messages::System.new</code></a>(“You are a helpful assistant.”) msg.role # =&gt; :system msg.content # =&gt; “You are a helpful assistant.”</p>
+<p>Maintains up to +max_concurrency+ worker threads that pull items from a shared queue. When a worker finishes one item it immediately picks up the next, so a single slow item does not block other workers.</p>
+
+<p>If multiple workers raise, only the first exception is re-raised after all workers finish; subsequent errors are discarded.</p>
+
+<p>runner = <a href="Threaded.html#method-c-new"><code>Riffer::Runner::Threaded.new</code></a>(max_concurrency: 3) runner.map(items) { |item| expensive_operation(item) }</p>
 
   </section>
 
@@ -667,12 +690,81 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="DEFAULT_MAX_CONCURRENCY">DEFAULT_MAX_CONCURRENCY</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
 
 
 
 
 
 
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(max_concurrency: DEFAULT_MAX_CONCURRENCY)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/threaded.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">max_concurrency:</span> <span class="ruby-constant">DEFAULT_MAX_CONCURRENCY</span>)
+  <span class="ruby-ivar">@max_concurrency</span> = <span class="ruby-identifier">max_concurrency</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>+max_concurrency+ - maximum number of threads to run simultaneously.</p>
+
+<p>: (?max_concurrency: Integer) -&gt; void</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
 
 
@@ -686,13 +778,13 @@
        </header>
 
 
-      <div id="method-i-role" class="method-detail anchor-link ">
+      <div id="method-i-map" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-role" title="Link to this method">
-                <span class="method-name">role</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-map" title="Link to this method">
+                <span class="method-name">map</span>
+                <span class="method-args">(items, &amp;block)</span>
               </a>
             </div>
 
@@ -704,10 +796,40 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/system.rb, line 12</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
-  <span class="ruby-value">:system</span>
+          <div class="method-source-code" id="map-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/threaded.rb, line 27</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">map</span>(<span class="ruby-identifier">items</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">items</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">results</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">items</span>.<span class="ruby-identifier">size</span>)
+  <span class="ruby-identifier">errors</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">items</span>.<span class="ruby-identifier">size</span>)
+  <span class="ruby-identifier">queue</span> = <span class="ruby-constant">Queue</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">items</span>.<span class="ruby-identifier">each_with_index</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">item</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span> <span class="ruby-identifier">queue</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">item</span>, <span class="ruby-identifier">i</span>] }
+
+  <span class="ruby-identifier">workers</span> = [<span class="ruby-identifier">items</span>.<span class="ruby-identifier">size</span>, <span class="ruby-ivar">@max_concurrency</span>].<span class="ruby-identifier">min</span>.<span class="ruby-identifier">times</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+        <span class="ruby-identifier">pair</span> = <span class="ruby-keyword">begin</span>
+          <span class="ruby-identifier">queue</span>.<span class="ruby-identifier">pop</span>(<span class="ruby-keyword">true</span>)
+        <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ThreadError</span>
+          <span class="ruby-keyword">break</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">item</span>, <span class="ruby-identifier">index</span> = <span class="ruby-identifier">pair</span>
+        <span class="ruby-keyword">begin</span>
+          <span class="ruby-identifier">results</span>[<span class="ruby-identifier">index</span>] = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">item</span>)
+        <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
+          <span class="ruby-identifier">errors</span>[<span class="ruby-identifier">index</span>] = <span class="ruby-identifier">e</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">workers</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:join</span>)
+
+  <span class="ruby-identifier">first_error</span> = <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">first</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-identifier">first_error</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_error</span>
+
+  <span class="ruby-identifier">results</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -716,7 +838,7 @@
         <div class="method-description">
 
 
-          <p>: () -&gt; Symbol</p>
+          <p>: (<a href="untyped">Array</a>) { (untyped) -&gt; untyped } -&gt; <a href="untyped">Array</a></p>
 
 
         </div>

@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Messages::System - Riffer Documentation</title>
+<title>class Riffer::Runner::Sequential - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Messages::System"
+    content="ruby,class,Riffer::Runner::Sequential"
   >
 
     <meta
       name="description"
-      content="class Riffer::Messages::System: Represents a system message (instructions) in a conversation. System."
+      content="class Riffer::Runner::Sequential: Processes items sequentially in the current thread. This is the default runner used when no concurrency is needed."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Messages::System - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Runner::Sequential - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents a system message (instructions) in a conversation. System.">
+    <meta property="og:description" content="Processes items sequentially in the current thread. This is the default runner used when no concurrency is needed.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Messages::System - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Runner::Sequential - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents a system message (instructions) in a conversation. System.">
+    <meta name="twitter:description" content="Processes items sequentially in the current thread. This is the default runner used when no concurrency is needed.">
 
 
 
@@ -570,7 +570,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::Messages::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="../Runner.html">Riffer::Runner</a><ul><li>Object</li></ul></li></ul>
   </details>
 </div>
 
@@ -595,7 +595,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-role">role</a></li>
+        <li ><a href="#method-i-map">map</a></li>
 
       </ul>
     </details>
@@ -620,7 +620,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-messages-system">
+<main role="main" aria-labelledby="class-riffer-runner-sequential">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -633,29 +633,29 @@
       
       <li>
         
-        <a href="../../Riffer/Messages.html">Messages</a><span>::</span>
+        <a href="../../Riffer/Runner.html">Runner</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>System</span>
+        <span>Sequential</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Messages::System" class="legacy-anchor"></span>
-  <h1 id="class-riffer-messages-system" class="anchor-link class">
-    class Riffer::Messages::System
+  <span id="class-Riffer::Runner::Sequential" class="legacy-anchor"></span>
+  <h1 id="class-riffer-runner-sequential" class="anchor-link class">
+    class Riffer::Runner::Sequential
   </h1>
 
   <section class="description">
     
-<p>Represents a system message (instructions) in a conversation.</p>
+<p>Processes items sequentially in the current thread.</p>
 
-<p>msg = <a href="Base.html#method-c-new"><code>Riffer::Messages::System.new</code></a>(“You are a helpful assistant.”) msg.role # =&gt; :system msg.content # =&gt; “You are a helpful assistant.”</p>
+<p>This is the default runner used when no concurrency is needed.</p>
 
   </section>
 
@@ -686,13 +686,13 @@
        </header>
 
 
-      <div id="method-i-role" class="method-detail anchor-link ">
+      <div id="method-i-map" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-role" title="Link to this method">
-                <span class="method-name">role</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-map" title="Link to this method">
+                <span class="method-name">map</span>
+                <span class="method-args">(items, &amp;block)</span>
               </a>
             </div>
 
@@ -704,10 +704,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/system.rb, line 12</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
-  <span class="ruby-value">:system</span>
+          <div class="method-source-code" id="map-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/sequential.rb, line 10</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">map</span>(<span class="ruby-identifier">items</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">items</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -716,7 +716,7 @@
         <div class="method-description">
 
 
-          <p>: () -&gt; Symbol</p>
+          <p>: (<a href="untyped">Array</a>) { (untyped) -&gt; untyped } -&gt; <a href="untyped">Array</a></p>
 
 
         </div>
