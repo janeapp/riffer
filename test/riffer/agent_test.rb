@@ -2387,6 +2387,44 @@ describe Riffer::Agent do
         expect(system_messages.length).must_equal 1
         expect(system_messages.first.content).must_equal "Custom instructions."
       end
+
+      it "executes pending tool calls from hash-serialized messages" do
+        tc = Class.new(Riffer::Tool) do
+          description "Simple tool"
+          def call(context:)
+            text("done")
+          end
+        end.tap { |t| t.identifier("cross_process_pending_tool") }
+
+        tool = tc
+        custom_agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          uses_tools [tool]
+        end
+
+        agent = custom_agent_class.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response("All done!")
+
+        messages = [
+          {role: "user", content: "Call tool"},
+          {role: "assistant", content: "", tool_calls: [{id: "tc_1", call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}"}]}
+        ]
+        result = agent.resume(messages: messages)
+        expect(result.interrupted?).must_equal false
+
+        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        expect(tool_messages.length).must_equal 1
+        expect(tool_messages.first.content).must_equal "done"
+      end
+
+      it "clears context when not provided on cross-process resume" do
+        agent = agent_class.new
+        agent.generate("Hello", context: {user: "Alice"})
+
+        agent.resume(messages: [Riffer::Messages::User.new("Hello")])
+        expect(agent.send(:instance_variable_get, :@context)).must_be_nil
+      end
     end
 
     describe "auto-derived step offset" do
@@ -2453,6 +2491,52 @@ describe Riffer::Agent do
         )
         expect(result.interrupted?).must_equal true
         expect(result.interrupt_reason).must_equal :max_steps
+      end
+    end
+
+    describe "with structured_output" do
+      it "returns parsed structured_output on in-memory resume" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          structured_output do
+            required :sentiment, String
+          end
+        end
+
+        agent = klass.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response('{"sentiment":"positive"}')
+
+        interrupted_once = false
+        agent.on_message do |_msg|
+          unless interrupted_once
+            interrupted_once = true
+            throw :riffer_interrupt
+          end
+        end
+
+        agent.generate("Analyze sentiment")
+
+        provider.stub_response('{"sentiment":"negative"}')
+        result = agent.resume
+        expect(result.structured_output).must_equal({sentiment: "negative"})
+      end
+
+      it "returns parsed structured_output on cross-process resume" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          structured_output do
+            required :sentiment, String
+          end
+        end
+
+        agent = klass.new
+        provider = agent.send(:provider_instance)
+        provider.stub_response('{"sentiment":"positive"}')
+
+        messages = [Riffer::Messages::User.new("Analyze sentiment")]
+        result = agent.resume(messages: messages)
+        expect(result.structured_output).must_equal({sentiment: "positive"})
       end
     end
   end
@@ -2539,6 +2623,18 @@ describe Riffer::Agent do
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
         expect(interrupt_event).must_be_nil
       end
+    end
+
+    it "raises when structured_output is configured" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        structured_output do
+          required :sentiment, String
+        end
+      end
+      agent = klass.new
+      error = expect { agent.resume_stream }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/Structured output is not supported with streaming/)
     end
   end
 

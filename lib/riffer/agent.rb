@@ -295,6 +295,7 @@ class Riffer::Agent
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def resume(messages: nil, context: nil)
     restore_state(messages: messages, context: context)
+    @structured_output = resolve_structured_output
     run_generate_loop(resume: true)
   end
 
@@ -304,6 +305,8 @@ class Riffer::Agent
   #
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def resume_stream(messages: nil, context: nil)
+    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #resume instead." if self.class.structured_output
+
     restore_state(messages: messages, context: context)
 
     Enumerator.new do |yielder|
@@ -410,7 +413,7 @@ class Riffer::Agent
   #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> void
   def restore_state(messages: nil, context: nil)
     @messages = messages.map { |item| convert_to_message_object(item) } if messages
-    @context = context if context
+    @context = context
     prepare_run
   end
 
@@ -507,7 +510,7 @@ class Riffer::Agent
       messages: @messages,
       model: @model_name,
       tools: resolved_tools,
-      **self.class.model_options
+      **merged_model_options
     )
   end
 
