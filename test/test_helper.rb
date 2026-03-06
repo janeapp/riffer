@@ -41,3 +41,8 @@ VCR.configure do |config|
 end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
+
+# Clears the MCP registry between tests, retiring any in-flight discovery threads.
+def clear_mcp_registry!
+  Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
+end

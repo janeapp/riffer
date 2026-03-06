@@ -1,0 +1,17 @@
+# Generated from lib/riffer/mcp/authenticated_tool.rb with RBS::Inline
+
+# Wraps MCP-generated tool classes so +tools/call+ uses +Riffer.config.mcp.credentials+
+# per invocation while delegating metadata to the inner class.
+module Riffer::Mcp::AuthenticatedTool
+  # Returns one wrapper class per inner tool, sharing +manifest+ and +matched_tags+.
+  #
+  # --
+  # : (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
+  def self.wrap_all: (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
+  #  Class.new(Riffer::Tool) is typed as ::Class by steep — it cannot verify the subtype
+  #  relationship for dynamically created anonymous classes, so the ignore is required.
+  def self.wrap_one: (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
+end

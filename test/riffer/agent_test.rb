@@ -3554,4 +3554,218 @@ describe Riffer::Agent do
       expect(msg.content).must_include "Available Skills"
     end
   end
+
+  describe ".use_mcp / .mcp_configs" do
+    after { clear_mcp_registry! }
+
+    it "returns empty array when no use_mcp calls have been made" do
+      klass = Class.new(Riffer::Agent)
+      expect(klass.mcp_configs).must_equal []
+    end
+
+    it "accumulates mcp_configs from multiple use_mcp calls" do
+      klass = Class.new(Riffer::Agent) do
+        use_mcp :foo
+        use_mcp :bar, on_pending: :wait
+      end
+      expect(klass.mcp_configs.size).must_equal 2
+    end
+
+    it "normalizes tag to symbol" do
+      klass = Class.new(Riffer::Agent) { use_mcp "mytag" }
+      expect(klass.mcp_configs.first[:tags]).must_equal [:mytag]
+    end
+
+    it "stores on_pending per config entry" do
+      klass = Class.new(Riffer::Agent) { use_mcp :foo, on_pending: :raise }
+      expect(klass.mcp_configs.first[:on_pending]).must_equal :raise
+    end
+
+    it "stores nil on_pending when not provided (falls back to global config)" do
+      klass = Class.new(Riffer::Agent) { use_mcp :foo }
+      expect(klass.mcp_configs.first[:on_pending]).must_be_nil
+    end
+  end
+
+  describe "#resolved_tools with use_mcp" do
+    after { clear_mcp_registry! }
+
+    let(:fake_tool_class) do
+      klass = Class.new(Riffer::Tool)
+      klass.instance_variable_set(:@identifier, "mcp_tool")
+      klass
+    end
+
+    # Builds a stub registration and injects it directly into the registry store.
+    def inject_ready_registration(name:, tags:, tools:)
+      manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com", discovery_headers: {})
+      reg = Riffer::Mcp::Registration.allocate
+      reg.instance_variable_set(:@manifest, manifest)
+      reg.instance_variable_set(:@ready, true)
+      reg.instance_variable_set(:@tools, tools)
+      reg.instance_variable_set(:@agent, nil)
+      reg.instance_variable_set(:@mutex, Mutex.new)
+      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
+      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
+      reg
+    end
+
+    def inject_pending_registration(name:, tags:, discovery_error: nil)
+      manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com", discovery_headers: {})
+      reg = Riffer::Mcp::Registration.allocate
+      reg.instance_variable_set(:@manifest, manifest)
+      reg.instance_variable_set(:@ready, false)
+      reg.instance_variable_set(:@tools, [])
+      reg.instance_variable_set(:@agent, nil)
+      reg.instance_variable_set(:@discovery_error, discovery_error)
+      reg.instance_variable_set(:@mutex, Mutex.new)
+      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
+      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
+      reg
+    end
+
+    def resolved_tools_for(klass)
+      instance = klass.allocate
+      instance.instance_variable_set(:@context, nil)
+      instance.send(:resolved_tools)
+    end
+
+    it "merges MCP tools with uses_tools tools" do
+      static_tool = Class.new(Riffer::Tool)
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [static_tool]
+        use_mcp :srv
+      end
+
+      tools = resolved_tools_for(klass)
+      expect(tools).must_include static_tool
+      expect(tools).must_include fake_tool_class
+    end
+
+    it "raises ArgumentError when static tools and MCP tools share the same name" do
+      static = fake_tool_class
+      conflicting = Class.new(Riffer::Tool) do
+        identifier "mcp_tool"
+      end
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [conflicting])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [static]
+        use_mcp :srv
+      end
+
+      err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/Duplicate tool names:.*mcp_tool/)
+    end
+
+    it "returns MCP tools even when uses_tools is not set" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      expect(resolved_tools_for(klass)).must_include fake_tool_class
+    end
+
+    it "applies :ignore strategy and skips pending servers" do
+      inject_pending_registration(name: "srv", tags: [:srv])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, on_pending: :ignore
+      end
+
+      expect(resolved_tools_for(klass)).must_be_empty
+    end
+
+    it "applies :raise strategy and raises NotReadyError for pending servers" do
+      inject_pending_registration(name: "srv", tags: [:srv])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, on_pending: :raise
+      end
+
+      expect { resolved_tools_for(klass) }.must_raise Riffer::Mcp::NotReadyError
+    end
+
+    it "applies :raise strategy and re-raises discovery_error when discovery failed" do
+      inject_pending_registration(name: "srv", tags: [:srv], discovery_error: RuntimeError.new("mcp list failed"))
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, on_pending: :raise
+      end
+
+      err = expect { resolved_tools_for(klass) }.must_raise RuntimeError
+      expect(err.message).must_equal "mcp list failed"
+    end
+
+    it "applies :wait strategy and re-raises discovery_error when discovery failed" do
+      inject_pending_registration(name: "srv", tags: [:srv], discovery_error: RuntimeError.new("mcp list failed"))
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, on_pending: :wait
+      end
+
+      err = expect { resolved_tools_for(klass) }.must_raise RuntimeError
+      expect(err.message).must_equal "mcp list failed"
+    end
+
+    it "falls back to global on_pending when per-use_mcp on_pending is nil" do
+      inject_pending_registration(name: "srv", tags: [:srv])
+      prev_on_pending = Riffer.config.mcp.on_pending
+      Riffer.config.mcp.on_pending = :ignore
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      expect(resolved_tools_for(klass)).must_be_empty
+    ensure
+      Riffer.config.mcp.on_pending = prev_on_pending
+    end
+
+    it "omits MCP tools when credentials proc returns nil at resolve time" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      prev = Riffer.config.mcp.credentials
+      Riffer.config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
+      end
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      expect(resolved_tools_for(klass)).must_be_empty
+    ensure
+      Riffer.config.mcp.credentials = prev
+    end
+
+    it "uses AuthenticatedTool wrappers when credentials proc is set" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      prev = Riffer.config.mcp.credentials
+      Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { {"Authorization" => "Bearer x"} }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      tools = resolved_tools_for(klass)
+      expect(tools.size).must_equal 1
+      expect(tools.first).wont_equal fake_tool_class
+      expect(tools.first.name).must_equal fake_tool_class.name
+    ensure
+      Riffer.config.mcp.credentials = prev
+    end
+  end
 end

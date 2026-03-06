@@ -1,0 +1,72 @@
+# Generated from lib/riffer/mcp/registration.rb with RBS::Inline
+
+# Per-server state managed by Riffer::Mcp::Registry.
+#
+# Created when a server is registered. Spawns a background thread to discover
+# tools via the MCP +tools/list+ call, then generates tool classes.
+class Riffer::Mcp::Registration
+  # The manifest that describes this server.
+  attr_reader manifest: Riffer::Mcp::Manifest
+
+  # Generated Riffer::Tool subclasses (empty until discovery completes).
+  #
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def tools: () -> Array[singleton(Riffer::Tool)]
+
+  # Exception from failed tool discovery, or +nil+ if discovery succeeded or is still in progress.
+  #
+  # --
+  # : () -> Exception?
+  def discovery_error: () -> Exception?
+
+  # --
+  # : (Riffer::Mcp::Manifest) -> void
+  def initialize: (Riffer::Mcp::Manifest) -> void
+
+  # Retires this registration, preventing the discovery thread from publishing
+  # state and killing it if still running.
+  #
+  # --
+  # : () -> void
+  def retire!: () -> void
+
+  # Returns true once tool discovery has completed successfully.
+  #
+  # --
+  # : () -> bool
+  def ready?: () -> bool
+
+  # Returns true if this registration has been retired.
+  #
+  # --
+  # : () -> bool
+  def retired?: () -> bool
+
+  # Blocks the calling thread until this registration is ready or the timeout elapses.
+  #
+  # If tool discovery failed in the background thread, re-raises that exception
+  # immediately (no wait for +wait_timeout+).
+  #
+  # Raises Riffer::Mcp::TimeoutError if discovery is still in progress and
+  # +Riffer.config.mcp.wait_timeout+ seconds pass without becoming ready.
+  #
+  # --
+  # : () -> void
+  def wait_until_ready!: () -> void
+
+  private
+
+  # Discovery is a one-shot background init task, not concurrent tool execution
+  # during an agent run, so ToolRuntime does not apply. The factory is exposed
+  # for environments where raw Thread.new has side effects (e.g. connection pool
+  # inheritance in Rails).
+  #
+  # --
+  # : () -> Thread
+  def spawn_discovery_thread: () -> Thread
+
+  # --
+  # : () -> Riffer::Mcp::Client
+  def build_client: () -> Riffer::Mcp::Client
+end

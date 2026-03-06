@@ -1,0 +1,35 @@
+# Generated from lib/riffer/mcp/registry.rb with RBS::Inline
+
+# Thread-safe global store for MCP server registrations.
+#
+# Keyed by manifest name. All public methods are mutex-guarded.
+module Riffer::Mcp::Registry
+  # Registers an MCP server and starts async tool discovery.
+  #
+  # Accepts a Manifest instance or a hash of manifest keyword arguments.
+  # Replaces any existing registration with the same name.
+  #
+  # --
+  # : ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
+  def self.register: (Hash[Symbol, untyped] | Riffer::Mcp::Manifest) -> Riffer::Mcp::Registration
+
+  # Removes a registration by name.
+  #
+  # --
+  # : ((String | Symbol)) -> void
+  def self.unregister: (String | Symbol) -> void
+
+  # Returns a frozen snapshot of all current registrations.
+  #
+  # --
+  # : () -> Hash[String, Riffer::Mcp::Registration]
+  def self.registrations: () -> Hash[String, Riffer::Mcp::Registration]
+
+  # Returns all registrations whose manifest tags intersect with the given tags.
+  #
+  # Tags are normalized to symbols before matching.
+  #
+  # --
+  # : (Array[Symbol]) -> Array[Riffer::Mcp::Registration]
+  def self.find_by_tags: (Array[Symbol]) -> Array[Riffer::Mcp::Registration]
+end

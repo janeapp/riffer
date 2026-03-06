@@ -124,6 +124,10 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+### use_mcp
+
+Loads tools from registered [MCP](14_MCP.md) servers by tag. Like `uses_tools`, **`use_mcp` is not inherited**—add it on each subclass that should include MCP tools.
+
 ### provider_options
 
 Passes options to the provider client:

@@ -34,6 +34,28 @@ Riffer.config.anthropic.api_key
 
 For provider credentials and setup, see the individual [Provider guides](providers/).
 
+### MCP (Model Context Protocol)
+
+Optional settings for [MCP server integrations](14_MCP.md):
+
+| Option          | Description                                                                                                     |
+| --------------- | --------------------------------------------------------------------------------------------------------------- |
+| `on_pending`    | `:ignore` (default), `:wait`, or `:raise` when tool discovery is not finished yet                               |
+| `wait_timeout`  | Seconds to wait when `on_pending` is `:wait` (default `10`)                                                     |
+| `credentials`   | Optional `Proc` for per-run `tools/call` HTTP headers: `->(manifest:, matched_tags:, context:) { Hash or nil }` |
+
+```ruby
+Riffer.configure do |config|
+  config.mcp.on_pending = :wait
+  config.mcp.wait_timeout = 30
+  config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
+    {"Authorization" => "Bearer #{token_for(context)}"}
+  end
+end
+```
+
+See [MCP](14_MCP.md) for registration, tags, and agent `use_mcp`.
+
 ### Tool Runtime (Experimental)
 
 > **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
@@ -46,11 +68,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Value                          | Description                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `Riffer::ToolRuntime` subclass | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`) |
-| `Riffer::ToolRuntime` instance | Custom runtime with specific options                                                              |
-| `Proc`                         | Dynamic resolution                                                                                |
+| Value                           | Description                                                                                        |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `Riffer::ToolRuntime` subclass  | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`)  |
+| `Riffer::ToolRuntime` instance  | Custom runtime with specific options                                                               |
+| `Proc`                          | Dynamic resolution                                                                                 |
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 

@@ -60,6 +60,7 @@ For comprehensive documentation, see the [docs](docs/) directory:
 - [Evals](docs/11_EVALS.md) - Evaluating agent quality
 - [Guardrails](docs/12_GUARDRAILS.md) - Input/output validation
 - [Skills](docs/13_SKILLS.md) - Packaged agent capabilities
+- [MCP](docs/14_MCP.md) - Integrating third-party MCP servers
 - [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
 
 ### API Reference

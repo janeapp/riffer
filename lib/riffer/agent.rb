@@ -172,6 +172,26 @@ class Riffer::Agent
   end
   private_class_method :resolve_uses_tools_config
 
+  # Opts this agent into tools from all MCP registrations that share any of
+  # the given tag(s).
+  #
+  # +tag+ - a String or Symbol; matched against registration manifest tags.
+  # +on_pending:+ - per-call override for the global +Riffer.config.mcp.on_pending+
+  #   strategy. One of +:ignore+, +:wait+, or +:raise+.
+  #
+  #: (String | Symbol, ?on_pending: Symbol?) -> void
+  def self.use_mcp(tag, on_pending: nil)
+    @mcp_configs ||= []
+    @mcp_configs << {tags: [tag.to_sym], on_pending: on_pending}
+  end
+
+  # Returns the accumulated +use_mcp+ configurations for this agent class.
+  #
+  #: () -> Array[Hash[Symbol, untyped]]
+  def self.mcp_configs
+    @mcp_configs || []
+  end
+
   # Gets or sets the tool runtime for this agent.
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
@@ -756,8 +776,94 @@ class Riffer::Agent
 
   #--
   #: () -> Array[singleton(Riffer::Tool)]
+  def resolve_uses_tools_config
+    config = self.class.uses_tools
+
+    if config.nil?
+      []
+    elsif config.is_a?(Proc)
+      (config.arity == 0) ? config.call : config.call(@context)
+    else
+      config
+    end
+  end
+
+  #--
+  #: () -> Array[singleton(Riffer::Tool)]
+  def resolve_mcp_tool_classes
+    configs = self.class.mcp_configs
+    return [] if configs.empty?
+
+    cred = Riffer.config.mcp.credentials
+    ctx = @context
+    gather_mcp_registrations_with_tags(configs).flat_map do |reg, tag_accum|
+      matched_tags = tag_accum.uniq
+      mcp_tools_for_registration(reg, matched_tags, cred, ctx)
+    end
+  end
+
+  # Each matching MCP registration once, with tag symbols unioned across +use_mcp+ rows.
+  #
+  #: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
+  def gather_mcp_registrations_with_tags(configs)
+    by_reg = {}
+    configs.each do |cfg|
+      on_pending = cfg[:on_pending] || Riffer.config.mcp.on_pending
+      Riffer::Mcp::Registry.find_by_tags(cfg[:tags]).each do |reg|
+        next unless mcp_registration_ready!(reg, on_pending)
+
+        (by_reg[reg] ||= []).concat(cfg[:tags] & reg.manifest.tags)
+      end
+    end
+    by_reg
+  end
+
+  # Returns true if +reg+ is ready for tool resolution (waiting when +on_pending+ is +:wait+).
+  #
+  #: (Riffer::Mcp::Registration, Symbol) -> bool
+  def mcp_registration_ready!(reg, on_pending)
+    return true if reg.ready?
+
+    case on_pending
+    when :ignore
+      false
+    when :wait
+      reg.wait_until_ready!
+      true
+    when :raise
+      if (err = reg.discovery_error)
+        raise err
+      end
+      raise Riffer::Mcp::NotReadyError, "MCP server '#{reg.manifest.name}' is not ready"
+    else
+      raise Riffer::ArgumentError, "Invalid mcp on_pending: #{on_pending.inspect}"
+    end
+  end
+
+  #: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  def mcp_tools_for_registration(reg, matched_tags, cred, ctx)
+    return reg.tools unless cred
+    return [] if cred.call(manifest: reg.manifest, matched_tags: matched_tags, context: ctx).nil?
+    Riffer::Mcp::AuthenticatedTool.wrap_all(reg.tools, reg.manifest, matched_tags)
+  end
+
+  # Raises if two or more tool classes share the same +.name+ (ambiguous dispatch).
+  #
+  #: (Array[singleton(Riffer::Tool)]) -> void
+  def assert_distinct_tool_names!(tool_classes)
+    tally = Hash.new(0) #: Hash[String, Integer]
+    tool_classes.each { |tc| tally[tc.name] += 1 }
+    dupes = tally.filter_map { |name, n| name if n > 1 }
+    return if dupes.empty?
+
+    raise Riffer::ArgumentError, "Duplicate tool names: #{dupes.sort.join(", ")}"
+  end
+
+  #: () -> Array[singleton(Riffer::Tool)]
   def resolved_tools
-    @resolved_tools ||= self.class.resolved_tool_classes(context: @context)
+    @resolved_tools ||= self.class.resolved_tool_classes(context: @context) + resolve_mcp_tool_classes
+    assert_distinct_tool_names!(@resolved_tools)
+    @resolved_tools
   end
 
   #--
