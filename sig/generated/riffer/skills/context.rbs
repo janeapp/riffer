@@ -46,4 +46,9 @@ class Riffer::Skills::Context
   #
   # : () -> String
   def system_prompt: () -> String
+
+  private
+
+  # : () -> Array[Riffer::Skills::Frontmatter]
+  def available_skills: () -> Array[Riffer::Skills::Frontmatter]
 end

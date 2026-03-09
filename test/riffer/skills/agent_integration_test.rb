@@ -204,8 +204,29 @@ describe "Agent skills integration" do
 
       system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
       assert_includes system_message.content, "Base instructions."
-      assert_includes system_message.content, "Available Skills"
       assert_includes system_message.content, "code review assistant"
+      # Pre-activated skill should not appear in the catalog
+      refute_includes system_message.content, "- **code-review**"
+      # Non-activated skill should still be in the catalog
+      assert_includes system_message.content, "- **data-analysis**"
+    end
+
+    it "omits catalog entirely when all skills are pre-activated" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+          activate ["code-review", "data-analysis"]
+        end
+      end
+
+      agent = agent_class.new
+      agent.generate("Hello")
+
+      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
+      refute_includes system_message.content, "Available Skills"
+      assert_includes system_message.content, "code review assistant"
+      assert_includes system_message.content, "data analysis assistant"
     end
 
     it "raises on unknown activated skill" do

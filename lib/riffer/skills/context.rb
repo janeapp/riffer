@@ -60,8 +60,17 @@ class Riffer::Skills::Context
   #
   #: () -> String
   def system_prompt
-    parts = [@adapter.render_catalog(skills.values)]
+    available = available_skills
+    parts = []
+    parts << @adapter.render_catalog(available) unless available.empty?
     @activated.each_value { |body| parts << body }
     parts.join("\n\n")
+  end
+
+  private
+
+  #: () -> Array[Riffer::Skills::Frontmatter]
+  def available_skills
+    skills.values.reject { |skill| @activated.key?(skill.name) }
   end
 end
