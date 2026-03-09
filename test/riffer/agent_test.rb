@@ -402,7 +402,7 @@ describe Riffer::Agent do
       end
 
       it "does not add system message when Proc returns nil" do
-        returner = ->(_tool_context) {}
+        returner = ->(_context) {}
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
           instructions returner

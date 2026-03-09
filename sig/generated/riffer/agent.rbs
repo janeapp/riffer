@@ -91,6 +91,19 @@ class Riffer::Agent
   # : (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
   def self.tool_runtime: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
 
+  # Configures skills for this agent via a block DSL.
+  #
+  # Returns the current Riffer::Skills::Config when called without a block.
+  #
+  #   skills do
+  #     backend Riffer::Skills::FilesystemBackend.new(".skills")
+  #     adapter Riffer::Skills::XmlAdapter
+  #     activate ["code-review"]
+  #   end
+  #
+  # : () ?{ () -> void } -> Riffer::Skills::Config?
+  def self.skills: () ?{ () -> void } -> Riffer::Skills::Config?
+
   # Finds an agent class by identifier.
   #
   # : (String) -> singleton(Riffer::Agent)?
@@ -264,6 +277,13 @@ class Riffer::Agent
 
   # : () -> Riffer::ToolRuntime
   def resolve_tool_runtime: () -> Riffer::ToolRuntime
+
+  # Resolves the skills backend, lists skills, and selects an adapter.
+  #
+  # Returns nil if skills are not configured or empty.
+  #
+  # : () -> Riffer::Skills::Context?
+  def resolve_skills: () -> Riffer::Skills::Context?
 
   # : () -> singleton(Riffer::Providers::Base)
   def provider_class: () -> singleton(Riffer::Providers::Base)
