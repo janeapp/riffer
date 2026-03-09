@@ -8,7 +8,7 @@ describe "Agent skills integration" do
   let(:backend) { Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH) }
 
   describe "generate with skills" do
-    it "injects skills catalog into system prompt" do
+    it "injects skills catalog into separate system message" do
       agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         instructions "You are helpful."
@@ -20,12 +20,12 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      refute_nil system_message
-      assert_includes system_message.content, "You are helpful."
-      assert_includes system_message.content, "Available Skills"
-      assert_includes system_message.content, "code-review"
-      assert_includes system_message.content, "data-analysis"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      assert_equal 2, system_messages.length
+      assert_includes system_messages[0].content, "You are helpful."
+      assert_includes system_messages[1].content, "Available Skills"
+      assert_includes system_messages[1].content, "code-review"
+      assert_includes system_messages[1].content, "data-analysis"
     end
 
     it "uses Markdown renderer for mock provider by default" do
@@ -39,9 +39,10 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      assert_includes system_message.content, "## Available Skills"
-      assert_includes system_message.content, "- **code-review**"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_message = system_messages.find { |m| m.content.include?("Available Skills") }
+      assert_includes skills_message.content, "## Available Skills"
+      assert_includes skills_message.content, "- **code-review**"
     end
 
     it "allows custom adapter override" do
@@ -56,8 +57,9 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      assert_includes system_message.content, "<available_skills>"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_message = system_messages.find { |m| m.content.include?("available_skills") }
+      assert_includes skills_message.content, "<available_skills>"
     end
 
     it "includes skill_activate tool in resolved tools" do
@@ -166,8 +168,9 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      assert_includes system_message.content, "code-review"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_msg = system_messages.find { |m| m.content.include?("code-review") }
+      refute_nil skills_msg
     end
 
     it "generates no system message when skills backend returns empty" do
@@ -189,7 +192,7 @@ describe "Agent skills integration" do
   end
 
   describe "activated skills" do
-    it "appends activated skill bodies to system prompt" do
+    it "appends activated skill bodies to skills system message" do
       agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         instructions "Base instructions."
@@ -202,13 +205,15 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      assert_includes system_message.content, "Base instructions."
-      assert_includes system_message.content, "code review assistant"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      assert_equal 2, system_messages.length
+      assert_includes system_messages[0].content, "Base instructions."
+      skills_msg = system_messages[1]
+      assert_includes skills_msg.content, "code review assistant"
       # Pre-activated skill should not appear in the catalog
-      refute_includes system_message.content, "- **code-review**"
+      refute_includes skills_msg.content, "- **code-review**"
       # Non-activated skill should still be in the catalog
-      assert_includes system_message.content, "- **data-analysis**"
+      assert_includes skills_msg.content, "- **data-analysis**"
     end
 
     it "omits catalog entirely when all skills are pre-activated" do
@@ -223,10 +228,12 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      refute_includes system_message.content, "Available Skills"
-      assert_includes system_message.content, "code review assistant"
-      assert_includes system_message.content, "data analysis assistant"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_msg = system_messages.find { |m| m.content.include?("code review assistant") }
+      refute_nil skills_msg
+      refute_includes skills_msg.content, "Available Skills"
+      assert_includes skills_msg.content, "code review assistant"
+      assert_includes skills_msg.content, "data analysis assistant"
     end
 
     it "raises on unknown activated skill" do
@@ -255,13 +262,14 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello", context: {activate_skills: ["data-analysis"]})
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      assert_includes system_message.content, "data analysis assistant"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_msg = system_messages.find { |m| m.content.include?("data analysis assistant") }
+      refute_nil skills_msg
     end
   end
 
   describe "stream with skills" do
-    it "injects skills catalog into system prompt" do
+    it "injects skills catalog into separate system message" do
       agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         instructions "You are helpful."
@@ -273,10 +281,11 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.stream("Hello").each { |_| }
 
-      system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
-      refute_nil system_message
-      assert_includes system_message.content, "Available Skills"
-      assert_includes system_message.content, "code-review"
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      assert_equal 2, system_messages.length
+      skills_msg = system_messages.find { |m| m.content.include?("Available Skills") }
+      refute_nil skills_msg
+      assert_includes skills_msg.content, "code-review"
     end
   end
 

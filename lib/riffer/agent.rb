@@ -267,13 +267,15 @@ class Riffer::Agent
     @structured_output = resolve_structured_output
     initialize_messages(prompt_or_messages, files: files)
 
+    resume_mode = prompt_or_messages.is_a?(Array)
+
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
 
     tripwire, modifications = run_before_guardrails
     all_modifications.concat(modifications)
     return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
 
-    run_generate_loop(all_modifications)
+    run_generate_loop(all_modifications, resume: resume_mode)
   end
 
   # Streams a response from the agent.
@@ -288,6 +290,8 @@ class Riffer::Agent
     prepare_run
     initialize_messages(prompt_or_messages, files: files)
 
+    resume_mode = prompt_or_messages.is_a?(Array)
+
     Enumerator.new do |yielder|
       tripwire, modifications = run_before_guardrails
       modifications.each { |m| yielder << Riffer::StreamEvents::GuardrailModification.new(m) }
@@ -297,39 +301,7 @@ class Riffer::Agent
         next
       end
 
-      run_stream_loop(yielder)
-    end
-  end
-
-  # Resumes an agent loop.
-  #
-  # When called without +messages+, continues using the existing in-memory
-  # message history. When called with +messages+, reconstructs the agent
-  # state from persisted data (useful for cross-process resume).
-  #
-  # Skips message initialization and before guardrails in both cases.
-  # The step offset is derived automatically from the number of assistant
-  # messages so +max_steps+ is enforced across the full session.
-  #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def resume(messages: nil, context: nil)
-    restore_state(messages: messages, context: context)
-    @structured_output = resolve_structured_output
-    run_generate_loop(resume: true)
-  end
-
-  # Resumes an agent loop in streaming mode.
-  #
-  # Same as +resume+ but returns an Enumerator yielding stream events.
-  #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def resume_stream(messages: nil, context: nil)
-    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #resume instead." if self.class.structured_output
-
-    restore_state(messages: messages, context: context)
-
-    Enumerator.new do |yielder|
-      run_stream_loop(yielder, resume: true)
+      run_stream_loop(yielder, resume: resume_mode)
     end
   end
 
@@ -342,6 +314,34 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
     @message_callbacks << block
     self
+  end
+
+  # Returns the instruction system message for this agent.
+  #
+  # Useful for database persistence workflows where the system messages
+  # need to be stored independently.
+  #
+  # Returns +nil+ when no instructions are configured.
+  #
+  #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def instruction_message(context: nil)
+    @context = context
+    prepare_run
+    build_instruction_message
+  end
+
+  # Returns the skills catalog system message for this agent.
+  #
+  # Useful for database persistence workflows where the system messages
+  # need to be stored independently.
+  #
+  # Returns +nil+ when no skills are configured or the catalog is empty.
+  #
+  #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def skills_message(context: nil)
+    @context = context
+    prepare_run
+    build_skills_message
   end
 
   # Interrupts the agent loop.
@@ -411,34 +411,32 @@ class Riffer::Agent
 
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages(prompt_or_messages, files: nil)
-    @messages = []
-
-    system_content = [
-      generate_instructions,
-      @skills_state&.system_prompt
-    ].compact.join("\n\n")
-
-    @messages << Riffer::Messages::System.new(system_content) unless system_content.empty?
-
     if prompt_or_messages.is_a?(Array)
-      if files && !files.empty?
-        raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
-      end
-
-      prompt_or_messages.each do |item|
-        @messages << convert_to_message_object(item)
-      end
+      raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead" if files && !files.empty?
+      @messages = prompt_or_messages.map { |item| convert_to_message_object(item) }
     else
+      @messages = []
+      sys = build_instruction_message
+      @messages << sys if sys
+      skills = build_skills_message
+      @messages << skills if skills
       file_parts = (files || []).map { |f| convert_to_file_part(f) }
       @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
     end
   end
 
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> void
-  def restore_state(messages: nil, context: nil)
-    @messages = messages.map { |item| convert_to_message_object(item) } if messages
-    @context = context
-    prepare_run
+  #: () -> Riffer::Messages::System?
+  def build_instruction_message
+    content = generate_instructions
+    return nil if content.nil? || content.empty?
+    Riffer::Messages::System.new(content)
+  end
+
+  #: () -> Riffer::Messages::System?
+  def build_skills_message
+    content = @skills_state&.system_prompt
+    return nil if content.nil? || content.empty?
+    Riffer::Messages::System.new(content)
   end
 
   #: () -> Integer

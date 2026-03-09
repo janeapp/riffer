@@ -428,7 +428,7 @@ end
 
 #### Resuming an Interrupted Loop
 
-Use `resume` (or `resume_stream`) to continue after an interrupt. On resume, the agent automatically detects and executes any pending tool calls (tool calls from the last assistant message that lack a corresponding tool result) before re-entering the LLM loop.
+Pass the message array back to `generate` (or `stream`) to resume after an interrupt. When `generate`/`stream` receives an Array, it treats it as resume mode: messages are used as-is (no system message prepend), and pending tool calls are automatically executed before re-entering the LLM loop.
 
 ```ruby
 agent = MyAgent.new
@@ -438,53 +438,38 @@ response = agent.generate('Do something risky')
 
 if response.interrupted?
   approve_action(agent.messages)
-  response = agent.resume   # executes pending tools, then calls the LLM
+  response = agent.generate(agent.messages)  # executes pending tools, then calls the LLM
 end
 ```
 
-For cross-process resume (e.g., after a process restart or async approval), pass persisted messages via the `messages:` keyword. Accepts both message objects and hashes:
+For cross-process resume (e.g., after a process restart or async approval), pass persisted messages as an array. Accepts both message objects and hashes:
 
 ```ruby
 # Persist messages during generation (e.g., via on_message callback)
 # Later, in a new process:
 agent = MyAgent.new
-response = agent.resume(messages: persisted_messages, context: {user_id: 123})
+response = agent.generate(persisted_messages, context: {user_id: 123})
 
 # Or resume in streaming mode:
-agent.resume_stream(messages: persisted_messages).each do |event|
+agent.stream(persisted_messages).each do |event|
   # handle stream events
 end
 ```
 
-When called without `messages:`, resumes from in-memory state. When called with `messages:`, reconstructs state from persisted data. No prior interruption is required in either case.
+No prior interruption is required — any Array input triggers resume mode.
 
-### resume
+#### Building System Messages for Persistence
 
-Continues an agent loop synchronously. Returns a `Riffer::Agent::Response` object:
-
-```ruby
-# In-memory resume after an interrupt
-response = agent.resume
-
-# Cross-process resume from persisted messages
-response = agent.resume(messages: persisted_messages, context: {user_id: 123})
-```
-
-### resume_stream
-
-Continues an agent loop as a streaming Enumerator. Accepts the same arguments as `resume`:
+Use `instruction_message` and `skills_message` to generate system messages independently. This is useful for database persistence workflows where you store and reconstruct message histories:
 
 ```ruby
-# In-memory resume
-agent.resume_stream.each do |event|
-  # handle stream events
-end
-
-# Cross-process resume
 agent = MyAgent.new
-agent.resume_stream(messages: persisted_messages).each do |event|
-  # handle stream events
-end
+sys = agent.instruction_message(context: ctx)     # => Riffer::Messages::System or nil
+skills = agent.skills_message(context: ctx)        # => Riffer::Messages::System or nil
+
+# Store in DB, then later resume:
+messages = [sys, skills, user_msg].compact
+agent.generate(messages, context: ctx)
 ```
 
 ### interrupt!
@@ -516,7 +501,7 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 ## Response Attributes
 
-`Riffer::Agent::Response` is returned by `generate` and `resume`:
+`Riffer::Agent::Response` is returned by `generate`:
 
 | Attribute          | Type                        | Description                                        |
 | ------------------ | --------------------------- | -------------------------------------------------- |
@@ -629,7 +614,7 @@ Callbacks registered with `on_message` can call `agent.interrupt!` (or `throw :r
 - **When to use:** Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.
 - **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason.
 - **Streaming:** Yields an `Interrupt` event with a `reason` attribute.
-- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Resumable:** Yes. Call `generate(agent.messages)` or `stream(agent.messages)` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 agent = MyAgent.new
@@ -640,7 +625,7 @@ end
 response = agent.generate('Do something risky')
 response.interrupted?      # => true
 response.interrupt_reason  # => "approval needed"
-response = agent.resume    # continues where it left off
+response = agent.generate(agent.messages)  # continues where it left off
 ```
 
 ### Max Steps Limit
@@ -650,7 +635,7 @@ The `max_steps` class method caps the number of LLM call steps in the tool-use l
 - **When to use:** Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.
 - **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` is `:max_steps`.
 - **Streaming:** Yields an `Interrupt` event with `reason: :max_steps`.
-- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Resumable:** Yes. Call `generate(agent.messages)` or `stream(agent.messages)` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -673,7 +658,7 @@ If a guardrail, provider call, or other internal code raises an exception, it pr
 | ------------- | ------------------------------------ | -------------------------------- | -------------------------------- |
 | Defined       | At class level (`guardrail :before`) | At instance level (`on_message`) | At class level (`max_steps 8`)   |
 | Fires         | Automatically on every request       | When callback logic decides      | When step count reaches limit    |
-| Resumable     | No                                   | Yes (`resume` / `resume_stream`) | Yes (`resume` / `resume_stream`) |
+| Resumable     | No                                   | Yes (pass array to `generate`/`stream`) | Yes (pass array to `generate`/`stream`) |
 | Response flag | `blocked?`                           | `interrupted?`                   | `interrupted?`                   |
 | Stream event  | `GuardrailTripwire`                  | `Interrupt`                      | `Interrupt`                      |
 | Purpose       | Policy enforcement                   | Flow control                     | Runaway loop prevention          |

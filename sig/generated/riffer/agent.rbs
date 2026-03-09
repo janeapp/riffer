@@ -171,32 +171,32 @@ class Riffer::Agent
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # Resumes an agent loop.
-  #
-  # When called without +messages+, continues using the existing in-memory
-  # message history. When called with +messages+, reconstructs the agent
-  # state from persisted data (useful for cross-process resume).
-  #
-  # Skips message initialization and before guardrails in both cases.
-  # The step offset is derived automatically from the number of assistant
-  # messages so +max_steps+ is enforced across the full session.
-  #
-  # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def resume: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-
-  # Resumes an agent loop in streaming mode.
-  #
-  # Same as +resume+ but returns an Enumerator yielding stream events.
-  #
-  # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def resume_stream: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-
   # Registers a callback to be invoked when messages are added during generation.
   #
   # Raises Riffer::ArgumentError if no block is given.
   #
   # : () { (Riffer::Messages::Base) -> void } -> self
   def on_message: () { (Riffer::Messages::Base) -> void } -> self
+
+  # Returns the instruction system message for this agent.
+  #
+  # Useful for database persistence workflows where the system messages
+  # need to be stored independently.
+  #
+  # Returns +nil+ when no instructions are configured.
+  #
+  # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def instruction_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+
+  # Returns the skills catalog system message for this agent.
+  #
+  # Useful for database persistence workflows where the system messages
+  # need to be stored independently.
+  #
+  # Returns +nil+ when no skills are configured or the catalog is empty.
+  #
+  # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def skills_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 
   # Interrupts the agent loop.
   #
@@ -220,8 +220,11 @@ class Riffer::Agent
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
 
-  # : (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> void
-  def restore_state: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> void
+  # : () -> Riffer::Messages::System?
+  def build_instruction_message: () -> Riffer::Messages::System?
+
+  # : () -> Riffer::Messages::System?
+  def build_skills_message: () -> Riffer::Messages::System?
 
   # : () -> Integer
   def count_assistant_messages: () -> Integer
