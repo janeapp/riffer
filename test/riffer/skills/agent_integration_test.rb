@@ -2,8 +2,6 @@
 
 require "test_helper"
 
-SKILLS_FIXTURES_PATH = File.expand_path("../../fixtures/skills", __dir__)
-
 describe "Agent skills integration" do
   let(:backend) { Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH) }
 

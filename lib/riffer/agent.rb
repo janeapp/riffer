@@ -263,7 +263,7 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, files: nil, context: nil)
     @context = context
-    resume_mode = prompt_or_messages.is_a?(Array) || @messages.any?
+    continuation = prompt_or_messages.is_a?(Array) || @messages.any?
     prepare_run
     @structured_output = resolve_structured_output
     initialize_messages(prompt_or_messages, files: files)
@@ -274,7 +274,7 @@ class Riffer::Agent
     all_modifications.concat(modifications)
     return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
 
-    run_generate_loop(all_modifications, resume: resume_mode)
+    run_generate_loop(all_modifications, resume: continuation)
   end
 
   # Streams a response from the agent.
@@ -286,7 +286,7 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @context = context
-    resume_mode = prompt_or_messages.is_a?(Array) || @messages.any?
+    continuation = prompt_or_messages.is_a?(Array) || @messages.any?
     prepare_run
     initialize_messages(prompt_or_messages, files: files)
 
@@ -299,7 +299,7 @@ class Riffer::Agent
         next
       end
 
-      run_stream_loop(yielder, resume: resume_mode)
+      run_stream_loop(yielder, resume: continuation)
     end
   end
 
@@ -323,9 +323,7 @@ class Riffer::Agent
   #
   #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def instruction_message(context: nil)
-    @context = context
-    prepare_run
-    build_instruction_message
+    build_instruction_message(context)
   end
 
   # Returns the skills catalog system message for this agent.
@@ -337,9 +335,7 @@ class Riffer::Agent
   #
   #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def skills_message(context: nil)
-    @context = context
-    prepare_run
-    build_skills_message
+    build_skills_message(resolve_skills(context))
   end
 
   # Interrupts the agent loop.
@@ -427,16 +423,16 @@ class Riffer::Agent
     end
   end
 
-  #: () -> Riffer::Messages::System?
-  def build_instruction_message
-    content = generate_instructions
+  #: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def build_instruction_message(context = @context)
+    content = generate_instructions(context)
     return nil if content.nil? || content.empty?
     Riffer::Messages::System.new(content)
   end
 
-  #: () -> Riffer::Messages::System?
-  def build_skills_message
-    content = @skills_state&.system_prompt
+  #: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
+  def build_skills_message(skills_state = @skills_state)
+    content = skills_state&.system_prompt
     return nil if content.nil? || content.empty?
     Riffer::Messages::System.new(content)
   end
@@ -617,6 +613,7 @@ class Riffer::Agent
     @interrupted = false
     resolve_model
     @skills_state = resolve_skills
+    @context = (@context || {}).merge(skills: @skills_state) if @skills_state
   end
 
   #: (untyped) -> void
@@ -634,10 +631,10 @@ class Riffer::Agent
     @provider_instance = nil if @model_config.is_a?(Proc)
   end
 
-  #: () -> String?
-  def generate_instructions
+  #: (?Hash[Symbol, untyped]?) -> String?
+  def generate_instructions(context = @context)
     if @instructions_config.is_a?(Proc)
-      (@instructions_config.arity == 0) ? @instructions_config.call : @instructions_config.call(@context)
+      (@instructions_config.arity == 0) ? @instructions_config.call : @instructions_config.call(context)
     else
       @instructions_config
     end
@@ -701,15 +698,17 @@ class Riffer::Agent
   # Resolves the skills backend, lists skills, and selects an adapter.
   #
   # Returns nil if skills are not configured or empty.
+  # Does not mutate instance state — callers are responsible for
+  # assigning the returned context.
   #
-  #: () -> Riffer::Skills::Context?
-  def resolve_skills
+  #: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
+  def resolve_skills(context = @context)
     return nil unless self.class.skills
 
     backend = self.class.skills.backend
     return nil unless backend
 
-    backend = backend.is_a?(Proc) ? backend.call(@context) : backend
+    backend = backend.is_a?(Proc) ? backend.call(context) : backend
     skills_list = backend.list_skills
     return nil if skills_list.empty?
 
@@ -717,11 +716,11 @@ class Riffer::Agent
     adapter_class = self.class.skills.adapter || provider_class.skills_adapter
 
     skills_context = Riffer::Skills::Context.new(backend: backend, skills: skills, adapter: adapter_class.new)
-    @context = (@context || {}).merge(skills: skills_context)
+    ctx = (context || {}).merge(skills: skills_context)
 
     activate = self.class.skills.activate
     if activate
-      names = activate.is_a?(Proc) ? activate.call(@context) : Array(activate)
+      names = activate.is_a?(Proc) ? activate.call(ctx) : Array(activate)
       names.each { |name| skills_context.activate(name) }
     end
 

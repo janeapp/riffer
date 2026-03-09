@@ -220,11 +220,11 @@ class Riffer::Agent
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
 
-  # : () -> Riffer::Messages::System?
-  def build_instruction_message: () -> Riffer::Messages::System?
+  # : (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def build_instruction_message: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 
-  # : () -> Riffer::Messages::System?
-  def build_skills_message: () -> Riffer::Messages::System?
+  # : (?Riffer::Skills::Context?) -> Riffer::Messages::System?
+  def build_skills_message: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
 
   # : () -> Integer
   def count_assistant_messages: () -> Integer
@@ -267,8 +267,8 @@ class Riffer::Agent
   # : () -> void
   def clear_resolved_model: () -> void
 
-  # : () -> String?
-  def generate_instructions: () -> String?
+  # : (?Hash[Symbol, untyped]?) -> String?
+  def generate_instructions: (?Hash[Symbol, untyped]?) -> String?
 
   attr_reader resolved_model: String?
 
@@ -284,9 +284,11 @@ class Riffer::Agent
   # Resolves the skills backend, lists skills, and selects an adapter.
   #
   # Returns nil if skills are not configured or empty.
+  # Does not mutate instance state — callers are responsible for
+  # assigning the returned context.
   #
-  # : () -> Riffer::Skills::Context?
-  def resolve_skills: () -> Riffer::Skills::Context?
+  # : (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
+  def resolve_skills: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
 
   # : () -> singleton(Riffer::Providers::Base)
   def provider_class: () -> singleton(Riffer::Providers::Base)

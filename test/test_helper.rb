@@ -34,3 +34,5 @@ VCR.configure do |config|
   config.filter_sensitive_data("<AWS_BEDROCK_API_TOKEN>") { ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token") }
   config.filter_sensitive_data("<OPENAI_API_KEY>") { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 end
+
+SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)

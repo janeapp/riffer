@@ -2,8 +2,6 @@
 
 require "test_helper"
 
-SKILLS_FIXTURES_PATH = File.expand_path("../fixtures/skills", __dir__) unless defined?(SKILLS_FIXTURES_PATH)
-
 describe Riffer::Agent do
   let(:agent_class) do
     Class.new(Riffer::Agent) do
