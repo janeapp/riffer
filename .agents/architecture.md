@@ -81,6 +81,10 @@ Structured events for streaming responses:
 - `WebSearchDone` - web search completion with query and sources
 - `Interrupt` - callback interrupted the agent loop
 
+### Per-Call State Reset
+
+Each call to `generate` or `stream` resets `context`, tools, tool runtime, model, skills state, and the interrupted flag via `prepare_run`. Only the message history and cumulative `token_usage` persist across calls. This means `context:` must be passed on every call.
+
 ### Stopping the Loop Early
 
 Two mechanisms can stop the agent loop before the LLM finishes naturally:
