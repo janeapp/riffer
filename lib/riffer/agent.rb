@@ -263,11 +263,10 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, files: nil, context: nil)
     @context = context
+    resume_mode = prompt_or_messages.is_a?(Array) || @messages.any?
     prepare_run
     @structured_output = resolve_structured_output
     initialize_messages(prompt_or_messages, files: files)
-
-    resume_mode = prompt_or_messages.is_a?(Array)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
 
@@ -287,10 +286,9 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @context = context
+    resume_mode = prompt_or_messages.is_a?(Array) || @messages.any?
     prepare_run
     initialize_messages(prompt_or_messages, files: files)
-
-    resume_mode = prompt_or_messages.is_a?(Array)
 
     Enumerator.new do |yielder|
       tripwire, modifications = run_before_guardrails
@@ -412,8 +410,12 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages(prompt_or_messages, files: nil)
     if prompt_or_messages.is_a?(Array)
+      raise Riffer::ArgumentError, "cannot pass an array of messages on an agent with existing messages; use a string to continue the conversation or a new agent instance to start fresh" if @messages.any?
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead" if files && !files.empty?
       @messages = prompt_or_messages.map { |item| convert_to_message_object(item) }
+    elsif @messages.any?
+      file_parts = (files || []).map { |f| convert_to_file_part(f) }
+      @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
     else
       @messages = []
       sys = build_instruction_message

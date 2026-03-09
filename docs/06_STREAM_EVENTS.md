@@ -218,7 +218,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-After an interrupt, pass the message array back to `stream` to continue the loop. See [Agents - Resuming an Interrupted Loop](03_AGENTS.md#resuming-an-interrupted-loop) for details.
+After an interrupt, call `stream` again with a string to continue the loop. See [Agents — Resuming an Interrupted Loop](03_AGENTS.md#resuming-an-interrupted-loop) for details.
 
 ### TokenUsageDone
 

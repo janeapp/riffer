@@ -91,11 +91,14 @@ Two mechanisms can stop the agent loop before the LLM finishes naturally:
 
 ### Resuming After an Interrupt
 
-Pass the message array back to `generate` or `stream` to resume an interrupted loop. Array input is treated as resume mode: messages are used as-is (no system message prepend), and pending tool calls are automatically executed.
+Two resume paths:
+
+- **In-memory** — call `generate` or `stream` again with a string on the same agent instance. The message history is preserved and the new user message is appended.
+- **Cross-process** — pass persisted messages as an array to a new agent instance. Array input uses messages as-is (no system message prepend). Passing an array to an agent that already has messages raises `Riffer::ArgumentError`.
 
 ```ruby
-agent.generate(agent.messages)          # in-memory resume
-agent.stream(persisted_messages)        # cross-process resume
+agent.generate('Continue')              # in-memory resume
+MyAgent.new.stream(persisted_messages)  # cross-process resume
 ```
 
 On resume, `execute_pending_tool_calls` detects tool calls from the last assistant message that lack corresponding tool result messages and executes them before entering the LLM loop. This handles the case where an interrupt fired mid-way through tool execution.
