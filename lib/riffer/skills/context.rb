@@ -17,6 +17,9 @@ class Riffer::Skills::Context
   # The skill adapter used for this context.
   attr_reader :adapter #: Riffer::Skills::Adapter
 
+  # Optional callback invoked when a skill is first activated.
+  attr_writer :on_activate #: (^(String) -> void)?
+
   # Creates a new skills context for a generation cycle.
   #
   # +backend+ - the skills backend for reading skill bodies.
@@ -38,7 +41,10 @@ class Riffer::Skills::Context
   #: (String) -> String
   def activate(name)
     raise Riffer::ArgumentError, "Unknown skill: '#{name}'" unless skills.key?(name)
-    @activated[name] ||= @backend.read_skill(name)
+    return @activated[name] if @activated.key?(name)
+    @activated[name] = @backend.read_skill(name)
+    @on_activate&.call(name)
+    @activated[name]
   end
 
   # Returns whether a skill has been activated.

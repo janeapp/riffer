@@ -450,6 +450,10 @@ class Riffer::Agent
   def run_stream_loop(yielder, resume: false)
     step = resume ? count_assistant_messages : 0
 
+    if @skills_state
+      @skills_state.on_activate = ->(name) { yielder << Riffer::StreamEvents::SkillActivation.new(name) }
+    end
+
     completed = catch(:riffer_interrupt) do
       execute_pending_tool_calls if resume
 

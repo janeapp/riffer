@@ -259,6 +259,51 @@ describe "Agent skills integration" do
     end
   end
 
+  describe "stream emits SkillActivation events" do
+    it "emits SkillActivation event when skill is activated via tool call" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      provider = Riffer::Providers::Mock.new
+      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      provider.stub_response("Here is my review.")
+
+      agent = agent_class.new
+      agent.instance_variable_set(:@provider_instance, provider)
+
+      events = agent.stream("Review this code").select { |e| e.is_a?(Riffer::StreamEvents::SkillActivation) }
+
+      assert_equal 1, events.size
+      assert_equal "code-review", events.first.name
+      assert_equal :system, events.first.role
+    end
+
+    it "does not emit duplicate events for re-activation of the same skill" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      provider = Riffer::Providers::Mock.new
+      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      provider.stub_response("Done.")
+
+      agent = agent_class.new
+      agent.instance_variable_set(:@provider_instance, provider)
+
+      events = agent.stream("Review").select { |e| e.is_a?(Riffer::StreamEvents::SkillActivation) }
+
+      assert_equal 1, events.size
+    end
+  end
+
   describe "skill activation end-to-end" do
     it "activates a skill via tool call and returns body" do
       agent_class = Class.new(Riffer::Agent) do
