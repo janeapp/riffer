@@ -489,14 +489,14 @@ end
 
 #### Building System Messages for Persistence
 
-Use `instruction_message` and `skills_message` to generate system messages independently. This is useful for database persistence workflows where you need to store and later reconstruct message histories.
+Use `generate_instruction_message` and `generate_skills_message` to generate system messages independently. This is useful for database persistence workflows where you need to store and later reconstruct message histories.
 
 Both methods return a `Riffer::Messages::System` or `nil` (when unconfigured). They accept an optional `context:` keyword, just like `generate`.
 
 ```ruby
 agent = MyAgent.new
-sys = agent.instruction_message(context: ctx)     # => Riffer::Messages::System or nil
-skills = agent.skills_message(context: ctx)        # => Riffer::Messages::System or nil
+sys = agent.generate_instruction_message(context: ctx)     # => Riffer::Messages::System or nil
+skills = agent.generate_skills_message(context: ctx)        # => Riffer::Messages::System or nil
 
 # Store in DB, then later resume in a new process:
 messages = [sys, skills, user_msg].compact

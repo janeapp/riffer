@@ -314,7 +314,7 @@ class Riffer::Agent
     self
   end
 
-  # Returns the instruction system message for this agent.
+  # Generates the instruction system message for this agent.
   #
   # Useful for database persistence workflows where the system messages
   # need to be stored independently.
@@ -322,11 +322,11 @@ class Riffer::Agent
   # Returns +nil+ when no instructions are configured.
   #
   #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def instruction_message(context: nil)
+  def generate_instruction_message(context: nil)
     build_instruction_message(context)
   end
 
-  # Returns the skills catalog system message for this agent.
+  # Generates the skills catalog system message for this agent.
   #
   # Useful for database persistence workflows where the system messages
   # need to be stored independently.
@@ -334,7 +334,7 @@ class Riffer::Agent
   # Returns +nil+ when no skills are configured or the catalog is empty.
   #
   #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def skills_message(context: nil)
+  def generate_skills_message(context: nil)
     build_skills_message(resolve_skills(context))
   end
 

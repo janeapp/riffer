@@ -178,7 +178,7 @@ class Riffer::Agent
   # : () { (Riffer::Messages::Base) -> void } -> self
   def on_message: () { (Riffer::Messages::Base) -> void } -> self
 
-  # Returns the instruction system message for this agent.
+  # Generates the instruction system message for this agent.
   #
   # Useful for database persistence workflows where the system messages
   # need to be stored independently.
@@ -186,9 +186,9 @@ class Riffer::Agent
   # Returns +nil+ when no instructions are configured.
   #
   # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def instruction_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def generate_instruction_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 
-  # Returns the skills catalog system message for this agent.
+  # Generates the skills catalog system message for this agent.
   #
   # Useful for database persistence workflows where the system messages
   # need to be stored independently.
@@ -196,7 +196,7 @@ class Riffer::Agent
   # Returns +nil+ when no skills are configured or the catalog is empty.
   #
   # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def skills_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def generate_skills_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 
   # Interrupts the agent loop.
   #

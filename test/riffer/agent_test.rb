@@ -3428,10 +3428,10 @@ describe Riffer::Agent do
     end
   end
 
-  describe "#instruction_message" do
+  describe "#generate_instruction_message" do
     it "returns a System message with instructions" do
       agent = agent_class.new
-      msg = agent.instruction_message
+      msg = agent.generate_instruction_message
       expect(msg).must_be_instance_of Riffer::Messages::System
       expect(msg.content).must_equal "You are a helpful assistant."
     end
@@ -3441,7 +3441,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
       end
       agent = klass.new
-      expect(agent.instruction_message).must_be_nil
+      expect(agent.generate_instruction_message).must_be_nil
     end
 
     it "resolves dynamic instructions with context" do
@@ -3450,7 +3450,7 @@ describe Riffer::Agent do
         instructions ->(context) { "Helping #{context[:name]}" }
       end
       agent = klass.new
-      msg = agent.instruction_message(context: {name: "Alice"})
+      msg = agent.generate_instruction_message(context: {name: "Alice"})
       expect(msg.content).must_equal "Helping Alice"
     end
 
@@ -3461,14 +3461,14 @@ describe Riffer::Agent do
         instructions returner
       end
       agent = klass.new
-      expect(agent.instruction_message).must_be_nil
+      expect(agent.generate_instruction_message).must_be_nil
     end
   end
 
-  describe "#skills_message" do
+  describe "#generate_skills_message" do
     it "returns nil when no skills configured" do
       agent = agent_class.new
-      expect(agent.skills_message).must_be_nil
+      expect(agent.generate_skills_message).must_be_nil
     end
 
     it "returns a System message when skills are configured" do
@@ -3479,7 +3479,7 @@ describe Riffer::Agent do
         end
       end
       agent = klass.new
-      msg = agent.skills_message
+      msg = agent.generate_skills_message
       expect(msg).must_be_instance_of Riffer::Messages::System
       expect(msg.content).must_include "Available Skills"
     end
