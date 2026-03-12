@@ -4,7 +4,7 @@
 
 ### Agent (`lib/riffer/agent.rb`)
 
-Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, and `structured_output` to configure. Orchestrates message flow, LLM calls, tool execution, and structured output parsing via a generate/stream loop.
+Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, `structured_output`, and `skills` to configure. Orchestrates message flow, LLM calls, tool execution, structured output parsing, and skill activation via a generate/stream loop.
 
 ```ruby
 class EchoAgent < Riffer::Agent
@@ -39,6 +39,22 @@ Adapters for LLM APIs. The base class uses a template-method pattern — `genera
 - `extract_tool_calls(response)` — extract tool calls from the SDK response
 
 Providers are registered in `Riffer::Providers::Repository::REPO` with identifiers (e.g., `openai`, `amazon_bedrock`).
+
+Each provider declares a preferred skill adapter via `self.skills_adapter` (Markdown for most, XML for Anthropic).
+
+### Skills (`lib/riffer/skills/`)
+
+Support for the [Agent Skills spec](https://agentskills.io/). Skills are packaged as directories containing `SKILL.md` files with YAML frontmatter. The framework discovers skills through a pluggable backend, injects metadata into the system prompt, and provides a tool (`skill_activate`) for the LLM to load full skill instructions on demand.
+
+- `Config` - DSL configuration object (`backend`, `adapter`, `activate`)
+- `Backend` - base class interface (`list_skills`, `read_skill`)
+- `FilesystemBackend` - built-in filesystem scanner
+- `Frontmatter` - parsed YAML frontmatter value object with `.parse(raw)` class method
+- `Context` - coordinates discovery, activation, caching, and prompt rendering for a generation cycle
+- `Adapter` - base class for skill adapters (`render_catalog`, `activate_tool`)
+- `MarkdownAdapter` - default Markdown skill adapter
+- `XmlAdapter` - XML skill adapter for Anthropic/Claude
+- `ActivateTool` - default tool the LLM calls to activate a skill
 
 ### Messages (`lib/riffer/messages/`)
 
@@ -105,6 +121,17 @@ lib/
     params.rb            # Parameter collection with DSL and validation
     structured_output.rb # Structured output schema wrapper
     stream_events.rb     # Stream events namespace/module
+    skills.rb            # Skills namespace/module
+    skills/
+      config.rb          # DSL configuration object
+      adapter.rb         # Adapter base class (render_catalog, activate_tool)
+      markdown_adapter.rb # Default Markdown skill adapter
+      xml_adapter.rb     # XML skill adapter for Anthropic/Claude
+      backend.rb         # Backend base class (interface)
+      filesystem_backend.rb # Built-in filesystem backend
+      frontmatter.rb     # Parsed YAML frontmatter value object with .parse
+      context.rb         # Skills context for a generation cycle
+      activate_tool.rb   # Default skill_activate tool
     structured_output/
       result.rb          # Parse/validation result object
     helpers/

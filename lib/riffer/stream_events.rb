@@ -10,5 +10,6 @@
 # - Riffer::StreamEvents::ToolCallDone - Complete tool call
 # - Riffer::StreamEvents::ReasoningDelta - Incremental reasoning content
 # - Riffer::StreamEvents::ReasoningDone - Complete reasoning content
+# - Riffer::StreamEvents::SkillActivation - Skill activated during streaming
 module Riffer::StreamEvents
 end

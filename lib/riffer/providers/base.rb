@@ -20,6 +20,15 @@ class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
 
+  # Returns the preferred skill adapter for this provider.
+  #
+  # Override in subclasses for provider-specific formats.
+  #
+  #: () -> singleton(Riffer::Skills::Adapter)
+  def self.skills_adapter
+    Riffer::Skills::MarkdownAdapter
+  end
+
   # Generates text using the provider.
   #
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
