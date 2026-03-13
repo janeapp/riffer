@@ -286,12 +286,12 @@ Generates a response synchronously. Returns a `Riffer::Agent::Response` object.
 
 The behavior depends on what you pass and the agent's current state:
 
-| Input | Agent state | Behavior |
-|---|---|---|
-| **String** | No prior messages | **New conversation.** Builds system messages (instructions + skills), adds user message, calls the LLM. |
+| Input      | Agent state                    | Behavior                                                                                                                                                              |
+| ---------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **String** | No prior messages              | **New conversation.** Builds system messages (instructions + skills), adds user message, calls the LLM.                                                               |
 | **String** | Has messages from a prior call | **Continue conversation.** Appends the user message to the existing history and re-enters the LLM loop. Pending tool calls from a prior interrupt are executed first. |
-| **Array** | No prior messages | **Restore from persisted data.** Uses the array as-is (no system messages added). Pending tool calls are executed. This is for cross-process resume. |
-| **Array** | Has messages from a prior call | **Raises `Riffer::ArgumentError`.** Use a string to continue, or a new agent instance to start from a persisted array. |
+| **Array**  | No prior messages              | **Restore from persisted data.** Uses the array as-is (no system messages added). Pending tool calls are executed. This is for cross-process resume.                  |
+| **Array**  | Has messages from a prior call | **Raises `Riffer::ArgumentError`.** Use a string to continue, or a new agent instance to start from a persisted array.                                                |
 
 **State reset per call:** Each call to `generate` or `stream` resets `context`, tools, tool runtime, model, skills state, and the interrupted flag. This means `context:` must be passed on every call — it is not carried over from a previous call. The only state that persists across calls is the message history and cumulative `token_usage`.
 
@@ -534,16 +534,16 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 `Riffer::Agent::Response` is returned by `generate`:
 
-| Attribute          | Type                        | Description                                        |
-| ------------------ | --------------------------- | -------------------------------------------------- |
-| `content`          | `String`                    | The response text                                  |
+| Attribute           | Type                        | Description                                        |
+| ------------------- | --------------------------- | -------------------------------------------------- |
+| `content`           | `String`                    | The response text                                  |
 | `structured_output` | `Hash` / `nil`              | Parsed and validated structured output (see below) |
-| `blocked?`         | `Boolean`                   | `true` if a guardrail tripwire fired               |
-| `tripwire`         | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
-| `modified?`        | `Boolean`                   | `true` if a guardrail modified the content         |
-| `modifications`    | `Array`                     | List of guardrail modifications applied            |
-| `interrupted?`     | `Boolean`                   | `true` if the loop was interrupted                 |
-| `interrupt_reason` | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
+| `blocked?`          | `Boolean`                   | `true` if a guardrail tripwire fired               |
+| `tripwire`          | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
+| `modified?`         | `Boolean`                   | `true` if a guardrail modified the content         |
+| `modifications`     | `Array`                     | List of guardrail modifications applied            |
+| `interrupted?`      | `Boolean`                   | `true` if the loop was interrupted                 |
+| `interrupt_reason`  | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
 
 ### response.structured_output
 
@@ -685,11 +685,11 @@ If a guardrail, provider call, or other internal code raises an exception, it pr
 
 ### Comparison
 
-|               | Guardrail Tripwire                   | Callback Interrupt               | Max Steps Limit                  |
-| ------------- | ------------------------------------ | -------------------------------- | -------------------------------- |
-| Defined       | At class level (`guardrail :before`) | At instance level (`on_message`) | At class level (`max_steps 8`)   |
-| Fires         | Automatically on every request       | When callback logic decides      | When step count reaches limit    |
-| Resumable     | No                                   | Yes (call `generate`/`stream` again)    | Yes (call `generate`/`stream` again)    |
-| Response flag | `blocked?`                           | `interrupted?`                   | `interrupted?`                   |
-| Stream event  | `GuardrailTripwire`                  | `Interrupt`                      | `Interrupt`                      |
-| Purpose       | Policy enforcement                   | Flow control                     | Runaway loop prevention          |
+|               | Guardrail Tripwire                   | Callback Interrupt                   | Max Steps Limit                      |
+| ------------- | ------------------------------------ | ------------------------------------ | ------------------------------------ |
+| Defined       | At class level (`guardrail :before`) | At instance level (`on_message`)     | At class level (`max_steps 8`)       |
+| Fires         | Automatically on every request       | When callback logic decides          | When step count reaches limit        |
+| Resumable     | No                                   | Yes (call `generate`/`stream` again) | Yes (call `generate`/`stream` again) |
+| Response flag | `blocked?`                           | `interrupted?`                       | `interrupted?`                       |
+| Stream event  | `GuardrailTripwire`                  | `Interrupt`                          | `Interrupt`                          |
+| Purpose       | Policy enforcement                   | Flow control                         | Runaway loop prevention              |

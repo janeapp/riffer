@@ -380,9 +380,9 @@ By default, tool calls are executed sequentially in the current thread using `Ri
 
 ### Built-in Runtimes
 
-| Runtime | Description |
-|---------|-------------|
-| `Riffer::ToolRuntime::Inline` | Executes tool calls sequentially (default) |
+| Runtime                         | Description                                    |
+| ------------------------------- | ---------------------------------------------- |
+| `Riffer::ToolRuntime::Inline`   | Executes tool calls sequentially (default)     |
 | `Riffer::ToolRuntime::Threaded` | Executes tool calls concurrently using threads |
 
 ### Per-Agent Configuration
