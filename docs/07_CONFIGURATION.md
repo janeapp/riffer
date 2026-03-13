@@ -84,11 +84,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Value | Description |
-|-------|-------------|
+| Value                          | Description                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
 | `Riffer::ToolRuntime` subclass | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`) |
-| `Riffer::ToolRuntime` instance | Custom runtime with specific options |
-| `Proc` | Dynamic resolution |
+| `Riffer::ToolRuntime` instance | Custom runtime with specific options                                                              |
+| `Proc`                         | Dynamic resolution                                                                                |
 
 Per-agent configuration overrides this global default. See [Tools — Tool Runtime](04_TOOLS.md#tool-runtime-experimental) for details.
 
@@ -145,10 +145,10 @@ end
 
 Options are passed through to the [Bedrock Converse API](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#converse-instance_method).
 
-| Option                               | Description                                                       |
-| ------------------------------------ | ----------------------------------------------------------------- |
-| `inference_config`                   | Hash with `max_tokens`, `temperature`, `top_p`, `stop_sequences`  |
-| `additional_model_request_fields`    | Hash for model-specific params (e.g., `top_k` for Claude)        |
+| Option                            | Description                                                      |
+| --------------------------------- | ---------------------------------------------------------------- |
+| `inference_config`                | Hash with `max_tokens`, `temperature`, `top_p`, `stop_sequences` |
+| `additional_model_request_fields` | Hash for model-specific params (e.g., `top_k` for Claude)        |
 
 ```ruby
 class MyAgent < Riffer::Agent

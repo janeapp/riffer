@@ -301,38 +301,6 @@ class Riffer::Agent
     end
   end
 
-  # Resumes an agent loop.
-  #
-  # When called without +messages+, continues using the existing in-memory
-  # message history. When called with +messages+, reconstructs the agent
-  # state from persisted data (useful for cross-process resume).
-  #
-  # Skips message initialization and before guardrails in both cases.
-  # The step offset is derived automatically from the number of assistant
-  # messages so +max_steps+ is enforced across the full session.
-  #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def resume(messages: nil, context: nil)
-    restore_state(messages: messages, context: context)
-    @structured_output = resolve_structured_output
-    run_generate_loop(resume: true)
-  end
-
-  # Resumes an agent loop in streaming mode.
-  #
-  # Same as +resume+ but returns an Enumerator yielding stream events.
-  #
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def resume_stream(messages: nil, context: nil)
-    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #resume instead." if self.class.structured_output
-
-    restore_state(messages: messages, context: context)
-
-    Enumerator.new do |yielder|
-      run_stream_loop(yielder, resume: true)
-    end
-  end
-
   # Registers a callback to be invoked when messages are added during generation.
   #
   # Raises Riffer::ArgumentError if no block is given.
@@ -342,6 +310,30 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
     @message_callbacks << block
     self
+  end
+
+  # Generates the instruction system message for this agent.
+  #
+  # Useful for database persistence workflows where the system messages
+  # need to be stored independently.
+  #
+  # Returns +nil+ when no instructions are configured.
+  #
+  #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def generate_instruction_message(context: nil)
+    build_instruction_message(context)
+  end
+
+  # Generates the skills catalog system message for this agent.
+  #
+  # Useful for database persistence workflows where the system messages
+  # need to be stored independently.
+  #
+  # Returns +nil+ when no skills are configured or the catalog is empty.
+  #
+  #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def generate_skills_message(context: nil)
+    build_skills_message(resolve_skills(context))
   end
 
   # Interrupts the agent loop.
@@ -356,12 +348,12 @@ class Riffer::Agent
 
   private
 
-  #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
-  def run_generate_loop(all_modifications = [], resume: false)
-    step = resume ? count_assistant_messages : 0
+  #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def run_generate_loop(all_modifications = [])
+    step = count_assistant_messages
 
     reason = catch(:riffer_interrupt) do
-      execute_pending_tool_calls if resume
+      execute_pending_tool_calls
 
       loop do
         response = call_llm
@@ -411,34 +403,36 @@ class Riffer::Agent
 
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages(prompt_or_messages, files: nil)
-    @messages = []
-
-    system_content = [
-      generate_instructions,
-      @skills_state&.system_prompt
-    ].compact.join("\n\n")
-
-    @messages << Riffer::Messages::System.new(system_content) unless system_content.empty?
-
     if prompt_or_messages.is_a?(Array)
-      if files && !files.empty?
-        raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
-      end
-
-      prompt_or_messages.each do |item|
-        @messages << convert_to_message_object(item)
-      end
+      raise Riffer::ArgumentError, "cannot pass an array of messages on an agent with existing messages; use a string to continue the conversation or a new agent instance to start fresh" if @messages.any?
+      raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead" if files && !files.empty?
+      @messages = prompt_or_messages.map { |item| convert_to_message_object(item) }
+    elsif @messages.any?
+      file_parts = (files || []).map { |f| convert_to_file_part(f) }
+      @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
     else
+      @messages = []
+      sys = build_instruction_message
+      @messages << sys if sys
+      skills = build_skills_message
+      @messages << skills if skills
       file_parts = (files || []).map { |f| convert_to_file_part(f) }
       @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
     end
   end
 
-  #: (?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?context: Hash[Symbol, untyped]?) -> void
-  def restore_state(messages: nil, context: nil)
-    @messages = messages.map { |item| convert_to_message_object(item) } if messages
-    @context = context
-    prepare_run
+  #: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  def build_instruction_message(context = @context)
+    content = generate_instructions(context)
+    return nil if content.nil? || content.empty?
+    Riffer::Messages::System.new(content)
+  end
+
+  #: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
+  def build_skills_message(skills_state = @skills_state)
+    content = skills_state&.system_prompt
+    return nil if content.nil? || content.empty?
+    Riffer::Messages::System.new(content)
   end
 
   #: () -> Integer
@@ -446,16 +440,16 @@ class Riffer::Agent
     @messages.count { |m| m.is_a?(Riffer::Messages::Assistant) }
   end
 
-  #: (Enumerator::Yielder, ?resume: bool) -> void
-  def run_stream_loop(yielder, resume: false)
-    step = resume ? count_assistant_messages : 0
+  #: (Enumerator::Yielder) -> void
+  def run_stream_loop(yielder)
+    step = count_assistant_messages
 
     if @skills_state
       @skills_state.on_activate = ->(name) { yielder << Riffer::StreamEvents::SkillActivation.new(name) }
     end
 
     completed = catch(:riffer_interrupt) do
-      execute_pending_tool_calls if resume
+      execute_pending_tool_calls
 
       loop do
         accumulated_content = ""
@@ -577,22 +571,11 @@ class Riffer::Agent
   # then executes any that are missing.
   #
   #: () -> void
+  # Executes tool calls from the last assistant message that don't yet
+  # have a corresponding tool result. Safe to call unconditionally —
+  # returns immediately when there is nothing pending.
   def execute_pending_tool_calls
-    # Find the most recent assistant message (the one whose tool calls
-    # may be partially executed).
-    last_assistant_idx = @messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
-    return unless last_assistant_idx
-
-    assistant = @messages[last_assistant_idx]
-    return if assistant.tool_calls.empty?
-
-    # Collect ids of tool calls that already have a result message
-    # after the assistant message.
-    executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
-      m.is_a?(Riffer::Messages::Tool)
-    }.map(&:tool_call_id)
-
-    pending = assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
+    pending = pending_tool_calls
     return if pending.empty?
 
     runtime = resolve_tool_runtime
@@ -609,6 +592,20 @@ class Riffer::Agent
     end
   end
 
+  def pending_tool_calls
+    last_assistant_idx = @messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
+    return [] unless last_assistant_idx
+
+    assistant = @messages[last_assistant_idx]
+    return [] if assistant.tool_calls.empty?
+
+    executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
+      m.is_a?(Riffer::Messages::Tool)
+    }.map(&:tool_call_id)
+
+    assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
+  end
+
   #: () -> void
   def prepare_run
     @resolved_tools = nil
@@ -617,6 +614,7 @@ class Riffer::Agent
     @interrupted = false
     resolve_model
     @skills_state = resolve_skills
+    @context = (@context || {}).merge(skills: @skills_state) if @skills_state
   end
 
   #: (untyped) -> void
@@ -634,10 +632,10 @@ class Riffer::Agent
     @provider_instance = nil if @model_config.is_a?(Proc)
   end
 
-  #: () -> String?
-  def generate_instructions
+  #: (?Hash[Symbol, untyped]?) -> String?
+  def generate_instructions(context = @context)
     if @instructions_config.is_a?(Proc)
-      (@instructions_config.arity == 0) ? @instructions_config.call : @instructions_config.call(@context)
+      (@instructions_config.arity == 0) ? @instructions_config.call : @instructions_config.call(context)
     else
       @instructions_config
     end
@@ -701,15 +699,17 @@ class Riffer::Agent
   # Resolves the skills backend, lists skills, and selects an adapter.
   #
   # Returns nil if skills are not configured or empty.
+  # Does not mutate instance state — callers are responsible for
+  # assigning the returned context.
   #
-  #: () -> Riffer::Skills::Context?
-  def resolve_skills
+  #: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
+  def resolve_skills(context = @context)
     return nil unless self.class.skills
 
     backend = self.class.skills.backend
     return nil unless backend
 
-    backend = backend.is_a?(Proc) ? backend.call(@context) : backend
+    backend = backend.is_a?(Proc) ? backend.call(context) : backend
     skills_list = backend.list_skills
     return nil if skills_list.empty?
 
@@ -717,11 +717,11 @@ class Riffer::Agent
     adapter_class = self.class.skills.adapter || provider_class.skills_adapter
 
     skills_context = Riffer::Skills::Context.new(backend: backend, skills: skills, adapter: adapter_class.new)
-    @context = (@context || {}).merge(skills: skills_context)
+    ctx = (context || {}).merge(skills: skills_context)
 
     activate = self.class.skills.activate
     if activate
-      names = activate.is_a?(Proc) ? activate.call(@context) : Array(activate)
+      names = activate.is_a?(Proc) ? activate.call(ctx) : Array(activate)
       names.each { |name| skills_context.activate(name) }
     end
 

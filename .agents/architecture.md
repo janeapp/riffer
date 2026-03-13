@@ -81,6 +81,10 @@ Structured events for streaming responses:
 - `WebSearchDone` - web search completion with query and sources
 - `Interrupt` - callback interrupted the agent loop
 
+### Per-Call State Reset
+
+Each call to `generate` or `stream` resets `context`, tools, tool runtime, model, skills state, and the interrupted flag via `prepare_run`. Only the message history and cumulative `token_usage` persist across calls. This means `context:` must be passed on every call.
+
 ### Stopping the Loop Early
 
 Two mechanisms can stop the agent loop before the LLM finishes naturally:
@@ -91,7 +95,15 @@ Two mechanisms can stop the agent loop before the LLM finishes naturally:
 
 ### Resuming After an Interrupt
 
-`agent.resume` or `agent.resume_stream` continues an interrupted loop. Both accept `messages:` for cross-process resume from persisted data.
+Two resume paths:
+
+- **In-memory** — call `generate` or `stream` again with a string on the same agent instance. The message history is preserved and the new user message is appended.
+- **Cross-process** — pass persisted messages as an array to a new agent instance. Array input uses messages as-is (no system message prepend). Passing an array to an agent that already has messages raises `Riffer::ArgumentError`.
+
+```ruby
+agent.generate('Continue')              # in-memory resume
+MyAgent.new.stream(persisted_messages)  # cross-process resume
+```
 
 On resume, `execute_pending_tool_calls` detects tool calls from the last assistant message that lack corresponding tool result messages and executes them before entering the LLM loop. This handles the case where an interrupt fired mid-way through tool execution.
 

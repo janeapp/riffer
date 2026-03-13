@@ -21,9 +21,11 @@ Each `SKILL.md` has YAML frontmatter and a Markdown body:
 name: code-review
 description: Reviews code for quality, style, and potential issues.
 ---
+
 You are a code review assistant.
 
 Review the code for:
+
 - Style issues
 - Potential bugs
 - Performance problems

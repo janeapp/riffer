@@ -282,27 +282,46 @@ See [Guardrails](09_GUARDRAILS.md) for detailed documentation.
 
 ### generate
 
-Generates a response synchronously. Returns a `Riffer::Agent::Response` object:
+Generates a response synchronously. Returns a `Riffer::Agent::Response` object.
+
+The behavior depends on what you pass and the agent's current state:
+
+| Input      | Agent state                    | Behavior                                                                                                                                                              |
+| ---------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **String** | No prior messages              | **New conversation.** Builds system messages (instructions + skills), adds user message, calls the LLM.                                                               |
+| **String** | Has messages from a prior call | **Continue conversation.** Appends the user message to the existing history and re-enters the LLM loop. Pending tool calls from a prior interrupt are executed first. |
+| **Array**  | No prior messages              | **Restore from persisted data.** Uses the array as-is (no system messages added). Pending tool calls are executed. This is for cross-process resume.                  |
+| **Array**  | Has messages from a prior call | **Raises `Riffer::ArgumentError`.** Use a string to continue, or a new agent instance to start from a persisted array.                                                |
+
+**State reset per call:** Each call to `generate` or `stream` resets `context`, tools, tool runtime, model, skills state, and the interrupted flag. This means `context:` must be passed on every call — it is not carried over from a previous call. The only state that persists across calls is the message history and cumulative `token_usage`.
 
 ```ruby
-# Class method (recommended for simple calls)
+agent.generate('Hello', context: {user_id: 123})
+agent.generate('Follow up')  # context is nil here — pass it again if needed
+agent.generate('More', context: {user_id: 123})  # context is restored
+```
+
+```ruby
+# New conversation (class method — recommended for simple calls)
 response = MyAgent.generate('Hello')
 puts response.content       # Access the response text
 puts response.blocked?      # Check if guardrail blocked (always false without guardrails)
 puts response.interrupted?  # Check if a callback interrupted the loop
 
-# Instance method (when you need message history or callbacks)
+# New conversation (instance method — when you need message history or callbacks)
 agent = MyAgent.new
 agent.on_message { |msg| log(msg) }
 response = agent.generate('Hello')
 agent.messages  # Access message history
 
-# With message objects/hashes
-response = MyAgent.generate([
-  {role: 'user', content: 'Hello'},
-  {role: 'assistant', content: 'Hi there!'},
-  {role: 'user', content: 'How are you?'}
-])
+# Multi-turn conversation
+agent = MyAgent.new
+agent.generate('Hello')
+agent.generate('Tell me more')   # continues with full history
+
+# Restore from persisted messages (cross-process resume)
+agent = MyAgent.new
+response = agent.generate(persisted_messages, context: {user_id: 123})
 
 # With context
 response = MyAgent.generate('Look up my orders', context: {user_id: 123})
@@ -322,10 +341,10 @@ response = MyAgent.generate([
 
 ### stream
 
-Streams a response as an Enumerator:
+Streams a response as an Enumerator. Follows the same input rules as `generate` — a string starts a new conversation or continues an existing one, an array restores from persisted data.
 
 ```ruby
-# Class method (recommended for simple calls)
+# New conversation (class method — recommended for simple calls)
 MyAgent.stream('Tell me a story').each do |event|
   case event
   when Riffer::StreamEvents::TextDelta
@@ -337,11 +356,16 @@ MyAgent.stream('Tell me a story').each do |event|
   end
 end
 
-# Instance method (when you need message history or callbacks)
+# New conversation (instance method — when you need message history or callbacks)
 agent = MyAgent.new
 agent.on_message { |msg| persist_message(msg) }
 agent.stream('Tell me a story').each { |event| handle(event) }
 agent.messages  # Access message history
+
+# Multi-turn conversation
+agent = MyAgent.new
+agent.stream('Hello').each { |event| handle(event) }
+agent.stream('Tell me more').each { |event| handle(event) }
 
 # With files
 MyAgent.stream('What is in this image?', files: [{data: base64_data, media_type: 'image/jpeg'}]).each do |event|
@@ -428,7 +452,9 @@ end
 
 #### Resuming an Interrupted Loop
 
-Use `resume` (or `resume_stream`) to continue after an interrupt. On resume, the agent automatically detects and executes any pending tool calls (tool calls from the last assistant message that lack a corresponding tool result) before re-entering the LLM loop.
+There are two ways to resume after an interrupt, depending on whether the agent is still in memory or you're restoring from persisted data.
+
+**In-memory resume** — call `generate` (or `stream`) again with a string. The agent keeps its message history, so a new string appends a user message and continues the loop. Pending tool calls from the interrupt are automatically executed first.
 
 ```ruby
 agent = MyAgent.new
@@ -438,53 +464,43 @@ response = agent.generate('Do something risky')
 
 if response.interrupted?
   approve_action(agent.messages)
-  response = agent.resume   # executes pending tools, then calls the LLM
+  response = agent.generate('Approved, go ahead')  # executes pending tools, then calls the LLM
 end
 ```
 
-For cross-process resume (e.g., after a process restart or async approval), pass persisted messages via the `messages:` keyword. Accepts both message objects and hashes:
+You can also resume without adding a new user message by passing a continuation like `'Continue'` — the LLM will pick up from the existing context.
+
+**Cross-process resume** — when the agent is gone (process restart, async approval, etc.), create a new agent and pass the persisted messages as an array. Array input uses messages as-is (no system messages added) and executes any pending tool calls.
 
 ```ruby
-# Persist messages during generation (e.g., via on_message callback)
+# During generation, persist messages via on_message callback
 # Later, in a new process:
 agent = MyAgent.new
-response = agent.resume(messages: persisted_messages, context: {user_id: 123})
+response = agent.generate(persisted_messages, context: {user_id: 123})
 
 # Or resume in streaming mode:
-agent.resume_stream(messages: persisted_messages).each do |event|
-  # handle stream events
-end
-```
-
-When called without `messages:`, resumes from in-memory state. When called with `messages:`, reconstructs state from persisted data. No prior interruption is required in either case.
-
-### resume
-
-Continues an agent loop synchronously. Returns a `Riffer::Agent::Response` object:
-
-```ruby
-# In-memory resume after an interrupt
-response = agent.resume
-
-# Cross-process resume from persisted messages
-response = agent.resume(messages: persisted_messages, context: {user_id: 123})
-```
-
-### resume_stream
-
-Continues an agent loop as a streaming Enumerator. Accepts the same arguments as `resume`:
-
-```ruby
-# In-memory resume
-agent.resume_stream.each do |event|
-  # handle stream events
-end
-
-# Cross-process resume
 agent = MyAgent.new
-agent.resume_stream(messages: persisted_messages).each do |event|
+agent.stream(persisted_messages).each do |event|
   # handle stream events
 end
+```
+
+**Important:** You cannot pass an array to an agent that already has messages. This raises `Riffer::ArgumentError` because it would silently discard the existing history. Use a string to continue, or create a new agent instance for cross-process resume.
+
+#### Building System Messages for Persistence
+
+Use `generate_instruction_message` and `generate_skills_message` to generate system messages independently. This is useful for database persistence workflows where you need to store and later reconstruct message histories.
+
+Both methods return a `Riffer::Messages::System` or `nil` (when unconfigured). They accept an optional `context:` keyword, just like `generate`.
+
+```ruby
+agent = MyAgent.new
+sys = agent.generate_instruction_message(context: ctx)     # => Riffer::Messages::System or nil
+skills = agent.generate_skills_message(context: ctx)        # => Riffer::Messages::System or nil
+
+# Store in DB, then later resume in a new process:
+messages = [sys, skills, user_msg].compact
+MyAgent.new.generate(messages, context: ctx)
 ```
 
 ### interrupt!
@@ -516,18 +532,18 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 ## Response Attributes
 
-`Riffer::Agent::Response` is returned by `generate` and `resume`:
+`Riffer::Agent::Response` is returned by `generate`:
 
-| Attribute          | Type                        | Description                                        |
-| ------------------ | --------------------------- | -------------------------------------------------- |
-| `content`          | `String`                    | The response text                                  |
+| Attribute           | Type                        | Description                                        |
+| ------------------- | --------------------------- | -------------------------------------------------- |
+| `content`           | `String`                    | The response text                                  |
 | `structured_output` | `Hash` / `nil`              | Parsed and validated structured output (see below) |
-| `blocked?`         | `Boolean`                   | `true` if a guardrail tripwire fired               |
-| `tripwire`         | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
-| `modified?`        | `Boolean`                   | `true` if a guardrail modified the content         |
-| `modifications`    | `Array`                     | List of guardrail modifications applied            |
-| `interrupted?`     | `Boolean`                   | `true` if the loop was interrupted                 |
-| `interrupt_reason` | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
+| `blocked?`          | `Boolean`                   | `true` if a guardrail tripwire fired               |
+| `tripwire`          | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
+| `modified?`         | `Boolean`                   | `true` if a guardrail modified the content         |
+| `modifications`     | `Array`                     | List of guardrail modifications applied            |
+| `interrupted?`      | `Boolean`                   | `true` if the loop was interrupted                 |
+| `interrupt_reason`  | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
 
 ### response.structured_output
 
@@ -629,7 +645,7 @@ Callbacks registered with `on_message` can call `agent.interrupt!` (or `throw :r
 - **When to use:** Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.
 - **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason.
 - **Streaming:** Yields an `Interrupt` event with a `reason` attribute.
-- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Resumable:** Yes. Call `generate('Continue')` or `stream('Continue')` on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 agent = MyAgent.new
@@ -640,7 +656,7 @@ end
 response = agent.generate('Do something risky')
 response.interrupted?      # => true
 response.interrupt_reason  # => "approval needed"
-response = agent.resume    # continues where it left off
+response = agent.generate('Approved, continue')  # continues where it left off
 ```
 
 ### Max Steps Limit
@@ -650,7 +666,7 @@ The `max_steps` class method caps the number of LLM call steps in the tool-use l
 - **When to use:** Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.
 - **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` is `:max_steps`.
 - **Streaming:** Yields an `Interrupt` event with `reason: :max_steps`.
-- **Resumable:** Yes. Call `resume` or `resume_stream` to continue. Pending tool calls are automatically executed before the LLM loop resumes.
+- **Resumable:** Yes. Call `generate('Continue')` or `stream('Continue')` on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -669,11 +685,11 @@ If a guardrail, provider call, or other internal code raises an exception, it pr
 
 ### Comparison
 
-|               | Guardrail Tripwire                   | Callback Interrupt               | Max Steps Limit                  |
-| ------------- | ------------------------------------ | -------------------------------- | -------------------------------- |
-| Defined       | At class level (`guardrail :before`) | At instance level (`on_message`) | At class level (`max_steps 8`)   |
-| Fires         | Automatically on every request       | When callback logic decides      | When step count reaches limit    |
-| Resumable     | No                                   | Yes (`resume` / `resume_stream`) | Yes (`resume` / `resume_stream`) |
-| Response flag | `blocked?`                           | `interrupted?`                   | `interrupted?`                   |
-| Stream event  | `GuardrailTripwire`                  | `Interrupt`                      | `Interrupt`                      |
-| Purpose       | Policy enforcement                   | Flow control                     | Runaway loop prevention          |
+|               | Guardrail Tripwire                   | Callback Interrupt                   | Max Steps Limit                      |
+| ------------- | ------------------------------------ | ------------------------------------ | ------------------------------------ |
+| Defined       | At class level (`guardrail :before`) | At instance level (`on_message`)     | At class level (`max_steps 8`)       |
+| Fires         | Automatically on every request       | When callback logic decides          | When step count reaches limit        |
+| Resumable     | No                                   | Yes (call `generate`/`stream` again) | Yes (call `generate`/`stream` again) |
+| Response flag | `blocked?`                           | `interrupted?`                       | `interrupted?`                       |
+| Stream event  | `GuardrailTripwire`                  | `Interrupt`                          | `Interrupt`                          |
+| Purpose       | Policy enforcement                   | Flow control                         | Runaway loop prevention              |

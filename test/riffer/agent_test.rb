@@ -297,18 +297,11 @@ describe Riffer::Agent do
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
-      it "adds system message before the provided messages when instructions are present" do
+      it "uses messages as-is without prepending system message" do
         agent = agent_class.new
         messages = [Riffer::Messages::User.new("Hello")]
         agent.generate(messages)
-        expect(agent.messages.first).must_be_instance_of Riffer::Messages::System
-      end
-
-      it "preserves message order with system message first" do
-        agent = agent_class.new
-        messages = [Riffer::Messages::User.new("Hello")]
-        agent.generate(messages)
-        expect(agent.messages[1]).must_be_instance_of Riffer::Messages::User
+        expect(agent.messages.first).must_be_instance_of Riffer::Messages::User
       end
 
       it "preserves all provided messages" do
@@ -321,6 +314,15 @@ describe Riffer::Agent do
         agent.generate(messages)
         user_messages = agent.messages.select { |msg| msg.is_a?(Riffer::Messages::User) }
         expect(user_messages.length).must_be :>=, 2
+      end
+
+      it "raises when passing an array on an agent with existing messages" do
+        agent = agent_class.new
+        agent.generate("Hello")
+        error = expect {
+          agent.generate([Riffer::Messages::User.new("Follow up")])
+        }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/cannot pass an array/)
       end
     end
 
@@ -589,18 +591,11 @@ describe Riffer::Agent do
         expect(result).must_be_instance_of Enumerator
       end
 
-      it "adds system message before the provided messages when instructions are present" do
+      it "uses messages as-is without prepending system message" do
         agent = agent_class.new
         messages = [Riffer::Messages::User.new("Hello")]
         agent.stream(messages).each { |_| }
-        expect(agent.messages.first).must_be_instance_of Riffer::Messages::System
-      end
-
-      it "preserves message order with system message first" do
-        agent = agent_class.new
-        messages = [Riffer::Messages::User.new("Hello")]
-        agent.stream(messages).each { |_| }
-        expect(agent.messages[1]).must_be_instance_of Riffer::Messages::User
+        expect(agent.messages.first).must_be_instance_of Riffer::Messages::User
       end
     end
 
@@ -2111,7 +2106,7 @@ describe Riffer::Agent do
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 1
 
-        result = agent.resume
+        result = agent.generate("Continue")
         expect(result.interrupted?).must_equal false
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 2
@@ -2146,7 +2141,7 @@ describe Riffer::Agent do
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 0
 
-        result = agent.resume
+        result = agent.generate("Continue")
         expect(result.interrupted?).must_equal false
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 2
@@ -2188,11 +2183,11 @@ describe Riffer::Agent do
     end
   end
 
-  describe "#resume" do
+  describe "resume via generate" do
     it "re-enters loop without prior interruption" do
       agent = agent_class.new
       agent.generate("Hello")
-      result = agent.resume
+      result = agent.generate("Continue")
       expect(result).must_be_instance_of Riffer::Agent::Response
       expect(result.interrupted?).must_equal false
     end
@@ -2207,7 +2202,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      result = agent.resume
+      result = agent.generate("Continue")
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
@@ -2221,7 +2216,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      result = agent.resume
+      result = agent.generate("Continue")
       expect(result.interrupted?).must_equal false
     end
 
@@ -2235,7 +2230,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      result = agent.resume
+      result = agent.generate("Continue")
       expect(result.interrupt_reason).must_be_nil
     end
 
@@ -2250,7 +2245,7 @@ describe Riffer::Agent do
       end
       agent.generate("Hello")
       messages_before = agent.messages.length
-      agent.resume
+      agent.generate("Continue")
       expect(agent.messages.length).must_be :>, messages_before
     end
 
@@ -2264,7 +2259,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      agent.resume
+      agent.generate("Continue")
       system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       expect(system_messages.length).must_equal 1
     end
@@ -2307,7 +2302,7 @@ describe Riffer::Agent do
         result = agent.generate("What's the weather?")
         expect(result.interrupted?).must_equal true
 
-        result = agent.resume
+        result = agent.generate("Continue")
         expect(result.interrupted?).must_equal false
         expect(result.content).must_equal "The weather is nice!"
       end
@@ -2321,7 +2316,7 @@ describe Riffer::Agent do
           Riffer::Messages::User.new("Hello"),
           Riffer::Messages::Assistant.new("Hi there!")
         ]
-        result = agent.resume(messages: messages)
+        result = agent.generate(messages)
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
@@ -2332,7 +2327,7 @@ describe Riffer::Agent do
           {role: "user", content: "Hello"},
           {role: "assistant", content: "Hi there!"}
         ]
-        result = agent.resume(messages: messages)
+        result = agent.generate(messages)
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
@@ -2341,7 +2336,7 @@ describe Riffer::Agent do
         messages = [
           Riffer::Messages::User.new("Hello")
         ]
-        result = agent.resume(messages: messages)
+        result = agent.generate(messages)
         expect(result.interrupted?).must_equal false
       end
 
@@ -2370,7 +2365,7 @@ describe Riffer::Agent do
         provider.stub_response("Your name is Alice!")
 
         messages = [Riffer::Messages::User.new("Get my name")]
-        agent.resume(messages: messages, context: {user_name: "Alice"})
+        agent.generate(messages, context: {user_name: "Alice"})
 
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "Alice"
@@ -2382,7 +2377,7 @@ describe Riffer::Agent do
           Riffer::Messages::System.new("Custom instructions."),
           Riffer::Messages::User.new("Hello")
         ]
-        agent.resume(messages: messages)
+        agent.generate(messages)
         system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
         expect(system_messages.length).must_equal 1
         expect(system_messages.first.content).must_equal "Custom instructions."
@@ -2410,7 +2405,7 @@ describe Riffer::Agent do
           {role: "user", content: "Call tool"},
           {role: "assistant", content: "", tool_calls: [{id: "tc_1", call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}"}]}
         ]
-        result = agent.resume(messages: messages)
+        result = agent.generate(messages)
         expect(result.interrupted?).must_equal false
 
         tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
@@ -2420,10 +2415,11 @@ describe Riffer::Agent do
 
       it "clears context when not provided on cross-process resume" do
         agent = agent_class.new
-        agent.generate("Hello", context: {user: "Alice"})
+        agent.generate([Riffer::Messages::User.new("Hello")], context: {user: "Alice"})
 
-        agent.resume(messages: [Riffer::Messages::User.new("Hello")])
-        expect(agent.send(:instance_variable_get, :@context)).must_be_nil
+        fresh_agent = agent_class.new
+        fresh_agent.generate([Riffer::Messages::User.new("Hello")])
+        expect(fresh_agent.send(:instance_variable_get, :@context)).must_be_nil
       end
     end
 
@@ -2461,8 +2457,8 @@ describe Riffer::Agent do
         result = agent.generate("Do stuff")
         expect(result.interrupted?).must_equal true
 
-        # Resume: step offset is auto-derived from assistant messages
-        result = agent.resume
+        # Resume via generate with array: step offset is auto-derived from assistant messages
+        result = agent.generate("Continue")
         expect(result.interrupted?).must_equal true
         expect(result.interrupt_reason).must_equal :max_steps
       end
@@ -2480,15 +2476,13 @@ describe Riffer::Agent do
         # Only 1 more step fits before max_steps (3 prior + 1 = 4)
         provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}])
 
-        result = agent.resume(
-          messages: [
-            Riffer::Messages::User.new("Original prompt"),
-            Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
-            Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
-            Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
-            Riffer::Messages::User.new("Continue")
-          ]
-        )
+        result = agent.generate([
+          Riffer::Messages::User.new("Original prompt"),
+          Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
+          Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
+          Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
+          Riffer::Messages::User.new("Continue")
+        ])
         expect(result.interrupted?).must_equal true
         expect(result.interrupt_reason).must_equal :max_steps
       end
@@ -2518,7 +2512,7 @@ describe Riffer::Agent do
         agent.generate("Analyze sentiment")
 
         provider.stub_response('{"sentiment":"negative"}')
-        result = agent.resume
+        result = agent.generate("Continue")
         expect(result.structured_output).must_equal({sentiment: "negative"})
       end
 
@@ -2535,17 +2529,17 @@ describe Riffer::Agent do
         provider.stub_response('{"sentiment":"positive"}')
 
         messages = [Riffer::Messages::User.new("Analyze sentiment")]
-        result = agent.resume(messages: messages)
+        result = agent.generate(messages)
         expect(result.structured_output).must_equal({sentiment: "positive"})
       end
     end
   end
 
-  describe "#resume_stream" do
+  describe "resume via stream" do
     it "re-enters loop without prior interruption" do
       agent = agent_class.new
       agent.generate("Hello")
-      events = agent.resume_stream.to_a
+      events = agent.stream("Continue").to_a
       text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
       expect(text_events).wont_be_empty
     end
@@ -2560,7 +2554,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      result = agent.resume_stream
+      result = agent.stream("Continue")
       expect(result).must_be_instance_of Enumerator
     end
 
@@ -2574,7 +2568,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      events = agent.resume_stream.to_a
+      events = agent.stream("Continue").to_a
       text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
       expect(text_events).wont_be_empty
     end
@@ -2589,7 +2583,7 @@ describe Riffer::Agent do
         end
       end
       agent.generate("Hello")
-      events = agent.resume_stream.to_a
+      events = agent.stream("Continue").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event).must_be_nil
     end
@@ -2601,7 +2595,7 @@ describe Riffer::Agent do
           Riffer::Messages::System.new("You are a helpful assistant."),
           Riffer::Messages::User.new("Hello")
         ]
-        events = agent.resume_stream(messages: messages).to_a
+        events = agent.stream(messages).to_a
         text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
         expect(text_events).wont_be_empty
       end
@@ -2612,29 +2606,153 @@ describe Riffer::Agent do
           {role: "system", content: "You are a helpful assistant."},
           {role: "user", content: "Hello"}
         ]
-        events = agent.resume_stream(messages: messages).to_a
+        events = agent.stream(messages).to_a
         expect(events).wont_be_empty
       end
 
       it "does not require prior interruption" do
         agent = agent_class.new
         messages = [Riffer::Messages::User.new("Hello")]
-        events = agent.resume_stream(messages: messages).to_a
+        events = agent.stream(messages).to_a
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
         expect(interrupt_event).must_be_nil
       end
     end
+  end
 
-    it "raises when structured_output is configured" do
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        structured_output do
-          required :sentiment, String
+  describe "multi-turn string continuation" do
+    it "continues conversation when calling generate with a string on an agent with existing messages" do
+      agent = agent_class.new
+      agent.generate("Hello")
+      messages_before = agent.messages.length
+
+      result = agent.generate("Follow up")
+      expect(result).must_be_instance_of Riffer::Agent::Response
+      expect(agent.messages.length).must_be :>, messages_before
+    end
+
+    it "does not duplicate system messages on continuation" do
+      agent = agent_class.new
+      agent.generate("Hello")
+      agent.generate("Follow up")
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      expect(system_messages.length).must_equal 1
+    end
+
+    it "appends new user message to existing history" do
+      agent = agent_class.new
+      agent.generate("Hello")
+      agent.generate("Follow up")
+      user_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      expect(user_messages.length).must_equal 2
+      expect(user_messages.last.content).must_equal "Follow up"
+    end
+
+    it "resumes after interrupt with a new user message" do
+      agent = agent_class.new
+      interrupted_once = false
+      agent.on_message do |_msg|
+        unless interrupted_once
+          interrupted_once = true
+          throw :riffer_interrupt
         end
       end
-      agent = klass.new
-      error = expect { agent.resume_stream }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/Structured output is not supported with streaming/)
+
+      result = agent.generate("Hello")
+      expect(result.interrupted?).must_equal true
+
+      result = agent.generate("Continue please")
+      expect(result.interrupted?).must_equal false
+      user_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      expect(user_messages.length).must_equal 2
+    end
+
+    it "executes pending tool calls on string continuation" do
+      tc = Class.new(Riffer::Tool) do
+        description "Simple tool"
+        def call(context:)
+          text("done")
+        end
+      end.tap { |t| t.identifier("continuation_pending_tool") }
+
+      tool = tc
+      custom_agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tool]
+      end
+
+      agent = custom_agent_class.new
+      provider = agent.send(:provider_instance)
+      provider.stub_response("", tool_calls: [
+        {name: "continuation_pending_tool", arguments: "{}"},
+        {name: "continuation_pending_tool", arguments: "{}"}
+      ])
+      provider.stub_response("Done!")
+
+      tool_count = 0
+      agent.on_message do |msg|
+        if msg.is_a?(Riffer::Messages::Tool)
+          tool_count += 1
+          throw :riffer_interrupt if tool_count == 1
+        end
+      end
+
+      result = agent.generate("Call tools")
+      expect(result.interrupted?).must_equal true
+      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(tool_messages.length).must_equal 1
+
+      result = agent.generate("Go ahead")
+      expect(result.interrupted?).must_equal false
+      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(tool_messages.length).must_equal 2
+    end
+
+    it "enforces max_steps across continuations" do
+      tc = Class.new(Riffer::Tool) do
+        description "Simple tool"
+        def call(context:)
+          text("done")
+        end
+      end.tap { |t| t.identifier("continuation_step_tool") }
+
+      tool = tc
+      custom_agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        max_steps 3
+        uses_tools [tool]
+      end
+
+      agent = custom_agent_class.new
+      provider = agent.send(:provider_instance)
+      3.times { provider.stub_response("", tool_calls: [{name: "continuation_step_tool", arguments: "{}"}]) }
+
+      interrupted_once = false
+      agent.on_message do |msg|
+        if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
+          interrupted_once = true
+          throw :riffer_interrupt
+        end
+      end
+
+      result = agent.generate("Do stuff")
+      expect(result.interrupted?).must_equal true
+
+      result = agent.generate("Continue")
+      expect(result.interrupted?).must_equal true
+      expect(result.interrupt_reason).must_equal :max_steps
+    end
+
+    it "continues conversation with stream" do
+      agent = agent_class.new
+      agent.generate("Hello")
+
+      events = agent.stream("Follow up").to_a
+      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      expect(text_events).wont_be_empty
+
+      user_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      expect(user_messages.length).must_equal 2
     end
   end
 
@@ -2704,7 +2822,7 @@ describe Riffer::Agent do
       tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tool_messages.length).must_equal 1
 
-      events = agent.resume_stream.to_a
+      events = agent.stream("Continue").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event).must_be_nil
       tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
@@ -3307,6 +3425,63 @@ describe Riffer::Agent do
         mod_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
         expect(mod_event.guardrail).must_equal transform_guardrail_class
       end
+    end
+  end
+
+  describe "#generate_instruction_message" do
+    it "returns a System message with instructions" do
+      agent = agent_class.new
+      msg = agent.generate_instruction_message
+      expect(msg).must_be_instance_of Riffer::Messages::System
+      expect(msg.content).must_equal "You are a helpful assistant."
+    end
+
+    it "returns nil when no instructions configured" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+      end
+      agent = klass.new
+      expect(agent.generate_instruction_message).must_be_nil
+    end
+
+    it "resolves dynamic instructions with context" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        instructions ->(context) { "Helping #{context[:name]}" }
+      end
+      agent = klass.new
+      msg = agent.generate_instruction_message(context: {name: "Alice"})
+      expect(msg.content).must_equal "Helping Alice"
+    end
+
+    it "returns nil when Proc returns nil" do
+      returner = ->(_ctx) {}
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        instructions returner
+      end
+      agent = klass.new
+      expect(agent.generate_instruction_message).must_be_nil
+    end
+  end
+
+  describe "#generate_skills_message" do
+    it "returns nil when no skills configured" do
+      agent = agent_class.new
+      expect(agent.generate_skills_message).must_be_nil
+    end
+
+    it "returns a System message when skills are configured" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+      agent = klass.new
+      msg = agent.generate_skills_message
+      expect(msg).must_be_instance_of Riffer::Messages::System
+      expect(msg.content).must_include "Available Skills"
     end
   end
 end
