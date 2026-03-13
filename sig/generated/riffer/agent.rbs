@@ -208,8 +208,8 @@ class Riffer::Agent
 
   private
 
-  # : (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
-  def run_generate_loop: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
+  # : (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def run_generate_loop: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
 
   # : (Riffer::Messages::Base) -> void
   def add_message: (Riffer::Messages::Base) -> void
@@ -229,8 +229,8 @@ class Riffer::Agent
   # : () -> Integer
   def count_assistant_messages: () -> Integer
 
-  # : (Enumerator::Yielder, ?resume: bool) -> void
-  def run_stream_loop: (Enumerator::Yielder, ?resume: bool) -> void
+  # : (Enumerator::Yielder) -> void
+  def run_stream_loop: (Enumerator::Yielder) -> void
 
   # : () -> Riffer::Messages::Assistant
   def call_llm: () -> Riffer::Messages::Assistant
@@ -256,7 +256,12 @@ class Riffer::Agent
   # then executes any that are missing.
   #
   # : () -> void
+  # Executes tool calls from the last assistant message that don't yet
+  # have a corresponding tool result. Safe to call unconditionally —
+  # returns immediately when there is nothing pending.
   def execute_pending_tool_calls: () -> void
+
+  def pending_tool_calls: () -> untyped
 
   # : () -> void
   def prepare_run: () -> void
