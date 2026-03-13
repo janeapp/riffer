@@ -263,7 +263,6 @@ class Riffer::Agent
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, files: nil, context: nil)
     @context = context
-    continuation = prompt_or_messages.is_a?(Array) || @messages.any?
     prepare_run
     @structured_output = resolve_structured_output
     initialize_messages(prompt_or_messages, files: files)
@@ -274,7 +273,7 @@ class Riffer::Agent
     all_modifications.concat(modifications)
     return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
 
-    run_generate_loop(all_modifications, resume: continuation)
+    run_generate_loop(all_modifications)
   end
 
   # Streams a response from the agent.
@@ -286,7 +285,6 @@ class Riffer::Agent
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @context = context
-    continuation = prompt_or_messages.is_a?(Array) || @messages.any?
     prepare_run
     initialize_messages(prompt_or_messages, files: files)
 
@@ -299,7 +297,7 @@ class Riffer::Agent
         next
       end
 
-      run_stream_loop(yielder, resume: continuation)
+      run_stream_loop(yielder)
     end
   end
 
@@ -350,12 +348,12 @@ class Riffer::Agent
 
   private
 
-  #: (?Array[Riffer::Guardrails::Modification], ?resume: bool) -> Riffer::Agent::Response
-  def run_generate_loop(all_modifications = [], resume: false)
-    step = resume ? count_assistant_messages : 0
+  #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def run_generate_loop(all_modifications = [])
+    step = count_assistant_messages
 
     reason = catch(:riffer_interrupt) do
-      execute_pending_tool_calls if resume
+      execute_pending_tool_calls
 
       loop do
         response = call_llm
@@ -442,16 +440,16 @@ class Riffer::Agent
     @messages.count { |m| m.is_a?(Riffer::Messages::Assistant) }
   end
 
-  #: (Enumerator::Yielder, ?resume: bool) -> void
-  def run_stream_loop(yielder, resume: false)
-    step = resume ? count_assistant_messages : 0
+  #: (Enumerator::Yielder) -> void
+  def run_stream_loop(yielder)
+    step = count_assistant_messages
 
     if @skills_state
       @skills_state.on_activate = ->(name) { yielder << Riffer::StreamEvents::SkillActivation.new(name) }
     end
 
     completed = catch(:riffer_interrupt) do
-      execute_pending_tool_calls if resume
+      execute_pending_tool_calls
 
       loop do
         accumulated_content = ""
@@ -573,22 +571,11 @@ class Riffer::Agent
   # then executes any that are missing.
   #
   #: () -> void
+  # Executes tool calls from the last assistant message that don't yet
+  # have a corresponding tool result. Safe to call unconditionally —
+  # returns immediately when there is nothing pending.
   def execute_pending_tool_calls
-    # Find the most recent assistant message (the one whose tool calls
-    # may be partially executed).
-    last_assistant_idx = @messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
-    return unless last_assistant_idx
-
-    assistant = @messages[last_assistant_idx]
-    return if assistant.tool_calls.empty?
-
-    # Collect ids of tool calls that already have a result message
-    # after the assistant message.
-    executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
-      m.is_a?(Riffer::Messages::Tool)
-    }.map(&:tool_call_id)
-
-    pending = assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
+    pending = pending_tool_calls
     return if pending.empty?
 
     runtime = resolve_tool_runtime
@@ -603,6 +590,20 @@ class Riffer::Agent
         error_type: result.error_type
       ))
     end
+  end
+
+  def pending_tool_calls
+    last_assistant_idx = @messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
+    return [] unless last_assistant_idx
+
+    assistant = @messages[last_assistant_idx]
+    return [] if assistant.tool_calls.empty?
+
+    executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
+      m.is_a?(Riffer::Messages::Tool)
+    }.map(&:tool_call_id)
+
+    assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
   end
 
   #: () -> void
