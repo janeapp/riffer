@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0](https://github.com/janeapp/riffer/compare/riffer/v0.17.0...riffer/v0.18.0) (2026-03-13)
+
+
+### Features
+
+* add support for agent skills ([#151](https://github.com/janeapp/riffer/issues/151)) ([8847d54](https://github.com/janeapp/riffer/commit/8847d54dede875f207d0e0b28bb64039d3c2e69f))
+* Unify generate/stream API with multi-turn support, remove resume methods ([#165](https://github.com/janeapp/riffer/issues/165)) ([58826df](https://github.com/janeapp/riffer/commit/58826df27806bb10afe1c7ad94322cc643d049f9))
+
 ## [0.17.0](https://github.com/janeapp/riffer/compare/riffer/v0.16.1...riffer/v0.17.0) (2026-03-06)
 
 
