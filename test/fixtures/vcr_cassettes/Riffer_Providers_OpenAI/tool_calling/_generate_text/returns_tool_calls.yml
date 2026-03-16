@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5-nano","tools":[{"type":"function","name":"get_weather","description":"Get
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5-mini","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
     headers:
@@ -14,7 +14,7 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.43.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -24,7 +24,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.43.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -45,87 +45,83 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 20 Jan 2026 23:13:05 GMT
+      - Mon, 16 Mar 2026 18:50:11 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
+      Server:
+      - cloudflare
       X-Ratelimit-Limit-Requests:
-      - '500'
+      - '30000'
       X-Ratelimit-Limit-Tokens:
-      - '200000'
+      - '180000000'
       X-Ratelimit-Remaining-Requests:
-      - '499'
+      - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '200000'
+      - '180000000'
       X-Ratelimit-Reset-Requests:
-      - 120ms
+      - 2ms
       X-Ratelimit-Reset-Tokens:
       - 0s
       Openai-Version:
       - '2020-10-01'
       Openai-Organization:
-      - user-es54vpvsdme6lpuoivzzi85g
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Project:
-      - proj_E1uuOHBzdF9a5YsgdGcH09SZ
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_99ce0e1d41fc4a97975cc27e669a6778
+      - req_97506857e3714d03bd0286e145c15605
       Openai-Processing-Ms:
-      - '2247'
-      X-Envoy-Upstream-Service-Time:
-      - '2251'
+      - '2130'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=Vf6KU1yVYkOa4YMXB06LO_0EEzA6bYrz5CDqh_LARpg-1768950785-1.0.1.1-uUOwQuSbIMISbD9u90.CZdh3Lk51NVfp5PXKY3LWohokqzQkycORo6rJ3XK6suQJMcAzUGpinHcoSz9yXJE_YF6KVFt1zcwcgyv45KNZ2Oo;
-        path=/; expires=Tue, 20-Jan-26 23:43:05 GMT; domain=.api.openai.com; HttpOnly;
-        Secure; SameSite=None
-      - _cfuvid=8.2E4cY8TaHorJqhq0OasQG5NK77tQdtDdl.j3U2L8Q-1768950785995-0.0.1.1-604800000;
-        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      - __cf_bm=g_yj1FuDbSXooyuGj2HNPlH2PC.wcQOfNfPKslJrbRw-1773687008.92843-1.0.1.1-VmKE.X0.11MkJiXjRxYs3Z4z6gUg1isXYkFQiCY6OBacz6SCvJk0S.H5xxXHBEO.bCxf4UV7vmcFL5z0i83aKsZiyHGt4QyirawUsI0ah9h3wTEtSzwqXYXv_ifK7oJm;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:20:11 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
-      Server:
-      - cloudflare
       Cf-Ray:
-      - 9c12429b6d4958f2-YVR
+      - 9dd5f11dcf582384-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0259c08582c5dae70069700bffbaf4819790d9ef4deb2d4f95",
+          "id": "resp_0ed962f49b350be80169b850e0fc108194b03ff4a50284a2c5",
           "object": "response",
-          "created_at": 1768950783,
+          "created_at": 1773687009,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1768950785,
+          "completed_at": 1773687011,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_0259c08582c5dae70069700c001e6081979890a47e96bb430b",
+              "id": "rs_0ed962f49b350be80169b850e1a9f08194ae318e81aa2ef534",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "fc_0259c08582c5dae70069700c0192d881978f30222459a1b8f8",
+              "id": "fc_0ed962f49b350be80169b850e2f0148194ae341f815ee9c3c6",
               "type": "function_call",
               "status": "completed",
               "arguments": "{\"city\":\"Toronto\"}",
-              "call_id": "call_p9NGJk4nlicnLJwqHbEG4AAy",
+              "call_id": "call_Fl4g0O7qHP9s2BAwOzCX3ECf",
               "name": "get_weather"
             }
           ],
@@ -140,7 +136,7 @@ http_interactions:
           },
           "safety_identifier": null,
           "service_tier": "default",
-          "store": true,
+          "store": false,
           "temperature": 1.0,
           "text": {
             "format": {
@@ -178,14 +174,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 148,
+            "output_tokens": 97,
             "output_tokens_details": {
-              "reasoning_tokens": 128
+              "reasoning_tokens": 64
             },
-            "total_tokens": 204
+            "total_tokens": 153
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Tue, 20 Jan 2026 23:13:05 GMT
+  recorded_at: Mon, 16 Mar 2026 18:50:11 GMT
 recorded_with: VCR 6.4.0

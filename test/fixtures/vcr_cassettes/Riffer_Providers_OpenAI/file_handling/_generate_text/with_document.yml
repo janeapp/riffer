@@ -6,14 +6,14 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"What
-        is in this document?"},{"type":"input_file","file_data":"data:application/pdf;base64,JVBERi0xLjAKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCA2MTIgNzkyXS9QYXJlbnQgMiAwIFIvUmVzb3VyY2VzPDw+Pj4+ZW5kb2JqCnhyZWYKMCA0CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKdHJhaWxlcjw8L1NpemUgNC9Sb290IDEgMCBSPj4Kc3RhcnR4cmVmCjIwNgolJUVPRg==","filename":"test.pdf"}]}],"model":"gpt-5-nano"}'
+        is in this document?"},{"type":"input_file","file_data":"data:application/pdf;base64,JVBERi0xLjAKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL01lZGlhQm94WzAgMCA2MTIgNzkyXS9QYXJlbnQgMiAwIFIvUmVzb3VyY2VzPDw+Pj4+ZW5kb2JqCnhyZWYKMCA0CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKdHJhaWxlcjw8L1NpemUgNC9Sb290IDEgMCBSPj4Kc3RhcnR4cmVmCjIwNgolJUVPRg==","filename":"test.pdf"}]}],"model":"gpt-5-mini"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.49.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -23,7 +23,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.49.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -44,7 +44,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 23 Feb 2026 16:34:41 GMT
+      - Mon, 16 Mar 2026 18:53:10 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -60,7 +60,7 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999508'
+      - '179999316'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
@@ -72,51 +72,51 @@ http_interactions:
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_aac86e20e428400fbb30f534b5c0d326
+      - req_58fe5294800f4c1f94ddbd2b7dec4381
       Openai-Processing-Ms:
-      - '8542'
+      - '12702'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=l11RktjPYmHBWS1rUqWtgelF6wCikMQ9L4_tfvelDN0-1771864472.1316216-1.0.1.1-Y3aPfjkYtkHkrRRuiSzvJaO2492Wv5FxlMrRYTi60HhjAd4Nwj5FUIzdoNo0HBsC38z6beyRoIleNEHjOk_6eJHe6aWPIdMz6p8MXYxe9YPkVPYolhUGVwJafoOTdUa4;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 23 Feb 2026
-        17:04:41 GMT
+      - __cf_bm=YgfDapAVNMrYFmvFA9gVRR0McBFI71JkeJuyQGHWnEY-1773687177.3658035-1.0.1.1-Nk7rLJCnfB5wYVYxril7hXp9hAsnhNChWmh1DcdJnort4Xpmx9RS8Mp93XvJ4.1FWbidYoZjVUgnzvF_u4jVUnOvpkIIV6HsB_YcVjhrCYQpCw4leF5KvvIuZuktbWtZ;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:23:10 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
       Cf-Ray:
-      - 9d282196db272086-YVR
+      - 9dd5f53a8fa82914-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0de04ee9af7ba72d01699c8198903481949281928ed5e90b86",
+          "id": "resp_033372cd99113e850169b851896ab4819598a6adb8f8d720a0",
           "object": "response",
-          "created_at": 1771864472,
+          "created_at": 1773687177,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1771864481,
+          "completed_at": 1773687190,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_0de04ee9af7ba72d01699c819925548194aabcc8d8612cb8a7",
+              "id": "rs_033372cd99113e850169b85189ff148195bdf18be438ab81dc",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_0de04ee9af7ba72d01699c819f875c8194b80611c0749d1ef4",
+              "id": "msg_033372cd99113e850169b85190fee48195afe4f91d72d788fe",
               "type": "message",
               "status": "completed",
               "content": [
@@ -124,7 +124,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "I don\u2019t have the document yet. Please upload the document or paste the text, or share a link to it. I can:\n\n- Give a quick summary of the main idea\n- Outline the sections and major points\n- Identify key findings, data, and conclusions\n- Extract important dates, names, metrics, or action items\n- Answer specific questions about the content\n- Create a one-page briefing or study guide\n\nIf you can\u2019t share the file, tell me the title, author, and rough page count (or a brief description), and I\u2019ll provide a high-level overview based on that."
+                  "text": "I couldn\u2019t read any images or text from the file you tried to use \u2014 the system returned: \u201cNo content (images or text) could be read from document 'test.pdf'.\u201d Possible reasons and next steps:\n\nWhy this can happen\n- The PDF is a scanned image PDF without an OCR (searchable text) layer.  \n- The PDF is encrypted/password-protected or corrupted.  \n- The PDF is empty (zero pages) or contains only metadata/annotations.  \n- The file failed to upload completely or is in an unsupported/odd format.\n\nHow you can check quickly\n- Open the PDF in a reader (Adobe Reader, Preview, or your browser). Try to select/copy text. If you can\u2019t select text and it looks like images, it likely needs OCR.  \n- Check file integrity and metadata: use pdfinfo (from poppler) or any \u201cProperties\u201d view in your reader.\n\nIf you want to fix it yourself\n- Extract metadata / test: pdfinfo test.pdf ; pdftotext test.pdf - (on Linux/mac).  \n- If it\u2019s images-only, add OCR:\n  - ocrmypdf test.pdf output.pdf\n  - or convert pages to images then use Tesseract: convert -density 300 test.pdf page.png && tesseract page.png out -l eng\n  - In Adobe Acrobat: Tools \u2192 Enhance Scans \u2192 Recognize Text.\n- If it\u2019s encrypted, open it with the password or recreate an unencrypted copy.\n\nWhat I can do for you\n- Re-upload the PDF (ensure upload completes).  \n- Or paste/attach screenshots or copied text.  \n- Tell me what you want (summary, extract, translate, check for specific info) and I\u2019ll process it once I can read the file.\n\nWhich would you like to do next?"
                 }
               ],
               "role": "assistant"
@@ -155,18 +155,18 @@ http_interactions:
           "top_p": 1.0,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 16,
+            "input_tokens": 32,
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 711,
+            "output_tokens": 899,
             "output_tokens_details": {
-              "reasoning_tokens": 576
+              "reasoning_tokens": 512
             },
-            "total_tokens": 727
+            "total_tokens": 931
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Mon, 23 Feb 2026 16:34:41 GMT
+  recorded_at: Mon, 16 Mar 2026 18:53:10 GMT
 recorded_with: VCR 6.4.0

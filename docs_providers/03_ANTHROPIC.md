@@ -24,7 +24,7 @@ Or per-agent:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'anthropic/claude-4-5-haiku-20251001'
+  model 'anthropic/claude-haiku-4-5-20251001'
   provider_options api_key: ENV['ANTHROPIC_API_KEY']
 end
 ```
@@ -102,7 +102,7 @@ Riffer.configure do |config|
 end
 
 class AssistantAgent < Riffer::Agent
-  model 'anthropic/claude-4-5-haiku-20251001'
+  model 'anthropic/claude-haiku-4-5-20251001'
   instructions 'You are a helpful assistant.'
   model_options temperature: 0.7, max_tokens: 4096
 end
@@ -150,7 +150,7 @@ class WeatherTool < Riffer::Tool
 end
 
 class WeatherAgent < Riffer::Agent
-  model 'anthropic/claude-4-5-haiku-20251001'
+  model 'anthropic/claude-haiku-4-5-20251001'
   uses_tools [WeatherTool]
 end
 ```
@@ -161,7 +161,7 @@ Extended thinking enables Claude to reason through complex problems before respo
 
 ```ruby
 class ReasoningAgent < Riffer::Agent
-  model 'anthropic/claude-4-5-haiku-20251001'
+  model 'anthropic/claude-haiku-4-5-20251001'
   model_options thinking: {type: "enabled", budget_tokens: 10000}
 end
 ```
@@ -189,7 +189,7 @@ Web search allows Claude to search the web for up-to-date information. When enab
 
 ```ruby
 class SearchAgent < Riffer::Agent
-  model 'anthropic/claude-4-5-haiku-20251001'
+  model 'anthropic/claude-haiku-4-5-20251001'
   model_options web_search: true
 end
 
@@ -230,7 +230,7 @@ provider = Riffer::Providers::Anthropic.new(
 
 response = provider.generate_text(
   prompt: "Hello!",
-  model: "claude-4-5-haiku-20251001",
+  model: "claude-haiku-4-5-20251001",
   temperature: 0.7
 )
 
@@ -242,7 +242,7 @@ puts response.content
 ```ruby
 response = provider.generate_text(
   prompt: "Explain step by step how to solve a Rubik's cube",
-  model: "claude-4-5-haiku-20251001",
+  model: "claude-haiku-4-5-20251001",
   thinking: { type: "enabled", budget_tokens: 10000 }
 )
 

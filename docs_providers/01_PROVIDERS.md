@@ -17,9 +17,9 @@ Agents specify providers using the `provider/model` format:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'              # OpenAI
-  model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'  # Bedrock
-  model 'anthropic/claude-3-5-sonnet-20241022'  # Anthropic
+  model 'openai/gpt-5-mini'              # OpenAI
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
+  model 'anthropic/claude-haiku-4-5-20251001'  # Anthropic
   model 'mock/any'                   # Mock provider
 end
 ```
@@ -37,14 +37,14 @@ provider = Riffer::Providers::OpenAI.new(api_key: "...")
 
 response = provider.generate_text(
   prompt: "Hello!",
-  model: "gpt-4o"
+  model: "gpt-5-mini"
 )
 # => Riffer::Messages::Assistant
 
 # Or with messages
 response = provider.generate_text(
   messages: [Riffer::Messages::User.new("Hello!")],
-  model: "gpt-4o"
+  model: "gpt-5-mini"
 )
 ```
 
@@ -53,7 +53,7 @@ response = provider.generate_text(
 Streams a response as an Enumerator:
 
 ```ruby
-provider.stream_text(prompt: "Tell me a story", model: "gpt-4o").each do |event|
+provider.stream_text(prompt: "Tell me a story", model: "gpt-5-mini").each do |event|
   case event
   when Riffer::StreamEvents::TextDelta
     print event.content
@@ -90,7 +90,7 @@ provider = Riffer::Providers::OpenAI.new
 # Simple prompt
 response = provider.generate_text(
   prompt: "What is Ruby?",
-  model: "gpt-4o"
+  model: "gpt-5-mini"
 )
 puts response.content
 
@@ -98,7 +98,7 @@ puts response.content
 response = provider.generate_text(
   prompt: "Explain recursion",
   system: "You are a programming tutor. Use simple language.",
-  model: "gpt-4o"
+  model: "gpt-5-mini"
 )
 
 # With message history
@@ -111,7 +111,7 @@ messages = [
 
 response = provider.generate_text(
   messages: messages,
-  model: "gpt-4o"
+  model: "gpt-5-mini"
 )
 ```
 
@@ -132,7 +132,7 @@ end
 
 response = provider.generate_text(
   prompt: "What's the weather in Tokyo?",
-  model: "gpt-4o",
+  model: "gpt-5-mini",
   tools: [WeatherTool]
 )
 

@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Extract the address from: John
-        lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"model":"gpt-5-nano","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
         address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
         or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}}}'
@@ -16,7 +16,7 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.49.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -26,7 +26,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.49.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -47,7 +47,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 26 Feb 2026 23:07:42 GMT
+      - Mon, 16 Mar 2026 18:49:24 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -63,7 +63,7 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999460'
+      - '179999916'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
@@ -75,51 +75,51 @@ http_interactions:
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_b415e86bd30b42a7b77ba459b5100677
+      - req_d5dcb7bd0fd743faa44e62021391d254
       Openai-Processing-Ms:
-      - '7297'
+      - '5158'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=LIKPsc2GlQOJip0AXakqBkx8T4LT630_OOB0Xhl4F8I-1772147255.2200525-1.0.1.1-sMR7u1WqCnrjojpeDmUYHbG0quEM62smzZsd2KRw_GuID00GNR88B_zEyv_2KYhmyFkD6QjL7ngBrDMHh_bZfRfjAdgFFQlluhc3gCese9OFJ6E1z.UwDKy7dS5jtacg;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Thu, 26 Feb 2026
-        23:37:42 GMT
+      - __cf_bm=t2DIdWtjYsdQi.IjtBBfheUL4UuJwu9aDGFdT_That8-1773686959.447607-1.0.1.1-Oxylg1maBRlhWIz2SjBms.CGDQsNw_SFTiGBigfliSR16AsZ7SY3Ryijwo78EFsZy4rMeYH6bX7_j1_JURlKlwe_.XYA3GL8Yqjgmil6C30rAl0_ZTkBfFnKxs_PGw0m;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:19:24 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
       Cf-Ray:
-      - 9d43197918c683f9-YVR
+      - 9dd5efe88d191a75-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_013086c787a693a00169a0d237836881959adfddd2830c799c",
+          "id": "resp_0b535e2f457a190f0169b850afca84819692c6ac41e1794830",
           "object": "response",
-          "created_at": 1772147255,
+          "created_at": 1773686959,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1772147262,
+          "completed_at": 1773686964,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_013086c787a693a00169a0d237df70819593696b6edbf9fb10",
+              "id": "rs_0b535e2f457a190f0169b850b0363c81969287eab43dcfcccd",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_013086c787a693a00169a0d23d323c819585e1b71b2c14a53d",
+              "id": "msg_0b535e2f457a190f0169b850b42c748196b6e66d6ee862b08c",
               "type": "message",
               "status": "completed",
               "content": [
@@ -214,14 +214,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 756,
+            "output_tokens": 302,
             "output_tokens_details": {
-              "reasoning_tokens": 704
+              "reasoning_tokens": 256
             },
-            "total_tokens": 883
+            "total_tokens": 429
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Thu, 26 Feb 2026 23:07:42 GMT
+  recorded_at: Mon, 16 Mar 2026 18:49:25 GMT
 recorded_with: VCR 6.4.0

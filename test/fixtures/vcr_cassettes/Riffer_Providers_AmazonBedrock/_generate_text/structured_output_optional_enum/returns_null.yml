@@ -14,7 +14,7 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 718607ee-789d-4e33-9c73-5a7fdd0bec05
+      - 57ab2688-b721-4060-b56a-019251f45bbf
       Content-Type:
       - application/json
       Authorization:
@@ -32,18 +32,18 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 02 Mar 2026 22:56:38 GMT
+      - Mon, 16 Mar 2026 18:53:17 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '381'
+      - '384'
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 8ec6741e-c930-4800-a9e1-e9467bf197f4
+      - f660bc79-1258-47f0-aaf1-d7b32fc9806b
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":1576},"output":{"message":{"content":[{"text":"{\"name\":\"yoga
-        class, underwater format\",\"session_type\":null}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":276,"outputTokens":18,"serverToolUsage":{},"totalTokens":294}}'
-  recorded_at: Mon, 02 Mar 2026 22:56:38 GMT
+      string: '{"metrics":{"latencyMs":4135},"output":{"message":{"content":[{"text":"{\"name\":
+        \"yoga class, underwater format\", \"session_type\": null}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":276,"outputTokens":20,"serverToolUsage":{},"totalTokens":296}}'
+  recorded_at: Mon, 16 Mar 2026 18:53:17 GMT
 recorded_with: VCR 6.4.0

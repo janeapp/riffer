@@ -37,7 +37,7 @@ Or per-agent:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
   provider_options region: 'us-west-2', api_token: ENV['BEDROCK_API_TOKEN']
 end
 ```
@@ -48,9 +48,9 @@ Use Bedrock model IDs in the `amazon_bedrock/model` format:
 
 ```ruby
 # Claude models
-model 'amazon_bedrock/anthropic.claude-3-opus-20240229-v1:0'
-model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
-model 'amazon_bedrock/anthropic.claude-3-haiku-20240307-v1:0'
+model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
+model 'amazon_bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
+model 'amazon_bedrock/us.anthropic.claude-opus-4-5-20251101-v1:0'
 
 # Other foundation models available in Bedrock
 model 'amazon_bedrock/amazon.titan-text-express-v1'
@@ -91,7 +91,7 @@ Riffer.configure do |config|
 end
 
 class AssistantAgent < Riffer::Agent
-  model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
   instructions 'You are a helpful assistant.'
   model_options inference_config: {temperature: 0.7, max_tokens: 4096}
 end
@@ -135,7 +135,7 @@ class S3ListTool < Riffer::Tool
 end
 
 class AWSAgent < Riffer::Agent
-  model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
   uses_tools [S3ListTool]
 end
 ```
@@ -161,7 +161,7 @@ provider = Riffer::Providers::AmazonBedrock.new(
 
 response = provider.generate_text(
   prompt: "Hello!",
-  model: "anthropic.claude-3-sonnet-20240229-v1:0",
+  model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
   temperature: 0.7
 )
 

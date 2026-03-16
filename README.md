@@ -34,7 +34,7 @@ end
 
 # Define an agent
 class EchoAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are an assistant that repeats what the user says.'
 end
 

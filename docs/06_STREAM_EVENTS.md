@@ -266,7 +266,7 @@ end
 
 ```ruby
 class WeatherAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are a weather assistant.'
   uses_tools [WeatherTool]
 end

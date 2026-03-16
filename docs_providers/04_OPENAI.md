@@ -24,7 +24,7 @@ Or per-agent:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   provider_options api_key: ENV['CUSTOM_API_KEY']
 end
 ```
@@ -34,10 +34,8 @@ end
 Use any OpenAI model in the `openai/model` format:
 
 ```ruby
-model 'openai/gpt-4o'
-model 'openai/gpt-4o-mini'
-model 'openai/gpt-4-turbo'
-model 'openai/gpt-3.5-turbo'
+model 'openai/gpt-5.4'
+model 'openai/gpt-5-mini'
 ```
 
 ## Model Options
@@ -88,7 +86,7 @@ Riffer.configure do |config|
 end
 
 class CodeReviewAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are a code reviewer. Provide constructive feedback.'
   model_options temperature: 0.3, reasoning: 'medium'
 end
@@ -138,7 +136,7 @@ class CalculatorTool < Riffer::Tool
 end
 
 class MathAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [CalculatorTool]
 end
 ```
@@ -149,7 +147,7 @@ Web search allows the model to search the web for up-to-date information. When e
 
 ```ruby
 class SearchAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   model_options web_search: true
 end
 
@@ -190,7 +188,7 @@ provider = Riffer::Providers::OpenAI.new(api_key: ENV['OPENAI_API_KEY'])
 
 response = provider.generate_text(
   prompt: "Hello!",
-  model: "gpt-4o",
+  model: "gpt-5-mini",
   temperature: 0.7
 )
 

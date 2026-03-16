@@ -6,14 +6,14 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"Describe
-        this image"},{"type":"input_image","image_url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="}]}],"model":"gpt-5-nano"}'
+        this image"},{"type":"input_image","image_url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="}]}],"model":"gpt-5-mini"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.49.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -23,7 +23,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.49.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -44,7 +44,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 20 Feb 2026 16:14:43 GMT
+      - Mon, 16 Mar 2026 18:52:53 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -60,7 +60,7 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999964'
+      - '180000000'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
@@ -72,51 +72,51 @@ http_interactions:
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_d29b270b995c4a6daa1fb7ff5259911e
+      - req_99e90beec53b48d79c2133a1b731cf80
       Openai-Processing-Ms:
-      - '5115'
+      - '5902'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=PPehNPbElrlqbzBOCbXNtEIRsXJKiNgnoNkYbKhXYUY-1771604078.2097695-1.0.1.1-hynUsk9Pqr0EMNsC1ZMy.O6..egDPRXyNilauK2wIuXTHmvxWt3gnDm7NV_Q0VEsEqDeMi53tnNS1kuWDZOcfq0Q3jfB1AHLwL.ndGeAclhVXW4J9ugCen2RZBnfyfyd;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Fri, 20 Feb 2026
-        16:44:43 GMT
+      - __cf_bm=hWc.UmUTRHbOXcJY.LY6GeuBrsgQnaat0KTMyzbObSg-1773687167.8679569-1.0.1.1-W5iT7oNfmrn3L_IyDRHIz11K1q7bfSetfHHm1cw93dGeiXj43V_y.GIDCbuApJMz.hk5CamuBRtUpdncNXZt7XWNQ9wzIaHj6eFXoGUdqbBDJyt80bCaQEUrcfvxGeJh;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:22:53 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
       Cf-Ray:
-      - 9d0f4c50ce0788d9-YVR
+      - 9dd5f4ff2a5da14f-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_01028f3342bb511b016998886ea7a881908debaaad2b473385",
+          "id": "resp_095ab954f4345f450169b8517feb788197a63eeb16d4cedda5",
           "object": "response",
-          "created_at": 1771604078,
+          "created_at": 1773687167,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1771604083,
+          "completed_at": 1773687173,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_01028f3342bb511b016998886f4eb48190bcfd1d8e548f3b12",
+              "id": "rs_095ab954f4345f450169b85180aba08197a638919b6224b15f",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_01028f3342bb511b016998887358cc819093c221f80f1766bf",
+              "id": "msg_095ab954f4345f450169b85184e9e88197bb40a3a9c1e7ab6e",
               "type": "message",
               "status": "completed",
               "content": [
@@ -124,7 +124,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "A solid red square, mostly uniform in color with a very slight darker patch toward the bottom-left corner. No other objects or text are present."
+                  "text": "A simple, flat, uniformly saturated red square centered on a dark (black) background. No text, patterns, or other features; the image is small (about 51\u00d751 pixels) and appears close to pure red (approximately hex #FF0000)."
                 }
               ],
               "role": "assistant"
@@ -155,18 +155,18 @@ http_interactions:
           "top_p": 1.0,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 15,
+            "input_tokens": 14,
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 399,
+            "output_tokens": 364,
             "output_tokens_details": {
-              "reasoning_tokens": 320
+              "reasoning_tokens": 256
             },
-            "total_tokens": 414
+            "total_tokens": 378
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Fri, 20 Feb 2026 16:14:43 GMT
+  recorded_at: Mon, 16 Mar 2026 18:52:53 GMT
 recorded_with: VCR 6.4.0
