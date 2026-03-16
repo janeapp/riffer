@@ -277,7 +277,7 @@ Accepts a `Riffer::ToolRuntime` subclass, a `Riffer::ToolRuntime` instance, or a
 Registers subagents the agent can delegate to:
 
 ```ruby
-class SupervisorAgent < Riffer::Agent
+class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_agents [ResearchAgent, WriterAgent]
 end
@@ -286,7 +286,7 @@ end
 Subagents can also be resolved dynamically with a lambda:
 
 ```ruby
-class SupervisorAgent < Riffer::Agent
+class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
 
   uses_agents ->(context) {
@@ -306,7 +306,7 @@ See [Subagents](#subagents) for details.
 Configures how subagent calls are executed. Defaults to sequential (inline) execution:
 
 ```ruby
-class SupervisorAgent < Riffer::Agent
+class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_agents [ResearchAgent, WriterAgent]
   agent_runtime Riffer::AgentRuntime::Threaded
@@ -652,7 +652,7 @@ end
 
 ## Subagents
 
-Agents can delegate tasks to specialized subagents. A supervisor agent sees subagents as callable tools (via tool calling), but their execution is handled by a separate `AgentRuntime` — not the `ToolRuntime` — because agent dispatch is always in-process LLM calls optimized for threads/fibers, while tools may be dispatched remotely (gRPC, HTTP).
+Agents can delegate tasks to specialized subagents. Register subagents with `uses_agents` and the LLM decides when to delegate based on each subagent's description.
 
 ### Defining Subagents
 
@@ -672,46 +672,36 @@ class WriterAgent < Riffer::Agent
 end
 ```
 
-### Creating a Supervisor
+### Delegating to Subagents
 
 Register subagents with `uses_agents`:
 
 ```ruby
-class SupervisorAgent < Riffer::Agent
+class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   instructions 'You coordinate research and writing tasks.'
   uses_agents [ResearchAgent, WriterAgent]
 end
 
-response = SupervisorAgent.generate('Write an article about Ruby concurrency')
+response = MaestroAgent.generate('Write an article about Ruby concurrency')
 ```
 
-The supervisor can also use regular tools alongside subagents:
+Your agent can also use regular tools alongside subagents:
 
 ```ruby
-class SupervisorAgent < Riffer::Agent
+class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WebSearchTool]
   uses_agents [ResearchAgent, WriterAgent]
 end
 ```
 
-### How It Works
-
-1. Subagents are exposed to the LLM as tools with an `agent__` prefix (e.g., `agent__research_agent`)
-2. Each agent tool has a single `message` parameter — what the supervisor tells the subagent
-3. When the LLM returns tool calls, the agent partitions them:
-   - Regular tool calls go to the `ToolRuntime`
-   - Agent tool calls go to the `AgentRuntime`
-4. The `AgentRuntime` instantiates the subagent and calls `generate` with the message and the supervisor's `context`
-5. The subagent's response is returned to the supervisor as a tool result
-
 ### Context Propagation
 
-The supervisor's `context` is passed through to subagents automatically:
+The calling agent's `context` is passed through to subagents automatically:
 
 ```ruby
-response = SupervisorAgent.generate(
+response = MaestroAgent.generate(
   'Research Ruby GC',
   context: {user_id: 123, preferences: {depth: :detailed}}
 )
@@ -723,7 +713,7 @@ response = SupervisorAgent.generate(
 By default, subagent calls are executed sequentially using `Riffer::AgentRuntime::Inline`. Use `Riffer::AgentRuntime::Threaded` for concurrent execution:
 
 ```ruby
-class SupervisorAgent < Riffer::Agent
+class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_agents [ResearchAgent, WriterAgent]
   agent_runtime Riffer::AgentRuntime::Threaded
@@ -768,10 +758,10 @@ end
 
 ### Error Handling
 
-Subagent execution errors are handled gracefully and returned to the supervisor LLM:
+Subagent execution errors are handled gracefully and returned to the calling agent:
 
-- **Blocked** — If a subagent's guardrail fires, the supervisor receives an error: `"Agent was blocked: <reason>"`
-- **Interrupted** — If a subagent hits its `max_steps` limit, the supervisor receives the partial content: `"Agent was interrupted: <content>"`
+- **Blocked** — If a subagent's guardrail fires, the calling agent receives an error: `"Agent was blocked: <reason>"`
+- **Interrupted** — If a subagent hits its `max_steps` limit, the calling agent receives the partial content: `"Agent was interrupted: <content>"`
 - **RuntimeError** — Exceptions are caught and returned as error responses
 
 ### Constraints
@@ -785,13 +775,10 @@ Subagent execution errors are handled gracefully and returned to the supervisor 
 When an agent receives a response with tool calls:
 
 1. Agent detects `tool_calls` in the assistant message
-2. Tool calls are partitioned — agent tool calls (prefixed with `agent__`) go to the `AgentRuntime`, regular tool calls go to the `ToolRuntime`
-3. The configured runtime executes the calls (sequentially by default, or concurrently with threaded runtimes):
-   - **Tools:** Finds the matching tool class, validates arguments, calls `call` with context and arguments
-   - **Agents:** Instantiates the subagent, calls `generate` with the message and context
-4. Creates Tool messages with the results
-5. Sends the updated message history back to the LLM
-6. Repeats until no more tool calls
+2. The configured runtime executes the calls — finds the matching tool class, validates arguments, calls `call` with context and arguments
+3. Creates Tool messages with the results
+4. Sends the updated message history back to the LLM
+5. Repeats until no more tool calls
 
 ## Error Handling
 

@@ -39,7 +39,7 @@ See [Tools](06_TOOLS.md) for details.
 
 ### Subagent
 
-Agents can delegate tasks to specialized subagents. The supervisor agent sees subagents as callable tools, but their execution is handled by a separate `AgentRuntime` optimized for in-process LLM calls.
+Agents can delegate tasks to specialized subagents using `uses_agents`. The LLM decides when to delegate based on each subagent's description.
 
 ```ruby
 class ResearchAgent < Riffer::Agent
@@ -48,7 +48,7 @@ class ResearchAgent < Riffer::Agent
   instructions 'You are a research specialist.'
 end
 
-class SupervisorAgent < Riffer::Agent
+class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   instructions 'You delegate research tasks to your subagent.'
   uses_agents [ResearchAgent]
