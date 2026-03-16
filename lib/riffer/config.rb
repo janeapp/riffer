@@ -42,6 +42,12 @@ class Riffer::Config
   # or a Proc. Defaults to <tt>Riffer::ToolRuntime::Inline.new</tt>.
   attr_reader :tool_runtime #: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
 
+  # Global agent runtime configuration (experimental).
+  #
+  # Accepts a Riffer::AgentRuntime subclass, a Riffer::AgentRuntime instance,
+  # or a Proc. Defaults to +Riffer::AgentRuntime::Inline.new+.
+  attr_reader :agent_runtime #: (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)
+
   # Sets the global tool runtime.
   #
   # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
@@ -55,6 +61,18 @@ class Riffer::Config
     @tool_runtime = value
   end
 
+  # Sets the global agent runtime.
+  #
+  # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
+  # (AgentRuntime subclass, AgentRuntime instance, or Proc).
+  #
+  #: ((singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)) -> void
+  def agent_runtime=(value)
+    valid = (value.is_a?(Class) && value < Riffer::AgentRuntime) || value.is_a?(Riffer::AgentRuntime) || value.is_a?(Proc)
+    raise Riffer::ArgumentError, "agent_runtime must be a Riffer::AgentRuntime subclass, instance, or a Proc" unless valid
+    @agent_runtime = value
+  end
+
   #--
   #: () -> void
   def initialize
@@ -64,5 +82,6 @@ class Riffer::Config
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new
+    @agent_runtime = Riffer::AgentRuntime::Inline.new
   end
 end

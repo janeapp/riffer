@@ -35,6 +35,18 @@ class Riffer::Agent
     @identifier = value.to_s
   end
 
+  # Gets or sets the agent description.
+  #
+  # Required for agents used as subagents — the LLM needs it to make
+  # delegation decisions.
+  #
+  #: (?String?) -> String?
+  def self.description(value = nil)
+    return @description if value.nil?
+    validate_is_string!(value, "description")
+    @description = value
+  end
+
   # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
   #
   #--
@@ -148,6 +160,32 @@ class Riffer::Agent
       superclass.respond_to?(:tool_runtime) ? superclass.tool_runtime : nil
     else
       @tool_runtime = value
+    end
+  end
+
+  # Gets or sets the subagents used by this agent.
+  #
+  #: (?(Array[singleton(Riffer::Agent)] | Proc)?) -> (Array[singleton(Riffer::Agent)] | Proc)?
+  def self.uses_agents(agents_or_lambda = nil)
+    return @agents_config if agents_or_lambda.nil?
+    @agents_config = agents_or_lambda
+  end
+
+  # Gets or sets the agent runtime for this agent.
+  #
+  # Accepts a Riffer::AgentRuntime subclass, a Riffer::AgentRuntime instance,
+  # or a Proc.
+  #
+  # Inherited by subclasses. When unset, walks the ancestor chain and
+  # falls back to the global +Riffer.config.agent_runtime+.
+  #
+  #: (?(singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?) -> (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?
+  def self.agent_runtime(value = nil)
+    if value.nil?
+      return @agent_runtime if instance_variable_defined?(:@agent_runtime)
+      superclass.respond_to?(:agent_runtime) ? superclass.agent_runtime : nil
+    else
+      @agent_runtime = value
     end
   end
 
@@ -584,17 +622,14 @@ class Riffer::Agent
   #--
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
-    runtime = resolve_tool_runtime
-    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @context)
+    agent_names = resolved_agent_map.keys.to_set
 
-    results.each do |tool_call, result|
-      add_message(Riffer::Messages::Tool.new(
-        result.content,
-        tool_call_id: tool_call.id,
-        name: tool_call.name,
-        error: result.error_message,
-        error_type: result.error_type
-      ))
+    if agent_names.empty?
+      dispatch_tool_results(resolve_tool_runtime.execute(response.tool_calls, tools: resolved_tools, context: @context))
+    else
+      agent_calls, tool_calls = response.tool_calls.partition { |tc| agent_names.include?(tc.name) }
+      dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context)) unless tool_calls.empty?
+      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: @context)) unless agent_calls.empty?
     end
   end
 
@@ -615,17 +650,14 @@ class Riffer::Agent
     pending = pending_tool_calls
     return if pending.empty?
 
-    runtime = resolve_tool_runtime
-    results = runtime.execute(pending, tools: resolved_tools, context: @context)
+    agent_names = resolved_agent_map.keys.to_set
 
-    results.each do |tool_call, result|
-      add_message(Riffer::Messages::Tool.new(
-        result.content,
-        tool_call_id: tool_call.id,
-        name: tool_call.name,
-        error: result.error_message,
-        error_type: result.error_type
-      ))
+    if agent_names.empty?
+      dispatch_tool_results(resolve_tool_runtime.execute(pending, tools: resolved_tools, context: @context))
+    else
+      agent_calls, tool_calls = pending.partition { |tc| agent_names.include?(tc.name) }
+      dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context)) unless tool_calls.empty?
+      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: @context)) unless agent_calls.empty?
     end
   end
 
@@ -643,11 +675,26 @@ class Riffer::Agent
     assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
   end
 
+  #: (Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
+  def dispatch_tool_results(results)
+    results.each do |tool_call, result|
+      add_message(Riffer::Messages::Tool.new(
+        result.content,
+        tool_call_id: tool_call.id,
+        name: tool_call.name,
+        error: result.error_message,
+        error_type: result.error_type
+      ))
+    end
+  end
+
   #--
   #: () -> void
   def prepare_run
     @resolved_tools = nil
     @resolved_tool_runtime = nil
+    @resolved_agent_runtime = nil
+    @resolved_agent_map = nil
     clear_resolved_model
     @interrupted = false
     resolve_model
@@ -710,6 +757,16 @@ class Riffer::Agent
         config
       end
 
+      agent_classes = resolve_agents_config
+      if agent_classes&.any?
+        raise Riffer::ArgumentError, "Agent cannot use itself as a subagent" if agent_classes.include?(self.class)
+        agent_tools = agent_classes.map { |ac| Riffer::AgentTool.build(ac) }
+        all_names = tools.map(&:name) + agent_tools.map(&:name)
+        dups = all_names.tally.select { |_, count| count > 1 }.keys
+        raise Riffer::ArgumentError, "Tool name conflict with agent tools: #{dups.join(", ")}" if dups.any?
+        tools += agent_tools
+      end
+
       if @skills_state
         activate_tool = @skills_state.adapter.activate_tool
         raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{activate_tool.name}" if tools.any? { |t| t.name == activate_tool.name }
@@ -717,6 +774,27 @@ class Riffer::Agent
       else
         tools
       end
+    end
+  end
+
+  #: () -> Hash[String, singleton(Riffer::Agent)]
+  def resolved_agent_map
+    @resolved_agent_map ||= begin
+      agent_classes = resolve_agents_config
+      return {} unless agent_classes&.any?
+      agent_classes.to_h { |ac| [Riffer::AgentTool.identifier_for(ac), ac] }
+    end
+  end
+
+  #: () -> Array[singleton(Riffer::Agent)]?
+  def resolve_agents_config
+    config = self.class.uses_agents
+    return nil if config.nil?
+
+    if config.is_a?(Proc)
+      (config.arity == 0) ? config.call : config.call(@context)
+    else
+      config
     end
   end
 
@@ -736,6 +814,25 @@ class Riffer::Agent
       when Class then runtime.new
       when Riffer::ToolRuntime then runtime
       else raise Riffer::ArgumentError, "Invalid tool_runtime: #{runtime.inspect}"
+      end
+    end
+  end
+
+  #: () -> Riffer::AgentRuntime
+  def resolve_agent_runtime
+    @resolved_agent_runtime ||= begin
+      config = self.class.agent_runtime || Riffer.config.agent_runtime
+
+      runtime = if config.is_a?(Proc)
+        (config.arity == 0) ? config.call : config.call(@context)
+      else
+        config
+      end
+
+      case runtime
+      when Class then runtime.new
+      when Riffer::AgentRuntime then runtime
+      else raise Riffer::ArgumentError, "Invalid agent_runtime: #{runtime.inspect}"
       end
     end
   end

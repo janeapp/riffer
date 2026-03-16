@@ -4,7 +4,7 @@
 
 ### Agent (`lib/riffer/agent.rb`)
 
-Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, `structured_output`, and `skills` to configure. Orchestrates message flow, LLM calls, tool execution, structured output parsing, and skill activation via a generate/stream loop.
+Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, `description`, `structured_output`, `skills`, `uses_agents`, and `agent_runtime` to configure. Orchestrates message flow, LLM calls, tool execution, subagent delegation, structured output parsing, and skill activation via a generate/stream loop.
 
 ```ruby
 class EchoAgent < Riffer::Agent
@@ -56,6 +56,19 @@ Support for the [Agent Skills spec](https://agentskills.io/). Skills are package
 - `XmlAdapter` - XML skill adapter for Anthropic/Claude
 - `ActivateTool` - default tool the LLM calls to activate a skill
 
+### AgentTool (`lib/riffer/agent_tool.rb`)
+
+Factory module that generates schema-only `Riffer::Tool` subclasses from agent classes. The LLM sees subagents as callable tools with an `agent__` prefix and a single `message` parameter. The tool's `call` method is never invoked — `AgentRuntime` handles dispatch directly.
+
+### AgentRuntime (`lib/riffer/agent_runtime.rb`)
+
+Abstract base class for subagent call dispatch. Mirrors `ToolRuntime` structure but dispatches agents directly (always in-process I/O). Composes with a `Runner` for concurrency control. Subclasses:
+
+- `Inline` (`agent_runtime/inline.rb`) — sequential execution via `Runner::Sequential`
+- `Threaded` (`agent_runtime/threaded.rb`) — concurrent execution via `Runner::Threaded`
+
+Provides `around_agent_call` hook for instrumentation.
+
 ### Messages (`lib/riffer/messages/`)
 
 Typed message objects that extend `Riffer::Messages::Base`:
@@ -83,7 +96,7 @@ Structured events for streaming responses:
 
 ### Per-Call State Reset
 
-Each call to `generate` or `stream` resets `context`, tools, tool runtime, model, skills state, and the interrupted flag via `prepare_run`. Only the message history and cumulative `token_usage` persist across calls. This means `context:` must be passed on every call.
+Each call to `generate` or `stream` resets `context`, tools, tool runtime, agent runtime, agent map, model, skills state, and the interrupted flag via `prepare_run`. Only the message history and cumulative `token_usage` persist across calls. This means `context:` must be passed on every call.
 
 ### Stopping the Loop Early
 
@@ -150,6 +163,11 @@ lib/
     config.rb            # Configuration class
     core.rb              # Core functionality
     agent.rb             # Agent class
+    agent_tool.rb        # Factory for schema-only agent tools
+    agent_runtime.rb     # Abstract base class for agent dispatch
+    agent_runtime/
+      inline.rb          # Sequential agent execution
+      threaded.rb        # Threaded agent execution
     messages.rb          # Messages namespace/module
     providers.rb         # Providers namespace/module
     param.rb             # Single parameter definition (shared by tools and structured output)

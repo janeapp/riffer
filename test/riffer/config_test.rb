@@ -46,6 +46,29 @@ describe Riffer::Config do
     end
   end
 
+  describe "agent_runtime" do
+    it "defaults to Inline instance" do
+      config = Riffer::Config.new
+      expect(config.agent_runtime).must_be_instance_of Riffer::AgentRuntime::Inline
+    end
+
+    it "allows setting agent_runtime" do
+      config = Riffer::Config.new
+      config.agent_runtime = Riffer::AgentRuntime::Threaded
+      expect(config.agent_runtime).must_equal Riffer::AgentRuntime::Threaded
+    end
+
+    it "raises for invalid agent_runtime" do
+      config = Riffer::Config.new
+      expect { config.agent_runtime = nil }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for string agent_runtime" do
+      config = Riffer::Config.new
+      expect { config.agent_runtime = "invalid" }.must_raise Riffer::ArgumentError
+    end
+  end
+
   describe "evals namespace" do
     it "initializes with nil judge_model" do
       config = Riffer::Config.new

@@ -37,6 +37,26 @@ end
 
 See [Tools](06_TOOLS.md) for details.
 
+### Subagent
+
+Agents can delegate tasks to specialized subagents. The supervisor agent sees subagents as callable tools, but their execution is handled by a separate `AgentRuntime` optimized for in-process LLM calls.
+
+```ruby
+class ResearchAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  description 'Researches topics and returns summaries'
+  instructions 'You are a research specialist.'
+end
+
+class SupervisorAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  instructions 'You delegate research tasks to your subagent.'
+  uses_agents [ResearchAgent]
+end
+```
+
+See the [subagent section in Agents](03_AGENTS.md#subagents) for details.
+
 ### Structured Output
 
 Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (`Hash`), typed arrays (`Array, of:`), and arrays of objects (`Array` with block):

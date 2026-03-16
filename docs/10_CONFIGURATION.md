@@ -54,6 +54,26 @@ end
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
+### Agent Runtime (Experimental)
+
+> **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
+
+Configure the default agent runtime for all agents with subagents:
+
+```ruby
+Riffer.configure do |config|
+  config.agent_runtime = Riffer::AgentRuntime::Threaded
+end
+```
+
+| Value                           | Description                                                                                         |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `Riffer::AgentRuntime` subclass | Instantiated automatically (e.g., `Riffer::AgentRuntime::Inline`, `Riffer::AgentRuntime::Threaded`) |
+| `Riffer::AgentRuntime` instance | Custom runtime with specific options                                                                |
+| `Proc`                          | Dynamic resolution                                                                                  |
+
+Per-agent configuration overrides this global default. See [Agents — Subagents](03_AGENTS.md#subagents) for details.
+
 ## Agent-Level Configuration
 
 Override global configuration at the agent level:

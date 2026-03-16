@@ -3484,4 +3484,241 @@ describe Riffer::Agent do
       expect(msg.content).must_include "Available Skills"
     end
   end
+
+  describe ".description" do
+    it "returns nil when not set" do
+      expect(agent_class.description).must_be_nil
+    end
+
+    it "sets the description" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        description "A helpful research agent"
+      end
+      expect(klass.description).must_equal "A helpful research agent"
+    end
+
+    it "raises error when description is not a string" do
+      error = expect { agent_class.description(123) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/description must be a String/)
+    end
+
+    it "raises error when description is an empty string" do
+      error = expect { agent_class.description("   ") }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/description cannot be empty/)
+    end
+  end
+
+  describe ".uses_agents" do
+    let(:subagent_class) do
+      Class.new(Riffer::Agent) do
+        identifier "sub-agent"
+        model "mock/riffer-1"
+        description "A subagent"
+      end
+    end
+
+    it "returns nil when not set" do
+      expect(agent_class.uses_agents).must_be_nil
+    end
+
+    it "sets the agents array" do
+      sub = subagent_class
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_agents [sub]
+      end
+      expect(klass.uses_agents).must_equal [sub]
+    end
+
+    it "accepts a lambda" do
+      sub = subagent_class
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_agents -> { [sub] }
+      end
+      expect(klass.uses_agents).must_be_instance_of Proc
+    end
+  end
+
+  describe ".agent_runtime" do
+    it "returns nil when not set" do
+      expect(agent_class.agent_runtime).must_be_nil
+    end
+
+    it "sets the agent_runtime class" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        agent_runtime Riffer::AgentRuntime::Threaded
+      end
+      expect(klass.agent_runtime).must_equal Riffer::AgentRuntime::Threaded
+    end
+
+    it "inherits agent_runtime from parent class" do
+      parent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        agent_runtime Riffer::AgentRuntime::Threaded
+      end
+      child = Class.new(parent)
+
+      expect(child.agent_runtime).must_equal Riffer::AgentRuntime::Threaded
+    end
+
+    it "allows subclass to override inherited agent_runtime" do
+      parent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        agent_runtime Riffer::AgentRuntime::Threaded
+      end
+      child = Class.new(parent) do
+        agent_runtime Riffer::AgentRuntime::Inline
+      end
+
+      expect(child.agent_runtime).must_equal Riffer::AgentRuntime::Inline
+      expect(parent.agent_runtime).must_equal Riffer::AgentRuntime::Threaded
+    end
+
+    it "defaults to inline when no config" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+      end
+      runtime = klass.new.send(:resolve_agent_runtime)
+      expect(runtime).must_be_instance_of Riffer::AgentRuntime::Inline
+    end
+  end
+
+  describe "subagent integration" do
+    let(:subagent_class) do
+      Class.new(Riffer::Agent) do
+        identifier "research-agent"
+        model "mock/riffer-1"
+        description "Researches topics"
+        instructions "You are a research agent."
+      end
+    end
+
+    it "includes agent tools in resolved_tools" do
+      sub = subagent_class
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_agents [sub]
+      end
+
+      instance = klass.new
+      instance.instance_variable_set(:@model_config, "mock/riffer-1")
+      instance.send(:parse_model_string!, "mock/riffer-1")
+      tools = instance.send(:resolved_tools)
+
+      expect(tools.any? { |t| t.name == "agent__research-agent" }).must_equal true
+    end
+
+    it "prevents self-reference" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        description "Self-referencing agent"
+      end
+      klass.uses_agents [klass]
+
+      instance = klass.new
+      instance.instance_variable_set(:@model_config, "mock/riffer-1")
+      instance.send(:parse_model_string!, "mock/riffer-1")
+
+      expect { instance.send(:resolved_tools) }.must_raise(Riffer::ArgumentError)
+    end
+
+    it "detects name conflicts between tools and agent tools" do
+      conflicting_tool = Class.new(Riffer::Tool) do
+        identifier "agent__research-agent"
+        description "A tool with conflicting name"
+
+        def call(context:, **)
+          text("conflict")
+        end
+      end
+
+      sub = subagent_class
+      tool = conflicting_tool
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tool]
+        uses_agents [sub]
+      end
+
+      instance = klass.new
+      instance.instance_variable_set(:@model_config, "mock/riffer-1")
+      instance.send(:parse_model_string!, "mock/riffer-1")
+
+      error = expect { instance.send(:resolved_tools) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/Tool name conflict/)
+    end
+
+    it "partitions tool calls between tool runtime and agent runtime" do
+      tool_class = Class.new(Riffer::Tool) do
+        identifier "weather_tool"
+        description "Gets weather"
+
+        def call(context:, **)
+          text("sunny")
+        end
+      end
+
+      sub = subagent_class
+      sub_provider = Riffer::Providers::Mock.new
+      sub_provider.stub_response("Research done")
+      sub.define_method(:provider_instance) { sub_provider }
+
+      tool = tool_class
+      supervisor_provider = Riffer::Providers::Mock.new
+      supervisor_provider.stub_response("",
+        tool_calls: [
+          {name: "weather_tool", arguments: "{}"},
+          {name: "agent__research-agent", arguments: '{"message":"research AI"}'}
+        ])
+      supervisor_provider.stub_response("Final answer based on research")
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tool]
+        uses_agents [sub]
+      end
+
+      klass.define_method(:provider_instance) { supervisor_provider }
+      response = klass.new.generate("Do research and check weather")
+
+      expect(response.content).must_equal "Final answer based on research"
+    end
+
+    it "propagates context to subagent" do
+      received_context = nil
+      sub = Class.new(Riffer::Agent) do
+        identifier "ctx-sub"
+        model "mock/riffer-1"
+        description "Context subagent"
+      end
+
+      sub_provider = Riffer::Providers::Mock.new
+      sub_provider.stub_response("done")
+      sub.define_method(:provider_instance) { sub_provider }
+
+      original_generate = sub.instance_method(:generate)
+      sub.define_method(:generate) do |prompt, **kwargs|
+        received_context = kwargs[:context]
+        original_generate.bind_call(self, prompt, **kwargs)
+      end
+
+      supervisor_provider = Riffer::Providers::Mock.new
+      supervisor_provider.stub_response("",
+        tool_calls: [{name: "agent__ctx-sub", arguments: '{"message":"test"}'}])
+      supervisor_provider.stub_response("Done")
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_agents [sub]
+      end
+
+      klass.define_method(:provider_instance) { supervisor_provider }
+      klass.new.generate("test", context: {user_id: 42})
+
+      expect(received_context).must_equal({user_id: 42})
+    end
+  end
 end
