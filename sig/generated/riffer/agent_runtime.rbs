@@ -1,0 +1,46 @@
+# Generated from lib/riffer/agent_runtime.rb with RBS::Inline
+
+# Riffer::AgentRuntime handles subagent call execution for a supervisor agent.
+#
+# Composes with a Riffer::Runner for concurrency control and provides
+# +execute+ as the sole public entry point.
+#
+# Mirrors Riffer::ToolRuntime structure but dispatches agent calls
+# directly (not through tools) — agents are always in-process I/O.
+#
+#   runtime = Riffer::AgentRuntime::Inline.new
+#   results = runtime.execute(tool_calls, agents: agent_map, context: context)
+class Riffer::AgentRuntime
+  # +runner+ - the concurrency runner to use for batch execution.
+  #
+  # Subclasses must provide a runner; instantiating AgentRuntime directly
+  # raises +NotImplementedError+.
+  #
+  # : (runner: Riffer::Runner) -> void
+  def initialize: (runner: Riffer::Runner) -> void
+
+  # Executes a batch of agent calls, returning +[tool_call, response]+ pairs.
+  #
+  # +tool_calls+ - the tool calls to execute (agent tool calls).
+  # +agents+ - Hash mapping agent tool names to agent classes.
+  # +context+ - the context hash.
+  #
+  # : (Array[Riffer::Messages::Assistant::ToolCall], agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  def execute: (Array[Riffer::Messages::Assistant::ToolCall], agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]
+
+  # Hook that wraps each agent call execution. Override in subclasses
+  # to customize. Must +yield+ to continue execution.
+  #
+  # : (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  def around_agent_call: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+
+  private
+
+  # Dispatches a single agent call.
+  #
+  # : (Riffer::Messages::Assistant::ToolCall, agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
+  def dispatch_agent_call: (Riffer::Messages::Assistant::ToolCall, agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
+
+  # : (String?) -> Hash[Symbol, untyped]
+  def parse_arguments: (String?) -> Hash[Symbol, untyped]
+end

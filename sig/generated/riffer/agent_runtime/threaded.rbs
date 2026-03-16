@@ -1,0 +1,15 @@
+# Generated from lib/riffer/agent_runtime/threaded.rb with RBS::Inline
+
+# Executes agent calls concurrently using threads.
+#
+#   class MySupervisor < Riffer::Agent
+#     agent_runtime Riffer::AgentRuntime::Threaded
+#   end
+class Riffer::AgentRuntime::Threaded < Riffer::AgentRuntime
+  DEFAULT_MAX_CONCURRENCY: Integer
+
+  # +max_concurrency+ - maximum number of agent calls to execute simultaneously.
+  #
+  # : (?max_concurrency: Integer) -> void
+  def initialize: (?max_concurrency: Integer) -> void
+end

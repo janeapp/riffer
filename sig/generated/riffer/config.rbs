@@ -73,6 +73,12 @@ class Riffer::Config
   # or a Proc. Defaults to <tt>Riffer::ToolRuntime::Inline.new</tt>.
   attr_reader tool_runtime: singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc
 
+  # Global agent runtime configuration (experimental).
+  #
+  # Accepts a Riffer::AgentRuntime subclass, a Riffer::AgentRuntime instance,
+  # or a Proc. Defaults to +Riffer::AgentRuntime::Inline.new+.
+  attr_reader agent_runtime: singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc
+
   # Sets the global tool runtime.
   #
   # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
@@ -81,6 +87,14 @@ class Riffer::Config
   # --
   # : ((singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)) -> void
   def tool_runtime=: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc) -> void
+
+  # Sets the global agent runtime.
+  #
+  # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
+  # (AgentRuntime subclass, AgentRuntime instance, or Proc).
+  #
+  # : ((singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)) -> void
+  def agent_runtime=: (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc) -> void
 
   # --
   # : () -> void

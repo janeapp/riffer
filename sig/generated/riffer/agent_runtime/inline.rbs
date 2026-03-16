@@ -1,0 +1,9 @@
+# Generated from lib/riffer/agent_runtime/inline.rb with RBS::Inline
+
+# Executes agent calls sequentially in the current thread.
+#
+# This is the default agent runtime used when no runtime is configured.
+class Riffer::AgentRuntime::Inline < Riffer::AgentRuntime
+  # : () -> void
+  def initialize: () -> void
+end

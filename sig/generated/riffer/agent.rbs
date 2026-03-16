@@ -31,6 +31,14 @@ class Riffer::Agent
   # : (?String?) -> String
   def self.identifier: (?String?) -> String
 
+  # Gets or sets the agent description.
+  #
+  # Required for agents used as subagents — the LLM needs it to make
+  # delegation decisions.
+  #
+  # : (?String?) -> String?
+  def self.description: (?String?) -> String?
+
   # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
   #
   # --
@@ -99,6 +107,22 @@ class Riffer::Agent
   # --
   # : (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
   def self.tool_runtime: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
+
+  # Gets or sets the subagents used by this agent.
+  #
+  # : (?(Array[singleton(Riffer::Agent)] | Proc)?) -> (Array[singleton(Riffer::Agent)] | Proc)?
+  def self.uses_agents: (?(Array[singleton(Riffer::Agent)] | Proc)?) -> (Array[singleton(Riffer::Agent)] | Proc)?
+
+  # Gets or sets the agent runtime for this agent.
+  #
+  # Accepts a Riffer::AgentRuntime subclass, a Riffer::AgentRuntime instance,
+  # or a Proc.
+  #
+  # Inherited by subclasses. When unset, walks the ancestor chain and
+  # falls back to the global +Riffer.config.agent_runtime+.
+  #
+  # : (?(singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?) -> (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?
+  def self.agent_runtime: (?(singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?) -> (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?
 
   # Configures skills for this agent via a block DSL.
   #
@@ -300,6 +324,9 @@ class Riffer::Agent
 
   def pending_tool_calls: () -> untyped
 
+  # : (Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
+  def dispatch_tool_results: (Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
+
   # --
   # : () -> void
   def prepare_run: () -> void
@@ -326,9 +353,18 @@ class Riffer::Agent
   # : () -> Array[singleton(Riffer::Tool)]
   def resolved_tools: () -> Array[singleton(Riffer::Tool)]
 
+  # : () -> Hash[String, singleton(Riffer::Agent)]
+  def resolved_agent_map: () -> Hash[String, singleton(Riffer::Agent)]
+
+  # : () -> Array[singleton(Riffer::Agent)]?
+  def resolve_agents_config: () -> Array[singleton(Riffer::Agent)]?
+
   # --
   # : () -> Riffer::ToolRuntime
   def resolve_tool_runtime: () -> Riffer::ToolRuntime
+
+  # : () -> Riffer::AgentRuntime
+  def resolve_agent_runtime: () -> Riffer::AgentRuntime
 
   # Resolves the skills backend, lists skills, and selects an adapter.
   #
