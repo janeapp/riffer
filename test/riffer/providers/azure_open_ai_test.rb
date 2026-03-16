@@ -4,7 +4,7 @@ require "test_helper"
 
 describe Riffer::Providers::AzureOpenAI do
   let(:api_key) { ENV.fetch("AZURE_OPENAI_API_KEY", "test_api_key") }
-  let(:endpoint) { ENV.fetch("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com") }
+  let(:endpoint) { ENV.fetch("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com/") }
 
   describe "#initialize" do
     it "creates Azure OpenAI client with api_key and endpoint" do
