@@ -10,7 +10,8 @@ require "zeitwerk"
 # See Riffer::Config, Riffer::Agent, Riffer::Providers, and Riffer::Messages.
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect(
-  "open_ai" => "OpenAI"
+  "open_ai" => "OpenAI",
+  "azure_open_ai" => "AzureOpenAI"
 )
 loader.setup
 

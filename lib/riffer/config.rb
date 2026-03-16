@@ -17,6 +17,7 @@
 class Riffer::Config
   AmazonBedrock = Struct.new(:api_token, :region, keyword_init: true)
   Anthropic = Struct.new(:api_key, keyword_init: true)
+  AzureOpenAI = Struct.new(:api_key, :endpoint, keyword_init: true)
   OpenAI = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
 
@@ -25,6 +26,9 @@ class Riffer::Config
 
   # Anthropic configuration (Struct with +api_key+).
   attr_reader :anthropic #: Riffer::Config::Anthropic
+
+  # Azure OpenAI configuration (Struct with +api_key+ and +endpoint+).
+  attr_reader :azure_openai #: Riffer::Config::AzureOpenAI
 
   # OpenAI configuration (Struct with +api_key+).
   attr_reader :openai #: Riffer::Config::OpenAI
@@ -54,6 +58,7 @@ class Riffer::Config
   def initialize
     @amazon_bedrock = AmazonBedrock.new
     @anthropic = Anthropic.new
+    @azure_openai = AzureOpenAI.new
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new

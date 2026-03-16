@@ -1,0 +1,244 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<AZURE_OPENAI_ENDPOINT>responses"
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"}],"model":"gpt-5-mini","tools":[{"type":"function","name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.55.0
+      Host:
+      - riffer-testing-eastus2-resource.cognitiveservices.azure.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.55.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.8
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AZURE_OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '358'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '3563'
+      Content-Type:
+      - application/json
+      Skip-Error-Remapping:
+      - 'true'
+      X-Ratelimit-Limit-Requests:
+      - '250'
+      X-Ratelimit-Limit-Tokens:
+      - '250000'
+      X-Ratelimit-Remaining-Requests:
+      - '246'
+      X-Ratelimit-Remaining-Tokens:
+      - '249992'
+      X-Ratelimit-Reset-Requests:
+      - '0'
+      X-Ratelimit-Reset-Tokens:
+      - '0'
+      Azureai-Requested-Tier:
+      - default
+      Azureai-Processed-Tier:
+      - default
+      X-Request-Id:
+      - 71d9dd21-5a52-4d4d-a1af-abaab8a1d8db
+      Apim-Request-Id:
+      - f3330513-36e4-4441-94e6-3b72d5caa673
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Ms-Client-Request-Id:
+      - Not-Set
+      X-Content-Type-Options:
+      - nosniff
+      X-Ms-Region:
+      - East US 2
+      Date:
+      - Mon, 16 Mar 2026 18:36:03 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "resp_0c67b116c3d97ddf0069b84d929d5c819491a3608aff5d4cbb",
+          "object": "response",
+          "created_at": 1773686162,
+          "status": "completed",
+          "background": false,
+          "completed_at": 1773686164,
+          "content_filters": [
+            {
+              "blocked": false,
+              "source_type": "prompt",
+              "content_filter_raw": [],
+              "content_filter_results": {
+                "jailbreak": {
+                  "detected": false,
+                  "filtered": false
+                },
+                "hate": {
+                  "filtered": false,
+                  "severity": "safe"
+                },
+                "sexual": {
+                  "filtered": false,
+                  "severity": "safe"
+                },
+                "violence": {
+                  "filtered": false,
+                  "severity": "safe"
+                },
+                "self_harm": {
+                  "filtered": false,
+                  "severity": "safe"
+                }
+              },
+              "content_filter_offsets": {
+                "start_offset": 0,
+                "end_offset": 64,
+                "check_offset": 0
+              }
+            },
+            {
+              "blocked": false,
+              "source_type": "completion",
+              "content_filter_raw": [],
+              "content_filter_results": {
+                "protected_material_code": {
+                  "detected": false,
+                  "filtered": false
+                },
+                "protected_material_text": {
+                  "detected": false,
+                  "filtered": false
+                },
+                "hate": {
+                  "filtered": false,
+                  "severity": "safe"
+                },
+                "sexual": {
+                  "filtered": false,
+                  "severity": "safe"
+                },
+                "violence": {
+                  "filtered": false,
+                  "severity": "safe"
+                },
+                "self_harm": {
+                  "filtered": false,
+                  "severity": "safe"
+                }
+              },
+              "content_filter_offsets": {
+                "start_offset": 0,
+                "end_offset": 1406,
+                "check_offset": 0
+              }
+            }
+          ],
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini",
+          "output": [
+            {
+              "id": "rs_0c67b116c3d97ddf0069b84d92fa4c819497580e0ae7b4c966",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "fc_0c67b116c3d97ddf0069b84d93ded08194b99fadd640c9506c",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{\"city\":\"Toronto\"}",
+              "call_id": "call_OT80oILiyNJaX7B4kVHc2zDH",
+              "name": "get_weather"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": "medium",
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "type": "function",
+              "description": "Get the current weather for a city",
+              "name": "get_weather",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "The city name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 59,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 80,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 139
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Mon, 16 Mar 2026 18:36:04 GMT
+recorded_with: VCR 6.4.0
