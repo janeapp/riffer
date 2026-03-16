@@ -737,7 +737,7 @@ class Riffer::Agent
 
   #: () -> Riffer::Messages::Assistant?
   def extract_final_response
-    @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+    @messages.rfind { |msg| msg.is_a?(Riffer::Messages::Assistant) }
   end
 
   #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]

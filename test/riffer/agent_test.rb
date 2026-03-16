@@ -776,7 +776,7 @@ describe Riffer::Agent do
       provider.stub_response('{"sentiment":"positive"}')
 
       agent.generate("Analyze sentiment")
-      last_assistant = agent.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+      last_assistant = agent.messages.rfind { |m| m.is_a?(Riffer::Messages::Assistant) }
       expect(last_assistant.structured_output?).must_equal true
       expect(last_assistant.structured_output).must_equal({sentiment: "positive"})
     end
