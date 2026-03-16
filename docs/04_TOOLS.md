@@ -324,7 +324,7 @@ WeatherTool.parameters_schema
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
 end
 ```
@@ -335,7 +335,7 @@ Use a lambda for context-aware tool resolution:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
 
   uses_tools ->(context) {
     tools = [PublicSearchTool]
@@ -391,7 +391,7 @@ Use the `tool_runtime` class method on your agent:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
   tool_runtime Riffer::ToolRuntime::Threaded
 end
@@ -409,7 +409,7 @@ Use a lambda for context-aware runtime selection:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
 
   tool_runtime ->(context) {
@@ -444,7 +444,7 @@ The threaded runtime accepts a `max_concurrency` option (default: 5):
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
   tool_runtime Riffer::ToolRuntime::Threaded.new(max_concurrency: 3)
 end

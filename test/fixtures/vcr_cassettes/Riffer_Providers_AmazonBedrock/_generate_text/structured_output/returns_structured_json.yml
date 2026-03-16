@@ -11,7 +11,7 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 852bc9d1-98f3-488a-9e95-10cfd891a308
+      - 9671402f-db97-4b96-a026-58749e1aa7ba
       Content-Type:
       - application/json
       Authorization:
@@ -29,7 +29,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 19 Feb 2026 23:53:05 GMT
+      - Mon, 16 Mar 2026 18:52:16 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -37,9 +37,9 @@ http_interactions:
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 9115c625-562c-4c4c-8195-938d24ed690c
+      - 54c2d293-d9dc-4b1a-80b1-3f217a32f7cf
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":2061},"output":{"message":{"content":[{"text":"{\"sentiment\":\"positive\",\"score\":0.95}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":189,"outputTokens":14,"serverToolUsage":{},"totalTokens":203}}'
-  recorded_at: Thu, 19 Feb 2026 23:53:05 GMT
+      string: '{"metrics":{"latencyMs":2410},"output":{"message":{"content":[{"text":"{\"sentiment\":\"positive\",\"score\":0.95}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":189,"outputTokens":14,"serverToolUsage":{},"totalTokens":203}}'
+  recorded_at: Mon, 16 Mar 2026 18:52:16 GMT
 recorded_with: VCR 6.4.0

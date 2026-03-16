@@ -7,7 +7,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Extract info from: Jane works at
         42 King St in Vancouver. No other details are known. Return null for any unknown
-        fields."}],"model":"gpt-5-nano","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        fields."}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Person
         name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
         address"},"city":{"type":"string","description":"City"},"postal_code":{"type":["string","null"],"description":"Postal
         or zip code"},"country":{"type":["string","null"],"description":"Country"}},"required":["street","city","postal_code","country"],"additionalProperties":false}},"required":["name","address"],"additionalProperties":false},"strict":true}}}'
@@ -17,7 +17,7 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.49.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -27,7 +27,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.49.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -48,7 +48,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 26 Feb 2026 23:33:15 GMT
+      - Mon, 16 Mar 2026 18:53:31 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -64,7 +64,7 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999865'
+      - '179999952'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
@@ -76,51 +76,51 @@ http_interactions:
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_6bc2902db77d4e18880717867877d815
+      - req_163618d3be804286a1d644f4e7e9bb8a
       Openai-Processing-Ms:
-      - '2793'
+      - '6121'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=3hGq.3fTVkLMEZ1vvYjWi_iNqCdiHI4P.L0PqKl3zhY-1772148792.811263-1.0.1.1-CTWSRZZrRli83EfRjAirtyoCmMIvgUZYfly6Am8yvxHIcWHrKU1BH1HBrZa1JnxMUA9QPVBEFPNC.Q_Yf0dMGaGNdFEjktQ7raaH.SNWylJ5hT_azBlsvv.cPGN_eoFW;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Fri, 27 Feb 2026
-        00:03:15 GMT
+      - __cf_bm=NlXgN92cZpI_hywq2volsObBAZYoT5qYfy0NMlJP3LI-1773687205.585991-1.0.1.1-xpIEJrWQ29DKoSjhPiI41hgtkcdYf2RWdoYEU_drHTUeSLXwm81eEDBAWOWylXG7wX.g5tBm.Xd8CXORLUtBoxuXEfTQYF10haJRpTVKUXMJ8DeNUGplMOSfT7wS51GR;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:23:31 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
       Cf-Ray:
-      - 9d433f031c903753-YVR
+      - 9dd5f5eaeb84db4e-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_04e9e418ca73f4580169a0d838dd2881958b0721f49bedd99b",
+          "id": "resp_0937967d0ce8ca860169b851a5a31c8197b59ced41e7bfa451",
           "object": "response",
-          "created_at": 1772148792,
+          "created_at": 1773687205,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1772148795,
+          "completed_at": 1773687211,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_04e9e418ca73f4580169a0d8392a6081959ba527a31c22d1b1",
+              "id": "rs_0937967d0ce8ca860169b851a5f9fc819784e57d21a1898f04",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_04e9e418ca73f4580169a0d83b474c8195833e91d7dc83be47",
+              "id": "msg_0937967d0ce8ca860169b851ab64b88197a3dff602438bec6f",
               "type": "message",
               "status": "completed",
               "content": [
@@ -215,14 +215,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 351,
+            "output_tokens": 266,
             "output_tokens_details": {
-              "reasoning_tokens": 256
+              "reasoning_tokens": 192
             },
-            "total_tokens": 480
+            "total_tokens": 395
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Thu, 26 Feb 2026 23:33:15 GMT
+  recorded_at: Mon, 16 Mar 2026 18:53:31 GMT
 recorded_with: VCR 6.4.0

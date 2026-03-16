@@ -5,14 +5,14 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the latest Ruby version?"}],"model":"gpt-5-nano","tools":[{"type":"web_search_preview"}]}'
+      string: '{"input":[{"role":"user","content":"What is the latest Ruby version?"}],"model":"gpt-5-mini","tools":[{"type":"web_search_preview"}]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.49.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -22,7 +22,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.49.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -43,7 +43,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 19 Feb 2026 22:48:23 GMT
+      - Mon, 16 Mar 2026 18:52:00 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -59,7 +59,7 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179994186'
+      - '179995356'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
@@ -71,70 +71,84 @@ http_interactions:
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_dcb173c7182a4f748f3125df20eff852
+      - req_2ff748753a0b4b96ba4059f13e58a097
       Openai-Processing-Ms:
-      - '16391'
+      - '16465'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=PGtd9JVqlGLs.CWegePyTQU3ITe3QN51W_nHmYVRWTY-1771541286.9572153-1.0.1.1-2K6tdqQgLZegF8My6wndqq6GhDYEO0taTqz3rX3AOC.ESgiQGkm4qDjIv18lc3Toffq5IVu_L62iXzSa1US440EjJOviCLc05L08ced06KoNL8w2xpVgu2o7hLGv7cTO;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Thu, 19 Feb 2026
-        23:18:23 GMT
+      - __cf_bm=ZhLR6TIr40CCqFmGl6pTQLUyPeL9eaQh6rFln1C6BLA-1773687103.609934-1.0.1.1-YymoMph9oXA5I2_gwKEDBcR3zAwbUeNuTATeQCjrCuCw_jGV03oRlocFs8FeT_2l4X8HydKIVLz4W36apXU6ZHi0etOvJKdb1QoU7I1BGsUwOkjjKHr6Mu3Esoq5LRaQ;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:22:00 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
       Cf-Ray:
-      - 9d094f537dbfdfdb-YVR
+      - 9dd5f36d8f2abdba-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_03c9a9966602a864016997932702188197923645c1da776d0c",
+          "id": "resp_052138713ab5cd1c0169b8513fa960819598d0bf7eaa890a63",
           "object": "response",
-          "created_at": 1771541287,
+          "created_at": 1773687103,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1771541303,
+          "completed_at": 1773687120,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_03c9a9966602a864016997932747448197900280ef6fe03ac2",
+              "id": "rs_052138713ab5cd1c0169b8514002b08195ad8f97f71f86e7d8",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "ws_03c9a9966602a864016997932aff988197a869492169545389",
+              "id": "ws_052138713ab5cd1c0169b851413854819581099eb8ebba462b",
               "type": "web_search_call",
               "status": "completed",
               "action": {
                 "type": "search",
                 "queries": [
                   "latest Ruby version",
-                  "Ruby latest stable release",
-                  "Ruby 3.3 release date"
+                  "Ruby download latest version ruby-lang.org",
+                  "What is the current latest stable Ruby version March 2026"
                 ],
                 "query": "latest Ruby version"
               }
             },
             {
-              "id": "rs_03c9a9966602a864016997932be29c81979d3a4769b032cbb2",
+              "id": "rs_052138713ab5cd1c0169b85142bacc819583efceaa754af12f",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_03c9a9966602a8640169979335db308197b139899c729d23ae",
+              "id": "ws_052138713ab5cd1c0169b85143fedc8195a262d3662a93874b",
+              "type": "web_search_call",
+              "status": "completed",
+              "action": {
+                "type": "open_page",
+                "url": "https://www.ruby-lang.org/en/downloads/releases/"
+              }
+            },
+            {
+              "id": "rs_052138713ab5cd1c0169b85145606c8195bf057221d0220e29",
+              "type": "reasoning",
+              "summary": []
+            },
+            {
+              "id": "msg_052138713ab5cd1c0169b8514e0684819594e5bc38ae365481",
               "type": "message",
               "status": "completed",
               "content": [
@@ -143,28 +157,21 @@ http_interactions:
                   "annotations": [
                     {
                       "type": "url_citation",
-                      "end_index": 250,
-                      "start_index": 148,
-                      "title": "Ruby 4.0.1 Released | Ruby",
-                      "url": "https://www.ruby-lang.org/en/news/2026/01/13/ruby-4-0-1-released/?utm_source=openai"
-                    },
-                    {
-                      "type": "url_citation",
-                      "end_index": 436,
-                      "start_index": 334,
-                      "title": "Ruby 4.0.1 Released | Ruby",
-                      "url": "https://www.ruby-lang.org/en/news/2026/01/13/ruby-4-0-1-released/?utm_source=openai"
-                    },
-                    {
-                      "type": "url_citation",
-                      "end_index": 610,
-                      "start_index": 525,
+                      "end_index": 172,
+                      "start_index": 105,
                       "title": "Ruby Releases | Ruby",
-                      "url": "https://www.ruby-lang.org/en/downloads/releases/?utm_source=openai"
+                      "url": "https://www.ruby-lang.org/en/downloads/releases/"
+                    },
+                    {
+                      "type": "url_citation",
+                      "end_index": 364,
+                      "start_index": 297,
+                      "title": "Ruby Releases | Ruby",
+                      "url": "https://www.ruby-lang.org/en/downloads/releases/"
                     }
                   ],
                   "logprobs": [],
-                  "text": "As of February 19, 2026, the latest stable Ruby version is 4.0.1, released on January 13, 2026. The next patch (4.0.2) is scheduled for March 2026. ([ruby-lang.org](https://www.ruby-lang.org/en/news/2026/01/13/ruby-4-0-1-released/?utm_source=openai))\n\nNotes:\n- 4.0.0/4.0.1 are part of the Ruby 4.x line; 4.0.2 was planned soon after. ([ruby-lang.org](https://www.ruby-lang.org/en/news/2026/01/13/ruby-4-0-1-released/?utm_source=openai))\n- If you\u2019re tracking release history, the Ruby Releases page lists 4.0.1 with its date. ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/?utm_source=openai))\n\nWould you like links or commands to install this version (e.g., via rbenv, RVM, or asdf)?"
+                  "text": "As of the most recent releases, the newest Ruby release by date is Ruby 3.4.9 (released March 11, 2026). ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nIf you meant the newest major series, Ruby 4.0.x is available \u2014 the latest 4.0 patch is 4.0.1 (released January 13, 2026). ([ruby-lang.org](https://www.ruby-lang.org/en/downloads/releases/))\n\nTo check the version installed on your machine: ruby -v. If you want, I can give install/update instructions for your OS or show how to install a specific Ruby version with rbenv/rvm."
                 }
               ],
               "role": "assistant"
@@ -207,18 +214,18 @@ http_interactions:
           "top_p": 1.0,
           "truncation": "disabled",
           "usage": {
-            "input_tokens": 8824,
+            "input_tokens": 12658,
             "input_tokens_details": {
-              "cached_tokens": 4224
+              "cached_tokens": 3712
             },
-            "output_tokens": 1833,
+            "output_tokens": 915,
             "output_tokens_details": {
-              "reasoning_tokens": 1536
+              "reasoning_tokens": 704
             },
-            "total_tokens": 10657
+            "total_tokens": 13573
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Thu, 19 Feb 2026 22:48:23 GMT
+  recorded_at: Mon, 16 Mar 2026 18:52:00 GMT
 recorded_with: VCR 6.4.0

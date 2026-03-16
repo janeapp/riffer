@@ -44,7 +44,7 @@ Use the `skills` block DSL to configure skills:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model "openai/gpt-4o"
+  model "openai/gpt-5-mini"
   instructions "You are a helpful assistant."
   skills do
     backend Riffer::Skills::FilesystemBackend.new(".skills")

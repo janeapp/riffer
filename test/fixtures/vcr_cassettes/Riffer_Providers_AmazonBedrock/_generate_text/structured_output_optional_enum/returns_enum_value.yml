@@ -13,7 +13,7 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 6d4e04ce-96d7-43b4-8be3-a8b3c72c2ef1
+      - 889f7e8e-97ec-48ca-a58f-8ad4fb3127ef
       Content-Type:
       - application/json
       Authorization:
@@ -31,7 +31,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 02 Mar 2026 22:56:37 GMT
+      - Mon, 16 Mar 2026 18:53:21 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -39,10 +39,10 @@ http_interactions:
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 9e0ff700-b734-4c6d-b75a-04e21b3936b2
+      - 113631a6-0c57-4b06-8f9c-064d205b8e09
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":1682},"output":{"message":{"content":[{"text":"{\"name\":\"yoga
+      string: '{"metrics":{"latencyMs":3390},"output":{"message":{"content":[{"text":"{\"name\":\"yoga
         class\",\"session_type\":\"in_person\"}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":269,"outputTokens":17,"serverToolUsage":{},"totalTokens":286}}'
-  recorded_at: Mon, 02 Mar 2026 22:56:37 GMT
+  recorded_at: Mon, 16 Mar 2026 18:53:21 GMT
 recorded_with: VCR 6.4.0

@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"input":[{"role":"user","content":"Classify the session: yoga class,
-        in-person format. Return session_type from the enum."}],"model":"gpt-5-nano","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
+        in-person format. Return session_type from the enum."}],"model":"gpt-5-mini","text":{"format":{"type":"json_schema","name":"response","schema":{"type":"object","properties":{"name":{"type":"string","description":"Session
         name"},"session_type":{"anyOf":[{"type":"string","enum":["in_person","online","both"]},{"type":"null"}],"description":"Type
         of session"}},"required":["name","session_type"],"additionalProperties":false},"strict":true}}}'
     headers:
@@ -15,7 +15,7 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.49.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -25,7 +25,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.49.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -46,7 +46,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 02 Mar 2026 22:55:05 GMT
+      - Mon, 16 Mar 2026 18:49:19 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -62,7 +62,7 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '179999451'
+      - '180000000'
       X-Ratelimit-Reset-Requests:
       - 2ms
       X-Ratelimit-Reset-Tokens:
@@ -74,51 +74,51 @@ http_interactions:
       Openai-Project:
       - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_e1178187c43e4bafb4f3134e79a2f405
+      - req_39e1e53504b04951b4d0a59fbe62cd6d
       Openai-Processing-Ms:
-      - '7021'
+      - '3332'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=6shgkOGkx4eJus4T9S6SMC6cMCl.awiFV4nvIIWnGJs-1772492097.7545705-1.0.1.1-ZRX8x4k6VwqetAV9X8XP4F9OMX7aYhLijUkUlm6ERDpzaHnaGFpjF3YXJH7PpzatqGaXebFTMhUIN0I6d4p.PdSTpPKARMGE4gqMSm.zLw3nzJ5dPkm22m9Ifw0dfvRr;
-        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 02 Mar 2026
-        23:25:05 GMT
+      - __cf_bm=HZVms_Uyz.jPdfzB5olBhyoCpiO_6tXz9NGeafNUuCw-1773686955.5986772-1.0.1.1-ibu5Dm23rv_5yPxPVJVoW0r795Egr6zIaz8zX8ABmQlEp92MbnZguTiLhIfDdNyuyBI4cuKo1JK5jw_3hITcPhAnhWrNKgACli7YmQ.s3VdlYao4b8wRhOAjEIgwRIv3;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:19:19 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
       Cf-Ray:
-      - 9d63fc7afcfdadab-YVR
+      - 9dd5efd07cc1eef3-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_0016c23a704d4d900169a6154207488195b7a421519bdc570a",
+          "id": "resp_0ea4e1f973ef68ae0169b850abeb2881978e7213ebffc949ec",
           "object": "response",
-          "created_at": 1772492098,
+          "created_at": 1773686955,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1772492105,
+          "completed_at": 1773686959,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_0016c23a704d4d900169a6154245e0819598b16318d1e7d518",
+              "id": "rs_0ea4e1f973ef68ae0169b850acc6e48197af7162546a81feba",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_0016c23a704d4d900169a615488be88195812ad3148672531a",
+              "id": "msg_0ea4e1f973ef68ae0169b850aeda58819798d603b4de6fe0ff",
               "type": "message",
               "status": "completed",
               "content": [
@@ -126,7 +126,7 @@ http_interactions:
                   "type": "output_text",
                   "annotations": [],
                   "logprobs": [],
-                  "text": "{\"name\":\"Yoga class\",\"session_type\":\"in_person\"}"
+                  "text": "{\"name\":\"yoga class\",\"session_type\":\"in_person\"}"
                 }
               ],
               "role": "assistant"
@@ -194,14 +194,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 767,
+            "output_tokens": 164,
             "output_tokens_details": {
-              "reasoning_tokens": 704
+              "reasoning_tokens": 128
             },
-            "total_tokens": 851
+            "total_tokens": 248
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Mon, 02 Mar 2026 22:55:05 GMT
+  recorded_at: Mon, 16 Mar 2026 18:49:19 GMT
 recorded_with: VCR 6.4.0

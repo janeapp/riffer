@@ -102,7 +102,7 @@ Pass options directly to the provider client:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
 
   # Override API key for this agent only
   provider_options api_key: ENV['CUSTOM_OPENAI_KEY']
@@ -115,7 +115,7 @@ Pass options to each LLM request:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
 
   # These options are sent with every generate/stream call
   model_options temperature: 0.7, reasoning: 'medium'
@@ -136,7 +136,7 @@ end
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   model_options temperature: 0.7, reasoning: 'medium'
 end
 ```
@@ -152,7 +152,7 @@ Options are passed through to the [Bedrock Converse API](https://docs.aws.amazon
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
   model_options inference_config: {temperature: 0.7, max_tokens: 4096}
 end
 ```
@@ -170,13 +170,13 @@ end
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'anthropic/claude-3-5-sonnet-20241022'
+  model 'anthropic/claude-haiku-4-5-20251001'
   model_options temperature: 0.7, max_tokens: 4096
 end
 
 # With extended thinking (Claude 3.7+)
 class ReasoningAgent < Riffer::Agent
-  model 'anthropic/claude-3-7-sonnet-20250219'
+  model 'anthropic/claude-haiku-4-5-20251001'
   model_options thinking: {type: "enabled", budget_tokens: 10000}
 end
 ```
@@ -205,12 +205,12 @@ For different environments or use cases, use agent-level overrides:
 
 ```ruby
 class ProductionAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   provider_options api_key: ENV['PRODUCTION_OPENAI_KEY']
 end
 
 class DevelopmentAgent < Riffer::Agent
-  model 'openai/gpt-4o-mini'
+  model 'openai/gpt-5-mini'
   provider_options api_key: ENV['DEV_OPENAI_KEY']
   model_options temperature: 0.0  # Deterministic for testing
 end

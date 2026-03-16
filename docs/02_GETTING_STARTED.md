@@ -68,7 +68,7 @@ Riffer.configure do |config|
 end
 
 class GreetingAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are a friendly assistant. Greet the user warmly.'
 end
 
@@ -109,7 +109,7 @@ class TimeTool < Riffer::Tool
 end
 
 class TimeAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You can tell the user the current time.'
   uses_tools [TimeTool]
 end

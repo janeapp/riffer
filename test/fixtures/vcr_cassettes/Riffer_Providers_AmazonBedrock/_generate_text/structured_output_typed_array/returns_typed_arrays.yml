@@ -13,7 +13,7 @@ http_interactions:
       Accept-Encoding:
       - ''
       Amz-Sdk-Invocation-Id:
-      - 76af9831-6473-4405-ae7f-d4990e672cab
+      - e83f4044-6bc0-4636-a609-bba12c24c6aa
       Content-Type:
       - application/json
       Authorization:
@@ -31,7 +31,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 26 Feb 2026 23:26:25 GMT
+      - Mon, 16 Mar 2026 18:51:04 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -39,11 +39,11 @@ http_interactions:
       Connection:
       - keep-alive
       X-Amzn-Requestid:
-      - 9f2f5854-4402-4bea-9c5a-cf39231b3370
+      - 840fc6bd-0944-4dc7-8d49-c4deb7dfb20c
     body:
       encoding: UTF-8
-      string: '{"metrics":{"latencyMs":1852},"output":{"message":{"content":[{"text":"{\"tags\":
+      string: '{"metrics":{"latencyMs":5510},"output":{"message":{"content":[{"text":"{\"tags\":
         [\"programming language\", \"Ruby\", \"positive sentiment\"], \"scores\":
-        [0.95, 0.92, 0.88]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":262,"outputTokens":35,"serverToolUsage":{},"totalTokens":297}}'
-  recorded_at: Thu, 26 Feb 2026 23:26:25 GMT
+        [0.95, 0.98, 0.89]}"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":262,"outputTokens":35,"serverToolUsage":{},"totalTokens":297}}'
+  recorded_at: Mon, 16 Mar 2026 18:51:04 GMT
 recorded_with: VCR 6.4.0

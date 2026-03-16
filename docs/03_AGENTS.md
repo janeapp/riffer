@@ -8,7 +8,7 @@ Create an agent by subclassing `Riffer::Agent`:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are a helpful assistant.'
 end
 ```
@@ -21,9 +21,9 @@ Sets the provider and model in `provider/model` format:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'           # OpenAI
+  model 'openai/gpt-5-mini'           # OpenAI
   # or
-  model 'amazon_bedrock/anthropic.claude-3-sonnet-20240229-v1:0'  # Bedrock
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   # or
   model 'mock/any'                # Mock provider
 end
@@ -33,7 +33,7 @@ Models can also be resolved dynamically with a lambda:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model -> { "anthropic/claude-sonnet-4-20250514" }
+  model -> { "anthropic/claude-haiku-4-5-20251001" }
 end
 ```
 
@@ -42,7 +42,7 @@ When the lambda accepts a parameter, it receives the `context`:
 ```ruby
 class MyAgent < Riffer::Agent
   model ->(context) {
-    context&.dig(:premium) ? "anthropic/claude-sonnet-4-20250514" : "anthropic/claude-haiku-4-5-20251001"
+    context&.dig(:premium) ? "anthropic/claude-sonnet-4-5-20250929" : "anthropic/claude-haiku-4-5-20251001"
   }
 end
 ```
@@ -55,7 +55,7 @@ Sets system instructions for the agent:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are an expert Ruby programmer. Provide concise answers.'
 end
 ```
@@ -64,7 +64,7 @@ Instructions can also be resolved dynamically with a lambda:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions -> { "Today is #{Date.today}. You are a helpful assistant." }
 end
 ```
@@ -73,7 +73,7 @@ When the lambda accepts a parameter, it receives the `context`:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions ->(ctx) { "You are assisting #{ctx[:name]}" }
 end
 
@@ -88,7 +88,7 @@ Sets a custom identifier (defaults to snake_case class name):
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   identifier 'custom_agent_name'
 end
 
@@ -101,7 +101,7 @@ Registers tools the agent can use:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, TimeTool]
 end
 ```
@@ -110,7 +110,7 @@ Tools can also be resolved dynamically with a lambda:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
 
   uses_tools ->(context) {
     tools = [PublicTool]
@@ -126,7 +126,7 @@ Passes options to the provider client:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   provider_options api_key: ENV['CUSTOM_OPENAI_KEY']
 end
 ```
@@ -137,7 +137,7 @@ Passes options to each LLM request:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   model_options reasoning: 'medium', temperature: 0.7, web_search: true
 end
 ```
@@ -148,7 +148,7 @@ Sets the maximum number of LLM call steps in the tool-use loop. When the limit i
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   max_steps 8
 end
 ```
@@ -159,7 +159,7 @@ Configures the agent to return structured JSON responses conforming to a schema.
 
 ```ruby
 class SentimentAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'Analyze the sentiment of the given text.'
   structured_output do
     required :sentiment, String, description: "positive, negative, or neutral"
@@ -249,7 +249,7 @@ Configures how tool calls are executed. Defaults to sequential (inline) executio
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
   tool_runtime Riffer::ToolRuntime::Threaded
 end
@@ -263,7 +263,7 @@ Registers guardrails for pre/post processing of messages. Pass the guardrail cla
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
 
   # Input-only guardrail
   guardrail :before, with: InputValidator
@@ -629,7 +629,7 @@ Guardrails are registered at class definition time and run automatically on ever
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   guardrail :before, with: ContentPolicy
 end
 
@@ -670,7 +670,7 @@ The `max_steps` class method caps the number of LLM call steps in the tool-use l
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   max_steps 8
 end
 

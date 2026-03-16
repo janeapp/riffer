@@ -10,7 +10,7 @@ The Agent is the central orchestrator for AI interactions. It manages messages, 
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   instructions 'You are a helpful assistant.'
 end
 ```
@@ -43,7 +43,7 @@ Agents can return structured JSON responses that conform to a schema. The respon
 
 ```ruby
 class SentimentAgent < Riffer::Agent
-  model 'openai/gpt-4o'
+  model 'openai/gpt-5-mini'
   structured_output do
     required :sentiment, String
     required :score, Float

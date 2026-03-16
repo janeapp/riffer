@@ -5,14 +5,14 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"Say hello"}],"model":"gpt-5-nano"}'
+      string: '{"input":[{"role":"user","content":"Say hello"}],"model":"gpt-5-mini"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - application/json
       User-Agent:
-      - OpenAI::Client/Ruby 0.43.0
+      - OpenAI::Client/Ruby 0.55.0
       Host:
       - api.openai.com
       X-Stainless-Arch:
@@ -22,7 +22,7 @@ http_interactions:
       X-Stainless-Os:
       - MacOS
       X-Stainless-Package-Version:
-      - 0.43.0
+      - 0.55.0
       X-Stainless-Runtime:
       - ruby
       X-Stainless-Runtime-Version:
@@ -43,83 +43,79 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 20 Jan 2026 18:51:33 GMT
+      - Mon, 16 Mar 2026 18:55:06 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
+      Server:
+      - cloudflare
       X-Ratelimit-Limit-Requests:
-      - '500'
+      - '30000'
       X-Ratelimit-Limit-Tokens:
-      - '200000'
+      - '180000000'
       X-Ratelimit-Remaining-Requests:
-      - '499'
+      - '29999'
       X-Ratelimit-Remaining-Tokens:
-      - '200000'
+      - '180000000'
       X-Ratelimit-Reset-Requests:
-      - 120ms
+      - 2ms
       X-Ratelimit-Reset-Tokens:
       - 0s
       Openai-Version:
       - '2020-10-01'
       Openai-Organization:
-      - user-es54vpvsdme6lpuoivzzi85g
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
       Openai-Project:
-      - proj_E1uuOHBzdF9a5YsgdGcH09SZ
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
       X-Request-Id:
-      - req_11e3a797615845479d3b343ad4e8bed2
+      - req_6761df4e34384e2bb2ebc0e9f7185dd3
       Openai-Processing-Ms:
-      - '8739'
-      X-Envoy-Upstream-Service-Time:
-      - '8742'
+      - '1443'
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=7AVQmasCaWSXeXiLKlCsbxdaiO_QaOKuYnUj9DNoaqw-1768935093-1.0.1.1-14dqqJOP.tYXYNPC.lEvHkdT7TDfr1slrpLeDxOdco2udcUEWVa2Jj2_tWmDxMYqcYquoXORnqtHZHxKVyecDH0iST55FFQ4Ji84vdnuDpE;
-        path=/; expires=Tue, 20-Jan-26 19:21:33 GMT; domain=.api.openai.com; HttpOnly;
-        Secure; SameSite=None
-      - _cfuvid=HhUqV3zA0zv3UMvV2UUXHBuDqO8YlrjEcrRgH2pSeKw-1768935093405-0.0.1.1-604800000;
-        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      - __cf_bm=bie86xdqmzwTjY3o67lxCFCEs9HZK7a2RQxV1Z3muMk-1773687305.4142487-1.0.1.1-iPjl9rkPnbbYJixgeWBwU342IJW6XVmB6_HiM4Tw6RUEFgjF8mXsGoWNULI9CSV2_jjIYtbXxl7_Afb3B0lBsvgC.BJEL_Upco4qEO5ZR.fmqYycS3vHWPL5djhAt9wS;
+        HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Mon, 16 Mar 2026
+        19:25:06 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Content-Type-Options:
       - nosniff
-      Server:
-      - cloudflare
       Cf-Ray:
-      - 9c10c35699079df8-YVR
+      - 9dd5f85addd71e19-YVR
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |-
         {
-          "id": "resp_010bcf5c8c90a5bf00696fceaca3a08194a4f1da5d034f8a51",
+          "id": "resp_0fe053af578664db0169b8520977e48190a6a413c68c6cac86",
           "object": "response",
-          "created_at": 1768935084,
+          "created_at": 1773687305,
           "status": "completed",
           "background": false,
           "billing": {
             "payer": "developer"
           },
-          "completed_at": 1768935093,
+          "completed_at": 1773687306,
           "error": null,
           "frequency_penalty": 0.0,
           "incomplete_details": null,
           "instructions": null,
           "max_output_tokens": null,
           "max_tool_calls": null,
-          "model": "gpt-5-nano-2025-08-07",
+          "model": "gpt-5-mini-2025-08-07",
           "output": [
             {
-              "id": "rs_010bcf5c8c90a5bf00696fceb11fe08194962111dc12ca1419",
+              "id": "rs_0fe053af578664db0169b85209c86c8190905e7207b8d4cbb5",
               "type": "reasoning",
               "summary": []
             },
             {
-              "id": "msg_010bcf5c8c90a5bf00696fceb499808194b249d914d4263ed3",
+              "id": "msg_0fe053af578664db0169b8520a8a848190b9d94753d61425bd",
               "type": "message",
               "status": "completed",
               "content": [
@@ -144,7 +140,7 @@ http_interactions:
           },
           "safety_identifier": null,
           "service_tier": "default",
-          "store": true,
+          "store": false,
           "temperature": 1.0,
           "text": {
             "format": {
@@ -162,14 +158,14 @@ http_interactions:
             "input_tokens_details": {
               "cached_tokens": 0
             },
-            "output_tokens": 143,
+            "output_tokens": 63,
             "output_tokens_details": {
-              "reasoning_tokens": 128
+              "reasoning_tokens": 0
             },
-            "total_tokens": 151
+            "total_tokens": 71
           },
           "user": null,
           "metadata": {}
         }
-  recorded_at: Tue, 20 Jan 2026 18:51:33 GMT
+  recorded_at: Mon, 16 Mar 2026 18:55:06 GMT
 recorded_with: VCR 6.4.0
