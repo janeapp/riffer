@@ -331,12 +331,11 @@ class Riffer::Agent
   # : () -> void
   def prepare_run: () -> void
 
-  # Seeds the agent stack in context with this agent's class when agents
-  # are configured. The stack is used by AgentRuntime to detect circular
-  # delegation.
+  # Builds a derived context with +_agent_stack+ seeded for agent
+  # dispatch. Does not mutate +@context+.
   #
-  # : () -> void
-  def seed_agent_stack: () -> void
+  # : () -> Hash[Symbol, untyped]
+  def agent_dispatch_context: () -> Hash[Symbol, untyped]
 
   # --
   # : (untyped) -> void

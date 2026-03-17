@@ -629,7 +629,7 @@ class Riffer::Agent
     else
       agent_calls, tool_calls = response.tool_calls.partition { |tc| agent_names.include?(tc.name) }
       dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context)) unless tool_calls.empty?
-      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: @context)) unless agent_calls.empty?
+      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: agent_dispatch_context)) unless agent_calls.empty?
     end
   end
 
@@ -657,7 +657,7 @@ class Riffer::Agent
     else
       agent_calls, tool_calls = pending.partition { |tc| agent_names.include?(tc.name) }
       dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context)) unless tool_calls.empty?
-      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: @context)) unless agent_calls.empty?
+      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: agent_dispatch_context)) unless agent_calls.empty?
     end
   end
 
@@ -700,21 +700,16 @@ class Riffer::Agent
     resolve_model
     @skills_state = resolve_skills
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
-    seed_agent_stack
   end
 
-  # Seeds the agent stack in context with this agent's class when agents
-  # are configured. The stack is used by AgentRuntime to detect circular
-  # delegation.
+  # Builds a derived context with +_agent_stack+ seeded for agent
+  # dispatch. Does not mutate +@context+.
   #
-  #: () -> void
-  def seed_agent_stack
-    return unless self.class.uses_agents
-
-    agent_stack = (@context || {})[:_agent_stack] || []
-    unless agent_stack.include?(self.class)
-      @context = (@context || {}).merge(_agent_stack: agent_stack + [self.class])
-    end
+  #: () -> Hash[Symbol, untyped]
+  def agent_dispatch_context
+    ctx = @context || {}
+    stack = ctx[:_agent_stack] || []
+    stack.include?(self.class) ? ctx : ctx.merge(_agent_stack: stack + [self.class])
   end
 
   #--
