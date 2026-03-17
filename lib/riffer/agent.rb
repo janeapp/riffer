@@ -788,6 +788,6 @@ class Riffer::Agent
 
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: @messages.frozen? ? @messages : @messages.dup.freeze)
   end
 end

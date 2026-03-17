@@ -88,6 +88,19 @@ describe Riffer::Agent::Response do
     end
   end
 
+  describe "#messages" do
+    it "defaults to empty array" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.messages).must_equal []
+    end
+
+    it "stores the messages" do
+      messages = [Riffer::Messages::User.new("Hi"), Riffer::Messages::Assistant.new("Hello")]
+      response = Riffer::Agent::Response.new("Hello!", messages: messages)
+      expect(response.messages).must_equal messages
+    end
+  end
+
   describe "#interrupted?" do
     it "returns false by default" do
       response = Riffer::Agent::Response.new("Hello!")

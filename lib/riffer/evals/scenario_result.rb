@@ -27,14 +27,18 @@ class Riffer::Evals::ScenarioResult
   # Individual evaluation results.
   attr_reader :results #: Array[Riffer::Evals::Result]
 
+  # The full message history from the agent conversation.
+  attr_reader :messages #: Array[Riffer::Messages::Base]
+
   # Initializes a new scenario result.
   #
-  #: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result]) -> void
-  def initialize(input:, output:, ground_truth:, results:)
+  #: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
+  def initialize(input:, output:, ground_truth:, results:, messages: [])
     @input = input
     @output = output
     @ground_truth = ground_truth
     @results = results
+    @messages = messages
   end
 
   # Returns scores keyed by evaluator class.
@@ -55,7 +59,8 @@ class Riffer::Evals::ScenarioResult
       output: output,
       ground_truth: ground_truth,
       scores: scores.transform_keys(&:name),
-      results: results.map(&:to_h)
+      results: results.map(&:to_h),
+      messages: messages.map { |m| {role: m.role, content: m.content} }
     }
   end
 end

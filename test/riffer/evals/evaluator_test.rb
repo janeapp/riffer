@@ -127,7 +127,7 @@ describe Riffer::Evals::Evaluator do
       klass = Class.new(Riffer::Evals::Evaluator) do
         higher_is_better true
 
-        def evaluate(input:, output:, ground_truth: nil)
+        def evaluate(input:, output:, ground_truth: nil, messages: [])
           result(score: 0.9, reason: "Good")
         end
       end
@@ -146,7 +146,7 @@ describe Riffer::Evals::Evaluator do
       klass = Class.new(Riffer::Evals::Evaluator) do
         higher_is_better false
 
-        def evaluate(input:, output:, ground_truth: nil)
+        def evaluate(input:, output:, ground_truth: nil, messages: [])
           result(score: 0.1, reason: "Low toxicity")
         end
       end

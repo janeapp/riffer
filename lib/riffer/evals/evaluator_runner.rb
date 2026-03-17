@@ -65,16 +65,18 @@ class Riffer::Evals::EvaluatorRunner
 
     response = agent.generate(input, context: resolved_context)
     output = response.content
+    messages = response.messages
 
     results = evaluators.map do |evaluator_class|
-      evaluator_class.new.evaluate(input: input, output: output, ground_truth: ground_truth)
+      evaluator_class.new.evaluate(input: input, output: output, ground_truth: ground_truth, messages: messages)
     end
 
     Riffer::Evals::ScenarioResult.new(
       input: input,
       output: output,
       ground_truth: ground_truth,
-      results: results
+      results: results,
+      messages: messages
     )
   end
 end

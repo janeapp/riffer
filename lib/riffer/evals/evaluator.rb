@@ -50,11 +50,12 @@ class Riffer::Evals::Evaluator
   # +input+ - the input to evaluate; String or Array of message hashes/Message objects.
   # +output+ - the agent's response to evaluate.
   # +ground_truth+ - optional reference answer for comparison.
+  # +messages+ - the full message history from the agent conversation.
   #
   # Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.
   #
-  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?) -> Riffer::Evals::Result
-  def evaluate(input:, output:, ground_truth: nil)
+  #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
+  def evaluate(input:, output:, ground_truth: nil, messages: [])
     instr = self.class.instructions
     raise NotImplementedError, "#{self.class} must set instructions or implement #evaluate" unless instr
 
