@@ -3718,7 +3718,47 @@ describe Riffer::Agent do
       klass.define_method(:provider_instance) { supervisor_provider }
       klass.new.generate("test", context: {user_id: 42})
 
-      expect(received_context).must_equal({user_id: 42})
+      expect(received_context[:user_id]).must_equal 42
+      expect(received_context[:_agent_stack]).must_be_instance_of Array
+    end
+
+    it "detects indirect circular delegation (A -> B -> A)" do
+      agent_a = Class.new(Riffer::Agent) do
+        identifier "cycle-agent-a"
+        model "mock/riffer-1"
+        description "Agent A delegates to B"
+        instructions "You delegate to agent B."
+      end
+
+      agent_b = Class.new(Riffer::Agent) do
+        identifier "cycle-agent-b"
+        model "mock/riffer-1"
+        description "Agent B delegates to A"
+        instructions "You delegate to agent A."
+      end
+
+      agent_a.uses_agents [agent_b]
+      agent_b.uses_agents [agent_a]
+
+      # Agent A's provider: delegates to B, then gives final answer
+      provider_a = Riffer::Providers::Mock.new
+      provider_a.stub_response("",
+        tool_calls: [{name: "agent__cycle-agent-b", arguments: '{"message":"do work"}'}])
+      provider_a.stub_response("Got result from B")
+      agent_a.define_method(:provider_instance) { provider_a }
+
+      # Agent B's provider: tries to delegate back to A (cycle detected),
+      # then receives the error and gives final answer
+      provider_b = Riffer::Providers::Mock.new
+      provider_b.stub_response("",
+        tool_calls: [{name: "agent__cycle-agent-a", arguments: '{"message":"delegate back"}'}])
+      provider_b.stub_response("Handled the circular error")
+      agent_b.define_method(:provider_instance) { provider_b }
+
+      response = agent_a.new.generate("Start task")
+
+      # Should complete without SystemStackError
+      expect(response.content).must_equal "Got result from B"
     end
   end
 end

@@ -700,6 +700,21 @@ class Riffer::Agent
     resolve_model
     @skills_state = resolve_skills
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
+    seed_agent_stack
+  end
+
+  # Seeds the agent stack in context with this agent's class when agents
+  # are configured. The stack is used by AgentRuntime to detect circular
+  # delegation.
+  #
+  #: () -> void
+  def seed_agent_stack
+    return unless self.class.uses_agents
+
+    agent_stack = (@context || {})[:_agent_stack] || []
+    unless agent_stack.include?(self.class)
+      @context = (@context || {}).merge(_agent_stack: agent_stack + [self.class])
+    end
   end
 
   #--

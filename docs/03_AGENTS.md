@@ -767,8 +767,15 @@ Subagent execution errors are handled gracefully and returned to the calling age
 ### Constraints
 
 - An agent cannot use itself as a subagent (raises `Riffer::ArgumentError`)
+- Circular agent delegation is detected at runtime — if Agent A delegates to Agent B which delegates back to Agent A, the cycle is caught and returned as an error response to the calling agent (rather than causing a stack overflow)
 - Subagent tool names must not conflict with regular tool names (raises `Riffer::ArgumentError`)
 - Subagents must have a `description` (raises `Riffer::ArgumentError`)
+
+### Circular Delegation
+
+Nested subagent chains are allowed (A → B → C), but cycles are blocked. The agent call stack is tracked via the context, and before dispatching to a subagent, the runtime checks whether that agent class is already in the stack.
+
+When a cycle is detected, the runtime returns an error response (with type `:circular_delegation`) to the calling agent instead of recursing. This lets the calling agent recover gracefully — the LLM sees the error as a tool result and can respond accordingly.
 
 ## Tool Execution Flow
 

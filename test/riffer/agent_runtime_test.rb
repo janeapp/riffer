@@ -126,6 +126,26 @@ describe Riffer::AgentRuntime do
       expect(results[1][1].content).must_equal "Result 2"
     end
 
+    it "detects circular agent delegation" do
+      agent_b = Class.new(Riffer::Agent) do
+        identifier "agent-b"
+        model "mock/riffer-1"
+        description "Agent B"
+      end
+
+      runtime = Riffer::AgentRuntime::Inline.new
+      tool_call = make_tool_call(name: "agent__agent-b", arguments: '{"message":"hello"}')
+
+      # Simulate agent-b already being in the call stack
+      context_with_stack = {_agent_stack: [agent_b]}
+
+      result = execute_single(runtime, tool_call, agents: {"agent__agent-b" => agent_b}, context: context_with_stack)
+
+      expect(result.error?).must_equal true
+      expect(result.error_type).must_equal :circular_delegation
+      expect(result.content).must_match(/Circular agent delegation detected/)
+    end
+
     it "passes context to subagent" do
       received_context = nil
       ctx_agent = Class.new(Riffer::Agent) do
@@ -150,7 +170,7 @@ describe Riffer::AgentRuntime do
 
       runtime.execute([tool_call], agents: {"agent__ctx-agent" => ctx_agent}, context: test_context)
 
-      expect(received_context).must_equal test_context
+      expect(received_context).must_equal test_context.merge(_agent_stack: [ctx_agent])
     end
   end
 

@@ -65,8 +65,18 @@ class Riffer::AgentRuntime
       )
     end
 
+    agent_stack = (context || {})[:_agent_stack] || []
+
+    if agent_stack.include?(agent_class)
+      return Riffer::Tools::Response.error(
+        "Circular agent delegation detected: #{agent_class} is already in the call stack",
+        type: :circular_delegation
+      )
+    end
+
+    child_context = (context || {}).merge(_agent_stack: agent_stack + [agent_class])
     message = parse_arguments(tool_call.arguments)[:message]
-    response = agent_class.new.generate(message, context: context)
+    response = agent_class.new.generate(message, context: child_context)
 
     if response.blocked?
       Riffer::Tools::Response.error(
