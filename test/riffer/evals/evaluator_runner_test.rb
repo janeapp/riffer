@@ -7,7 +7,7 @@ describe Riffer::Evals::EvaluatorRunner do
     Class.new(Riffer::Evals::Evaluator) do
       higher_is_better true
 
-      def evaluate(input:, output:, ground_truth: nil)
+      def evaluate(input:, output:, ground_truth: nil, messages: [])
         score = [output.length / 100.0, 1.0].min
         result(score: score, reason: "Based on output length")
       end
@@ -18,7 +18,7 @@ describe Riffer::Evals::EvaluatorRunner do
     Class.new(Riffer::Evals::Evaluator) do
       higher_is_better true
 
-      def evaluate(input:, output:, ground_truth: nil)
+      def evaluate(input:, output:, ground_truth: nil, messages: [])
         score = (ground_truth == output) ? 1.0 : 0.5
         result(score: score, reason: "Ground truth match")
       end
@@ -88,6 +88,41 @@ describe Riffer::Evals::EvaluatorRunner do
       )
 
       expect(result.scenario_results.first.output).must_equal "Mock response"
+    end
+
+    it "includes message history in scenario results" do
+      result = Riffer::Evals::EvaluatorRunner.run(
+        agent: agent_class,
+        scenarios: [{input: "Hello"}],
+        evaluators: [evaluator_class]
+      )
+
+      messages = result.scenario_results.first.messages
+      expect(messages).wont_be_empty
+      expect(messages.any? { |m| m.is_a?(Riffer::Messages::System) }).must_equal true
+      expect(messages.any? { |m| m.is_a?(Riffer::Messages::User) }).must_equal true
+      expect(messages.any? { |m| m.is_a?(Riffer::Messages::Assistant) }).must_equal true
+    end
+
+    it "passes messages to evaluators" do
+      received_messages = nil
+      messages_evaluator = Class.new(Riffer::Evals::Evaluator) do
+        higher_is_better true
+
+        define_method(:evaluate) do |input:, output:, ground_truth: nil, messages: []|
+          received_messages = messages
+          result(score: 1.0, reason: "ok")
+        end
+      end
+
+      Riffer::Evals::EvaluatorRunner.run(
+        agent: agent_class,
+        scenarios: [{input: "Hello"}],
+        evaluators: [messages_evaluator]
+      )
+
+      expect(received_messages).wont_be_nil
+      expect(received_messages).wont_be_empty
     end
 
     it "returns aggregate scores" do

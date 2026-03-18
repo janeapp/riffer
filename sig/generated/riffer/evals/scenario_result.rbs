@@ -25,10 +25,13 @@ class Riffer::Evals::ScenarioResult
   # Individual evaluation results.
   attr_reader results: Array[Riffer::Evals::Result]
 
+  # The full message history from the agent conversation.
+  attr_reader messages: Array[Riffer::Messages::Base]
+
   # Initializes a new scenario result.
   #
-  # : (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result]) -> void
-  def initialize: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result]) -> void
+  # : (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
+  def initialize: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
 
   # Returns scores keyed by evaluator class.
   #

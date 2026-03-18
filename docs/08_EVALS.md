@@ -120,6 +120,7 @@ scenario.output       # => "The capital of France is Paris."
 scenario.ground_truth # => "Paris"
 scenario.scores       # => { EvaluatorClass => score } for this scenario
 scenario.results      # => Array of Result objects
+scenario.messages     # => Array of Message objects (system, user, assistant, tool)
 scenario.to_h         # => Hash representation
 ```
 
@@ -183,7 +184,7 @@ Class methods:
 
 Instance methods:
 
-- `evaluate(input:, output:, ground_truth:)` - Override for custom logic; default calls judge with `instructions`
+- `evaluate(input:, output:, ground_truth:, messages:)` - Override for custom logic; default calls judge with `instructions`
 - `judge` - Returns a Judge instance for LLM-as-judge calls
 - `result(score:, reason:, metadata:)` - Helper to build Result objects
 
@@ -196,7 +197,7 @@ class CustomEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
   judge_model "anthropic/claude-opus-4-5-20251101"
 
-  def evaluate(input:, output:, ground_truth: nil)
+  def evaluate(input:, output:, ground_truth: nil, messages: [])
     evaluation = judge.evaluate(
       instructions: "Custom evaluation criteria...",
       input: input,
@@ -217,7 +218,7 @@ Evaluators don't have to use LLM-as-judge:
 class LengthEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 
-  def evaluate(input:, output:, ground_truth: nil)
+  def evaluate(input:, output:, ground_truth: nil, messages: [])
     min_length = 50
     max_length = 500
 

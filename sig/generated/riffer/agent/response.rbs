@@ -27,6 +27,9 @@ class Riffer::Agent::Response
   # The parsed structured output, if structured output was configured.
   attr_reader structured_output: Hash[Symbol, untyped]?
 
+  # The full message history from the agent conversation.
+  attr_reader messages: Array[Riffer::Messages::Base]
+
   # Creates a new response.
   #
   # +content+ - the response content.
@@ -35,9 +38,10 @@ class Riffer::Agent::Response
   # +interrupted+ - whether the agent loop was interrupted by a callback.
   # +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+.
   # +structured_output+ - parsed structured output when structured output is configured.
+  # +messages+ - the full message history from the agent conversation.
   #
-  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> void
-  def initialize: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base]) -> void
+  def initialize: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base]) -> void
 
   # Returns true if the response was blocked by a guardrail.
   #

@@ -544,6 +544,7 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 | `modifications`     | `Array`                     | List of guardrail modifications applied            |
 | `interrupted?`      | `Boolean`                   | `true` if the loop was interrupted                 |
 | `interrupt_reason`  | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
+| `messages`          | `Array`                     | Full message history from the conversation         |
 
 ### response.structured_output
 

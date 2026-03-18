@@ -39,6 +39,32 @@ describe Riffer::Evals::ScenarioResult do
     end
   end
 
+  describe "#messages" do
+    it "defaults to empty array" do
+      scenario = Riffer::Evals::ScenarioResult.new(
+        input: "test",
+        output: "test",
+        ground_truth: nil,
+        results: []
+      )
+
+      expect(scenario.messages).must_equal []
+    end
+
+    it "stores provided messages" do
+      messages = [Riffer::Messages::User.new("Hi"), Riffer::Messages::Assistant.new("Hello")]
+      scenario = Riffer::Evals::ScenarioResult.new(
+        input: "test",
+        output: "test",
+        ground_truth: nil,
+        results: [],
+        messages: messages
+      )
+
+      expect(scenario.messages).must_equal messages
+    end
+  end
+
   describe "#scores" do
     it "returns scores keyed by evaluator class" do
       scenario = Riffer::Evals::ScenarioResult.new(
@@ -79,6 +105,7 @@ describe Riffer::Evals::ScenarioResult do
       expect(hash[:ground_truth]).must_equal "A programming language"
       expect(hash[:results].length).must_equal 1
       expect(hash[:scores]).must_be_instance_of Hash
+      expect(hash[:messages]).must_be_instance_of Array
     end
   end
 end
