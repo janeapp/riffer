@@ -7,6 +7,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | Provider       | Identifier       | Gem Required             |
 | -------------- | ---------------- | ------------------------ |
 | OpenAI         | `openai`         | `openai`                 |
+| Azure OpenAI   | `azure_openai`   | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
 | Mock           | `mock`           | None                     |
@@ -17,10 +18,11 @@ Agents specify providers using the `provider/model` format:
 
 ```ruby
 class MyAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'              # OpenAI
+  model 'openai/gpt-5-mini'                                           # OpenAI
+  model 'azure_openai/gpt-5-mini'                                     # Azure OpenAI
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
-  model 'anthropic/claude-haiku-4-5-20251001'  # Anthropic
-  model 'mock/any'                   # Mock provider
+  model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
+  model 'mock/any'                                                    # Mock provider
 end
 ```
 
@@ -149,6 +151,9 @@ Riffer uses a registry to find providers by identifier:
 Riffer::Providers::Repository.find(:openai)
 # => Riffer::Providers::OpenAI
 
+Riffer::Providers::Repository.find(:azure_openai)
+# => Riffer::Providers::AzureOpenAI
+
 Riffer::Providers::Repository.find(:amazon_bedrock)
 # => Riffer::Providers::AmazonBedrock
 
@@ -164,5 +169,6 @@ Riffer::Providers::Repository.find(:mock)
 - [Amazon Bedrock](02_AMAZON_BEDROCK.md) - Claude and other models via AWS
 - [Anthropic](03_ANTHROPIC.md) - Claude models via Anthropic API
 - [OpenAI](04_OPENAI.md) - GPT models
-- [Mock](05_MOCK_PROVIDER.md) - Mock provider for testing
-- [Custom Providers](06_CUSTOM_PROVIDERS.md) - Creating your own provider
+- [Azure OpenAI](05_AZURE_OPENAI.md) - GPT models via Azure
+- [Mock](06_MOCK_PROVIDER.md) - Mock provider for testing
+- [Custom Providers](07_CUSTOM_PROVIDERS.md) - Creating your own provider
