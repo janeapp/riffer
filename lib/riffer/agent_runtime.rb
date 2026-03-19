@@ -88,7 +88,7 @@ class Riffer::AgentRuntime
     else
       Riffer::Tools::Response.text(response.content)
     end
-  rescue RuntimeError => e
+  rescue => e
     Riffer::Tools::Response.error("Error executing agent: #{e.message}", type: :execution_error)
   end
 
