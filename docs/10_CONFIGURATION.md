@@ -50,7 +50,7 @@ end
 | ------------------------------ | ------------------------------------------------------------------------------------------------- |
 | `Riffer::ToolRuntime` subclass | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`) |
 | `Riffer::ToolRuntime` instance | Custom runtime with specific options                                                              |
-| `Proc`                         | Dynamic resolution                                                                                |
+| `Proc`                         | Receives context, must return a runtime subclass or instance                                      |
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
@@ -70,7 +70,7 @@ end
 | ------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `Riffer::AgentRuntime` subclass | Instantiated automatically (e.g., `Riffer::AgentRuntime::Inline`, `Riffer::AgentRuntime::Threaded`) |
 | `Riffer::AgentRuntime` instance | Custom runtime with specific options                                                                |
-| `Proc`                          | Dynamic resolution                                                                                  |
+| `Proc`                          | Receives context, must return a runtime subclass or instance                                        |
 
 Per-agent configuration overrides this global default. See [Agents — Subagents](03_AGENTS.md#subagents) for details.
 
