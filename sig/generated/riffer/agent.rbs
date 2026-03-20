@@ -325,7 +325,11 @@ class Riffer::Agent
   def pending_tool_calls: () -> untyped
 
   # : (Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
-  def dispatch_tool_results: (Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
+  # : (Array[Riffer::ToolCall]) -> void
+  def dispatch_calls: (Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
+                    | (Array[Riffer::ToolCall]) -> void
+
+  def dispatch_tool_results: (untyped results) -> untyped
 
   # --
   # : () -> void
