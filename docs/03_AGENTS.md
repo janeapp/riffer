@@ -274,7 +274,7 @@ Accepts a `Riffer::ToolRuntime` subclass, a `Riffer::ToolRuntime` instance, or a
 
 ### uses_agents
 
-Registers subagents the agent can delegate to:
+Registers subagents the agent can delegate to. Accepts an array of agent classes or a lambda for dynamic resolution:
 
 ```ruby
 class MaestroAgent < Riffer::Agent
@@ -283,37 +283,13 @@ class MaestroAgent < Riffer::Agent
 end
 ```
 
-Subagents can also be resolved dynamically with a lambda:
-
-```ruby
-class MaestroAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-
-  uses_agents ->(context) {
-    agents = [ResearchAgent]
-    agents << WriterAgent if context&.dig(:enable_writing)
-    agents
-  }
-end
-```
-
-See [Subagents](#subagents) for details.
+See [Subagents](#subagents) for full details including dynamic resolution, context propagation, and runtime configuration.
 
 ### agent_runtime (Experimental)
 
 > **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
 
-Configures how subagent calls are executed. Defaults to sequential (inline) execution:
-
-```ruby
-class MaestroAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-  uses_agents [ResearchAgent, WriterAgent]
-  agent_runtime Riffer::AgentRuntime::Threaded
-end
-```
-
-Accepts a `Riffer::AgentRuntime` subclass, a `Riffer::AgentRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Subagents — Agent Runtime](#agent-runtime) for details.
+Configures how subagent calls are executed. Defaults to sequential (inline) execution. Accepts a `Riffer::AgentRuntime` subclass, instance, or `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Subagents — Agent Runtime](#agent-runtime) for details.
 
 ### guardrail
 
@@ -693,6 +669,21 @@ class MaestroAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WebSearchTool]
   uses_agents [ResearchAgent, WriterAgent]
+end
+```
+
+Subagents can also be resolved dynamically with a lambda:
+
+```ruby
+# Dynamic resolution with a lambda
+class MaestroAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+
+  uses_agents ->(context) {
+    agents = [ResearchAgent]
+    agents << WriterAgent if context&.dig(:enable_writing)
+    agents
+  }
 end
 ```
 
