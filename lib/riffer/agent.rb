@@ -622,15 +622,7 @@ class Riffer::Agent
   #--
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
-    agent_names = resolved_agent_map.keys.to_set
-
-    if agent_names.empty?
-      dispatch_tool_results(resolve_tool_runtime.execute(response.tool_calls, tools: resolved_tools, context: @context))
-    else
-      agent_calls, tool_calls = response.tool_calls.partition { |tc| agent_names.include?(tc.name) }
-      dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context)) unless tool_calls.empty?
-      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: agent_dispatch_context)) unless agent_calls.empty?
-    end
+    dispatch_calls(response.tool_calls)
   end
 
   # Executes tool calls left unfinished by a prior interrupt.
@@ -650,15 +642,7 @@ class Riffer::Agent
     pending = pending_tool_calls
     return if pending.empty?
 
-    agent_names = resolved_agent_map.keys.to_set
-
-    if agent_names.empty?
-      dispatch_tool_results(resolve_tool_runtime.execute(pending, tools: resolved_tools, context: @context))
-    else
-      agent_calls, tool_calls = pending.partition { |tc| agent_names.include?(tc.name) }
-      dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context)) unless tool_calls.empty?
-      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: agent_dispatch_context)) unless agent_calls.empty?
-    end
+    dispatch_calls(pending)
   end
 
   def pending_tool_calls
@@ -676,6 +660,19 @@ class Riffer::Agent
   end
 
   #: (Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
+  #: (Array[Riffer::ToolCall]) -> void
+  def dispatch_calls(tool_calls)
+    agent_names = resolved_agent_map.keys.to_set
+
+    if agent_names.empty?
+      dispatch_tool_results(resolve_tool_runtime.execute(tool_calls, tools: resolved_tools, context: @context))
+    else
+      agent_calls, regular_calls = tool_calls.partition { |tc| agent_names.include?(tc.name) }
+      dispatch_tool_results(resolve_tool_runtime.execute(regular_calls, tools: resolved_tools, context: @context)) unless regular_calls.empty?
+      dispatch_tool_results(resolve_agent_runtime.execute(agent_calls, agents: resolved_agent_map, context: agent_dispatch_context)) unless agent_calls.empty?
+    end
+  end
+
   def dispatch_tool_results(results)
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
@@ -798,13 +795,15 @@ class Riffer::Agent
 
   #: () -> Array[singleton(Riffer::Agent)]?
   def resolve_agents_config
-    config = self.class.uses_agents
-    return nil if config.nil?
+    @resolved_agents_config ||= begin
+      config = self.class.uses_agents
+      return nil if config.nil?
 
-    if config.is_a?(Proc)
-      (config.arity == 0) ? config.call : config.call(@context)
-    else
-      config
+      if config.is_a?(Proc)
+        (config.arity == 0) ? config.call : config.call(@context)
+      else
+        config
+      end
     end
   end
 
