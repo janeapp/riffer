@@ -22,7 +22,7 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.9)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.23.0)
+    anthropic (1.25.0)
       cgi
       connection_pool
     ast (2.4.3)
@@ -234,7 +234,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.23.0)
+  anthropic (~> 1.25.0)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
   guard
@@ -253,7 +253,7 @@ DEPENDENCIES
 CHECKSUMS
   activesupport (8.1.2) sha256=88842578ccd0d40f658289b0e8c842acfe9af751afee2e0744a7873f50b6fdae
   addressable (2.8.9) sha256=cc154fcbe689711808a43601dee7b980238ce54368d23e127421753e46895485
-  anthropic (1.23.0) sha256=6290309d1f6488d132b6fd5a79d8d5414ef09f281d6668f930c2cd88658b9d82
+  anthropic (1.25.0) sha256=263ec37d38e2de51e056eb1ce2e17f80fa6a329865432cc82e1efff25e71d17b
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
   aws-partitions (1.1229.0) sha256=4cdba3093cc518e1ffe9f0f35050953cb5fb4a79797e4c928ab1cd3ed369407b
