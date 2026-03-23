@@ -111,7 +111,7 @@ GEM
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    openai (0.55.0)
+    openai (0.56.0)
       base64
       cgi
       connection_pool
@@ -241,7 +241,7 @@ DEPENDENCIES
   guard-shell
   irb
   minitest (~> 6.0)
-  openai (~> 0.55.0)
+  openai (~> 0.56.0)
   rake (~> 13.0)
   rbs-inline (~> 0.12)
   riffer!
@@ -304,7 +304,7 @@ CHECKSUMS
   mutex_m (0.3.0) sha256=cfcb04ac16b69c4813777022fdceda24e9f798e48092a2b817eb4c0a782b0751
   nenv (0.3.0) sha256=d9de6d8fb7072228463bf61843159419c969edb34b3cef51832b516ae7972765
   notiffany (0.1.3) sha256=d37669605b7f8dcb04e004e6373e2a780b98c776f8eb503ac9578557d7808738
-  openai (0.55.0) sha256=5e81ac00b1ff9b53ce42c93ea4788910b4a374200f401c7521a82603967573cc
+  openai (0.56.0) sha256=099f44a4aa4eb3b98f262d0f15e314b0ebf156e34d4871ef6e3068ca8720b722
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
   parser (3.3.10.2) sha256=6f60c84aa4bdcedb6d1a2434b738fe8a8136807b6adc8f7f53b97da9bc4e9357
   pp (0.6.3) sha256=2951d514450b93ccfeb1df7d021cae0da16e0a7f95ee1e2273719669d0ab9df6
