@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.0](https://github.com/janeapp/riffer/compare/riffer/v0.18.0...riffer/v0.19.0) (2026-03-25)
+
+
+### Features
+
+* Add Azure OpenAI provider ([#167](https://github.com/janeapp/riffer/issues/167)) ([5d34fcd](https://github.com/janeapp/riffer/commit/5d34fcd4a98a6bcfa768c50fea7c25959eca5f1d))
+* expose message history in eval results ([#171](https://github.com/janeapp/riffer/issues/171)) ([c8b1aec](https://github.com/janeapp/riffer/commit/c8b1aeceb40a173c70d4be445fb82bba10113b87))
+* provide agent context to runners ([#181](https://github.com/janeapp/riffer/issues/181)) ([23c9282](https://github.com/janeapp/riffer/commit/23c9282d4f2076d1ff6185f99bcf855f158ccb0d))
+
 ## [0.18.0](https://github.com/janeapp/riffer/compare/riffer/v0.17.0...riffer/v0.18.0) (2026-03-13)
 
 
