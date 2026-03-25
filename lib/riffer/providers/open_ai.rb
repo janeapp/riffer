@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# OpenAI provider for GPT models.
-#
-# Requires the +openai+ gem to be installed.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
-  # Initializes the OpenAI provider.
-  #
   #: (**untyped) -> void
   def initialize(**options)
     depends_on "openai"

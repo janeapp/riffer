@@ -1,21 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents a user message in a conversation.
-#
-#   msg = Riffer::Messages::User.new("Hello!")
-#   msg.role     # => :user
-#   msg.content  # => "Hello!"
-#
-#   msg = Riffer::Messages::User.new("Describe this image", files: [file_part])
-#   msg.files    # => [#<Riffer::FilePart ...>]
-#
 class Riffer::Messages::User < Riffer::Messages::Base
-  # File attachments for this message.
   attr_reader :files #: Array[Riffer::FilePart]
 
-  # Initializes a user message.
-  #
   #: (String, ?files: Array[Riffer::FilePart]) -> void
   def initialize(content, files: [])
     super(content)

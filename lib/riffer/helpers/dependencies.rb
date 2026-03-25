@@ -1,24 +1,11 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Helper module for lazy loading gem dependencies.
-#
-# Used by providers to load their required gems only when needed.
 module Riffer::Helpers::Dependencies
-  # Raised when a required gem cannot be loaded.
   class LoadError < ::LoadError; end
 
-  # Raised when a gem version requirement is not satisfied.
   class VersionError < ScriptError; end
 
-  # Declares a dependency on a gem.
-  #
-  # Verifies the gem is installed and satisfies version requirements,
-  # then requires it.
-  #
-  # Raises LoadError if the gem is not installed.
-  # Raises VersionError if the gem version does not satisfy requirements.
-  #
   #: (String, ?req: (bool | String)) -> true
   def depends_on(gem_name, req: true)
     gem(gem_name)

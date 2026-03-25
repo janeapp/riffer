@@ -14,7 +14,6 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 - [Architecture](.agents/architecture.md) - Core components and project structure
 - [Testing](.agents/testing.md) - Minitest spec DSL and VCR cassettes
 - [Code Style](.agents/code-style.md) - StandardRB and comment conventions
-- [RDoc](.agents/rdoc.md) - Documentation format for public APIs
 - [Providers](.agents/providers.md) - Adding new LLM provider adapters
 - [RBS Inline](.agents/rbs-inline.md) - Type annotations with rbs-inline
 

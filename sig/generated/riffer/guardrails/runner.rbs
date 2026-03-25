@@ -1,40 +1,15 @@
 # Generated from lib/riffer/guardrails/runner.rb with RBS::Inline
 
-# Executes guardrails sequentially and manages the processing pipeline.
-#
-# The runner processes guardrails in order, passing the output of each
-# to the next. If any guardrail blocks, execution stops and a tripwire
-# is returned.
-#
-#   runner = Runner.new(guardrail_configs, phase: :before, context: context)
-#   data, tripwire, modifications = runner.run(messages)
 class Riffer::Guardrails::Runner
-  # The guardrail configs to execute.
   attr_reader guardrail_configs: Array[Hash[Symbol, untyped]]
 
-  # The execution phase (:before or :after).
   attr_reader phase: Symbol
 
-  # The context passed to guardrails.
   attr_reader context: untyped
 
-  # Creates a new runner.
-  #
-  # +guardrail_configs+ - configs with :class and :options keys.
-  # +phase+ - :before or :after.
-  # +context+ - optional context to pass to guardrails.
-  #
   # : (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
   def initialize: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
 
-  # Runs the guardrails sequentially.
-  #
-  # For before phase, data should be an array of messages.
-  # For after phase, data should be a response and messages must be provided.
-  #
-  # +data+ - the data to process (messages for before, response for after).
-  # +messages+ - the conversation messages (required for after phase).
-  #
   # : (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
 

@@ -1,16 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Params provides a DSL for defining parameters.
-#
-# Used within a Tool's +params+ block to define required and optional parameters,
-# and by StructuredOutput to define response schemas.
-#
-#   params do
-#     required :city, String, description: "The city name"
-#     optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
-#   end
-#
 class Riffer::Params
   attr_reader :parameters #: Array[Riffer::Param]
 
@@ -19,8 +9,6 @@ class Riffer::Params
     @parameters = []
   end
 
-  # Defines a required parameter.
-  #
   #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
@@ -35,8 +23,6 @@ class Riffer::Params
     )
   end
 
-  # Defines an optional parameter.
-  #
   #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
@@ -52,10 +38,6 @@ class Riffer::Params
     )
   end
 
-  # Validates arguments against parameter definitions.
-  #
-  # Raises Riffer::ValidationError if validation fails.
-  #
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate(arguments)
     validated = {}
@@ -94,12 +76,6 @@ class Riffer::Params
     validated
   end
 
-  # Converts all parameters to JSON Schema format.
-  #
-  # When +strict+ is true, every property appears in +required+ and
-  # optional properties are made nullable instead. This satisfies
-  # providers that enforce strict structured output schemas.
-  #
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)
     properties = {}

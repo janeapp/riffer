@@ -1,14 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Module for converting hashes to message objects.
-#
-# Included in Agent and Provider classes to handle message normalization.
 module Riffer::Messages::Converter
-  # Converts a hash or message object to a Riffer::Messages::Base subclass.
-  #
-  # Raises Riffer::ArgumentError if the message format is invalid.
-  #
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def convert_to_message_object(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
@@ -20,15 +13,6 @@ module Riffer::Messages::Converter
     convert_hash_to_message(msg)
   end
 
-  # Converts a hash or FilePart object to a Riffer::FilePart.
-  #
-  # Accepts:
-  # - +Riffer::FilePart+ objects (passed through)
-  # - +{url: "https://...", media_type: "..."}+ (URL source)
-  # - +{data: "...", media_type: "..."}+ (raw base64)
-  #
-  # Raises Riffer::ArgumentError if the hash format is invalid.
-  #
   #: ((Hash[Symbol, untyped] | Riffer::FilePart)) -> Riffer::FilePart
   def convert_to_file_part(file)
     return file if file.is_a?(Riffer::FilePart)

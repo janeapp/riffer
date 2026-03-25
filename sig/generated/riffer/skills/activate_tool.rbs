@@ -1,17 +1,6 @@
 # Generated from lib/riffer/skills/activate_tool.rb with RBS::Inline
 
-# Tool for the LLM to activate a skill and receive its full instructions.
-#
-# Registered automatically when an agent has skills configured.
-# The LLM calls this when a task matches an available skill's description.
-#
-# See Riffer::Skills::Context.
 class Riffer::Skills::ActivateTool < Riffer::Tool
-  # Activates a skill by name and returns its body.
-  #
-  # +context+ - tool context containing +:skills+ (a Riffer::Skills::Context).
-  # +name+ - the skill name to activate.
-  #
   # : (context: Hash[Symbol, untyped]?, name: String) -> Riffer::Tools::Response
   def call: (context: Hash[Symbol, untyped]?, name: String) -> Riffer::Tools::Response
 end

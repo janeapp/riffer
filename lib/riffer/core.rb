@@ -3,11 +3,7 @@
 
 require "logger"
 
-# Riffer::Core provides core functionality for the Riffer framework.
-#
-# Handles logging and configuration for the framework.
 class Riffer::Core
-  # The logger instance for Riffer.
   attr_reader :logger #: Logger
 
   #: () -> void
@@ -17,8 +13,6 @@ class Riffer::Core
     @storage_registry = {}
   end
 
-  # Yields self for configuration.
-  #
   #: () ?{ (Riffer::Core) -> void } -> void
   def configure(&block)
     yield self if block_given?

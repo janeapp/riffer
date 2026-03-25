@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Tool for the LLM to activate a skill and receive its full instructions.
-#
-# Registered automatically when an agent has skills configured.
-# The LLM calls this when a task matches an available skill's description.
-#
-# See Riffer::Skills::Context.
 class Riffer::Skills::ActivateTool < Riffer::Tool
   identifier "skill_activate"
   description "Activates a skill and returns its instructions. " \
@@ -17,11 +11,6 @@ class Riffer::Skills::ActivateTool < Riffer::Tool
     required :name, String, description: "The skill name to activate"
   end
 
-  # Activates a skill by name and returns its body.
-  #
-  # +context+ - tool context containing +:skills+ (a Riffer::Skills::Context).
-  # +name+ - the skill name to activate.
-  #
   #: (context: Hash[Symbol, untyped]?, name: String) -> Riffer::Tools::Response
   def call(context:, name:)
     skills_context = context&.dig(:skills)

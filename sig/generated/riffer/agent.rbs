@@ -1,19 +1,5 @@
 # Generated from lib/riffer/agent.rb with RBS::Inline
 
-# Riffer::Agent is the base class for all agents in the Riffer framework.
-#
-# Provides orchestration for LLM calls, tool use, and message management.
-# Subclass this to create your own agents.
-#
-# See Riffer::Messages and Riffer::Providers.
-#
-#   class MyAgent < Riffer::Agent
-#     model 'openai/gpt-4o'
-#     instructions 'You are a helpful assistant.'
-#   end
-#
-#   agent = MyAgent.new
-#   agent.generate('Hello!')
 class Riffer::Agent
   include Riffer::Messages::Converter
 
@@ -25,184 +11,76 @@ class Riffer::Agent
 
   INTERRUPT_MAX_STEPS: Symbol
 
-  # Gets or sets the agent identifier.
-  #
   # : (?String?) -> String
   def self.identifier: (?String?) -> String
 
-  # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
-  #
   # : (?(String | Proc)?) -> (String | Proc)?
   def self.model: (?(String | Proc)?) -> (String | Proc)?
 
-  # Gets or sets the agent instructions.
-  #
-  # Accepts a static string or a Proc for dynamic instructions.
-  # When a Proc is given, it is called at generate time and receives
-  # the +context+ hash (which may be +nil+).
-  #
-  #   instructions "You are a helpful assistant."
-  #
-  #   instructions -> (context) {
-  #     "You are assisting #{context[:name]}"
-  #   }
-  #
   # : (?(String | Proc)?) -> (String | Proc)?
   def self.instructions: (?(String | Proc)?) -> (String | Proc)?
 
-  # Gets or sets provider options passed to the provider client.
-  #
   # : (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.provider_options: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
 
-  # Gets or sets model options passed to generate_text/stream_text.
-  #
   # : (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.model_options: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
 
-  # Gets or sets the structured output schema for this agent.
-  #
-  # Accepts a Riffer::Params instance or a block evaluated against a new Params.
-  #
   # : (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
   def self.structured_output: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
 
-  # Gets or sets the maximum number of LLM call steps in the tool-use loop.
-  #
-  # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
-  # unlimited steps.
-  #
   # : (?Numeric?) -> Numeric
   def self.max_steps: (?Numeric?) -> Numeric
 
-  # Gets or sets the tools used by this agent.
-  #
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
-  # Gets or sets the tool runtime for this agent.
-  #
-  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
-  # or a Proc.
-  #
-  # Inherited by subclasses. When unset, walks the ancestor chain and
-  # falls back to the global +Riffer.config.tool_runtime+.
-  #
   # : (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
   def self.tool_runtime: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
 
-  # Configures skills for this agent via a block DSL.
-  #
-  # Returns the current Riffer::Skills::Config when called without a block.
-  #
-  #   skills do
-  #     backend Riffer::Skills::FilesystemBackend.new(".skills")
-  #     adapter Riffer::Skills::XmlAdapter
-  #     activate ["code-review"]
-  #   end
-  #
   # : () ?{ () -> void } -> Riffer::Skills::Config?
   def self.skills: () ?{ () -> void } -> Riffer::Skills::Config?
 
-  # Finds an agent class by identifier.
-  #
   # : (String) -> singleton(Riffer::Agent)?
   def self.find: (String) -> singleton(Riffer::Agent)?
 
-  # Returns all agent subclasses.
-  #
   # : () -> Array[singleton(Riffer::Agent)]
   def self.all: () -> Array[singleton(Riffer::Agent)]
 
-  # Generates a response using a new agent instance.
-  #
-  # See #generate for parameters and return value.
-  #
   # : (*untyped, **untyped) -> Riffer::Agent::Response
   def self.generate: (*untyped, **untyped) -> Riffer::Agent::Response
 
-  # Streams a response using a new agent instance.
-  #
-  # See #stream for parameters and return value.
-  #
   # : (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def self.stream: (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # Registers a guardrail for input, output, or both phases.
-  #
-  # +phase+ - :before, :after, or :around.
-  # +with+ - the guardrail class (must be subclass of Riffer::Guardrail).
-  # +options+ - additional options passed to the guardrail.
-  #
-  # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
   # : (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
   def self.guardrail: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
 
-  # Returns the registered guardrail configs for a given phase.
-  #
-  # +phase+ - :before or :after.
-  #
   # : (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 
-  # The message history for the agent.
   attr_reader messages: Array[Riffer::Messages::Base]
 
-  # Cumulative token usage across all LLM calls.
   attr_reader token_usage: Riffer::TokenUsage?
 
-  # Initializes a new agent.
-  #
-  # Raises Riffer::ArgumentError if the configured model string is invalid
-  # (must be "provider/model" format).
-  #
   # : () -> void
   def initialize: () -> void
 
-  # Generates a response from the agent.
-  #
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
 
-  # Streams a response from the agent.
-  #
-  # Raises Riffer::ArgumentError if structured output is configured.
-  #
   # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # Registers a callback to be invoked when messages are added during generation.
-  #
-  # Raises Riffer::ArgumentError if no block is given.
-  #
   # : () { (Riffer::Messages::Base) -> void } -> self
   def on_message: () { (Riffer::Messages::Base) -> void } -> self
 
-  # Generates the instruction system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no instructions are configured.
-  #
   # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def generate_instruction_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 
-  # Generates the skills catalog system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no skills are configured or the catalog is empty.
-  #
   # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def generate_skills_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 
-  # Interrupts the agent loop.
-  #
-  # Call from an +on_message+ callback to cleanly interrupt the loop.
-  # Equivalent to +throw :riffer_interrupt, reason+.
-  #
   # : (?(String | Symbol)?) -> void
   def interrupt!: (?(String | Symbol)?) -> void
 
@@ -247,18 +125,7 @@ class Riffer::Agent
   # : (Riffer::Messages::Assistant) -> void
   def execute_tool_calls: (Riffer::Messages::Assistant) -> void
 
-  # Executes tool calls left unfinished by a prior interrupt.
-  #
-  # When an interrupt fires mid-way through tool execution, some tool calls
-  # from the last assistant message may not have been executed yet. This
-  # method detects those gaps by comparing the tool call ids requested by the
-  # last assistant message against the tool result messages that follow it,
-  # then executes any that are missing.
-  #
   # : () -> void
-  # Executes tool calls from the last assistant message that don't yet
-  # have a corresponding tool result. Safe to call unconditionally —
-  # returns immediately when there is nothing pending.
   def execute_pending_tool_calls: () -> void
 
   def pending_tool_calls: () -> untyped
@@ -286,12 +153,6 @@ class Riffer::Agent
   # : () -> Riffer::ToolRuntime
   def resolve_tool_runtime: () -> Riffer::ToolRuntime
 
-  # Resolves the skills backend, lists skills, and selects an adapter.
-  #
-  # Returns nil if skills are not configured or empty.
-  # Does not mutate instance state — callers are responsible for
-  # assigning the returned context.
-  #
   # : (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
   def resolve_skills: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
 

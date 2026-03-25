@@ -1,37 +1,20 @@
 # Generated from lib/riffer/stream_events/guardrail_tripwire.rb with RBS::Inline
 
-# Represents a guardrail tripwire event during streaming.
-#
-# Emitted when a guardrail blocks execution during the streaming pipeline.
 class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
-  # The tripwire containing block details.
   attr_reader tripwire: Riffer::Guardrails::Tripwire
 
-  # Creates a new tripwire stream event.
-  #
-  # +tripwire+ - the tripwire details.
-  # +role+ - the message role (defaults to :assistant).
-  #
   # : (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
   def initialize: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
 
-  # The reason for blocking.
-  #
   # : () -> String
   def reason: () -> String
 
-  # The phase when blocking occurred (:before or :after).
-  #
   # : () -> Symbol
   def phase: () -> Symbol
 
-  # The guardrail class that triggered the block.
-  #
   # : () -> singleton(Riffer::Guardrail)
   def guardrail: () -> singleton(Riffer::Guardrail)
 
-  # Converts the event to a hash.
-  #
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

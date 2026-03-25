@@ -3,34 +3,15 @@
 
 require "json"
 
-# Base class for all LLM providers in the Riffer framework.
-#
-# Provides a template-method flow for text generation and streaming.
-# Subclasses implement five hook methods; the base class orchestrates them.
-#
-# ==== Hook methods
-#
-# - +build_request_params+ — convert messages, tools, and options into SDK params
-# - +execute_generate+ — call the SDK and return the raw response
-# - +execute_stream+ — call the streaming SDK, mapping events to the yielder
-# - +extract_token_usage+ — pull token counts from the SDK response
-# - +extract_content+ — extract text content from the SDK response
-# - +extract_tool_calls+ — extract tool calls from the SDK response
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
 
-  # Returns the preferred skill adapter for this provider.
-  #
-  # Override in subclasses for provider-specific formats.
-  #
   #: () -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter
     Riffer::Skills::MarkdownAdapter
   end
 
-  # Generates text using the provider.
-  #
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
@@ -52,8 +33,6 @@ class Riffer::Providers::Base
     )
   end
 
-  # Streams text from the provider.
-  #
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)

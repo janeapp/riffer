@@ -1,20 +1,11 @@
 # Generated from lib/riffer/providers/anthropic.rb with RBS::Inline
 
-# Anthropic provider for Claude models via the Anthropic API.
-#
-# Requires the +anthropic+ gem to be installed.
-#
-# See https://github.com/anthropics/anthropic-sdk-ruby
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
-  # Returns the XML skill adapter for Anthropic/Claude.
-  #
   # : () -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: () -> singleton(Riffer::Skills::Adapter)
 
-  # Initializes the Anthropic provider.
-  #
   # : (?api_key: String?, **untyped) -> void
   def initialize: (?api_key: String?, **untyped) -> void
 

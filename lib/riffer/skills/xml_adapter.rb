@@ -3,16 +3,7 @@
 
 require "cgi"
 
-# XML skill adapter, optimized for Anthropic/Claude.
-#
-# Renders a skill catalog as XML for the system prompt.
-#
-# See Riffer::Skills::MarkdownAdapter for the default variant.
 class Riffer::Skills::XmlAdapter < Riffer::Skills::Adapter
-  # Renders a skill catalog as XML.
-  #
-  # +skills+ - array of Frontmatter objects to render.
-  #
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
     lines = []

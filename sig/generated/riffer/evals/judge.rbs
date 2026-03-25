@@ -1,42 +1,16 @@
 # Generated from lib/riffer/evals/judge.rb with RBS::Inline
 
-# Executes LLM-as-judge evaluations using the provider infrastructure.
-#
-# The Judge class handles calling an LLM to evaluate agent outputs
-# and parsing the structured response. It uses tool calling internally
-# to get guaranteed structured output from the judge model.
-#
-#   judge = Riffer::Evals::Judge.new(model: "anthropic/claude-opus-4-5-20251101")
-#   result = judge.evaluate(
-#     instructions: "Assess answer relevancy...",
-#     input: "What is Ruby?",
-#     output: "Ruby is a programming language."
-#   )
-#   result[:score]  # => 0.85
-#   result[:reason] # => "The response is relevant..."
 class Riffer::Evals::Judge
-  # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
     # : (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
     def call: (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
   end
 
-  # The model string (provider/model format).
   attr_reader model: String
 
-  # Initializes a new judge.
-  #
   # : (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
   def initialize: (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
 
-  # Evaluates using the configured LLM.
-  #
-  # Composes system and user messages from the semantic fields:
-  # +instructions+ - evaluation criteria and scoring rubric.
-  # +input+ - the original input/question.
-  # +output+ - the agent's response to evaluate.
-  # +ground_truth+ - optional reference answer for comparison.
-  #
   # : (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
   def evaluate: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
 

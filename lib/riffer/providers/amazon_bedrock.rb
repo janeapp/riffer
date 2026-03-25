@@ -1,14 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Amazon Bedrock provider for Claude and other foundation models.
-#
-# Requires the +aws-sdk-bedrockruntime+ gem to be installed.
-#
-# See https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
-  # Initializes the Amazon Bedrock provider.
-  #
   #: (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize(api_token: nil, region: nil, **options)
     depends_on "aws-sdk-bedrockruntime"

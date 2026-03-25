@@ -4,16 +4,6 @@
 require "base64"
 require "uri"
 
-# Represents a file attachment (image or document) in a conversation.
-#
-# Supports two input sources:
-# - URLs (stored and passed to providers that support them via +from_url+)
-# - Raw base64 data (via +new+)
-#
-#   file = Riffer::FilePart.from_url("https://example.com/doc.pdf", media_type: "application/pdf")
-#   file.url?        # => true
-#   file.document?   # => true
-#
 class Riffer::FilePart
   MEDIA_TYPES = {
     ".jpg" => "image/jpeg",
@@ -30,19 +20,10 @@ class Riffer::FilePart
 
   SUPPORTED_MEDIA_TYPES = MEDIA_TYPES.values.uniq.freeze #: Array[String]
 
-  # The MIME type of the file.
   attr_reader :media_type #: String
 
-  # The filename, if available.
   attr_reader :filename #: String?
 
-  # Creates a FilePart from raw base64 data or a URL.
-  #
-  # At least one of +data+ or +url+ must be provided.
-  #
-  # Raises Riffer::ArgumentError if neither data nor url is provided,
-  # or if media_type is not supported.
-  #
   #: (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
   def initialize(media_type:, data: nil, filename: nil, url: nil)
     raise Riffer::ArgumentError, "Either data or url must be provided" if data.nil? && url.nil?
@@ -54,13 +35,6 @@ class Riffer::FilePart
     @url_string = url
   end
 
-  # Creates a FilePart from a URL.
-  #
-  # The URL is stored and passed directly to providers that support URL sources.
-  # If +media_type+ is not provided, it is detected from the URL path extension.
-  #
-  # Raises Riffer::ArgumentError if media_type cannot be detected.
-  #
   #: (String, ?media_type: String?) -> Riffer::FilePart
   def self.from_url(url, media_type: nil)
     unless media_type
@@ -72,39 +46,28 @@ class Riffer::FilePart
     new(url: url, media_type: media_type)
   end
 
-  # Returns the base64-encoded data, or nil for URL-only sources.
   attr_reader :data #: String?
 
-  # Returns the URL if the source was a URL, nil otherwise.
-  #
   #: () -> String?
   def url
     @url_string
   end
 
-  # Returns true if the source was a URL.
-  #
   #: () -> bool
   def url?
     !@url_string.nil?
   end
 
-  # Returns true if the file is an image.
-  #
   #: () -> bool
   def image?
     media_type.start_with?("image/")
   end
 
-  # Returns true if the file is a document (not an image).
-  #
   #: () -> bool
   def document?
     !image?
   end
 
-  # Serializes the FilePart to a hash.
-  #
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {media_type: media_type}

@@ -1,25 +1,13 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents an assistant (LLM) message in a conversation.
-#
-# May include tool calls when the LLM requests tool execution.
-#
-#   msg = Riffer::Messages::Assistant.new("Hello!")
-#   msg.role        # => :assistant
-#   msg.content     # => "Hello!"
-#   msg.tool_calls  # => []
-#
 class Riffer::Messages::Assistant < Riffer::Messages::Base
   ToolCall = Struct.new(:id, :call_id, :name, :arguments, keyword_init: true)
 
-  # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
 
-  # Token usage data for this response.
   attr_reader :token_usage #: Riffer::TokenUsage?
 
-  # Parsed structured output hash, or nil when not applicable.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
 
   #: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
@@ -40,8 +28,6 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     !@structured_output.nil?
   end
 
-  # Converts the message to a hash.
-  #
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content}

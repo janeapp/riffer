@@ -1,27 +1,13 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Records a guardrail transformation event.
-#
-# When a guardrail transforms data (via +transform+), a Modification is
-# created to record which guardrail made the change, in which phase, and
-# which message indices were affected.
 class Riffer::Guardrails::Modification
-  # The guardrail class that transformed data.
   attr_reader :guardrail #: singleton(Riffer::Guardrail)
 
-  # The phase when the transformation occurred (:before or :after).
   attr_reader :phase #: Symbol
 
-  # The indices of messages that were changed.
   attr_reader :message_indices #: Array[Integer]
 
-  # Creates a new modification record.
-  #
-  # +guardrail+ - the guardrail class that transformed.
-  # +phase+ - :before or :after.
-  # +message_indices+ - indices of changed messages.
-  #
   #: (guardrail: singleton(Riffer::Guardrail), phase: Symbol, message_indices: Array[Integer]) -> void
   def initialize(guardrail:, phase:, message_indices:)
     @guardrail = guardrail
@@ -29,8 +15,6 @@ class Riffer::Guardrails::Modification
     @message_indices = message_indices
   end
 
-  # Converts the modification to a hash.
-  #
   #: () -> Hash[Symbol, untyped]
   def to_h
     {

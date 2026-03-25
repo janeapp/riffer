@@ -1,23 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Processes items concurrently using a thread pool.
-#
-# Maintains up to +max_concurrency+ worker threads that pull items from
-# a shared queue. When a worker finishes one item it immediately picks
-# up the next, so a single slow item does not block other workers.
-#
-# If multiple workers raise, only the first exception is re-raised
-# after all workers finish; subsequent errors are discarded.
-#
-#   runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
-#   runner.map(items) { |item| expensive_operation(item) }
-#
 class Riffer::Runner::Threaded < Riffer::Runner
   DEFAULT_MAX_CONCURRENCY = 5 #: Integer
 
-  # +max_concurrency+ - maximum number of threads to run simultaneously.
-  #
   #: (?max_concurrency: Integer) -> void
   def initialize(max_concurrency: DEFAULT_MAX_CONCURRENCY)
     @max_concurrency = max_concurrency
