@@ -12,16 +12,19 @@
 class Riffer::Params
   attr_reader parameters: Array[Riffer::Param]
 
+  # --
   # : () -> void
   def initialize: () -> void
 
   # Defines a required parameter.
   #
+  # --
   # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
   def required: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
 
   # Defines an optional parameter.
   #
+  # --
   # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
   def optional: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
 
@@ -29,6 +32,7 @@ class Riffer::Params
   #
   # Raises Riffer::ValidationError if validation fails.
   #
+  # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
@@ -38,23 +42,29 @@ class Riffer::Params
   # optional properties are made nullable instead. This satisfies
   # providers that enforce strict structured output schemas.
   #
+  # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
   private
 
+  # --
   # : (Class, Class?) ?{ () -> void } -> Riffer::Params?
   def build_nested: (Class, Class?) ?{ () -> void } -> Riffer::Params?
 
+  # --
   # : (Riffer::Param, untyped, Array[String]) -> untyped
   def validate_nested: (Riffer::Param, untyped, Array[String]) -> untyped
 
+  # --
   # : (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
   def validate_nested_hash: (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
 
+  # --
   # : (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects: (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
 
+  # --
   # : (Riffer::Param, Array[untyped], Array[String]) -> void
   def validate_typed_array: (Riffer::Param, Array[untyped], Array[String]) -> void
 end

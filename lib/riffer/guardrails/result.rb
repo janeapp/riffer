@@ -9,6 +9,7 @@
 # - block: Halt execution with a reason
 #
 # Use the factory methods to create results:
+#
 #   Result.pass(data)
 #   Result.transform(data)
 #   Result.block(reason, metadata: nil)
@@ -27,8 +28,9 @@ class Riffer::Guardrails::Result
   class << self
     # Creates a pass result that continues with unchanged data.
     #
-    # +data+ - the original data to pass through.
+    # [data] the original data to pass through.
     #
+    #--
     #: (untyped) -> Riffer::Guardrails::Result
     def pass(data)
       new(:pass, data)
@@ -36,8 +38,9 @@ class Riffer::Guardrails::Result
 
     # Creates a transform result that continues with transformed data.
     #
-    # +data+ - the transformed data.
+    # [data] the transformed data.
     #
+    #--
     #: (untyped) -> Riffer::Guardrails::Result
     def transform(data)
       new(:transform, data)
@@ -45,9 +48,10 @@ class Riffer::Guardrails::Result
 
     # Creates a block result that halts execution.
     #
-    # +reason+ - the reason for blocking.
-    # +metadata+ - optional additional information.
+    # [reason] the reason for blocking.
+    # [metadata] optional additional information.
     #
+    #--
     #: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
     def block(reason, metadata: nil)
       new(:block, reason, metadata: metadata)
@@ -56,12 +60,13 @@ class Riffer::Guardrails::Result
 
   # Creates a new result.
   #
-  # +type+ - the result type (:pass, :transform, or :block).
-  # +data+ - the data or reason.
-  # +metadata+ - optional metadata for block results.
+  # [type] the result type (:pass, :transform, or :block).
+  # [data] the data or reason.
+  # [metadata] optional metadata for block results.
   #
   # Raises Riffer::ArgumentError if the result type is invalid.
   #
+  #--
   #: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(type, data, metadata: nil)
     raise Riffer::ArgumentError, "Invalid result type: #{type}" unless TYPES.include?(type)
@@ -73,6 +78,7 @@ class Riffer::Guardrails::Result
 
   # Returns true if this is a pass result.
   #
+  #--
   #: () -> bool
   def pass?
     type == :pass
@@ -80,6 +86,7 @@ class Riffer::Guardrails::Result
 
   # Returns true if this is a transform result.
   #
+  #--
   #: () -> bool
   def transform?
     type == :transform
@@ -87,6 +94,7 @@ class Riffer::Guardrails::Result
 
   # Returns true if this is a block result.
   #
+  #--
   #: () -> bool
   def block?
     type == :block

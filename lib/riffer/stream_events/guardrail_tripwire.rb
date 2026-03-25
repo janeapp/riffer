@@ -10,9 +10,10 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
 
   # Creates a new tripwire stream event.
   #
-  # +tripwire+ - the tripwire details.
-  # +role+ - the message role (defaults to :assistant).
+  # [tripwire] the tripwire details.
+  # [role] the message role (defaults to :assistant).
   #
+  #--
   #: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
   def initialize(tripwire, role: :assistant)
     super(role: role)
@@ -21,6 +22,7 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
 
   # The reason for blocking.
   #
+  #--
   #: () -> String
   def reason
     tripwire.reason
@@ -28,6 +30,7 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
 
   # The phase when blocking occurred (:before or :after).
   #
+  #--
   #: () -> Symbol
   def phase
     tripwire.phase
@@ -35,6 +38,7 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
 
   # The guardrail class that triggered the block.
   #
+  #--
   #: () -> singleton(Riffer::Guardrail)
   def guardrail
     tripwire.guardrail
@@ -42,6 +46,7 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
 
   # Converts the event to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {

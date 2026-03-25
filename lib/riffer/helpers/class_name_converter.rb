@@ -7,6 +7,7 @@ module Riffer::Helpers::ClassNameConverter
 
   # Converts a class name to snake_case identifier format.
   #
+  #--
   #: (String, ?separator: String) -> String
   def class_name_to_path(class_name, separator: DEFAULT_SEPARATOR)
     class_name

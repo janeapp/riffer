@@ -28,18 +28,20 @@ class Riffer::Guardrails::Tripwire
 
   # Creates a new tripwire.
   #
-  # +reason+ - the reason for blocking.
-  # +guardrail+ - the guardrail class that blocked.
-  # +phase+ - :before or :after.
-  # +metadata+ - optional additional information.
+  # [reason] the reason for blocking.
+  # [guardrail] the guardrail class that blocked.
+  # [phase] :before or :after.
+  # [metadata] optional additional information.
   #
   # Raises Riffer::ArgumentError if the phase is invalid.
   #
+  # --
   # : (reason: String, guardrail: singleton(Riffer::Guardrail), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize: (reason: String, guardrail: singleton(Riffer::Guardrail), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
 
   # Converts the tripwire to a hash.
   #
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

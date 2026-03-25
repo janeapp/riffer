@@ -13,8 +13,9 @@
 class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   # Creates a new FilesystemBackend.
   #
-  # +paths+ - one or more directory paths to scan for skills.
+  # [paths] one or more directory paths to scan for skills.
   #
+  #--
   #: (*String) -> void
   def initialize(*paths)
     @paths = paths.flatten.map { |p| File.expand_path(p) }
@@ -27,6 +28,7 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   # SKILL.md. When multiple paths contain a skill with the same name,
   # first-path-wins.
   #
+  #--
   #: () -> Array[Riffer::Skills::Frontmatter]
   def list_skills
     @skills_cache = {}
@@ -55,10 +57,11 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
 
   # Returns the full SKILL.md body (without frontmatter) for a skill.
   #
-  # +name+ - the skill name to read.
+  # [name] the skill name to read.
   #
   # Raises Riffer::ArgumentError if skill not found.
   #
+  #--
   #: (String) -> String
   def read_skill(name)
     list_skills unless @skills_cache
@@ -71,6 +74,7 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
 
   private
 
+  #--
   #: (String, String) -> void
   def validate_dirname_matches_name!(dirname, name)
     return if dirname == name

@@ -14,6 +14,7 @@
 class Riffer::Params
   attr_reader :parameters #: Array[Riffer::Param]
 
+  #--
   #: () -> void
   def initialize
     @parameters = []
@@ -21,6 +22,7 @@ class Riffer::Params
 
   # Defines a required parameter.
   #
+  #--
   #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
@@ -37,6 +39,7 @@ class Riffer::Params
 
   # Defines an optional parameter.
   #
+  #--
   #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
@@ -56,6 +59,7 @@ class Riffer::Params
   #
   # Raises Riffer::ValidationError if validation fails.
   #
+  #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate(arguments)
     validated = {}
@@ -100,6 +104,7 @@ class Riffer::Params
   # optional properties are made nullable instead. This satisfies
   # providers that enforce strict structured output schemas.
   #
+  #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)
     properties = {}
@@ -120,6 +125,7 @@ class Riffer::Params
 
   private
 
+  #--
   #: (Class, Class?) ?{ () -> void } -> Riffer::Params?
   def build_nested(type, of, &block)
     if of && block
@@ -147,6 +153,7 @@ class Riffer::Params
     end
   end
 
+  #--
   #: (Riffer::Param, untyped, Array[String]) -> untyped
   def validate_nested(param, value, errors)
     if param.type == Hash && param.nested_params
@@ -161,6 +168,7 @@ class Riffer::Params
     end
   end
 
+  #--
   #: (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
   def validate_nested_hash(param, value, errors)
     param.nested_params.validate(value)
@@ -171,6 +179,7 @@ class Riffer::Params
     value
   end
 
+  #--
   #: (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects(param, value, errors)
     value.map.with_index do |item, i|
@@ -187,6 +196,7 @@ class Riffer::Params
     end
   end
 
+  #--
   #: (Riffer::Param, Array[untyped], Array[String]) -> void
   def validate_typed_array(param, value, errors)
     type_name = Riffer::Param::TYPE_MAPPINGS[param.item_type]

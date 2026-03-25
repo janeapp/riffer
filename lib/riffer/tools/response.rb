@@ -28,6 +28,7 @@ class Riffer::Tools::Response
   #
   # Raises Riffer::ArgumentError if format is invalid.
   #
+  #--
   #: (untyped, ?format: Symbol) -> Riffer::Tools::Response
   def self.success(result, format: :text)
     unless VALID_FORMATS.include?(format)
@@ -40,6 +41,7 @@ class Riffer::Tools::Response
 
   # Creates a success response with text format.
   #
+  #--
   #: (untyped) -> Riffer::Tools::Response
   def self.text(result)
     success(result, format: :text)
@@ -47,6 +49,7 @@ class Riffer::Tools::Response
 
   # Creates a success response with JSON format.
   #
+  #--
   #: (untyped) -> Riffer::Tools::Response
   def self.json(result)
     success(result, format: :json)
@@ -54,19 +57,23 @@ class Riffer::Tools::Response
 
   # Creates an error response.
   #
+  #--
   #: (String, ?type: Symbol) -> Riffer::Tools::Response
   def self.error(message, type: :execution_error)
     new(content: message, success: false, error_message: message, error_type: type)
   end
 
+  #--
   #: () -> bool
   def success? = @success
 
+  #--
   #: () -> bool
   def error? = !@success
 
   # Returns a hash representation of the response.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {content: @content, error: @error_message, error_type: @error_type}
@@ -74,6 +81,7 @@ class Riffer::Tools::Response
 
   private
 
+  #--
   #: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
   def initialize(content:, success:, error_message: nil, error_type: nil)
     @content = content

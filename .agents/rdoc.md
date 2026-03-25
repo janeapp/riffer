@@ -4,16 +4,28 @@ Use RDoc prose comments for public API descriptions and RBS inline annotations f
 
 ## Parameters and Return Types
 
-Describe parameters in the RDoc prose comment. Use a single `#:` line for the RBS method signature (see [rbs-inline.md](rbs-inline.md) for the full type annotation syntax):
+Describe parameters using RDoc labeled list syntax. Use a single `#:` line for the RBS method signature (see [rbs-inline.md](rbs-inline.md) for the full type annotation syntax):
 
 ```ruby
 # Creates a new agent.
 #
-# +name+ - the agent name.
-# +options+ - optional configuration.
+# [name] the agent name.
+# [options] optional configuration.
 #
+#--
 #: (String, ?options: Hash[Symbol, untyped]) -> void
 def initialize(name, options: {})
+```
+
+Always add `#--` (RDoc stop directive) on the line before a standalone `#:` type annotation. Without it, RDoc treats `#:` as a label-list marker and corrupts the preceding comment into a `<pre>` block. Inline `#:` on the same line as code (e.g., `attr_reader :name #: String`) does not need this.
+
+## Inline Code
+
+Use `+word+` for single-word inline code. For multi-word expressions (containing spaces, colons, or brackets), use `<tt>multi word expression</tt>`:
+
+```ruby
+# Returns +nil+ when no instructions are configured.
+# Equivalent to <tt>throw :riffer_interrupt, reason</tt>.
 ```
 
 ## Attributes and Constants
@@ -37,7 +49,7 @@ Document with prose:
 
 ## Examples
 
-Include usage examples as indented code blocks:
+Include usage examples as indented code blocks (2 extra spaces of indent):
 
 ```ruby
 # Creates a new agent.

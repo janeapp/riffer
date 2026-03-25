@@ -14,6 +14,7 @@ class Riffer::Providers::Repository
 
   # Finds a provider class by identifier.
   #
+  #--
   #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
   def self.find(identifier)
     REPO.fetch(identifier.to_sym, nil)&.call

@@ -17,8 +17,7 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "LICENSE.txt", "docs/**/*.md", "docs_providers/**/*.md")
   rdoc.rdoc_files.include("lib/**/*.rb")
 
-  # Use Markdown where available and ensure UTF-8
-  rdoc.options << "--charset" << "utf-8" << "--markup" << "markdown"
+  rdoc.options << "--charset" << "utf-8"
 end
 
 task docs: :rdoc

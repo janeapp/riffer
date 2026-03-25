@@ -18,10 +18,11 @@ class Riffer::Guardrails::Modification
 
   # Creates a new modification record.
   #
-  # +guardrail+ - the guardrail class that transformed.
-  # +phase+ - :before or :after.
-  # +message_indices+ - indices of changed messages.
+  # [guardrail] the guardrail class that transformed.
+  # [phase] :before or :after.
+  # [message_indices] indices of changed messages.
   #
+  #--
   #: (guardrail: singleton(Riffer::Guardrail), phase: Symbol, message_indices: Array[Integer]) -> void
   def initialize(guardrail:, phase:, message_indices:)
     @guardrail = guardrail
@@ -31,6 +32,7 @@ class Riffer::Guardrails::Modification
 
   # Converts the modification to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {

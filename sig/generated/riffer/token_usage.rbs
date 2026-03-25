@@ -21,16 +21,19 @@ class Riffer::TokenUsage
   # Number of tokens read from cache (Anthropic-specific).
   attr_reader cache_read_tokens: Integer?
 
+  # --
   # : (input_tokens: Integer, output_tokens: Integer, ?cache_creation_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
   def initialize: (input_tokens: Integer, output_tokens: Integer, ?cache_creation_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
 
   # Returns the total number of tokens (input + output).
   #
+  # --
   # : () -> Integer
   def total_tokens: () -> Integer
 
   # Combines two TokenUsage objects for cumulative tracking.
   #
+  # --
   # : (Riffer::TokenUsage) -> Riffer::TokenUsage
   def +: (Riffer::TokenUsage) -> Riffer::TokenUsage
 
@@ -38,11 +41,13 @@ class Riffer::TokenUsage
   #
   # Cache tokens are omitted if nil.
   #
+  # --
   # : () -> Hash[Symbol, Integer]
   def to_h: () -> Hash[Symbol, Integer]
 
   private
 
+  # --
   # : (Integer?, Integer?) -> Integer?
   def add_nullable: (Integer?, Integer?) -> Integer?
 end

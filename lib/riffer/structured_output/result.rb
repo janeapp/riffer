@@ -17,6 +17,7 @@ class Riffer::StructuredOutput::Result
   attr_reader :object #: Hash[Symbol, untyped]?
   attr_reader :error #: String?
 
+  #--
   #: (?object: Hash[Symbol, untyped]?, ?error: String?) -> void
   def initialize(object: nil, error: nil)
     @object = object
@@ -25,11 +26,13 @@ class Riffer::StructuredOutput::Result
 
   # Returns true when parsing and validation succeeded.
   #
+  #--
   #: () -> bool
   def success? = @error.nil?
 
   # Returns true when parsing or validation failed.
   #
+  #--
   #: () -> bool
   def failure? = !success?
 end

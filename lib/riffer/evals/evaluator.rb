@@ -19,6 +19,7 @@ class Riffer::Evals::Evaluator
   class << self
     # Gets or sets the evaluation instructions (criteria and scoring rubric).
     #
+    #--
     #: (?String?) -> String?
     def instructions(value = nil)
       return @instructions if value.nil?
@@ -27,6 +28,7 @@ class Riffer::Evals::Evaluator
 
     # Gets or sets whether higher scores are better.
     #
+    #--
     #: (?bool?) -> bool
     def higher_is_better(value = nil)
       return @higher_is_better.nil? || @higher_is_better if value.nil?
@@ -35,6 +37,7 @@ class Riffer::Evals::Evaluator
 
     # Gets or sets the judge model for LLM-as-judge evaluations.
     #
+    #--
     #: (?String?) -> String?
     def judge_model(value = nil)
       return @judge_model if value.nil?
@@ -47,13 +50,14 @@ class Riffer::Evals::Evaluator
   # The default implementation calls the judge with the class-level +instructions+.
   # Override this method for custom evaluation logic (e.g. rule-based evaluators).
   #
-  # +input+ - the input to evaluate; String or Array of message hashes/Message objects.
-  # +output+ - the agent's response to evaluate.
-  # +ground_truth+ - optional reference answer for comparison.
-  # +messages+ - the full message history from the agent conversation.
+  # [input] the input to evaluate; String or Array of message hashes/Message objects.
+  # [output] the agent's response to evaluate.
+  # [ground_truth] optional reference answer for comparison.
+  # [messages] the full message history from the agent conversation.
   #
   # Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.
   #
+  #--
   #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
   def evaluate(input:, output:, ground_truth: nil, messages: [])
     instr = self.class.instructions
@@ -77,6 +81,7 @@ class Riffer::Evals::Evaluator
   # Array inputs (message hashes or Message objects) are formatted
   # as labeled role/content pairs separated by blank lines.
   #
+  #--
   #: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
   def format_input(input)
     return input if input.is_a?(String)
@@ -92,6 +97,7 @@ class Riffer::Evals::Evaluator
 
   # Returns a Judge instance configured for this evaluator.
   #
+  #--
   #: () -> Riffer::Evals::Judge
   def judge
     @judge ||= begin
@@ -103,6 +109,7 @@ class Riffer::Evals::Evaluator
 
   # Helper to build a Result object.
   #
+  #--
   #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
   def result(score:, reason: nil, metadata: {})
     Riffer::Evals::Result.new(

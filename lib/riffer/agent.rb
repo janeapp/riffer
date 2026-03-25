@@ -28,6 +28,7 @@ class Riffer::Agent
 
   # Gets or sets the agent identifier.
   #
+  #--
   #: (?String?) -> String
   def self.identifier(value = nil)
     return @identifier || class_name_to_path(name) if value.nil?
@@ -36,6 +37,7 @@ class Riffer::Agent
 
   # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
   #
+  #--
   #: (?(String | Proc)?) -> (String | Proc)?
   def self.model(model_string_or_proc = nil)
     return @model if model_string_or_proc.nil?
@@ -60,6 +62,7 @@ class Riffer::Agent
   #     "You are assisting #{context[:name]}"
   #   }
   #
+  #--
   #: (?(String | Proc)?) -> (String | Proc)?
   def self.instructions(instructions_or_proc = nil)
     return @instructions if instructions_or_proc.nil?
@@ -74,6 +77,7 @@ class Riffer::Agent
 
   # Gets or sets provider options passed to the provider client.
   #
+  #--
   #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.provider_options(options = nil)
     return @provider_options || {} if options.nil?
@@ -82,6 +86,7 @@ class Riffer::Agent
 
   # Gets or sets model options passed to generate_text/stream_text.
   #
+  #--
   #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.model_options(options = nil)
     return @model_options || {} if options.nil?
@@ -92,6 +97,7 @@ class Riffer::Agent
   #
   # Accepts a Riffer::Params instance or a block evaluated against a new Params.
   #
+  #--
   #: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
   def self.structured_output(params = nil, &block)
     if block
@@ -110,6 +116,7 @@ class Riffer::Agent
   # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
   # unlimited steps.
   #
+  #--
   #: (?Numeric?) -> Numeric
   def self.max_steps(value = nil)
     return @max_steps || DEFAULT_MAX_STEPS if value.nil?
@@ -118,6 +125,7 @@ class Riffer::Agent
 
   # Gets or sets the tools used by this agent.
   #
+  #--
   #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools(tools_or_lambda = nil)
     return @tools_config if tools_or_lambda.nil?
@@ -130,8 +138,9 @@ class Riffer::Agent
   # or a Proc.
   #
   # Inherited by subclasses. When unset, walks the ancestor chain and
-  # falls back to the global +Riffer.config.tool_runtime+.
+  # falls back to the global <tt>Riffer.config.tool_runtime</tt>.
   #
+  #--
   #: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
   def self.tool_runtime(value = nil)
     if value.nil?
@@ -152,6 +161,7 @@ class Riffer::Agent
   #     activate ["code-review"]
   #   end
   #
+  #--
   #: () ?{ () -> void } -> Riffer::Skills::Config?
   def self.skills(&block)
     if block
@@ -163,6 +173,7 @@ class Riffer::Agent
 
   # Finds an agent class by identifier.
   #
+  #--
   #: (String) -> singleton(Riffer::Agent)?
   def self.find(identifier)
     subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
@@ -170,6 +181,7 @@ class Riffer::Agent
 
   # Returns all agent subclasses.
   #
+  #--
   #: () -> Array[singleton(Riffer::Agent)]
   def self.all
     subclasses
@@ -179,6 +191,7 @@ class Riffer::Agent
   #
   # See #generate for parameters and return value.
   #
+  #--
   #: (*untyped, **untyped) -> Riffer::Agent::Response
   def self.generate(...)
     new.generate(...)
@@ -188,6 +201,7 @@ class Riffer::Agent
   #
   # See #stream for parameters and return value.
   #
+  #--
   #: (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def self.stream(...)
     new.stream(...)
@@ -195,11 +209,12 @@ class Riffer::Agent
 
   # Registers a guardrail for input, output, or both phases.
   #
-  # +phase+ - :before, :after, or :around.
-  # +with+ - the guardrail class (must be subclass of Riffer::Guardrail).
-  # +options+ - additional options passed to the guardrail.
+  # [phase] :before, :after, or :around.
+  # [with] the guardrail class (must be subclass of Riffer::Guardrail).
+  # [options] additional options passed to the guardrail.
   #
   # Raises Riffer::ArgumentError if phase is invalid or guardrail is not a Guardrail class.
+  #--
   #: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
   def self.guardrail(phase, with:, **options)
     valid_phases = [*Riffer::Guardrails::PHASES, :around]
@@ -222,8 +237,9 @@ class Riffer::Agent
 
   # Returns the registered guardrail configs for a given phase.
   #
-  # +phase+ - :before or :after.
+  # [phase] :before or :after.
   #
+  #--
   #: (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for(phase)
     @guardrails ||= {before: [], after: []}
@@ -241,6 +257,7 @@ class Riffer::Agent
   # Raises Riffer::ArgumentError if the configured model string is invalid
   # (must be "provider/model" format).
   #
+  #--
   #: () -> void
   def initialize
     @messages = []
@@ -260,6 +277,7 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
+  #--
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def generate(prompt_or_messages, files: nil, context: nil)
     @context = context
@@ -280,6 +298,7 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
+  #--
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt_or_messages, files: nil, context: nil)
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
@@ -305,6 +324,7 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if no block is given.
   #
+  #--
   #: () { (Riffer::Messages::Base) -> void } -> self
   def on_message(&block)
     raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
@@ -319,6 +339,7 @@ class Riffer::Agent
   #
   # Returns +nil+ when no instructions are configured.
   #
+  #--
   #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def generate_instruction_message(context: nil)
     build_instruction_message(context)
@@ -331,6 +352,7 @@ class Riffer::Agent
   #
   # Returns +nil+ when no skills are configured or the catalog is empty.
   #
+  #--
   #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def generate_skills_message(context: nil)
     build_skills_message(resolve_skills(context))
@@ -339,8 +361,9 @@ class Riffer::Agent
   # Interrupts the agent loop.
   #
   # Call from an +on_message+ callback to cleanly interrupt the loop.
-  # Equivalent to +throw :riffer_interrupt, reason+.
+  # Equivalent to <tt>throw :riffer_interrupt, reason</tt>.
   #
+  #--
   #: (?(String | Symbol)?) -> void
   def interrupt!(reason = nil)
     throw :riffer_interrupt, reason
@@ -348,6 +371,7 @@ class Riffer::Agent
 
   private
 
+  #--
   #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def run_generate_loop(all_modifications = [])
     step = count_assistant_messages
@@ -388,12 +412,14 @@ class Riffer::Agent
     build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response))
   end
 
+  #--
   #: (Riffer::Messages::Base) -> void
   def add_message(message)
     @messages << message
     @message_callbacks.each { |callback| callback.call(message) }
   end
 
+  #--
   #: (Riffer::TokenUsage?) -> void
   def track_token_usage(usage)
     return unless usage
@@ -401,6 +427,7 @@ class Riffer::Agent
     @token_usage = @token_usage ? @token_usage + usage : usage
   end
 
+  #--
   #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def initialize_messages(prompt_or_messages, files: nil)
     if prompt_or_messages.is_a?(Array)
@@ -421,6 +448,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def build_instruction_message(context = @context)
     content = generate_instructions(context)
@@ -428,6 +456,7 @@ class Riffer::Agent
     Riffer::Messages::System.new(content)
   end
 
+  #--
   #: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
   def build_skills_message(skills_state = @skills_state)
     content = skills_state&.system_prompt
@@ -435,11 +464,13 @@ class Riffer::Agent
     Riffer::Messages::System.new(content)
   end
 
+  #--
   #: () -> Integer
   def count_assistant_messages
     @messages.count { |m| m.is_a?(Riffer::Messages::Assistant) }
   end
 
+  #--
   #: (Enumerator::Yielder) -> void
   def run_stream_loop(yielder)
     step = count_assistant_messages
@@ -516,6 +547,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: () -> Riffer::Messages::Assistant
   def call_llm
     provider_instance.generate_text(
@@ -526,6 +558,7 @@ class Riffer::Agent
     )
   end
 
+  #--
   #: () -> Enumerator[Riffer::StreamEvents::Base, void]
   def call_llm_stream
     provider_instance.stream_text(
@@ -536,16 +569,19 @@ class Riffer::Agent
     )
   end
 
+  #--
   #: () -> Riffer::Providers::Base
   def provider_instance
     @provider_instance ||= provider_class.new(**self.class.provider_options)
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> bool
   def has_tool_calls?(response)
     response.is_a?(Riffer::Messages::Assistant) && !response.tool_calls.empty?
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
     runtime = resolve_tool_runtime
@@ -570,6 +606,7 @@ class Riffer::Agent
   # last assistant message against the tool result messages that follow it,
   # then executes any that are missing.
   #
+  #--
   #: () -> void
   # Executes tool calls from the last assistant message that don't yet
   # have a corresponding tool result. Safe to call unconditionally —
@@ -606,6 +643,7 @@ class Riffer::Agent
     assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
   end
 
+  #--
   #: () -> void
   def prepare_run
     @resolved_tools = nil
@@ -617,6 +655,7 @@ class Riffer::Agent
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
   end
 
+  #--
   #: (untyped) -> void
   def parse_model_string!(model_string)
     raise Riffer::ArgumentError, "Invalid model string: #{model_string}" unless model_string.is_a?(String)
@@ -626,12 +665,14 @@ class Riffer::Agent
     @model_name = model_name
   end
 
+  #--
   #: () -> void
   def clear_resolved_model
     @resolved_model = nil
     @provider_instance = nil if @model_config.is_a?(Proc)
   end
 
+  #--
   #: (?Hash[Symbol, untyped]?) -> String?
   def generate_instructions(context = @context)
     if @instructions_config.is_a?(Proc)
@@ -643,6 +684,7 @@ class Riffer::Agent
 
   attr_reader :resolved_model #: String?
 
+  #--
   #: () -> String
   def resolve_model
     @resolved_model ||= if @model_config.is_a?(Proc)
@@ -654,6 +696,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: () -> Array[singleton(Riffer::Tool)]
   def resolved_tools
     @resolved_tools ||= begin
@@ -677,6 +720,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: () -> Riffer::ToolRuntime
   def resolve_tool_runtime
     @resolved_tool_runtime ||= begin
@@ -702,6 +746,7 @@ class Riffer::Agent
   # Does not mutate instance state — callers are responsible for
   # assigning the returned context.
   #
+  #--
   #: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
   def resolve_skills(context = @context)
     return nil unless self.class.skills
@@ -728,6 +773,7 @@ class Riffer::Agent
     skills_context
   end
 
+  #--
   #: () -> singleton(Riffer::Providers::Base)
   def provider_class
     klass = Riffer::Providers::Repository.find(@provider_name)
@@ -735,11 +781,13 @@ class Riffer::Agent
     klass
   end
 
+  #--
   #: () -> Riffer::Messages::Assistant?
   def extract_final_response
     @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
   end
 
+  #--
   #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_before_guardrails
     guardrails = self.class.guardrails_for(:before)
@@ -751,6 +799,7 @@ class Riffer::Agent
     [tripwire, modifications]
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails(response)
     guardrails = self.class.guardrails_for(:after)
@@ -765,6 +814,7 @@ class Riffer::Agent
     [processed_response, tripwire, modifications]
   end
 
+  #--
   #: (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
   def validate_structured_output(response)
     return unless response&.structured_output? && @structured_output
@@ -772,12 +822,14 @@ class Riffer::Agent
     @structured_output.parse_and_validate(response.content).object
   end
 
+  #--
   #: () -> Riffer::StructuredOutput?
   def resolve_structured_output
     params = self.class.structured_output
     params ? Riffer::StructuredOutput.new(params) : nil
   end
 
+  #--
   #: () -> Hash[Symbol, untyped]
   def merged_model_options
     opts = self.class.model_options.dup
@@ -785,6 +837,7 @@ class Riffer::Agent
     opts
   end
 
+  #--
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)
     Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: @messages.frozen? ? @messages : @messages.dup.freeze)

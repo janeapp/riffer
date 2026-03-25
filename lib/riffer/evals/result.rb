@@ -36,6 +36,7 @@ class Riffer::Evals::Result
   #
   # Raises Riffer::ArgumentError if score is not between 0.0 and 1.0.
   #
+  #--
   #: (evaluator: singleton(Riffer::Evals::Evaluator), score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?higher_is_better: bool) -> void
   def initialize(evaluator:, score:, reason: nil, metadata: {}, higher_is_better: true)
     @evaluator = evaluator
@@ -48,6 +49,7 @@ class Riffer::Evals::Result
 
   # Returns a hash representation of the result.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {
@@ -61,6 +63,7 @@ class Riffer::Evals::Result
 
   private
 
+  #--
   #: () -> void
   def validate_score!
     return if score.is_a?(Numeric) && score >= 0.0 && score <= 1.0

@@ -11,11 +11,13 @@
 class Riffer::StructuredOutput
   attr_reader params: Riffer::Params
 
+  # --
   # : (Riffer::Params) -> void
   def initialize: (Riffer::Params) -> void
 
   # Returns the JSON Schema for this structured output.
   #
+  # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
@@ -23,6 +25,7 @@ class Riffer::StructuredOutput
   #
   # Returns a Result with the validated object on success, or an error message on failure.
   #
+  # --
   # : (String) -> Riffer::StructuredOutput::Result
   def parse_and_validate: (String) -> Riffer::StructuredOutput::Result
 end

@@ -11,6 +11,7 @@ class Riffer::StreamEvents::WebSearchDone < Riffer::StreamEvents::Base
   # The search result sources with title and url.
   attr_reader :sources #: Array[Hash[Symbol, String?]]
 
+  #--
   #: (String, ?sources: Array[Hash[Symbol, String?]], ?role: Symbol) -> void
   def initialize(query, sources: [], role: :assistant)
     super(role: role)
@@ -18,6 +19,7 @@ class Riffer::StreamEvents::WebSearchDone < Riffer::StreamEvents::Base
     @sources = sources
   end
 
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, query: @query, sources: @sources}

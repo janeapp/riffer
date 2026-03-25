@@ -21,10 +21,11 @@ class Riffer::Guardrails::Runner
 
   # Creates a new runner.
   #
-  # +guardrail_configs+ - configs with :class and :options keys.
-  # +phase+ - :before or :after.
-  # +context+ - optional context to pass to guardrails.
+  # [guardrail_configs] configs with :class and :options keys.
+  # [phase] :before or :after.
+  # [context] optional context to pass to guardrails.
   #
+  #--
   #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
   def initialize(guardrail_configs, phase:, context: nil)
     @guardrail_configs = guardrail_configs
@@ -37,9 +38,10 @@ class Riffer::Guardrails::Runner
   # For before phase, data should be an array of messages.
   # For after phase, data should be a response and messages must be provided.
   #
-  # +data+ - the data to process (messages for before, response for after).
-  # +messages+ - the conversation messages (required for after phase).
+  # [data] the data to process (messages for before, response for after).
+  # [messages] the conversation messages (required for after phase).
   #
+  #--
   #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run(data, messages: nil)
     current_data = data
@@ -75,11 +77,13 @@ class Riffer::Guardrails::Runner
 
   private
 
+  #--
   #: (Hash[Symbol, untyped]) -> Riffer::Guardrail
   def instantiate_guardrail(config)
     config[:class].new(**config[:options])
   end
 
+  #--
   #: (untyped, untyped) -> Array[Integer]
   def detect_changed_indices(old_data, new_data)
     if old_data.is_a?(Array) && new_data.is_a?(Array)
@@ -90,6 +94,7 @@ class Riffer::Guardrails::Runner
     end
   end
 
+  #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
     case phase

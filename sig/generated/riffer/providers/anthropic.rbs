@@ -10,76 +10,99 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   # Returns the XML skill adapter for Anthropic/Claude.
   #
+  # --
   # : () -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: () -> singleton(Riffer::Skills::Adapter)
 
   # Initializes the Anthropic provider.
   #
+  # --
   # : (?api_key: String?, **untyped) -> void
   def initialize: (?api_key: String?, **untyped) -> void
 
   private
 
+  # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # --
   # : (Hash[Symbol, untyped]) -> Anthropic::Models::Message
   def execute_generate: (Hash[Symbol, untyped]) -> Anthropic::Models::Message
 
+  # --
   # : (Anthropic::Models::Message) -> Riffer::TokenUsage?
   def extract_token_usage: (Anthropic::Models::Message) -> Riffer::TokenUsage?
 
+  # --
   # : (Anthropic::Models::Message) -> String
   def extract_content: (Anthropic::Models::Message) -> String
 
+  # --
   # : (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
 
+  # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped]) -> void
   def handle_raw_content_block_start: (untyped, state: Hash[Symbol, untyped]) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped]) -> void
   def handle_raw_content_block_delta: (untyped, state: Hash[Symbol, untyped]) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_text_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_thinking_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_input_json_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_thinking: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_text: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_server_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_web_search_result: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_message_stop: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
+  # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
+  # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
+  # --
   # : (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_anthropic_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
 
+  # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_anthropic_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

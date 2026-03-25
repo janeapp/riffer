@@ -33,6 +33,7 @@ class Riffer::Skills::Frontmatter
   #
   # Raises Riffer::ArgumentError if frontmatter is invalid.
   #
+  #--
   #: (String) -> [Riffer::Skills::Frontmatter, String]
   def self.parse(raw)
     yaml, body = split_frontmatter(raw)
@@ -44,6 +45,7 @@ class Riffer::Skills::Frontmatter
   #
   # Raises Riffer::ArgumentError if frontmatter is invalid.
   #
+  #--
   #: (String) -> Riffer::Skills::Frontmatter
   def self.parse_frontmatter(raw)
     yaml, _ = split_frontmatter(raw)
@@ -51,6 +53,7 @@ class Riffer::Skills::Frontmatter
     new(name: yaml.delete(:name), description: yaml.delete(:description), metadata: yaml)
   end
 
+  #--
   #: (String) -> [Hash[Symbol, untyped], String]
   def self.split_frontmatter(raw) # :nodoc:
     parts = raw.split(/^---\s*$/, 3)
@@ -67,12 +70,13 @@ class Riffer::Skills::Frontmatter
 
   # Creates a new Frontmatter.
   #
-  # +name+ - the skill name (must match +[a-z0-9]([a-z0-9-]*[a-z0-9])?+, 1-64 chars).
-  # +description+ - the skill description (1-1024 chars).
-  # +metadata+ - optional metadata hash.
+  # [name] the skill name (must match +[a-z0-9]([a-z0-9-]*[a-z0-9])?+, 1-64 chars).
+  # [description] the skill description (1-1024 chars).
+  # [metadata] optional metadata hash.
   #
   # Raises Riffer::ArgumentError if name or description is invalid.
   #
+  #--
   #: (name: String, description: String, ?metadata: Hash[Symbol, untyped]) -> void
   def initialize(name:, description:, metadata: {})
     validate_name!(name)
@@ -84,6 +88,7 @@ class Riffer::Skills::Frontmatter
 
   private
 
+  #--
   #: (untyped) -> void
   def validate_name!(name)
     raise Riffer::ArgumentError, "name must be a String" unless name.is_a?(String)
@@ -91,6 +96,7 @@ class Riffer::Skills::Frontmatter
     raise Riffer::ArgumentError, "name must match #{NAME_PATTERN.source}" unless NAME_PATTERN.match?(name)
   end
 
+  #--
   #: (untyped) -> void
   def validate_description!(description)
     raise Riffer::ArgumentError, "description must be a String" unless description.is_a?(String)

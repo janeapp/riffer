@@ -13,9 +13,11 @@ class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
   # The incremental arguments JSON fragment.
   attr_reader arguments_delta: String
 
+  # --
   # : (item_id: String, arguments_delta: String, ?name: String?, ?role: Symbol) -> void
   def initialize: (item_id: String, arguments_delta: String, ?name: String?, ?role: Symbol) -> void
 
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

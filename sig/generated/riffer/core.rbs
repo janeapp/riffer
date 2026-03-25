@@ -7,11 +7,13 @@ class Riffer::Core
   # The logger instance for Riffer.
   attr_reader logger: Logger
 
+  # --
   # : () -> void
   def initialize: () -> void
 
   # Yields self for configuration.
   #
+  # --
   # : () ?{ (Riffer::Core) -> void } -> void
   def configure: () ?{ (Riffer::Core) -> void } -> void
 end

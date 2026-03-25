@@ -7,7 +7,7 @@ class Riffer::Param
   # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS: Hash[Module, String]
 
-  # Primitive types allowed for the +of:+ keyword on Array params
+  # Primitive types allowed for the <tt>of:</tt> keyword on Array params
   PRIMITIVE_TYPES: Array[Class]
 
   attr_reader name: Symbol
@@ -26,29 +26,33 @@ class Riffer::Param
 
   attr_reader nested_params: Riffer::Params?
 
+  # --
   # : (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Class?, ?nested_params: Riffer::Params?) -> void
   def initialize: (name: Symbol, type: Class, required: bool, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?item_type: Class?, ?nested_params: Riffer::Params?) -> void
 
   # Validates that a value matches the expected type.
   #
+  # --
   # : (untyped) -> bool
   def valid_type?: (untyped) -> bool
 
   # Returns the JSON Schema type name for this parameter.
   #
+  # --
   # : () -> String
   def type_name: () -> String
 
   # Converts this parameter to JSON Schema format.
   #
   # When +strict+ is true, optional parameters are made nullable
-  # (+["type", "null"]+) so that strict mode providers can distinguish
+  # (<tt>["type", "null"]</tt>) so that strict mode providers can distinguish
   # "absent" from "present" without rejecting the schema.
   #
   # Optional parameters with an +enum+ use +anyOf+ to separate the enum
   # constraint from the null type, since providers like Anthropic reject
-  # +{"type": ["string", "null"], "enum": [...]}+.
+  # <tt>{"type": ["string", "null"], "enum": [...]}</tt>.
   #
+  # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 end

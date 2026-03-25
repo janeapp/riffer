@@ -10,6 +10,7 @@ class Riffer::Core
   # The logger instance for Riffer.
   attr_reader :logger #: Logger
 
+  #--
   #: () -> void
   def initialize
     @logger = Logger.new($stdout)
@@ -19,6 +20,7 @@ class Riffer::Core
 
   # Yields self for configuration.
   #
+  #--
   #: () ?{ (Riffer::Core) -> void } -> void
   def configure(&block)
     yield self if block_given?

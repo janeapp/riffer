@@ -8,6 +8,7 @@
 # - block: Halt execution with a reason
 #
 # Use the factory methods to create results:
+#
 #   Result.pass(data)
 #   Result.transform(data)
 #   Result.block(reason, metadata: nil)
@@ -25,49 +26,56 @@ class Riffer::Guardrails::Result
 
   # Creates a pass result that continues with unchanged data.
   #
-  # +data+ - the original data to pass through.
+  # [data] the original data to pass through.
   #
+  # --
   # : (untyped) -> Riffer::Guardrails::Result
   def self.pass: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a transform result that continues with transformed data.
   #
-  # +data+ - the transformed data.
+  # [data] the transformed data.
   #
+  # --
   # : (untyped) -> Riffer::Guardrails::Result
   def self.transform: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a block result that halts execution.
   #
-  # +reason+ - the reason for blocking.
-  # +metadata+ - optional additional information.
+  # [reason] the reason for blocking.
+  # [metadata] optional additional information.
   #
+  # --
   # : (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
   def self.block: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
 
   # Creates a new result.
   #
-  # +type+ - the result type (:pass, :transform, or :block).
-  # +data+ - the data or reason.
-  # +metadata+ - optional metadata for block results.
+  # [type] the result type (:pass, :transform, or :block).
+  # [data] the data or reason.
+  # [metadata] optional metadata for block results.
   #
   # Raises Riffer::ArgumentError if the result type is invalid.
   #
+  # --
   # : (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
 
   # Returns true if this is a pass result.
   #
+  # --
   # : () -> bool
   def pass?: () -> bool
 
   # Returns true if this is a transform result.
   #
+  # --
   # : () -> bool
   def transform?: () -> bool
 
   # Returns true if this is a block result.
   #
+  # --
   # : () -> bool
   def block?: () -> bool
 end

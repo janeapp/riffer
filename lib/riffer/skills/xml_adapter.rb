@@ -11,8 +11,9 @@ require "cgi"
 class Riffer::Skills::XmlAdapter < Riffer::Skills::Adapter
   # Renders a skill catalog as XML.
   #
-  # +skills+ - array of Frontmatter objects to render.
+  # [skills] array of Frontmatter objects to render.
   #
+  #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
     lines = []
