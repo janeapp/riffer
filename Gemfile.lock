@@ -26,7 +26,7 @@ GEM
       cgi
       connection_pool
     ast (2.4.3)
-    async (2.38.1)
+    async (2.37.0)
       console (~> 1.29)
       fiber-annotation
       io-event (~> 1.11)
@@ -252,7 +252,7 @@ PLATFORMS
 
 DEPENDENCIES
   anthropic (~> 1.25.0)
-  async
+  async (~> 2.25, < 2.38)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
   guard
