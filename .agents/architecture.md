@@ -107,6 +107,29 @@ MyAgent.new.stream(persisted_messages)  # cross-process resume
 
 On resume, `execute_pending_tool_calls` detects tool calls from the last assistant message that lack corresponding tool result messages and executes them before entering the LLM loop. This handles the case where an interrupt fired mid-way through tool execution.
 
+### Runner (`lib/riffer/runner.rb`)
+
+Concurrency primitive for batch execution. Subclasses implement `#map(items, context: nil, &block)` to control how items are processed. The `context` keyword carries the agent's context hash, enabling runners that need it for job serialization or routing.
+
+Built-in runners:
+- `Sequential` — processes items in the current thread via `Array#map`
+- `Threaded` — processes items concurrently using a thread pool with configurable `max_concurrency`
+
+```ruby
+runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
+runner.map(items, context: ctx) { |item| process(item) }
+```
+
+### ToolRuntime (`lib/riffer/tool_runtime.rb`)
+
+Composes with a Runner to execute tool calls. Provides `#execute` as the public entry point and `#around_tool_call` as a hook for instrumentation. Passes the agent context through to the runner.
+
+Built-in runtimes:
+- `Inline` — uses `Runner::Sequential` (default)
+- `Threaded` — uses `Runner::Threaded`
+
+Context flow: `Agent#execute_tool_calls` → `ToolRuntime#execute(tool_calls, tools:, context:)` → `Runner#map(tool_calls, context:) { dispatch }` → `Tool#call(context:, **args)`
+
 ## Key Patterns
 
 - Model config accepts a `provider/model` string (e.g., `openai/gpt-4`) or a Proc/lambda that returns one

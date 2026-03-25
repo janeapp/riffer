@@ -9,6 +9,21 @@ describe Riffer::Runner do
       expect { runner.map([1, 2, 3]) { |n| n } }.must_raise NotImplementedError
     end
   end
+
+  describe "subclass context access" do
+    it "makes context available to custom runner implementations" do
+      captured_context = nil
+      runner_class = Class.new(Riffer::Runner) do
+        define_method(:map) do |items, context: nil, &block|
+          captured_context = context
+          items.map(&block)
+        end
+      end
+
+      runner_class.new.map([1], context: {user_id: 42}) { |n| n }
+      expect(captured_context).must_equal({user_id: 42})
+    end
+  end
 end
 
 describe Riffer::Runner::Sequential do
@@ -23,6 +38,12 @@ describe Riffer::Runner::Sequential do
       runner = Riffer::Runner::Sequential.new
       results = runner.map([]) { |n| n }
       expect(results).must_equal []
+    end
+
+    it "accepts context keyword" do
+      runner = Riffer::Runner::Sequential.new
+      results = runner.map([1], context: {user: "test"}) { |n| n }
+      expect(results).must_equal [1]
     end
   end
 end
@@ -83,6 +104,12 @@ describe Riffer::Runner::Threaded do
           n
         end
       }.must_raise RuntimeError
+    end
+
+    it "accepts context keyword" do
+      runner = Riffer::Runner::Threaded.new
+      results = runner.map([1], context: {user: "test"}) { |n| n }
+      expect(results).must_equal [1]
     end
   end
 end

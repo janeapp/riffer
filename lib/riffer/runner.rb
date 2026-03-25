@@ -14,11 +14,12 @@ class Riffer::Runner
   # Maps over items using the provided block.
   #
   # +items+ - the items to process.
+  # +context+ - optional context hash forwarded from the agent.
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  #: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
-  def map(items, &block)
+  #: (Array[untyped], ?context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  def map(items, context: nil, &block)
     raise NotImplementedError, "#{self.class} must implement #map"
   end
 end
