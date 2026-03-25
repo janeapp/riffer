@@ -34,7 +34,7 @@ class Riffer::ToolRuntime
   #
   #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:)
-    @runner.map(tool_calls) do |tool_call|
+    @runner.map(tool_calls, context: context) do |tool_call|
       result = around_tool_call(tool_call, context: context) do
         dispatch_tool_call(tool_call, tools: tools, context: context)
       end

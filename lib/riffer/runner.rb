@@ -7,18 +7,19 @@
 # (sequentially, threaded, etc.).
 #
 #   runner = Riffer::Runner::Sequential.new
-#   runner.map([1, 2, 3]) { |n| n * 2 }
+#   runner.map([1, 2, 3], context: ctx) { |n| n * 2 }
 #   # => [2, 4, 6]
 #
 class Riffer::Runner
   # Maps over items using the provided block.
   #
   # +items+ - the items to process.
+  # +context+ - context hash forwarded from the agent.
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
-  #: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
-  def map(items, &block)
+  #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  def map(items, context:, &block)
     raise NotImplementedError, "#{self.class} must implement #map"
   end
 end

@@ -4,6 +4,6 @@
 #
 # This is the default runner used when no concurrency is needed.
 class Riffer::Runner::Sequential < Riffer::Runner
-  # : (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
-  def map: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+  # : (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  def map: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
 end
