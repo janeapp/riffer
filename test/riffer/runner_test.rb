@@ -6,7 +6,7 @@ describe Riffer::Runner do
   describe "#map" do
     it "raises NotImplementedError" do
       runner = Riffer::Runner.new
-      expect { runner.map([1, 2, 3]) { |n| n } }.must_raise NotImplementedError
+      expect { runner.map([1, 2, 3], context: nil) { |n| n } }.must_raise NotImplementedError
     end
   end
 
@@ -14,7 +14,7 @@ describe Riffer::Runner do
     it "makes context available to custom runner implementations" do
       captured_context = nil
       runner_class = Class.new(Riffer::Runner) do
-        define_method(:map) do |items, context: nil, &block|
+        define_method(:map) do |items, context:, &block|
           captured_context = context
           items.map(&block)
         end
