@@ -384,6 +384,7 @@ By default, tool calls are executed sequentially in the current thread using `Ri
 | ------------------------------- | ---------------------------------------------- |
 | `Riffer::ToolRuntime::Inline`   | Executes tool calls sequentially (default)     |
 | `Riffer::ToolRuntime::Threaded` | Executes tool calls concurrently using threads |
+| `Riffer::ToolRuntime::Fibers`   | Executes tool calls concurrently using fibers  |
 
 ### Per-Agent Configuration
 
@@ -449,6 +450,35 @@ class MyAgent < Riffer::Agent
   tool_runtime Riffer::ToolRuntime::Threaded.new(max_concurrency: 3)
 end
 ```
+
+### Fibers Runtime
+
+The fibers runtime uses the [async](https://github.com/socketry/async) gem for lightweight, cooperative concurrency. It requires the `async` gem to be installed:
+
+```ruby
+# Gemfile
+gem "async"
+```
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  uses_tools [WeatherTool, SearchTool]
+  tool_runtime Riffer::ToolRuntime::Fibers
+end
+```
+
+By default, all tool calls run as fibers without a concurrency limit. You can optionally set a limit:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  uses_tools [WeatherTool, SearchTool]
+  tool_runtime Riffer::ToolRuntime::Fibers.new(max_concurrency: 10)
+end
+```
+
+Fibers use cooperative scheduling — they yield control at I/O boundaries (network calls, file reads, sleep). CPU-bound tools will not benefit from the fibers runtime. Be mindful of fiber-local state (`Fiber.[]`) and note that `Thread.current[]` values are shared across all fibers in the same thread.
 
 ### Custom Runtimes
 
