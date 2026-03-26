@@ -737,8 +737,7 @@ class Riffer::Agent
 
   #: () -> Riffer::Messages::Assistant?
   def extract_final_response
-    # TODO: Replace with rfind when Ruby 3.x is no longer supported
-    @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) } # rubocop:disable Style/ReverseFind
+    @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
   end
 
   #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
