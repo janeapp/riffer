@@ -48,6 +48,63 @@ describe Riffer::Runner::Sequential do
   end
 end
 
+describe Riffer::Runner::Fibers do
+  describe "#map" do
+    it "returns results in order" do
+      runner = Riffer::Runner::Fibers.new
+      results = runner.map([1, 2, 3], context: nil) { |n| n * 2 }
+      expect(results).must_equal [2, 4, 6]
+    end
+
+    it "executes concurrently" do
+      runner = Riffer::Runner::Fibers.new
+      seen = []
+
+      runner.map([1, 2, 3], context: nil) do |n|
+        seen << Fiber.current.object_id
+        n
+      end
+
+      expect(seen.uniq.length).must_equal 3
+    end
+
+    it "respects max_concurrency" do
+      runner = Riffer::Runner::Fibers.new(max_concurrency: 2)
+      concurrent = 0
+      max_concurrent = 0
+      mutex = Mutex.new
+
+      runner.map([1, 2, 3, 4], context: nil) do |n|
+        mutex.synchronize do
+          concurrent += 1
+          max_concurrent = [max_concurrent, concurrent].max
+        end
+        sleep 0.02
+        mutex.synchronize { concurrent -= 1 }
+        n
+      end
+
+      expect(max_concurrent).must_be :<=, 2
+    end
+
+    it "handles empty items" do
+      runner = Riffer::Runner::Fibers.new
+      results = runner.map([], context: nil) { |n| n }
+      expect(results).must_equal []
+    end
+
+    it "propagates exceptions" do
+      runner = Riffer::Runner::Fibers.new
+      expect {
+        runner.map([1, 2, 3], context: nil) do |n|
+          raise "boom" if n == 2
+          n
+        end
+      }.must_raise RuntimeError
+    end
+  end
+end
+
 describe Riffer::Runner::Threaded do
   describe "#map" do
     it "returns results in order" do

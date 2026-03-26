@@ -271,6 +271,35 @@ describe Riffer::ToolRuntime::Inline do
   end
 end
 
+describe Riffer::ToolRuntime::Fibers do
+  it "executes tool calls concurrently" do
+    seen = []
+
+    tracking_tool = Class.new(Riffer::Tool) do
+      identifier "tracking_tool"
+      description "Tracks fibers"
+
+      define_method(:call) do |context:, **|
+        seen << Fiber.current.object_id
+        sleep 0.01
+        text("done")
+      end
+    end
+
+    runtime = Riffer::ToolRuntime::Fibers.new
+    tool_calls = 3.times.map do |i|
+      Riffer::Messages::Assistant::ToolCall.new(
+        id: i.to_s, call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
+      )
+    end
+
+    results = runtime.execute(tool_calls, tools: [tracking_tool], context: nil)
+
+    expect(results.length).must_equal 3
+    expect(seen.uniq.length).must_equal 3
+  end
+end
+
 describe Riffer::ToolRuntime::Threaded do
   it "executes tool calls in parallel" do
     thread_ids = Mutex.new
