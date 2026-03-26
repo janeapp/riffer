@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::StreamEvents::WebSearchStatus - Riffer Documentation</title>
+<title>class Riffer::ToolRuntime::Fibers - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::StreamEvents::WebSearchStatus"
+    content="ruby,class,Riffer::ToolRuntime::Fibers"
   >
 
     <meta
       name="description"
-      content="class Riffer::StreamEvents::WebSearchStatus: Represents a web search status notification during streaming. Emitted when the LLM performs a server-side web search and its status changes."
+      content="class Riffer::ToolRuntime::Fibers: Executes tool calls concurrently using fibers via the +async+ gem."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::StreamEvents::WebSearchStatus - Riffer Documentation">
+<meta property="og:title" content="class Riffer::ToolRuntime::Fibers - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents a web search status notification during streaming. Emitted when the LLM performs a server-side web search and its status changes.">
+    <meta property="og:description" content="Executes tool calls concurrently using fibers via the +async+ gem.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::StreamEvents::WebSearchStatus - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::ToolRuntime::Fibers - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents a web search status notification during streaming. Emitted when the LLM performs a server-side web search and its status changes.">
+    <meta name="twitter:description" content="Executes tool calls concurrently using fibers via the +async+ gem.">
 
 
 
@@ -582,7 +582,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::StreamEvents::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="../ToolRuntime.html">Riffer::ToolRuntime</a><ul><li>Object</li></ul></li></ul>
   </details>
 </div>
 
@@ -613,25 +613,6 @@
 
 
 
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-to_h">to_h</a></li>
-
-      </ul>
-    </details>
-  </div>
-
 
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
@@ -651,7 +632,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-streamevents-websearchstatus">
+<main role="main" aria-labelledby="class-riffer-toolruntime-fibers">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -664,29 +645,32 @@
       
       <li>
         
-        <a href="../../Riffer/StreamEvents.html">StreamEvents</a><span>::</span>
+        <a href="../../Riffer/ToolRuntime.html">ToolRuntime</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>WebSearchStatus</span>
+        <span>Fibers</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::StreamEvents::WebSearchStatus" class="legacy-anchor"></span>
-  <h1 id="class-riffer-streamevents-websearchstatus" class="anchor-link class">
-    class Riffer::StreamEvents::WebSearchStatus
+  <span id="class-Riffer::ToolRuntime::Fibers" class="legacy-anchor"></span>
+  <h1 id="class-riffer-toolruntime-fibers" class="anchor-link class">
+    class Riffer::ToolRuntime::Fibers
   </h1>
 
   <section class="description">
     
-<p>Represents a web search status notification during streaming.</p>
+<p>Executes tool calls concurrently using fibers via the <code>async</code> gem.</p>
 
-<p>Emitted when the LLM performs a server-side web search and its status changes.</p>
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">tool_runtime</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span><span class="ruby-operator">::</span><span class="ruby-constant">Fibers</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
   </section>
 
@@ -699,62 +683,6 @@
 
 
 
-
-    <section class="attribute-method-details method-section">
-      <header>
-        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
-      </header>
-
-
-      <div id="attribute-i-query" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-query" title="Link to this attribute">
-            <span class="method-name">query</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>The search query (present when available during status changes).</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-status" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-status" title="Link to this attribute">
-            <span class="method-name">status</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>The web search status (“in_progress”, “searching”, “completed”, “open_page”).</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-url" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-url" title="Link to this attribute">
-            <span class="method-name">url</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>The URL being fetched (present for “open_page” status).</p>
-
-        </div>
-      </div>
-
-    </section>
 
 
 
@@ -773,7 +701,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(status, url: nil, query: nil, role: :assistant)</span>
+                <span class="method-args">(max_concurrency: nil)</span>
               </a>
             </div>
 
@@ -786,12 +714,9 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/web_search_status.rb, line 19</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">status</span>, <span class="ruby-value">url:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">query:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">role:</span> <span class="ruby-value">:assistant</span>)
-  <span class="ruby-keyword">super</span>(<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>)
-  <span class="ruby-ivar">@status</span> = <span class="ruby-identifier">status</span>
-  <span class="ruby-ivar">@url</span> = <span class="ruby-identifier">url</span>
-  <span class="ruby-ivar">@query</span> = <span class="ruby-identifier">query</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool_runtime/fibers.rb, line 16</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">max_concurrency:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">super</span>(<span class="ruby-value">runner:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Runner</span><span class="ruby-operator">::</span><span class="ruby-constant">Fibers</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">max_concurrency:</span> <span class="ruby-identifier">max_concurrency</span>))
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -800,12 +725,17 @@
         <div class="method-description">
 
 
-          
+          <dl class="rdoc-list label-list"><dt>max_concurrency</dt>
+<dd>
+<p>maximum number of tool calls to execute simultaneously.</p>
+</dd></dl>
+
+<pre>When +nil+, all tool calls run as fibers without limit.</pre>
 
 
             <div class="method-calls-super">
               Calls superclass method
-              <a href="Base.html#method-c-new"><code>Riffer::StreamEvents::Base::new</code></a>
+              <a href="../ToolRuntime.html#method-c-new"><code>Riffer::ToolRuntime::new</code></a>
             </div>
 
         </div>
@@ -824,59 +754,6 @@
 
 
 
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-to_h" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-to_h" title="Link to this method">
-                <span class="method-name">to_h</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/web_search_status.rb, line 28</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
-  <span class="ruby-identifier">h</span> = {<span class="ruby-value">role:</span> <span class="ruby-ivar">@role</span>, <span class="ruby-value">status:</span> <span class="ruby-ivar">@status</span>}
-  <span class="ruby-identifier">h</span>[<span class="ruby-value">:url</span>] = <span class="ruby-ivar">@url</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@url</span>
-  <span class="ruby-identifier">h</span>[<span class="ruby-value">:query</span>] = <span class="ruby-ivar">@query</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@query</span>
-  <span class="ruby-identifier">h</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
 
 
 

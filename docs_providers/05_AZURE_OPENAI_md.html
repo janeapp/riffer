@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Runner - Riffer Documentation</title>
+<title>05_AZURE_OPENAI - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,05_AZURE_OPENAI">
   <meta
-    name="keywords"
-    content="ruby,class,Riffer::Runner"
+    name="description"
+    content="05_AZURE_OPENAI: Azure OpenAI Provider The Azure OpenAI provider connects to OpenAI models hosted on Azure. It is a thin subclass of the OpenAI provider that configur"
   >
-
-    <meta
-      name="description"
-      content="class Riffer::Runner: Generic concurrency primitive for batch execution. Subclasses implement +map+ to control how items are processed (sequentially, threaded, etc."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Runner - Riffer Documentation">
+<meta property="og:title" content="05_AZURE_OPENAI - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Generic concurrency primitive for batch execution. Subclasses implement +map+ to control how items are processed (sequentially, threaded, etc.">
+    <meta property="og:description" content="Azure OpenAI Provider The Azure OpenAI provider connects to OpenAI models hosted on Azure. It is a thin subclass of the OpenAI provider that configur">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Runner - Riffer Documentation">
+<meta name="twitter:title" content="05_AZURE_OPENAI - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Generic concurrency primitive for batch execution. Subclasses implement +map+ to control how items are processed (sequentially, threaded, etc.">
+    <meta name="twitter:description" content="Azure OpenAI Provider The Azure OpenAI provider connects to OpenAI models hosted on Azure. It is a thin subclass of the OpenAI provider that configur">
 
 
 
@@ -96,7 +91,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -374,8 +369,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -507,7 +504,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   docs_providers
@@ -568,52 +565,6 @@
   </div>
 
 
-  
-
-  
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li>Object</li></ul>
-  </details>
-</div>
-
-
-  
-
-  
-
-  
-
-
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-map">map</a></li>
-
-      </ul>
-    </details>
-  </div>
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -632,128 +583,180 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-runner">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>Runner</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page docs_providers/05_AZURE_OPENAI.md">
 
-  <span id="class-Riffer::Runner" class="legacy-anchor"></span>
-  <h1 id="class-riffer-runner" class="anchor-link class">
-    class Riffer::Runner
-  </h1>
+<span id="label-Azure+OpenAI+Provider" class="legacy-anchor"></span>
+<h1 id="azure-openai-provider"><a href="#azure-openai-provider">Azure OpenAI Provider</a></h1>
 
-  <section class="description">
-    
-<p>Generic concurrency primitive for batch execution.</p>
+<p>The Azure OpenAI provider connects to OpenAI models hosted on Azure. It is a thin subclass of the OpenAI provider that configures the Azure-specific endpoint and API key — all request building, streaming, and extraction logic is inherited.</p>
 
-<p>Subclasses implement <code>map</code> to control how items are processed (sequentially, threaded, etc.).</p>
+<span id="label-Installation" class="legacy-anchor"></span>
+<h2 id="installation"><a href="#installation">Installation</a></h2>
 
-<pre class="ruby"><span class="ruby-identifier">runner</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Runner</span><span class="ruby-operator">::</span><span class="ruby-constant">Sequential</span>.<span class="ruby-identifier">new</span>
-<span class="ruby-identifier">runner</span>.<span class="ruby-identifier">map</span>([<span class="ruby-value">1</span>, <span class="ruby-value">2</span>, <span class="ruby-value">3</span>], <span class="ruby-value">context:</span> <span class="ruby-identifier">ctx</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">*</span> <span class="ruby-value">2</span> }
-<span class="ruby-comment"># =&gt; [2, 4, 6]</span>
+<p>Add the OpenAI gem to your Gemfile (same gem as the OpenAI provider):</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;openai&#39;</span>
 </pre>
 
-  </section>
+<span id="label-Configuration" class="legacy-anchor"></span>
+<h2 id="configuration"><a href="#configuration">Configuration</a></h2>
 
+<p>Credentials are resolved in order:</p>
+<ol><li>
+<p>Keyword arguments (<code>api_key</code>, <code>base_url</code>)</p>
+</li><li>
+<p>Global config (<code>Riffer.config.azure_openai.api_key</code> / <code>.endpoint</code>)</p>
+</li><li>
+<p>Environment variables (<code>AZURE_OPENAI_API_KEY</code> / <code>AZURE_OPENAI_ENDPOINT</code>)</p>
+</li></ol>
 
-  <span id="5Buntitled-5D" class="legacy-anchor"></span>
-  <section class="documentation-section anchor-link">
+<span id="label-Global+config" class="legacy-anchor"></span>
+<h3 id="global-config"><a href="#global-config">Global config</a></h3>
 
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">azure_openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_API_KEY&#39;</span>]
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">azure_openai</span>.<span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_ENDPOINT&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<span id="label-Per-agent" class="legacy-anchor"></span>
+<h3 id="per-agent"><a href="#per-agent">Per-agent</a></h3>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;azure_openai/gpt-5-mini&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_API_KEY&#39;</span>],
+                   <span class="ruby-value">base_url:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_ENDPOINT&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<span id="label-Environment+variables+only" class="legacy-anchor"></span>
+<h3 id="environment-variables-only"><a href="#environment-variables-only">Environment variables only</a></h3>
 
+<p>If <code>AZURE_OPENAI_API_KEY</code> and <code>AZURE_OPENAI_ENDPOINT</code> are set, no explicit configuration is needed:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;azure_openai/gpt-5-mini&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
+<span id="label-Supported+Models" class="legacy-anchor"></span>
+<h2 id="supported-models"><a href="#supported-models">Supported Models</a></h2>
 
+<p>Use any model deployed to your Azure OpenAI resource in the <code>azure_openai/model</code> format:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model</span> <span class="ruby-string">&#39;azure_openai/gpt-5.4&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;azure_openai/gpt-5-mini&#39;</span>
+</pre>
 
+<span id="label-Model+Options" class="legacy-anchor"></span>
+<h2 id="model-options"><a href="#model-options">Model Options</a></h2>
 
+<p>All model options from the OpenAI provider are supported:</p>
 
+<span id="label-temperature" class="legacy-anchor"></span>
+<h3 id="temperature"><a href="#temperature">temperature</a></h3>
 
+<p>Controls randomness (0.0-2.0):</p>
 
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+</pre>
 
+<span id="label-max_tokens" class="legacy-anchor"></span>
+<h3 id="maxtokens"><a href="#maxtokens">max_tokens</a></h3>
 
+<p>Maximum tokens in response:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">max_tokens:</span> <span class="ruby-value">4096</span>
+</pre>
 
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
-       </header>
+<span id="label-reasoning" class="legacy-anchor"></span>
+<h3 id="reasoning"><a href="#reasoning">reasoning</a></h3>
 
+<p>Enables extended thinking (for supported models):</p>
 
-      <div id="method-i-map" class="method-detail anchor-link ">
-        <div class="method-header">
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;medium&#39;</span>  <span class="ruby-comment"># &#39;low&#39;, &#39;medium&#39;, or &#39;high&#39;</span>
+</pre>
 
-            <div class="method-heading">
-              <a href="#method-i-map" title="Link to this method">
-                <span class="method-name">map</span>
-                <span class="method-args">(items, context:, &amp;block)</span>
-              </a>
-            </div>
+<span id="label-structured_output" class="legacy-anchor"></span>
+<h3 id="structuredoutput"><a href="#structuredoutput"><a href="../lib/riffer/structured_output_rb.html">structured_output</a></a></h3>
 
-        </div>
+<p>Structured JSON output works identically to the OpenAI provider.</p>
 
+<span id="label-Example" class="legacy-anchor"></span>
+<h2 id="example"><a href="#example">Example</a></h2>
 
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="map-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner.rb, line 23</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">map</span>(<span class="ruby-identifier">items</span>, <span class="ruby-value">context:</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} must implement #map&quot;</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">azure_openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_API_KEY&#39;</span>]
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">azure_openai</span>.<span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_ENDPOINT&#39;</span>]
+<span class="ruby-keyword">end</span>
 
+<span class="ruby-keyword">class</span> <span class="ruby-constant">SummaryAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;azure_openai/gpt-5-mini&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a summarization assistant. Be concise.&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.3</span>
+<span class="ruby-keyword">end</span>
 
+<span class="ruby-identifier">agent</span> = <span class="ruby-constant">SummaryAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Summarize the Ruby programming language in one paragraph.&quot;</span>)
+</pre>
 
-        <div class="method-description">
+<span id="label-Streaming" class="legacy-anchor"></span>
+<h2 id="streaming"><a href="#streaming">Streaming</a></h2>
 
+<pre class="ruby"><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&quot;Explain Ruby blocks&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
 
-          <p>Maps over items using the provided block.</p>
-<dl class="rdoc-list label-list"><dt>items</dt>
-<dd>
-<p>the items to process.</p>
-</dd><dt>context</dt>
-<dd>
-<p>context hash forwarded from the agent.</p>
-</dd></dl>
+<span id="label-Tool+Calling" class="legacy-anchor"></span>
+<h2 id="tool-calling"><a href="#tool-calling">Tool Calling</a></h2>
 
-<p>Raises NotImplementedError if not implemented by subclass.</p>
+<p>Tool calling works identically to the OpenAI provider:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CalculatorTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Performs basic math operations&quot;</span>
 
-        </div>
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:operation</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&quot;add&quot;</span>, <span class="ruby-string">&quot;subtract&quot;</span>, <span class="ruby-string">&quot;multiply&quot;</span>, <span class="ruby-string">&quot;divide&quot;</span>]
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:a</span>, <span class="ruby-constant">Float</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;First number&quot;</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:b</span>, <span class="ruby-constant">Float</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Second number&quot;</span>
+  <span class="ruby-keyword">end</span>
 
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">operation:</span>, <span class="ruby-value">a:</span>, <span class="ruby-value">b:</span>)
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">operation</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;add&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;subtract&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;multiply&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;divide&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">end</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
 
+<span class="ruby-keyword">class</span> <span class="ruby-constant">MathAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;azure_openai/gpt-5-mini&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">CalculatorTool</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<span id="label-Direct+Provider+Usage" class="legacy-anchor"></span>
+<h2 id="direct-provider-usage"><a href="#direct-provider-usage">Direct Provider Usage</a></h2>
 
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">AzureOpenAI</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_API_KEY&#39;</span>],
+  <span class="ruby-value">base_url:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;AZURE_OPENAI_ENDPOINT&#39;</span>]
+)
 
-      </div>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Hello!&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gpt-5-mini&quot;</span>,
+  <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+)
 
-
-    </section>
-
-
-
-
-  </section>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+</pre>
 
 </main>
 

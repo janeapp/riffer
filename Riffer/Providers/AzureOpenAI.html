@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::StreamEvents::WebSearchStatus - Riffer Documentation</title>
+<title>class Riffer::Providers::AzureOpenAI - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::StreamEvents::WebSearchStatus"
+    content="ruby,class,Riffer::Providers::AzureOpenAI"
   >
 
     <meta
       name="description"
-      content="class Riffer::StreamEvents::WebSearchStatus: Represents a web search status notification during streaming. Emitted when the LLM performs a server-side web search and its status changes."
+      content="class Riffer::Providers::AzureOpenAI: Azure OpenAI provider for GPT models hosted on Azure. Requires the +openai+ gem to be installed."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::StreamEvents::WebSearchStatus - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Providers::AzureOpenAI - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents a web search status notification during streaming. Emitted when the LLM performs a server-side web search and its status changes.">
+    <meta property="og:description" content="Azure OpenAI provider for GPT models hosted on Azure. Requires the +openai+ gem to be installed.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::StreamEvents::WebSearchStatus - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Providers::AzureOpenAI - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents a web search status notification during streaming. Emitted when the LLM performs a server-side web search and its status changes.">
+    <meta name="twitter:description" content="Azure OpenAI provider for GPT models hosted on Azure. Requires the +openai+ gem to be installed.">
 
 
 
@@ -582,7 +582,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::StreamEvents::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="OpenAI.html">Riffer::Providers::OpenAI</a><ul><li><a href="Base.html">Riffer::Providers::Base</a><ul><li>Object</li></ul></li></ul></li></ul>
   </details>
 </div>
 
@@ -605,32 +605,13 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li class="calls-super" ><a href="#method-c-new">new</a></li>
+        <li ><a href="#method-c-new">new</a></li>
 
       </ul>
     </details>
   </div>
 
 
-
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-to_h">to_h</a></li>
-
-      </ul>
-    </details>
-  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -651,7 +632,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-streamevents-websearchstatus">
+<main role="main" aria-labelledby="class-riffer-providers-azureopenai">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -664,29 +645,44 @@
       
       <li>
         
-        <a href="../../Riffer/StreamEvents.html">StreamEvents</a><span>::</span>
+        <a href="../../Riffer/Providers.html">Providers</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>WebSearchStatus</span>
+        <span>AzureOpenAI</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::StreamEvents::WebSearchStatus" class="legacy-anchor"></span>
-  <h1 id="class-riffer-streamevents-websearchstatus" class="anchor-link class">
-    class Riffer::StreamEvents::WebSearchStatus
+  <span id="class-Riffer::Providers::AzureOpenAI" class="legacy-anchor"></span>
+  <h1 id="class-riffer-providers-azureopenai" class="anchor-link class">
+    class Riffer::Providers::AzureOpenAI
   </h1>
 
   <section class="description">
     
-<p>Represents a web search status notification during streaming.</p>
+<p>Azure OpenAI provider for GPT models hosted on Azure.</p>
 
-<p>Emitted when the LLM performs a server-side web search and its status changes.</p>
+<p>Requires the <code>openai</code> gem to be installed.</p>
+
+<p>Credentials are resolved in order:</p>
+<ol><li>
+<p>Keyword arguments (<code>api_key</code>, <code>base_url</code>)</p>
+</li><li>
+<p>Config (<code>Riffer.config.azure_openai.api_key</code> / <code>.endpoint</code>)</p>
+</li><li>
+<p>Environment variables (<code>AZURE_OPENAI_API_KEY</code> / <code>AZURE_OPENAI_ENDPOINT</code>)</p>
+</li></ol>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">AzureOpenAI</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">api_key:</span> <span class="ruby-string">&quot;key&quot;</span>,
+  <span class="ruby-value">base_url:</span> <span class="ruby-string">&quot;https://my-resource.openai.azure.com&quot;</span>
+)
+</pre>
 
   </section>
 
@@ -699,62 +695,6 @@
 
 
 
-
-    <section class="attribute-method-details method-section">
-      <header>
-        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
-      </header>
-
-
-      <div id="attribute-i-query" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-query" title="Link to this attribute">
-            <span class="method-name">query</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>The search query (present when available during status changes).</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-status" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-status" title="Link to this attribute">
-            <span class="method-name">status</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>The web search status (“in_progress”, “searching”, “completed”, “open_page”).</p>
-
-        </div>
-      </div>
-
-      <div id="attribute-i-url" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-url" title="Link to this attribute">
-            <span class="method-name">url</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
-
-        <div class="method-description">
-
-
-        <p>The URL being fetched (present for “open_page” status).</p>
-
-        </div>
-      </div>
-
-    </section>
 
 
 
@@ -773,7 +713,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(status, url: nil, query: nil, role: :assistant)</span>
+                <span class="method-args">(**options)</span>
               </a>
             </div>
 
@@ -786,12 +726,21 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/web_search_status.rb, line 19</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">status</span>, <span class="ruby-value">url:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">query:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">role:</span> <span class="ruby-value">:assistant</span>)
-  <span class="ruby-keyword">super</span>(<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>)
-  <span class="ruby-ivar">@status</span> = <span class="ruby-identifier">status</span>
-  <span class="ruby-ivar">@url</span> = <span class="ruby-identifier">url</span>
-  <span class="ruby-ivar">@query</span> = <span class="ruby-identifier">query</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/azure_open_ai.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;openai&quot;</span>
+
+  <span class="ruby-identifier">api_key</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:api_key</span>) {
+    <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">azure_openai</span>.<span class="ruby-identifier">api_key</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&quot;AZURE_OPENAI_API_KEY&quot;</span>]
+  }
+  <span class="ruby-identifier">base_url</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:base_url</span>) {
+    <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">azure_openai</span>.<span class="ruby-identifier">endpoint</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&quot;AZURE_OPENAI_ENDPOINT&quot;</span>]
+  }
+  <span class="ruby-ivar">@client</span> = <span class="ruby-operator">::</span><span class="ruby-constant">OpenAI</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">api_key:</span> <span class="ruby-identifier">api_key</span>,
+    <span class="ruby-value">base_url:</span> <span class="ruby-identifier">base_url</span>,
+    <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>.<span class="ruby-identifier">except</span>(<span class="ruby-value">:api_key</span>, <span class="ruby-value">:base_url</span>)
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -800,13 +749,15 @@
         <div class="method-description">
 
 
-          
+          <p>Initializes the Azure OpenAI provider.</p>
+<dl class="rdoc-list label-list"><dt>api_key</dt>
+<dd>
+<p>Azure OpenAI API key. Falls back to config, then <code>AZURE_OPENAI_API_KEY</code>.</p>
+</dd><dt>base_url</dt>
+<dd>
+<p>Azure OpenAI endpoint URL. Falls back to config, then <code>AZURE_OPENAI_ENDPOINT</code>.</p>
+</dd></dl>
 
-
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="Base.html#method-c-new"><code>Riffer::StreamEvents::Base::new</code></a>
-            </div>
 
         </div>
 
@@ -824,59 +775,6 @@
 
 
 
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-to_h" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-to_h" title="Link to this method">
-                <span class="method-name">to_h</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/stream_events/web_search_status.rb, line 28</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
-  <span class="ruby-identifier">h</span> = {<span class="ruby-value">role:</span> <span class="ruby-ivar">@role</span>, <span class="ruby-value">status:</span> <span class="ruby-ivar">@status</span>}
-  <span class="ruby-identifier">h</span>[<span class="ruby-value">:url</span>] = <span class="ruby-ivar">@url</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@url</span>
-  <span class="ruby-identifier">h</span>[<span class="ruby-value">:query</span>] = <span class="ruby-ivar">@query</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@query</span>
-  <span class="ruby-identifier">h</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
 
 
 
