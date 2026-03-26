@@ -26,8 +26,8 @@ class Riffer::Runner::Fibers < Riffer::Runner
     @max_concurrency = max_concurrency
   end
 
-  #: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
-  def map(items, &block)
+  #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  def map(items, context:, &block)
     return [] if items.empty?
 
     results = Array.new(items.size)

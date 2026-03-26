@@ -20,6 +20,6 @@ class Riffer::Runner::Fibers < Riffer::Runner
   # : (?max_concurrency: Integer?) -> void
   def initialize: (?max_concurrency: Integer?) -> void
 
-  # : (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
-  def map: (Array[untyped]) { (untyped) -> untyped } -> Array[untyped]
+  # : (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  def map: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
 end

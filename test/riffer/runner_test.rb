@@ -52,7 +52,7 @@ describe Riffer::Runner::Fibers do
   describe "#map" do
     it "returns results in order" do
       runner = Riffer::Runner::Fibers.new
-      results = runner.map([1, 2, 3]) { |n| n * 2 }
+      results = runner.map([1, 2, 3], context: nil) { |n| n * 2 }
       expect(results).must_equal [2, 4, 6]
     end
 
@@ -60,7 +60,7 @@ describe Riffer::Runner::Fibers do
       runner = Riffer::Runner::Fibers.new
       seen = []
 
-      runner.map([1, 2, 3]) do |n|
+      runner.map([1, 2, 3], context: nil) do |n|
         seen << Fiber.current.object_id
         n
       end
@@ -74,7 +74,7 @@ describe Riffer::Runner::Fibers do
       max_concurrent = 0
       mutex = Mutex.new
 
-      runner.map([1, 2, 3, 4]) do |n|
+      runner.map([1, 2, 3, 4], context: nil) do |n|
         mutex.synchronize do
           concurrent += 1
           max_concurrent = [max_concurrent, concurrent].max
@@ -89,14 +89,14 @@ describe Riffer::Runner::Fibers do
 
     it "handles empty items" do
       runner = Riffer::Runner::Fibers.new
-      results = runner.map([]) { |n| n }
+      results = runner.map([], context: nil) { |n| n }
       expect(results).must_equal []
     end
 
     it "propagates exceptions" do
       runner = Riffer::Runner::Fibers.new
       expect {
-        runner.map([1, 2, 3]) do |n|
+        runner.map([1, 2, 3], context: nil) do |n|
           raise "boom" if n == 2
           n
         end
