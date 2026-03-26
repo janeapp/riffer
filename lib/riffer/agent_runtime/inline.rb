@@ -6,6 +6,7 @@
 # This is the default agent runtime used when no runtime is configured.
 #
 class Riffer::AgentRuntime::Inline < Riffer::AgentRuntime
+  #--
   #: () -> void
   def initialize
     super(runner: Riffer::Runner::Sequential.new)

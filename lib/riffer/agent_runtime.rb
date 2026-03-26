@@ -15,23 +15,25 @@ require "json"
 #   results = runtime.execute(tool_calls, agents: agent_map, context: context)
 #
 class Riffer::AgentRuntime
-  # +runner+ - the concurrency runner to use for batch execution.
+  # [runner] the concurrency runner to use for batch execution.
   #
   # Subclasses must provide a runner; instantiating AgentRuntime directly
   # raises +NotImplementedError+.
   #
+  #--
   #: (runner: Riffer::Runner) -> void
   def initialize(runner:)
     raise NotImplementedError, "#{self.class} is abstract — use a subclass like Riffer::AgentRuntime::Inline" if instance_of?(Riffer::AgentRuntime)
     @runner = runner
   end
 
-  # Executes a batch of agent calls, returning +[tool_call, response]+ pairs.
+  # Executes a batch of agent calls, returning <tt>[tool_call, response]</tt> pairs.
   #
-  # +tool_calls+ - the tool calls to execute (agent tool calls).
-  # +agents+ - Hash mapping agent tool names to agent classes.
-  # +context+ - the context hash.
+  # [tool_calls] the tool calls to execute (agent tool calls).
+  # [agents] Hash mapping agent tool names to agent classes.
+  # [context] the context hash.
   #
+  #--
   #: (Array[Riffer::Messages::Assistant::ToolCall], agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, agents:, context:)
     @runner.map(tool_calls) do |tool_call|
@@ -45,6 +47,7 @@ class Riffer::AgentRuntime
   # Hook that wraps each agent call execution. Override in subclasses
   # to customize. Must +yield+ to continue execution.
   #
+  #--
   #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
   def around_agent_call(tool_call, context:)
     yield
@@ -54,6 +57,7 @@ class Riffer::AgentRuntime
 
   # Dispatches a single agent call.
   #
+  #--
   #: (Riffer::Messages::Assistant::ToolCall, agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
   def dispatch_agent_call(tool_call, agents:, context:)
     agent_class = agents[tool_call.name]
@@ -92,6 +96,7 @@ class Riffer::AgentRuntime
     Riffer::Tools::Response.error("Error executing agent: #{e.message}", type: :execution_error)
   end
 
+  #--
   #: (String?) -> Hash[Symbol, untyped]
   def parse_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?

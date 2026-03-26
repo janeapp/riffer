@@ -8,8 +8,9 @@
 class Riffer::AgentRuntime::Threaded < Riffer::AgentRuntime
   DEFAULT_MAX_CONCURRENCY: Integer
 
-  # +max_concurrency+ - maximum number of agent calls to execute simultaneously.
+  # [max_concurrency] maximum number of agent calls to execute simultaneously.
   #
+  # --
   # : (?max_concurrency: Integer) -> void
   def initialize: (?max_concurrency: Integer) -> void
 end

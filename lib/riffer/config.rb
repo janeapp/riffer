@@ -45,7 +45,7 @@ class Riffer::Config
   # Global agent runtime configuration (experimental).
   #
   # Accepts a Riffer::AgentRuntime subclass, a Riffer::AgentRuntime instance,
-  # or a Proc. Defaults to +Riffer::AgentRuntime::Inline.new+.
+  # or a Proc. Defaults to <tt>Riffer::AgentRuntime::Inline.new</tt>.
   attr_reader :agent_runtime #: (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)
 
   # Sets the global tool runtime.

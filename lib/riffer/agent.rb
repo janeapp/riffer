@@ -40,6 +40,7 @@ class Riffer::Agent
   # Required for agents used as subagents — the LLM needs it to make
   # delegation decisions.
   #
+  #--
   #: (?String?) -> String?
   def self.description(value = nil)
     return @description if value.nil?
@@ -165,6 +166,7 @@ class Riffer::Agent
 
   # Gets or sets the subagents used by this agent.
   #
+  #--
   #: (?(Array[singleton(Riffer::Agent)] | Proc)?) -> (Array[singleton(Riffer::Agent)] | Proc)?
   def self.uses_agents(agents_or_lambda = nil)
     return @agents_config if agents_or_lambda.nil?
@@ -179,6 +181,7 @@ class Riffer::Agent
   # Inherited by subclasses. When unset, walks the ancestor chain and
   # falls back to the global +Riffer.config.agent_runtime+.
   #
+  #--
   #: (?(singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?) -> (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?
   def self.agent_runtime(value = nil)
     if value.nil?
@@ -659,6 +662,7 @@ class Riffer::Agent
     assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
   end
 
+  #--
   #: (Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
   #: (Array[Riffer::ToolCall]) -> void
   def dispatch_calls(tool_calls)
@@ -702,6 +706,7 @@ class Riffer::Agent
   # Builds a derived context with +_agent_stack+ seeded for agent
   # dispatch. Does not mutate +@context+.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def agent_dispatch_context
     ctx = @context || {}
@@ -784,6 +789,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: () -> Hash[String, singleton(Riffer::Agent)]
   def resolved_agent_map
     @resolved_agent_map ||= begin
@@ -793,6 +799,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: () -> Array[singleton(Riffer::Agent)]?
   def resolve_agents_config
     @resolved_agents_config ||= begin
@@ -827,6 +834,7 @@ class Riffer::Agent
     end
   end
 
+  #--
   #: () -> Riffer::AgentRuntime
   def resolve_agent_runtime
     @resolved_agent_runtime ||= begin

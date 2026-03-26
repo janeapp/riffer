@@ -36,6 +36,7 @@ class Riffer::Agent
   # Required for agents used as subagents — the LLM needs it to make
   # delegation decisions.
   #
+  # --
   # : (?String?) -> String?
   def self.description: (?String?) -> String?
 
@@ -110,6 +111,7 @@ class Riffer::Agent
 
   # Gets or sets the subagents used by this agent.
   #
+  # --
   # : (?(Array[singleton(Riffer::Agent)] | Proc)?) -> (Array[singleton(Riffer::Agent)] | Proc)?
   def self.uses_agents: (?(Array[singleton(Riffer::Agent)] | Proc)?) -> (Array[singleton(Riffer::Agent)] | Proc)?
 
@@ -121,6 +123,7 @@ class Riffer::Agent
   # Inherited by subclasses. When unset, walks the ancestor chain and
   # falls back to the global +Riffer.config.agent_runtime+.
   #
+  # --
   # : (?(singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?) -> (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?
   def self.agent_runtime: (?(singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?) -> (singleton(Riffer::AgentRuntime) | Riffer::AgentRuntime | Proc)?
 
@@ -324,6 +327,7 @@ class Riffer::Agent
 
   def pending_tool_calls: () -> untyped
 
+  # --
   # : (Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
   # : (Array[Riffer::ToolCall]) -> void
   def dispatch_calls: (Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
@@ -338,6 +342,7 @@ class Riffer::Agent
   # Builds a derived context with +_agent_stack+ seeded for agent
   # dispatch. Does not mutate +@context+.
   #
+  # --
   # : () -> Hash[Symbol, untyped]
   def agent_dispatch_context: () -> Hash[Symbol, untyped]
 
@@ -363,9 +368,11 @@ class Riffer::Agent
   # : () -> Array[singleton(Riffer::Tool)]
   def resolved_tools: () -> Array[singleton(Riffer::Tool)]
 
+  # --
   # : () -> Hash[String, singleton(Riffer::Agent)]
   def resolved_agent_map: () -> Hash[String, singleton(Riffer::Agent)]
 
+  # --
   # : () -> Array[singleton(Riffer::Agent)]?
   def resolve_agents_config: () -> Array[singleton(Riffer::Agent)]?
 
@@ -373,6 +380,7 @@ class Riffer::Agent
   # : () -> Riffer::ToolRuntime
   def resolve_tool_runtime: () -> Riffer::ToolRuntime
 
+  # --
   # : () -> Riffer::AgentRuntime
   def resolve_agent_runtime: () -> Riffer::AgentRuntime
 
