@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.20.0](https://github.com/janeapp/riffer/compare/riffer/v0.19.0...riffer/v0.20.0) (2026-03-26)
+
+
+### Features
+
+* add fibers tool runtime using async gem ([#178](https://github.com/janeapp/riffer/issues/178)) ([67fd344](https://github.com/janeapp/riffer/commit/67fd34493126559b99a00cc3402a6adabefc14ea))
+
+
+### Bug Fixes
+
+* correct RDoc formatting for docs.riffer.ai ([#182](https://github.com/janeapp/riffer/issues/182)) ([2f2fbc9](https://github.com/janeapp/riffer/commit/2f2fbc997281ef4a546a58e44233e325a25c41d5))
+
 ## [0.19.0](https://github.com/janeapp/riffer/compare/riffer/v0.18.0...riffer/v0.19.0) (2026-03-25)
 
 
