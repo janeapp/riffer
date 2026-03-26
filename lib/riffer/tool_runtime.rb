@@ -15,23 +15,25 @@ require "json"
 #   results = runtime.execute(tool_calls, tools: tools, context: context)
 #
 class Riffer::ToolRuntime
-  # +runner+ - the concurrency runner to use for batch execution.
+  # [runner] the concurrency runner to use for batch execution.
   #
   # Subclasses must provide a runner; instantiating ToolRuntime directly
   # raises +NotImplementedError+.
   #
+  #--
   #: (runner: Riffer::Runner) -> void
   def initialize(runner:)
     raise NotImplementedError, "#{self.class} is abstract — use a subclass like Riffer::ToolRuntime::Inline" if instance_of?(Riffer::ToolRuntime)
     @runner = runner
   end
 
-  # Executes a batch of tool calls, returning +[tool_call, response]+ pairs.
+  # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
   #
-  # +tool_calls+ - the tool calls to execute.
-  # +tools+ - the resolved tool classes.
-  # +context+ - the context hash.
+  # [tool_calls] the tool calls to execute.
+  # [tools] the resolved tool classes.
+  # [context] the context hash.
   #
+  #--
   #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:)
     @runner.map(tool_calls, context: context) do |tool_call|
@@ -58,6 +60,7 @@ class Riffer::ToolRuntime
   #     end
   #   end
   #
+  #--
   #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
   def around_tool_call(tool_call, context:)
     yield
@@ -68,10 +71,11 @@ class Riffer::ToolRuntime
   # Dispatches a single tool call. Override in subclasses to change
   # how individual tools are invoked (e.g., HTTP, gRPC).
   #
-  # +tool_call+ - the tool call to execute.
-  # +tools+ - the resolved tool classes.
-  # +context+ - the context hash.
+  # [tool_call] the tool call to execute.
+  # [tools] the resolved tool classes.
+  # [context] the context hash.
   #
+  #--
   #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
   def dispatch_tool_call(tool_call, tools:, context:)
     tool_class = tools.find { |tc| tc.name == tool_call.name }
@@ -97,6 +101,7 @@ class Riffer::ToolRuntime
     Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
   end
 
+  #--
   #: (String?) -> Hash[Symbol, untyped]
   def parse_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?

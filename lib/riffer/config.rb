@@ -39,7 +39,7 @@ class Riffer::Config
   # Global tool runtime configuration (experimental).
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
-  # or a Proc. Defaults to +Riffer::ToolRuntime::Inline.new+.
+  # or a Proc. Defaults to <tt>Riffer::ToolRuntime::Inline.new</tt>.
   attr_reader :tool_runtime #: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
 
   # Sets the global tool runtime.
@@ -47,6 +47,7 @@ class Riffer::Config
   # Raises +Riffer::ArgumentError+ if the value is not a valid runtime
   # (ToolRuntime subclass, ToolRuntime instance, or Proc).
   #
+  #--
   #: ((singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)) -> void
   def tool_runtime=(value)
     valid = (value.is_a?(Class) && value < Riffer::ToolRuntime) || value.is_a?(Riffer::ToolRuntime) || value.is_a?(Proc)
@@ -54,6 +55,7 @@ class Riffer::Config
     @tool_runtime = value
   end
 
+  #--
   #: () -> void
   def initialize
     @amazon_bedrock = AmazonBedrock.new

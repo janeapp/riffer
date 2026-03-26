@@ -10,8 +10,9 @@
 class Riffer::Skills::MarkdownAdapter < Riffer::Skills::Adapter
   # Renders a skill catalog as Markdown.
   #
-  # +skills+ - array of Frontmatter objects to render.
+  # [skills] array of Frontmatter objects to render.
   #
+  #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
     lines = []

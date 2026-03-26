@@ -8,64 +8,83 @@
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # Initializes the Amazon Bedrock provider.
   #
+  # --
   # : (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize: (?api_token: String?, ?region: String?, **untyped) -> void
 
   private
 
+  # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # --
   # : (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
   def execute_generate: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
 
+  # --
   # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
   def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
 
+  # --
   # : (Aws::BedrockRuntime::Types::ConverseResponse) -> String
   def extract_content: (Aws::BedrockRuntime::Types::ConverseResponse) -> String
 
+  # --
   # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
 
+  # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
+  # --
   # : (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_start_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # --
   # : (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_delta_text_delta: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # --
   # : (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_delta_tool_use: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # --
   # : (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_stop_text_delta: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # --
   # : (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_stop_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # --
   # : (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_metadata_usage: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
+  # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
+  # --
   # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
+  # --
   # : (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
 
   BEDROCK_FORMAT_MAP: Hash[String, String]
 
+  # --
   # : (String) -> String
   def bedrock_format: (String) -> String
 
+  # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_bedrock_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 end

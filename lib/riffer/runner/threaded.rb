@@ -16,13 +16,15 @@
 class Riffer::Runner::Threaded < Riffer::Runner
   DEFAULT_MAX_CONCURRENCY = 5 #: Integer
 
-  # +max_concurrency+ - maximum number of threads to run simultaneously.
+  # [max_concurrency] maximum number of threads to run simultaneously.
   #
+  #--
   #: (?max_concurrency: Integer) -> void
   def initialize(max_concurrency: DEFAULT_MAX_CONCURRENCY)
     @max_concurrency = max_concurrency
   end
 
+  #--
   #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)
     return [] if items.empty?

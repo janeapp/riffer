@@ -13,6 +13,7 @@
 class Riffer::Skills::Config
   # Creates a new Config with all options unset.
   #
+  #--
   #: () -> void
   def initialize
     @backend = nil
@@ -25,6 +26,7 @@ class Riffer::Skills::Config
   # Accepts a Riffer::Skills::Backend instance, or a Proc that receives
   # +context+ and returns a Backend.
   #
+  #--
   #: (?(Riffer::Skills::Backend | Proc)?) -> (Riffer::Skills::Backend | Proc)?
   def backend(value = nil)
     return @backend if value.nil?
@@ -36,6 +38,7 @@ class Riffer::Skills::Config
   # Must be a subclass of Riffer::Skills::Adapter.
   # Defaults to the provider's preferred adapter.
   #
+  #--
   #: (?singleton(Riffer::Skills::Adapter)?) -> singleton(Riffer::Skills::Adapter)?
   def adapter(value = nil)
     return @adapter if value.nil?
@@ -50,6 +53,7 @@ class Riffer::Skills::Config
   # Accepts an array of skill name strings or a Proc that receives
   # +context+ and returns an array of names.
   #
+  #--
   #: (?(Array[String] | Proc)?) -> (Array[String] | Proc)?
   def activate(value = nil)
     return @activate if value.nil?

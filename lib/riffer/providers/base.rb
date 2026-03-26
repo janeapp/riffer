@@ -10,12 +10,12 @@ require "json"
 #
 # ==== Hook methods
 #
-# - +build_request_params+ — convert messages, tools, and options into SDK params
-# - +execute_generate+ — call the SDK and return the raw response
-# - +execute_stream+ — call the streaming SDK, mapping events to the yielder
-# - +extract_token_usage+ — pull token counts from the SDK response
-# - +extract_content+ — extract text content from the SDK response
-# - +extract_tool_calls+ — extract tool calls from the SDK response
+# [build_request_params] convert messages, tools, and options into SDK params
+# [execute_generate] call the SDK and return the raw response
+# [execute_stream] call the streaming SDK, mapping events to the yielder
+# [extract_token_usage] pull token counts from the SDK response
+# [extract_content] extract text content from the SDK response
+# [extract_tool_calls] extract tool calls from the SDK response
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
@@ -24,6 +24,7 @@ class Riffer::Providers::Base
   #
   # Override in subclasses for provider-specific formats.
   #
+  #--
   #: () -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter
     Riffer::Skills::MarkdownAdapter
@@ -31,6 +32,7 @@ class Riffer::Providers::Base
 
   # Generates text using the provider.
   #
+  #--
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
@@ -54,6 +56,7 @@ class Riffer::Providers::Base
 
   # Streams text from the provider.
   #
+  #--
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
@@ -67,36 +70,43 @@ class Riffer::Providers::Base
 
   private
 
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     raise NotImplementedError, "Subclasses must implement #build_request_params"
   end
 
+  #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
     raise NotImplementedError, "Subclasses must implement #execute_generate"
   end
 
+  #--
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream(params, yielder)
     raise NotImplementedError, "Subclasses must implement #execute_stream"
   end
 
+  #--
   #: (untyped) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     raise NotImplementedError, "Subclasses must implement #extract_token_usage"
   end
 
+  #--
   #: (untyped) -> String
   def extract_content(response)
     raise NotImplementedError, "Subclasses must implement #extract_content"
   end
 
+  #--
   #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     raise NotImplementedError, "Subclasses must implement #extract_tool_calls"
   end
 
+  #--
   #: (String) -> Hash[Symbol, untyped]?
   def parse_structured_output(content)
     JSON.parse(content, symbolize_names: true)
@@ -104,12 +114,14 @@ class Riffer::Providers::Base
     nil
   end
 
+  #--
   #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
   end
 
+  #--
   #: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
   def validate_input!(prompt:, system:, messages:)
     if messages.nil?
@@ -120,6 +132,7 @@ class Riffer::Providers::Base
     end
   end
 
+  #--
   #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Array[Riffer::Messages::Base]
   def normalize_messages(prompt:, system:, messages:, files: nil)
     if messages && files && !files.empty?
@@ -137,6 +150,7 @@ class Riffer::Providers::Base
     result
   end
 
+  #--
   #: (Array[Riffer::Messages::Base]) -> void
   def validate_normalized_messages!(messages)
     has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }

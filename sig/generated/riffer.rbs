@@ -23,6 +23,7 @@ module Riffer
 
   # Returns the Riffer configuration.
   #
+  # --
   # : () -> Riffer::Config
   def self.config: () -> Riffer::Config
 
@@ -32,9 +33,11 @@ module Riffer
   #     config.openai.api_key = ENV['OPENAI_API_KEY']
   #   end
   #
+  # --
   # : () ?{ (Riffer::Config) -> void } -> void
   def self.configure: () ?{ (Riffer::Config) -> void } -> void
 
+  # --
   # : () -> String
   def self.version: () -> String
 end

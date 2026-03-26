@@ -17,6 +17,7 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
   # The complete arguments JSON string.
   attr_reader :arguments #: String
 
+  #--
   #: (item_id: String, call_id: String, name: String, arguments: String, ?role: Symbol) -> void
   def initialize(item_id:, call_id:, name:, arguments:, role: :assistant)
     super(role: role)
@@ -26,6 +27,7 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
     @arguments = arguments
   end
 
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, item_id: @item_id, call_id: @call_id, name: @name, arguments: @arguments}

@@ -15,10 +15,11 @@
 class Riffer::Skills::Adapter
   # Renders a skill catalog section for the system prompt.
   #
-  # +skills+ - array of Frontmatter objects to render.
+  # [skills] array of Frontmatter objects to render.
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
+  #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
     raise NotImplementedError, "#{self.class} must implement #render_catalog"
@@ -28,6 +29,7 @@ class Riffer::Skills::Adapter
   #
   # Override to provide a custom activation tool.
   #
+  #--
   #: () -> singleton(Riffer::Tool)
   def activate_tool
     Riffer::Skills::ActivateTool

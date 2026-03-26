@@ -18,6 +18,7 @@ class Riffer::Skills::Backend
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
+  #--
   #: () -> Array[Riffer::Skills::Frontmatter]
   def list_skills
     raise NotImplementedError, "#{self.class} must implement #list_skills"
@@ -25,11 +26,12 @@ class Riffer::Skills::Backend
 
   # Returns the full SKILL.md body (without frontmatter) for a skill.
   #
-  # +name+ - the skill name to read.
+  # [name] the skill name to read.
   #
   # Raises NotImplementedError if not implemented by subclass.
   # Raises Riffer::ArgumentError if skill not found.
   #
+  #--
   #: (String) -> String
   def read_skill(name)
     raise NotImplementedError, "#{self.class} must implement #read_skill"

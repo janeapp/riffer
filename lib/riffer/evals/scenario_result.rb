@@ -32,6 +32,7 @@ class Riffer::Evals::ScenarioResult
 
   # Initializes a new scenario result.
   #
+  #--
   #: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
   def initialize(input:, output:, ground_truth:, results:, messages: [])
     @input = input
@@ -43,6 +44,7 @@ class Riffer::Evals::ScenarioResult
 
   # Returns scores keyed by evaluator class.
   #
+  #--
   #: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores
     results.each_with_object({}) do |result, hash|
@@ -52,6 +54,7 @@ class Riffer::Evals::ScenarioResult
 
   # Returns a hash representation of the scenario result.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {

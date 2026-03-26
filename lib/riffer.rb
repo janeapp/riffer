@@ -33,6 +33,7 @@ module Riffer
 
   # Returns the Riffer configuration.
   #
+  #--
   #: () -> Riffer::Config
   def self.config
     @config ||= Config.new
@@ -44,11 +45,13 @@ module Riffer
   #     config.openai.api_key = ENV['OPENAI_API_KEY']
   #   end
   #
+  #--
   #: () ?{ (Riffer::Config) -> void } -> void
   def self.configure(&block)
     yield config if block_given?
   end
 
+  #--
   #: () -> String
   def self.version
     VERSION

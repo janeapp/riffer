@@ -29,6 +29,7 @@ class Riffer::Evals::Judge
       required :reason, String, description: "Brief explanation for the score"
     end
 
+    #--
     #: (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
     def call(context:, score:, reason:)
       json({score: score, reason: reason})
@@ -40,6 +41,7 @@ class Riffer::Evals::Judge
 
   # Initializes a new judge.
   #
+  #--
   #: (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
   def initialize(model:, provider_options: {})
     provider_name, model_name = model.split("/", 2)
@@ -54,11 +56,12 @@ class Riffer::Evals::Judge
   # Evaluates using the configured LLM.
   #
   # Composes system and user messages from the semantic fields:
-  # +instructions+ - evaluation criteria and scoring rubric.
-  # +input+ - the original input/question.
-  # +output+ - the agent's response to evaluate.
-  # +ground_truth+ - optional reference answer for comparison.
+  # [instructions] evaluation criteria and scoring rubric.
+  # [input] the original input/question.
+  # [output] the agent's response to evaluate.
+  # [ground_truth] optional reference answer for comparison.
   #
+  #--
   #: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
   def evaluate(instructions:, input:, output:, ground_truth: nil)
     system_message = build_system_message(instructions)
@@ -76,6 +79,7 @@ class Riffer::Evals::Judge
 
   private
 
+  #--
   #: (String) -> String
   def build_system_message(instructions)
     <<~SYSTEM.strip
@@ -87,6 +91,7 @@ class Riffer::Evals::Judge
     SYSTEM
   end
 
+  #--
   #: (input: String, output: String, ?ground_truth: String?) -> String
   def build_user_message(input:, output:, ground_truth: nil)
     parts = []
@@ -96,6 +101,7 @@ class Riffer::Evals::Judge
     parts.join("\n\n")
   end
 
+  #--
   #: () -> Riffer::Providers::Base
   def provider_instance
     @provider_instance ||= begin
@@ -105,16 +111,19 @@ class Riffer::Evals::Judge
     end
   end
 
+  #--
   #: () -> String
   def provider_name
     @provider_name ||= @model.split("/", 2).first
   end
 
+  #--
   #: () -> String
   def model_name
     @model_name ||= @model.split("/", 2).last
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def parse_tool_response(response)
     tool_call = response.tool_calls.first

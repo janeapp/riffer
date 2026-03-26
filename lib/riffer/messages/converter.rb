@@ -9,6 +9,7 @@ module Riffer::Messages::Converter
   #
   # Raises Riffer::ArgumentError if the message format is invalid.
   #
+  #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def convert_to_message_object(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
@@ -24,11 +25,12 @@ module Riffer::Messages::Converter
   #
   # Accepts:
   # - +Riffer::FilePart+ objects (passed through)
-  # - +{url: "https://...", media_type: "..."}+ (URL source)
-  # - +{data: "...", media_type: "..."}+ (raw base64)
+  # - <tt>{url: "https://...", media_type: "..."}</tt> (URL source)
+  # - <tt>{data: "...", media_type: "..."}</tt> (raw base64)
   #
   # Raises Riffer::ArgumentError if the hash format is invalid.
   #
+  #--
   #: ((Hash[Symbol, untyped] | Riffer::FilePart)) -> Riffer::FilePart
   def convert_to_file_part(file)
     return file if file.is_a?(Riffer::FilePart)
@@ -53,6 +55,7 @@ module Riffer::Messages::Converter
 
   private
 
+  #--
   #: (Hash[Symbol, untyped]) -> Riffer::Messages::Base
   def convert_hash_to_message(hash)
     role = hash[:role]

@@ -8,6 +8,7 @@ class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
   # The reason provided with the interrupt, if any.
   attr_reader :reason #: (String | Symbol)?
 
+  #--
   #: (?reason: (String | Symbol)?) -> void
   def initialize(reason: nil)
     super(role: :system)
@@ -16,6 +17,7 @@ class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
 
   # Converts the event to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     h = {role: @role, interrupt: true}

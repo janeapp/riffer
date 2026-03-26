@@ -26,37 +26,45 @@ class Riffer::Tools::Response
   #
   # Raises Riffer::ArgumentError if format is invalid.
   #
+  # --
   # : (untyped, ?format: Symbol) -> Riffer::Tools::Response
   def self.success: (untyped, ?format: Symbol) -> Riffer::Tools::Response
 
   # Creates a success response with text format.
   #
+  # --
   # : (untyped) -> Riffer::Tools::Response
   def self.text: (untyped) -> Riffer::Tools::Response
 
   # Creates a success response with JSON format.
   #
+  # --
   # : (untyped) -> Riffer::Tools::Response
   def self.json: (untyped) -> Riffer::Tools::Response
 
   # Creates an error response.
   #
+  # --
   # : (String, ?type: Symbol) -> Riffer::Tools::Response
   def self.error: (String, ?type: Symbol) -> Riffer::Tools::Response
 
+  # --
   # : () -> bool
   def success?: () -> bool
 
+  # --
   # : () -> bool
   def error?: () -> bool
 
   # Returns a hash representation of the response.
   #
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 
   private
 
+  # --
   # : (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
   def initialize: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
 end

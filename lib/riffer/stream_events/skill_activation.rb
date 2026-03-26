@@ -9,12 +9,14 @@ class Riffer::StreamEvents::SkillActivation < Riffer::StreamEvents::Base
   # The activated skill name.
   attr_reader :name #: String
 
+  #--
   #: (String, ?role: Symbol) -> void
   def initialize(name, role: :system)
     super(role: role)
     @name = name
   end
 
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {role: @role, name: @name}

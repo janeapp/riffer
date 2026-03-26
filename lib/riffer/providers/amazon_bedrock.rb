@@ -9,6 +9,7 @@
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # Initializes the Amazon Bedrock provider.
   #
+  #--
   #: (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize(api_token: nil, region: nil, **options)
     depends_on "aws-sdk-bedrockruntime"
@@ -30,6 +31,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   private
 
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     partitioned_messages = partition_messages(messages)
@@ -69,11 +71,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     params
   end
 
+  #--
   #: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
   def execute_generate(params)
     @client.converse(**params)
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -87,6 +91,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ConverseResponse) -> String
   def extract_content(response)
     content_blocks = response.output&.message&.content
@@ -101,6 +106,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     text_content
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     content_blocks = response.output&.message&.content
@@ -122,6 +128,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     tool_calls
   end
 
+  #--
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream(params, yielder)
     current_state = {
@@ -147,6 +154,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_start_tool_use(event, state:, yielder:)
     state[:tool_call] = {
@@ -156,6 +164,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     }
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     delta_text = event.delta.text
@@ -164,6 +173,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_delta_tool_use(event, state:, yielder:)
     input_delta = event.delta.tool_use.input
@@ -177,12 +187,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_stop_tool_use(_event, state:, yielder:)
     tool_call = state[:tool_call]
@@ -195,6 +207,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     state[:tool_call] = nil
   end
 
+  #--
   #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_metadata_usage(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
@@ -207,6 +220,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
     system_prompts = []
@@ -233,6 +247,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     }
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = []
@@ -251,6 +266,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     {role: "assistant", content: content}
   end
 
+  #--
   #: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
   def append_tool_result(conversation_messages, message)
     tool_result = {
@@ -268,6 +284,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format(file)
     raise Riffer::ArgumentError, "Amazon Bedrock does not support URL file sources; provide base64 data instead" if file.url? && file.data.nil?
@@ -293,11 +310,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "text/html" => "html"
   }.freeze #: Hash[String, String]
 
+  #--
   #: (String) -> String
   def bedrock_format(media_type)
     BEDROCK_FORMAT_MAP.fetch(media_type)
   end
 
+  #--
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_bedrock_format(tool)
     {

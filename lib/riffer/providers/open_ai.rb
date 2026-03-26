@@ -9,6 +9,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   # Initializes the OpenAI provider.
   #
+  #--
   #: (**untyped) -> void
   def initialize(**options)
     depends_on "openai"
@@ -19,6 +20,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   private
 
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     reasoning = options[:reasoning]
@@ -63,11 +65,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     params.compact
   end
 
+  #--
   #: (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
   def execute_generate(params)
     @client.responses.create(params)
   end
 
+  #--
   #: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -79,6 +83,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (OpenAI::Models::Responses::Response) -> String
   def extract_content(response)
     text_content = ""
@@ -93,6 +98,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     text_content
   end
 
+  #--
   #: (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     tool_calls = []
@@ -111,6 +117,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     tool_calls
   end
 
+  #--
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream(params, yielder)
     current_state = {
@@ -148,6 +155,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_output_item_added_function_call(event, state:, yielder:)
     state[:tool_info][event.item.id] = {
@@ -156,26 +164,31 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     }
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_output_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDelta.new(event.delta)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_output_text_done(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(event.text)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_reasoning_summary_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.delta)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_reasoning_summary_text_done(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(event.text)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_function_call_arguments_delta(event, state:, yielder:)
     tracked = state[:tool_info][event.item_id] || {}
@@ -186,6 +199,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_function_call_arguments_done(event, state:, yielder:)
     tracked = state[:tool_info][event.item_id] || {}
@@ -197,6 +211,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_response_completed(event, state:, yielder:)
     usage = event.response&.usage
@@ -210,11 +225,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (untyped, status: String, yielder: Enumerator::Yielder) -> void
   def handle_web_search_status(_event, status:, yielder:)
     yielder << Riffer::StreamEvents::WebSearchStatus.new(status)
   end
 
+  #--
   #: (untyped, yielder: Enumerator::Yielder) -> void
   def handle_output_item_done_web_search(event, yielder:)
     action = event.item.action
@@ -229,6 +246,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format(messages)
     messages.flat_map do |message|
@@ -255,6 +273,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format(message)
     if message.tool_calls.empty?
@@ -275,6 +294,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_openai_format(file)
     if file.image?
@@ -288,6 +308,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_openai_format(tool)
     {

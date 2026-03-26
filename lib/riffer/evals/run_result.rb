@@ -17,6 +17,7 @@ class Riffer::Evals::RunResult
 
   # Initializes a new run result.
   #
+  #--
   #: (scenario_results: Array[Riffer::Evals::ScenarioResult]) -> void
   def initialize(scenario_results:)
     @scenario_results = scenario_results
@@ -24,6 +25,7 @@ class Riffer::Evals::RunResult
 
   # Returns average scores keyed by evaluator class across all scenarios.
   #
+  #--
   #: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores
     return {} if scenario_results.empty?
@@ -45,6 +47,7 @@ class Riffer::Evals::RunResult
 
   # Returns a hash representation of the run result.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {

@@ -11,6 +11,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   # Returns the XML skill adapter for Anthropic/Claude.
   #
+  #--
   #: () -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter
     Riffer::Skills::XmlAdapter
@@ -18,6 +19,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   # Initializes the Anthropic provider.
   #
+  #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **options)
     depends_on "anthropic"
@@ -29,6 +31,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   private
 
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     partitioned_messages = partition_messages(messages)
@@ -73,11 +76,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     params
   end
 
+  #--
   #: (Hash[Symbol, untyped]) -> Anthropic::Models::Message
   def execute_generate(params)
     @client.messages.create(**params)
   end
 
+  #--
   #: (Anthropic::Models::Message) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
@@ -91,6 +96,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (Anthropic::Models::Message) -> String
   def extract_content(response)
     content_blocks = response.content
@@ -105,6 +111,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     text_content
   end
 
+  #--
   #: (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     content_blocks = response.content
@@ -126,6 +133,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     tool_calls
   end
 
+  #--
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream(params, yielder)
     current_state = {
@@ -165,6 +173,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped]) -> void
   def handle_raw_content_block_start(event, state:)
     content_block = event.content_block
@@ -174,6 +183,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped]) -> void
   def handle_raw_content_block_delta(event, state:)
     return unless state[:web_search_index] == event.index
@@ -182,6 +192,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     state[:web_search_json] += delta.partial_json if delta.respond_to?(:partial_json)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_text_event(event, state:, yielder:)
     state[:text] ||= ""
@@ -189,6 +200,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::TextDelta.new(event.text)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_thinking_event(event, state:, yielder:)
     state[:reasoning] ||= ""
@@ -196,6 +208,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_input_json_event(event, state:, yielder:)
     if state[:tool_call].nil?
@@ -209,6 +222,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     )
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_tool_use(event, state:, yielder:)
     content_block = event.content_block
@@ -222,18 +236,21 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     state[:tool_call] = nil
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_thinking(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
     state[:reasoning] = nil
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_text(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_server_tool_use(_event, state:, yielder:)
     return unless state[:web_search_json]
@@ -245,6 +262,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: input[:query])
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_web_search_result(event, state:, yielder:)
     content_block = event.content_block
@@ -257,6 +275,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     state[:web_search_query] = nil
   end
 
+  #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_message_stop(_event, state:, yielder:)
     final_message = state[:stream].accumulated_message
@@ -273,6 +292,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
   end
 
+  #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
     system_prompts = []
@@ -310,6 +330,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     }
   end
 
+  #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
     content = []
@@ -327,6 +348,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     {role: "assistant", content: content}
   end
 
+  #--
   #: (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_anthropic_format(file)
     type = file.image? ? "image" : "document"
@@ -340,6 +362,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     {type: type, source: source}
   end
 
+  #--
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_anthropic_format(tool)
     {

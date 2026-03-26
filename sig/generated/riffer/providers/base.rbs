@@ -7,12 +7,12 @@
 #
 # ==== Hook methods
 #
-# - +build_request_params+ — convert messages, tools, and options into SDK params
-# - +execute_generate+ — call the SDK and return the raw response
-# - +execute_stream+ — call the streaming SDK, mapping events to the yielder
-# - +extract_token_usage+ — pull token counts from the SDK response
-# - +extract_content+ — extract text content from the SDK response
-# - +extract_tool_calls+ — extract tool calls from the SDK response
+# [build_request_params] convert messages, tools, and options into SDK params
+# [execute_generate] call the SDK and return the raw response
+# [execute_stream] call the streaming SDK, mapping events to the yielder
+# [extract_token_usage] pull token counts from the SDK response
+# [extract_content] extract text content from the SDK response
+# [extract_tool_calls] extract tool calls from the SDK response
 class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
 
@@ -22,51 +22,65 @@ class Riffer::Providers::Base
   #
   # Override in subclasses for provider-specific formats.
   #
+  # --
   # : () -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: () -> singleton(Riffer::Skills::Adapter)
 
   # Generates text using the provider.
   #
+  # --
   # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
 
   # Streams text from the provider.
   #
+  # --
   # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   private
 
+  # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # --
   # : (Hash[Symbol, untyped]) -> untyped
   def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
+  # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
+  # --
   # : (untyped) -> Riffer::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::TokenUsage?
 
+  # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String
 
+  # --
   # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
+  # --
   # : (String) -> Hash[Symbol, untyped]?
   def parse_structured_output: (String) -> Hash[Symbol, untyped]?
 
+  # --
   # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 
+  # --
   # : (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
   def validate_input!: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
 
+  # --
   # : (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Array[Riffer::Messages::Base]
   def normalize_messages: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Array[Riffer::Messages::Base]
 
+  # --
   # : (Array[Riffer::Messages::Base]) -> void
   def validate_normalized_messages!: (Array[Riffer::Messages::Base]) -> void
 end

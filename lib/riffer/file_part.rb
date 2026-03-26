@@ -43,6 +43,7 @@ class Riffer::FilePart
   # Raises Riffer::ArgumentError if neither data nor url is provided,
   # or if media_type is not supported.
   #
+  #--
   #: (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
   def initialize(media_type:, data: nil, filename: nil, url: nil)
     raise Riffer::ArgumentError, "Either data or url must be provided" if data.nil? && url.nil?
@@ -61,6 +62,7 @@ class Riffer::FilePart
   #
   # Raises Riffer::ArgumentError if media_type cannot be detected.
   #
+  #--
   #: (String, ?media_type: String?) -> Riffer::FilePart
   def self.from_url(url, media_type: nil)
     unless media_type
@@ -77,6 +79,7 @@ class Riffer::FilePart
 
   # Returns the URL if the source was a URL, nil otherwise.
   #
+  #--
   #: () -> String?
   def url
     @url_string
@@ -84,6 +87,7 @@ class Riffer::FilePart
 
   # Returns true if the source was a URL.
   #
+  #--
   #: () -> bool
   def url?
     !@url_string.nil?
@@ -91,6 +95,7 @@ class Riffer::FilePart
 
   # Returns true if the file is an image.
   #
+  #--
   #: () -> bool
   def image?
     media_type.start_with?("image/")
@@ -98,6 +103,7 @@ class Riffer::FilePart
 
   # Returns true if the file is a document (not an image).
   #
+  #--
   #: () -> bool
   def document?
     !image?
@@ -105,6 +111,7 @@ class Riffer::FilePart
 
   # Serializes the FilePart to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {media_type: media_type}

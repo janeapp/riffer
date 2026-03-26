@@ -13,9 +13,11 @@ class Riffer::StreamEvents::WebSearchStatus < Riffer::StreamEvents::Base
   # The search query (present when available during status changes).
   attr_reader query: String?
 
+  # --
   # : (String, ?url: String?, ?query: String?, ?role: Symbol) -> void
   def initialize: (String, ?url: String?, ?query: String?, ?role: Symbol) -> void
 
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

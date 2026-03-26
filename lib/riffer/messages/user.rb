@@ -16,17 +16,20 @@ class Riffer::Messages::User < Riffer::Messages::Base
 
   # Initializes a user message.
   #
+  #--
   #: (String, ?files: Array[Riffer::FilePart]) -> void
   def initialize(content, files: [])
     super(content)
     @files = files
   end
 
+  #--
   #: () -> Symbol
   def role
     :user
   end
 
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content}

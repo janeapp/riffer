@@ -25,6 +25,7 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   # The type of error (:unknown_tool, :validation_error, :execution_error, :timeout_error).
   attr_reader :error_type #: Symbol?
 
+  #--
   #: (String, tool_call_id: String, name: String, ?error: String?, ?error_type: Symbol?) -> void
   def initialize(content, tool_call_id:, name:, error: nil, error_type: nil)
     super(content)
@@ -36,11 +37,13 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
 
   # Returns true if the tool execution resulted in an error.
   #
+  #--
   #: () -> bool
   def error?
     !@error.nil?
   end
 
+  #--
   #: () -> Symbol
   def role
     :tool
@@ -48,6 +51,7 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
 
   # Converts the message to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content, tool_call_id: tool_call_id, name: name}

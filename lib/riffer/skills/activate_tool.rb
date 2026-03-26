@@ -19,9 +19,10 @@ class Riffer::Skills::ActivateTool < Riffer::Tool
 
   # Activates a skill by name and returns its body.
   #
-  # +context+ - tool context containing +:skills+ (a Riffer::Skills::Context).
-  # +name+ - the skill name to activate.
+  # [context] tool context containing +:skills+ (a Riffer::Skills::Context).
+  # [name] the skill name to activate.
   #
+  #--
   #: (context: Hash[Symbol, untyped]?, name: String) -> Riffer::Tools::Response
   def call(context:, name:)
     skills_context = context&.dig(:skills)

@@ -29,13 +29,14 @@ class Riffer::Guardrails::Tripwire
 
   # Creates a new tripwire.
   #
-  # +reason+ - the reason for blocking.
-  # +guardrail+ - the guardrail class that blocked.
-  # +phase+ - :before or :after.
-  # +metadata+ - optional additional information.
+  # [reason] the reason for blocking.
+  # [guardrail] the guardrail class that blocked.
+  # [phase] :before or :after.
+  # [metadata] optional additional information.
   #
   # Raises Riffer::ArgumentError if the phase is invalid.
   #
+  #--
   #: (reason: String, guardrail: singleton(Riffer::Guardrail), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(reason:, guardrail:, phase:, metadata: nil)
     raise Riffer::ArgumentError, "Invalid phase: #{phase}" unless PHASES.include?(phase)
@@ -48,6 +49,7 @@ class Riffer::Guardrails::Tripwire
 
   # Converts the tripwire to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     {

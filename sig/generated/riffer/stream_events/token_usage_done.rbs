@@ -11,9 +11,11 @@ class Riffer::StreamEvents::TokenUsageDone < Riffer::StreamEvents::Base
   # The token usage data for this response.
   attr_reader token_usage: Riffer::TokenUsage
 
+  # --
   # : (token_usage: Riffer::TokenUsage, ?role: Symbol) -> void
   def initialize: (token_usage: Riffer::TokenUsage, ?role: Symbol) -> void
 
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

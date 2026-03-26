@@ -8,9 +8,11 @@ class Riffer::StreamEvents::ReasoningDelta < Riffer::StreamEvents::Base
   # The incremental reasoning content.
   attr_reader content: String
 
+  # --
   # : (String, ?role: Symbol) -> void
   def initialize: (String, ?role: Symbol) -> void
 
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

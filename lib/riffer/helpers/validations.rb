@@ -7,6 +7,7 @@ module Riffer::Helpers::Validations
   #
   # Raises Riffer::ArgumentError if the value is not a string or is empty.
   #
+  #--
   #: (untyped, ?String) -> true
   def validate_is_string!(value, name = "value")
     raise Riffer::ArgumentError, "#{name} must be a String" unless value.is_a?(String)

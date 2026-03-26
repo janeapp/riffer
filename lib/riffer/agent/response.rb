@@ -33,14 +33,15 @@ class Riffer::Agent::Response
 
   # Creates a new response.
   #
-  # +content+ - the response content.
-  # +tripwire+ - optional tripwire for blocked responses.
-  # +modifications+ - guardrail modifications applied during processing.
-  # +interrupted+ - whether the agent loop was interrupted by a callback.
-  # +interrupt_reason+ - optional reason passed via +throw :riffer_interrupt, reason+.
-  # +structured_output+ - parsed structured output when structured output is configured.
-  # +messages+ - the full message history from the agent conversation.
+  # [content] the response content.
+  # [tripwire] optional tripwire for blocked responses.
+  # [modifications] guardrail modifications applied during processing.
+  # [interrupted] whether the agent loop was interrupted by a callback.
+  # [interrupt_reason] optional reason passed via <tt>throw :riffer_interrupt, reason</tt>.
+  # [structured_output] parsed structured output when structured output is configured.
+  # [messages] the full message history from the agent conversation.
   #
+  #--
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base]) -> void
   def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [])
     @content = content
@@ -54,6 +55,7 @@ class Riffer::Agent::Response
 
   # Returns true if the response was blocked by a guardrail.
   #
+  #--
   #: () -> bool
   def blocked?
     !tripwire.nil?
@@ -61,14 +63,16 @@ class Riffer::Agent::Response
 
   # Returns true if any guardrail modified data during processing.
   #
+  #--
   #: () -> bool
   def modified?
     modifications.any?
   end
 
   # Returns true if the agent loop was interrupted by a callback
-  # via +throw :riffer_interrupt+.
+  # via <tt>throw :riffer_interrupt</tt>.
   #
+  #--
   #: () -> bool
   def interrupted?
     @interrupted

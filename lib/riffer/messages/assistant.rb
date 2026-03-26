@@ -22,6 +22,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # Parsed structured output hash, or nil when not applicable.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
 
+  #--
   #: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
   def initialize(content, tool_calls: [], token_usage: nil, structured_output: nil)
     super(content)
@@ -30,11 +31,13 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     @structured_output = structured_output
   end
 
+  #--
   #: () -> Symbol
   def role
     :assistant
   end
 
+  #--
   #: () -> bool
   def structured_output?
     !@structured_output.nil?
@@ -42,6 +45,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
   # Converts the message to a hash.
   #
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content}

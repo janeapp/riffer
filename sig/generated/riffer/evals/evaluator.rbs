@@ -16,16 +16,19 @@
 class Riffer::Evals::Evaluator
   # Gets or sets the evaluation instructions (criteria and scoring rubric).
   #
+  # --
   # : (?String?) -> String?
   def self.instructions: (?String?) -> String?
 
   # Gets or sets whether higher scores are better.
   #
+  # --
   # : (?bool?) -> bool
   def self.higher_is_better: (?bool?) -> bool
 
   # Gets or sets the judge model for LLM-as-judge evaluations.
   #
+  # --
   # : (?String?) -> String?
   def self.judge_model: (?String?) -> String?
 
@@ -34,13 +37,14 @@ class Riffer::Evals::Evaluator
   # The default implementation calls the judge with the class-level +instructions+.
   # Override this method for custom evaluation logic (e.g. rule-based evaluators).
   #
-  # +input+ - the input to evaluate; String or Array of message hashes/Message objects.
-  # +output+ - the agent's response to evaluate.
-  # +ground_truth+ - optional reference answer for comparison.
-  # +messages+ - the full message history from the agent conversation.
+  # [input] the input to evaluate; String or Array of message hashes/Message objects.
+  # [output] the agent's response to evaluate.
+  # [ground_truth] optional reference answer for comparison.
+  # [messages] the full message history from the agent conversation.
   #
   # Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.
   #
+  # --
   # : (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
   def evaluate: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
 
@@ -52,16 +56,19 @@ class Riffer::Evals::Evaluator
   # Array inputs (message hashes or Message objects) are formatted
   # as labeled role/content pairs separated by blank lines.
   #
+  # --
   # : (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
   def format_input: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
 
   # Returns a Judge instance configured for this evaluator.
   #
+  # --
   # : () -> Riffer::Evals::Judge
   def judge: () -> Riffer::Evals::Judge
 
   # Helper to build a Result object.
   #
+  # --
   # : (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
   def result: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
 end

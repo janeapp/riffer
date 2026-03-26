@@ -31,6 +31,7 @@ class Riffer::Skills::Frontmatter
   #
   # Raises Riffer::ArgumentError if frontmatter is invalid.
   #
+  # --
   # : (String) -> [Riffer::Skills::Frontmatter, String]
   def self.parse: (String) -> [ Riffer::Skills::Frontmatter, String ]
 
@@ -38,28 +39,33 @@ class Riffer::Skills::Frontmatter
   #
   # Raises Riffer::ArgumentError if frontmatter is invalid.
   #
+  # --
   # : (String) -> Riffer::Skills::Frontmatter
   def self.parse_frontmatter: (String) -> Riffer::Skills::Frontmatter
 
+  # --
   # : (String) -> [Hash[Symbol, untyped], String]
   def self.split_frontmatter: (String) -> [ Hash[Symbol, untyped], String ]
 
   # Creates a new Frontmatter.
   #
-  # +name+ - the skill name (must match +[a-z0-9]([a-z0-9-]*[a-z0-9])?+, 1-64 chars).
-  # +description+ - the skill description (1-1024 chars).
-  # +metadata+ - optional metadata hash.
+  # [name] the skill name (must match +[a-z0-9]([a-z0-9-]*[a-z0-9])?+, 1-64 chars).
+  # [description] the skill description (1-1024 chars).
+  # [metadata] optional metadata hash.
   #
   # Raises Riffer::ArgumentError if name or description is invalid.
   #
+  # --
   # : (name: String, description: String, ?metadata: Hash[Symbol, untyped]) -> void
   def initialize: (name: String, description: String, ?metadata: Hash[Symbol, untyped]) -> void
 
   private
 
+  # --
   # : (untyped) -> void
   def validate_name!: (untyped) -> void
 
+  # --
   # : (untyped) -> void
   def validate_description!: (untyped) -> void
 end

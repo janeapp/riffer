@@ -33,6 +33,7 @@ class Riffer::Tool
 
   # Gets or sets the tool description.
   #
+  #--
   #: (?String?) -> String?
   def self.description(value = nil)
     return @description if value.nil?
@@ -41,6 +42,7 @@ class Riffer::Tool
 
   # Gets or sets the tool identifier/name.
   #
+  #--
   #: (?String?) -> String
   def self.identifier(value = nil)
     return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self), separator: TOOL_SEPARATOR) if value.nil?
@@ -49,6 +51,7 @@ class Riffer::Tool
 
   # Alias for identifier - used by providers.
   #
+  #--
   #: (?String?) -> String
   def self.name(value = nil)
     return identifier(value) unless value.nil?
@@ -57,6 +60,7 @@ class Riffer::Tool
 
   # Gets or sets the tool timeout in seconds.
   #
+  #--
   #: (?(Integer | Float)?) -> (Integer | Float)
   def self.timeout(value = nil)
     return @timeout || DEFAULT_TIMEOUT if value.nil?
@@ -65,6 +69,7 @@ class Riffer::Tool
 
   # Defines parameters using the Params DSL.
   #
+  #--
   #: () ?{ () -> void } -> Riffer::Params?
   def self.params(&block)
     return @params_builder if block.nil?
@@ -74,6 +79,7 @@ class Riffer::Tool
 
   # Returns the JSON Schema for the tool's parameters.
   #
+  #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def self.parameters_schema(strict: false)
     @params_builder&.to_json_schema(strict: strict) || empty_schema
@@ -88,6 +94,7 @@ class Riffer::Tool
   #
   # Raises NotImplementedError if not implemented by subclass.
   #
+  #--
   #: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
   def call(context:, **kwargs)
     raise NotImplementedError, "#{self.class} must implement #call"
@@ -95,6 +102,7 @@ class Riffer::Tool
 
   # Creates a text response. Shorthand for Riffer::Tools::Response.text.
   #
+  #--
   #: (untyped) -> Riffer::Tools::Response
   def text(result)
     Riffer::Tools::Response.text(result)
@@ -102,6 +110,7 @@ class Riffer::Tool
 
   # Creates a JSON response. Shorthand for Riffer::Tools::Response.json.
   #
+  #--
   #: (untyped) -> Riffer::Tools::Response
   def json(result)
     Riffer::Tools::Response.json(result)
@@ -109,6 +118,7 @@ class Riffer::Tool
 
   # Creates an error response. Shorthand for Riffer::Tools::Response.error.
   #
+  #--
   #: (String, ?type: Symbol) -> Riffer::Tools::Response
   def error(message, type: :execution_error)
     Riffer::Tools::Response.error(message, type: type)
@@ -120,6 +130,7 @@ class Riffer::Tool
   # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
   # Raises Riffer::Error if the tool does not return a Response object.
   #
+  #--
   #: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params

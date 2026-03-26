@@ -10,6 +10,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
   # Initializes the mock provider.
   #
+  #--
   #: (**untyped) -> void
   def initialize(**options)
     @responses = options[:responses] || []
@@ -26,6 +27,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
   #   provider.stub_response("Final response", token_usage: Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5))
   #
+  #--
   #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -> void
   def stub_response(content, tool_calls: [], token_usage: nil)
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
@@ -41,6 +43,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
   # Clears all stubbed responses.
   #
+  #--
   #: () -> void
   def clear_stubs
     @stubbed_responses = []
@@ -48,6 +51,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
   private
 
+  #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     web_search = options[:web_search]
@@ -57,26 +61,31 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     {response: response}
   end
 
+  #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate(params)
     params[:response]
   end
 
+  #--
   #: (untyped) -> Riffer::TokenUsage?
   def extract_token_usage(response)
     response[:token_usage]
   end
 
+  #--
   #: (untyped) -> String
   def extract_content(response)
     response.is_a?(Hash) ? (response[:content] || "") : response.content
   end
 
+  #--
   #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     response.is_a?(Hash) ? (response[:tool_calls] || []) : response.tool_calls
   end
 
+  #--
   #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream(params, yielder)
     response = params[:response]
@@ -118,6 +127,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage) if token_usage
   end
 
+  #--
   #: () -> Hash[Symbol, untyped]
   def next_response
     if @stubbed_responses.any?

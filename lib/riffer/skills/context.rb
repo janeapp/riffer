@@ -22,10 +22,11 @@ class Riffer::Skills::Context
 
   # Creates a new skills context for a generation cycle.
   #
-  # +backend+ - the skills backend for reading skill bodies.
-  # +skills+ - skill catalog indexed by name.
-  # +adapter+ - the adapter used to render skill content.
+  # [backend] the skills backend for reading skill bodies.
+  # [skills] skill catalog indexed by name.
+  # [adapter] the adapter used to render skill content.
   #
+  #--
   #: (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void
   def initialize(backend:, skills:, adapter:)
     @backend = backend
@@ -38,6 +39,7 @@ class Riffer::Skills::Context
   #
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
   #
+  #--
   #: (String) -> String
   def activate(name)
     raise Riffer::ArgumentError, "Unknown skill: '#{name}'" unless skills.key?(name)
@@ -49,6 +51,7 @@ class Riffer::Skills::Context
 
   # Returns whether a skill has been activated.
   #
+  #--
   #: (String) -> bool
   def activated?(name)
     @activated.key?(name)
@@ -58,6 +61,7 @@ class Riffer::Skills::Context
   #
   # Includes the catalog and any pre-activated skill bodies.
   #
+  #--
   #: () -> String
   def system_prompt
     available = available_skills
@@ -69,6 +73,7 @@ class Riffer::Skills::Context
 
   private
 
+  #--
   #: () -> Array[Riffer::Skills::Frontmatter]
   def available_skills
     skills.values.reject { |skill| @activated.key?(skill.name) }
