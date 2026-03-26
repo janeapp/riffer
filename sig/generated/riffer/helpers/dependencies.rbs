@@ -8,19 +8,11 @@ module Riffer::Helpers::Dependencies
   class LoadError < ::LoadError
   end
 
-  # Raised when a gem version requirement is not satisfied.
-  class VersionError < ScriptError
-  end
-
-  # Declares a dependency on a gem.
+  # Requires a gem by name, raising a helpful error if it is not installed.
   #
-  # Verifies the gem is installed and satisfies version requirements,
-  # then requires it.
-  #
-  # Raises LoadError if the gem is not installed.
-  # Raises VersionError if the gem version does not satisfy requirements.
+  # Raises LoadError if the gem cannot be required.
   #
   # --
-  # : (String, ?req: (bool | String)) -> true
-  def depends_on: (String, ?req: bool | String) -> true
+  # : (String) -> true
+  def depends_on: (String) -> true
 end
