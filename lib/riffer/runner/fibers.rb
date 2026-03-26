@@ -4,7 +4,7 @@
 # Processes items concurrently using fibers via the +async+ gem.
 #
 # All items run as fibers simultaneously by default. When
-# +max_concurrency+ is set, an +Async::Semaphore+ limits how many
+# +max_concurrency+ is set, an <tt>Async::Semaphore</tt> limits how many
 # fibers execute at once.
 #
 # If multiple fibers raise, only the first exception is re-raised
@@ -16,9 +16,10 @@
 class Riffer::Runner::Fibers < Riffer::Runner
   include Riffer::Helpers::Dependencies
 
-  # +max_concurrency+ - maximum number of fibers to run simultaneously.
+  # [max_concurrency] maximum number of fibers to run simultaneously.
   #   When +nil+, all fibers run without limit.
   #
+  #--
   #: (?max_concurrency: Integer?) -> void
   def initialize(max_concurrency: nil)
     depends_on "async"
@@ -26,6 +27,7 @@ class Riffer::Runner::Fibers < Riffer::Runner
     @max_concurrency = max_concurrency
   end
 
+  #--
   #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)
     return [] if items.empty?

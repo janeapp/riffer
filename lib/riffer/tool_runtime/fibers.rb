@@ -8,9 +8,10 @@
 #   end
 #
 class Riffer::ToolRuntime::Fibers < Riffer::ToolRuntime
-  # +max_concurrency+ - maximum number of tool calls to execute simultaneously.
+  # [max_concurrency] maximum number of tool calls to execute simultaneously.
   #   When +nil+, all tool calls run as fibers without limit.
   #
+  #--
   #: (?max_concurrency: Integer?) -> void
   def initialize(max_concurrency: nil)
     super(runner: Riffer::Runner::Fibers.new(max_concurrency: max_concurrency))
