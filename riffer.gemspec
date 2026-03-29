@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
   spec.add_development_dependency "openai", "~> 0.56.0"
   spec.add_development_dependency "async", "~> 2.25", "< 2.38"
-  spec.add_development_dependency "io-event", "< 1.14"
+  spec.add_development_dependency "io-event", "< 1.15"
 
   # Testing
   spec.add_development_dependency "minitest", "~> 6.0"
