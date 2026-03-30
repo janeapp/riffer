@@ -289,7 +289,17 @@ See [Subagents](#subagents) for full details including dynamic resolution, conte
 
 > **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
 
-Configures how subagent calls are executed. Defaults to sequential (inline) execution. Accepts a `Riffer::AgentRuntime` subclass, instance, or `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Subagents — Agent Runtime](#agent-runtime) for details.
+Configures how subagent calls are executed. Defaults to sequential (inline) execution:
+
+```ruby
+class MaestroAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  uses_agents [ResearchAgent, WriterAgent]
+  agent_runtime Riffer::AgentRuntime::Threaded
+end
+```
+
+Accepts a `Riffer::AgentRuntime` subclass, a `Riffer::AgentRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Subagents — Agent Runtime](#agent-runtime) for details.
 
 ### guardrail
 
@@ -687,6 +697,10 @@ class MaestroAgent < Riffer::Agent
 end
 ```
 
+### How It Works
+
+Under the hood, each subagent is exposed to the LLM as a tool with an `agent__` prefix (e.g., `agent__research_agent`). Each tool accepts a single `message` parameter — what your agent tells the subagent. When the LLM returns agent tool calls, they are partitioned from regular tool calls and dispatched to the `AgentRuntime` instead of the `ToolRuntime`.
+
 ### Context Propagation
 
 The calling agent's `context` is passed through to subagents automatically:
@@ -767,10 +781,13 @@ Subagent execution errors are handled gracefully and returned to the calling age
 When an agent receives a response with tool calls:
 
 1. Agent detects `tool_calls` in the assistant message
-2. The configured runtime executes the calls — finds the matching tool class, validates arguments, calls `call` with context and arguments
-3. Creates Tool messages with the results
-4. Sends the updated message history back to the LLM
-5. Repeats until no more tool calls
+2. Tool calls are partitioned — agent tool calls (prefixed with `agent__`) go to the `AgentRuntime`, regular tool calls go to the `ToolRuntime`
+3. The configured runtime executes the calls (sequentially by default, or concurrently with threaded runtimes):
+   - **Tools:** Finds the matching tool class, validates arguments, calls `call` with context and arguments
+   - **Agents:** Instantiates the subagent, calls `generate` with the message and context
+4. Creates Tool messages with the results
+5. Sends the updated message history back to the LLM
+6. Repeats until no more tool calls
 
 ## Error Handling
 
