@@ -299,7 +299,7 @@ class MaestroAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::AgentRuntime` subclass, a `Riffer::AgentRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Agent Orchestration — Agent Runtime](14_AGENT_ORCHESTRATION.md#agent-runtime) for details.
+Accepts a `Riffer::AgentRuntime` subclass, a `Riffer::AgentRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Agent Orchestration — Agent Runtime](14_AGENT_ORCHESTRATION.md#agent-runtime-experimental) for details.
 
 ### guardrail
 

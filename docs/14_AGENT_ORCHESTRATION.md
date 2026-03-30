@@ -2,6 +2,10 @@
 
 Agents can delegate tasks to specialized subagents. Register subagents with `uses_agents` and the LLM decides when to delegate based on each subagent's description.
 
+## When to Use Subagents
+
+Use subagents when a task naturally decomposes into distinct specialties — for example, one agent researches while another writes. If a single agent with tools can handle the task, prefer that simpler setup. Subagents add value when each subtask benefits from its own instructions, model, or tool set.
+
 ## Defining Subagents
 
 Subagents are regular agents with a `description` (required — the LLM uses it to decide when to delegate):
@@ -75,7 +79,9 @@ response = MaestroAgent.generate(
 # ResearchAgent receives the same context
 ```
 
-## Agent Runtime
+## Agent Runtime (Experimental)
+
+> **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
 
 By default, subagent calls are executed sequentially using `Riffer::AgentRuntime::Inline`. Use `Riffer::AgentRuntime::Threaded` for concurrent execution:
 
@@ -122,9 +128,29 @@ end
 
 Per-agent configuration overrides the global default. See [Configuration](10_CONFIGURATION.md#agent-runtime-experimental) for details.
 
-## Custom Agent Runtimes
+## Custom Runtimes
 
-Create a custom runtime by subclassing `Riffer::AgentRuntime`. Override `around_agent_call` for instrumentation:
+Create a custom runtime by subclassing `Riffer::AgentRuntime` and overriding the private `dispatch_agent_call` method:
+
+```ruby
+class RemoteAgentRuntime < Riffer::AgentRuntime
+  private
+
+  def dispatch_agent_call(tool_call, agents:, context:)
+    response = HttpClient.post("/agents/execute", {
+      name: tool_call.name,
+      arguments: tool_call.arguments
+    })
+    Riffer::Tools::Response.text(response.body)
+  rescue RuntimeError => e
+    Riffer::Tools::Response.error("Error executing agent: #{e.message}", type: :execution_error)
+  end
+end
+```
+
+### Around-Call Hook
+
+Each agent call is wrapped by the `around_agent_call` method, which yields by default. Override it in a subclass to add instrumentation, logging, or other cross-cutting concerns:
 
 ```ruby
 class InstrumentedAgentRuntime < Riffer::AgentRuntime::Inline
@@ -138,6 +164,8 @@ class InstrumentedAgentRuntime < Riffer::AgentRuntime::Inline
   end
 end
 ```
+
+Subclasses inherit the hook and can override it further.
 
 ## Error Handling
 

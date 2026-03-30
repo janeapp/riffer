@@ -72,7 +72,7 @@ end
 | `Riffer::AgentRuntime` instance | Custom runtime with specific options                                                                |
 | `Proc`                          | Receives context, must return a runtime subclass or instance                                        |
 
-Per-agent configuration overrides this global default. See [Agent Orchestration](14_AGENT_ORCHESTRATION.md#agent-runtime) for details.
+Per-agent configuration overrides this global default. See [Agent Orchestration](14_AGENT_ORCHESTRATION.md#agent-runtime-experimental) for details.
 
 ## Agent-Level Configuration
 

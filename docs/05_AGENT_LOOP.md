@@ -5,13 +5,13 @@
 When an agent receives a response with tool calls:
 
 1. Agent detects `tool_calls` in the assistant message
-2. The configured tool runtime executes the tool calls (sequentially by default, or concurrently with `Riffer::ToolRuntime::Threaded`):
-   - Finds the matching tool class
-   - Validates arguments against the tool's parameter schema
-   - Calls the tool's `call` method with `context` and arguments
-   - Creates a Tool message with the result
-3. Sends the updated message history back to the LLM
-4. Repeats until no more tool calls
+2. Tool calls are partitioned — agent tool calls (prefixed with `agent__`) go to the `AgentRuntime`, regular tool calls go to the `ToolRuntime`. See [Agent Orchestration](14_AGENT_ORCHESTRATION.md) for details on subagent dispatch.
+3. The configured runtime executes the calls (sequentially by default, or concurrently with threaded runtimes):
+   - **Tools:** Finds the matching tool class, validates arguments, calls `call` with context and arguments
+   - **Agents:** Instantiates the subagent, calls `generate` with the message and context
+4. Creates Tool messages with the results
+5. Sends the updated message history back to the LLM
+6. Repeats until no more tool calls
 
 ## Error Handling
 
