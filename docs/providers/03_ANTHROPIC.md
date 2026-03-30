@@ -145,7 +145,7 @@ class WeatherTool < Riffer::Tool
 
   def call(context:, city:, unit: "celsius")
     # Implementation
-    "It's 22 degrees #{unit} in #{city}"
+    text("It's 22 degrees #{unit} in #{city}")
   end
 end
 
@@ -157,7 +157,7 @@ end
 
 ## Extended Thinking
 
-Extended thinking enables Claude to reason through complex problems before responding. This is available on Claude 3.7 models.
+Extended thinking enables Claude to reason through complex problems before responding. This is available on supported models (Claude 3.7+).
 
 ```ruby
 class ReasoningAgent < Riffer::Agent

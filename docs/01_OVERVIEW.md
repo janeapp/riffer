@@ -30,7 +30,7 @@ class WeatherTool < Riffer::Tool
   end
 
   def call(context:, city:)
-    WeatherAPI.fetch(city)
+    text(WeatherAPI.fetch(city))
   end
 end
 ```
@@ -65,7 +65,9 @@ See the [structured output section in Agents](03_AGENTS.md#structured_output) fo
 Providers are adapters that connect to LLM services. Riffer supports:
 
 - **OpenAI** - GPT models via the OpenAI API
+- **Azure OpenAI** - GPT models via Azure
 - **Amazon Bedrock** - Claude and other models via AWS Bedrock
+- **Anthropic** - Claude models via the Anthropic API
 - **Mock** - Mock provider for testing
 
 See [Providers](providers/01_PROVIDERS.md) for details.

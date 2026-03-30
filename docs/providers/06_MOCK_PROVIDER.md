@@ -100,7 +100,7 @@ class MyAgentTest < Minitest::Test
 
     response = @agent.generate("Hi")
 
-    assert_equal "Hello!", response
+    assert_equal "Hello!", response.content
   end
 
   def test_executes_tool
@@ -111,7 +111,7 @@ class MyAgentTest < Minitest::Test
 
     response = @agent.generate("What's the weather?")
 
-    assert_equal "The weather is sunny.", response
+    assert_equal "The weather is sunny.", response.content
     assert_equal 2, @provider.calls.length
   end
 

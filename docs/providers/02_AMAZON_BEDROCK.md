@@ -83,6 +83,10 @@ model_options additional_model_request_fields: {
 }
 ```
 
+## Unsupported Features
+
+**Web search** is not available through the Bedrock provider. Use the OpenAI or Anthropic provider if you need web search.
+
 ## Example
 
 ```ruby
@@ -130,7 +134,7 @@ class S3ListTool < Riffer::Tool
 
   def call(context:, bucket:, prefix: nil)
     # Implementation
-    "Found 10 objects in #{bucket}"
+    text("Found 10 objects in #{bucket}")
   end
 end
 

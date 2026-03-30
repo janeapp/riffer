@@ -74,7 +74,7 @@ class TimeTool < Riffer::Tool
   description "Gets the current time"
 
   def call(context:)
-    Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    text(Time.now.strftime('%Y-%m-%d %H:%M:%S'))
   end
 end
 

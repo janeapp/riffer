@@ -126,12 +126,13 @@ class CalculatorTool < Riffer::Tool
   end
 
   def call(context:, operation:, a:, b:)
-    case operation
+    result = case operation
     when "add" then a + b
     when "subtract" then a - b
     when "multiply" then a * b
     when "divide" then a / b
-    end.to_s
+    end
+    text(result.to_s)
   end
 end
 

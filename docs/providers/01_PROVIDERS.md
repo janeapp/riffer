@@ -128,7 +128,7 @@ class WeatherTool < Riffer::Tool
     required :city, String
   end
   def call(context:, city:)
-    "Sunny in #{city}"
+    text("Sunny in #{city}")
   end
 end
 

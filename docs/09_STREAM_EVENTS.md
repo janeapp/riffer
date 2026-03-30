@@ -35,9 +35,9 @@ Emitted when incremental text content is received:
 
 ```ruby
 event = Riffer::StreamEvents::TextDelta.new("Hello ")
-event.role     # => "assistant"
+event.role     # => :assistant
 event.content  # => "Hello "
-event.to_h     # => {role: "assistant", content: "Hello "}
+event.to_h     # => {role: :assistant, content: "Hello "}
 ```
 
 Use this to display text in real-time as it streams.
@@ -48,9 +48,9 @@ Emitted when text generation is complete:
 
 ```ruby
 event = Riffer::StreamEvents::TextDone.new("Hello, how can I help you?")
-event.role     # => "assistant"
+event.role     # => :assistant
 event.content  # => "Hello, how can I help you?"
-event.to_h     # => {role: "assistant", content: "Hello, how can I help you?"}
+event.to_h     # => {role: :assistant, content: "Hello, how can I help you?"}
 ```
 
 Contains the complete final text.
@@ -65,7 +65,7 @@ event = Riffer::StreamEvents::ToolCallDelta.new(
   name: "weather_tool",
   arguments_delta: '{"city":'
 )
-event.role             # => "assistant"
+event.role             # => :assistant
 event.item_id          # => "item_123"
 event.name             # => "weather_tool"
 event.arguments_delta  # => '{"city":'
@@ -84,7 +84,7 @@ event = Riffer::StreamEvents::ToolCallDone.new(
   name: "weather_tool",
   arguments: '{"city":"Tokyo"}'
 )
-event.role       # => "assistant"
+event.role       # => :assistant
 event.item_id    # => "item_123"
 event.call_id    # => "call_456"
 event.name       # => "weather_tool"
@@ -99,7 +99,7 @@ Emitted when reasoning/thinking content is streamed (OpenAI with reasoning enabl
 
 ```ruby
 event = Riffer::StreamEvents::ReasoningDelta.new("Let me think about ")
-event.role     # => "assistant"
+event.role     # => :assistant
 event.content  # => "Let me think about "
 ```
 
@@ -109,7 +109,7 @@ Emitted when reasoning is complete:
 
 ```ruby
 event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by step...")
-event.role     # => "assistant"
+event.role     # => :assistant
 event.content  # => "Let me think about this step by step..."
 ```
 
@@ -185,6 +185,28 @@ end
 ```
 
 See [Guardrails](12_GUARDRAILS.md) for more information.
+
+### SkillActivation
+
+Emitted when a skill is activated during streaming. Fired when the LLM calls the skill activation tool:
+
+```ruby
+agent.stream("Review this code").each do |event|
+  case event
+  when Riffer::StreamEvents::SkillActivation
+    puts "[Skill activated: #{event.name}]"
+  end
+end
+```
+
+```ruby
+event = Riffer::StreamEvents::SkillActivation.new("code-review")
+event.role  # => :system
+event.name  # => "code-review"
+event.to_h  # => {role: :system, name: "code-review"}
+```
+
+See [Skills](13_SKILLS.md) for more information.
 
 ### Interrupt
 
@@ -319,7 +341,7 @@ All events inherit from `Riffer::StreamEvents::Base`:
 class Riffer::StreamEvents::Base
   attr_reader :role
 
-  def initialize(role: "assistant")
+  def initialize(role: :assistant)
     @role = role
   end
 

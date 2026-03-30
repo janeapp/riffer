@@ -166,6 +166,8 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+Extra keyword arguments after `with:` are forwarded to the guardrail's `initialize` method. For example, `max: 1000` above is passed as `MaxLengthGuardrail.new(max: 1000)`.
+
 ### Phases
 
 - `:before` - Runs before the LLM call on input messages
