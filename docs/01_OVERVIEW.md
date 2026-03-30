@@ -35,7 +35,7 @@ class WeatherTool < Riffer::Tool
 end
 ```
 
-See [Tools](04_TOOLS.md) for details.
+See [Tools](06_TOOLS.md) for details.
 
 ### Structured Output
 
@@ -79,7 +79,7 @@ Messages represent the conversation between user and assistant. Riffer uses stro
 - `Riffer::Messages::Assistant` - LLM responses
 - `Riffer::Messages::Tool` - Tool execution results
 
-See [Messages](05_MESSAGES.md) for details.
+See [Messages](08_MESSAGES.md) for details.
 
 ### Stream Events
 
@@ -92,7 +92,7 @@ When streaming responses, Riffer emits typed events:
 - `WebSearchStatus` - Web search progress updates
 - `WebSearchDone` - Web search completion with sources
 
-See [Stream Events](06_STREAM_EVENTS.md) for details.
+See [Stream Events](09_STREAM_EVENTS.md) for details.
 
 ## Architecture
 
@@ -127,5 +127,8 @@ Response
 
 - [Getting Started](02_GETTING_STARTED.md) - Quick start guide
 - [Agents](03_AGENTS.md) - Agent configuration and usage
-- [Tools](04_TOOLS.md) - Creating tools
-- [Configuration](07_CONFIGURATION.md) - Global configuration
+- [Tools](06_TOOLS.md) - Creating tools
+- [Configuration](10_CONFIGURATION.md) - Global configuration
+- [Evals](11_EVALS.md) - Evaluating agent quality
+- [Guardrails](12_GUARDRAILS.md) - Input/output validation
+- [Skills](13_SKILLS.md) - Packaged agent capabilities

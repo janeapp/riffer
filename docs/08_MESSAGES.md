@@ -242,7 +242,7 @@ When creating tool result messages, use the `id` as `tool_call_id`.
 
 Agents can emit messages as they're added during generation via the `on_message` callback. This is useful for persistence or real-time logging. Only agent-generated messages (Assistant, Tool) are emitted—not inputs (System, User).
 
-See [Agents - on_message](03_AGENTS.md#on_message) for details.
+See [Agent Lifecycle - on_message](04_AGENT_LIFECYCLE.md#on_message) for details.
 
 ## Base Class
 

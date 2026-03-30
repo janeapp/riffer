@@ -32,45 +32,7 @@ Riffer.config.anthropic.api_key
 
 ## Provider-Specific Configuration
 
-### OpenAI
-
-| Option    | Description         |
-| --------- | ------------------- |
-| `api_key` | Your OpenAI API key |
-
-```ruby
-Riffer.configure do |config|
-  config.openai.api_key = ENV['OPENAI_API_KEY']
-end
-```
-
-### Amazon Bedrock
-
-| Option      | Description                                  |
-| ----------- | -------------------------------------------- |
-| `region`    | AWS region (e.g., `us-east-1`)               |
-| `api_token` | Optional bearer token for API authentication |
-
-```ruby
-Riffer.configure do |config|
-  config.amazon_bedrock.region = 'us-east-1'
-  config.amazon_bedrock.api_token = ENV['BEDROCK_API_TOKEN']  # Optional
-end
-```
-
-When `api_token` is not set, the provider uses standard AWS IAM authentication.
-
-### Anthropic
-
-| Option    | Description            |
-| --------- | ---------------------- |
-| `api_key` | Your Anthropic API key |
-
-```ruby
-Riffer.configure do |config|
-  config.anthropic.api_key = ENV['ANTHROPIC_API_KEY']
-end
-```
+For provider credentials and setup, see the individual [Provider guides](providers/).
 
 ### Tool Runtime (Experimental)
 
@@ -90,7 +52,7 @@ end
 | `Riffer::ToolRuntime` instance | Custom runtime with specific options                                                              |
 | `Proc`                         | Dynamic resolution                                                                                |
 
-Per-agent configuration overrides this global default. See [Tools — Tool Runtime](04_TOOLS.md#tool-runtime-experimental) for details.
+Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ## Agent-Level Configuration
 

@@ -24,37 +24,7 @@ gem install riffer
 
 ## Provider Setup
 
-Riffer requires an LLM provider. Install the provider gem for your chosen service:
-
-### OpenAI
-
-```ruby
-gem 'openai'
-```
-
-Configure your API key:
-
-```ruby
-Riffer.configure do |config|
-  config.openai.api_key = ENV['OPENAI_API_KEY']
-end
-```
-
-### Amazon Bedrock
-
-```ruby
-gem 'aws-sdk-bedrockruntime'
-```
-
-Configure your credentials:
-
-```ruby
-Riffer.configure do |config|
-  config.amazon_bedrock.region = 'us-east-1'
-  # Optional: Use bearer token auth instead of IAM
-  config.amazon_bedrock.api_token = ENV['BEDROCK_API_TOKEN']
-end
-```
+Riffer requires an LLM provider. See [Providers](providers/01_PROVIDERS.md) for setup instructions for each supported provider.
 
 ## Creating Your First Agent
 
@@ -122,7 +92,7 @@ puts agent.generate("What time is it?")
 ## Next Steps
 
 - [Agents](03_AGENTS.md) - Agent configuration options
-- [Tools](04_TOOLS.md) - Creating tools with parameters
-- [Messages](05_MESSAGES.md) - Message types and history
-- [Stream Events](06_STREAM_EVENTS.md) - Streaming event types
+- [Tools](06_TOOLS.md) - Creating tools with parameters
+- [Messages](08_MESSAGES.md) - Message types and history
+- [Stream Events](09_STREAM_EVENTS.md) - Streaming event types
 - [Providers](providers/01_PROVIDERS.md) - Provider-specific guides

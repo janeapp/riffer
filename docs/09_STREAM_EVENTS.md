@@ -167,7 +167,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-See [Guardrails](09_GUARDRAILS.md) for more information.
+See [Guardrails](12_GUARDRAILS.md) for more information.
 
 ### GuardrailModification
 
@@ -184,7 +184,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-See [Guardrails](09_GUARDRAILS.md) for more information.
+See [Guardrails](12_GUARDRAILS.md) for more information.
 
 ### Interrupt
 
@@ -218,7 +218,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-After an interrupt, call `stream` again with a string to continue the loop. See [Agents — Resuming an Interrupted Loop](03_AGENTS.md#resuming-an-interrupted-loop) for details.
+After an interrupt, call `stream` again with a string to continue the loop. See [Agent Lifecycle — Resuming an Interrupted Loop](04_AGENT_LIFECYCLE.md#resuming-an-interrupted-loop) for details.
 
 ### TokenUsageDone
 
