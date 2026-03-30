@@ -30,12 +30,12 @@ class WeatherTool < Riffer::Tool
   end
 
   def call(context:, city:)
-    WeatherAPI.fetch(city)
+    text(WeatherAPI.fetch(city))
   end
 end
 ```
 
-See [Tools](04_TOOLS.md) for details.
+See [Tools](06_TOOLS.md) for details.
 
 ### Structured Output
 
@@ -65,7 +65,9 @@ See the [structured output section in Agents](03_AGENTS.md#structured_output) fo
 Providers are adapters that connect to LLM services. Riffer supports:
 
 - **OpenAI** - GPT models via the OpenAI API
+- **Azure OpenAI** - GPT models via Azure
 - **Amazon Bedrock** - Claude and other models via AWS Bedrock
+- **Anthropic** - Claude models via the Anthropic API
 - **Mock** - Mock provider for testing
 
 See [Providers](providers/01_PROVIDERS.md) for details.
@@ -79,7 +81,7 @@ Messages represent the conversation between user and assistant. Riffer uses stro
 - `Riffer::Messages::Assistant` - LLM responses
 - `Riffer::Messages::Tool` - Tool execution results
 
-See [Messages](05_MESSAGES.md) for details.
+See [Messages](08_MESSAGES.md) for details.
 
 ### Stream Events
 
@@ -92,7 +94,7 @@ When streaming responses, Riffer emits typed events:
 - `WebSearchStatus` - Web search progress updates
 - `WebSearchDone` - Web search completion with sources
 
-See [Stream Events](06_STREAM_EVENTS.md) for details.
+See [Stream Events](09_STREAM_EVENTS.md) for details.
 
 ## Architecture
 
@@ -127,5 +129,8 @@ Response
 
 - [Getting Started](02_GETTING_STARTED.md) - Quick start guide
 - [Agents](03_AGENTS.md) - Agent configuration and usage
-- [Tools](04_TOOLS.md) - Creating tools
-- [Configuration](07_CONFIGURATION.md) - Global configuration
+- [Tools](06_TOOLS.md) - Creating tools
+- [Configuration](10_CONFIGURATION.md) - Global configuration
+- [Evals](11_EVALS.md) - Evaluating agent quality
+- [Guardrails](12_GUARDRAILS.md) - Input/output validation
+- [Skills](13_SKILLS.md) - Packaged agent capabilities

@@ -130,7 +130,7 @@ class S3ListTool < Riffer::Tool
 
   def call(context:, bucket:, prefix: nil)
     # Implementation
-    "Found 10 objects in #{bucket}"
+    text("Found 10 objects in #{bucket}")
   end
 end
 

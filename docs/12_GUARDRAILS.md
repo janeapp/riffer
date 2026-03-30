@@ -2,7 +2,40 @@
 
 Guardrails provide pre-processing of input messages (before LLM calls) and post-processing of output responses (after LLM responses). They enable validation, transformation, and content filtering in the agent pipeline.
 
-> **Tip:** See `examples/guardrails/` for ready-to-use reference implementations you can copy into your project.
+## When to Use Guardrails
+
+Use guardrails when you need to enforce rules that apply to every request — content filtering, PII redaction, length limits, or input validation. If you need one-off conditional logic, handle it in your tool or agent instructions instead.
+
+## Quickstart
+
+```ruby
+require 'riffer'
+
+class ProfanityFilter < Riffer::Guardrail
+  def process_input(messages, context:)
+    if messages.any? { |m| m.content&.match?(/badword/i) }
+      block("Profanity detected")
+    else
+      pass(messages)
+    end
+  end
+end
+
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  instructions 'You are a helpful assistant.'
+  guardrail :before, with: ProfanityFilter
+end
+
+response = MyAgent.generate("Hello!")
+response.blocked?  # => false
+
+response = MyAgent.generate("You are a badword")
+response.blocked?          # => true
+response.tripwire.reason   # => "Profanity detected"
+```
+
+> **Tip:** See [`examples/guardrails/`](https://github.com/janeapp/riffer/tree/main/examples/guardrails) for more ready-to-use reference implementations.
 
 ## Overview
 
@@ -132,6 +165,8 @@ class MyAgent < Riffer::Agent
   guardrail :around, with: MaxLengthGuardrail, max: 1000
 end
 ```
+
+Extra keyword arguments after `with:` are forwarded to the guardrail's `initialize` method. For example, `max: 1000` above is passed as `MaxLengthGuardrail.new(max: 1000)`.
 
 ### Phases
 

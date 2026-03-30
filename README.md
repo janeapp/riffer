@@ -49,12 +49,18 @@ For comprehensive documentation, see the [docs](docs/) directory:
 
 - [Overview](docs/01_OVERVIEW.md) - Core concepts and architecture
 - [Getting Started](docs/02_GETTING_STARTED.md) - Installation and first steps
-- [Agents](docs/03_AGENTS.md) - Building AI agents
-- [Tools](docs/04_TOOLS.md) - Creating tools for agents
-- [Messages](docs/05_MESSAGES.md) - Message types and formats
-- [Stream Events](docs/06_STREAM_EVENTS.md) - Streaming responses
-- [Configuration](docs/07_CONFIGURATION.md) - Framework configuration
-- [Providers](docs_providers/01_PROVIDERS.md) - LLM provider adapters
+- [Agents](docs/03_AGENTS.md) - Defining and configuring agents
+- [Agent Lifecycle](docs/04_AGENT_LIFECYCLE.md) - Generate, stream, and responses
+- [Agent Loop](docs/05_AGENT_LOOP.md) - Tool execution flow and stopping
+- [Tools](docs/06_TOOLS.md) - Creating tools for agents
+- [Advanced Tools](docs/07_TOOL_ADVANCED.md) - Timeouts, runtime, and registration
+- [Messages](docs/08_MESSAGES.md) - Message types and formats
+- [Stream Events](docs/09_STREAM_EVENTS.md) - Streaming responses
+- [Configuration](docs/10_CONFIGURATION.md) - Framework configuration
+- [Evals](docs/11_EVALS.md) - Evaluating agent quality
+- [Guardrails](docs/12_GUARDRAILS.md) - Input/output validation
+- [Skills](docs/13_SKILLS.md) - Packaged agent capabilities
+- [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
 
 ### API Reference
 

@@ -12,12 +12,10 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = "doc"
   rdoc.title = "Riffer Documentation"
   rdoc.main = "README.md"
-
-  # Explicitly include top-level docs and the library
-  rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "LICENSE.txt", "docs/**/*.md", "docs_providers/**/*.md")
+  rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "LICENSE.txt")
   rdoc.rdoc_files.include("lib/**/*.rb")
-
   rdoc.options << "--charset" << "utf-8"
+  rdoc.options << "--page-dir" << "docs"
 end
 
 task docs: :rdoc
