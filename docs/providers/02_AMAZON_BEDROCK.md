@@ -83,10 +83,6 @@ model_options additional_model_request_fields: {
 }
 ```
 
-## Unsupported Features
-
-**Web search** is not available through the Bedrock provider. Use the OpenAI or Anthropic provider if you need web search.
-
 ## Example
 
 ```ruby
