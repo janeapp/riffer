@@ -134,7 +134,7 @@ agent
 
 Works with both `generate` and `stream`. Only emits agent-generated messages (Assistant, Tool), not inputs (System, User).
 
-#### Interrupting the Agent Loop
+## Interrupting the Agent Loop
 
 Callbacks can interrupt the agent loop. This is useful for human-in-the-loop approval, cost limits, or content filtering.
 
@@ -172,7 +172,7 @@ end
 
 **Partial tool execution** — tool calls are executed one at a time. When an interrupt fires during tool execution, only the completed tool results remain in the message history. For example, if an assistant message requests two tool calls and the callback interrupts after the first tool result, only that first result will be in the message history.
 
-#### Resuming an Interrupted Loop
+### Resuming an Interrupted Loop
 
 There are two ways to resume after an interrupt, depending on whether the agent is still in memory or you're restoring from persisted data.
 
@@ -209,7 +209,7 @@ end
 
 **Important:** You cannot pass an array to an agent that already has messages. This raises `Riffer::ArgumentError` because it would silently discard the existing history. Use a string to continue, or create a new agent instance for cross-process resume.
 
-#### Building System Messages for Persistence
+### Building System Messages for Persistence
 
 Use `generate_instruction_message` and `generate_skills_message` to generate system messages independently. This is useful for database persistence workflows where you need to store and later reconstruct message histories.
 

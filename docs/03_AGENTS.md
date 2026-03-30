@@ -2,6 +2,10 @@
 
 Agents are the central orchestrator in Riffer. They manage the conversation flow, call LLM providers, and handle tool execution.
 
+## When to Use Agents
+
+Use an agent when the task is open-ended and the LLM needs to reason, iterate, or call tools to produce a result. If your task follows a fixed sequence of steps with no LLM decision-making, consider a simpler pipeline instead.
+
 ## Defining an Agent
 
 Create an agent by subclassing `Riffer::Agent`:
@@ -277,3 +281,17 @@ end
 ```
 
 See [Guardrails](12_GUARDRAILS.md) for detailed documentation.
+
+## Expand Your Agent
+
+| Goal | Feature | Guide |
+|------|---------|-------|
+| Call APIs or run functions | Tools | [Tools](06_TOOLS.md) |
+| Return structured JSON | Structured Output | [structured_output](#structured_output) |
+| Validate or filter content | Guardrails | [Guardrails](12_GUARDRAILS.md) |
+| Measure output quality | Evals | [Evals](11_EVALS.md) |
+| Add packaged capabilities | Skills | [Skills](13_SKILLS.md) |
+| Control the tool-use loop | Agent Loop | [Agent Loop](05_AGENT_LOOP.md) |
+| Human-in-the-loop approval | Interrupts | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
+| Run tools concurrently | Tool Runtime | [Advanced Tools](07_TOOL_ADVANCED.md#tool-runtime-experimental) |
+| Stream responses in real time | Streaming | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#stream) |

@@ -2,6 +2,10 @@
 
 Evals let you measure the quality of agent outputs using LLM-as-judge evaluations.
 
+## When to Use Evals
+
+Use evals when you need to measure agent quality objectively — after changing instructions, switching models, or before deploying to production. Evals catch regressions that manual testing misses because LLM outputs are non-deterministic.
+
 > **Tip:** See `examples/evaluators/` for ready-to-use reference implementations you can copy into your project.
 
 ## Overview

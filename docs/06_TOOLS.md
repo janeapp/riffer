@@ -2,6 +2,10 @@
 
 Tools are callable functions that agents can invoke to interact with external systems, fetch data, or perform actions.
 
+## When to Use Tools
+
+Use tools when your agent needs to fetch external data, call APIs, query databases, or perform side effects. If the agent only needs to generate text from its training data, you do not need tools.
+
 ## Defining a Tool
 
 Create a tool by subclassing `Riffer::Tool`:
