@@ -55,7 +55,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-See the [subagent section in Agents](03_AGENTS.md#subagents) for details.
+See [Agent Orchestration](14_AGENT_ORCHESTRATION.md) for details.
 
 ### Structured Output
 
@@ -151,6 +151,7 @@ Response
 - [Agents](03_AGENTS.md) - Agent configuration and usage
 - [Tools](06_TOOLS.md) - Creating tools
 - [Configuration](10_CONFIGURATION.md) - Global configuration
+- [Agent Orchestration](14_AGENT_ORCHESTRATION.md) - Subagents and delegation
 - [Evals](11_EVALS.md) - Evaluating agent quality
 - [Guardrails](12_GUARDRAILS.md) - Input/output validation
 - [Skills](13_SKILLS.md) - Packaged agent capabilities

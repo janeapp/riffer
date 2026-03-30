@@ -15,7 +15,7 @@ The behavior depends on what you pass and the agent's current state:
 | **Array**  | No prior messages              | **Restore from persisted data.** Uses the array as-is (no system messages added). Pending tool calls are executed. This is for cross-process resume.                  |
 | **Array**  | Has messages from a prior call | **Raises `Riffer::ArgumentError`.** Use a string to continue, or a new agent instance to start from a persisted array.                                                |
 
-**State reset per call:** Each call to `generate` or `stream` resets `context`, tools, tool runtime, model, skills state, and the interrupted flag. This means `context:` must be passed on every call — it is not carried over from a previous call. The only state that persists across calls is the message history and cumulative `token_usage`.
+**State reset per call:** Each call to `generate` or `stream` resets `context`, tools, tool runtime, agent runtime, agent map, model, skills state, and the interrupted flag. This means `context:` must be passed on every call — it is not carried over from a previous call. The only state that persists across calls is the message history and cumulative `token_usage`.
 
 ```ruby
 agent.generate('Hello', context: {user_id: 123})
