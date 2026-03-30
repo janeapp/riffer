@@ -35,7 +35,7 @@ response.blocked?          # => true
 response.tripwire.reason   # => "Profanity detected"
 ```
 
-> **Tip:** See `examples/guardrails/` for more ready-to-use reference implementations.
+> **Tip:** See [`examples/guardrails/`](https://github.com/janeapp/riffer/tree/main/examples/guardrails) for more ready-to-use reference implementations.
 
 ## Overview
 

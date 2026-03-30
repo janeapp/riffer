@@ -6,7 +6,7 @@ Evals let you measure the quality of agent outputs using LLM-as-judge evaluation
 
 Use evals when you need to measure agent quality objectively — after changing instructions, switching models, or before deploying to production. Evals catch regressions that manual testing misses because LLM outputs are non-deterministic.
 
-> **Tip:** See `examples/evaluators/` for ready-to-use reference implementations you can copy into your project.
+> **Tip:** See [`examples/evaluators/`](https://github.com/janeapp/riffer/tree/main/examples/evaluators) for ready-to-use reference implementations you can copy into your project.
 
 ## Overview
 
@@ -56,7 +56,7 @@ The judge model is the LLM that evaluates agent outputs. You can use any configu
 
 ## Example Evaluators
 
-Ready-to-use evaluator implementations are available in `examples/evaluators/`. Copy them into your project and customize as needed.
+Ready-to-use evaluator implementations are available in [`examples/evaluators/`](https://github.com/janeapp/riffer/tree/main/examples/evaluators). Copy them into your project and customize as needed.
 
 ### AnswerRelevancy
 
