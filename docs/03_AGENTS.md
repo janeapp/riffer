@@ -284,14 +284,14 @@ See [Guardrails](12_GUARDRAILS.md) for detailed documentation.
 
 ## Expand Your Agent
 
-| Goal | Feature | Guide |
-|------|---------|-------|
-| Call APIs or run functions | Tools | [Tools](06_TOOLS.md) |
-| Return structured JSON | Structured Output | [structured_output](#structured_output) |
-| Validate or filter content | Guardrails | [Guardrails](12_GUARDRAILS.md) |
-| Measure output quality | Evals | [Evals](11_EVALS.md) |
-| Add packaged capabilities | Skills | [Skills](13_SKILLS.md) |
-| Control the tool-use loop | Agent Loop | [Agent Loop](05_AGENT_LOOP.md) |
-| Human-in-the-loop approval | Interrupts | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
-| Run tools concurrently | Tool Runtime | [Advanced Tools](07_TOOL_ADVANCED.md#tool-runtime-experimental) |
-| Stream responses in real time | Streaming | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#stream) |
+| Goal                          | Feature           | Guide                                                                |
+| ----------------------------- | ----------------- | -------------------------------------------------------------------- |
+| Call APIs or run functions    | Tools             | [Tools](06_TOOLS.md)                                                 |
+| Return structured JSON        | Structured Output | [structured_output](#structured_output)                              |
+| Validate or filter content    | Guardrails        | [Guardrails](12_GUARDRAILS.md)                                       |
+| Measure output quality        | Evals             | [Evals](11_EVALS.md)                                                 |
+| Add packaged capabilities     | Skills            | [Skills](13_SKILLS.md)                                               |
+| Control the tool-use loop     | Agent Loop        | [Agent Loop](05_AGENT_LOOP.md)                                       |
+| Human-in-the-loop approval    | Interrupts        | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
+| Run tools concurrently        | Tool Runtime      | [Advanced Tools](07_TOOL_ADVANCED.md#tool-runtime-experimental)      |
+| Stream responses in real time | Streaming         | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#stream)                      |
