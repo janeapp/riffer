@@ -36,7 +36,7 @@ class Riffer::AgentRuntime
   #--
   #: (Array[Riffer::Messages::Assistant::ToolCall], agents: Hash[String, singleton(Riffer::Agent)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, agents:, context:)
-    @runner.map(tool_calls) do |tool_call|
+    @runner.map(tool_calls, context: context) do |tool_call|
       result = around_agent_call(tool_call, context: context) do
         dispatch_agent_call(tool_call, agents: agents, context: context)
       end
