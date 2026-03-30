@@ -42,12 +42,6 @@ See [Tools](06_TOOLS.md) for details.
 Agents can delegate tasks to specialized subagents using `uses_agents`. The LLM decides when to delegate based on each subagent's description.
 
 ```ruby
-class ResearchAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-  description 'Researches topics and returns summaries'
-  instructions 'You are a research specialist.'
-end
-
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   instructions 'You delegate research tasks to your subagent.'

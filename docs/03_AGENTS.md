@@ -101,7 +101,7 @@ MyAgent.identifier  # => "custom_agent_name"
 
 ### description
 
-Sets a description for the agent. Required for agents used as subagents — the LLM needs it to make delegation decisions:
+Sets a human-readable description for the agent:
 
 ```ruby
 class ResearchAgent < Riffer::Agent
@@ -299,7 +299,7 @@ class MaestroAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::AgentRuntime` subclass, a `Riffer::AgentRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.agent_runtime`. See [Agent Orchestration — Agent Runtime](14_AGENT_ORCHESTRATION.md#agent-runtime-experimental) for details.
+See [Agent Orchestration — Agent Runtime](14_AGENT_ORCHESTRATION.md#agent-runtime-experimental) for details.
 
 ### guardrail
 

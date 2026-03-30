@@ -4,7 +4,7 @@ Agents can delegate tasks to specialized subagents. Register subagents with `use
 
 ## When to Use Subagents
 
-Use subagents when a task naturally decomposes into distinct specialties — for example, one agent researches while another writes. If a single agent with tools can handle the task, prefer that simpler setup. Subagents add value when each subtask benefits from its own instructions, model, or tool set.
+Use subagents when a task naturally decomposes into distinct specialties. If a single agent with tools can handle the task, prefer that simpler setup. Subagents add value when each subtask benefits from its own instructions, model, or tool set — for example, a content pipeline where one agent researches a topic (with web search tools and a fast model) while another writes polished copy (with different instructions and a stronger model).
 
 ## Defining Subagents
 
@@ -63,9 +63,9 @@ class MaestroAgent < Riffer::Agent
 end
 ```
 
-## How It Works
+## How Subagents Are Exposed to the LLM
 
-Under the hood, each subagent is exposed to the LLM as a tool with an `agent__` prefix (e.g., `agent__research_agent`). Each tool accepts a single `message` parameter — what your agent tells the subagent. When the LLM returns agent tool calls, they are partitioned from regular tool calls and dispatched to the `AgentRuntime` instead of the `ToolRuntime`.
+Each subagent appears to the LLM as a callable tool with a single `message` parameter — what your agent tells the subagent. When the LLM delegates, the runtime instantiates the subagent and calls `generate` with that message and the parent's context.
 
 ## Context Propagation
 
@@ -114,7 +114,7 @@ agent_runtime ->(context) {
 
 ### Threaded Runtime Considerations
 
-When using `Riffer::AgentRuntime::Threaded`, each subagent runs in its own thread. Be mindful of thread-local state — for example, `ActiveRecord::Base.connection`, `RequestStore`, or any `Thread.current[]` values may not be available or may behave differently across threads. Ensure your subagents and their tools are thread-safe.
+The same thread-safety considerations as tool runtimes apply (thread-local state, `ActiveRecord::Base.connection`, etc.) — see [Threaded Runtime Considerations](07_TOOL_ADVANCED.md#threaded-runtime-considerations). Ensure your subagents and their tools are thread-safe.
 
 ### Global Configuration
 

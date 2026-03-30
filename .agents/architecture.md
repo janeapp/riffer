@@ -96,7 +96,7 @@ Structured events for streaming responses:
 
 ### Per-Call State Reset
 
-Each call to `generate` or `stream` resets `context`, tools, tool runtime, agent runtime, agent map, model, skills state, and the interrupted flag via `prepare_run`. Only the message history and cumulative `token_usage` persist across calls. This means `context:` must be passed on every call.
+Each call to `generate` or `stream` resets all per-call state — context, registered tools and agents, runtimes, model, skills, and the interrupted flag — via `prepare_run`. Only the message history and cumulative `token_usage` persist across calls. This means `context:` must be passed on every call.
 
 ### Stopping the Loop Early
 
