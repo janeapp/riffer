@@ -9,6 +9,20 @@ describe Riffer::Messages::Base do
     it "sets the content" do
       expect(base_message.content).must_equal "Test content"
     end
+
+    it "sets a default timestamp" do
+      before = Time.now
+      message = Riffer::Messages::Base.new("Test")
+      after = Time.now
+      expect(message.timestamp).must_be :>=, before
+      expect(message.timestamp).must_be :<=, after
+    end
+
+    it "accepts a custom timestamp" do
+      custom_time = Time.new(2025, 1, 15, 12, 0, 0)
+      message = Riffer::Messages::Base.new("Test", timestamp: custom_time)
+      expect(message.timestamp).must_equal custom_time
+    end
   end
 
   describe "#role" do

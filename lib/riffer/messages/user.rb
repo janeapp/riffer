@@ -17,9 +17,9 @@ class Riffer::Messages::User < Riffer::Messages::Base
   # Initializes a user message.
   #
   #--
-  #: (String, ?files: Array[Riffer::FilePart]) -> void
-  def initialize(content, files: [])
-    super(content)
+  #: (String, ?files: Array[Riffer::FilePart], ?timestamp: Time) -> void
+  def initialize(content, files: [], timestamp: Time.now)
+    super(content, timestamp: timestamp)
     @files = files
   end
 
@@ -32,7 +32,7 @@ class Riffer::Messages::User < Riffer::Messages::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = {role: role, content: content}
+    hash = super
     hash[:files] = files.map(&:to_h) unless files.empty?
     hash
   end

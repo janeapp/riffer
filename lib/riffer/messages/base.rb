@@ -8,10 +8,14 @@ class Riffer::Messages::Base
   # The message content.
   attr_reader :content #: String
 
+  # The time the message was created.
+  attr_reader :timestamp #: Time
+
   #--
-  #: (String) -> void
-  def initialize(content)
+  #: (String, ?timestamp: Time) -> void
+  def initialize(content, timestamp: Time.now)
     @content = content
+    @timestamp = timestamp
   end
 
   # Converts the message to a hash.
@@ -19,7 +23,7 @@ class Riffer::Messages::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: role, content: content}
+    {role: role, content: content, timestamp: timestamp.iso8601(3)}
   end
 
   # Returns the message role.

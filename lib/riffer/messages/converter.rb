@@ -65,22 +65,28 @@ module Riffer::Messages::Converter
       raise Riffer::ArgumentError, "Message hash must include a 'role' key"
     end
 
+    timestamp_kwarg = if hash.key?(:timestamp)
+      {timestamp: hash[:timestamp].is_a?(Time) ? hash[:timestamp] : Time.iso8601(hash[:timestamp])}
+    else
+      {}
+    end
+
     case role.to_sym
     when :user
       files = (hash[:files] || []).map { |f| convert_to_file_part(f) }
-      Riffer::Messages::User.new(content, files: files)
+      Riffer::Messages::User.new(content, files: files, **timestamp_kwarg)
     when :assistant
       tool_calls = (hash[:tool_calls] || []).map { |tc|
         tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
       }
       structured_output = hash[:structured_output]
-      Riffer::Messages::Assistant.new(content, tool_calls: tool_calls, structured_output: structured_output)
+      Riffer::Messages::Assistant.new(content, tool_calls: tool_calls, structured_output: structured_output, **timestamp_kwarg)
     when :system
-      Riffer::Messages::System.new(content)
+      Riffer::Messages::System.new(content, **timestamp_kwarg)
     when :tool
       tool_call_id = hash[:tool_call_id]
       name = hash[:name]
-      Riffer::Messages::Tool.new(content, tool_call_id: tool_call_id, name: name)
+      Riffer::Messages::Tool.new(content, tool_call_id: tool_call_id, name: name, **timestamp_kwarg)
     else
       raise Riffer::ArgumentError, "Unknown message role: #{role}"
     end

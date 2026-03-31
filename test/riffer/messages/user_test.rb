@@ -29,10 +29,32 @@ describe Riffer::Messages::User do
     end
   end
 
+  describe "#timestamp" do
+    it "sets a default timestamp" do
+      before = Time.now
+      message = Riffer::Messages::User.new("Hello")
+      after = Time.now
+      expect(message.timestamp).must_be :>=, before
+      expect(message.timestamp).must_be :<=, after
+    end
+
+    it "accepts a custom timestamp" do
+      custom_time = Time.new(2025, 1, 15, 12, 0, 0)
+      message = Riffer::Messages::User.new("Hello", timestamp: custom_time)
+      expect(message.timestamp).must_equal custom_time
+    end
+  end
+
   describe "#to_h" do
     it "returns hash with role and content" do
       message = Riffer::Messages::User.new("Hello")
-      expect(message.to_h).must_equal({role: :user, content: "Hello"})
+      expect(message.to_h.except(:timestamp)).must_equal({role: :user, content: "Hello"})
+    end
+
+    it "includes timestamp as ISO 8601 with milliseconds" do
+      custom_time = Time.new(2025, 1, 15, 12, 0, 0)
+      message = Riffer::Messages::User.new("Hello", timestamp: custom_time)
+      expect(message.to_h[:timestamp]).must_equal custom_time.iso8601(3)
     end
 
     it "omits files key when files is empty" do

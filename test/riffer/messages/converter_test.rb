@@ -39,6 +39,35 @@ describe Riffer::Messages::Converter do
       expect(result.content).must_equal "Hello"
     end
 
+    describe "with timestamp" do
+      it "parses ISO 8601 timestamp string" do
+        ts = "2025-01-15T12:00:00.000+00:00"
+        result = instance.convert_to_message_object({role: "user", content: "Hello", timestamp: ts})
+        expect(result.timestamp).must_equal Time.iso8601(ts)
+      end
+
+      it "passes through Time objects" do
+        custom_time = Time.new(2025, 1, 15, 12, 0, 0)
+        result = instance.convert_to_message_object({role: "user", content: "Hello", timestamp: custom_time})
+        expect(result.timestamp).must_equal custom_time
+      end
+
+      it "defaults timestamp when not provided" do
+        before = Time.now
+        result = instance.convert_to_message_object({role: "user", content: "Hello"})
+        after = Time.now
+        expect(result.timestamp).must_be :>=, before
+        expect(result.timestamp).must_be :<=, after
+      end
+
+      it "round-trips timestamp through to_h" do
+        custom_time = Time.new(2025, 1, 15, 12, 0, 0)
+        msg = Riffer::Messages::User.new("Hello", timestamp: custom_time)
+        result = instance.convert_to_message_object(msg.to_h)
+        expect(result.timestamp).must_equal Time.iso8601(custom_time.iso8601(3))
+      end
+    end
+
     it "converts assistant hash to Assistant message" do
       result = instance.convert_to_message_object({role: "assistant", content: "Hi"})
       expect(result).must_be_instance_of Riffer::Messages::Assistant

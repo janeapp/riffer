@@ -65,6 +65,8 @@ Typed message objects that extend `Riffer::Messages::Base`:
 - `Assistant` - AI responses
 - `Tool` - tool execution results
 
+All messages carry a `timestamp` (`Time`, defaults to creation time, ISO 8601 with millisecond precision in `to_h`). Override when rehydrating persisted messages.
+
 `Riffer::FilePart` represents file attachments (images and documents) that can be included with User messages. Supports file paths, URLs, and raw base64 data.
 
 The `Converter` module handles hash-to-object conversion, including file hash-to-`FilePart` conversion.

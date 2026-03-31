@@ -38,12 +38,14 @@ describe Riffer::Providers::Mock do
 
     it "stores normalized messages in calls" do
       provider.generate_text(prompt: "Hello")
-      expect(provider.calls.last[:messages]).must_equal [{role: :user, content: "Hello"}]
+      messages = provider.calls.last[:messages].map { |m| m.except(:timestamp) }
+      expect(messages).must_equal [{role: :user, content: "Hello"}]
     end
 
     it "stores system and user messages in calls when both provided" do
       provider.generate_text(prompt: "Hello", system: "You are helpful")
-      expect(provider.calls.last[:messages]).must_equal [
+      messages = provider.calls.last[:messages].map { |m| m.except(:timestamp) }
+      expect(messages).must_equal [
         {role: :system, content: "You are helpful"},
         {role: :user, content: "Hello"}
       ]
