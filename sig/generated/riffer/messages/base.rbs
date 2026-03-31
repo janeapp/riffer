@@ -7,9 +7,12 @@ class Riffer::Messages::Base
   # The message content.
   attr_reader content: String
 
+  # The time the message was created.
+  attr_reader timestamp: Time
+
   # --
-  # : (String) -> void
-  def initialize: (String) -> void
+  # : (String, ?timestamp: Time) -> void
+  def initialize: (String, ?timestamp: Time) -> void
 
   # Converts the message to a hash.
   #

@@ -32,8 +32,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   attr_reader structured_output: Hash[Symbol, untyped]?
 
   # --
-  # : (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
-  def initialize: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  # : (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?timestamp: Time) -> void
+  def initialize: (String, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?timestamp: Time) -> void
 
   # --
   # : () -> Symbol

@@ -24,8 +24,8 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   attr_reader error_type: Symbol?
 
   # --
-  # : (String, tool_call_id: String, name: String, ?error: String?, ?error_type: Symbol?) -> void
-  def initialize: (String, tool_call_id: String, name: String, ?error: String?, ?error_type: Symbol?) -> void
+  # : (String, tool_call_id: String, name: String, ?error: String?, ?error_type: Symbol?, ?timestamp: Time) -> void
+  def initialize: (String, tool_call_id: String, name: String, ?error: String?, ?error_type: Symbol?, ?timestamp: Time) -> void
 
   # Returns true if the tool execution resulted in an error.
   #
