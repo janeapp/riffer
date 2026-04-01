@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-west-2.amazonaws.com/model/us.amazon.nova-lite-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is in this document?"},{"document":{"format":"pdf","name":"super-secret-document","source":{"s3Location":{"uri":"<AWS_TEST_DOCUMENT_S3_URI>"}}}}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 0d904877-2718-4571-a79c-fad665417538
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.244.0 ua/2.1 api/bedrock_runtime#1.74.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '236'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 01 Apr 2026 00:22:49 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '249'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 2802dbf1-a701-4711-b488-7e3927be1200
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":2954},"output":{"message":{"content":[{"text":"Pssst...
+        this is super secret information."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":1617,"outputTokens":12,"serverToolUsage":{},"totalTokens":1629}}'
+  recorded_at: Wed, 01 Apr 2026 00:22:49 GMT
+recorded_with: VCR 6.4.0
