@@ -647,7 +647,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           result = provider.generate_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file])
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -656,7 +656,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           result = provider.generate_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file])
           expect(result.content).wont_be_empty
         end
@@ -688,7 +688,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           events = provider.stream_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
           expect(events).wont_be_empty
         end
@@ -697,7 +697,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           events = provider.stream_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           expect(done).wont_be_nil

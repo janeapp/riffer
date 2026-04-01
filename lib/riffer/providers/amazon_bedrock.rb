@@ -300,8 +300,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     if file.image?
       {image: {format: format, source: source}}
     else
-      name = file.filename || ::File.basename(URI.parse(file.url).path, ".*")
-      {document: {format: format, name: name, source: source}}
+      {document: {format: format, name: file.filename, source: source}}
     end
   end
 
