@@ -4,7 +4,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 
 ## Quick Reference
 
-- **Ruby**: 3.2.0+
+- **Ruby**: 3.3.0+
 - **Lint + Test**: `bundle exec rake`
 - **Autoloading**: Zeitwerk (file paths must match module/class names)
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)
