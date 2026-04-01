@@ -287,15 +287,21 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format(file)
-    raise Riffer::ArgumentError, "Amazon Bedrock does not support URL file sources; provide base64 data instead" if file.url? && file.data.nil?
-
     format = bedrock_format(file.media_type)
-    bytes = Base64.decode64(file.data)
+
+    source = if file.data
+      {bytes: Base64.decode64(file.data)}
+    elsif file.url&.start_with?("s3://")
+      {s3_location: {uri: file.url}}
+    else
+      raise Riffer::ArgumentError, "Amazon Bedrock only supports S3 URI or base64 data file sources"
+    end
 
     if file.image?
-      {image: {format: format, source: {bytes: bytes}}}
+      {image: {format: format, source: source}}
     else
-      {document: {format: format, name: file.filename, source: {bytes: bytes}}}
+      name = file.filename || ::File.basename(URI.parse(file.url).path, ".*")
+      {document: {format: format, name: name, source: source}}
     end
   end
 

@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-west-2.amazonaws.com/model/us.amazon.nova-lite-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Describe this image"},{"image":{"format":"png","source":{"s3Location":{"uri":"<AWS_TEST_IMAGE_S3_URI>"}}}}]}],"system":[]}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 5b25da4b-56f3-4364-8099-b0e7f70f75e1
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.244.0 ua/2.1 api/bedrock_runtime#1.74.0 os/macos#25 md/arm64
+        lang/ruby#3.4.8 md/3.4.8 m/Z,b,D
+      Content-Length:
+      - '193'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 01 Apr 2026 00:20:21 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '550'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 6247f74f-69d8-4675-977e-8cbb1801b388
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1863},"output":{"message":{"content":[{"text":"The
+        image contains a black background with white text. The text reads \"Pssst...
+        this is super secret information.\" It is written in a bold, capital font,
+        and there are three dots after the word \"Pssst,\" which could indicate a
+        pause or a sense of secrecy. The text is written in a way that it seems to
+        be whispered or shared confidentially."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"inputTokens":1711,"outputTokens":79,"serverToolUsage":{},"totalTokens":1790}}'
+  recorded_at: Wed, 01 Apr 2026 00:20:21 GMT
+recorded_with: VCR 6.4.0

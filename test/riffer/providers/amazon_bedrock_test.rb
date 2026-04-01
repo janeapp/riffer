@@ -619,6 +619,100 @@ describe Riffer::Providers::AmazonBedrock do
         end
       end
     end
+
+    let(:image_s3_uri) { ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://test-bucket/test-image.png") }
+    let(:document_s3_uri) { ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://test-bucket/test-document.pdf") }
+
+    describe "#generate_text with S3 URI image" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(image_s3_uri)
+          result = provider.generate_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file])
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns content" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(image_s3_uri)
+          result = provider.generate_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file])
+          expect(result.content).wont_be_empty
+        end
+      end
+    end
+
+    describe "#generate_text with S3 URI document" do
+      it "returns an Assistant message" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          result = provider.generate_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file])
+          expect(result).must_be_instance_of Riffer::Messages::Assistant
+        end
+      end
+
+      it "returns content" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          result = provider.generate_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file])
+          expect(result.content).wont_be_empty
+        end
+      end
+    end
+
+    describe "#stream_text with S3 URI image" do
+      it "yields stream events" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(image_s3_uri)
+          events = provider.stream_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
+          expect(events).wont_be_empty
+        end
+      end
+
+      it "yields TextDone event" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(image_s3_uri)
+          events = provider.stream_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
+          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+          expect(done).wont_be_nil
+        end
+      end
+    end
+
+    describe "#stream_text with S3 URI document" do
+      it "yields stream events" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          events = provider.stream_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
+          expect(events).wont_be_empty
+        end
+      end
+
+      it "yields TextDone event" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
+          provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
+          file = Riffer::FilePart.from_url(document_s3_uri, media_type: "application/pdf")
+          events = provider.stream_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
+          done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+          expect(done).wont_be_nil
+        end
+      end
+    end
+
+    describe "with unsupported URL source" do
+      it "raises ArgumentError for non-S3 URLs" do
+        provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+        file = Riffer::FilePart.from_url("https://example.com/image.png")
+        expect { provider.generate_text(prompt: "Describe this", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file]) }
+          .must_raise Riffer::ArgumentError
+      end
+    end
   end
 
   describe "tool schema strict mode" do
