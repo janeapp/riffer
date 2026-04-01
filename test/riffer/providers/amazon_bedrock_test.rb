@@ -620,8 +620,8 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
-    let(:image_s3_uri) { ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://test-bucket/test-image.png") }
-    let(:document_s3_uri) { ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://test-bucket/test-document.pdf") }
+    let(:image_s3_uri) { ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png") }
+    let(:document_s3_uri) { ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://riffer-test-bucket/super-secret-document.pdf") }
 
     describe "#generate_text with S3 URI image" do
       it "returns an Assistant message" do
