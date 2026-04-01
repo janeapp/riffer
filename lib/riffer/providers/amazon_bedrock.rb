@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
+require "base64"
+
 # Amazon Bedrock provider for Claude and other foundation models.
 #
 # Requires the +aws-sdk-bedrockruntime+ gem to be installed.
