@@ -2403,7 +2403,7 @@ describe Riffer::Agent do
 
         messages = [
           {role: "user", content: "Call tool"},
-          {role: "assistant", content: "", tool_calls: [{id: "tc_1", call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}"}]}
+          {role: "assistant", content: "", tool_calls: [{call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}"}]}
         ]
         result = agent.generate(messages)
         expect(result.interrupted?).must_equal false

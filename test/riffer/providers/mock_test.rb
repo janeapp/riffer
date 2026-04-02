@@ -86,12 +86,6 @@ describe Riffer::Providers::Mock do
 
   describe "tool calling" do
     describe "#stub_response with tool_calls" do
-      it "formats tool_calls with generated id" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
-        result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first.id).must_equal "mock_id_0"
-      end
-
       it "formats tool_calls with generated call_id" do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
         result = provider.generate_text(prompt: "Call a tool")
@@ -114,12 +108,6 @@ describe Riffer::Providers::Mock do
         provider.stub_response("", tool_calls: [{name: "my_tool", arguments: {city: "Toronto"}}])
         result = provider.generate_text(prompt: "Call a tool")
         expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
-      end
-
-      it "uses provided id if specified" do
-        provider.stub_response("", tool_calls: [{id: "custom_id", name: "my_tool", arguments: "{}"}])
-        result = provider.generate_text(prompt: "Call a tool")
-        expect(result.tool_calls.first.id).must_equal "custom_id"
       end
 
       it "handles multiple tool calls count" do

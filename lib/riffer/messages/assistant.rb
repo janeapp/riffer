@@ -11,7 +11,7 @@
 #   msg.tool_calls  # => []
 #
 class Riffer::Messages::Assistant < Riffer::Messages::Base
-  ToolCall = Struct.new(:id, :call_id, :name, :arguments, keyword_init: true)
+  ToolCall = Struct.new(:call_id, :name, :arguments, keyword_init: true)
 
   # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]

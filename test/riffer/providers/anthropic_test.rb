@@ -701,7 +701,7 @@ describe Riffer::Providers::Anthropic do
             model: "claude-haiku-4-5-20251001",
             tools: [weather_tool]
           )
-          expect(result.tool_calls.first.id).wont_be_nil
+          expect(result.tool_calls.first.call_id).wont_be_nil
         end
       end
     end
@@ -713,7 +713,7 @@ describe Riffer::Providers::Anthropic do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              Riffer::Messages::Assistant::ToolCall.new(id: "toolu_123", call_id: "toolu_123", name: "get_weather", arguments: '{"city":"Toronto"}')
+              Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_123", name: "get_weather", arguments: '{"city":"Toronto"}')
             ]),
             Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "toolu_123", name: "get_weather")
           ]
@@ -732,7 +732,7 @@ describe Riffer::Providers::Anthropic do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              Riffer::Messages::Assistant::ToolCall.new(id: "toolu_123", call_id: "toolu_123", name: "get_weather", arguments: '{"city":"Toronto"}')
+              Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_123", name: "get_weather", arguments: '{"city":"Toronto"}')
             ]),
             Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "toolu_123", name: "get_weather")
           ]

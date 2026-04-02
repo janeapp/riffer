@@ -32,7 +32,6 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def stub_response(content, tool_calls: [], token_usage: nil)
     formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
       Riffer::Messages::Assistant::ToolCall.new(
-        id: tc[:id] || "mock_id_#{idx}",
         call_id: tc[:call_id] || tc[:id] || "mock_call_#{idx}",
         name: tc[:name],
         arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
@@ -111,12 +110,12 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
     tool_calls.each do |tc|
       yielder << Riffer::StreamEvents::ToolCallDelta.new(
-        item_id: tc.id,
+        item_id: tc.call_id,
         name: tc.name,
         arguments_delta: tc.arguments
       )
       yielder << Riffer::StreamEvents::ToolCallDone.new(
-        item_id: tc.id,
+        item_id: tc.call_id,
         call_id: tc.call_id,
         name: tc.name,
         arguments: tc.arguments

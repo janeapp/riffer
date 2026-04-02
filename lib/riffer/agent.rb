@@ -502,7 +502,6 @@ class Riffer::Agent
             current_tool_call[:name] ||= event.name
           when Riffer::StreamEvents::ToolCallDone
             accumulated_tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-              id: event.item_id,
               call_id: event.call_id,
               name: event.name,
               arguments: event.arguments
@@ -590,7 +589,7 @@ class Riffer::Agent
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
         result.content,
-        tool_call_id: tool_call.id,
+        tool_call_id: tool_call.call_id,
         name: tool_call.name,
         error: result.error_message,
         error_type: result.error_type
@@ -621,7 +620,7 @@ class Riffer::Agent
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
         result.content,
-        tool_call_id: tool_call.id,
+        tool_call_id: tool_call.call_id,
         name: tool_call.name,
         error: result.error_message,
         error_type: result.error_type
@@ -640,7 +639,7 @@ class Riffer::Agent
       m.is_a?(Riffer::Messages::Tool)
     }.map(&:tool_call_id)
 
-    assistant.tool_calls.reject { |tc| executed_ids.include?(tc.id) }
+    assistant.tool_calls.reject { |tc| executed_ids.include?(tc.call_id) }
   end
 
   #--

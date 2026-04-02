@@ -902,7 +902,7 @@ describe Riffer::Providers::OpenAI do
             model: "gpt-5-mini",
             tools: [weather_tool]
           )
-          expect(result.tool_calls.first.id).wont_be_nil
+          expect(result.tool_calls.first.call_id).wont_be_nil
         end
       end
 
@@ -926,7 +926,7 @@ describe Riffer::Providers::OpenAI do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              Riffer::Messages::Assistant::ToolCall.new(id: "fc_tool_call_123", call_id: "call_tool_123", name: "get_weather", arguments: '{"city":"Toronto"}')
+              Riffer::Messages::Assistant::ToolCall.new(call_id: "call_tool_123", name: "get_weather", arguments: '{"city":"Toronto"}')
             ]),
             Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "call_tool_123", name: "get_weather")
           ]
@@ -945,7 +945,7 @@ describe Riffer::Providers::OpenAI do
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new("", tool_calls: [
-              Riffer::Messages::Assistant::ToolCall.new(id: "fc_tool_call_123", call_id: "call_tool_123", name: "get_weather", arguments: '{"city":"Toronto"}')
+              Riffer::Messages::Assistant::ToolCall.new(call_id: "call_tool_123", name: "get_weather", arguments: '{"city":"Toronto"}')
             ]),
             Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "call_tool_123", name: "get_weather")
           ]

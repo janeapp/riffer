@@ -34,10 +34,9 @@ describe Riffer::ToolRuntime do
   let(:tools) { [weather_tool_class] }
   let(:context) { nil }
 
-  def make_tool_call(name:, arguments:, id: "call_1")
+  def make_tool_call(name:, arguments:, call_id: "call_1")
     Riffer::Messages::Assistant::ToolCall.new(
-      id: id,
-      call_id: "call_id_#{id}",
+      call_id: call_id,
       name: name,
       arguments: arguments
     )
@@ -159,8 +158,8 @@ describe Riffer::ToolRuntime do
 
     it "returns [tool_call, response] pairs in order" do
       runtime = Riffer::ToolRuntime::Inline.new
-      tc1 = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}', id: "1")
-      tc2 = make_tool_call(name: "weather_tool", arguments: '{"city":"London"}', id: "2")
+      tc1 = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}', call_id: "1")
+      tc2 = make_tool_call(name: "weather_tool", arguments: '{"city":"London"}', call_id: "2")
 
       results = runtime.execute([tc1, tc2], tools: tools, context: context)
 
@@ -261,7 +260,7 @@ describe Riffer::ToolRuntime::Inline do
 
     runtime = Riffer::ToolRuntime::Inline.new
     tool_call = Riffer::Messages::Assistant::ToolCall.new(
-      id: "1", call_id: "cid_1", name: "weather_tool", arguments: '{"city":"Toronto"}'
+      call_id: "cid_1", name: "weather_tool", arguments: '{"city":"Toronto"}'
     )
 
     results = runtime.execute([tool_call], tools: [weather_tool], context: nil)
@@ -289,7 +288,7 @@ describe Riffer::ToolRuntime::Fibers do
     runtime = Riffer::ToolRuntime::Fibers.new
     tool_calls = 3.times.map do |i|
       Riffer::Messages::Assistant::ToolCall.new(
-        id: i.to_s, call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
+        call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
       )
     end
 
@@ -319,7 +318,7 @@ describe Riffer::ToolRuntime::Threaded do
     runtime = Riffer::ToolRuntime::Threaded.new(max_concurrency: 3)
     tool_calls = 3.times.map do |i|
       Riffer::Messages::Assistant::ToolCall.new(
-        id: i.to_s, call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
+        call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
       )
     end
 
