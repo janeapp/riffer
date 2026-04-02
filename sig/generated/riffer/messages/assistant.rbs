@@ -10,16 +10,14 @@
 #   msg.tool_calls  # => []
 class Riffer::Messages::Assistant < Riffer::Messages::Base
   class ToolCall < Struct[untyped]
-    attr_accessor id(): untyped
-
     attr_accessor call_id(): untyped
 
     attr_accessor name(): untyped
 
     attr_accessor arguments(): untyped
 
-    def self.new: (?id: untyped, ?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
-                | ({ ?id: untyped, ?call_id: untyped, ?name: untyped, ?arguments: untyped }) -> instance
+    def self.new: (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
+                | ({ ?call_id: untyped, ?name: untyped, ?arguments: untyped }) -> instance
   end
 
   # Array of tool calls requested by the assistant.

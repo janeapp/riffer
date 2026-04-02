@@ -119,7 +119,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     content_blocks.each do |block|
       if block.respond_to?(:tool_use) && block.tool_use
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          id: block.tool_use.tool_use_id,
           call_id: block.tool_use.tool_use_id,
           name: block.tool_use.name,
           arguments: block.tool_use.input.to_json
@@ -258,7 +257,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     message.tool_calls.each do |tc|
       content << {
         tool_use: {
-          tool_use_id: tc.id || tc.call_id,
+          tool_use_id: tc.call_id,
           name: tc.name,
           input: parse_tool_arguments(tc.arguments)
         }

@@ -122,7 +122,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     content_blocks.each do |block|
       if block.type.to_s == "tool_use"
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          id: block.id,
           call_id: block.id,
           name: block.name,
           arguments: block.input.to_json
@@ -339,7 +338,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     message.tool_calls.each do |tc|
       content << {
         type: "tool_use",
-        id: tc.id || tc.call_id,
+        id: tc.call_id,
         name: tc.name,
         input: parse_tool_arguments(tc.arguments)
       }

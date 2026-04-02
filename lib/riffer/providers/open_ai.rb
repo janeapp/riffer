@@ -106,7 +106,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     response.output.each do |item|
       if item.type == :function_call
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          id: item.id,
           call_id: item.call_id,
           name: item.name,
           arguments: item.arguments
@@ -284,8 +283,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       message.tool_calls.each do |tc|
         items << {
           type: "function_call",
-          id: tc.id,
-          call_id: tc.call_id || tc.id,
+          call_id: tc.call_id,
           name: tc.name,
           arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json
         }

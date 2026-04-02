@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.openai.com/v1/responses
     body:
       encoding: UTF-8
-      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"function_call","id":"fc_tool_call_123","call_id":"call_tool_123","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_tool_123","output":"The
+      string: '{"input":[{"role":"user","content":"What is the weather in Toronto?"},{"type":"function_call","call_id":"call_tool_123","name":"get_weather","arguments":"{\"city\":\"Toronto\"}"},{"type":"function_call_output","call_id":"call_tool_123","output":"The
         weather in Toronto is 15 degrees Celsius."}],"model":"gpt-5-mini","tools":[{"type":"function","name":"get_weather","description":"Get
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"],"additionalProperties":false},"strict":true}]}'
