@@ -1,0 +1,84 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GCP_VERTEX_API_KEY>
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
+        John lives at 123 Main St, Toronto, ON M5V 2T6, Canada"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"name":{"type":"string","description":"Person
+        name"},"address":{"type":"object","description":"Mailing address","properties":{"street":{"type":"string","description":"Street
+        address"},"city":{"type":"string","description":"City"},"postal_code":{"type":"string","description":"Postal
+        or zip code"},"country":{"type":"string","description":"Country"}},"required":["street","city"]}},"required":["name","address"]}}}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.14.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 07 Apr 2026 22:16:00 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=585
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"name\": \"John\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\",\n    \"country\": \"Canada\",\n    \"postal_code\": \"M5V 2T6\"\n  }\n}"
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 28,
+            "candidatesTokenCount": 64,
+            "totalTokenCount": 92,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 28
+              }
+            ]
+          },
+          "modelVersion": "gemini-2.5-flash-lite",
+          "responseId": "H4LVaf2WO--VmtkPlveGqAU"
+        }
+  recorded_at: Tue, 07 Apr 2026 22:15:59 GMT
+recorded_with: VCR 6.4.0

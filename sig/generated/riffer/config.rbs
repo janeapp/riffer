@@ -38,6 +38,13 @@ class Riffer::Config
                 | ({ ?api_key: untyped, ?endpoint: untyped }) -> instance
   end
 
+  class Gemini < Struct[untyped]
+    attr_accessor api_key(): untyped
+
+    def self.new: (?api_key: untyped) -> instance
+                | ({ ?api_key: untyped }) -> instance
+  end
+
   class OpenAI < Struct[untyped]
     attr_accessor api_key(): untyped
 
@@ -60,6 +67,9 @@ class Riffer::Config
 
   # Azure OpenAI configuration (Struct with +api_key+ and +endpoint+).
   attr_reader azure_openai: Riffer::Config::AzureOpenAI
+
+  # Google Gemini configuration (Struct with +api_key+).
+  attr_reader gemini: Riffer::Config::Gemini
 
   # OpenAI configuration (Struct with +api_key+).
   attr_reader openai: Riffer::Config::OpenAI

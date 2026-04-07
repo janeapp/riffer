@@ -10,6 +10,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | Azure OpenAI   | `azure_openai`   | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
+| Gemini         | `gemini`         | `faraday`                |
 | Mock           | `mock`           | None                     |
 
 ## Model String Format
@@ -22,6 +23,7 @@ class MyAgent < Riffer::Agent
   model 'azure_openai/gpt-5-mini'                                     # Azure OpenAI
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
+  model 'gemini/gemini-2.5-flash-lite'                                # Gemini
   model 'mock/any'                                                    # Mock provider
 end
 ```
@@ -160,6 +162,9 @@ Riffer::Providers::Repository.find(:amazon_bedrock)
 Riffer::Providers::Repository.find(:anthropic)
 # => Riffer::Providers::Anthropic
 
+Riffer::Providers::Repository.find(:gemini)
+# => Riffer::Providers::Gemini
+
 Riffer::Providers::Repository.find(:mock)
 # => Riffer::Providers::Mock
 ```
@@ -172,3 +177,4 @@ Riffer::Providers::Repository.find(:mock)
 - [Azure OpenAI](05_AZURE_OPENAI.md) - GPT models via Azure
 - [Mock](06_MOCK_PROVIDER.md) - Mock provider for testing
 - [Custom Providers](07_CUSTOM_PROVIDERS.md) - Creating your own provider
+- [Gemini](08_GEMINI.md) - Gemini models via Google GenAI API
