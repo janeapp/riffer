@@ -7,14 +7,16 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
     headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - Faraday v2.14.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
   response:
     status:
       code: 200
@@ -29,7 +31,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 22:15:57 GMT
+      - Tue, 07 Apr 2026 23:26:00 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -39,42 +41,14 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=334
+      - gfet4t7; dur=404
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: |
-        {
-          "candidates": [
-            {
-              "content": {
-                "parts": [
-                  {
-                    "text": "Hello! How can I help you today?"
-                  }
-                ],
-                "role": "model"
-              },
-              "finishReason": "STOP",
-              "index": 0
-            }
-          ],
-          "usageMetadata": {
-            "promptTokenCount": 3,
-            "candidatesTokenCount": 9,
-            "totalTokenCount": 12,
-            "promptTokensDetails": [
-              {
-                "modality": "TEXT",
-                "tokenCount": 3
-              }
-            ]
-          },
-          "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "HYLVaafUJLf4qtsPsZSQmAU"
-        }
-  recorded_at: Tue, 07 Apr 2026 22:15:57 GMT
+      string: !binary |-
+        ewogICJjYW5kaWRhdGVzIjogWwogICAgewogICAgICAiY29udGVudCI6IHsKICAgICAgICAicGFydHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJ0ZXh0IjogIkhlbGxvISBIb3cgY2FuIEkgaGVscCB5b3UgdG9kYXk/IPCfmIoiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAicm9sZSI6ICJtb2RlbCIKICAgICAgfSwKICAgICAgImZpbmlzaFJlYXNvbiI6ICJTVE9QIiwKICAgICAgImluZGV4IjogMAogICAgfQogIF0sCiAgInVzYWdlTWV0YWRhdGEiOiB7CiAgICAicHJvbXB0VG9rZW5Db3VudCI6IDMsCiAgICAiY2FuZGlkYXRlc1Rva2VuQ291bnQiOiAxMCwKICAgICJ0b3RhbFRva2VuQ291bnQiOiAxMywKICAgICJwcm9tcHRUb2tlbnNEZXRhaWxzIjogWwogICAgICB7CiAgICAgICAgIm1vZGFsaXR5IjogIlRFWFQiLAogICAgICAgICJ0b2tlbkNvdW50IjogMwogICAgICB9CiAgICBdCiAgfSwKICAibW9kZWxWZXJzaW9uIjogImdlbWluaS0yLjUtZmxhc2gtbGl0ZSIsCiAgInJlc3BvbnNlSWQiOiAiaUpMVmFhdk9CT20zbXRrUHZLV24wQVEiCn0K
+  recorded_at: Tue, 07 Apr 2026 23:26:00 GMT
 recorded_with: VCR 6.4.0

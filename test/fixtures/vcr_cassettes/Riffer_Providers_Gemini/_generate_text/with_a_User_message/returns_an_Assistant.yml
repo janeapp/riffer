@@ -7,14 +7,16 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
     headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - Faraday v2.14.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
   response:
     status:
       code: 200
@@ -29,7 +31,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 22:16:05 GMT
+      - Tue, 07 Apr 2026 23:25:55 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -39,7 +41,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=356
+      - gfet4t7; dur=392
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -53,7 +55,7 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "Hello! How can I help you today?"
+                    "text": "Hello!"
                   }
                 ],
                 "role": "model"
@@ -64,8 +66,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 3,
-            "candidatesTokenCount": 9,
-            "totalTokenCount": 12,
+            "candidatesTokenCount": 2,
+            "totalTokenCount": 5,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -74,7 +76,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "JYLVaczPErTjqtsPvZrQ6QU"
+          "responseId": "g5LVabfXKL-nqtsP8q-cyQQ"
         }
-  recorded_at: Tue, 07 Apr 2026 22:16:05 GMT
+  recorded_at: Tue, 07 Apr 2026 23:25:55 GMT
 recorded_with: VCR 6.4.0

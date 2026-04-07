@@ -1,10 +1,8 @@
 # Generated from lib/riffer/providers/gemini.rb with RBS::Inline
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
-#
-# Requires the +faraday+ gem to be installed.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
-  BASE_URL: String
+  BASE_URI: URI::Generic
 
   # Initializes the Gemini provider.
   #
@@ -55,6 +53,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def convert_tool_to_gemini_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 
   # --
+  # : (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
+  def post_request: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
+
+  # --
   # : (String, String) -> String
   def api_path: (String, String) -> String
 
@@ -63,6 +65,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def strip_additional_properties: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
-  # : (Faraday::Response) -> void
-  def handle_api_error!: (Faraday::Response) -> void
+  # : (Net::HTTPResponse) -> void
+  def handle_api_error!: (Net::HTTPResponse) -> void
 end

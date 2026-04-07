@@ -11,14 +11,16 @@ http_interactions:
         address"},"city":{"type":"string","description":"City"},"postal_code":{"type":"string","description":"Postal
         or zip code"},"country":{"type":"string","description":"Country"}},"required":["street","city"]}},"required":["name","address"]}}}'
     headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - Faraday v2.14.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
   response:
     status:
       code: 200
@@ -33,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 22:16:00 GMT
+      - Tue, 07 Apr 2026 23:25:52 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -43,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=585
+      - gfet4t7; dur=557
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -78,7 +80,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "H4LVaf2WO--VmtkPlveGqAU"
+          "responseId": "gJLVafahM7-nqtsP8q-cyQQ"
         }
-  recorded_at: Tue, 07 Apr 2026 22:15:59 GMT
+  recorded_at: Tue, 07 Apr 2026 23:25:52 GMT
 recorded_with: VCR 6.4.0

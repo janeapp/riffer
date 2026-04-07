@@ -2,14 +2,6 @@
 
 The Gemini provider connects to Google's Gemini models via the Gemini REST API.
 
-## Installation
-
-Add the Faraday gem to your Gemfile (if not already present):
-
-```ruby
-gem 'faraday'
-```
-
 ## Configuration
 
 Configure your Gemini API key:

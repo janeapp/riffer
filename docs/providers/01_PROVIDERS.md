@@ -10,7 +10,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | Azure OpenAI   | `azure_openai`   | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
-| Gemini         | `gemini`         | `faraday`                |
+| Gemini         | `gemini`         | None                     |
 | Mock           | `mock`           | None                     |
 
 ## Model String Format

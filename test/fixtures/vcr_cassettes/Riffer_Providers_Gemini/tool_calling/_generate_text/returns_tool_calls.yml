@@ -10,14 +10,16 @@ http_interactions:
         the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
         city name"}},"required":["city"]}}]}]}'
     headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - Faraday v2.14.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
   response:
     status:
       code: 200
@@ -32,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 22:16:00 GMT
+      - Tue, 07 Apr 2026 23:25:56 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -42,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=374
+      - gfet4t7; dur=388
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -83,7 +85,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "IILVaZGjOfb6qtsPxILjuAQ"
+          "responseId": "hJLVabiABcKzqtsPnbLRwQQ"
         }
-  recorded_at: Tue, 07 Apr 2026 22:16:00 GMT
+  recorded_at: Tue, 07 Apr 2026 23:25:56 GMT
 recorded_with: VCR 6.4.0

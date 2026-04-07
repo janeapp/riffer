@@ -11,14 +11,16 @@ http_interactions:
         name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":"integer","description":"Quantity
         ordered"}},"required":["name","price"]}}},"required":["order_id","items"]}}}'
     headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - Faraday v2.14.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
   response:
     status:
       code: 200
@@ -33,7 +35,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 22:15:57 GMT
+      - Tue, 07 Apr 2026 23:25:53 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -43,7 +45,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=641
+      - gfet4t7; dur=537
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -57,7 +59,7 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"order_id\": \"12345\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50\n    }\n  ]\n}"
+                    "text": "{\n  \"order_id\": \"abc123xyz\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50\n    }\n  ]\n}"
                   }
                 ],
                 "role": "model"
@@ -78,7 +80,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "HYLVaa-2CO-uqtsPqvKekAU"
+          "responseId": "gZLVaYb7Gu-uqtsPqvKekAU"
         }
-  recorded_at: Tue, 07 Apr 2026 22:15:57 GMT
+  recorded_at: Tue, 07 Apr 2026 23:25:53 GMT
 recorded_with: VCR 6.4.0

@@ -2,27 +2,21 @@
 # rbs_inline: enabled
 
 require "json"
+require "net/http"
 require "securerandom"
+require "uri"
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
-#
-# Requires the +faraday+ gem to be installed.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
-  BASE_URL = "https://generativelanguage.googleapis.com" #: String
+  BASE_URI = URI("https://generativelanguage.googleapis.com") #: URI::Generic
 
   # Initializes the Gemini provider.
   #
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **options)
-    depends_on "faraday"
-
     api_key ||= Riffer.config.gemini.api_key
     @api_key = api_key
-
-    @connection = Faraday.new(url: BASE_URL) do |f|
-      f.headers["Content-Type"] = "application/json"
-    end
   end
 
   private
@@ -64,8 +58,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def execute_generate(params)
     model = params[:model]
     body = params.except(:model)
-    response = @connection.post(api_path(model, "generateContent"), body.to_json)
-    handle_api_error!(response) unless response.success?
+    response = post_request(api_path(model, "generateContent"), body)
+    handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
     JSON.parse(response.body, symbolize_names: true)
   end
 
@@ -114,8 +108,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     model = params[:model]
     body = params.except(:model)
 
-    response = @connection.post("#{api_path(model, "streamGenerateContent")}&alt=sse", body.to_json)
-    handle_api_error!(response) unless response.success?
+    response = post_request("#{api_path(model, "streamGenerateContent")}&alt=sse", body)
+    handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
 
     full_text = ""
 
@@ -235,6 +229,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
+  #: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
+  def post_request(path, body)
+    uri = URI("#{BASE_URI}/#{path}")
+    request = Net::HTTP::Post.new(uri)
+    request["Content-Type"] = "application/json"
+    request.body = body.to_json
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(request) }
+  end
+
+  #--
   #: (String, String) -> String
   def api_path(model, method)
     "v1beta/models/#{model}:#{method}?key=#{@api_key}"
@@ -260,7 +264,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Faraday::Response) -> void
+  #: (Net::HTTPResponse) -> void
   def handle_api_error!(response)
     body = begin
       JSON.parse(response.body, symbolize_names: true)
@@ -268,6 +272,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       {message: response.body}
     end
     error_message = body.dig(:error, :message) || body[:message] || response.body
-    raise Riffer::Error, "Gemini API error (#{response.status}): #{error_message}"
+    raise Riffer::Error, "Gemini API error (#{response.code}): #{error_message}"
   end
 end

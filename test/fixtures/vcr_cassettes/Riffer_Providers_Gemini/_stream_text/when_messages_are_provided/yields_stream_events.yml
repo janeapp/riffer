@@ -7,14 +7,16 @@ http_interactions:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
     headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - Faraday v2.14.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
       - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
   response:
     status:
       code: 200
@@ -31,7 +33,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 07 Apr 2026 22:15:56 GMT
+      - Tue, 07 Apr 2026 23:25:58 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -41,19 +43,12 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=332
+      - gfet4t7; dur=360
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
-      encoding: UTF-8
-      string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"Hello\"}],\"role\":
-        \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 3,\"candidatesTokenCount\":
-        1,\"totalTokenCount\": 4,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        3}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\": \"HILVaYnsGtHBqtsPsOuGsAQ\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"! How can I help
-        you today?\"}],\"role\": \"model\"},\"finishReason\": \"STOP\",\"index\":
-        0}],\"usageMetadata\": {\"promptTokenCount\": 3,\"candidatesTokenCount\":
-        9,\"totalTokenCount\": 12,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
-        3}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\": \"HILVaYnsGtHBqtsPsOuGsAQ\"}\r\n\r\n"
-  recorded_at: Tue, 07 Apr 2026 22:15:56 GMT
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJjYW5kaWRhdGVzIjogW3siY29udGVudCI6IHsicGFydHMiOiBbeyJ0ZXh0IjogIkhlbGxvISJ9XSwicm9sZSI6ICJtb2RlbCJ9LCJpbmRleCI6IDB9XSwidXNhZ2VNZXRhZGF0YSI6IHsicHJvbXB0VG9rZW5Db3VudCI6IDMsImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMiwidG90YWxUb2tlbkNvdW50IjogNSwicHJvbXB0VG9rZW5zRGV0YWlscyI6IFt7Im1vZGFsaXR5IjogIlRFWFQiLCJ0b2tlbkNvdW50IjogM31dfSwibW9kZWxWZXJzaW9uIjogImdlbWluaS0yLjUtZmxhc2gtbGl0ZSIsInJlc3BvbnNlSWQiOiAiaHBMVmFjNmpKcktVbXRrUHU4SHJtUVUifQ0KDQpkYXRhOiB7ImNhbmRpZGF0ZXMiOiBbeyJjb250ZW50IjogeyJwYXJ0cyI6IFt7InRleHQiOiAiIPCfmIoifV0sInJvbGUiOiAibW9kZWwifSwiZmluaXNoUmVhc29uIjogIlNUT1AiLCJpbmRleCI6IDB9XSwidXNhZ2VNZXRhZGF0YSI6IHsicHJvbXB0VG9rZW5Db3VudCI6IDMsImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMywidG90YWxUb2tlbkNvdW50IjogNiwicHJvbXB0VG9rZW5zRGV0YWlscyI6IFt7Im1vZGFsaXR5IjogIlRFWFQiLCJ0b2tlbkNvdW50IjogM31dfSwibW9kZWxWZXJzaW9uIjogImdlbWluaS0yLjUtZmxhc2gtbGl0ZSIsInJlc3BvbnNlSWQiOiAiaHBMVmFjNmpKcktVbXRrUHU4SHJtUVUifQ0KDQo=
+  recorded_at: Tue, 07 Apr 2026 23:25:58 GMT
 recorded_with: VCR 6.4.0
