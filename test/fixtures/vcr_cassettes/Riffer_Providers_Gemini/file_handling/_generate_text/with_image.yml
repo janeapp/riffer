@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GCP_VERTEX_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GEMINI_API_KEY>
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Describe this image"},{"inlineData":{"mimeType":"image/png","data":"iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="}}]}]}'

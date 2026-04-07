@@ -8,7 +8,7 @@ Configure your Gemini API key:
 
 ```ruby
 Riffer.configure do |config|
-  config.gemini.api_key = ENV['GCP_VERTEX_API_KEY']
+  config.gemini.api_key = ENV['GEMINI_API_KEY']
 end
 ```
 
@@ -17,7 +17,7 @@ Or per-agent:
 ```ruby
 class MyAgent < Riffer::Agent
   model 'gemini/gemini-2.5-flash-lite'
-  provider_options api_key: ENV['GCP_VERTEX_API_KEY']
+  provider_options api_key: ENV['GEMINI_API_KEY']
 end
 ```
 
@@ -62,7 +62,7 @@ model_options topP: 0.9
 ### Basic Generation
 
 ```ruby
-provider = Riffer::Providers::Gemini.new(api_key: ENV['GCP_VERTEX_API_KEY'])
+provider = Riffer::Providers::Gemini.new(api_key: ENV['GEMINI_API_KEY'])
 
 response = provider.generate_text(
   prompt: "Hello!",

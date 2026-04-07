@@ -3,7 +3,7 @@
 require "test_helper"
 
 describe Riffer::Providers::Gemini do
-  let(:api_key) { ENV.fetch("GCP_VERTEX_API_KEY", "test_api_key") }
+  let(:api_key) { ENV.fetch("GEMINI_API_KEY", "test_api_key") }
 
   describe "#initialize" do
     it "creates Gemini client with an api_key" do
