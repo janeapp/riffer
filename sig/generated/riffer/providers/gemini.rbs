@@ -53,6 +53,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def convert_tool_to_gemini_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
 
   # --
+  # : (untyped) -> String
+  def encode_tool_arguments: (untyped) -> String
+
+  # --
   # : (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
   def post_request: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
 
