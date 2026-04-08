@@ -85,7 +85,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: "gemini_call_#{SecureRandom.hex(12)}",
         name: fc[:name],
-        arguments: fc[:args].is_a?(String) ? fc[:args] : fc[:args].to_json
+        arguments: encode_tool_arguments(fc[:args])
       )
     end
   end
@@ -108,43 +108,65 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     model = params[:model]
     body = params.except(:model)
 
-    response = post_request("#{api_path(model, "streamGenerateContent")}&alt=sse", body)
-    handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
+    uri = URI("#{BASE_URI}/#{api_path(model, "streamGenerateContent")}&alt=sse")
+    request = Net::HTTP::Post.new(uri)
+    request["Content-Type"] = "application/json"
+    request.body = body.to_json
 
     full_text = ""
+    buffer = +""
 
-    response.body.scan(/data: (.+?)(?=\r?\n\r?\n|\z)/m).each do |match|
-      json_str = match[0].strip
-      next if json_str.empty?
+    process_chunk = lambda do |chunk|
+      buffer << chunk
 
-      parsed = JSON.parse(json_str, symbolize_names: true)
-      parts = parsed.dig(:candidates, 0, :content, :parts)
+      while (match = buffer.match(/\r?\n\r?\n/))
+        frame = buffer.slice!(0, match.end(0)).strip
+        next unless frame.start_with?("data: ")
 
-      parts&.each do |part|
-        if part[:text]
-          full_text += part[:text]
-          yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
-        elsif part[:functionCall]
-          fc = part[:functionCall]
-          call_id = "gemini_call_#{SecureRandom.hex(12)}"
-          arguments = fc[:args].is_a?(String) ? fc[:args] : fc[:args].to_json
-          yielder << Riffer::StreamEvents::ToolCallDone.new(
-            item_id: call_id,
-            call_id: call_id,
-            name: fc[:name],
-            arguments: arguments
+        json_str = frame.delete_prefix("data: ").strip
+        next if json_str.empty?
+
+        parsed = JSON.parse(json_str, symbolize_names: true)
+        parts = parsed.dig(:candidates, 0, :content, :parts)
+
+        parts&.each do |part|
+          if part[:text]
+            full_text += part[:text]
+            yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
+          elsif part[:functionCall]
+            fc = part[:functionCall]
+            call_id = "gemini_call_#{SecureRandom.hex(12)}"
+            arguments = encode_tool_arguments(fc[:args])
+            yielder << Riffer::StreamEvents::ToolCallDone.new(
+              item_id: call_id,
+              call_id: call_id,
+              name: fc[:name],
+              arguments: arguments
+            )
+          end
+        end
+
+        usage = parsed[:usageMetadata]
+        if usage && usage[:candidatesTokenCount]
+          yielder << Riffer::StreamEvents::TokenUsageDone.new(
+            token_usage: Riffer::TokenUsage.new(
+              input_tokens: usage[:promptTokenCount] || 0,
+              output_tokens: usage[:candidatesTokenCount] || 0
+            )
           )
         end
       end
+    end
 
-      usage = parsed[:usageMetadata]
-      if usage && usage[:candidatesTokenCount]
-        yielder << Riffer::StreamEvents::TokenUsageDone.new(
-          token_usage: Riffer::TokenUsage.new(
-            input_tokens: usage[:promptTokenCount] || 0,
-            output_tokens: usage[:candidatesTokenCount] || 0
-          )
-        )
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request) do |response|
+        handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
+
+        begin
+          response.read_body { |chunk| process_chunk.call(chunk) }
+        rescue IOError
+          process_chunk.call(response.body)
+        end
       end
     end
 
@@ -226,6 +248,14 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       description: tool.description,
       parameters: strip_additional_properties(tool.parameters_schema)
     }
+  end
+
+  #--
+  #: (untyped) -> String
+  def encode_tool_arguments(args)
+    return "{}" unless args
+
+    args.is_a?(String) ? args : args.to_json
   end
 
   #--
