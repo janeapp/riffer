@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.22.0](https://github.com/janeapp/riffer/compare/riffer/v0.21.0...riffer/v0.22.0) (2026-04-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* `Tool.name` returns `namespace/tool_name` instead of `namespace__tool_name`.
+
+### Features
+
+* use human-friendly `/` separator for tool names ([#202](https://github.com/janeapp/riffer/issues/202)) ([8dda251](https://github.com/janeapp/riffer/commit/8dda251ff6d91a6cebbbb82082b7ac21c2a51253))
+
+
+### Bug Fixes
+
+* release 0.22.0 ([#204](https://github.com/janeapp/riffer/issues/204)) ([860a500](https://github.com/janeapp/riffer/commit/860a500bb6e991de8018b43cda0c5f2662e22402))
+
 ## [0.21.0](https://github.com/janeapp/riffer/compare/riffer/v0.20.0...riffer/v0.21.0) (2026-04-09)
 
 
