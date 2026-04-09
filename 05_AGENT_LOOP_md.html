@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>README - Riffer Documentation</title>
+<title>05_AGENT_LOOP - Riffer Documentation</title>
 
 
-  <meta name="keywords" content="ruby,documentation,README">
+  <meta name="keywords" content="ruby,documentation,05_AGENT_LOOP">
   <meta
     name="description"
-    content="README: Riffer The all-in-one Ruby framework for building AI-powered applications and agents. badge."
+    content="05_AGENT_LOOP: Agent detects `tool_calls` in the assistant message 2. Finds the matching tool class - Validates arguments against the tool&#39;s parameter schema -"
   >
 
 
@@ -19,11 +19,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="README - Riffer Documentation">
+<meta property="og:title" content="05_AGENT_LOOP - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Riffer The all-in-one Ruby framework for building AI-powered applications and agents. badge.">
+    <meta property="og:description" content="Agent detects `tool_calls` in the assistant message 2. Finds the matching tool class - Validates arguments against the tool&#39;s parameter schema -">
 
 
 
@@ -31,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="README - Riffer Documentation">
+<meta name="twitter:title" content="05_AGENT_LOOP - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Riffer The all-in-one Ruby framework for building AI-powered applications and agents. badge.">
+    <meta name="twitter:description" content="Agent detects `tool_calls` in the assistant message 2. Finds the matching tool class - Validates arguments against the tool&#39;s parameter schema -">
 
 
 
@@ -621,163 +621,181 @@
 
 </nav>
 
-<main role="main" aria-label="Page README.md">
+<main role="main" aria-label="Page 05_AGENT_LOOP.md">
 
-<span id="label-Riffer" class="legacy-anchor"></span>
-<h1 id="riffer"><a href="#riffer"><a href="Riffer.html"><code>Riffer</code></a></a></h1>
+<span id="label-Agent+Loop" class="legacy-anchor"></span>
+<h1 id="agent-loop"><a href="#agent-loop">Agent Loop</a></h1>
 
-<p>The all-in-one Ruby framework for building AI-powered applications and agents.</p>
+<span id="label-Tool+Execution+Flow" class="legacy-anchor"></span>
+<h2 id="tool-execution-flow"><a href="#tool-execution-flow">Tool Execution Flow</a></h2>
 
-<p><a href="https://badge.fury.io/rb/riffer"><img src="https://badge.fury.io/rb/riffer.svg" alt="Gem Version"></a></p>
-
-<span id="label-Requirements" class="legacy-anchor"></span>
-<h2 id="requirements"><a href="#requirements">Requirements</a></h2>
-<ul><li>
-<p>Ruby 3.3 or later</p>
-</li></ul>
-
-<span id="label-Installation" class="legacy-anchor"></span>
-<h2 id="installation"><a href="#installation">Installation</a></h2>
-
-<p>Install the released gem:</p>
-
-<pre class="bash">gem install riffer</pre>
-
-<p>Or add to your application’s Gemfile:</p>
-
-<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;riffer&#39;</span>
-</pre>
-
-<span id="label-Quick+Start" class="legacy-anchor"></span>
-<h2 id="quick-start"><a href="#quick-start">Quick Start</a></h2>
-
-<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;riffer&#39;</span>
-
-<span class="ruby-comment"># Configure your provider</span>
-<span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
-  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openai</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENAI_API_KEY&#39;</span>]
-<span class="ruby-keyword">end</span>
-
-<span class="ruby-comment"># Define an agent</span>
-<span class="ruby-keyword">class</span> <span class="ruby-constant">EchoAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-5-mini&#39;</span>
-  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are an assistant that repeats what the user says.&#39;</span>
-<span class="ruby-keyword">end</span>
-
-<span class="ruby-comment"># Use the agent</span>
-<span class="ruby-identifier">agent</span> = <span class="ruby-constant">EchoAgent</span>.<span class="ruby-identifier">new</span>
-<span class="ruby-identifier">puts</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Hello world&#39;</span>)
-</pre>
-
-<span id="label-Documentation" class="legacy-anchor"></span>
-<h2 id="documentation"><a href="#documentation">Documentation</a></h2>
-
-<p>For comprehensive documentation, see the <a href="docs/">docs</a> directory:</p>
-<ul><li>
-<p><a href="docs/01_OVERVIEW_md.html">Overview</a> - Core concepts and architecture</p>
-</li><li>
-<p><a href="docs/02_GETTING_STARTED_md.html">Getting Started</a> - Installation and first steps</p>
-</li><li>
-<p><a href="docs/03_AGENTS_md.html">Agents</a> - Defining and configuring agents</p>
-</li><li>
-<p><a href="docs/04_AGENT_LIFECYCLE_md.html">Agent Lifecycle</a> - Generate, stream, and responses</p>
-</li><li>
-<p><a href="docs/05_AGENT_LOOP_md.html">Agent Loop</a> - Tool execution flow and stopping</p>
-</li><li>
-<p><a href="docs/06_TOOLS_md.html">Tools</a> - Creating tools for agents</p>
-</li><li>
-<p><a href="docs/07_TOOL_ADVANCED_md.html">Advanced Tools</a> - Timeouts, runtime, and registration</p>
-</li><li>
-<p><a href="docs/08_MESSAGES_md.html">Messages</a> - Message types and formats</p>
-</li><li>
-<p><a href="docs/09_STREAM_EVENTS_md.html">Stream Events</a> - Streaming responses</p>
-</li><li>
-<p><a href="docs/10_CONFIGURATION_md.html">Configuration</a> - Framework configuration</p>
-</li><li>
-<p><a href="docs/11_EVALS_md.html">Evals</a> - Evaluating agent quality</p>
-</li><li>
-<p><a href="docs/12_GUARDRAILS_md.html">Guardrails</a> - Input/output validation</p>
-</li><li>
-<p><a href="docs/13_SKILLS_md.html">Skills</a> - Packaged agent capabilities</p>
-</li><li>
-<p><a href="docs/providers/01_PROVIDERS_md.html">Providers</a> - LLM provider adapters</p>
-</li></ul>
-
-<span id="label-API+Reference" class="legacy-anchor"></span>
-<h3 id="api-reference"><a href="#api-reference">API Reference</a></h3>
-
-<p>Generate the full API documentation with:</p>
-
-<pre class="bash">bundle exec rake docs</pre>
-
-<p>Then open <code>doc/index.html</code> in your browser.</p>
-
-<span id="label-Development" class="legacy-anchor"></span>
-<h2 id="development"><a href="#development">Development</a></h2>
-
-<p>After checking out the repo, run:</p>
-
-<pre class="bash">bin/setup</pre>
-
-<p>Run the test suite:</p>
-
-<pre class="bash">bundle exec rake test</pre>
-
-<p>Check and fix code style:</p>
-
-<pre class="bash">bundle exec rake standard
-bundle exec rake standard:fix</pre>
-
-<p>Run the interactive console:</p>
-
-<pre class="bash">bin/console</pre>
-
-<span id="label-Recording+VCR+Cassettes" class="legacy-anchor"></span>
-<h3 id="recording-vcr-cassettes"><a href="#recording-vcr-cassettes">Recording VCR Cassettes</a></h3>
-
-<p>Integration tests use <a href="https://github.com/vcr/vcr">VCR</a> to record and replay HTTP interactions. When adding new tests that hit provider APIs, you need to record cassettes with real API keys.</p>
-
-<p>Create a <code>.env</code> file in the project root (it is gitignored):</p>
-
-<pre class="bash">OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-AWS_BEDROCK_API_TOKEN=...</pre>
-
-<p>The test helper loads this file automatically via <code>dotenv</code>. Then run the specific tests that need new cassettes:</p>
-
-<pre class="bash">bundle exec ruby -Itest test/riffer/providers/open_ai_test.rb
-bundle exec ruby -Itest test/riffer/providers/anthropic_test.rb
-bundle exec ruby -Itest test/riffer/providers/amazon_bedrock_test.rb</pre>
-
-<p>VCR records the HTTP interactions to <code>test/fixtures/vcr_cassettes/</code> on the first run. Subsequent runs replay from the cassettes without hitting the API. API keys are automatically filtered from recorded cassettes.</p>
-
-<span id="label-Contributing" class="legacy-anchor"></span>
-<h2 id="contributing"><a href="#contributing">Contributing</a></h2>
+<p>When an agent receives a response with tool calls:</p>
 <ol><li>
-<p>Fork the repository and create your branch: <code>git checkout -b feature/foo</code></p>
+<p>Agent detects <code>tool_calls</code> in the assistant message</p>
 </li><li>
-<p>Run tests and linters locally: <code>bundle exec rake</code></p>
+<p>The configured tool runtime executes the tool calls (sequentially by default, or concurrently with <a href="Riffer/ToolRuntime/Threaded.html"><code>Riffer::ToolRuntime::Threaded</code></a>):</p>
 </li><li>
-<p>Submit a pull request with a clear description of the change</p>
+<p>Finds the matching tool class</p>
+</li><li>
+<p>Validates arguments against the tool’s parameter schema</p>
+</li><li>
+<p>Calls the tool’s <code>call</code> method with <code>context</code> and arguments</p>
+</li><li>
+<p>Creates a Tool message with the result</p>
+</li><li>
+<p>Sends the updated message history back to the LLM</p>
+</li><li>
+<p>Repeats until no more tool calls</p>
 </li></ol>
 
-<p>Please follow the <a href="https://github.com/janeapp/riffer/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
+<span id="label-Error+Handling" class="legacy-anchor"></span>
+<h2 id="error-handling"><a href="#error-handling">Error Handling</a></h2>
 
-<span id="label-Changelog" class="legacy-anchor"></span>
-<h2 id="changelog"><a href="#changelog">Changelog</a></h2>
-
-<p>All notable changes to this project are documented in <a href="CHANGELOG_md.html">CHANGELOG.md</a>.</p>
-
-<span id="label-License" class="legacy-anchor"></span>
-<h2 id="license"><a href="#license">License</a></h2>
-
-<p>Licensed under the MIT License. See <a href="LICENSE_txt.html">LICENSE.txt</a> for details.</p>
-
-<span id="label-Maintainers" class="legacy-anchor"></span>
-<h2 id="maintainers"><a href="#maintainers">Maintainers</a></h2>
+<p>Tool execution errors are captured and sent back to the LLM:</p>
 <ul><li>
-<p>Jake Bottrall - <a href="https://github.com/bottrall">github.com/bottrall</a></p>
+<p><code>unknown_tool</code> - Tool not found in registered tools</p>
+</li><li>
+<p><code>validation_error</code> - Arguments failed validation</p>
+</li><li>
+<p><code>execution_error</code> - Tool raised an exception</p>
 </li></ul>
+
+<p>The LLM can use this information to retry or respond appropriately.</p>
+
+<span id="label-Ways+the+Agent+Loop+Can+Stop" class="legacy-anchor"></span>
+<h2 id="ways-the-agent-loop-can-stop"><a href="#ways-the-agent-loop-can-stop">Ways the Agent Loop Can Stop</a></h2>
+
+<p>The agent loop normally runs until the LLM produces a response with no tool calls. There are four mechanisms that can stop it early, each designed for a different use case:</p>
+
+<span id="label-Guardrail+Tripwire+-28declarative-2C+internal-29" class="legacy-anchor"></span>
+<h3 id="guardrail-tripwire-declarative-internal"><a href="#guardrail-tripwire-declarative-internal">Guardrail Tripwire (declarative, internal)</a></h3>
+
+<p>Guardrails are registered at class definition time and run automatically on every request. When a guardrail calls <code>block</code>, it sets a <strong>tripwire</strong> that stops the loop immediately. The LLM is never called (for <code>:before</code> guardrails) or its response is discarded (for <code>:after</code> guardrails).</p>
+<ul><li>
+<p><strong>When to use:</strong> Policy enforcement that should always apply — content filtering, input validation, length limits.</p>
+</li><li>
+<p><strong>Response:</strong> <code>response.blocked?</code> returns <code>true</code>, <code>response.tripwire</code> contains the reason and metadata.</p>
+</li><li>
+<p><strong>Streaming:</strong> Yields a <code>GuardrailTripwire</code> event.</p>
+</li><li>
+<p><strong>Resumable:</strong> No. A tripwire is a hard stop. The caller must change the input and start a new <code>generate</code>/<code>stream</code> call.</p>
+</li></ul>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-5-mini&#39;</span>
+  <span class="ruby-identifier">guardrail</span> <span class="ruby-value">:before</span>, <span class="ruby-value">with:</span> <span class="ruby-constant">ContentPolicy</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">response</span> = <span class="ruby-constant">MyAgent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;blocked input&#39;</span>)
+<span class="ruby-identifier">response</span>.<span class="ruby-identifier">blocked?</span>          <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">response</span>.<span class="ruby-identifier">tripwire</span>.<span class="ruby-identifier">reason</span>   <span class="ruby-comment"># =&gt; &quot;Content policy violation&quot;</span>
+</pre>
+
+<span id="label-Callback+Interrupt+-28imperative-2C+external-29" class="legacy-anchor"></span>
+<h3 id="callback-interrupt-imperative-external"><a href="#callback-interrupt-imperative-external">Callback Interrupt (imperative, external)</a></h3>
+
+<p>Callbacks registered with <code>on_message</code> can call <code>agent.interrupt!</code> (or <code>throw :riffer_interrupt</code>) to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.</p>
+<ul><li>
+<p><strong>When to use:</strong> Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.</p>
+</li><li>
+<p><strong>Response:</strong> <code>response.interrupted?</code> returns <code>true</code>, <code>response.interrupt_reason</code> contains the optional reason.</p>
+</li><li>
+<p><strong>Streaming:</strong> Yields an <code>Interrupt</code> event with a <code>reason</code> attribute.</p>
+</li><li>
+<p><strong>Resumable:</strong> Yes. Call <code>generate(&#39;Continue&#39;)</code> or <code>stream(&#39;Continue&#39;)</code> on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.</p>
+</li></ul>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span> = <span class="ruby-constant">MyAgent</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">on_message</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">interrupt!</span>(<span class="ruby-string">&quot;approval needed&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">requires_approval?</span>(<span class="ruby-identifier">msg</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Do something risky&#39;</span>)
+<span class="ruby-identifier">response</span>.<span class="ruby-identifier">interrupted?</span>      <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">response</span>.<span class="ruby-identifier">interrupt_reason</span>  <span class="ruby-comment"># =&gt; &quot;approval needed&quot;</span>
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Approved, continue&#39;</span>)  <span class="ruby-comment"># continues where it left off</span>
+</pre>
+
+<span id="label-Max+Steps+Limit" class="legacy-anchor"></span>
+<h3 id="max-steps-limit"><a href="#max-steps-limit">Max Steps Limit</a></h3>
+
+<p>The <code>max_steps</code> class method caps the number of LLM call steps in the tool-use loop. When the step count reaches the limit, the loop interrupts automatically with reason <code>:max_steps</code>.</p>
+<ul><li>
+<p><strong>When to use:</strong> Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.</p>
+</li><li>
+<p><strong>Response:</strong> <code>response.interrupted?</code> returns <code>true</code>, <code>response.interrupt_reason</code> is <code>:max_steps</code>.</p>
+</li><li>
+<p><strong>Streaming:</strong> Yields an <code>Interrupt</code> event with <code>reason: :max_steps</code>.</p>
+</li><li>
+<p><strong>Resumable:</strong> Yes. Call <code>generate(&#39;Continue&#39;)</code> or <code>stream(&#39;Continue&#39;)</code> on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.</p>
+</li></ul>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-5-mini&#39;</span>
+  <span class="ruby-identifier">max_steps</span> <span class="ruby-value">8</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">response</span> = <span class="ruby-constant">MyAgent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Do a complex task&#39;</span>)
+<span class="ruby-identifier">response</span>.<span class="ruby-identifier">interrupted?</span>      <span class="ruby-comment"># =&gt; true (if 8 steps were reached)</span>
+<span class="ruby-identifier">response</span>.<span class="ruby-identifier">interrupt_reason</span>  <span class="ruby-comment"># =&gt; :max_steps</span>
+</pre>
+
+<span id="label-Unhandled+Exceptions" class="legacy-anchor"></span>
+<h3 id="unhandled-exceptions"><a href="#unhandled-exceptions">Unhandled Exceptions</a></h3>
+
+<p>If a guardrail, provider call, or other internal code raises an exception, it propagates to the caller. Tool execution exceptions are the one exception — they are caught and sent back to the LLM as error messages (see <a href="#error-handling">Error Handling</a> above).</p>
+
+<span id="label-Comparison" class="legacy-anchor"></span>
+<h3 id="comparison"><a href="#comparison">Comparison</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th></th>
+<th>Guardrail Tripwire</th>
+<th>Callback Interrupt</th>
+<th>Max Steps Limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Defined</td>
+<td>At class level (<code>guardrail :before</code>)</td>
+<td>At instance level (<code>on_message</code>)</td>
+<td>At class level (<code>max_steps 8</code>)</td>
+</tr>
+<tr>
+<td>Fires</td>
+<td>Automatically on every request</td>
+<td>When callback logic decides</td>
+<td>When step count reaches limit</td>
+</tr>
+<tr>
+<td>Resumable</td>
+<td>No</td>
+<td>Yes (call <code>generate</code>/<code>stream</code> again)</td>
+<td>Yes (call <code>generate</code>/<code>stream</code> again)</td>
+</tr>
+<tr>
+<td>Response flag</td>
+<td><code>blocked?</code></td>
+<td><code>interrupted?</code></td>
+<td><code>interrupted?</code></td>
+</tr>
+<tr>
+<td>Stream event</td>
+<td><code>GuardrailTripwire</code></td>
+<td><code>Interrupt</code></td>
+<td><code>Interrupt</code></td>
+</tr>
+<tr>
+<td>Purpose</td>
+<td>Policy enforcement</td>
+<td>Flow control</td>
+<td>Runaway loop prevention</td>
+</tr>
+</tbody>
+</table>
 
 </main>
 
