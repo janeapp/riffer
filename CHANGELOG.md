@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.0](https://github.com/janeapp/riffer/compare/riffer/v0.20.0...riffer/v0.21.0) (2026-04-09)
+
+
+### Features
+
+* **amazon_bedrock:** support S3 URI file sources ([#190](https://github.com/janeapp/riffer/issues/190)) ([243e5b1](https://github.com/janeapp/riffer/commit/243e5b12407cac800b6cf0968a24989924932c26))
+* normalize consecutive same-role messages before provider serialization ([#201](https://github.com/janeapp/riffer/issues/201)) ([1ac986d](https://github.com/janeapp/riffer/commit/1ac986dd54a3fb9859ae05d57c49176e37704195))
+
 ## [0.20.0](https://github.com/janeapp/riffer/compare/riffer/v0.19.0...riffer/v0.20.0) (2026-03-26)
 
 
