@@ -13,4 +13,10 @@ class Riffer::Messages::System < Riffer::Messages::Base
   def role
     :system
   end
+
+  #--
+  #: (Riffer::Messages::System) -> Riffer::Messages::System
+  def +(other)
+    self.class.new("#{content}\n\n#{other.content}")
+  end
 end

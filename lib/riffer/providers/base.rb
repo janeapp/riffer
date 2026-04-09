@@ -38,6 +38,7 @@ class Riffer::Providers::Base
     validate_input!(prompt: prompt, system: system, messages: messages)
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
     response = execute_generate(params)
 
@@ -62,6 +63,7 @@ class Riffer::Providers::Base
     validate_input!(prompt: prompt, system: system, messages: messages)
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
     Enumerator.new do |yielder|
       execute_stream(params, yielder)
@@ -119,6 +121,16 @@ class Riffer::Providers::Base
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def merge_consecutive_messages(messages)
+    messages.chunk { |msg| msg.role }.flat_map do |role, group|
+      next group if role == :tool || group.size == 1
+
+      group.inject { |merged, msg| merged + msg }
+    end
   end
 
   #--

@@ -41,6 +41,10 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # : () -> bool
   def structured_output?: () -> bool
 
+  # --
+  # : (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+  def +: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+
   # Converts the message to a hash.
   #
   # --

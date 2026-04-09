@@ -43,6 +43,12 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     !@structured_output.nil?
   end
 
+  #--
+  #: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+  def +(other)
+    self.class.new("#{content}\n\n#{other.content}", tool_calls: tool_calls + other.tool_calls)
+  end
+
   # Converts the message to a hash.
   #
   #--

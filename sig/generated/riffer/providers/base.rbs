@@ -73,6 +73,10 @@ class Riffer::Providers::Base
   def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
 
   # --
+  # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def merge_consecutive_messages: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+
+  # --
   # : (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
   def validate_input!: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
 
