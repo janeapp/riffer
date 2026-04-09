@@ -244,6 +244,40 @@ Agents can emit messages as they're added during generation via the `on_message`
 
 See [Agent Lifecycle - on_message](04_AGENT_LIFECYCLE.md#on_message) for details.
 
+## Consecutive Message Merging
+
+Before messages reach a provider adapter, Riffer merges consecutive messages that share the same role into a single message. This guarantees every provider receives an identical message list, regardless of how it handles consecutive same-role messages internally.
+
+Without this step, the same model can receive different input depending on the provider. Anthropic's API silently merges consecutive user messages server-side, while Bedrock and Gemini reject them outright. Normalizing at the Riffer level removes that divergence.
+
+### Merge rules
+
+| Message type | Content | Auxiliary data | Merged? |
+|--------------|---------|----------------|---------|
+| `System` | Joined with `"\n\n"` | — | Yes |
+| `User` | Joined with `"\n\n"` | `files` arrays concatenated | Yes |
+| `Assistant` | Joined with `"\n\n"` | `tool_calls` arrays concatenated | Yes |
+| `Tool` | — | — | Never (each has a unique `tool_call_id`) |
+
+### Example
+
+When a context message is injected before the user's turn, two consecutive user messages are merged into one:
+
+```ruby
+messages = [
+  Riffer::Messages::System.new("You are a code reviewer."),
+  Riffer::Messages::User.new("The repository uses RSpec for testing."),
+  Riffer::Messages::User.new("Review this pull request.")
+]
+
+agent.generate(messages)
+# The provider receives two messages:
+#   1. System  — "You are a code reviewer."
+#   2. User    — "The repository uses RSpec for testing.\n\nReview this pull request."
+```
+
+Merging happens at serialization time only. The agent's `messages` array still contains the original separate messages for logging, evals, and debugging.
+
 ## Base Class
 
 All messages inherit from `Riffer::Messages::Base`:
