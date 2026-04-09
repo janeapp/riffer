@@ -120,7 +120,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       if block.respond_to?(:tool_use) && block.tool_use
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           call_id: block.tool_use.tool_use_id,
-          name: block.tool_use.name,
+          name: decode_tool_name(block.tool_use.name, tools: @current_tools),
           arguments: block.tool_use.input.to_json
         )
       end
@@ -160,7 +160,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_content_block_start_tool_use(event, state:, yielder:)
     state[:tool_call] = {
       id: event.start.tool_use.tool_use_id,
-      name: event.start.tool_use.name,
+      name: decode_tool_name(event.start.tool_use.name, tools: @current_tools),
       arguments: ""
     }
   end
@@ -258,7 +258,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       content << {
         tool_use: {
           tool_use_id: tc.call_id,
-          name: tc.name,
+          name: encode_tool_name(tc.name),
           input: parse_tool_arguments(tc.arguments)
         }
       }
@@ -327,7 +327,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def convert_tool_to_bedrock_format(tool)
     {
       tool_spec: {
-        name: tool.name,
+        name: encode_tool_name(tool.name),
         description: tool.description,
         input_schema: {
           json: tool.parameters_schema(strict: true)

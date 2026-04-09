@@ -18,6 +18,8 @@ class Riffer::Providers::Base
 
   include Riffer::Messages::Converter
 
+  WIRE_SEPARATOR: String
+
   # Returns the preferred skill adapter for this provider.
   #
   # Override in subclasses for provider-specific formats.
@@ -39,6 +41,14 @@ class Riffer::Providers::Base
   def stream_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   private
+
+  # --
+  # : (String) -> String
+  def encode_tool_name: (String) -> String
+
+  # --
+  # : (String, tools: Array[Riffer::Tool]) -> String
+  def decode_tool_name: (String, tools: Array[Riffer::Tool]) -> String
 
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

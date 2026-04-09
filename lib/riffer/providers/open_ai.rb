@@ -107,7 +107,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       if item.type == :function_call
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           call_id: item.call_id,
-          name: item.name,
+          name: decode_tool_name(item.name, tools: @current_tools),
           arguments: item.arguments
         )
       end
@@ -158,7 +158,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_output_item_added_function_call(event, state:, yielder:)
     state[:tool_info][event.item.id] = {
-      name: event.item.name,
+      name: decode_tool_name(event.item.name, tools: @current_tools),
       call_id: event.item.call_id
     }
   end
@@ -284,7 +284,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         items << {
           type: "function_call",
           call_id: tc.call_id,
-          name: tc.name,
+          name: encode_tool_name(tc.name),
           arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json
         }
       end
@@ -311,7 +311,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def convert_tool_to_openai_format(tool)
     {
       type: "function",
-      name: tool.name,
+      name: encode_tool_name(tool.name),
       description: tool.description,
       parameters: tool.parameters_schema(strict: true),
       strict: true
