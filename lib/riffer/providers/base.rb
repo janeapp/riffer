@@ -38,6 +38,7 @@ class Riffer::Providers::Base
     validate_input!(prompt: prompt, system: system, messages: messages)
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
     response = execute_generate(params)
 
@@ -62,6 +63,7 @@ class Riffer::Providers::Base
     validate_input!(prompt: prompt, system: system, messages: messages)
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
     Enumerator.new do |yielder|
       execute_stream(params, yielder)
@@ -119,6 +121,31 @@ class Riffer::Providers::Base
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def merge_consecutive_messages(messages)
+    messages.chunk { |msg| msg.class }.flat_map do |klass, group|
+      next group if klass == Riffer::Messages::Tool || group.size == 1
+
+      case klass.name
+      when "Riffer::Messages::System"
+        Riffer::Messages::System.new(group.map(&:content).join("\n\n"))
+      when "Riffer::Messages::User"
+        Riffer::Messages::User.new(
+          group.map(&:content).join("\n\n"),
+          files: group.flat_map(&:files)
+        )
+      when "Riffer::Messages::Assistant"
+        Riffer::Messages::Assistant.new(
+          group.map(&:content).join("\n\n"),
+          tool_calls: group.flat_map(&:tool_calls)
+        )
+      else
+        group
+      end
+    end
   end
 
   #--
