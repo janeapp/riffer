@@ -30,6 +30,12 @@ class Riffer::Messages::User < Riffer::Messages::Base
   end
 
   #--
+  #: (Riffer::Messages::User) -> Riffer::Messages::User
+  def +(other)
+    self.class.new("#{content}\n\n#{other.content}", files: files + other.files)
+  end
+
+  #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content}

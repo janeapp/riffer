@@ -9,4 +9,8 @@ class Riffer::Messages::System < Riffer::Messages::Base
   # --
   # : () -> Symbol
   def role: () -> Symbol
+
+  # --
+  # : (Riffer::Messages::System) -> Riffer::Messages::System
+  def +: (Riffer::Messages::System) -> Riffer::Messages::System
 end

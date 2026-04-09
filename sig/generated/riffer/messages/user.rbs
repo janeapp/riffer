@@ -23,6 +23,10 @@ class Riffer::Messages::User < Riffer::Messages::Base
   def role: () -> Symbol
 
   # --
+  # : (Riffer::Messages::User) -> Riffer::Messages::User
+  def +: (Riffer::Messages::User) -> Riffer::Messages::User
+
+  # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 end

@@ -126,25 +126,10 @@ class Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def merge_consecutive_messages(messages)
-    messages.chunk { |msg| msg.class }.flat_map do |klass, group|
-      next group if klass == Riffer::Messages::Tool || group.size == 1
+    messages.chunk { |msg| msg.role }.flat_map do |role, group|
+      next group if role == :tool || group.size == 1
 
-      case klass.name
-      when "Riffer::Messages::System"
-        Riffer::Messages::System.new(group.map(&:content).join("\n\n"))
-      when "Riffer::Messages::User"
-        Riffer::Messages::User.new(
-          group.map(&:content).join("\n\n"),
-          files: group.flat_map(&:files)
-        )
-      when "Riffer::Messages::Assistant"
-        Riffer::Messages::Assistant.new(
-          group.map(&:content).join("\n\n"),
-          tool_calls: group.flat_map(&:tool_calls)
-        )
-      else
-        group
-      end
+      group.inject { |merged, msg| merged + msg }
     end
   end
 
