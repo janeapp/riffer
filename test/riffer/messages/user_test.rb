@@ -29,6 +29,46 @@ describe Riffer::Messages::User do
     end
   end
 
+  describe "#+" do
+    it "concatenates content" do
+      a = Riffer::Messages::User.new("First")
+      b = Riffer::Messages::User.new("Second")
+
+      result = a + b
+
+      expect(result.content).must_equal "First\n\nSecond"
+    end
+
+    it "returns a User message" do
+      a = Riffer::Messages::User.new("First")
+      b = Riffer::Messages::User.new("Second")
+
+      result = a + b
+
+      expect(result).must_be_instance_of Riffer::Messages::User
+    end
+
+    it "combines files from both messages" do
+      file_a = Riffer::FilePart.new(data: "abc", media_type: "image/png")
+      file_b = Riffer::FilePart.new(data: "def", media_type: "image/jpeg")
+      a = Riffer::Messages::User.new("With image", files: [file_a])
+      b = Riffer::Messages::User.new("Another", files: [file_b])
+
+      result = a + b
+
+      expect(result.files).must_equal [file_a, file_b]
+    end
+
+    it "preserves empty files" do
+      a = Riffer::Messages::User.new("No files")
+      b = Riffer::Messages::User.new("Also no files")
+
+      result = a + b
+
+      expect(result.files).must_equal []
+    end
+  end
+
   describe "#to_h" do
     it "returns hash with role and content" do
       message = Riffer::Messages::User.new("Hello")

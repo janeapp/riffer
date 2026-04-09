@@ -47,6 +47,48 @@ describe Riffer::Messages::Assistant do
     end
   end
 
+  describe "#+" do
+    it "concatenates content" do
+      a = Riffer::Messages::Assistant.new("Part one")
+      b = Riffer::Messages::Assistant.new("Part two")
+
+      result = a + b
+
+      expect(result.content).must_equal "Part one\n\nPart two"
+    end
+
+    it "returns an Assistant message" do
+      a = Riffer::Messages::Assistant.new("Part one")
+      b = Riffer::Messages::Assistant.new("Part two")
+
+      result = a + b
+
+      expect(result).must_be_instance_of Riffer::Messages::Assistant
+    end
+
+    it "combines tool calls from both messages" do
+      tc_a = Riffer::Messages::Assistant::ToolCall.new(call_id: "1", name: "foo", arguments: "{}")
+      tc_b = Riffer::Messages::Assistant::ToolCall.new(call_id: "2", name: "bar", arguments: "{}")
+      a = Riffer::Messages::Assistant.new("First", tool_calls: [tc_a])
+      b = Riffer::Messages::Assistant.new("Second", tool_calls: [tc_b])
+
+      result = a + b
+
+      expect(result.tool_calls).must_equal [tc_a, tc_b]
+    end
+
+    it "discards token_usage and structured_output" do
+      usage = Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+      a = Riffer::Messages::Assistant.new("First", token_usage: usage, structured_output: {key: "val"})
+      b = Riffer::Messages::Assistant.new("Second")
+
+      result = a + b
+
+      expect(result.token_usage).must_be_nil
+      expect(result.structured_output).must_be_nil
+    end
+  end
+
   describe "#to_h" do
     it "returns hash with role and content" do
       message = Riffer::Messages::Assistant.new("I can help")
