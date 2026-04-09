@@ -20,6 +20,8 @@ class Riffer::Providers::Base
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
 
+  WIRE_SEPARATOR = "__" #: String
+
   # Returns the preferred skill adapter for this provider.
   #
   # Override in subclasses for provider-specific formats.
@@ -36,6 +38,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
+    @current_tools = options[:tools] || []
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
@@ -61,6 +64,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
+    @current_tools = options[:tools] || []
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
@@ -71,6 +75,19 @@ class Riffer::Providers::Base
   end
 
   private
+
+  #--
+  #: (String) -> String
+  def encode_tool_name(name)
+    name.gsub("/", WIRE_SEPARATOR)
+  end
+
+  #--
+  #: (String, tools: Array[Riffer::Tool]) -> String
+  def decode_tool_name(wire_name, tools:)
+    tool = tools.find { |t| encode_tool_name(t.name) == wire_name }
+    tool ? tool.name : wire_name
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

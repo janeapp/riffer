@@ -123,7 +123,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       if block.type.to_s == "tool_use"
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           call_id: block.id,
-          name: block.name,
+          name: decode_tool_name(block.name, tools: @current_tools),
           arguments: block.input.to_json
         )
       end
@@ -229,7 +229,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::ToolCallDone.new(
       item_id: content_block.id,
       call_id: content_block.id,
-      name: content_block.name,
+      name: decode_tool_name(content_block.name, tools: @current_tools),
       arguments: arguments
     )
     state[:tool_call] = nil
@@ -339,7 +339,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       content << {
         type: "tool_use",
         id: tc.call_id,
-        name: tc.name,
+        name: encode_tool_name(tc.name),
         input: parse_tool_arguments(tc.arguments)
       }
     end
@@ -365,7 +365,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
   def convert_tool_to_anthropic_format(tool)
     {
-      name: tool.name,
+      name: encode_tool_name(tool.name),
       description: tool.description,
       input_schema: tool.parameters_schema(strict: true)
     }
