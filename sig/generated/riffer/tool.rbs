@@ -20,8 +20,6 @@
 #     end
 #   end
 class Riffer::Tool
-  DEFAULT_TIMEOUT: Integer
-
   extend Riffer::Toolable
 
   # Executes the tool with the given arguments.

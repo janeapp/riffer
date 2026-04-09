@@ -24,8 +24,6 @@ require "timeout"
 #   end
 #
 class Riffer::Tool
-  DEFAULT_TIMEOUT = Riffer::Toolable::DEFAULT_TIMEOUT #: Integer
-
   extend Riffer::Toolable
 
   kind :tool
