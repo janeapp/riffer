@@ -22,45 +22,7 @@
 class Riffer::Tool
   DEFAULT_TIMEOUT: Integer
 
-  extend Riffer::Helpers::ClassNameConverter
-
-  # Gets or sets the tool description.
-  #
-  # --
-  # : (?String?) -> String?
-  def self.description: (?String?) -> String?
-
-  # Gets or sets the tool identifier/name.
-  #
-  # --
-  # : (?String?) -> String
-  def self.identifier: (?String?) -> String
-
-  # Alias for identifier - used by providers.
-  #
-  # --
-  # : (?String?) -> String
-  def self.name: (?String?) -> String
-
-  # Gets or sets the tool timeout in seconds.
-  #
-  # --
-  # : (?(Integer | Float)?) -> (Integer | Float)
-  def self.timeout: (?(Integer | Float)?) -> (Integer | Float)
-
-  # Defines parameters using the Params DSL.
-  #
-  # --
-  # : () ?{ () -> void } -> Riffer::Params?
-  def self.params: () ?{ () -> void } -> Riffer::Params?
-
-  # Returns the JSON Schema for the tool's parameters.
-  #
-  # --
-  # : (?strict: bool) -> Hash[Symbol, untyped]
-  def self.parameters_schema: (?strict: bool) -> Hash[Symbol, untyped]
-
-  def self.empty_schema: () -> untyped
+  extend Riffer::Toolable
 
   # Executes the tool with the given arguments.
   #
