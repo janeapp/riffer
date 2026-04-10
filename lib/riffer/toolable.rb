@@ -6,8 +6,8 @@
 # future.
 #
 # Extend this module to make a class discoverable as a tool by LLM providers.
-# Provides identifier, description, params, timeout, requires_approval,
-# and JSON schema generation.
+# Provides identifier, description, params, timeout, and JSON schema
+# generation.
 #
 # Instance-level execution concerns (+call+, +call_with_validation+, etc.)
 # are NOT part of Toolable — those belong on Riffer::Tool.
@@ -95,15 +95,6 @@ module Riffer::Toolable
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def parameters_schema(strict: false)
     @params_builder&.to_json_schema(strict: strict) || empty_schema
-  end
-
-  # Gets or sets whether this tool requires human approval before execution.
-  #
-  #--
-  #: (?bool?) -> bool
-  def requires_approval(value = nil)
-    return @requires_approval || false if value.nil?
-    @requires_approval = !!value
   end
 
   # Returns the kind of toolable entity.

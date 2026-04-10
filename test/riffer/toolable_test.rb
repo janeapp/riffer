@@ -101,22 +101,6 @@ describe Riffer::Toolable do
     end
   end
 
-  describe "#requires_approval" do
-    it "defaults to false" do
-      klass = Class.new { extend Riffer::Toolable }
-      expect(klass.requires_approval).must_equal false
-    end
-
-    it "can be set to true" do
-      klass = Class.new do
-        extend Riffer::Toolable
-
-        requires_approval true
-      end
-      expect(klass.requires_approval).must_equal true
-    end
-  end
-
   describe "#kind" do
     it "defaults to :tool" do
       klass = Class.new { extend Riffer::Toolable }
