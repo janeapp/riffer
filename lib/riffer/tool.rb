@@ -24,68 +24,9 @@ require "timeout"
 #   end
 #
 class Riffer::Tool
-  DEFAULT_TIMEOUT = 10 #: Integer
+  extend Riffer::Toolable
 
-  extend Riffer::Helpers::ClassNameConverter
-
-  # Gets or sets the tool description.
-  #
-  #--
-  #: (?String?) -> String?
-  def self.description(value = nil)
-    return @description if value.nil?
-    @description = value.to_s
-  end
-
-  # Gets or sets the tool identifier/name.
-  #
-  #--
-  #: (?String?) -> String
-  def self.identifier(value = nil)
-    return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self)) if value.nil?
-    @identifier = value.to_s
-  end
-
-  # Alias for identifier - used by providers.
-  #
-  #--
-  #: (?String?) -> String
-  def self.name(value = nil)
-    return identifier(value) unless value.nil?
-    identifier
-  end
-
-  # Gets or sets the tool timeout in seconds.
-  #
-  #--
-  #: (?(Integer | Float)?) -> (Integer | Float)
-  def self.timeout(value = nil)
-    return @timeout || DEFAULT_TIMEOUT if value.nil?
-    @timeout = value.to_f
-  end
-
-  # Defines parameters using the Params DSL.
-  #
-  #--
-  #: () ?{ () -> void } -> Riffer::Params?
-  def self.params(&block)
-    return @params_builder if block.nil?
-    @params_builder = Riffer::Params.new
-    @params_builder.instance_eval(&block)
-  end
-
-  # Returns the JSON Schema for the tool's parameters.
-  #
-  #--
-  #: (?strict: bool) -> Hash[Symbol, untyped]
-  def self.parameters_schema(strict: false)
-    @params_builder&.to_json_schema(strict: strict) || empty_schema
-  end
-
-  def self.empty_schema # :nodoc:
-    {type: "object", properties: {}, required: [], additionalProperties: false}
-  end
-  private_class_method :empty_schema
+  kind :tool
 
   # Executes the tool with the given arguments.
   #
