@@ -11,6 +11,8 @@
 class Riffer::Skills::Backend
   SKILL_FILENAME: String
 
+  def initialize: () -> untyped
+
   # Returns frontmatter for all available skills.
   #
   # Called once at the start of generate/stream.

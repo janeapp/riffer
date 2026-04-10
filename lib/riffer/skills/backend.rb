@@ -12,6 +12,8 @@
 class Riffer::Skills::Backend
   SKILL_FILENAME = "SKILL.md" #: String
 
+  def initialize = nil
+
   # Returns frontmatter for all available skills.
   #
   # Called once at the start of generate/stream.
