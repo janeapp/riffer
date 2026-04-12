@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   # Development dependencies
   spec.add_development_dependency "anthropic", "~> 1.28.0"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
-  spec.add_development_dependency "openai", "~> 0.57.0"
+  spec.add_development_dependency "openai", "~> 0.58.0"
   spec.add_development_dependency "async", "~> 2.25", "< 2.40"
   spec.add_development_dependency "io-event", "< 1.16"
 
