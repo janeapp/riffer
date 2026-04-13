@@ -22,7 +22,7 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.9)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.28.0)
+    anthropic (1.32.0)
       cgi
       connection_pool
     ast (2.4.3)
@@ -251,7 +251,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.28.0)
+  anthropic (~> 1.32.0)
   async (~> 2.25, < 2.40)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
