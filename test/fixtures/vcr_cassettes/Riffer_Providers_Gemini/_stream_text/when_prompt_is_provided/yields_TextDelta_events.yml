@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse&key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
@@ -17,6 +17,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -33,7 +35,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 07 Apr 2026 23:25:57 GMT
+      - Tue, 14 Apr 2026 23:45:23 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -43,20 +45,19 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=349
+      - gfet4t7; dur=3605
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
       encoding: UTF-8
       string: "data: {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \"Hello!
-        How can I help\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\":
-        {\"promptTokenCount\": 3,\"candidatesTokenCount\": 6,\"totalTokenCount\":
-        9,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\": 3}]},\"modelVersion\":
-        \"gemini-2.5-flash-lite\",\"responseId\": \"hZLVacH9Faq3mtkPjYWX6QQ\"}\r\n\r\ndata:
-        {\"candidates\": [{\"content\": {\"parts\": [{\"text\": \" you today?\"}],\"role\":
-        \"model\"},\"finishReason\": \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
-        3,\"candidatesTokenCount\": 9,\"totalTokenCount\": 12,\"promptTokensDetails\":
+        How\"}],\"role\": \"model\"},\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\":
+        3,\"candidatesTokenCount\": 3,\"totalTokenCount\": 6,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 3}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\":
-        \"hZLVacH9Faq3mtkPjYWX6QQ\"}\r\n\r\n"
-  recorded_at: Tue, 07 Apr 2026 23:25:57 GMT
+        \"k9HeabT2L_iomtkP8JOBiAQ\"}\r\n\r\ndata: {\"candidates\": [{\"content\":
+        {\"parts\": [{\"text\": \" can I help you today?\"}],\"role\": \"model\"},\"finishReason\":
+        \"STOP\",\"index\": 0}],\"usageMetadata\": {\"promptTokenCount\": 3,\"candidatesTokenCount\":
+        9,\"totalTokenCount\": 12,\"promptTokensDetails\": [{\"modality\": \"TEXT\",\"tokenCount\":
+        3}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\": \"k9HeabT2L_iomtkP8JOBiAQ\"}\r\n\r\n"
+  recorded_at: Tue, 14 Apr 2026 23:45:23 GMT
 recorded_with: VCR 6.4.0

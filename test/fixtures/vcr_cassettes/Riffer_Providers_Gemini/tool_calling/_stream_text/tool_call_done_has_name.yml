@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse&key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
@@ -20,6 +20,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -36,7 +38,7 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Tue, 07 Apr 2026 23:25:52 GMT
+      - Tue, 14 Apr 2026 23:45:16 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -46,7 +48,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=433
+      - gfet4t7; dur=829
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
     body:
@@ -57,6 +59,6 @@ http_interactions:
         generated function call(s).\"}],\"usageMetadata\": {\"promptTokenCount\":
         49,\"candidatesTokenCount\": 15,\"totalTokenCount\": 64,\"promptTokensDetails\":
         [{\"modality\": \"TEXT\",\"tokenCount\": 49}]},\"modelVersion\": \"gemini-2.5-flash-lite\",\"responseId\":
-        \"gJLVaeeUDOS5mtkP4pfYkQU\"}\r\n\r\n"
-  recorded_at: Tue, 07 Apr 2026 23:25:52 GMT
+        \"jNHeaerRHZ6nqtsPguzEgQU\"}\r\n\r\n"
+  recorded_at: Tue, 14 Apr 2026 23:45:16 GMT
 recorded_with: VCR 6.4.0

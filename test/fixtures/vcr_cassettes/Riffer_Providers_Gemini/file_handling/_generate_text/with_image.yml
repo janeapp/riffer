@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Describe this image"},{"inlineData":{"mimeType":"image/png","data":"iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="}}]}]}'
@@ -17,6 +17,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -31,7 +33,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 23:25:54 GMT
+      - Tue, 14 Apr 2026 23:45:06 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -41,7 +43,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=729
+      - gfet4t7; dur=998
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -55,7 +57,7 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "The image is a solid field of bright red. There are no discernible objects, patterns, or textures within the frame, making it a purely monochromatic composition. The color appears to be a vibrant, saturated red."
+                    "text": "The image is a solid, vibrant red color. There are no other objects, shapes, or details visible. It is a completely monochromatic image."
                   }
                 ],
                 "role": "model"
@@ -66,8 +68,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 262,
-            "candidatesTokenCount": 42,
-            "totalTokenCount": 304,
+            "candidatesTokenCount": 29,
+            "totalTokenCount": 291,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -80,7 +82,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "gpLVabOpDLf4qtsPsZSQmAU"
+          "responseId": "gtHeaZqJMoHAqtsPorXgmAQ"
         }
-  recorded_at: Tue, 07 Apr 2026 23:25:54 GMT
+  recorded_at: Tue, 14 Apr 2026 23:45:06 GMT
 recorded_with: VCR 6.4.0

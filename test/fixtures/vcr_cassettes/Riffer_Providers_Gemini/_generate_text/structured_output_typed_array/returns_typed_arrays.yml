@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"List 3 tags and 3 scores
@@ -20,6 +20,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -34,7 +36,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 23:25:48 GMT
+      - Tue, 14 Apr 2026 23:45:08 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -44,7 +46,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=503
+      - gfet4t7; dur=1235
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -58,7 +60,7 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"tags\": [\"programming language\", \"ruby\", \"versatile\"],\n  \"scores\": [0.9, 0.8, 0.7]\n}"
+                    "text": "{\n  \"tags\": [\"programming language\", \"ruby\", \"developer tools\"],\n  \"scores\": [0.9, 0.8, 0.7]\n}"
                   }
                 ],
                 "role": "model"
@@ -79,7 +81,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "fJLVaYeNNPyKqtsPxqvpoAU"
+          "responseId": "hNHeaY6GB-qlmtkPr9rr4AU"
         }
-  recorded_at: Tue, 07 Apr 2026 23:25:48 GMT
+  recorded_at: Tue, 14 Apr 2026 23:45:08 GMT
 recorded_with: VCR 6.4.0

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]}]}'
@@ -17,6 +17,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -31,7 +33,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 23:26:00 GMT
+      - Tue, 14 Apr 2026 23:45:29 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -41,14 +43,42 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=404
+      - gfet4t7; dur=1374
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        ewogICJjYW5kaWRhdGVzIjogWwogICAgewogICAgICAiY29udGVudCI6IHsKICAgICAgICAicGFydHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJ0ZXh0IjogIkhlbGxvISBIb3cgY2FuIEkgaGVscCB5b3UgdG9kYXk/IPCfmIoiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAicm9sZSI6ICJtb2RlbCIKICAgICAgfSwKICAgICAgImZpbmlzaFJlYXNvbiI6ICJTVE9QIiwKICAgICAgImluZGV4IjogMAogICAgfQogIF0sCiAgInVzYWdlTWV0YWRhdGEiOiB7CiAgICAicHJvbXB0VG9rZW5Db3VudCI6IDMsCiAgICAiY2FuZGlkYXRlc1Rva2VuQ291bnQiOiAxMCwKICAgICJ0b3RhbFRva2VuQ291bnQiOiAxMywKICAgICJwcm9tcHRUb2tlbnNEZXRhaWxzIjogWwogICAgICB7CiAgICAgICAgIm1vZGFsaXR5IjogIlRFWFQiLAogICAgICAgICJ0b2tlbkNvdW50IjogMwogICAgICB9CiAgICBdCiAgfSwKICAibW9kZWxWZXJzaW9uIjogImdlbWluaS0yLjUtZmxhc2gtbGl0ZSIsCiAgInJlc3BvbnNlSWQiOiAiaUpMVmFhdk9CT20zbXRrUHZLV24wQVEiCn0K
-  recorded_at: Tue, 07 Apr 2026 23:26:00 GMT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "Hello!"
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 3,
+            "candidatesTokenCount": 2,
+            "totalTokenCount": 5,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 3
+              }
+            ]
+          },
+          "modelVersion": "gemini-2.5-flash-lite",
+          "responseId": "mdHeaY30H5yiqtsPqb2jkAQ"
+        }
+  recorded_at: Tue, 14 Apr 2026 23:45:29 GMT
 recorded_with: VCR 6.4.0

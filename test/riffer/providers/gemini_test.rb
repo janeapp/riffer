@@ -10,6 +10,40 @@ describe Riffer::Providers::Gemini do
       provider = Riffer::Providers::Gemini.new(api_key: api_key)
       expect(provider).must_be_instance_of Riffer::Providers::Gemini
     end
+
+    it "uses default timeouts" do
+      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      expect(provider.instance_variable_get(:@open_timeout)).must_equal 10
+      expect(provider.instance_variable_get(:@read_timeout)).must_equal 60
+    end
+
+    it "allows custom timeouts" do
+      provider = Riffer::Providers::Gemini.new(api_key: api_key, open_timeout: 5, read_timeout: 30)
+      expect(provider.instance_variable_get(:@open_timeout)).must_equal 5
+      expect(provider.instance_variable_get(:@read_timeout)).must_equal 30
+    end
+  end
+
+  describe "model validation" do
+    it "raises ArgumentError for model with slashes" do
+      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      expect {
+        provider.generate_text(prompt: "Hello", model: "../admin")
+      }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises ArgumentError for model with spaces" do
+      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      expect {
+        provider.generate_text(prompt: "Hello", model: "gemini 2.5")
+      }.must_raise Riffer::ArgumentError
+    end
+
+    it "accepts valid model names" do
+      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      path = provider.send(:api_path, "gemini-2.5-flash-lite", "generateContent")
+      expect(path).must_include "v1beta/models/gemini-2.5-flash-lite:generateContent"
+    end
   end
 
   describe "#generate_text" do

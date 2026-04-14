@@ -4,11 +4,17 @@
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   BASE_URI: URI::Generic
 
+  VALID_MODEL_PATTERN: Regexp
+
+  DEFAULT_OPEN_TIMEOUT: Integer
+
+  DEFAULT_READ_TIMEOUT: Integer
+
   # Initializes the Gemini provider.
   #
   # --
-  # : (?api_key: String?, **untyped) -> void
-  def initialize: (?api_key: String?, **untyped) -> void
+  # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
+  def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
 
   private
 
@@ -63,6 +69,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (String, String) -> String
   def api_path: (String, String) -> String
+
+  # --
+  # : (String) -> void
+  def validate_model!: (String) -> void
 
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

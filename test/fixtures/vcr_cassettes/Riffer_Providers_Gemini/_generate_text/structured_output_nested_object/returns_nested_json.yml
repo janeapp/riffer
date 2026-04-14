@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Extract the address from:
@@ -21,6 +21,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -35,7 +37,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 23:25:52 GMT
+      - Tue, 14 Apr 2026 23:45:20 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -45,7 +47,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=557
+      - gfet4t7; dur=3555
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -59,7 +61,7 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "{\n  \"name\": \"John\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\",\n    \"country\": \"Canada\",\n    \"postal_code\": \"M5V 2T6\"\n  }\n}"
+                    "text": "{\n  \"name\": \"John\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Toronto\",\n    \"postal_code\": \"M5V 2T6\"\n  }\n}"
                   }
                 ],
                 "role": "model"
@@ -70,8 +72,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 28,
-            "candidatesTokenCount": 64,
-            "totalTokenCount": 92,
+            "candidatesTokenCount": 56,
+            "totalTokenCount": 84,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -80,7 +82,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "gJLVafahM7-nqtsP8q-cyQQ"
+          "responseId": "kNHeaar5BdKhqtsPqMTRyAg"
         }
-  recorded_at: Tue, 07 Apr 2026 23:25:52 GMT
+  recorded_at: Tue, 14 Apr 2026 23:45:20 GMT
 recorded_with: VCR 6.4.0

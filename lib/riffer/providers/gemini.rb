@@ -9,14 +9,19 @@ require "uri"
 # Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   BASE_URI = URI("https://generativelanguage.googleapis.com") #: URI::Generic
+  VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
+  DEFAULT_OPEN_TIMEOUT = 10 #: Integer
+  DEFAULT_READ_TIMEOUT = 60 #: Integer
 
   # Initializes the Gemini provider.
   #
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **options)
+  #: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
+  def initialize(api_key: nil, open_timeout: nil, read_timeout: nil, **options)
     api_key ||= Riffer.config.gemini.api_key
     @api_key = api_key
+    @open_timeout = open_timeout || Riffer.config.gemini.open_timeout || DEFAULT_OPEN_TIMEOUT
+    @read_timeout = read_timeout || Riffer.config.gemini.read_timeout || DEFAULT_READ_TIMEOUT
   end
 
   private
@@ -108,12 +113,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     model = params[:model]
     body = params.except(:model)
 
-    uri = URI("#{BASE_URI}/#{api_path(model, "streamGenerateContent")}&alt=sse")
+    uri = URI("#{BASE_URI}/#{api_path(model, "streamGenerateContent")}?alt=sse")
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
+    request["x-goog-api-key"] = @api_key
     request.body = body.to_json
 
-    full_text = ""
+    full_text = +""
     buffer = +""
 
     process_chunk = lambda do |chunk|
@@ -131,7 +137,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
         parts&.each do |part|
           if part[:text]
-            full_text += part[:text]
+            full_text << part[:text]
             yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
           elsif part[:functionCall]
             fc = part[:functionCall]
@@ -158,7 +164,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) do |http|
       http.request(request) do |response|
         handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
 
@@ -264,14 +270,24 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     uri = URI("#{BASE_URI}/#{path}")
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
+    request["x-goog-api-key"] = @api_key
     request.body = body.to_json
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(request) }
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) { |http| http.request(request) }
   end
 
   #--
   #: (String, String) -> String
   def api_path(model, method)
-    "v1beta/models/#{model}:#{method}?key=#{@api_key}"
+    validate_model!(model)
+    "v1beta/models/#{model}:#{method}"
+  end
+
+  #--
+  #: (String) -> void
+  def validate_model!(model)
+    return if model.match?(VALID_MODEL_PATTERN)
+
+    raise Riffer::ArgumentError, "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, hyphens, dots, and underscores."
   end
 
   #--

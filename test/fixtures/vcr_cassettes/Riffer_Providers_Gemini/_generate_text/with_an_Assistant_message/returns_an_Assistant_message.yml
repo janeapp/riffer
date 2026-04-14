@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=<GEMINI_API_KEY>
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
     body:
       encoding: UTF-8
       string: '{"contents":[{"role":"user","parts":[{"text":"Say hello"}]},{"role":"model","parts":[{"text":"Hello!"}]},{"role":"user","parts":[{"text":"How
@@ -18,6 +18,8 @@ http_interactions:
       - generativelanguage.googleapis.com
       Content-Type:
       - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
   response:
     status:
       code: 200
@@ -32,7 +34,7 @@ http_interactions:
       - Referer
       - X-Origin
       Date:
-      - Tue, 07 Apr 2026 23:25:59 GMT
+      - Tue, 14 Apr 2026 23:45:11 GMT
       Server:
       - scaffolding on HTTPServer2
       X-Xss-Protection:
@@ -42,7 +44,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Server-Timing:
-      - gfet4t7; dur=403
+      - gfet4t7; dur=2113
       Alt-Svc:
       - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
       Transfer-Encoding:
@@ -56,7 +58,7 @@ http_interactions:
               "content": {
                 "parts": [
                   {
-                    "text": "I am a large language model, trained by Google. I do not have feelings or emotions, so I do not experience \"how are you\" in the way a human does.\n\nHowever, I am functioning optimally and ready to assist you! How can I help you today?"
+                    "text": "I am a large language model, trained by Google. I don't have feelings or personal experiences, so I don't have a \"how are you\" in the same way a human does.\n\nHowever, I'm functioning well and ready to help!\n\nHow are *you* doing today?"
                   }
                 ],
                 "role": "model"
@@ -67,8 +69,8 @@ http_interactions:
           ],
           "usageMetadata": {
             "promptTokenCount": 11,
-            "candidatesTokenCount": 56,
-            "totalTokenCount": 67,
+            "candidatesTokenCount": 63,
+            "totalTokenCount": 74,
             "promptTokensDetails": [
               {
                 "modality": "TEXT",
@@ -77,7 +79,7 @@ http_interactions:
             ]
           },
           "modelVersion": "gemini-2.5-flash-lite",
-          "responseId": "h5LVacH4JLzxqtsPo_XOiAU"
+          "responseId": "h9HeafKiMIO2qtsP7fL0-AQ"
         }
-  recorded_at: Tue, 07 Apr 2026 23:25:59 GMT
+  recorded_at: Tue, 14 Apr 2026 23:45:11 GMT
 recorded_with: VCR 6.4.0
