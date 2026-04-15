@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Tool - Riffer Documentation</title>
+<title>module Riffer::Toolable - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Tool"
+    content="ruby,module,Riffer::Toolable"
   >
 
     <meta
       name="description"
-      content="class Riffer::Tool: Tool is the base class for all tools in the Riffer framework. Provides a DSL for defining tool description and parameters."
+      content="module Riffer::Toolable: workflows in the future. Extend this module to make a class discoverable as a tool by LLM providers."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Tool - Riffer Documentation">
+<meta property="og:title" content="module Riffer::Toolable - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Tool is the base class for all tools in the Riffer framework. Provides a DSL for defining tool description and parameters.">
+    <meta property="og:description" content="workflows in the future. Extend this module to make a class discoverable as a tool by LLM providers.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Tool - Riffer Documentation">
+<meta name="twitter:title" content="module Riffer::Toolable - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Tool is the base class for all tools in the Riffer framework. Provides a DSL for defining tool description and parameters.">
+    <meta name="twitter:description" content="workflows in the future. Extend this module to make a class discoverable as a tool by LLM providers.">
 
 
 
@@ -96,7 +96,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="module has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -615,21 +615,6 @@
   
 
   
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li>Object</li></ul>
-  </details>
-</div>
-
 
   
 
@@ -649,7 +634,7 @@
     <ul class="nav-list">
 
 
-      <li><a class="extend" href="Toolable.html">Riffer::Toolable</a></li>
+      <li><a class="extend" href="Helpers/ClassNameConverter.html">Riffer::Helpers::ClassNameConverter</a></li>
 
 
     </ul>
@@ -658,6 +643,27 @@
 
 
   
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-all">all</a></li>
+
+        <li ><a href="#method-c-extended">extended</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
 
   <div class="nav-section">
@@ -673,15 +679,23 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-call">call</a></li>
+        <li ><a href="#method-i-description">description</a></li>
 
-        <li ><a href="#method-i-call_with_validation">call_with_validation</a></li>
+        <li ><a href="#method-i-identifier">identifier</a></li>
 
-        <li ><a href="#method-i-error">error</a></li>
+        <li ><a href="#method-i-kind">kind</a></li>
 
-        <li ><a href="#method-i-json">json</a></li>
+        <li ><a href="#method-i-name">name</a></li>
 
-        <li ><a href="#method-i-text">text</a></li>
+        <li ><a href="#method-i-parameters_schema">parameters_schema</a></li>
+
+        <li ><a href="#method-i-params">params</a></li>
+
+        <li ><a href="#method-i-timeout">timeout</a></li>
+
+        <li ><a href="#method-i-to_tool_schema">to_tool_schema</a></li>
+
+        <li ><a href="#method-i-validate_as_tool-21">validate_as_tool!</a></li>
 
       </ul>
     </details>
@@ -706,7 +720,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-tool">
+<main role="main" aria-labelledby="module-riffer-toolable">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -719,36 +733,33 @@
       
       <li>
         
-        <span>Tool</span>
+        <span>Toolable</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Tool" class="legacy-anchor"></span>
-  <h1 id="class-riffer-tool" class="anchor-link class">
-    class Riffer::Tool
+  <span id="module-Riffer::Toolable" class="legacy-anchor"></span>
+  <h1 id="module-riffer-toolable" class="anchor-link module">
+    module Riffer::Toolable
   </h1>
 
   <section class="description">
     
-<p><a href="Tool.html"><code>Riffer::Tool</code></a> is the base class for all tools in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
+<p><a href="Toolable.html"><code>Riffer::Toolable</code></a> provides the shared class-level DSL for anything that can present as a tool to an LLM — tools today, and subagents/workflows in the future.</p>
 
-<p>Provides a DSL for defining tool description and parameters. Subclasses must implement the <code>call</code> method.</p>
+<p>Extend this module to make a class discoverable as a tool by LLM providers. Provides identifier, description, params, timeout, and JSON schema generation.</p>
 
-<p>See <a href="Agent.html"><code>Riffer::Agent</code></a>.</p>
+<p>Instance-level execution concerns (<code>call</code>, <code>call_with_validation</code>, etc.) are NOT part of <a href="Toolable.html"><code>Toolable</code></a> — those belong on <a href="Tool.html"><code>Riffer::Tool</code></a>.</p>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherLookupTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
-  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Provides current weather information for a specified city.&quot;</span>
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyTool</span>
+  <span class="ruby-identifier">extend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Toolable</span>
+
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Does something useful&quot;</span>
 
   <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The city to look up&quot;</span>
-    <span class="ruby-identifier">optional</span> <span class="ruby-value">:units</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">default:</span> <span class="ruby-string">&quot;celsius&quot;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>, <span class="ruby-value">units:</span> <span class="ruby-keyword">nil</span>)
-    <span class="ruby-comment"># Implementation</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:input</span>, <span class="ruby-constant">String</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 </pre>
@@ -763,12 +774,123 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="DEFAULT_TIMEOUT">DEFAULT_TIMEOUT</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
 
 
 
 
 
 
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-all" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-all" title="Link to this method">
+                <span class="method-name">all</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="all-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 42</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
+  <span class="ruby-ivar">@extenders</span> <span class="ruby-operator">||</span> []
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns all classes that have extended <a href="Toolable.html"><code>Toolable</code></a>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-extended" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-extended" title="Link to this method">
+                <span class="method-name">extended</span>
+                <span class="method-args">(base)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="extended-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">extended</span>(<span class="ruby-identifier">base</span>)
+  <span class="ruby-identifier">base</span>.<span class="ruby-identifier">extend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Helpers</span><span class="ruby-operator">::</span><span class="ruby-constant">ClassNameConverter</span>
+  <span class="ruby-ivar">@extenders</span> <span class="ruby-operator">||=</span> []
+  <span class="ruby-ivar">@extenders</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">base</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Tracks all classes that extend <a href="Toolable.html"><code>Toolable</code></a>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
 
 
@@ -782,13 +904,13 @@
        </header>
 
 
-      <div id="method-i-call" class="method-detail anchor-link ">
+      <div id="method-i-description" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-call" title="Link to this method">
-                <span class="method-name">call</span>
-                <span class="method-args">(context:, **kwargs)</span>
+              <a href="#method-i-description" title="Link to this method">
+                <span class="method-name">description</span>
+                <span class="method-args">(value = nil)</span>
               </a>
             </div>
 
@@ -800,10 +922,11 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 37</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} must implement #call&quot;</span>
+          <div class="method-source-code" id="description-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">description</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@description</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -812,9 +935,7 @@
         <div class="method-description">
 
 
-          <p>Executes the tool with the given arguments.</p>
-
-<p>Raises NotImplementedError if not implemented by subclass.</p>
+          <p>Gets or sets the tool description.</p>
 
 
         </div>
@@ -826,13 +947,13 @@
       </div>
 
 
-      <div id="method-i-call_with_validation" class="method-detail anchor-link ">
+      <div id="method-i-identifier" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-call_with_validation" title="Link to this method">
-                <span class="method-name">call_with_validation</span>
-                <span class="method-args">(context:, **kwargs)</span>
+              <a href="#method-i-identifier" title="Link to this method">
+                <span class="method-name">identifier</span>
+                <span class="method-args">(value = nil)</span>
               </a>
             </div>
 
@@ -844,23 +965,11 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="call_with_validation-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call_with_validation</span>(<span class="ruby-value">context:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">kwargs</span>)
-  <span class="ruby-identifier">params_builder</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">params</span>
-  <span class="ruby-identifier">validated_args</span> = <span class="ruby-identifier">params_builder</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">params_builder</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">kwargs</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">kwargs</span>
-
-  <span class="ruby-identifier">result</span> = <span class="ruby-constant">Timeout</span>.<span class="ruby-identifier">timeout</span>(<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">timeout</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">call</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">validated_args</span>)
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>)
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>, <span class="ruby-node">&quot;#{self.class} must return a Riffer::Tools::Response from #call&quot;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">result</span>
-<span class="ruby-keyword">rescue</span> <span class="ruby-constant">Timeout</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">TimeoutError</span>, <span class="ruby-node">&quot;Tool execution timed out after #{self.class.timeout} seconds&quot;</span>
+          <div class="method-source-code" id="identifier-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-constant">Module</span>.<span class="ruby-identifier">instance_method</span>(<span class="ruby-value">:name</span>).<span class="ruby-identifier">bind_call</span>(<span class="ruby-keyword">self</span>)) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -869,9 +978,7 @@
         <div class="method-description">
 
 
-          <p>Executes the tool with validation and timeout (used by Agent).</p>
-
-<p>Raises <a href="ValidationError.html"><code>Riffer::ValidationError</code></a> if validation fails. Raises <a href="TimeoutError.html"><code>Riffer::TimeoutError</code></a> if execution exceeds the configured timeout. Raises <a href="Error.html"><code>Riffer::Error</code></a> if the tool does not return a Response object.</p>
+          <p>Gets or sets the tool identifier/name.</p>
 
 
         </div>
@@ -883,13 +990,13 @@
       </div>
 
 
-      <div id="method-i-error" class="method-detail anchor-link ">
+      <div id="method-i-kind" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-error" title="Link to this method">
-                <span class="method-name">error</span>
-                <span class="method-args">(message, type: :execution_error)</span>
+              <a href="#method-i-kind" title="Link to this method">
+                <span class="method-name">kind</span>
+                <span class="method-args">(value = nil)</span>
               </a>
             </div>
 
@@ -901,10 +1008,11 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="error-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 61</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:execution_error</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-identifier">type</span>)
+          <div class="method-source-code" id="kind-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 106</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">kind</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@kind</span> <span class="ruby-operator">||</span> <span class="ruby-value">:tool</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@kind</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_sym</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -913,7 +1021,9 @@
         <div class="method-description">
 
 
-          <p>Creates an error response. Shorthand for <a href="Tools/Response.html#method-c-error"><code>Riffer::Tools::Response.error</code></a>.</p>
+          <p>Returns the kind of toolable entity.</p>
+
+<p>Defaults to <code>:tool</code>. Extensible to <code>:agent</code>, <code>:workflow</code>, etc.</p>
 
 
         </div>
@@ -925,13 +1035,13 @@
       </div>
 
 
-      <div id="method-i-json" class="method-detail anchor-link ">
+      <div id="method-i-name" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-json" title="Link to this method">
-                <span class="method-name">json</span>
-                <span class="method-args">(result)</span>
+              <a href="#method-i-name" title="Link to this method">
+                <span class="method-name">name</span>
+                <span class="method-args">(value = nil)</span>
               </a>
             </div>
 
@@ -943,10 +1053,11 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">json</span>(<span class="ruby-identifier">result</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">json</span>(<span class="ruby-identifier">result</span>)
+          <div class="method-source-code" id="name-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">identifier</span>(<span class="ruby-identifier">value</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">identifier</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -955,7 +1066,7 @@
         <div class="method-description">
 
 
-          <p>Creates a JSON response. Shorthand for <a href="Tools/Response.html#method-c-json"><code>Riffer::Tools::Response.json</code></a>.</p>
+          <p>Alias for identifier — used by providers.</p>
 
 
         </div>
@@ -967,13 +1078,13 @@
       </div>
 
 
-      <div id="method-i-text" class="method-detail anchor-link ">
+      <div id="method-i-parameters_schema" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-text" title="Link to this method">
-                <span class="method-name">text</span>
-                <span class="method-args">(result)</span>
+              <a href="#method-i-parameters_schema" title="Link to this method">
+                <span class="method-name">parameters_schema</span>
+                <span class="method-args">(strict: false)</span>
               </a>
             </div>
 
@@ -985,10 +1096,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tool.rb, line 45</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text</span>(<span class="ruby-identifier">result</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">text</span>(<span class="ruby-identifier">result</span>)
+          <div class="method-source-code" id="parameters_schema-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parameters_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
+  <span class="ruby-ivar">@params_builder</span>&amp;.<span class="ruby-identifier">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-identifier">strict</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">empty_schema</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -997,7 +1108,186 @@
         <div class="method-description">
 
 
-          <p>Creates a text response. Shorthand for <a href="Tools/Response.html#method-c-text"><code>Riffer::Tools::Response.text</code></a>.</p>
+          <p>Returns the JSON Schema for the tool’s parameters.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-params" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-params" title="Link to this method">
+                <span class="method-name">params</span>
+                <span class="method-args">(&amp;block)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="params-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">params</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@params_builder</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@params_builder</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@params_builder</span>.<span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Defines parameters using the <a href="Params.html"><code>Params</code></a> DSL.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-timeout" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-timeout" title="Link to this method">
+                <span class="method-name">timeout</span>
+                <span class="method-args">(value = nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="timeout-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 77</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">timeout</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DEFAULT_TIMEOUT</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@timeout</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_f</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Gets or sets the tool timeout in seconds.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-to_tool_schema" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-to_tool_schema" title="Link to this method">
+                <span class="method-name">to_tool_schema</span>
+                <span class="method-args">(strict: false)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="to_tool_schema-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_tool_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
+  {
+    <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>,
+    <span class="ruby-value">description:</span> <span class="ruby-identifier">description</span>,
+    <span class="ruby-value">parameters_schema:</span> <span class="ruby-identifier">parameters_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-identifier">strict</span>)
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns a provider-agnostic tool schema hash.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-validate_as_tool-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-validate_as_tool-21" title="Link to this method">
+                <span class="method-name">validate_as_tool!</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="validate_as_tool-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/toolable.rb, line 129</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_as_tool!</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{self} must define a description&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">description</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">description</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{self} must have an identifier&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Validates that the minimum required metadata is present for LLM tool use.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if validation fails.</p>
 
 
         </div>

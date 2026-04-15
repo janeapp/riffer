@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Messages::User - Riffer Documentation</title>
+<title>class Riffer::Providers::Gemini - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Messages::User"
+    content="ruby,class,Riffer::Providers::Gemini"
   >
 
     <meta
       name="description"
-      content="class Riffer::Messages::User: Represents a user message in a conversation. User."
+      content="class Riffer::Providers::Gemini: Google Gemini provider for Gemini models via the Gemini REST API."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Messages::User - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Providers::Gemini - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Represents a user message in a conversation. User.">
+    <meta property="og:description" content="Google Gemini provider for Gemini models via the Gemini REST API.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Messages::User - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Providers::Gemini - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Represents a user message in a conversation. User.">
+    <meta name="twitter:description" content="Google Gemini provider for Gemini models via the Gemini REST API.">
 
 
 
@@ -626,7 +626,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Base.html">Riffer::Messages::Base</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="Base.html">Riffer::Providers::Base</a><ul><li>Object</li></ul></li></ul>
   </details>
 </div>
 
@@ -649,36 +649,13 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li class="calls-super" ><a href="#method-c-new">new</a></li>
+        <li ><a href="#method-c-new">new</a></li>
 
       </ul>
     </details>
   </div>
 
 
-
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-2B">+</a></li>
-
-        <li ><a href="#method-i-role">role</a></li>
-
-        <li ><a href="#method-i-to_h">to_h</a></li>
-
-      </ul>
-    </details>
-  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -699,7 +676,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-messages-user">
+<main role="main" aria-labelledby="class-riffer-providers-gemini">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -712,35 +689,27 @@
       
       <li>
         
-        <a href="../../Riffer/Messages.html">Messages</a><span>::</span>
+        <a href="../../Riffer/Providers.html">Providers</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>User</span>
+        <span>Gemini</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Messages::User" class="legacy-anchor"></span>
-  <h1 id="class-riffer-messages-user" class="anchor-link class">
-    class Riffer::Messages::User
+  <span id="class-Riffer::Providers::Gemini" class="legacy-anchor"></span>
+  <h1 id="class-riffer-providers-gemini" class="anchor-link class">
+    class Riffer::Providers::Gemini
   </h1>
 
   <section class="description">
     
-<p>Represents a user message in a conversation.</p>
-
-<pre class="ruby"><span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Hello!&quot;</span>)
-<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">role</span>     <span class="ruby-comment"># =&gt; :user</span>
-<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content</span>  <span class="ruby-comment"># =&gt; &quot;Hello!&quot;</span>
-
-<span class="ruby-identifier">msg</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Describe this image&quot;</span>, <span class="ruby-value">files:</span> [<span class="ruby-identifier">file_part</span>])
-<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">files</span>    <span class="ruby-comment"># =&gt; [#&lt;Riffer::FilePart ...&gt;]</span>
-</pre>
+<p>Google <a href="Gemini.html"><code>Gemini</code></a> provider for <a href="Gemini.html"><code>Gemini</code></a> models via the <a href="Gemini.html"><code>Gemini</code></a> REST API.</p>
 
   </section>
 
@@ -752,31 +721,48 @@
 
 
 
-
-
-    <section class="attribute-method-details method-section">
+    <section class="constants-list">
       <header>
-        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
       </header>
+      <dl>
+
+        <dt id="BASE_URI">BASE_URI</dt>
+
+        <dd>
+
+          
+        </dd>
 
 
-      <div id="attribute-i-files" class="method-detail anchor-link">
-        <div class="method-heading attribute-method-heading">
-          <a href="#attribute-i-files" title="Link to this attribute">
-            <span class="method-name">files</span>
-            <span class="attribute-access-type">[R]</span>
-          </a>
-        </div>
+        <dt id="DEFAULT_OPEN_TIMEOUT">DEFAULT_OPEN_TIMEOUT</dt>
 
-        <div class="method-description">
+        <dd>
+
+          
+        </dd>
 
 
-        <p>File attachments for this message.</p>
+        <dt id="DEFAULT_READ_TIMEOUT">DEFAULT_READ_TIMEOUT</dt>
 
-        </div>
-      </div>
+        <dd>
 
+          
+        </dd>
+
+
+        <dt id="VALID_MODEL_PATTERN">VALID_MODEL_PATTERN</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
     </section>
+
+
 
 
 
@@ -795,7 +781,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content, files: [])</span>
+                <span class="method-args">(api_key: nil, open_timeout: nil, read_timeout: nil, **options)</span>
               </a>
             </div>
 
@@ -808,10 +794,12 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 21</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">files:</span> [])
-  <span class="ruby-keyword">super</span>(<span class="ruby-identifier">content</span>)
-  <span class="ruby-ivar">@files</span> = <span class="ruby-identifier">files</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/gemini.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">api_key:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">open_timeout:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">read_timeout:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">api_key</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">gemini</span>.<span class="ruby-identifier">api_key</span>
+  <span class="ruby-ivar">@api_key</span> = <span class="ruby-identifier">api_key</span>
+  <span class="ruby-ivar">@open_timeout</span> = <span class="ruby-identifier">open_timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">gemini</span>.<span class="ruby-identifier">open_timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DEFAULT_OPEN_TIMEOUT</span>
+  <span class="ruby-ivar">@read_timeout</span> = <span class="ruby-identifier">read_timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">gemini</span>.<span class="ruby-identifier">read_timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DEFAULT_READ_TIMEOUT</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -820,13 +808,8 @@
         <div class="method-description">
 
 
-          <p>Initializes a user message.</p>
+          <p>Initializes the <a href="Gemini.html"><code>Gemini</code></a> provider.</p>
 
-
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="Base.html#method-c-new"><code>Riffer::Messages::Base::new</code></a>
-            </div>
 
         </div>
 
@@ -844,142 +827,6 @@
 
 
 
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-2B" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-2B" title="Link to this method">
-                <span class="method-name">+</span>
-                <span class="method-args">(other)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="2B-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 34</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;#{content}\n\n#{other.content}&quot;</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">files</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-role" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-role" title="Link to this method">
-                <span class="method-name">role</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 28</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
-  <span class="ruby-value">:user</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-to_h" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-to_h" title="Link to this method">
-                <span class="method-name">to_h</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/user.rb, line 40</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
-  <span class="ruby-identifier">hash</span> = {<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>}
-  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:files</span>] = <span class="ruby-identifier">files</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_h</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">files</span>.<span class="ruby-identifier">empty?</span>
-  <span class="ruby-identifier">hash</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
 
 
 

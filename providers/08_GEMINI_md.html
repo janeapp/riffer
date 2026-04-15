@@ -5,30 +5,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::TimeoutError - Riffer Documentation</title>
+<title>08_GEMINI - Riffer Documentation</title>
 
 
+  <meta name="keywords" content="ruby,documentation,08_GEMINI">
   <meta
-    name="keywords"
-    content="ruby,class,Riffer::TimeoutError"
+    name="description"
+    content="08_GEMINI: Gemini Provider The Gemini provider connects to Google&#39;s Gemini models via the Gemini REST API. ruby Riffer."
   >
-
-    <meta
-      name="description"
-      content="class Riffer::TimeoutError: Raised when tool execution times out."
-    >
-
 
 
 
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::TimeoutError - Riffer Documentation">
+<meta property="og:title" content="08_GEMINI - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Raised when tool execution times out.">
+    <meta property="og:description" content="Gemini Provider The Gemini provider connects to Google&#39;s Gemini models via the Gemini REST API. ruby Riffer.">
 
 
 
@@ -36,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::TimeoutError - Riffer Documentation">
+<meta name="twitter:title" content="08_GEMINI - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Raised when tool execution times out.">
+    <meta name="twitter:description" content="Gemini Provider The Gemini provider connects to Google&#39;s Gemini models via the Gemini REST API. ruby Riffer.">
 
 
 
@@ -96,7 +91,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="file has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -374,8 +369,10 @@
 
 
 
+
+
   <div id="fileindex-section" class="nav-section">
-    <details class="nav-section-collapsible" >
+    <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
           <svg>
@@ -545,7 +542,7 @@
 
 
           <li>
-            <details >
+            <details  open>
               <summary>
                 
                   providers
@@ -612,33 +609,6 @@
   </div>
 
 
-  
-
-  
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li><a href="Error.html">Riffer::Error</a><ul><li>StandardError</li></ul></li></ul>
-  </details>
-</div>
-
-
-  
-
-  
-
-  
-
-
-
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
@@ -657,62 +627,156 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-timeouterror">
-  
-  
-    <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
-      
-      <li>
-        
-        <a href="../Riffer.html">Riffer</a><span>::</span>
-        
-      </li>
-      
-      <li>
-        
-        <span>TimeoutError</span>
-        
-      </li>
-      
-    </ol>
-  
+<main role="main" aria-label="Page providers/08_GEMINI.md">
 
-  <span id="class-Riffer::TimeoutError" class="legacy-anchor"></span>
-  <h1 id="class-riffer-timeouterror" class="anchor-link class">
-    class Riffer::TimeoutError
-  </h1>
+<span id="label-Gemini+Provider" class="legacy-anchor"></span>
+<h1 id="gemini-provider"><a href="#gemini-provider">Gemini Provider</a></h1>
 
-  <section class="description">
-    
-<p>Raised when tool execution times out.</p>
+<p>The Gemini provider connects to Google’s Gemini models via the Gemini REST API.</p>
 
-  </section>
+<span id="label-Configuration" class="legacy-anchor"></span>
+<h2 id="configuration"><a href="#configuration">Configuration</a></h2>
 
+<p>Configure your Gemini API key:</p>
 
-  <span id="5Buntitled-5D" class="legacy-anchor"></span>
-  <section class="documentation-section anchor-link">
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">gemini</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;GEMINI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<p>Or per-agent:</p>
 
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;gemini/gemini-2.5-flash-lite&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;GEMINI_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
 
+<span id="label-Supported+Models" class="legacy-anchor"></span>
+<h2 id="supported-models"><a href="#supported-models">Supported Models</a></h2>
 
+<p>Use Gemini model IDs in the <code>gemini/model</code> format:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model</span> <span class="ruby-string">&#39;gemini/gemini-2.5-flash-lite&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;gemini/gemini-2.5-pro&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;gemini/gemini-2.5-flash&#39;</span>
+</pre>
 
+<span id="label-Model+Options" class="legacy-anchor"></span>
+<h2 id="model-options"><a href="#model-options">Model Options</a></h2>
 
+<span id="label-temperature" class="legacy-anchor"></span>
+<h3 id="temperature"><a href="#temperature">temperature</a></h3>
 
+<p>Controls randomness:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+</pre>
 
+<span id="label-maxOutputTokens" class="legacy-anchor"></span>
+<h3 id="maxoutputtokens"><a href="#maxoutputtokens">maxOutputTokens</a></h3>
 
+<p>Maximum tokens in response:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">maxOutputTokens:</span> <span class="ruby-value">4096</span>
+</pre>
 
+<span id="label-topP" class="legacy-anchor"></span>
+<h3 id="topp"><a href="#topp">topP</a></h3>
 
+<p>Nucleus sampling:</p>
 
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">topP:</span> <span class="ruby-value">0.9</span>
+</pre>
 
+<span id="label-Usage" class="legacy-anchor"></span>
+<h2 id="usage"><a href="#usage">Usage</a></h2>
 
+<span id="label-Basic+Generation" class="legacy-anchor"></span>
+<h3 id="basic-generation"><a href="#basic-generation">Basic Generation</a></h3>
 
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Gemini</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;GEMINI_API_KEY&#39;</span>])
 
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Hello!&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gemini-2.5-flash-lite&quot;</span>
+)
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+</pre>
 
+<span id="label-Streaming" class="legacy-anchor"></span>
+<h3 id="streaming"><a href="#streaming">Streaming</a></h3>
 
-  </section>
+<pre class="ruby"><span class="ruby-identifier">provider</span>.<span class="ruby-identifier">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Tell me a story&quot;</span>, <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gemini-2.5-flash-lite&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDone</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\n---&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<span id="label-Structured+Output" class="legacy-anchor"></span>
+<h3 id="structured-output"><a href="#structured-output">Structured Output</a></h3>
+
+<pre class="ruby"><span class="ruby-identifier">params</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">params</span>.<span class="ruby-identifier">required</span>(<span class="ruby-value">:sentiment</span>, <span class="ruby-constant">String</span>)
+<span class="ruby-identifier">params</span>.<span class="ruby-identifier">required</span>(<span class="ruby-value">:score</span>, <span class="ruby-constant">Float</span>)
+<span class="ruby-identifier">structured_output</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StructuredOutput</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>)
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Analyze: &#39;This is great!&#39;&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gemini-2.5-flash-lite&quot;</span>,
+  <span class="ruby-value">structured_output:</span> <span class="ruby-identifier">structured_output</span>
+)
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">structured_output</span>
+</pre>
+
+<span id="label-Tool+Calling" class="legacy-anchor"></span>
+<h3 id="tool-calling"><a href="#tool-calling">Tool Calling</a></h3>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets weather&quot;</span>
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>)
+    <span class="ruby-identifier">text</span>(<span class="ruby-node">&quot;Sunny in #{city}&quot;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;What&#39;s the weather in Tokyo?&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gemini-2.5-flash-lite&quot;</span>,
+  <span class="ruby-value">tools:</span> [<span class="ruby-constant">WeatherTool</span>]
+)
+</pre>
+
+<span id="label-File+Support" class="legacy-anchor"></span>
+<h3 id="file-support"><a href="#file-support">File Support</a></h3>
+
+<p>Gemini supports inline base64-encoded files (images and documents):</p>
+
+<pre class="ruby"><span class="ruby-identifier">file</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">FilePart</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">data:</span> <span class="ruby-identifier">base64_data</span>, <span class="ruby-value">media_type:</span> <span class="ruby-string">&quot;image/png&quot;</span>)
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&quot;Describe this image&quot;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&quot;gemini-2.5-flash-lite&quot;</span>,
+  <span class="ruby-value">files:</span> [<span class="ruby-identifier">file</span>]
+)
+</pre>
+
+<p><strong>Note:</strong> URL-based file references are not supported. Provide base64-encoded data instead.</p>
+
+<span id="label-Limitations" class="legacy-anchor"></span>
+<h2 id="limitations"><a href="#limitations">Limitations</a></h2>
+<ul><li>
+<p><strong>No web search</strong> - Gemini’s standard API does not include a web search tool</p>
+</li><li>
+<p><strong>No URL files</strong> - Only base64 inline data is supported for file attachments</p>
+</li><li>
+<p><strong>Tool call IDs</strong> - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side</p>
+</li></ul>
 
 </main>
 
