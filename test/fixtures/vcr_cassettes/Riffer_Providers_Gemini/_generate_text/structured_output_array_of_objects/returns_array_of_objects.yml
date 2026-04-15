@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"List 2 items from an
+        order: a book costing $12.99 and a pen costing $1.50"}]}],"generationConfig":{"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"order_id":{"type":"string","description":"Order
+        identifier"},"items":{"type":"array","description":"Line items","items":{"type":"object","properties":{"name":{"type":"string","description":"Product
+        name"},"price":{"type":"number","description":"Price in dollars"},"quantity":{"type":"integer","description":"Quantity
+        ordered"}},"required":["name","price"]}}},"required":["order_id","items"]}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Tue, 14 Apr 2026 23:45:05 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=1196
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "text": "{\n  \"order_id\": \"12345\",\n  \"items\": [\n    {\n      \"name\": \"book\",\n      \"price\": 12.99\n    },\n    {\n      \"name\": \"pen\",\n      \"price\": 1.50\n    }\n  ]\n}"
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 27,
+            "candidatesTokenCount": 75,
+            "totalTokenCount": 102,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 27
+              }
+            ]
+          },
+          "modelVersion": "gemini-2.5-flash-lite",
+          "responseId": "gdHeaZ3oKZzyqtsPuOfesAU"
+        }
+  recorded_at: Tue, 14 Apr 2026 23:45:05 GMT
+recorded_with: VCR 6.4.0

@@ -8,6 +8,7 @@ class Riffer::Providers::Repository
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     anthropic: -> { Riffer::Providers::Anthropic },
     azure_openai: -> { Riffer::Providers::AzureOpenAI },
+    gemini: -> { Riffer::Providers::Gemini },
     openai: -> { Riffer::Providers::OpenAI },
     mock: -> { Riffer::Providers::Mock }
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]

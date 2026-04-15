@@ -18,6 +18,7 @@ class Riffer::Config
   AmazonBedrock = Struct.new(:api_token, :region, keyword_init: true)
   Anthropic = Struct.new(:api_key, keyword_init: true)
   AzureOpenAI = Struct.new(:api_key, :endpoint, keyword_init: true)
+  Gemini = Struct.new(:api_key, :open_timeout, :read_timeout, keyword_init: true)
   OpenAI = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
 
@@ -29,6 +30,9 @@ class Riffer::Config
 
   # Azure OpenAI configuration (Struct with +api_key+ and +endpoint+).
   attr_reader :azure_openai #: Riffer::Config::AzureOpenAI
+
+  # Google Gemini configuration (Struct with +api_key+, +open_timeout+, and +read_timeout+).
+  attr_reader :gemini #: Riffer::Config::Gemini
 
   # OpenAI configuration (Struct with +api_key+).
   attr_reader :openai #: Riffer::Config::OpenAI
@@ -61,6 +65,7 @@ class Riffer::Config
     @amazon_bedrock = AmazonBedrock.new
     @anthropic = Anthropic.new
     @azure_openai = AzureOpenAI.new
+    @gemini = Gemini.new
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new

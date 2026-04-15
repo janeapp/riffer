@@ -1,0 +1,84 @@
+# Generated from lib/riffer/providers/gemini.rb with RBS::Inline
+
+# Google Gemini provider for Gemini models via the Gemini REST API.
+class Riffer::Providers::Gemini < Riffer::Providers::Base
+  BASE_URI: URI::Generic
+
+  VALID_MODEL_PATTERN: Regexp
+
+  DEFAULT_OPEN_TIMEOUT: Integer
+
+  DEFAULT_READ_TIMEOUT: Integer
+
+  # Initializes the Gemini provider.
+  #
+  # --
+  # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
+  def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
+
+  private
+
+  # --
+  # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> String
+  def extract_content: (Hash[Symbol, untyped]) -> String
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::TokenUsage?
+  def extract_token_usage: (Hash[Symbol, untyped]) -> Riffer::TokenUsage?
+
+  # --
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # --
+  # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+  def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def convert_assistant_to_gemini_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_gemini_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
+
+  # --
+  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool_to_gemini_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+
+  # --
+  # : (untyped) -> String
+  def encode_tool_arguments: (untyped) -> String
+
+  # --
+  # : (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
+  def post_request: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
+
+  # --
+  # : (String, String) -> String
+  def api_path: (String, String) -> String
+
+  # --
+  # : (String) -> void
+  def validate_model!: (String) -> void
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def strip_additional_properties: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Net::HTTPResponse) -> void
+  def handle_api_error!: (Net::HTTPResponse) -> void
+end
