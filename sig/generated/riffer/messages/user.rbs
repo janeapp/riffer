@@ -15,8 +15,8 @@ class Riffer::Messages::User < Riffer::Messages::Base
   # Initializes a user message.
   #
   # --
-  # : (String, ?files: Array[Riffer::FilePart]) -> void
-  def initialize: (String, ?files: Array[Riffer::FilePart]) -> void
+  # : (String, ?id: String?, ?files: Array[Riffer::FilePart]) -> void
+  def initialize: (String, ?id: String?, ?files: Array[Riffer::FilePart]) -> void
 
   # --
   # : () -> Symbol

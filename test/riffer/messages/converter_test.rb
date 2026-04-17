@@ -76,6 +76,28 @@ describe Riffer::Messages::Converter do
       expect(result).must_equal msg
     end
 
+    describe "with :id in hash" do
+      it "propagates id to User messages" do
+        result = instance.convert_to_message_object({role: "user", content: "Hi", id: "u-1"})
+        expect(result.id).must_equal "u-1"
+      end
+
+      it "propagates id to Assistant messages" do
+        result = instance.convert_to_message_object({role: "assistant", content: "Hi", id: "a-1"})
+        expect(result.id).must_equal "a-1"
+      end
+
+      it "propagates id to System messages" do
+        result = instance.convert_to_message_object({role: "system", content: "Be nice", id: "s-1"})
+        expect(result.id).must_equal "s-1"
+      end
+
+      it "propagates id to Tool messages" do
+        result = instance.convert_to_message_object({role: "tool", content: "ok", tool_call_id: "c-1", name: "x", id: "t-1"})
+        expect(result.id).must_equal "t-1"
+      end
+    end
+
     describe "with assistant message with structured_output" do
       it "preserves structured_output from hash with symbol keys" do
         result = instance.convert_to_message_object({role: "assistant", content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}})

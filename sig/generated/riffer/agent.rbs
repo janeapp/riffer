@@ -248,6 +248,10 @@ class Riffer::Agent
   def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
 
   # --
+  # : (Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
+  def validate_seed_ids!: (Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
+
+  # --
   # : (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
   def build_instruction_message: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
 

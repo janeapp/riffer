@@ -326,6 +326,67 @@ describe Riffer::Agent do
       end
     end
 
+    describe "seed id validation" do
+      before { @original_strategy = Riffer.config.message_id_strategy }
+      after { Riffer.config.message_id_strategy = @original_strategy }
+
+      it "does not require id when strategy is :none" do
+        Riffer.config.message_id_strategy = :none
+        agent = agent_class.new
+        agent.generate([{role: "user", content: "Hi"}])
+        expect(agent.messages.any? { |m| m.is_a?(Riffer::Messages::User) }).must_equal true
+      end
+
+      it "raises when a seeded hash lacks :id and strategy is set" do
+        Riffer.config.message_id_strategy = :uuidv7
+        agent = agent_class.new
+        error = expect {
+          agent.generate([{role: "user", content: "Hi"}])
+        }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/index 0 is missing :id/)
+      end
+
+      it "preserves the seeded id when provided" do
+        Riffer.config.message_id_strategy = :uuidv7
+        agent = agent_class.new
+        agent.generate([{role: "user", content: "Hi", id: "seed-123"}])
+        user = agent.messages.find { |m| m.is_a?(Riffer::Messages::User) }
+        expect(user.id).must_equal "seed-123"
+      end
+
+      it "raises when a seeded message object has nil id and strategy is set" do
+        Riffer.config.message_id_strategy = :none
+        msg = Riffer::Messages::User.new("Hi") # built while strategy is :none → id is nil
+        Riffer.config.message_id_strategy = :uuidv7
+        agent = agent_class.new
+        error = expect {
+          agent.generate([msg])
+        }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/index 0 is missing :id/)
+      end
+
+      it "reports the index of the offending seed message" do
+        Riffer.config.message_id_strategy = :uuidv7
+        agent = agent_class.new
+        error = expect {
+          agent.generate([
+            {role: "user", content: "first", id: "ok-1"},
+            {role: "assistant", content: "no-id-here"}
+          ])
+        }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/index 1 is missing :id/)
+      end
+
+      it "assigns auto-generated ids to agent-created messages when strategy is set" do
+        Riffer.config.message_id_strategy = :uuidv7
+        agent = agent_class.new
+        agent.generate("Hello")
+        agent.messages.each do |msg|
+          expect(msg.id).wont_be_nil
+        end
+      end
+    end
+
     describe "with an array of hashes" do
       it "accepts an array of hashes and converts them to messages" do
         agent = agent_class.new
