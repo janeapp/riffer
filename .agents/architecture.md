@@ -112,6 +112,7 @@ On resume, `execute_pending_tool_calls` detects tool calls from the last assista
 Concurrency primitive for batch execution. Subclasses implement `#map(items, context: nil, &block)` to control how items are processed. The `context` keyword carries the agent's context hash, enabling runners that need it for job serialization or routing.
 
 Built-in runners:
+
 - `Sequential` — processes items in the current thread via `Array#map`
 - `Threaded` — processes items concurrently using a thread pool with configurable `max_concurrency`
 
@@ -125,6 +126,7 @@ runner.map(items, context: ctx) { |item| process(item) }
 Composes with a Runner to execute tool calls. Provides `#execute` as the public entry point and `#around_tool_call` as a hook for instrumentation. Passes the agent context through to the runner.
 
 Built-in runtimes:
+
 - `Inline` — uses `Runner::Sequential` (default)
 - `Threaded` — uses `Runner::Threaded`
 

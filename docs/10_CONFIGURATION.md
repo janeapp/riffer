@@ -64,11 +64,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Value             | Description                                                                 |
-| ----------------- | --------------------------------------------------------------------------- |
+| Value             | Description                                                                      |
+| ----------------- | -------------------------------------------------------------------------------- |
 | `:none` (default) | No id is generated; `message.id` returns `nil` and `:id` is omitted from `to_h`. |
-| `:uuid`           | UUIDv4 via `SecureRandom.uuid`.                                             |
-| `:uuidv7`         | Time-ordered UUIDv7 via `SecureRandom.uuid_v7` (Ruby 3.3+).                  |
+| `:uuid`           | UUIDv4 via `SecureRandom.uuid`.                                                  |
+| `:uuidv7`         | Time-ordered UUIDv7 via `SecureRandom.uuid_v7` (Ruby 3.3+).                      |
 
 When the strategy is not `:none`, every `Riffer::Messages::Base` instance — user prompts, system instructions, assistant responses, and tool results — gets an auto-generated `id` at construction time. IDs are included in `message.to_h` when present and omitted when `nil`. Provider API payloads are unaffected; the `id` stays on the Ruby side.
 

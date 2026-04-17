@@ -21,12 +21,12 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `bundle exec rake` | Run tests + lint (default) |
-| `bundle exec rake test` | Run tests only |
-| `bundle exec rake standard` | Check code style |
-| `bundle exec rake standard:fix` | Auto-fix style issues |
-| `bundle exec rake rbs:generate` | Generate RBS type signatures |
-| `bundle exec rake rbs:watch` | Watch and regenerate RBS files |
-| `bin/console` | Interactive console |
+| Command                         | Description                    |
+| ------------------------------- | ------------------------------ |
+| `bundle exec rake`              | Run tests + lint (default)     |
+| `bundle exec rake test`         | Run tests only                 |
+| `bundle exec rake standard`     | Check code style               |
+| `bundle exec rake standard:fix` | Auto-fix style issues          |
+| `bundle exec rake rbs:generate` | Generate RBS type signatures   |
+| `bundle exec rake rbs:watch`    | Watch and regenerate RBS files |
+| `bin/console`                   | Interactive console            |

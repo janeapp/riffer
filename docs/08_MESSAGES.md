@@ -252,12 +252,12 @@ Without this step, the same model can receive different input depending on the p
 
 ### Merge rules
 
-| Message type | Content | Auxiliary data | Merged? |
-|--------------|---------|----------------|---------|
-| `System` | Joined with `"\n\n"` | — | Yes |
-| `User` | Joined with `"\n\n"` | `files` arrays concatenated | Yes |
-| `Assistant` | Joined with `"\n\n"` | `tool_calls` arrays concatenated | Yes |
-| `Tool` | — | — | Never (each has a unique `tool_call_id`) |
+| Message type | Content              | Auxiliary data                   | Merged?                                  |
+| ------------ | -------------------- | -------------------------------- | ---------------------------------------- |
+| `System`     | Joined with `"\n\n"` | —                                | Yes                                      |
+| `User`       | Joined with `"\n\n"` | `files` arrays concatenated      | Yes                                      |
+| `Assistant`  | Joined with `"\n\n"` | `tool_calls` arrays concatenated | Yes                                      |
+| `Tool`       | —                    | —                                | Never (each has a unique `tool_call_id`) |
 
 ### Example
 
