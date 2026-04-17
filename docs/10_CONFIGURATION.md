@@ -54,6 +54,39 @@ end
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
+### Message ID Strategy
+
+Opt in to stable identifiers on every message for logging, persistence, or replay:
+
+```ruby
+Riffer.configure do |config|
+  config.message_id_strategy = :uuidv7
+end
+```
+
+| Value             | Description                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `:none` (default) | No id is generated; `message.id` returns `nil` and `:id` is omitted from `to_h`. |
+| `:uuid`           | UUIDv4 via `SecureRandom.uuid`.                                             |
+| `:uuidv7`         | Time-ordered UUIDv7 via `SecureRandom.uuid_v7` (Ruby 3.3+).                  |
+
+When the strategy is not `:none`, every `Riffer::Messages::Base` instance — user prompts, system instructions, assistant responses, and tool results — gets an auto-generated `id` at construction time. IDs are included in `message.to_h` when present and omitted when `nil`. Provider API payloads are unaffected; the `id` stays on the Ruby side.
+
+Seeded messages passed to `agent.generate([...])` must carry their own `:id` when the strategy is enabled — Riffer never fabricates identifiers for pre-existing history:
+
+```ruby
+Riffer.configure { |c| c.message_id_strategy = :uuidv7 }
+
+agent.generate([
+  {role: :user, content: "Hi", id: "msg-001"},
+  {role: :assistant, content: "Hello!", id: "msg-002"}
+])
+```
+
+Missing ids raise `Riffer::ArgumentError` with the offending index.
+
+See [Messages — IDs](08_MESSAGES.md#ids) for more details.
+
 ## Agent-Level Configuration
 
 Override global configuration at the agent level:
