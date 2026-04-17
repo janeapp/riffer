@@ -8,6 +8,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 - **Lint + Test**: `bundle exec rake`
 - **Autoloading**: Zeitwerk (file paths must match module/class names)
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)
+- **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/10_CONFIGURATION.md`, `docs/08_MESSAGES.md`). RDoc ≠ user docs.
 
 ## Topic Guides
 
