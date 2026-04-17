@@ -377,6 +377,14 @@ describe Riffer::Agent do
         expect(error.message).must_match(/index 1 is missing :id/)
       end
 
+      it "raises ArgumentError (not NoMethodError) for invalid seed types" do
+        Riffer.config.message_id_strategy = :uuidv7
+        agent = agent_class.new
+        expect {
+          agent.generate([42])
+        }.must_raise(Riffer::ArgumentError)
+      end
+
       it "assigns auto-generated ids to agent-created messages when strategy is set" do
         Riffer.config.message_id_strategy = :uuidv7
         agent = agent_class.new

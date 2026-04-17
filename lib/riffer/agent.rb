@@ -456,7 +456,11 @@ class Riffer::Agent
     return if strategy == :none
 
     items.each_with_index do |item, idx|
-      raw_id = item.is_a?(Hash) ? item[:id] : item.id
+      raw_id = case item
+      when Hash then item[:id]
+      when Riffer::Messages::Base then item.id
+      else next # type errors surface later via convert_to_message_object
+      end
       next unless raw_id.nil?
       raise Riffer::ArgumentError,
         "seeded message at index #{idx} is missing :id (required when Riffer.config.message_id_strategy = #{strategy.inspect})"
