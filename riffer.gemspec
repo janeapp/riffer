@@ -58,7 +58,7 @@ Gem::Specification.new do |spec|
 
   # Type checking
   spec.add_development_dependency "rbs-inline", "~> 0.12"
-  spec.add_development_dependency "steep", "~> 1.10.0"
+  spec.add_development_dependency "steep", "~> 2.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

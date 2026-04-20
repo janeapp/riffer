@@ -176,7 +176,7 @@ class Riffer::Agent
   #--
   #: (String) -> singleton(Riffer::Agent)?
   def self.find(identifier)
-    subclasses.find { |agent_class| agent_class.identifier == identifier.to_s }
+    all.find { |agent_class| agent_class.identifier == identifier.to_s }
   end
 
   # Returns all agent subclasses.
@@ -184,7 +184,7 @@ class Riffer::Agent
   #--
   #: () -> Array[singleton(Riffer::Agent)]
   def self.all
-    subclasses
+    subclasses #: Array[singleton(Riffer::Agent)]
   end
 
   # Generates a response using a new agent instance.
@@ -783,7 +783,7 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Messages::Assistant?
   def extract_final_response
-    @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+    @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
   end
 
   #--
