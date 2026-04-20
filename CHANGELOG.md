@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.24.0](https://github.com/janeapp/riffer/compare/riffer/v0.23.0...riffer/v0.24.0) (2026-04-20)
+
+
+### Features
+
+* add optional message id generation ([#210](https://github.com/janeapp/riffer/issues/210)) ([0f9e20d](https://github.com/janeapp/riffer/commit/0f9e20dcd2d69a49fe5da71be3f0b9deb0a046a4))
+
 ## [0.23.0](https://github.com/janeapp/riffer/compare/riffer/v0.22.0...riffer/v0.23.0) (2026-04-15)
 
 
