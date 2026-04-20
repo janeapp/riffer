@@ -936,7 +936,7 @@
           <div class="method-source-code" id="all-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 186</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
-  <span class="ruby-identifier">subclasses</span>
+  <span class="ruby-identifier">subclasses</span> <span class="ruby-comment">#: Array[singleton(Riffer::Agent)]</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -978,7 +978,7 @@
           <div class="method-source-code" id="find-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 178</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
-  <span class="ruby-identifier">subclasses</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">agent_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">agent_class</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span> }
+  <span class="ruby-identifier">all</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">agent_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">agent_class</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span> }
 <span class="ruby-keyword">end</span></pre>
           </div>
 

@@ -846,7 +846,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content, tool_calls: [], token_usage: nil, structured_output: nil)</span>
+                <span class="method-args">(content, id: nil, tool_calls: [], token_usage: nil, structured_output: nil)</span>
               </a>
             </div>
 
@@ -860,8 +860,8 @@
           </div>
           <div class="method-source-code" id="new-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant.rb, line 27</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> [], <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">super</span>(<span class="ruby-identifier">content</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_calls:</span> [], <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">super</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">id:</span> <span class="ruby-identifier">id</span>)
   <span class="ruby-ivar">@tool_calls</span> = <span class="ruby-identifier">tool_calls</span>
   <span class="ruby-ivar">@token_usage</span> = <span class="ruby-identifier">token_usage</span>
   <span class="ruby-ivar">@structured_output</span> = <span class="ruby-identifier">structured_output</span>
@@ -1052,6 +1052,7 @@
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/assistant.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = {<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>}
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:id</span>] = <span class="ruby-identifier">id</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">hash</span>[<span class="ruby-value">:tool_calls</span>] = <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_h</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-identifier">hash</span>[<span class="ruby-value">:token_usage</span>] = <span class="ruby-identifier">token_usage</span>.<span class="ruby-identifier">to_h</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">token_usage</span>
   <span class="ruby-identifier">hash</span>[<span class="ruby-value">:structured_output</span>] = <span class="ruby-identifier">structured_output</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">structured_output?</span>

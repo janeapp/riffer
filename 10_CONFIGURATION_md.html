@@ -706,6 +706,55 @@
 
 <p>Per-agent configuration overrides this global default. See <a href="07_TOOL_ADVANCED_md.html#tool-runtime-experimental">Advanced Tool Configuration — Tool Runtime</a> for details.</p>
 
+<span id="label-Message+ID+Strategy" class="legacy-anchor"></span>
+<h3 id="message-id-strategy"><a href="#message-id-strategy">Message ID Strategy</a></h3>
+
+<p>Opt in to stable identifiers on every message for logging, persistence, or replay:</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">message_id_strategy</span> = <span class="ruby-value">:uuidv7</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<table role="table">
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>:none</code> (default)</td>
+<td>No id is generated; <code>message.id</code> returns <code>nil</code> and <code>:id</code> is omitted from <code>to_h</code>.</td>
+</tr>
+<tr>
+<td><code>:uuid</code></td>
+<td>UUIDv4 via <code>SecureRandom.uuid</code>.</td>
+</tr>
+<tr>
+<td><code>:uuidv7</code></td>
+<td>Time-ordered UUIDv7 via <code>SecureRandom.uuid_v7</code> (Ruby 3.3+).</td>
+</tr>
+</tbody>
+</table>
+
+<p>When the strategy is not <code>:none</code>, every <a href="Riffer/Messages/Base.html"><code>Riffer::Messages::Base</code></a> instance — user prompts, system instructions, assistant responses, and tool results — gets an auto-generated <code>id</code> at construction time. IDs are included in <code>message.to_h</code> when present and omitted when <code>nil</code>. Provider API payloads are unaffected; the <code>id</code> stays on the Ruby side.</p>
+
+<p>Seeded messages passed to <code>agent.generate([...])</code> must carry their own <code>:id</code> when the strategy is enabled — <a href="Riffer.html"><code>Riffer</code></a> never fabricates identifiers for pre-existing history:</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">message_id_strategy</span> = <span class="ruby-value">:uuidv7</span> }
+
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>([
+  {<span class="ruby-value">role:</span> <span class="ruby-value">:user</span>, <span class="ruby-value">content:</span> <span class="ruby-string">&quot;Hi&quot;</span>, <span class="ruby-value">id:</span> <span class="ruby-string">&quot;msg-001&quot;</span>},
+  {<span class="ruby-value">role:</span> <span class="ruby-value">:assistant</span>, <span class="ruby-value">content:</span> <span class="ruby-string">&quot;Hello!&quot;</span>, <span class="ruby-value">id:</span> <span class="ruby-string">&quot;msg-002&quot;</span>}
+])
+</pre>
+
+<p>Missing ids raise <a href="Riffer/ArgumentError.html"><code>Riffer::ArgumentError</code></a> with the offending index.</p>
+
+<p>See <a href="08_MESSAGES_md.html#ids">Messages — IDs</a> for more details.</p>
+
 <span id="label-Agent-Level+Configuration" class="legacy-anchor"></span>
 <h2 id="agent-level-configuration"><a href="#agent-level-configuration">Agent-Level Configuration</a></h2>
 

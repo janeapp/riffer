@@ -670,6 +670,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-message_id_strategy-3D">message_id_strategy=</a></li>
+
         <li ><a href="#method-i-tool_runtime-3D">tool_runtime=</a></li>
 
       </ul>
@@ -800,6 +802,14 @@
         </dd>
 
 
+        <dt id="VALID_MESSAGE_ID_STRATEGIES">VALID_MESSAGE_ID_STRATEGIES</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
       </dl>
     </section>
 
@@ -891,6 +901,24 @@
         </div>
       </div>
 
+      <div id="attribute-i-message_id_strategy" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-message_id_strategy" title="Link to this attribute">
+            <span class="method-name">message_id_strategy</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Strategy for auto-generating message ids. One of <code>:none</code> (default, no id), <code>:uuid</code> (UUIDv4), or <code>:uuidv7</code> (time-ordered UUIDv7).</p>
+
+<p>When set to anything other than <code>:none</code>, each <a href="Messages/Base.html"><code>Riffer::Messages::Base</code></a> instance gets an <code>id</code> populated at construction time, and seeded messages passed to +Riffer::Agent#generate+ must carry their own <code>:id</code>.</p>
+
+        </div>
+      </div>
+
       <div id="attribute-i-openai" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-openai" title="Link to this attribute">
@@ -957,7 +985,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 64</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@amazon_bedrock</span> = <span class="ruby-constant">AmazonBedrock</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@anthropic</span> = <span class="ruby-constant">Anthropic</span>.<span class="ruby-identifier">new</span>
@@ -966,6 +994,7 @@
   <span class="ruby-ivar">@openai</span> = <span class="ruby-constant">OpenAI</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@evals</span> = <span class="ruby-constant">Evals</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@tool_runtime</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span><span class="ruby-operator">::</span><span class="ruby-constant">Inline</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@message_id_strategy</span> = <span class="ruby-value">:none</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1000,6 +1029,54 @@
        </header>
 
 
+      <div id="method-i-message_id_strategy-3D" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-message_id_strategy-3D" title="Link to this method">
+                <span class="method-name">message_id_strategy=</span>
+                <span class="method-args">(value)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="message_id_strategy-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 79</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">message_id_strategy=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">VALID_MESSAGE_ID_STRATEGIES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>,
+      <span class="ruby-node">&quot;message_id_strategy must be one of #{VALID_MESSAGE_ID_STRATEGIES.inspect}, got #{value.inspect}&quot;</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@message_id_strategy</span> = <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Sets the message id strategy.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if the value is not one of <code>:none</code>, <code>:uuid</code>, or <code>:uuidv7</code>.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-tool_runtime-3D" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1019,7 +1096,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tool_runtime-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 56</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tool_runtime=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-identifier">valid</span> = (<span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Proc</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;tool_runtime must be a Riffer::ToolRuntime subclass, instance, or a Proc&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid</span>

@@ -768,6 +768,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-id" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-id" title="Link to this attribute">
+            <span class="method-name">id</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The message id, or nil when <code>Riffer.config.message_id_strategy</code> is <code>:none</code>.</p>
+
+        </div>
+      </div>
+
     </section>
 
 
@@ -787,7 +803,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content)</span>
+                <span class="method-args">(content, id: nil)</span>
               </a>
             </div>
 
@@ -800,9 +816,10 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/base.rb, line 13</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/base.rb, line 18</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
+  <span class="ruby-ivar">@id</span> = <span class="ruby-identifier">id</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">generate_id</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -856,7 +873,7 @@
             </details>
           </div>
           <div class="method-source-code" id="role-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/base.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/base.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">role</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-string">&quot;Subclasses must implement #role&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -900,9 +917,11 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/base.rb, line 21</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/base.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
-  {<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>}
+  <span class="ruby-identifier">hash</span> = {<span class="ruby-value">role:</span> <span class="ruby-identifier">role</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>}
+  <span class="ruby-identifier">hash</span>[<span class="ruby-value">:id</span>] = <span class="ruby-identifier">id</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">id</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">hash</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
