@@ -58,4 +58,44 @@ describe Riffer::Config do
       expect(config.evals.judge_model).must_equal "anthropic/claude-sonnet-4-20250514"
     end
   end
+
+  describe "message_id_strategy" do
+    it "defaults to :none" do
+      config = Riffer::Config.new
+      expect(config.message_id_strategy).must_equal :none
+    end
+
+    it "accepts :none" do
+      config = Riffer::Config.new
+      config.message_id_strategy = :none
+      expect(config.message_id_strategy).must_equal :none
+    end
+
+    it "accepts :uuid" do
+      config = Riffer::Config.new
+      config.message_id_strategy = :uuid
+      expect(config.message_id_strategy).must_equal :uuid
+    end
+
+    it "accepts :uuidv7" do
+      config = Riffer::Config.new
+      config.message_id_strategy = :uuidv7
+      expect(config.message_id_strategy).must_equal :uuidv7
+    end
+
+    it "raises for unknown symbols" do
+      config = Riffer::Config.new
+      expect { config.message_id_strategy = :ulid }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for string values" do
+      config = Riffer::Config.new
+      expect { config.message_id_strategy = "uuid" }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for nil" do
+      config = Riffer::Config.new
+      expect { config.message_id_strategy = nil }.must_raise Riffer::ArgumentError
+    end
+  end
 end

@@ -26,9 +26,9 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   attr_reader :error_type #: Symbol?
 
   #--
-  #: (String, tool_call_id: String, name: String, ?error: String?, ?error_type: Symbol?) -> void
-  def initialize(content, tool_call_id:, name:, error: nil, error_type: nil)
-    super(content)
+  #: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void
+  def initialize(content, tool_call_id:, name:, id: nil, error: nil, error_type: nil)
+    super(content, id: id)
     @tool_call_id = tool_call_id
     @name = name
     @error = error
@@ -55,6 +55,7 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = {role: role, content: content, tool_call_id: tool_call_id, name: name}
+    hash[:id] = id unless id.nil?
     if error?
       hash[:error] = error
       hash[:error_type] = error_type

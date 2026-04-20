@@ -22,6 +22,8 @@ class Riffer::Config
   OpenAI = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
 
+  VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
+
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
   attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock
 
@@ -59,6 +61,29 @@ class Riffer::Config
     @tool_runtime = value
   end
 
+  # Strategy for auto-generating message ids. One of +:none+ (default, no id),
+  # +:uuid+ (UUIDv4), or +:uuidv7+ (time-ordered UUIDv7).
+  #
+  # When set to anything other than +:none+, each +Riffer::Messages::Base+
+  # instance gets an +id+ populated at construction time, and seeded messages
+  # passed to +Riffer::Agent#generate+ must carry their own +:id+.
+  attr_reader :message_id_strategy #: Symbol
+
+  # Sets the message id strategy.
+  #
+  # Raises +Riffer::ArgumentError+ if the value is not one of
+  # +:none+, +:uuid+, or +:uuidv7+.
+  #
+  #--
+  #: (Symbol) -> void
+  def message_id_strategy=(value)
+    unless VALID_MESSAGE_ID_STRATEGIES.include?(value)
+      raise Riffer::ArgumentError,
+        "message_id_strategy must be one of #{VALID_MESSAGE_ID_STRATEGIES.inspect}, got #{value.inspect}"
+    end
+    @message_id_strategy = value
+  end
+
   #--
   #: () -> void
   def initialize
@@ -69,5 +94,6 @@ class Riffer::Config
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new
+    @message_id_strategy = :none
   end
 end

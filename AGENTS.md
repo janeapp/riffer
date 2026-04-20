@@ -8,6 +8,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 - **Lint + Test**: `bundle exec rake`
 - **Autoloading**: Zeitwerk (file paths must match module/class names)
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)
+- **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/10_CONFIGURATION.md`, `docs/08_MESSAGES.md`). RDoc ≠ user docs.
 
 ## Topic Guides
 
@@ -20,12 +21,12 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `bundle exec rake` | Run tests + lint (default) |
-| `bundle exec rake test` | Run tests only |
-| `bundle exec rake standard` | Check code style |
-| `bundle exec rake standard:fix` | Auto-fix style issues |
-| `bundle exec rake rbs:generate` | Generate RBS type signatures |
-| `bundle exec rake rbs:watch` | Watch and regenerate RBS files |
-| `bin/console` | Interactive console |
+| Command                         | Description                    |
+| ------------------------------- | ------------------------------ |
+| `bundle exec rake`              | Run tests + lint (default)     |
+| `bundle exec rake test`         | Run tests only                 |
+| `bundle exec rake standard`     | Check code style               |
+| `bundle exec rake standard:fix` | Auto-fix style issues          |
+| `bundle exec rake rbs:generate` | Generate RBS type signatures   |
+| `bundle exec rake rbs:watch`    | Watch and regenerate RBS files |
+| `bin/console`                   | Interactive console            |

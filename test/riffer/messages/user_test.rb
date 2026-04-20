@@ -29,6 +29,13 @@ describe Riffer::Messages::User do
     end
   end
 
+  describe "#id" do
+    it "is preserved when passed explicitly" do
+      message = Riffer::Messages::User.new("Hi", id: "user-1")
+      expect(message.id).must_equal "user-1"
+    end
+  end
+
   describe "#+" do
     it "concatenates content" do
       a = Riffer::Messages::User.new("First")
@@ -37,6 +44,21 @@ describe Riffer::Messages::User do
       result = a + b
 
       expect(result.content).must_equal "First\n\nSecond"
+    end
+
+    it "generates a fresh id rather than inheriting from operands" do
+      original = Riffer.config.message_id_strategy
+      Riffer.config.message_id_strategy = :uuidv7
+      a = Riffer::Messages::User.new("First", id: "a-id")
+      b = Riffer::Messages::User.new("Second", id: "b-id")
+
+      result = a + b
+
+      expect(result.id).wont_equal "a-id"
+      expect(result.id).wont_equal "b-id"
+      expect(result.id).wont_be_nil
+    ensure
+      Riffer.config.message_id_strategy = original
     end
 
     it "returns a User message" do

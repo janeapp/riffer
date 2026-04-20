@@ -252,12 +252,12 @@ Without this step, the same model can receive different input depending on the p
 
 ### Merge rules
 
-| Message type | Content | Auxiliary data | Merged? |
-|--------------|---------|----------------|---------|
-| `System` | Joined with `"\n\n"` | — | Yes |
-| `User` | Joined with `"\n\n"` | `files` arrays concatenated | Yes |
-| `Assistant` | Joined with `"\n\n"` | `tool_calls` arrays concatenated | Yes |
-| `Tool` | — | — | Never (each has a unique `tool_call_id`) |
+| Message type | Content              | Auxiliary data                   | Merged?                                  |
+| ------------ | -------------------- | -------------------------------- | ---------------------------------------- |
+| `System`     | Joined with `"\n\n"` | —                                | Yes                                      |
+| `User`       | Joined with `"\n\n"` | `files` arrays concatenated      | Yes                                      |
+| `Assistant`  | Joined with `"\n\n"` | `tool_calls` arrays concatenated | Yes                                      |
+| `Tool`       | —                    | —                                | Never (each has a unique `tool_call_id`) |
 
 ### Example
 
@@ -278,20 +278,50 @@ agent.generate(messages)
 
 Merging happens at serialization time only. The agent's `messages` array still contains the original separate messages for logging, evals, and debugging.
 
+## IDs
+
+Every message carries an optional `id` attribute. By default ids are disabled (`message.id` returns `nil` and `:id` is omitted from `to_h`). Enable them globally by setting `Riffer.config.message_id_strategy`:
+
+```ruby
+Riffer.configure { |c| c.message_id_strategy = :uuidv7 }
+
+msg = Riffer::Messages::User.new("Hello")
+msg.id     # => "0195a2e1-..." (auto-generated UUIDv7)
+msg.to_h   # => {role: :user, content: "Hello", id: "0195a2e1-..."}
+```
+
+Supported strategies: `:none` (default), `:uuid`, `:uuidv7`. See [Configuration — Message ID Strategy](10_CONFIGURATION.md#message-id-strategy) for the full reference.
+
+Ids pass through to subclass constructors via an `id:` kwarg and are preserved when set explicitly:
+
+```ruby
+msg = Riffer::Messages::Assistant.new("Done.", id: "reply-42")
+msg.id  # => "reply-42"
+```
+
+When seeding an agent with existing conversation history and the strategy is enabled, every seeded message must include an id — Riffer raises `Riffer::ArgumentError` on missing ids rather than fabricating them.
+
 ## Base Class
 
 All messages inherit from `Riffer::Messages::Base`:
 
 ```ruby
 class Riffer::Messages::Base
-  attr_reader :content
+  attr_reader :content, :id
+
+  def initialize(content, id: nil)
+    @content = content
+    @id = id || generate_id  # uses Riffer.config.message_id_strategy
+  end
 
   def role
     raise NotImplementedError
   end
 
   def to_h
-    {role: role, content: content}
+    hash = {role: role, content: content}
+    hash[:id] = id unless id.nil?
+    hash
   end
 end
 ```

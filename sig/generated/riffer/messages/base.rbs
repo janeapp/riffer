@@ -7,9 +7,12 @@ class Riffer::Messages::Base
   # The message content.
   attr_reader content: String
 
+  # The message id, or nil when +Riffer.config.message_id_strategy+ is +:none+.
+  attr_reader id: String?
+
   # --
-  # : (String) -> void
-  def initialize: (String) -> void
+  # : (String, ?id: String?) -> void
+  def initialize: (String, ?id: String?) -> void
 
   # Converts the message to a hash.
   #
@@ -24,4 +27,9 @@ class Riffer::Messages::Base
   # --
   # : () -> Symbol
   def role: () -> Symbol
+
+  private
+
+  # : () -> String?
+  def generate_id: () -> String?
 end

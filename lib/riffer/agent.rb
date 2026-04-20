@@ -433,6 +433,7 @@ class Riffer::Agent
     if prompt_or_messages.is_a?(Array)
       raise Riffer::ArgumentError, "cannot pass an array of messages on an agent with existing messages; use a string to continue the conversation or a new agent instance to start fresh" if @messages.any?
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead" if files && !files.empty?
+      validate_seed_ids!(prompt_or_messages)
       @messages = prompt_or_messages.map { |item| convert_to_message_object(item) }
     elsif @messages.any?
       file_parts = (files || []).map { |f| convert_to_file_part(f) }
@@ -445,6 +446,24 @@ class Riffer::Agent
       @messages << skills if skills
       file_parts = (files || []).map { |f| convert_to_file_part(f) }
       @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
+    end
+  end
+
+  #--
+  #: (Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
+  def validate_seed_ids!(items)
+    strategy = Riffer.config.message_id_strategy
+    return if strategy == :none
+
+    items.each_with_index do |item, idx|
+      raw_id = case item
+      when Hash then item[:id]
+      when Riffer::Messages::Base then item.id
+      else next # type errors surface later via convert_to_message_object
+      end
+      next unless raw_id.nil?
+      raise Riffer::ArgumentError,
+        "seeded message at index #{idx} is missing :id (required when Riffer.config.message_id_strategy = #{strategy.inspect})"
     end
   end
 
