@@ -300,5 +300,50 @@ describe Riffer::Workflow do
         end
       end
     end
+
+    describe "workflow with multiple agents, tools, and workflows steps with dependencies" do
+      let(:simple_workflow_class) do
+        captured_agent = agent_class
+        Class.new(Riffer::Workflow) do
+          identifier "riffer/workflow"
+
+          step :search1, captured_agent
+        end
+      end
+      let(:workflow_class) do
+        captured_tool = weather_tool_class
+        captured_simple_tool_class = simple_tool_class
+        captured_agent = agent_class
+        captured_simple_workflow_class = simple_workflow_class
+        Class.new(Riffer::Workflow) do
+          identifier "riffer/workflow"
+
+          step :weather1, captured_tool
+          step :search1, captured_agent, depends_on: :weather1
+          step :simpletool, captured_simple_tool_class, depends_on: [:weather1, :search1]
+          step :search2, captured_agent, depends_on: :simpletool
+          step :simple_workflow, captured_simple_workflow_class, depends_on: :search2
+        end
+      end
+
+      describe "#run" do
+        describe "with mock provider" do
+          it "returns a Response object with success" do
+            result = workflow.run(context: nil, city: "Toronto", units: "fahrenheit")
+
+            expect(result).must_be_instance_of Riffer::Workflow::Response
+            expect(result.success?).must_equal true
+            expect(result.identifier).must_equal "riffer/workflow"
+            expect(result.steps_response).must_be_instance_of Hash
+            expect(result.steps_response.keys.length).must_equal 5
+            expect(result.steps_response[:weather1]).must_be_instance_of Riffer::Tools::Response
+            expect(result.steps_response[:search1]).must_be_instance_of Riffer::Agent::Response
+            expect(result.steps_response[:simpletool]).must_be_instance_of Riffer::Tools::Response
+            expect(result.steps_response[:search2]).must_be_instance_of Riffer::Agent::Response
+            expect(result.steps_response[:simple_workflow]).must_be_instance_of Riffer::Workflow::Response
+          end
+        end
+      end
+    end
   end
 end

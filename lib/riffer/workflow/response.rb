@@ -10,7 +10,7 @@ class Riffer::Workflow::Response
   attr_reader :identifier #: String
 
   # The output of each agent
-  attr_reader :steps_response #: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response]
+  attr_reader :steps_response #: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response|Riffer::Workflow::Response]
 
   # The error message when something fail
   attr_reader :error_message #: String?
@@ -21,7 +21,7 @@ class Riffer::Workflow::Response
   # Creates a success response.
   #
   #--
-  #: (identifier: String, steps_response: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response]) -> Riffer::Workflow::Response
+  #: (identifier: String, steps_response: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response|Riffer::Workflow::Response]) -> Riffer::Workflow::Response
   def self.success(identifier:, steps_response:)
     new(identifier: identifier, success: true, steps_response: steps_response)
   end
@@ -29,7 +29,7 @@ class Riffer::Workflow::Response
   # Creates an error response.
   #
   #--
-  #: (identifier: String, steps_response: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response], message: String, ?type: Symbol) -> Riffer::Workflow::Response
+  #: (identifier: String, steps_response: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response|Riffer::Workflow::Response], message: String, ?type: Symbol) -> Riffer::Workflow::Response
   def self.error(identifier:, steps_response:, message:, type: :execution_error)
     new(identifier: identifier, success: false, steps_response: steps_response,
       error_message: message, error_type: type)
@@ -46,7 +46,7 @@ class Riffer::Workflow::Response
   private
 
   #--
-  #: (identifier: String, success: bool, steps_response: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response], ?error_message: String?, ?error_type: Symbol?) -> void
+  #: (identifier: String, success: bool, steps_response: Hash[Symbol, Riffer::Agent::Response|Riffer::Tool::Response|Riffer::Workflow::Response], ?error_message: String?, ?error_type: Symbol?) -> void
   def initialize(identifier:, success:, steps_response:, error_message: nil, error_type: nil)
     @identifier = identifier
     @steps_response = steps_response

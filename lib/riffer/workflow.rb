@@ -5,8 +5,7 @@
 #
 # Subclass this to create your own workflows.
 # Provides a simple DSL for defining steps.
-# See Riffer::Agent.
-# For now, we will support just Riffer::Agent; in the next commit, we will onboard Riffer::Tools
+# See Riffer::Agent, Riffer::Tool.
 #
 # In case of success, a Riffer::Workflow::Response is returned in the method run.
 # The exceptions Riffer::ValidationError, Riffer::ArgumentError, Riffer::Error, and Riffer::TimeoutError
@@ -37,7 +36,7 @@ class Riffer::Workflow
   extend Riffer::Toolable
 
   kind :workflow
-  VALID_STEP_RESPONSE = [Riffer::Agent::Response, Riffer::Tools::Response].freeze
+  VALID_STEP_RESPONSE = [Riffer::Agent::Response, Riffer::Tools::Response, Riffer::Workflow::Response].freeze
   DEFAULT_TIMEOUT = 60 #: Integer
 
   # We use a class instance variable to store steps for each specific subclass
@@ -51,7 +50,7 @@ class Riffer::Workflow
   # we will update it later to also accept Riffer::Workflow
   #
   #--
-  #: (Symbol, singleton(Riffer::Agent|Riffer::Tool), ?Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
+  #: (Symbol, singleton(Riffer::Agent|Riffer::Tool|Riffer::Workflow), ?Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
   def self.step(name, step_class, options = {})
     steps << {
       name: name,
@@ -103,7 +102,7 @@ class Riffer::Workflow
   # Raises Riffer::ArgumentError if the step is not an Agent(we will update latter to accept Tool and Workflow).
   #
   #--
-  #: (step_config: Hash[Symbol, untyped]) -> Riffer::Agent::Response|Riffer::Tool::Response
+  #: (step_config: Hash[Symbol, untyped]) -> Riffer::Agent::Response|Riffer::Tool::Response|Riffer::Workflow::Response
   def run_step_with_validation(step_config:)
     validated_args = generate_validated_args(step_config)
 
@@ -119,6 +118,9 @@ class Riffer::Workflow
       when Riffer::Tool
         validated_args[:context] = @context
         step.call(**validated_args)
+      when Riffer::Workflow
+        validated_args[:context] = @context
+        step.run(**validated_args)
       else
         raise Riffer::ArgumentError, "Unknown message step: #{step_config[:step_class]}"
       end
