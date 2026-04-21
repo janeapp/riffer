@@ -37,7 +37,7 @@ class Riffer::Workflow
   extend Riffer::Toolable
 
   kind :workflow
-  VALID_STEP_RESPONSE = [Riffer::Agent::Response].freeze
+  VALID_STEP_RESPONSE = [Riffer::Agent::Response, Riffer::Tools::Response].freeze
   DEFAULT_TIMEOUT = 60 #: Integer
 
   # We use a class instance variable to store steps for each specific subclass
@@ -47,14 +47,15 @@ class Riffer::Workflow
     @steps ||= []
   end
 
-  # 'DSL' method to define a step, for now accepting just Agent, we will update it latter
+  # 'DSL' method to define a step, for now accepting just Riffer::Agent and Riffer::Tool,
+  # we will update it later to also accept Riffer::Workflow
   #
   #--
-  #: (Symbol, singleton(Riffer::Agent), ?Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
-  def self.step(name, agent_class, options = {})
+  #: (Symbol, singleton(Riffer::Agent|Riffer::Tool), ?Hash[Symbol, untyped]) -> Array[Hash[Symbol, untyped]]
+  def self.step(name, step_class, options = {})
     steps << {
       name: name,
-      step_class: agent_class,
+      step_class: step_class,
       depends_on: Array(options[:depends_on]) # Ensure it's always an array
     }
   end
@@ -82,13 +83,13 @@ class Riffer::Workflow
     end
 
     Riffer::Workflow::Response.success(identifier: self.class.identifier, steps_response: @results)
-  rescue Riffer::ValidationError, Riffer::ArgumentError, Riffer::Error => e
-    Riffer::Workflow::Response.error(
-      identifier: self.class.identifier, steps_response: @results, message: e.message, type: :validation_error
-    )
   rescue Riffer::TimeoutError => e
     Riffer::Workflow::Response.error(
       identifier: self.class.identifier, steps_response: @results, message: e.message, type: :execution_error
+    )
+  rescue Riffer::ValidationError, Riffer::ArgumentError, Riffer::Error => e
+    Riffer::Workflow::Response.error(
+      identifier: self.class.identifier, steps_response: @results, message: e.message, type: :validation_error
     )
   end
 
@@ -102,20 +103,22 @@ class Riffer::Workflow
   # Raises Riffer::ArgumentError if the step is not an Agent(we will update latter to accept Tool and Workflow).
   #
   #--
-  #: (step_config: Hash[Symbol, untyped]) -> Riffer::Agent::Response
+  #: (step_config: Hash[Symbol, untyped]) -> Riffer::Agent::Response|Riffer::Tool::Response
   def run_step_with_validation(step_config:)
     validated_args = generate_validated_args(step_config)
 
     result = Timeout.timeout(self.class.timeout) do
-      agent = step_config[:step_class].new
+      step = step_config[:step_class].new
 
-      case agent
+      case step
       when Riffer::Agent
         files = validated_args.delete(:files)
         prompt = validated_args.values.join(" ")
-        agent = step_config[:step_class].new
 
-        agent.generate(prompt, files:, context: @context)
+        step.generate(prompt, files:, context: @context)
+      when Riffer::Tool
+        validated_args[:context] = @context
+        step.call(**validated_args)
       else
         raise Riffer::ArgumentError, "Unknown message step: #{step_config[:step_class]}"
       end
@@ -139,15 +142,17 @@ class Riffer::Workflow
     sliced = @results.slice(*step_config[:depends_on])
     payload = sliced.empty? ? @default_input : sliced
 
-    payload = payload.map do |_key, result|
+    payload.transform_values do |result|
       if result.respond_to?(:structured_output)
         result.structured_output
       elsif result.respond_to?(:content)
         {content: result.content}
+      elsif result.respond_to?(:to_h)
+        result.to_h
       else
-        {content: result}
+        result # No need to wrap in {key => result} here
       end
-    end.reduce({}, :merge!)
+    end
 
     params_builder ? params_builder.validate(payload) : payload
   end
