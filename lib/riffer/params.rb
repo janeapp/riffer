@@ -55,6 +55,15 @@ class Riffer::Params
     )
   end
 
+  def is_equal?(other_params)
+    return false if other_params.nil? || !other_params.is_a?(Riffer::Params)
+    return false unless @parameters.size == other_params.parameters.size
+
+    @parameters.zip(other_params.parameters).all? do |param, other_param|
+      param.is_equal?(other_param)
+    end
+  end
+
   # Validates arguments against parameter definitions.
   #
   # Raises Riffer::ValidationError if validation fails.
