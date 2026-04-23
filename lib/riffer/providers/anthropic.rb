@@ -303,21 +303,28 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         system_prompts << {type: "text", text: message.content}
       when Riffer::Messages::User
         if message.files.empty?
+          next if empty_text?(message.content)
           conversation_messages << {role: "user", content: message.content}
         else
-          content = [{type: "text", text: message.content}]
+          content = []
+          content << {type: "text", text: message.content} unless empty_text?(message.content)
           message.files.each { |file| content << convert_file_part_to_anthropic_format(file) }
           conversation_messages << {role: "user", content: content}
         end
       when Riffer::Messages::Assistant
+        next if empty_text?(message.content) && message.tool_calls.empty?
         conversation_messages << convert_assistant_to_anthropic_format(message)
       when Riffer::Messages::Tool
+        # Anthropic rejects empty text content blocks; substitute a placeholder
+        # rather than dropping the tool_result, which would orphan the matching
+        # tool_use and also trigger an error.
+        tool_content = empty_text?(message.content) ? "(no content)" : message.content
         conversation_messages << {
           role: "user",
           content: [{
             type: "tool_result",
             tool_use_id: message.tool_call_id,
-            content: message.content
+            content: tool_content
           }]
         }
       end
@@ -333,7 +340,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
     content = []
-    content << {type: "text", text: message.content} if message.content && !message.content.empty?
+    content << {type: "text", text: message.content} unless empty_text?(message.content)
 
     message.tool_calls.each do |tc|
       content << {
@@ -345,6 +352,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     {role: "assistant", content: content}
+  end
+
+  #--
+  #: (String?) -> bool
+  def empty_text?(string)
+    string.nil? || string.strip.empty?
   end
 
   #--

@@ -948,4 +948,118 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
   end
+
+  describe "empty message normalization" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1") }
+
+    it "drops an assistant message with empty content and no tool_calls" do
+      messages = [
+        Riffer::Messages::User.new("Hi"),
+        Riffer::Messages::Assistant.new(""),
+        Riffer::Messages::User.new("Still there?")
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      assistant_messages = result[:conversation].select { |m| m[:role] == "assistant" }
+      expect(assistant_messages).must_be_empty
+    end
+
+    it "drops an assistant message with whitespace-only content and no tool_calls" do
+      messages = [
+        Riffer::Messages::User.new("Hi"),
+        Riffer::Messages::Assistant.new("   \n\t ")
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      expect(result[:conversation].any? { |m| m[:role] == "assistant" }).must_equal false
+    end
+
+    it "keeps tool_use blocks when assistant content is blank but tool_calls are present" do
+      messages = [
+        Riffer::Messages::User.new("Weather?"),
+        Riffer::Messages::Assistant.new("", tool_calls: [
+          Riffer::Messages::Assistant::ToolCall.new(call_id: "tool_1", name: "get_weather", arguments: '{"city":"Toronto"}')
+        ])
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      assistant = result[:conversation].find { |m| m[:role] == "assistant" }
+      expect(assistant).wont_be_nil
+      expect(assistant[:content].size).must_equal 1
+      expect(assistant[:content].first[:tool_use][:tool_use_id]).must_equal "tool_1"
+    end
+
+    it "omits an empty text ContentBlock when tool_calls are present" do
+      messages = [
+        Riffer::Messages::User.new("Weather?"),
+        Riffer::Messages::Assistant.new("  ", tool_calls: [
+          Riffer::Messages::Assistant::ToolCall.new(call_id: "tool_1", name: "get_weather", arguments: "{}")
+        ])
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      assistant = result[:conversation].find { |m| m[:role] == "assistant" }
+      expect(assistant[:content].none? { |b| b.key?(:text) }).must_equal true
+    end
+
+    it "passes through an assistant message with real content unchanged" do
+      messages = [
+        Riffer::Messages::User.new("Hi"),
+        Riffer::Messages::Assistant.new("Hello there!")
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      assistant = result[:conversation].find { |m| m[:role] == "assistant" }
+      expect(assistant[:content]).must_equal [{text: "Hello there!"}]
+    end
+
+    it "keeps an assistant message with content AND tool_calls intact" do
+      messages = [
+        Riffer::Messages::User.new("Weather?"),
+        Riffer::Messages::Assistant.new("Let me check.", tool_calls: [
+          Riffer::Messages::Assistant::ToolCall.new(call_id: "tool_1", name: "get_weather", arguments: "{}")
+        ])
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      assistant = result[:conversation].find { |m| m[:role] == "assistant" }
+      expect(assistant[:content].size).must_equal 2
+      expect(assistant[:content].first).must_equal({text: "Let me check."})
+      expect(assistant[:content].last[:tool_use][:tool_use_id]).must_equal "tool_1"
+    end
+
+    it "substitutes a placeholder for blank tool_result content" do
+      messages = [
+        Riffer::Messages::User.new("Weather?"),
+        Riffer::Messages::Assistant.new("", tool_calls: [
+          Riffer::Messages::Assistant::ToolCall.new(call_id: "tool_1", name: "get_weather", arguments: "{}")
+        ]),
+        Riffer::Messages::Tool.new("", tool_call_id: "tool_1", name: "get_weather")
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      tool_message = result[:conversation].last
+      tool_text = tool_message[:content].first[:tool_result][:content].first[:text]
+      expect(tool_text).wont_be_empty
+    end
+
+    it "drops a user message whose text is blank and has no files" do
+      messages = [
+        Riffer::Messages::User.new("  "),
+        Riffer::Messages::User.new("Hello")
+      ]
+
+      result = provider.send(:partition_messages, messages)
+
+      expect(result[:conversation].size).must_equal 1
+      expect(result[:conversation].first[:content].first[:text]).must_equal "Hello"
+    end
+  end
 end

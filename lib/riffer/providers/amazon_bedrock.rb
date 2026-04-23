@@ -232,10 +232,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       when Riffer::Messages::System
         system_prompts << {text: message.content}
       when Riffer::Messages::User
-        content = [{text: message.content}]
+        content = []
+        content << {text: message.content} unless empty_text?(message.content)
         message.files.each { |file| content << convert_file_part_to_bedrock_format(file) }
+        next if content.empty?
         conversation_messages << {role: "user", content: content}
       when Riffer::Messages::Assistant
+        next if empty_text?(message.content) && message.tool_calls.empty?
         conversation_messages << convert_assistant_to_bedrock_format(message)
       when Riffer::Messages::Tool
         append_tool_result(conversation_messages, message)
@@ -252,7 +255,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = []
-    content << {text: message.content} if message.content && !message.content.empty?
+    content << {text: message.content} unless empty_text?(message.content)
 
     message.tool_calls.each do |tc|
       content << {
@@ -270,10 +273,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
   def append_tool_result(conversation_messages, message)
+    # Bedrock rejects ContentBlocks whose text field is blank, but a missing
+    # tool_result for a prior tool_use is also invalid — so substitute a
+    # placeholder rather than dropping the message.
+    text = empty_text?(message.content) ? "(no content)" : message.content
     tool_result = {
       tool_result: {
         tool_use_id: message.tool_call_id,
-        content: [{text: message.content}]
+        content: [{text: text}]
       }
     }
 
@@ -283,6 +290,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     else
       conversation_messages << {role: "user", content: [tool_result]}
     end
+  end
+
+  #--
+  #: (String?) -> bool
+  def empty_text?(string)
+    string.nil? || string.strip.empty?
   end
 
   #--
