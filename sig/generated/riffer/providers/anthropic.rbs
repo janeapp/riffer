@@ -99,6 +99,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def convert_assistant_to_anthropic_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
   # --
+  # : (String?) -> bool
+  def empty_text?: (String?) -> bool
+
+  # --
   # : (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_anthropic_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
 

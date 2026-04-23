@@ -75,6 +75,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
   # --
+  # : (String?) -> bool
+  def empty_text?: (String?) -> bool
+
+  # --
   # : (Riffer::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
 
