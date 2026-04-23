@@ -367,6 +367,54 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "#extract_content" do
+    let(:provider) do
+      # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes
+      # the Aws::BedrockRuntime::Types constants below available.
+      Riffer::Providers::AmazonBedrock.new(api_token: "test", region: "us-east-1")
+    end
+
+    def build_response(content_blocks)
+      Aws::BedrockRuntime::Types::ConverseResponse.new(
+        output: Aws::BedrockRuntime::Types::ConverseOutput::Message.new(
+          message: Aws::BedrockRuntime::Types::Message.new(
+            role: "assistant",
+            content: content_blocks
+          )
+        )
+      )
+    end
+
+    it "concatenates multiple text blocks in order" do
+      provider # force SDK load before constructing Aws types below
+      # Regression: previously assigned (=) instead of appending (+=), so with
+      # multiple text blocks only the last survived. Bedrock splits output
+      # across several text blocks when reasoning or tool_use blocks are
+      # interleaved, so all text blocks must be preserved.
+      response = build_response([
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "Hello "),
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "world")
+      ])
+      expect(provider.send(:extract_content, response)).must_equal "Hello world"
+    end
+
+    it "ignores tool_use blocks when extracting text" do
+      provider # force SDK load before constructing Aws types below
+      response = build_response([
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "Answer: "),
+        Aws::BedrockRuntime::Types::ContentBlock.new(
+          tool_use: Aws::BedrockRuntime::Types::ToolUseBlock.new(
+            tool_use_id: "id-1",
+            name: "calculator",
+            input: {}
+          )
+        ),
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "42")
+      ])
+      expect(provider.send(:extract_content, response)).must_equal "Answer: 42"
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do

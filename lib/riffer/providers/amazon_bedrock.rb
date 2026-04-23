@@ -102,7 +102,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     text_content = ""
 
     content_blocks.each do |block|
-      text_content = block.text if block.respond_to?(:text) && block.text
+      text_content += block.text if block.respond_to?(:text) && block.text
     end
 
     text_content
