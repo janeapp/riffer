@@ -235,10 +235,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         content = []
         content << {text: message.content} unless empty_text?(message.content)
         message.files.each { |file| content << convert_file_part_to_bedrock_format(file) }
-        next if content.empty?
         conversation_messages << {role: "user", content: content}
       when Riffer::Messages::Assistant
-        next if empty_text?(message.content) && message.tool_calls.empty?
         conversation_messages << convert_assistant_to_bedrock_format(message)
       when Riffer::Messages::Tool
         append_tool_result(conversation_messages, message)
@@ -276,7 +274,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     # Bedrock rejects ContentBlocks whose text field is blank, but a missing
     # tool_result for a prior tool_use is also invalid — so substitute a
     # placeholder rather than dropping the message.
-    text = empty_text?(message.content) ? "(no content)" : message.content
+    text = empty_text?(message.content) ? Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER : message.content
     tool_result = {
       tool_result: {
         tool_use_id: message.tool_call_id,

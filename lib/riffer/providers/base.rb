@@ -41,6 +41,7 @@ class Riffer::Providers::Base
     @current_tools = options[:tools] || []
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    messages = substitute_blank_messages(messages)
     messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
     response = execute_generate(params)
@@ -67,6 +68,7 @@ class Riffer::Providers::Base
     @current_tools = options[:tools] || []
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    messages = substitute_blank_messages(messages)
     messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
     Enumerator.new do |yielder|
@@ -144,10 +146,48 @@ class Riffer::Providers::Base
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def merge_consecutive_messages(messages)
     messages.chunk { |msg| msg.role }.flat_map do |role, group|
-      next group if role == :tool || group.size == 1
+      next group if role == :tool
+
+      non_placeholders = group.reject { |msg| msg.content == Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER }
+      group = non_placeholders.empty? ? [group.first] : non_placeholders
+
+      next group if group.size == 1
 
       group.inject { |merged, msg| merged + msg }
     end
+  end
+
+  # Replaces blank user/assistant messages with a placeholder so that wire
+  # formats which reject empty content preserve alternation. Tool messages
+  # and messages that carry files/tool_calls are left untouched; their
+  # surrounding content blocks already satisfy the API.
+  #
+  #--
+  #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def substitute_blank_messages(messages)
+    messages.map do |message|
+      case message
+      when Riffer::Messages::User
+        next message unless blank_string?(message.content) && message.files.empty?
+        Riffer::Messages::User.new(Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER, id: message.id)
+      when Riffer::Messages::Assistant
+        next message unless blank_string?(message.content) && message.tool_calls.empty?
+        Riffer::Messages::Assistant.new(
+          Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER,
+          id: message.id,
+          token_usage: message.token_usage,
+          structured_output: message.structured_output
+        )
+      else
+        message
+      end
+    end
+  end
+
+  #--
+  #: (String?) -> bool
+  def blank_string?(string)
+    string.nil? || string.strip.empty?
   end
 
   #--

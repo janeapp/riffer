@@ -952,28 +952,37 @@ describe Riffer::Providers::AmazonBedrock do
   describe "empty message normalization" do
     let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1") }
 
-    it "drops an assistant message with empty content and no tool_calls" do
+    def pipeline(provider, messages)
+      messages = provider.send(:substitute_blank_messages, messages)
+      messages = provider.send(:merge_consecutive_messages, messages)
+      provider.send(:partition_messages, messages)
+    end
+
+    it "substitutes a placeholder for an assistant message with empty content and no tool_calls" do
       messages = [
         Riffer::Messages::User.new("Hi"),
         Riffer::Messages::Assistant.new(""),
         Riffer::Messages::User.new("Still there?")
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
-      assistant_messages = result[:conversation].select { |m| m[:role] == "assistant" }
-      expect(assistant_messages).must_be_empty
+      assistant = result[:conversation].find { |m| m[:role] == "assistant" }
+      expect(assistant).wont_be_nil
+      expect(assistant[:content]).must_equal [{text: Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER}]
     end
 
-    it "drops an assistant message with whitespace-only content and no tool_calls" do
+    it "substitutes a placeholder for whitespace-only assistant content" do
       messages = [
         Riffer::Messages::User.new("Hi"),
-        Riffer::Messages::Assistant.new("   \n\t ")
+        Riffer::Messages::Assistant.new("   \n\t "),
+        Riffer::Messages::User.new("Hello?")
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
-      expect(result[:conversation].any? { |m| m[:role] == "assistant" }).must_equal false
+      assistant = result[:conversation].find { |m| m[:role] == "assistant" }
+      expect(assistant[:content].first[:text]).must_equal Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER
     end
 
     it "keeps tool_use blocks when assistant content is blank but tool_calls are present" do
@@ -984,7 +993,7 @@ describe Riffer::Providers::AmazonBedrock do
         ])
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
       assistant = result[:conversation].find { |m| m[:role] == "assistant" }
       expect(assistant).wont_be_nil
@@ -1000,7 +1009,7 @@ describe Riffer::Providers::AmazonBedrock do
         ])
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
       assistant = result[:conversation].find { |m| m[:role] == "assistant" }
       expect(assistant[:content].none? { |b| b.key?(:text) }).must_equal true
@@ -1012,7 +1021,7 @@ describe Riffer::Providers::AmazonBedrock do
         Riffer::Messages::Assistant.new("Hello there!")
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
       assistant = result[:conversation].find { |m| m[:role] == "assistant" }
       expect(assistant[:content]).must_equal [{text: "Hello there!"}]
@@ -1026,7 +1035,7 @@ describe Riffer::Providers::AmazonBedrock do
         ])
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
       assistant = result[:conversation].find { |m| m[:role] == "assistant" }
       expect(assistant[:content].size).must_equal 2
@@ -1043,20 +1052,20 @@ describe Riffer::Providers::AmazonBedrock do
         Riffer::Messages::Tool.new("", tool_call_id: "tool_1", name: "get_weather")
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
       tool_message = result[:conversation].last
       tool_text = tool_message[:content].first[:tool_result][:content].first[:text]
-      expect(tool_text).wont_be_empty
+      expect(tool_text).must_equal Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER
     end
 
-    it "drops a user message whose text is blank and has no files" do
+    it "collapses a blank user message into its non-blank neighbor" do
       messages = [
         Riffer::Messages::User.new("  "),
         Riffer::Messages::User.new("Hello")
       ]
 
-      result = provider.send(:partition_messages, messages)
+      result = pipeline(provider, messages)
 
       expect(result[:conversation].size).must_equal 1
       expect(result[:conversation].first[:content].first[:text]).must_equal "Hello"

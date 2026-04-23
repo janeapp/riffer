@@ -194,5 +194,80 @@ describe Riffer::Providers::Base do
       expect(result[1]).must_be_instance_of Riffer::Messages::User
       expect(result[1].content).must_equal "Here is some context about the project\n\nWhat does this code do?"
     end
+
+    it "drops placeholder messages when a non-placeholder neighbor exists" do
+      messages = [
+        Riffer::Messages::User.new(Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER),
+        Riffer::Messages::User.new("Real question")
+      ]
+
+      result = provider.send(:merge_consecutive_messages, messages)
+
+      expect(result.size).must_equal 1
+      expect(result.first.content).must_equal "Real question"
+    end
+
+    it "keeps a single placeholder when every neighbor in the group is a placeholder" do
+      messages = [
+        Riffer::Messages::User.new(Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER),
+        Riffer::Messages::User.new(Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER)
+      ]
+
+      result = provider.send(:merge_consecutive_messages, messages)
+
+      expect(result.size).must_equal 1
+      expect(result.first.content).must_equal Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER
+    end
+  end
+
+  describe "#substitute_blank_messages" do
+    it "replaces a blank user message (no files) with the placeholder" do
+      messages = [Riffer::Messages::User.new("   ")]
+
+      result = provider.send(:substitute_blank_messages, messages)
+
+      expect(result.first.content).must_equal Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER
+    end
+
+    it "replaces a blank assistant message (no tool_calls) with the placeholder" do
+      messages = [Riffer::Messages::Assistant.new("")]
+
+      result = provider.send(:substitute_blank_messages, messages)
+
+      expect(result.first.content).must_equal Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER
+    end
+
+    it "leaves a user message with files alone even when text is blank" do
+      file = Riffer::FilePart.new(data: "abc", media_type: "image/png")
+      messages = [Riffer::Messages::User.new("", files: [file])]
+
+      result = provider.send(:substitute_blank_messages, messages)
+
+      expect(result.first.content).must_equal ""
+      expect(result.first.files).must_equal [file]
+    end
+
+    it "leaves an assistant message with tool_calls alone even when text is blank" do
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "1", name: "foo", arguments: "{}")
+      messages = [Riffer::Messages::Assistant.new("", tool_calls: [tc])]
+
+      result = provider.send(:substitute_blank_messages, messages)
+
+      expect(result.first.content).must_equal ""
+      expect(result.first.tool_calls).must_equal [tc]
+    end
+
+    it "passes through non-blank messages unchanged" do
+      messages = [
+        Riffer::Messages::System.new("System"),
+        Riffer::Messages::User.new("Hello"),
+        Riffer::Messages::Assistant.new("Hi"),
+        Riffer::Messages::Tool.new("", tool_call_id: "1", name: "t")
+      ]
+
+      result = provider.send(:substitute_blank_messages, messages)
+
+      expect(result.map(&:content)).must_equal ["System", "Hello", "Hi", ""]
+    end
   end
 end

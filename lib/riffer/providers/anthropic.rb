@@ -303,7 +303,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         system_prompts << {type: "text", text: message.content}
       when Riffer::Messages::User
         if message.files.empty?
-          next if empty_text?(message.content)
           conversation_messages << {role: "user", content: message.content}
         else
           content = []
@@ -312,13 +311,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           conversation_messages << {role: "user", content: content}
         end
       when Riffer::Messages::Assistant
-        next if empty_text?(message.content) && message.tool_calls.empty?
         conversation_messages << convert_assistant_to_anthropic_format(message)
       when Riffer::Messages::Tool
         # Anthropic rejects empty text content blocks; substitute a placeholder
         # rather than dropping the tool_result, which would orphan the matching
         # tool_use and also trigger an error.
-        tool_content = empty_text?(message.content) ? "(no content)" : message.content
+        tool_content = empty_text?(message.content) ? Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER : message.content
         conversation_messages << {
           role: "user",
           content: [{

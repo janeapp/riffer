@@ -86,6 +86,19 @@ class Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def merge_consecutive_messages: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
 
+  # Replaces blank user/assistant messages with a placeholder so that wire
+  # formats which reject empty content preserve alternation. Tool messages
+  # and messages that carry files/tool_calls are left untouched; their
+  # surrounding content blocks already satisfy the API.
+  #
+  # --
+  # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def substitute_blank_messages: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+
+  # --
+  # : (String?) -> bool
+  def blank_string?: (String?) -> bool
+
   # --
   # : (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
   def validate_input!: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void

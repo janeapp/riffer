@@ -7,6 +7,11 @@ require "securerandom"
 #
 # Subclasses must implement the +role+ method.
 class Riffer::Messages::Base
+  # Placeholder content substituted in place of a blank user or assistant
+  # message so that downstream wire formats (which reject empty content)
+  # keep valid user/assistant alternation.
+  BLANK_CONTENT_PLACEHOLDER = "(no content)" #: String
+
   # The message content.
   attr_reader :content #: String
 
