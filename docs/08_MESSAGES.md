@@ -278,6 +278,29 @@ agent.generate(messages)
 
 Merging happens at serialization time only. The agent's `messages` array still contains the original separate messages for logging, evals, and debugging.
 
+## Blank Message Normalization
+
+Some providers (Amazon Bedrock, Anthropic) reject messages whose text content is empty or whitespace-only. Before merging consecutive messages, Riffer replaces blank `User` and `Assistant` messages with a placeholder so that role alternation stays valid on the wire.
+
+The placeholder is exposed as the public constant `Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER` (currently `"(no content)"`).
+
+### Normalization rules
+
+| Message     | Trigger                                            | Behavior                                                   |
+| ----------- | -------------------------------------------------- | ---------------------------------------------------------- |
+| `User`      | `content` is `nil`/blank AND `files` is empty      | Content replaced with `BLANK_CONTENT_PLACEHOLDER`          |
+| `User`      | `content` is blank but `files` is non-empty        | Left untouched — file parts satisfy the wire format        |
+| `Assistant` | `content` is `nil`/blank AND `tool_calls` is empty | Content replaced with `BLANK_CONTENT_PLACEHOLDER`          |
+| `Assistant` | `content` is blank but `tool_calls` is non-empty   | Left untouched — empty text block is stripped per-provider |
+| `System`    | —                                                  | Never normalized                                           |
+| `Tool`      | —                                                  | Handled at conversion time — see below                     |
+
+For `Tool` messages with blank content, the Bedrock and Anthropic adapters substitute the same placeholder when serializing the `tool_result`, rather than dropping the message — dropping would orphan the matching `tool_use` and trigger a different rejection.
+
+If a placeholder message ends up adjacent to a real-content message of the same role, the placeholder is dropped during [consecutive-message merging](#consecutive-message-merging) — only a fully-blank run survives as a single placeholder.
+
+OpenAI Responses and Gemini accept empty strings and are unaffected in practice, but the normalization runs uniformly for every provider adapter.
+
 ## IDs
 
 Every message carries an optional `id` attribute. By default ids are disabled (`message.id` returns `nil` and `:id` is omitted from `to_h`). Enable them globally by setting `Riffer.config.message_id_strategy`:

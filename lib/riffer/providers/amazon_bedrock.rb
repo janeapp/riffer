@@ -221,6 +221,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
+  # Assumes +substitute_blank_messages+ has already run, so any User or
+  # Assistant with blank text either carries files/tool_calls or has been
+  # replaced with +BLANK_CONTENT_PLACEHOLDER+; the +blank_string?+ guards
+  # below remain defensive.
+  #
   #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
@@ -233,7 +238,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         system_prompts << {text: message.content}
       when Riffer::Messages::User
         content = []
-        content << {text: message.content} unless empty_text?(message.content)
+        content << {text: message.content} unless blank_string?(message.content)
         message.files.each { |file| content << convert_file_part_to_bedrock_format(file) }
         conversation_messages << {role: "user", content: content}
       when Riffer::Messages::Assistant
@@ -253,7 +258,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = []
-    content << {text: message.content} unless empty_text?(message.content)
+    content << {text: message.content} unless blank_string?(message.content)
 
     message.tool_calls.each do |tc|
       content << {
@@ -274,7 +279,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     # Bedrock rejects ContentBlocks whose text field is blank, but a missing
     # tool_result for a prior tool_use is also invalid — so substitute a
     # placeholder rather than dropping the message.
-    text = empty_text?(message.content) ? Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER : message.content
+    text = blank_string?(message.content) ? Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER : message.content
     tool_result = {
       tool_result: {
         tool_use_id: message.tool_call_id,
@@ -288,12 +293,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     else
       conversation_messages << {role: "user", content: [tool_result]}
     end
-  end
-
-  #--
-  #: (String?) -> bool
-  def empty_text?(string)
-    string.nil? || string.strip.empty?
   end
 
   #--

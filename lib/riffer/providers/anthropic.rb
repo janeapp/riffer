@@ -291,6 +291,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
   end
 
+  # Assumes +substitute_blank_messages+ has already run, so any User or
+  # Assistant with blank text either carries files/tool_calls or has been
+  # replaced with +BLANK_CONTENT_PLACEHOLDER+; the +blank_string?+ guards
+  # below remain defensive.
+  #
   #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
@@ -306,7 +311,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           conversation_messages << {role: "user", content: message.content}
         else
           content = []
-          content << {type: "text", text: message.content} unless empty_text?(message.content)
+          content << {type: "text", text: message.content} unless blank_string?(message.content)
           message.files.each { |file| content << convert_file_part_to_anthropic_format(file) }
           conversation_messages << {role: "user", content: content}
         end
@@ -316,7 +321,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         # Anthropic rejects empty text content blocks; substitute a placeholder
         # rather than dropping the tool_result, which would orphan the matching
         # tool_use and also trigger an error.
-        tool_content = empty_text?(message.content) ? Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER : message.content
+        tool_content = blank_string?(message.content) ? Riffer::Messages::Base::BLANK_CONTENT_PLACEHOLDER : message.content
         conversation_messages << {
           role: "user",
           content: [{
@@ -338,7 +343,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
     content = []
-    content << {type: "text", text: message.content} unless empty_text?(message.content)
+    content << {type: "text", text: message.content} unless blank_string?(message.content)
 
     message.tool_calls.each do |tc|
       content << {
@@ -350,12 +355,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     {role: "assistant", content: content}
-  end
-
-  #--
-  #: (String?) -> bool
-  def empty_text?(string)
-    string.nil? || string.strip.empty?
   end
 
   #--

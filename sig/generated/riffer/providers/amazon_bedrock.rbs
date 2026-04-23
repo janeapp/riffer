@@ -62,6 +62,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_metadata_usage: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
 
+  # Assumes +substitute_blank_messages+ has already run, so any User or
+  # Assistant with blank text either carries files/tool_calls or has been
+  # replaced with +BLANK_CONTENT_PLACEHOLDER+; the +blank_string?+ guards
+  # below remain defensive.
+  #
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
@@ -73,10 +78,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # --
   # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
-
-  # --
-  # : (String?) -> bool
-  def empty_text?: (String?) -> bool
 
   # --
   # : (Riffer::FilePart) -> Hash[Symbol, untyped]
