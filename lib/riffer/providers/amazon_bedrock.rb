@@ -150,34 +150,28 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
-        else
+        when Aws::BedrockRuntime::Types::InternalServerException,
+          Aws::BedrockRuntime::Types::ModelStreamErrorException,
+          Aws::BedrockRuntime::Types::ThrottlingException,
+          Aws::BedrockRuntime::Types::ValidationException,
+          Aws::BedrockRuntime::Types::ServiceUnavailableException
           raise_stream_exception!(event)
         end
       end
     end
   end
 
-  # Bedrock's ConverseStream delivers API errors (e.g. +throttling_exception+,
-  # +internal_server_exception+) as events on the same channel as content, so
-  # without this check a mid-stream failure would silently end the enumerator
-  # with no tokens or content.
+  # Re-raises a Bedrock stream exception event as the matching
+  # +Aws::BedrockRuntime::Errors+ service error. ConverseStream delivers API
+  # errors on the same channel as content, so without this a mid-stream
+  # failure would silently end the enumerator with no tokens or content.
   #--
   #: (untyped) -> void
   def raise_stream_exception!(event)
-    return unless event.respond_to?(:event_type)
-    event_type = event.event_type.to_s
-    return unless event_type.end_with?("_exception") || event_type == "error"
-
-    klass_name = event.class.name&.split("::")&.last
-    error_klass = if klass_name && Aws::BedrockRuntime::Errors.const_defined?(klass_name, false)
-      Aws::BedrockRuntime::Errors.const_get(klass_name, false)
-    else
-      Aws::BedrockRuntime::Errors::ServiceError
-    end
-
-    message = event.respond_to?(:message) ? event.message : event_type
+    klass_name = event.class.name.split("::").last
+    error_klass = Aws::BedrockRuntime::Errors.const_get(klass_name)
     context = Seahorse::Client::RequestContext.new(operation_name: :converse_stream)
-    raise error_klass.new(context, message, event)
+    raise error_klass.new(context, event.message, event)
   end
 
   #--
