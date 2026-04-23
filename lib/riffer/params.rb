@@ -59,7 +59,6 @@ class Riffer::Params
   #
   # Compares self to passed in params based on number of parameters and order
   # Does a deep comparison of each param using Riffer::Param#is_equal?
-  # This compares against required, type, and item_type, but ignores name and description
   #
   #--
   #: (Riffer::Params) -> bool

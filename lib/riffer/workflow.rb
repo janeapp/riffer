@@ -5,6 +5,7 @@ module Riffer::Workflow
     # Base error class for workflow-related errors.
     class Error < Riffer::Error; end
     # Raised when a step in the workflow fails to execute properly.
+    # Contains the results of all steps executed up to the point of failure for debugging purposes.
     class StepExecutionError < Error
         attr_reader :results
 
@@ -30,17 +31,21 @@ end
 # Example usage:
 #   class MyWorkflow < Riffer::Workflow::Base
 #     input_schema do
-#       required :city, String, description: "The city name"
+#       required :city, String
+#       optional :units, String
 #     end
 #     output_schema do
-#       required :temperature, Float, description: "The current temperature in the city"
+#       required :temperature, Float
 #     end
 #     step StepOne
 #     step StepTwo
 #   end
 class Riffer::Workflow::Base
 
-    # Returns the list of steps defined in the workflow. Steps are stored in the order they were added, and each step is an instance of a class that inherits from Riffer::Workflow::Step.
+    # Returns the list of steps defined in the workflow. 
+    # 
+    # Steps are stored in the order they were added, and each step is 
+    # an instance of a class that inherits from Riffer::Workflow::Step.
     #
     #--
     #: () -> Array[Riffer::Workflow::Step]
@@ -86,6 +91,7 @@ class Riffer::Workflow::Base
     #
     # Validates that the step's input schema matches the workflow's input schema (for the first step)
     # and that each step's output schema matches the next step's input schema.
+    # Requires the workflow have its input and output schemas defined before adding steps to ensure compatibility.
     #
     #--
     #: (Riffer::Workflow::Step) -> void
@@ -133,9 +139,13 @@ class Riffer::Workflow::Base
 
     # Executes the workflow with the given input.
     #
-    # Validates the input against the workflow's input schema, then executes each step in order, passing the output of each step as the input to the next.
-    # Collects the results of each step, including any errors, and returns a Riffer
-    # Workflow::Result object containing the step results and overall success status.
+    # Validates the input against the workflow's input schema, 
+    # the last step's output schema against the workflow's output schema, 
+    # then executes each step in order, passing the output of each step as the input to the next.
+    # Collects the results of each step and returns a Riffer::Workflow::Result object 
+    # containing each step's results and overall success status.
+    # If any step raises an error during execution, the workflow halts and raises a StepExecutionError
+    # with the results of all steps executed up to that point for debugging purposes.
     #
     #--
     #: (hash) -> Riffer::Workflow::Result
