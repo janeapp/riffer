@@ -528,6 +528,26 @@ describe Riffer::Providers::AmazonBedrock do
         assert_raises(Aws::BedrockRuntime::Errors::ModelStreamErrorException) { enum.to_a }
       end
 
+      it "raises for a future exception type not explicitly known (auto-caught by class-name suffix)" do
+        # Simulates the SDK adding a new stream-exception type we haven't coded
+        # against. The class-name suffix check should still route it through
+        # Aws::BedrockRuntime::Errors (DynamicErrors synthesizes the class)
+        # rather than silently dropping it.
+        provider
+        fake_future_exception_class = Struct.new(:message, :event_type) do
+          def self.name
+            "Aws::BedrockRuntime::Types::HypotheticalFutureException"
+          end
+        end
+        event = fake_future_exception_class.new("surprise", :hypothetical_future_exception)
+        stub_stream_events(provider, [event])
+
+        error = assert_raises(Aws::BedrockRuntime::Errors::ServiceError) do
+          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        end
+        expect(error).must_be_kind_of Aws::BedrockRuntime::Errors::HypotheticalFutureException
+      end
+
       it "ignores unknown non-exception events (e.g. message_start) without raising" do
         # Forward-compatible: unknown event types that aren't exceptions should be skipped,
         # not raise. Verified with MessageStartEvent which Bedrock emits but we don't consume.
