@@ -65,9 +65,13 @@ class Riffer::Params
   #: (Riffer::Params) -> bool
   def is_equal?(other_params)
     return false if other_params.nil? || !other_params.is_a?(Riffer::Params)
-    return false unless @parameters.size == other_params.parameters.size
 
-    @parameters.zip(other_params.parameters).all? do |param, other_param|
+    required_params = @parameters.select(&:required)
+    other_required_params = other_params.parameters.select(&:required)
+
+    return false unless required_params.size == other_required_params.size
+
+    required_params.zip(other_required_params).all? do |param, other_param|
       param.is_equal?(other_param)
     end
   end

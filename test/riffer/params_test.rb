@@ -417,5 +417,50 @@ describe Riffer::Params do
 
       expect(schema[:properties]["name"][:type]).must_equal "string"
     end
+
+    it "is_equal returns false if other_params is nil" do
+      params = Riffer::Params.new
+      expect(params.is_equal?(nil)).must_equal false
+    end
+
+    it "is_equal returns false if other_params is not a Params object" do
+      params = Riffer::Params.new
+      expect(params.is_equal?("not a params object")).must_equal false
+    end
+
+    it "is_equal returns false if required parameters differ" do
+      params1 = Riffer::Params.new
+      params1.required(:name, String)
+
+      params2 = Riffer::Params.new
+      params2.required(:name, String)
+      params2.required(:age, Integer)
+
+      expect(params1.is_equal?(params2)).must_equal false
+    end
+
+    it "is_equal returns true for identical Params objects" do
+      params1 = Riffer::Params.new
+      params1.required(:name, String)
+      params1.optional(:age, Integer)
+
+      params2 = Riffer::Params.new
+      params2.required(:name, String)
+      params2.optional(:age, Integer)
+
+      expect(params1.is_equal?(params2)).must_equal true
+    end
+
+    it "is_equal returns true regardless of optional parameters" do
+      params1 = Riffer::Params.new
+      params1.required(:name, String)
+      params1.optional(:age, Integer)
+
+      params2 = Riffer::Params.new
+      params2.optional(:count, Integer)
+      params2.required(:name, String)
+
+      expect(params1.is_equal?(params2)).must_equal true
+    end
   end
 end

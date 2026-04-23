@@ -193,5 +193,58 @@ describe Riffer::Param do
       expect(schema[:items][:properties].keys).must_equal ["product", "quantity"]
       expect(schema[:items][:required]).must_equal ["product", "quantity"]
     end
+
+    it "is_equal returns false when other_param is not a param" do
+      param = Riffer::Param.new(name: :city, type: String, required: true)
+      expect(param.is_equal?("not a param")).must_equal false
+    end
+
+    it "is_equal returns false when types differ" do
+      param1 = Riffer::Param.new(name: :value, type: String, required: true)
+      param2 = Riffer::Param.new(name: :value, type: Integer, required: true)
+      expect(param1.is_equal?(param2)).must_equal false
+    end
+
+    it "is_equal returns false when other param is not required" do
+      param1 = Riffer::Param.new(name: :city, type: String, required: true)
+      param2 = Riffer::Param.new(name: :city, type: String, required: false)
+      expect(param1.is_equal?(param2)).must_equal false 
+    end
+
+    it "is_equal returns false when item_type differs" do
+      param1 = Riffer::Param.new(name: :tags, type: Array, required: true, item_type: String)
+      param2 = Riffer::Param.new(name: :tags, type: Array, required: true, item_type: Integer)
+      expect(param1.is_equal?(param2)).must_equal false
+    end
+
+    it "is_equal returns true for identical params" do
+      param1 = Riffer::Param.new(name: :city, type: String, required: true)
+      param2 = Riffer::Param.new(name: :city, type: String, required: true)
+      expect(param1.is_equal?(param2)).must_equal true
+    end
+
+    it "is_equal returns true when only name differs" do
+      param1 = Riffer::Param.new(name: :city, type: String, required: true)
+      param2 = Riffer::Param.new(name: :town, type: String, required: true)
+      expect(param1.is_equal?(param2)).must_equal true
+    end
+
+    it "is_equal returns true when only description differs" do
+      param1 = Riffer::Param.new(name: :city, type: String, required: true, description: "The city name")
+      param2 = Riffer::Param.new(name: :city, type: String, required: true, description: "Name of the city")
+      expect(param1.is_equal?(param2)).must_equal true
+    end
+
+    it "is_equal returns true if required nested_params are equal" do
+      nested1 = Riffer::Params.new
+      nested1.required(:street, String)
+      param1 = Riffer::Param.new(name: :address, type: Hash, required: true, nested_params: nested1)
+
+      nested2 = Riffer::Params.new
+      nested2.required(:street, String)
+      param2 = Riffer::Param.new(name: :address, type: Hash, required: true, nested_params: nested2)
+
+      expect(param1.is_equal?(param2)).must_equal true
+    end
   end
 end

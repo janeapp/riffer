@@ -118,7 +118,7 @@ class Riffer::Param
     return false unless item_type == other_param.item_type
 
     if nested_params && other_param.nested_params
-      nested_params.equal(other_param.nested_params)
+      nested_params.is_equal?(other_param.nested_params)
     else
       nested_params.nil? && other_param.nested_params.nil?
     end
