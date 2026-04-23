@@ -102,7 +102,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     text_content = ""
 
     content_blocks.each do |block|
-      text_content = block.text if block.respond_to?(:text) && block.text
+      text_content += block.text if block.respond_to?(:text) && block.text
     end
 
     text_content
@@ -139,20 +139,42 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
     @client.converse_stream(**params) do |stream|
       stream.on_event do |event|
-        case event.event_type
-        when :content_block_start
+        case event
+        when Aws::BedrockRuntime::Types::ContentBlockStartEvent
           handle_content_block_start_tool_use(event, state: current_state, yielder: yielder) if event.start&.tool_use
-        when :content_block_delta
+        when Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
           handle_content_block_delta_text_delta(event, state: current_state, yielder: yielder) if event.delta&.text
           handle_content_block_delta_tool_use(event, state: current_state, yielder: yielder) if event.delta&.tool_use
-        when :content_block_stop
+        when Aws::BedrockRuntime::Types::ContentBlockStopEvent
           handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
-        when :metadata
+        when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
+        else
+          raise_if_stream_exception!(event)
         end
       end
     end
+  end
+
+  # Re-raises a Bedrock stream exception event as the matching
+  # +Aws::BedrockRuntime::Errors+ service error. ConverseStream delivers API
+  # errors on the same channel as content, so without this a mid-stream
+  # failure would silently end the enumerator with no tokens or content.
+  #
+  # Detection is by class-name suffix: every Bedrock stream-exception struct
+  # is named +*Exception+ and has a matching +Aws::BedrockRuntime::Errors+
+  # class of the same name (generated via +DynamicErrors+ if not explicit).
+  # Non-exception events (e.g. +MessageStartEvent+) pass through silently.
+  #--
+  #: (untyped) -> void
+  def raise_if_stream_exception!(event)
+    klass_name = event.class.name&.split("::")&.last
+    return unless klass_name&.end_with?("Exception")
+
+    error_klass = Aws::BedrockRuntime::Errors.const_get(klass_name)
+    context = Seahorse::Client::RequestContext.new(operation_name: :converse_stream)
+    raise error_klass.new(context, event.message, event)
   end
 
   #--

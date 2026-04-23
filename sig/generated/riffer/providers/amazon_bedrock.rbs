@@ -38,6 +38,19 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
+  # Re-raises a Bedrock stream exception event as the matching
+  # +Aws::BedrockRuntime::Errors+ service error. ConverseStream delivers API
+  # errors on the same channel as content, so without this a mid-stream
+  # failure would silently end the enumerator with no tokens or content.
+  #
+  # Detection is by class-name suffix: every Bedrock stream-exception struct
+  # is named +*Exception+ and has a matching +Aws::BedrockRuntime::Errors+
+  # class of the same name (generated via +DynamicErrors+ if not explicit).
+  # Non-exception events (e.g. +MessageStartEvent+) pass through silently.
+  # --
+  # : (untyped) -> void
+  def raise_if_stream_exception!: (untyped) -> void
+
   # --
   # : (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_content_block_start_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void

@@ -367,6 +367,54 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "#extract_content" do
+    let(:provider) do
+      # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes
+      # the Aws::BedrockRuntime::Types constants below available.
+      Riffer::Providers::AmazonBedrock.new(api_token: "test", region: "us-east-1")
+    end
+
+    def build_response(content_blocks)
+      Aws::BedrockRuntime::Types::ConverseResponse.new(
+        output: Aws::BedrockRuntime::Types::ConverseOutput::Message.new(
+          message: Aws::BedrockRuntime::Types::Message.new(
+            role: "assistant",
+            content: content_blocks
+          )
+        )
+      )
+    end
+
+    it "concatenates multiple text blocks in order" do
+      provider # force SDK load before constructing Aws types below
+      # Regression: previously assigned (=) instead of appending (+=), so with
+      # multiple text blocks only the last survived. Bedrock splits output
+      # across several text blocks when reasoning or tool_use blocks are
+      # interleaved, so all text blocks must be preserved.
+      response = build_response([
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "Hello "),
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "world")
+      ])
+      expect(provider.send(:extract_content, response)).must_equal "Hello world"
+    end
+
+    it "ignores tool_use blocks when extracting text" do
+      provider # force SDK load before constructing Aws types below
+      response = build_response([
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "Answer: "),
+        Aws::BedrockRuntime::Types::ContentBlock.new(
+          tool_use: Aws::BedrockRuntime::Types::ToolUseBlock.new(
+            tool_use_id: "id-1",
+            name: "calculator",
+            input: {}
+          )
+        ),
+        Aws::BedrockRuntime::Types::ContentBlock.new(text: "42")
+      ])
+      expect(provider.send(:extract_content, response)).must_equal "Answer: 42"
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do
@@ -425,6 +473,102 @@ describe Riffer::Providers::AmazonBedrock do
           ).to_a
           expect(events).wont_be_empty
         end
+      end
+    end
+
+    describe "when the stream emits an exception event" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: "test", region: "us-east-1") }
+
+      def stub_stream_events(provider, events)
+        stream_double = Object.new
+        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+        client_double = Object.new
+        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+        provider.instance_variable_set(:@client, client_double)
+      end
+
+      # Covers the Types → Errors conversion for every stream-exception event
+      # type that Bedrock's ConverseStream can emit. Each Types::X struct must
+      # map to the same-named Aws::BedrockRuntime::Errors::X service error.
+      {
+        InternalServerException: :internal_server_exception,
+        ModelStreamErrorException: :model_stream_error_exception,
+        ThrottlingException: :throttling_exception,
+        ValidationException: :validation_exception,
+        ServiceUnavailableException: :service_unavailable_exception
+      }.each do |class_name, event_type|
+        it "raises Aws::BedrockRuntime::Errors::#{class_name} for a #{event_type} event" do
+          provider # force SDK load so the Aws constants resolve below
+          type_klass = Aws::BedrockRuntime::Types.const_get(class_name)
+          error_klass = Aws::BedrockRuntime::Errors.const_get(class_name)
+          event = type_klass.new(message: "boom", event_type: event_type)
+          stub_stream_events(provider, [event])
+
+          error = assert_raises(error_klass) do
+            provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+          end
+          expect(error.message).must_equal "boom"
+        end
+      end
+
+      it "raises for a model_stream_error_exception mid-stream after content deltas" do
+        delta_event = Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+          delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(text: "Hel"),
+          content_block_index: 0,
+          event_type: :content_block_delta
+        )
+        error_event = Aws::BedrockRuntime::Types::ModelStreamErrorException.new(
+          message: "model failed",
+          original_status_code: 500,
+          event_type: :model_stream_error_exception
+        )
+        stub_stream_events(provider, [delta_event, error_event])
+
+        enum = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+        assert_raises(Aws::BedrockRuntime::Errors::ModelStreamErrorException) { enum.to_a }
+      end
+
+      it "raises for a future exception type not explicitly known (auto-caught by class-name suffix)" do
+        # Simulates the SDK adding a new stream-exception type we haven't coded
+        # against. The class-name suffix check should still route it through
+        # Aws::BedrockRuntime::Errors (DynamicErrors synthesizes the class)
+        # rather than silently dropping it.
+        provider
+        fake_future_exception_class = Struct.new(:message, :event_type) do
+          def self.name
+            "Aws::BedrockRuntime::Types::HypotheticalFutureException"
+          end
+        end
+        event = fake_future_exception_class.new("surprise", :hypothetical_future_exception)
+        stub_stream_events(provider, [event])
+
+        error = assert_raises(Aws::BedrockRuntime::Errors::ServiceError) do
+          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        end
+        expect(error).must_be_kind_of Aws::BedrockRuntime::Errors::HypotheticalFutureException
+      end
+
+      it "ignores unknown non-exception events (e.g. message_start) without raising" do
+        # Forward-compatible: unknown event types that aren't exceptions should be skipped,
+        # not raise. Verified with MessageStartEvent which Bedrock emits but we don't consume.
+        message_start = Aws::BedrockRuntime::Types::MessageStartEvent.new(
+          role: "assistant",
+          event_type: :message_start
+        )
+        metadata = Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent.new(
+          usage: Aws::BedrockRuntime::Types::TokenUsage.new(
+            input_tokens: 5,
+            output_tokens: 3,
+            total_tokens: 8
+          ),
+          event_type: :metadata
+        )
+        stub_stream_events(provider, [message_start, metadata])
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+        expect(usage_done).wont_be_nil
+        expect(usage_done.token_usage.input_tokens).must_equal 5
       end
     end
   end
