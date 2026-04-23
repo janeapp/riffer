@@ -144,7 +144,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       web_search_query: nil
     }
 
-    stream = @client.messages.stream(**params)
+    # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
+    # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
+    stream = @client.messages.stream(
+      **params,
+      request_options: {extra_headers: {"accept-encoding" => "identity"}}
+    )
     current_state[:stream] = stream
 
     stream.each do |event|
