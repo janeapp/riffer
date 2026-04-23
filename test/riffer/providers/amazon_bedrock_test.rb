@@ -487,28 +487,27 @@ describe Riffer::Providers::AmazonBedrock do
         provider.instance_variable_set(:@client, client_double)
       end
 
-      it "raises a matching Aws::BedrockRuntime::Errors error for a throttling exception" do
-        event = Aws::BedrockRuntime::Types::ThrottlingException.new(
-          message: "rate limit exceeded",
-          event_type: :throttling_exception
-        )
-        stub_stream_events(provider, [event])
+      # Covers the Types → Errors conversion for every stream-exception event
+      # type that Bedrock's ConverseStream can emit. Each Types::X struct must
+      # map to the same-named Aws::BedrockRuntime::Errors::X service error.
+      {
+        InternalServerException: :internal_server_exception,
+        ModelStreamErrorException: :model_stream_error_exception,
+        ThrottlingException: :throttling_exception,
+        ValidationException: :validation_exception,
+        ServiceUnavailableException: :service_unavailable_exception
+      }.each do |class_name, event_type|
+        it "raises Aws::BedrockRuntime::Errors::#{class_name} for a #{event_type} event" do
+          provider # force SDK load so the Aws constants resolve below
+          type_klass = Aws::BedrockRuntime::Types.const_get(class_name)
+          error_klass = Aws::BedrockRuntime::Errors.const_get(class_name)
+          event = type_klass.new(message: "boom", event_type: event_type)
+          stub_stream_events(provider, [event])
 
-        error = assert_raises(Aws::BedrockRuntime::Errors::ThrottlingException) do
-          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-        end
-        expect(error.message).must_equal "rate limit exceeded"
-      end
-
-      it "raises for an internal_server_exception" do
-        event = Aws::BedrockRuntime::Types::InternalServerException.new(
-          message: "boom",
-          event_type: :internal_server_exception
-        )
-        stub_stream_events(provider, [event])
-
-        assert_raises(Aws::BedrockRuntime::Errors::InternalServerException) do
-          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+          error = assert_raises(error_klass) do
+            provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+          end
+          expect(error.message).must_equal "boom"
         end
       end
 
