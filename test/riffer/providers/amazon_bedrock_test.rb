@@ -427,6 +427,83 @@ describe Riffer::Providers::AmazonBedrock do
         end
       end
     end
+
+    describe "when the stream emits an exception event" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: "test", region: "us-east-1") }
+
+      def stub_stream_events(provider, events)
+        stream_double = Object.new
+        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+        client_double = Object.new
+        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+        provider.instance_variable_set(:@client, client_double)
+      end
+
+      it "raises a matching Aws::BedrockRuntime::Errors error for a throttling exception" do
+        event = Aws::BedrockRuntime::Types::ThrottlingException.new(
+          message: "rate limit exceeded",
+          event_type: :throttling_exception
+        )
+        stub_stream_events(provider, [event])
+
+        error = assert_raises(Aws::BedrockRuntime::Errors::ThrottlingException) do
+          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        end
+        expect(error.message).must_equal "rate limit exceeded"
+      end
+
+      it "raises for an internal_server_exception" do
+        event = Aws::BedrockRuntime::Types::InternalServerException.new(
+          message: "boom",
+          event_type: :internal_server_exception
+        )
+        stub_stream_events(provider, [event])
+
+        assert_raises(Aws::BedrockRuntime::Errors::InternalServerException) do
+          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        end
+      end
+
+      it "raises for a model_stream_error_exception mid-stream after content deltas" do
+        delta_event = Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+          delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(text: "Hel"),
+          content_block_index: 0,
+          event_type: :content_block_delta
+        )
+        error_event = Aws::BedrockRuntime::Types::ModelStreamErrorException.new(
+          message: "model failed",
+          original_status_code: 500,
+          event_type: :model_stream_error_exception
+        )
+        stub_stream_events(provider, [delta_event, error_event])
+
+        enum = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+        assert_raises(Aws::BedrockRuntime::Errors::ModelStreamErrorException) { enum.to_a }
+      end
+
+      it "ignores unknown non-exception events (e.g. message_start) without raising" do
+        # Forward-compatible: unknown event types that aren't exceptions should be skipped,
+        # not raise. Verified with MessageStartEvent which Bedrock emits but we don't consume.
+        message_start = Aws::BedrockRuntime::Types::MessageStartEvent.new(
+          role: "assistant",
+          event_type: :message_start
+        )
+        metadata = Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent.new(
+          usage: Aws::BedrockRuntime::Types::TokenUsage.new(
+            input_tokens: 5,
+            output_tokens: 3,
+            total_tokens: 8
+          ),
+          event_type: :metadata
+        )
+        stub_stream_events(provider, [message_start, metadata])
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+        expect(usage_done).wont_be_nil
+        expect(usage_done.token_usage.input_tokens).must_equal 5
+      end
+    end
   end
 
   describe "usage" do
