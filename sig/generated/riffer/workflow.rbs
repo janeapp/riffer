@@ -1,0 +1,77 @@
+# Generated from lib/riffer/workflow.rb with RBS::Inline
+
+module Riffer
+  module Workflow
+    # Base error class for workflow-related errors.
+    class Error < Riffer::Error
+    end
+
+    # Raised when a step in the workflow fails to execute properly.
+    class StepExecutionError < Error
+    end
+
+    # Raised when validation of input or output schemas fails.
+    class SchemaValidationError < Error
+    end
+
+    # Raised when the workflow is misconfigured, such as missing steps or incompatible schemas.
+    class ConfigurationError < Error
+    end
+
+    # Riffer::Workflow::Base provides a DSL for defining multi-step workflows.
+    #
+    # The Workflow::Base class provides class methods for defining the 
+    # workflow's input and output schemas, as well as the steps that make 
+    # up the workflow.
+    # Each step is a class that must implement a class method +execute+ 
+    # which takes an input hash and returns an output hash.
+    #
+    # Example usage:
+    #   class MyWorkflow < Riffer::Workflow::Base
+    #     input_schema do
+    #       required :city, String, description: "The city name"
+    #     end
+    #     output_schema do
+    #       required :temperature, Float, description: "The current temperature in the city"
+    #     end
+    #     step StepOne
+    #     step StepTwo
+    #   end
+    class Base
+      # Defines or returns the workflow's input schema.
+      #
+      # If a block is given, it evaluates the block to define the input schema.
+      # If a Riffer::Params object is given, it sets that as the input schema
+      # --
+      # : (?Riffer::Params) ?{ () -> void } -> Riffer::Params
+      def self.input_schema: (?Riffer::Params) ?{ () -> void } -> Riffer::Params
+
+      # Defines or returns the workflow's output schema.
+      #
+      # If a block is given, it evaluates the block to define the output schema.
+      # If a Riffer::Params object is given, it sets that as the output schema
+      # --
+      # : (?Riffer::Params) ?{ () -> void } -> Riffer::Params
+      def self.output_schema: (?Riffer::Params) ?{ () -> void } -> Riffer::Params
+
+      # Defines a step in the workflow.
+      #
+      # Validates that the step's input schema matches the workflow's input schema (for the first step)
+      # and that each step's output schema matches the next step's input schema.
+      #
+      # --
+      # : (Riffer::Workflow::Step) -> void
+      def self.step: (Riffer::Workflow::Step) -> void
+
+      # Executes the workflow with the given input.
+      #
+      # Validates the input against the workflow's input schema, then executes each step in order, passing the output of each step as the input to the next.
+      # Collects the results of each step, including any errors, and returns a Riffer
+      # Workflow::Result object containing the step results and overall success status.
+      #
+      # --
+      # : (hash) -> Riffer::Workflow::Result
+      def self.execute: (hash) -> Riffer::Workflow::Result
+    end
+  end
+end

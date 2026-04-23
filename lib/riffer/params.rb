@@ -55,6 +55,14 @@ class Riffer::Params
     )
   end
 
+  # Checks if this Params definition is structurally equal to another.
+  #
+  # Compares self to passed in params based on number of parameters and order
+  # Does a deep comparison of each param using Riffer::Param#is_equal?
+  # This compares against required, type, and item_type, but ignores name and description
+  #
+  #--
+  #: (Riffer::Params) -> bool
   def is_equal?(other_params)
     return false if other_params.nil? || !other_params.is_a?(Riffer::Params)
     return false unless @parameters.size == other_params.parameters.size

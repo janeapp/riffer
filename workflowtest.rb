@@ -62,4 +62,6 @@ end
 result = MyWorkflow.execute(start_num: 5)
 puts result.result[:final_result] # should output 12
 
-puts result.steps
+result.steps.each do |step_result|
+    puts "Step: #{step_result.step}, Input: #{step_result.input}, Output: #{step_result.output}, Success: #{step_result.success}, Error: #{step_result.error}"
+end
