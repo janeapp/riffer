@@ -37,6 +37,33 @@ class Riffer::Workflow::Step
         @output_schema
     end
 
+    # Validates the input against the input schema and the execute output against the output schema
+    #--
+    #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+    def execute_with_validation(input)
+        unless self.class.input_schema
+            raise Riffer::Workflow::ConfigurationError, "Input schema is not defined"
+        end
+        unless self.class.output_schema
+            raise Riffer::Workflow::ConfigurationError, "Output schema is not defined"
+        end
+
+        begin
+            input_validated = self.class.input_schema&.validate(input) || input
+        rescue => e
+            raise Riffer::ValidationError.new("Input does not match input schema: #{e.message}")
+        end
+        
+        output = execute(input_validated)
+
+        begin 
+            output_validated = self.class.output_schema&.validate(output) || output
+        rescue => e
+            raise Riffer::ValidationError.new("Output does not match output schema: #{e.message}")
+        end
+        output_validated
+    end
+
     # Executes the step with the given input. This method should be overridden by subclasses to implement the actual logic of the step.
     #--
     #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

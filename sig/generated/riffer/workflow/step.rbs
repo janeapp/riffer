@@ -18,6 +18,11 @@ class Riffer::Workflow::Step
   # : (?Riffer::Params) ?{ () -> void } -> Riffer::Params
   def self.output_schema: (?Riffer::Params) ?{ () -> void } -> Riffer::Params
 
+  # Validates the input against the input schema and the execute output against the output schema
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def execute_with_validation: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
   # Executes the step with the given input. This method should be overridden by subclasses to implement the actual logic of the step.
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

@@ -20,7 +20,7 @@ class Step2 < Riffer::Workflow::Step
     end
 
     output_schema do
-        required :final_result, Integer
+        required :result, Integer
     end
 
     def execute(input)
@@ -30,6 +30,19 @@ end
 
 Riffer.configure do |config|
     config.openai.api_key = ENV['OPENAPI_KEY']
+end
+
+class PlusTenTool < Riffer::Tool
+    description "Adds 10 to the passed in number"
+
+    params do
+        required :input, Integer, description: "The number to add 10 to"
+    end
+
+    def call(context:, input:)
+        puts "invoking tool"
+        json({ result: input + 10})
+    end
 end
 
 class Step3 < Riffer::Workflow::AgentStep
@@ -42,7 +55,8 @@ class Step3 < Riffer::Workflow::AgentStep
     end
 
     model 'openai/gpt-5-mini'
-    instructions "Take the input number and add 10 to it."    
+    instructions "Call the plus_ten tool with the input and return the output"
+    uses_tools [PlusTenTool]
 end
 
 class MyWorkflow < Riffer::Workflow::Base

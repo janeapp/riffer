@@ -73,4 +73,66 @@ describe Riffer::Workflow::Step do
             expect { step.execute({}) }.must_raise NotImplementedError
         end
     end
+
+    describe "#execute_with_validation" do
+        it "validates that input schema is set" do
+            class MyStep6 < Riffer::Workflow::Step
+                output_schema do
+                    required :output, String
+                end
+                def execute(input)
+                    {}
+                end
+            end
+            step = MyStep6.new
+            expect { step.execute_with_validation({}) }.must_raise Riffer::Workflow::ConfigurationError
+        end
+
+        it "validates that output schema is set" do
+            class MyStep7 < Riffer::Workflow::Step
+                input_schema do
+                    required :output, String
+                end
+                def execute(input)
+                    {}
+                end
+            end
+            step = MyStep7.new
+            expect { step.execute_with_validation({}) }.must_raise Riffer::Workflow::ConfigurationError
+        end
+
+        it "wraps the subclass execute method with input_schema validation" do
+            class MyStep8 < Riffer::Workflow::Step
+                input_schema do
+                    required :name, String
+                end
+                output_schema do
+                    required :output, String
+                end
+                def execute(input)
+                    return {output: input[:name].upcase}
+                end
+            end 
+
+            step = MyStep8.new
+            expect { step.execute_with_validation({unmatched: "input"}) }.must_raise Riffer::ValidationError
+        end
+
+        it "wraps the subclass execute method with input_schema validation" do
+            class MyStep9 < Riffer::Workflow::Step
+                input_schema do
+                    required :name, String
+                end
+                output_schema do
+                    required :output, String
+                end
+                def execute(input)
+                    return {output: input[:name].upcase}
+                end
+            end 
+
+            step = MyStep9.new
+            expect { step.execute_with_validation({name: "input"}) }
+        end
+    end
 end

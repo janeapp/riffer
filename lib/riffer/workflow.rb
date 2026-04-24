@@ -22,9 +22,8 @@ end
 
 # Riffer::Workflow::Base provides a DSL for defining multi-step workflows.
 #
-# The Workflow::Base class provides class methods for defining the 
-# workflow's input and output schemas, as well as the steps that make 
-# up the workflow.
+# The Riffer::Workflow::Base class provides class methods for defining the 
+# workflow's input and output schemas, as well as the steps that make up the workflow.
 # Each step is a class that must implement a class method +execute+ 
 # which takes an input hash and returns an output hash.
 #
@@ -174,7 +173,7 @@ class Riffer::Workflow::Base
         self.steps.each do |step|
             result = Riffer::Workflow::StepResult.new(step.class, current_input)
             begin
-                output = step.execute(current_input)
+                output = step.execute_with_validation(current_input)
                 result.output = output
                 result.success = true
                 results.add_step_result(result)

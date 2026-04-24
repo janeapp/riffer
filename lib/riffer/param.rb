@@ -105,7 +105,7 @@ class Riffer::Param
 
   # Checks if this parameter definition is structurally equal to another.
   #
-  # Compares self to passed in param based on type, required flag, and item type
+  # Compares self to passed in param based on name, type, required flag, and item type
   # If self has nested params, runs a nested check on those as well.
   #
   #--
