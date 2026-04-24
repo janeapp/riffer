@@ -70,8 +70,9 @@ class Riffer::Params
 
     return false unless required_params.size == other_required_params.size
 
-    required_params.zip(other_required_params).all? do |param, other_param|
-      param.is_equal?(other_param)
+    required_params.all? do |param|
+      other_param = other_required_params.find { |p| p.name == param.name }
+      other_param && param.is_equal?(other_param)
     end
   end
 

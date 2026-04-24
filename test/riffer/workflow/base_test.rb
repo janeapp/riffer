@@ -319,7 +319,7 @@ describe Riffer::Workflow::Base do
         it "validates that the input schema matches the workflow's input schema" do
             step1 = Class.new(Riffer::Workflow::Step) do
                 input_schema do
-                    required :start_num, Integer
+                    required :name, Integer
                 end
 
                 output_schema do

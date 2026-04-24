@@ -10,5 +10,6 @@ class Riffer::Workflow::StepResult
         @error = nil
     end
 
-    attr_accessor :step, :input, :output, :success, :error
+    attr_reader :step, :input
+    attr_accessor :output, :success, :error
 end

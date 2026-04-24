@@ -159,7 +159,7 @@ class Riffer::Workflow::Base
         if output_schema && self.steps.any?
             last_output_schema = self.steps.last.class.output_schema
             if last_output_schema && !last_output_schema.is_equal?(output_schema)
-                raise Riffer::Workflow::SchemaValidationError, "Output schema of #{steps.last.class} is not compatible with workflow output schema"
+                raise Riffer::Workflow::SchemaValidationError, "Output schema of #{self.steps.last.class} is not compatible with workflow output schema"
             end
         end
 
