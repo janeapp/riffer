@@ -107,12 +107,12 @@ class Riffer::Param
   #
   # Compares self to passed in param based on type, required flag, and item type
   # If self has nested params, runs a nested check on those as well.
-  # Name is not compared; we only care about types and shape/order
   #
   #--
   #: (Riffer::Param) -> bool
   def is_equal?(other_param)
     return false unless other_param.is_a?(Riffer::Param)
+    return false unless name == other_param.name
     return false unless type == other_param.type
     return false unless required == other_param.required
     return false unless item_type == other_param.item_type

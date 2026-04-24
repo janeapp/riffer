@@ -60,7 +60,6 @@ class Riffer::Param
   #
   # Compares self to passed in param based on type, required flag, and item type
   # If self has nested params, runs a nested check on those as well.
-  # Name is not compared; we only care about types and shape/order
   #
   # --
   # : (Riffer::Param) -> bool

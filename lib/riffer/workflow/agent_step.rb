@@ -3,7 +3,6 @@
 
 # Riffer::Workflow::AgentStep defines a workflow step that executes an Agent.
 # The step takes the workflow input, formats it as JSON, and passes it to the agent's +generate+ method. 
-# The agent uses 
 class Riffer::Workflow::AgentStep < Riffer::Workflow::Step
     class << self
         # Returns the agent class associated with this step, creating a new one if it doesn't exist.
@@ -62,6 +61,9 @@ class Riffer::Workflow::AgentStep < Riffer::Workflow::Step
     #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
     def execute(input)
         # validate agent setup before executing
+        unless self.class.input_schema
+            raise Riffer::Workflow::ConfigurationError, "Input schema for agent #{self.class.agent_class} is not defined"
+        end
         unless self.class.agent_class.structured_output
             raise Riffer::Workflow::ConfigurationError, "Structured output for agent #{self.class.agent_class} is not defined"
         end

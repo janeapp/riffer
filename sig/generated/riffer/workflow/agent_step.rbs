@@ -1,18 +1,15 @@
 # Generated from lib/riffer/workflow/agent_step.rb with RBS::Inline
 
 # Riffer::Workflow::AgentStep defines a workflow step that executes an Agent.
-# The step takes the workflow input, formats it as JSON, and passes it to the agent's +generate+ method. The agent's response is expected to be in a structured format that can be returned
-# as the step's output.
+# The step takes the workflow input, formats it as JSON, and passes it to the agent's +generate+ method. 
 class Riffer::Workflow::AgentStep < Riffer::Workflow::Step
   # Returns the agent class associated with this step, creating a new one if it doesn't exist.
-  # The agent class is lazily initialized to allow the step class to be defined without immediately defining the agent.
-  # The agent class is where you would define the prompt and any parameters for the agent to use when generating a response.
-  #
   # --
-  # : () -> Class
-  def self.agent_class: () -> Class
+  # : () -> Riffer::Agent
+  def self.agent_class: () -> Riffer::Agent
 
   # Delegates missing class methods to the agent class, allowing you to define the agent's prompt and parameters directly on the step class.
+  #
   # If the agent class does not respond to the method, it falls back to the default behavior of method_missing.
   #
   # --
@@ -26,14 +23,19 @@ class Riffer::Workflow::AgentStep < Riffer::Workflow::Step
   def self.respond_to_missing?: (Symbol, bool) -> bool
 
   # Overrides the output_schema class method to also define the structured output for the agent class.
-  # When the output schema is defined for the step, it also sets that schema on the agent's structured output, ensuring that the agent's response will be validated against the same schema.
+  # When the output schema is defined for the step, it also sets that schema on the agent's structured output, 
+  # ensuring that the agent's response will be validated against the same schema.
   #
   # --
   # : (?Riffer::Params) ?{ () -> void } -> Riffer::Params
   def self.output_schema: (?Riffer::Params) ?{ () -> void } -> Riffer::Params
 
   # Executes the agent step by generating a response from the associated agent class.
-  # The input to the step is formatted as JSON and passed to the agent's +generate+ method. The agent's response is expected to be in a structured format that can be returned as the step's output.
+  #
+  # The input to the step is formatted as JSON and passed to the agent's +generate+ method. 
+  # The agent's response is expected to be in a structured format that can be returned as the step's output.
+  # Requires the agent to have its structured output, model, and instructions defined before execution 
+  # to ensure it can generate a valid response.
   #
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
