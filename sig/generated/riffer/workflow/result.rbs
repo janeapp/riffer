@@ -1,0 +1,33 @@
+# Generated from lib/riffer/workflow/result.rb with RBS::Inline
+
+# Riffer::Workflow::Result encapsulates the results of executing a workflow, including the output of each step and overall success status.
+class Riffer::Workflow::Result
+  attr_reader steps: untyped
+
+  def initialize: () -> untyped
+
+  # Adds the result of a step execution to the workflow result.
+  # --
+  # : (Riffer::Workflow::StepResult) -> void
+  def add_step_result: (Riffer::Workflow::StepResult) -> void
+
+  # Returns true if all steps succeeded, false if any step failed.
+  # --
+  # : () -> bool
+  def succeeded?: () -> bool
+
+  # Returns true if any step failed, false if all steps succeeded.
+  # --
+  # : () -> bool
+  def failed?: () -> bool
+
+  # Returns the output of the last step if the workflow succeeded, or nil if it failed.
+  # --
+  # : () -> untyped
+  def result: () -> untyped
+
+  # Returns the error message of the first failed step if the workflow failed, or nil if it succeeded.
+  # --
+  # : () -> String?
+  def error: () -> String?
+end

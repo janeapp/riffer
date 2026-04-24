@@ -1,0 +1,19 @@
+# Generated from lib/riffer/workflow/step_result.rb with RBS::Inline
+
+# Riffer::Workflow::StepResult encapsulates the results of executing a step 
+# in the workflow, including the input, output, success status, and any error message.
+class Riffer::Workflow::StepResult
+  # --
+  # : (Riffer::Workflow::Step, untyped) -> void
+  def initialize: (Riffer::Workflow::Step, untyped) -> void
+
+  attr_reader step: untyped
+
+  attr_reader input: untyped
+
+  attr_accessor output: untyped
+
+  attr_accessor success: untyped
+
+  attr_accessor error: untyped
+end

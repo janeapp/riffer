@@ -1,3 +1,5 @@
+# rbs_inline: enabled
+
 # Riffer::Workflow::Result encapsulates the results of executing a workflow, including the output of each step and overall success status.
 class Riffer::Workflow::Result
     attr_reader :steps

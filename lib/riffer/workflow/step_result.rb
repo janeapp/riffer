@@ -1,4 +1,7 @@
-# Riffer::Workflow::StepResult encapsulates the results of executing a step in the workflow, including the input, output, success status, and any error message.
+# rbs_inline: enabled
+
+# Riffer::Workflow::StepResult encapsulates the results of executing a step 
+# in the workflow, including the input, output, success status, and any error message.
 class Riffer::Workflow::StepResult
     #--
     #: (Riffer::Workflow::Step, untyped) -> void

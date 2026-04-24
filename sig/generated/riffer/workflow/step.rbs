@@ -1,16 +1,20 @@
 # Generated from lib/riffer/workflow/step.rb with RBS::Inline
 
-# Riffer::Workflow::Step represents a single step in a workflow, which can be either an AgentStep or a custom step that implements the execute method.
-# Each step can define its own input and output schemas, which are used to validate the data
+# Riffer::Workflow::Step represents a single step in a workflow, 
+# which can be either an AgentStep or a custom step that implements the 
+# execute method.
+# Each step can define its own input and output schemas, which are used to 
+# validate the data
 class Riffer::Workflow::Step
-  # Defines or returns the step's input schema. This is used to validate the input to the step and ensure it matches the expected format for the step's logic.
+  # Defines or returns the step's input schema.
+  #
   # If a block is given, it evaluates the block to define the input schema.
   # If a Riffer::Params object is given, it sets that as the input schema
   # --
   # : (?Riffer::Params) ?{ () -> void } -> Riffer::Params
   def self.input_schema: (?Riffer::Params) ?{ () -> void } -> Riffer::Params
 
-  # Defines or returns the step's output schema. This is used to validate the output of the step and ensure it matches the expected format for downstream steps or final workflow output.
+  # Defines or returns the step's output schema.
   #
   # If a block is given, it evaluates the block to define the output schema.
   # If a Riffer::Params object is given, it sets that as the output schema
@@ -18,12 +22,14 @@ class Riffer::Workflow::Step
   # : (?Riffer::Params) ?{ () -> void } -> Riffer::Params
   def self.output_schema: (?Riffer::Params) ?{ () -> void } -> Riffer::Params
 
-  # Validates the input against the input schema and the execute output against the output schema
+  # Validates the input against the input schema and the execute output 
+  # against the output schema
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_with_validation: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # Executes the step with the given input. This method should be overridden by subclasses to implement the actual logic of the step.
+  # Executes the step with the given input. This method should be 
+  # overridden by subclasses to implement the actual logic of the step.
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
