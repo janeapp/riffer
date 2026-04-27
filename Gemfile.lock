@@ -104,7 +104,7 @@ GEM
     lumberjack (1.4.2)
     method_source (1.1.0)
     metrics (0.15.0)
-    minitest (6.0.4)
+    minitest (6.0.5)
       drb (~> 2.0)
       prism (~> 1.5)
     nenv (0.3.0)
