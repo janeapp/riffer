@@ -21,23 +21,15 @@ module Riffer::Mcp
   class Error < Riffer::Error
   end
 
-  # Raised when an agent attempts to use an MCP server that has not finished
-  # discovery and the +:raise+ on_pending strategy is configured.
-  class NotReadyError < Error
-  end
-
-  # Raised when +wait_until_ready!+ exceeds +Riffer.config.mcp.wait_timeout+.
-  class TimeoutError < Error
-  end
-
   # Raised when +Riffer.config.mcp.credentials+ returns +nil+ during +tools/call+
   # after the server's tools were included for this run.
   class CredentialsDeniedError < Error
   end
 
-  # Registers an MCP server and starts async tool discovery.
+  # Registers an MCP server, blocking until tool discovery completes.
   #
-  # Returns immediately. Pass a +Manifest+ instance or a hash with the same keys.
+  # Raises on discovery failure. Pass a +Manifest+ instance or a hash with
+  # the same keys.
   #
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration

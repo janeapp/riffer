@@ -3566,7 +3566,7 @@ describe Riffer::Agent do
     it "accumulates mcp_configs from multiple use_mcp calls" do
       klass = Class.new(Riffer::Agent) do
         use_mcp :foo
-        use_mcp :bar, on_pending: :wait
+        use_mcp :bar
       end
       expect(klass.mcp_configs.size).must_equal 2
     end
@@ -3574,16 +3574,6 @@ describe Riffer::Agent do
     it "normalizes tag to symbol" do
       klass = Class.new(Riffer::Agent) { use_mcp "mytag" }
       expect(klass.mcp_configs.first[:tags]).must_equal [:mytag]
-    end
-
-    it "stores on_pending per config entry" do
-      klass = Class.new(Riffer::Agent) { use_mcp :foo, on_pending: :raise }
-      expect(klass.mcp_configs.first[:on_pending]).must_equal :raise
-    end
-
-    it "stores nil on_pending when not provided (falls back to global config)" do
-      klass = Class.new(Riffer::Agent) { use_mcp :foo }
-      expect(klass.mcp_configs.first[:on_pending]).must_be_nil
     end
   end
 
@@ -3601,23 +3591,7 @@ describe Riffer::Agent do
       manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com", discovery_headers: {})
       reg = Riffer::Mcp::Registration.allocate
       reg.instance_variable_set(:@manifest, manifest)
-      reg.instance_variable_set(:@ready, true)
       reg.instance_variable_set(:@tools, tools)
-      reg.instance_variable_set(:@agent, nil)
-      reg.instance_variable_set(:@mutex, Mutex.new)
-      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
-      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
-      reg
-    end
-
-    def inject_pending_registration(name:, tags:, discovery_error: nil)
-      manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com", discovery_headers: {})
-      reg = Riffer::Mcp::Registration.allocate
-      reg.instance_variable_set(:@manifest, manifest)
-      reg.instance_variable_set(:@ready, false)
-      reg.instance_variable_set(:@tools, [])
-      reg.instance_variable_set(:@agent, nil)
-      reg.instance_variable_set(:@discovery_error, discovery_error)
       reg.instance_variable_set(:@mutex, Mutex.new)
       store = Riffer::Mcp::Registry.instance_variable_get(:@store)
       Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
@@ -3671,67 +3645,6 @@ describe Riffer::Agent do
       end
 
       expect(resolved_tools_for(klass)).must_include fake_tool_class
-    end
-
-    it "applies :ignore strategy and skips pending servers" do
-      inject_pending_registration(name: "srv", tags: [:srv])
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        use_mcp :srv, on_pending: :ignore
-      end
-
-      expect(resolved_tools_for(klass)).must_be_empty
-    end
-
-    it "applies :raise strategy and raises NotReadyError for pending servers" do
-      inject_pending_registration(name: "srv", tags: [:srv])
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        use_mcp :srv, on_pending: :raise
-      end
-
-      expect { resolved_tools_for(klass) }.must_raise Riffer::Mcp::NotReadyError
-    end
-
-    it "applies :raise strategy and re-raises discovery_error when discovery failed" do
-      inject_pending_registration(name: "srv", tags: [:srv], discovery_error: RuntimeError.new("mcp list failed"))
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        use_mcp :srv, on_pending: :raise
-      end
-
-      err = expect { resolved_tools_for(klass) }.must_raise RuntimeError
-      expect(err.message).must_equal "mcp list failed"
-    end
-
-    it "applies :wait strategy and re-raises discovery_error when discovery failed" do
-      inject_pending_registration(name: "srv", tags: [:srv], discovery_error: RuntimeError.new("mcp list failed"))
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        use_mcp :srv, on_pending: :wait
-      end
-
-      err = expect { resolved_tools_for(klass) }.must_raise RuntimeError
-      expect(err.message).must_equal "mcp list failed"
-    end
-
-    it "falls back to global on_pending when per-use_mcp on_pending is nil" do
-      inject_pending_registration(name: "srv", tags: [:srv])
-      prev_on_pending = Riffer.config.mcp.on_pending
-      Riffer.config.mcp.on_pending = :ignore
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        use_mcp :srv
-      end
-
-      expect(resolved_tools_for(klass)).must_be_empty
-    ensure
-      Riffer.config.mcp.on_pending = prev_on_pending
     end
 
     it "omits MCP tools when credentials proc returns nil at resolve time" do

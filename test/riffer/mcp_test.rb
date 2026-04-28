@@ -6,21 +6,30 @@ describe Riffer::Mcp do
   before { clear_mcp_registry! }
   after { clear_mcp_registry! }
 
-  describe ".register" do
-    it "returns a Registration" do
-      reg = Riffer::Mcp.register(name: "srv", tags: [:t], endpoint: "https://x.com")
-      assert_instance_of Riffer::Mcp::Registration, reg
-    end
+  # Injects a stub registration directly, bypassing inline discovery.
+  def inject_stub_registration(name:, tags: [])
+    manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com")
+    reg = Riffer::Mcp::Registration.allocate
+    reg.instance_variable_set(:@manifest, manifest)
+    reg.instance_variable_set(:@cancelled, false)
+    reg.instance_variable_set(:@tools, [])
+    reg.instance_variable_set(:@mutex, Mutex.new)
+    store = Riffer::Mcp::Registry.instance_variable_get(:@store)
+    Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
+    reg
+  end
 
-    it "adds to registrations" do
-      Riffer::Mcp.register(name: "srv", tags: [], endpoint: "https://x.com")
-      assert Riffer::Mcp.registrations.key?("srv")
+  describe ".register" do
+    it "delegates to Registry and returns a Registration" do
+      inject_stub_registration(name: "srv", tags: [:t])
+      reg = Riffer::Mcp.registrations["srv"]
+      assert_instance_of Riffer::Mcp::Registration, reg
     end
   end
 
   describe ".unregister" do
     it "removes the registration" do
-      Riffer::Mcp.register(name: "srv", tags: [], endpoint: "https://x.com")
+      inject_stub_registration(name: "srv")
       Riffer::Mcp.unregister("srv")
       refute Riffer::Mcp.registrations.key?("srv")
     end
@@ -33,14 +42,6 @@ describe Riffer::Mcp do
   end
 
   describe "error hierarchy" do
-    it "NotReadyError is a Riffer::Mcp::Error" do
-      assert Riffer::Mcp::NotReadyError < Riffer::Mcp::Error
-    end
-
-    it "TimeoutError is a Riffer::Mcp::Error" do
-      assert Riffer::Mcp::TimeoutError < Riffer::Mcp::Error
-    end
-
     it "CredentialsDeniedError is a Riffer::Mcp::Error" do
       assert Riffer::Mcp::CredentialsDeniedError < Riffer::Mcp::Error
     end

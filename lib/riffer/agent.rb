@@ -176,13 +176,11 @@ class Riffer::Agent
   # the given tag(s).
   #
   # +tag+ - a String or Symbol; matched against registration manifest tags.
-  # +on_pending:+ - per-call override for the global +Riffer.config.mcp.on_pending+
-  #   strategy. One of +:ignore+, +:wait+, or +:raise+.
   #
-  #: (String | Symbol, ?on_pending: Symbol?) -> void
-  def self.use_mcp(tag, on_pending: nil)
+  #: (String | Symbol) -> void
+  def self.use_mcp(tag)
     @mcp_configs ||= []
-    @mcp_configs << {tags: [tag.to_sym], on_pending: on_pending}
+    @mcp_configs << {tags: [tag.to_sym]}
   end
 
   # Returns the accumulated +use_mcp+ configurations for this agent class.
@@ -808,36 +806,11 @@ class Riffer::Agent
   def gather_mcp_registrations_with_tags(configs)
     by_reg = {}
     configs.each do |cfg|
-      on_pending = cfg[:on_pending] || Riffer.config.mcp.on_pending
       Riffer::Mcp::Registry.find_by_tags(cfg[:tags]).each do |reg|
-        next unless mcp_registration_ready!(reg, on_pending)
-
         (by_reg[reg] ||= []).concat(cfg[:tags] & reg.manifest.tags)
       end
     end
     by_reg
-  end
-
-  # Returns true if +reg+ is ready for tool resolution (waiting when +on_pending+ is +:wait+).
-  #
-  #: (Riffer::Mcp::Registration, Symbol) -> bool
-  def mcp_registration_ready!(reg, on_pending)
-    return true if reg.ready?
-
-    case on_pending
-    when :ignore
-      false
-    when :wait
-      reg.wait_until_ready!
-      true
-    when :raise
-      if (err = reg.discovery_error)
-        raise err
-      end
-      raise Riffer::Mcp::NotReadyError, "MCP server '#{reg.manifest.name}' is not ready"
-    else
-      raise Riffer::ArgumentError, "Invalid mcp on_pending: #{on_pending.inspect}"
-    end
   end
 
   #: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]

@@ -117,11 +117,9 @@ class Riffer::Agent
   # the given tag(s).
   #
   # +tag+ - a String or Symbol; matched against registration manifest tags.
-  # +on_pending:+ - per-call override for the global +Riffer.config.mcp.on_pending+
-  #   strategy. One of +:ignore+, +:wait+, or +:raise+.
   #
-  # : (String | Symbol, ?on_pending: Symbol?) -> void
-  def self.use_mcp: (String | Symbol, ?on_pending: Symbol?) -> void
+  # : (String | Symbol) -> void
+  def self.use_mcp: (String | Symbol) -> void
 
   # Returns the accumulated +use_mcp+ configurations for this agent class.
   #
@@ -366,7 +364,6 @@ class Riffer::Agent
   # : () -> String
   def resolve_model: () -> String
 
-  # Returns tools from +uses_tools+ only (static array or Proc result).
   # --
   # : () -> Array[singleton(Riffer::Tool)]
   def resolve_uses_tools_config: () -> Array[singleton(Riffer::Tool)]
@@ -379,11 +376,6 @@ class Riffer::Agent
   #
   # : (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
   def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
-
-  # Returns true if +reg+ is ready for tool resolution (waiting when +on_pending+ is +:wait+).
-  #
-  # : (Riffer::Mcp::Registration, Symbol) -> bool
-  def mcp_registration_ready!: (Riffer::Mcp::Registration, Symbol) -> bool
 
   # : (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
   def mcp_tools_for_registration: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]

@@ -38,16 +38,13 @@ For provider credentials and setup, see the individual [Provider guides](provide
 
 Optional settings for [MCP server integrations](14_MCP.md):
 
-| Option          | Description                                                                                                     |
-| --------------- | --------------------------------------------------------------------------------------------------------------- |
-| `on_pending`    | `:ignore` (default), `:wait`, or `:raise` when tool discovery is not finished yet                               |
-| `wait_timeout`  | Seconds to wait when `on_pending` is `:wait` (default `10`)                                                     |
-| `credentials`   | Optional `Proc` for per-run `tools/call` HTTP headers: `->(manifest:, matched_tags:, context:) { Hash or nil }` |
+| Option             | Description                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `credentials`      | Optional `Proc` for per-run `tools/call` HTTP headers: `->(manifest:, matched_tags:, context:) { Hash or nil }` |
+| `discovery_runner` | `Riffer::Runner` instance for tool discovery (default `Runner::Sequential.new`)                                 |
 
 ```ruby
 Riffer.configure do |config|
-  config.mcp.on_pending = :wait
-  config.mcp.wait_timeout = 30
   config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
     {"Authorization" => "Bearer #{token_for(context)}"}
   end

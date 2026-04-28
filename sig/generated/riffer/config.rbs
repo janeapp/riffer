@@ -63,6 +63,15 @@ class Riffer::Config
                 | ({ ?judge_model: untyped }) -> instance
   end
 
+  class Mcp < Struct[untyped]
+    attr_accessor credentials(): untyped
+
+    attr_accessor discovery_runner(): untyped
+
+    def self.new: (?credentials: untyped, ?discovery_runner: untyped) -> instance
+                | ({ ?credentials: untyped, ?discovery_runner: untyped }) -> instance
+  end
+
   # Skills-related global configuration.
   #
   # See <tt>Riffer.config.skills.default_activate_tool</tt> and
@@ -104,19 +113,6 @@ class Riffer::Config
     def default_backend=: ((Riffer::Skills::Backend | Proc)?) -> void
   end
 
-  class Mcp < Struct[untyped]
-    attr_accessor on_pending(): untyped
-
-    attr_accessor wait_timeout(): untyped
-
-    attr_accessor credentials(): untyped
-
-    attr_accessor discovery_thread_factory(): untyped
-
-    def self.new: (?on_pending: untyped, ?wait_timeout: untyped, ?credentials: untyped, ?discovery_thread_factory: untyped) -> instance
-                | ({ ?on_pending: untyped, ?wait_timeout: untyped, ?credentials: untyped, ?discovery_thread_factory: untyped }) -> instance
-  end
-
   VALID_MESSAGE_ID_STRATEGIES: untyped
 
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
@@ -137,19 +133,15 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader evals: Riffer::Config::Evals
 
-  # MCP configuration (Struct with +on_pending+, +wait_timeout+, +credentials+,
-  # +discovery_thread_factory+).
-  #
-  # +on_pending+ controls agent behaviour when an MCP server has not finished
-  # discovery: +:ignore+ (default) skips the server, +:wait+ blocks until ready,
-  # +:raise+ raises Riffer::Mcp::NotReadyError.
-  #
-  # +wait_timeout+ is the maximum seconds to wait when +on_pending: :wait+.
+  # MCP configuration (Struct with +credentials+ and +discovery_runner+).
   #
   # +credentials+ is an optional Proc for per-run MCP +tools/call+ HTTP headers.
   # Signature: +->(manifest:, matched_tags:, context:) { Hash or nil }+.
   # +nil+ from the proc at tool-resolution time omits that server's tools; +nil+
   # at tool-call time raises Riffer::Mcp::CredentialsDeniedError.
+  #
+  # +discovery_runner+ is the Riffer::Runner used to execute tool discovery
+  # (default +Runner::Sequential+).
   attr_reader mcp: Riffer::Config::Mcp
 
   # Global tool runtime configuration (experimental).

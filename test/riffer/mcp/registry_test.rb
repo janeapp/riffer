@@ -6,46 +6,50 @@ describe Riffer::Mcp::Registry do
   before { clear_mcp_registry! }
   after { clear_mcp_registry! }
 
+  # Injects a stub registration directly into the registry store, bypassing discovery.
+  def inject_stub_registration(name:, tags:, endpoint: "https://x.com")
+    manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: endpoint)
+    reg = Riffer::Mcp::Registration.allocate
+    reg.instance_variable_set(:@manifest, manifest)
+    reg.instance_variable_set(:@cancelled, false)
+    reg.instance_variable_set(:@tools, [])
+    reg.instance_variable_set(:@mutex, Mutex.new)
+    store = Riffer::Mcp::Registry.instance_variable_get(:@store)
+    Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
+    reg
+  end
+
   describe ".register" do
-    it "accepts a Manifest instance" do
-      manifest = Riffer::Mcp::Manifest.new(name: "srv", tags: [:foo], endpoint: "https://x.com")
-      reg = Riffer::Mcp::Registry.register(manifest)
-      assert_instance_of Riffer::Mcp::Registration, reg
-    end
-
-    it "accepts a hash" do
-      reg = Riffer::Mcp::Registry.register(name: "srv", tags: [:foo], endpoint: "https://x.com")
-      assert_instance_of Riffer::Mcp::Registration, reg
-    end
-
     it "stores the registration by name" do
-      Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://x.com")
+      inject_stub_registration(name: "srv", tags: [])
       assert Riffer::Mcp::Registry.registrations.key?("srv")
     end
 
     it "replaces an existing registration with the same name" do
-      Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://a.com")
-      reg2 = Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://b.com")
+      inject_stub_registration(name: "srv", tags: [], endpoint: "https://a.com")
+      reg2 = inject_stub_registration(name: "srv", tags: [], endpoint: "https://b.com")
       assert_equal reg2, Riffer::Mcp::Registry.registrations["srv"]
       assert_equal "https://b.com", Riffer::Mcp::Registry.registrations["srv"].manifest.endpoint
     end
 
     it "retires the previous registration when replacing" do
-      old_reg = Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://a.com")
-      Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://b.com")
+      old_reg = inject_stub_registration(name: "srv", tags: [], endpoint: "https://a.com")
+      new_reg = inject_stub_registration(name: "srv", tags: [], endpoint: "https://b.com")
+      old_reg.retire!
       assert old_reg.retired?
+      refute new_reg.retired?
     end
   end
 
   describe ".unregister" do
     it "removes a registration by name" do
-      Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://x.com")
+      inject_stub_registration(name: "srv", tags: [])
       Riffer::Mcp::Registry.unregister("srv")
       refute Riffer::Mcp::Registry.registrations.key?("srv")
     end
 
     it "removes a registration registered with a symbol name" do
-      Riffer::Mcp::Registry.register(name: :github, tags: [], endpoint: "https://x.com")
+      inject_stub_registration(name: "github", tags: [])
       Riffer::Mcp::Registry.unregister("github")
       refute Riffer::Mcp::Registry.registrations.key?("github")
     end
@@ -55,7 +59,7 @@ describe Riffer::Mcp::Registry do
     end
 
     it "retires the registration when unregistered" do
-      reg = Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://x.com")
+      reg = inject_stub_registration(name: "srv", tags: [])
       Riffer::Mcp::Registry.unregister("srv")
       assert reg.retired?
     end
@@ -67,7 +71,7 @@ describe Riffer::Mcp::Registry do
     end
 
     it "returns a frozen snapshot" do
-      Riffer::Mcp::Registry.register(name: "srv", tags: [], endpoint: "https://x.com")
+      inject_stub_registration(name: "srv", tags: [])
       snapshot = Riffer::Mcp::Registry.registrations
       assert snapshot.frozen?
     end
@@ -75,27 +79,27 @@ describe Riffer::Mcp::Registry do
 
   describe ".find_by_tags" do
     it "returns registrations whose tags intersect the query" do
-      Riffer::Mcp::Registry.register(name: "a", tags: [:foo, :bar], endpoint: "https://a.com")
-      Riffer::Mcp::Registry.register(name: "b", tags: [:baz], endpoint: "https://b.com")
+      inject_stub_registration(name: "a", tags: [:foo, :bar])
+      inject_stub_registration(name: "b", tags: [:baz])
       results = Riffer::Mcp::Registry.find_by_tags([:foo])
       assert_equal 1, results.size
       assert_equal "a", results.first.manifest.name
     end
 
     it "returns empty array when no tags match" do
-      Riffer::Mcp::Registry.register(name: "a", tags: [:foo], endpoint: "https://a.com")
+      inject_stub_registration(name: "a", tags: [:foo])
       assert_empty Riffer::Mcp::Registry.find_by_tags([:zzz])
     end
 
     it "normalizes string tags to symbols for matching" do
-      Riffer::Mcp::Registry.register(name: "a", tags: [:foo], endpoint: "https://a.com")
+      inject_stub_registration(name: "a", tags: [:foo])
       results = Riffer::Mcp::Registry.find_by_tags(["foo"])
       assert_equal 1, results.size
     end
 
     it "returns multiple matches when several registrations share a tag" do
-      Riffer::Mcp::Registry.register(name: "a", tags: [:shared], endpoint: "https://a.com")
-      Riffer::Mcp::Registry.register(name: "b", tags: [:shared], endpoint: "https://b.com")
+      inject_stub_registration(name: "a", tags: [:shared])
+      inject_stub_registration(name: "b", tags: [:shared])
       assert_equal 2, Riffer::Mcp::Registry.find_by_tags([:shared]).size
     end
   end

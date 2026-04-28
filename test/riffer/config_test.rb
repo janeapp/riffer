@@ -100,28 +100,6 @@ describe Riffer::Config do
   end
 
   describe "mcp namespace" do
-    it "initializes on_pending to :ignore" do
-      config = Riffer::Config.new
-      expect(config.mcp.on_pending).must_equal :ignore
-    end
-
-    it "initializes wait_timeout to 10" do
-      config = Riffer::Config.new
-      expect(config.mcp.wait_timeout).must_equal 10
-    end
-
-    it "allows setting on_pending" do
-      config = Riffer::Config.new
-      config.mcp.on_pending = :wait
-      expect(config.mcp.on_pending).must_equal :wait
-    end
-
-    it "allows setting wait_timeout" do
-      config = Riffer::Config.new
-      config.mcp.wait_timeout = 30
-      expect(config.mcp.wait_timeout).must_equal 30
-    end
-
     it "initializes credentials to nil" do
       config = Riffer::Config.new
       expect(config.mcp.credentials).must_be_nil

@@ -19,7 +19,7 @@ Riffer::Mcp.register(
 )
 ```
 
-`register` returns immediately. Tool discovery runs in a background thread. Use `on_pending` (see below) to control agent behaviour while discovery is in progress.
+`register` blocks until tool discovery completes (or fails). Discovery uses the configured `Riffer::Runner` (default `Runner::Sequential` — inline). To run discovery on a pool thread (e.g. for Rails connection-pool isolation), set `config.mcp.discovery_runner = Riffer::Runner::Threaded.new`; `register` still blocks but the work runs off the calling thread.
 
 ### Discovery headers
 
@@ -90,32 +90,6 @@ Tool names must be unique across `uses_tools` and all included MCP servers; dupl
 
 Like [`uses_tools`](03_AGENTS.md#uses_tools), **`use_mcp` is not inherited** from the superclass. Declare `use_mcp` on each agent class that should load MCP tools.
 
-## Handling Pending Servers
-
-Discovery is asynchronous. When an agent runs before a server is ready, the `on_pending` strategy determines what happens:
-
-| Strategy  | Behaviour                                                                                                                                           |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `:ignore` | Tools from that server are omitted (default)                                                                                                        |
-| `:wait`   | Blocks until ready; if discovery **failed**, re-raises that exception immediately; if still **pending** until `wait_timeout`, raises `TimeoutError` |
-| `:raise`  | If discovery **failed**, re-raises that exception; if still **pending**, raises `NotReadyError`                                                     |
-
-Set the global default:
-
-```ruby
-Riffer.configure do |config|
-  config.mcp.on_pending = :wait
-  config.mcp.wait_timeout = 30  # seconds
-end
-```
-
-Override per `use_mcp` call:
-
-```ruby
-use_mcp :github, on_pending: :wait
-use_mcp :jira, on_pending: :ignore
-```
-
 ## Unregistering a Server
 
 ```ruby
@@ -131,21 +105,24 @@ Riffer::Mcp.registrations
 # => {"github" => #<Riffer::Mcp::Registration ...>, ...}
 
 reg = Riffer::Mcp.registrations["github"]
-reg.ready?   # => true / false
 reg.tools    # => [<Class:...>, ...]  (Riffer::Tool subclasses)
-reg.discovery_error  # => nil if discovery succeeded or still in progress; Exception if discovery failed
 ```
 
-If discovery fails (e.g. network error), the registration stays not ready and `reg.discovery_error` holds the exception. Nothing is written to stderr; use `on_pending: :wait` or `:raise` (or call `wait_until_ready!`) to surface the failure as a raised exception.
+Discovery failures raise from `register` directly, typically `Faraday::Error` for network issues or `Riffer::DependencyError` if the `mcp`/`faraday` gems are missing. Rescue `StandardError` for graceful degradation:
+
+```ruby
+begin
+  Riffer::Mcp.register(name: "github", ...)
+rescue StandardError => e
+  Rails.logger.warn("MCP registration failed: #{e.message}")
+end
+```
 
 ## Error Classes
 
-| Class                                 | Raised when                                                                                     |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `Riffer::Mcp::NotReadyError`          | `on_pending: :raise` and discovery still in progress (not failed)                               |
-| *(original exception)*                | Discovery failed and `on_pending` is `:wait` or `:raise` (re-raised from `reg.discovery_error`) |
-| `Riffer::Mcp::TimeoutError`           | `on_pending: :wait`, discovery still in progress, and `wait_timeout` exceeded                   |
-| `Riffer::Mcp::CredentialsDeniedError` | `credentials` proc returns `nil` during `tools/call`                                            |
+| Class                                 | Raised when                                          |
+| ------------------------------------- | ---------------------------------------------------- |
+| `Riffer::Mcp::CredentialsDeniedError` | `credentials` proc returns `nil` during `tools/call` |
 
 All inherit from `Riffer::Mcp::Error < Riffer::Error`.
 
