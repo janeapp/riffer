@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.26.0](https://github.com/janeapp/riffer/compare/riffer/v0.25.0...riffer/v0.26.0) (2026-04-29)
+
+
+### Features
+
+* model-aware skills adapter selection ([#232](https://github.com/janeapp/riffer/issues/232)) ([74a5323](https://github.com/janeapp/riffer/commit/74a5323945f3f6f30538d472400cc5fe27b588da))
+
 ## [0.25.0](https://github.com/janeapp/riffer/compare/riffer/v0.24.2...riffer/v0.25.0) (2026-04-29)
 
 
