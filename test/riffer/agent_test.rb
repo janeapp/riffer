@@ -845,7 +845,8 @@ describe Riffer::Agent do
       provider.stub_response('{"sentiment":"positive"}')
 
       agent.generate("Analyze sentiment")
-      last_assistant = agent.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+      # TODO: Replace with rfind when minimum Ruby is 4.0+
+      last_assistant = agent.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) } # rubocop:disable Style/ReverseFind
       expect(last_assistant.structured_output?).must_equal true
       expect(last_assistant.structured_output).must_equal({sentiment: "positive"})
     end
