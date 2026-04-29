@@ -40,7 +40,7 @@ Adapters for LLM APIs. The base class uses a template-method pattern — `genera
 
 Providers are registered in `Riffer::Providers::Repository::REPO` with identifiers (e.g., `openai`, `amazon_bedrock`).
 
-Each provider declares a preferred skill adapter via `self.skills_adapter` (Markdown for most, XML for Anthropic).
+Each provider declares a preferred skill adapter via `self.skills_adapter(model = nil)`. Default is Markdown; Anthropic returns XML; Amazon Bedrock returns XML when the model identifier matches an Anthropic model (e.g. `anthropic.claude-…` or `us.anthropic.claude-…`); Mock returns XML when the model name contains `claude`. The agent passes the resolved model identifier so proxy providers (Bedrock, Mock) can pick the right adapter without per-agent overrides.
 
 ### Skills (`lib/riffer/skills/`)
 

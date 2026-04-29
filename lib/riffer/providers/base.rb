@@ -24,11 +24,15 @@ class Riffer::Providers::Base
 
   # Returns the preferred skill adapter for this provider.
   #
-  # Override in subclasses for provider-specific formats.
+  # Override in subclasses for provider-specific formats. Subclasses may
+  # introspect +model+ (the resolved model identifier, e.g. the part after
+  # +provider/+) to pick an adapter that matches the underlying model
+  # family — useful for proxy providers like Amazon Bedrock that host
+  # models from multiple vendors.
   #
   #--
-  #: () -> singleton(Riffer::Skills::Adapter)
-  def self.skills_adapter
+  #: (?String?) -> singleton(Riffer::Skills::Adapter)
+  def self.skills_adapter(model = nil)
     Riffer::Skills::MarkdownAdapter
   end
 

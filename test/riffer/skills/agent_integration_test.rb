@@ -60,6 +60,77 @@ describe "Agent skills integration" do
       assert_includes skills_message.content, "<available_skills>"
     end
 
+    it "uses XML renderer for mock provider when the model name contains claude" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/claude-sonnet-4-6"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      agent = agent_class.new
+      agent.generate("Hello")
+
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_message = system_messages.find { |m| m.content.include?("<available_skills>") }
+      refute_nil skills_message
+      assert_includes skills_message.content, "<available_skills>"
+    end
+
+    it "explicit adapter wins over model-aware default" do
+      # Mock with a "claude" model name would default to XML; explicit
+      # MarkdownAdapter must still take precedence.
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/claude-sonnet-4-6"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+          adapter Riffer::Skills::MarkdownAdapter
+        end
+      end
+
+      agent = agent_class.new
+      agent.generate("Hello")
+
+      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      skills_message = system_messages.find { |m| m.content.include?("Available Skills") }
+      refute_nil skills_message
+      assert_includes skills_message.content, "## Available Skills"
+    end
+
+    it "selects XmlAdapter for amazon_bedrock with an Anthropic model id" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "amazon_bedrock/us.anthropic.claude-sonnet-4-6"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      # prepare_run resolves the model and skills without instantiating
+      # the AWS client, so we can assert the adapter without VCR.
+      agent = agent_class.new
+      agent.send(:prepare_run)
+
+      skills_state = agent.instance_variable_get(:@skills_state)
+      refute_nil skills_state
+      assert_kind_of Riffer::Skills::XmlAdapter, skills_state.adapter
+    end
+
+    it "selects MarkdownAdapter for amazon_bedrock with a non-Anthropic model id" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "amazon_bedrock/us.amazon.nova-lite-v1:0"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      agent = agent_class.new
+      agent.send(:prepare_run)
+
+      skills_state = agent.instance_variable_get(:@skills_state)
+      refute_nil skills_state
+      assert_kind_of Riffer::Skills::MarkdownAdapter, skills_state.adapter
+    end
+
     it "includes skill_activate tool in resolved tools" do
       agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"

@@ -12,8 +12,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # Returns the XML skill adapter for Anthropic/Claude.
   #
   #--
-  #: () -> singleton(Riffer::Skills::Adapter)
-  def self.skills_adapter
+  #: (?String?) -> singleton(Riffer::Skills::Adapter)
+  def self.skills_adapter(model = nil)
     Riffer::Skills::XmlAdapter
   end
 

@@ -5,6 +5,44 @@ require "test_helper"
 describe Riffer::Providers::AmazonBedrock do
   let(:api_token) { ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token") }
 
+  describe ".skills_adapter" do
+    it "returns XmlAdapter for a bare anthropic.* model id" do
+      adapter = Riffer::Providers::AmazonBedrock.skills_adapter("anthropic.claude-3-5-sonnet-20241022-v2:0")
+      expect(adapter).must_equal Riffer::Skills::XmlAdapter
+    end
+
+    it "returns XmlAdapter for a cross-region us.anthropic.* model id" do
+      adapter = Riffer::Providers::AmazonBedrock.skills_adapter("us.anthropic.claude-sonnet-4-6")
+      expect(adapter).must_equal Riffer::Skills::XmlAdapter
+    end
+
+    it "returns XmlAdapter for a cross-region eu.anthropic.* model id" do
+      adapter = Riffer::Providers::AmazonBedrock.skills_adapter("eu.anthropic.claude-haiku-4-5-20251001-v1:0")
+      expect(adapter).must_equal Riffer::Skills::XmlAdapter
+    end
+
+    it "returns MarkdownAdapter for a non-Anthropic model id" do
+      adapter = Riffer::Providers::AmazonBedrock.skills_adapter("us.amazon.nova-lite-v1:0")
+      expect(adapter).must_equal Riffer::Skills::MarkdownAdapter
+    end
+
+    it "returns MarkdownAdapter for a Meta model id" do
+      adapter = Riffer::Providers::AmazonBedrock.skills_adapter("meta.llama3-70b-instruct-v1:0")
+      expect(adapter).must_equal Riffer::Skills::MarkdownAdapter
+    end
+
+    it "returns MarkdownAdapter when model is nil" do
+      expect(Riffer::Providers::AmazonBedrock.skills_adapter).must_equal Riffer::Skills::MarkdownAdapter
+    end
+
+    it "does not match a stray 'anthropic' substring without a dot boundary" do
+      # Guards against regex drift: a model id like "panthropic-..." must not
+      # be treated as Anthropic just because it contains the substring.
+      adapter = Riffer::Providers::AmazonBedrock.skills_adapter("panthropic-foo")
+      expect(adapter).must_equal Riffer::Skills::MarkdownAdapter
+    end
+  end
+
   describe "#initialize" do
     it "creates Bedrock client with an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")

@@ -799,7 +799,7 @@ class Riffer::Agent
     return nil if skills_list.empty?
 
     skills = skills_list.to_h { |s| [s.name, s] }
-    adapter_class = self.class.skills.adapter || provider_class.skills_adapter
+    adapter_class = self.class.skills.adapter || provider_class.skills_adapter(@model_name)
     skill_activate_tool_class = self.class.skills.activate_tool || Riffer.config.skills.default_activate_tool
 
     skills_context = Riffer::Skills::Context.new(

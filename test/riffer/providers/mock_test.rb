@@ -5,6 +5,28 @@ require "test_helper"
 describe Riffer::Providers::Mock do
   let(:provider) { Riffer::Providers::Mock.new }
 
+  describe ".skills_adapter" do
+    it "returns XmlAdapter for a claude-* model name" do
+      expect(Riffer::Providers::Mock.skills_adapter("claude-sonnet-4-6")).must_equal Riffer::Skills::XmlAdapter
+    end
+
+    it "returns XmlAdapter for a model name that contains claude" do
+      expect(Riffer::Providers::Mock.skills_adapter("us.anthropic.claude-haiku-4-5")).must_equal Riffer::Skills::XmlAdapter
+    end
+
+    it "returns MarkdownAdapter for a non-claude model name" do
+      expect(Riffer::Providers::Mock.skills_adapter("riffer-1")).must_equal Riffer::Skills::MarkdownAdapter
+    end
+
+    it "returns MarkdownAdapter for a gpt-* model name" do
+      expect(Riffer::Providers::Mock.skills_adapter("gpt-4o-mini")).must_equal Riffer::Skills::MarkdownAdapter
+    end
+
+    it "returns MarkdownAdapter when model is nil" do
+      expect(Riffer::Providers::Mock.skills_adapter).must_equal Riffer::Skills::MarkdownAdapter
+    end
+  end
+
   describe "#initialize" do
     it "initializes calls to empty array" do
       expect(provider.calls).must_equal []
