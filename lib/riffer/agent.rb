@@ -144,7 +144,7 @@ class Riffer::Agent
   #
   # The activation tool class is resolved from the agent's
   # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
-  # from <tt>Riffer.config.skill_activate_tool</tt>.
+  # from <tt>Riffer.config.skills.default_activate_tool</tt>.
   #
   # Raises Riffer::ArgumentError on tool name conflicts with the skill
   # activation tool.
@@ -155,7 +155,7 @@ class Riffer::Agent
     base = resolve_uses_tools_config(context)
     return base unless skills
 
-    skill_activate_tool_class = skills.activate_tool || Riffer.config.skill_activate_tool
+    skill_activate_tool_class = skills.activate_tool || Riffer.config.skills.default_activate_tool
     if base.any? { |t| t.name == skill_activate_tool_class.name }
       raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
     end
@@ -800,7 +800,7 @@ class Riffer::Agent
 
     skills = skills_list.to_h { |s| [s.name, s] }
     adapter_class = self.class.skills.adapter || provider_class.skills_adapter
-    skill_activate_tool_class = self.class.skills.activate_tool || Riffer.config.skill_activate_tool
+    skill_activate_tool_class = self.class.skills.activate_tool || Riffer.config.skills.default_activate_tool
 
     skills_context = Riffer::Skills::Context.new(
       backend: backend,

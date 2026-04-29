@@ -48,7 +48,7 @@ class Riffer::Skills::Config
 
   # Gets or sets a per-agent override for the skill activation tool class.
   #
-  # When unset, falls back to <tt>Riffer.config.skill_activate_tool</tt>.
+  # When unset, falls back to <tt>Riffer.config.skills.default_activate_tool</tt>.
   # The override must be a subclass of Riffer::Tool.
   #
   # --

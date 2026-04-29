@@ -22,6 +22,35 @@ class Riffer::Config
   OpenAI = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
 
+  # Skills-related global configuration.
+  #
+  # See <tt>Riffer.config.skills.default_activate_tool</tt>.
+  class Skills
+    # Default skill activation tool class.
+    #
+    # The tool class the LLM calls to activate a skill. Defaults to
+    # <tt>Riffer::Skills::ActivateTool</tt>. Per-agent override is available
+    # via <tt>skills do; activate_tool ...; end</tt>.
+    attr_reader :default_activate_tool #: singleton(Riffer::Tool)
+
+    #--
+    #: () -> void
+    def initialize
+      @default_activate_tool = Riffer::Skills::ActivateTool
+    end
+
+    # Sets the default skill activation tool class.
+    #
+    # Raises +Riffer::ArgumentError+ if the value is not a Riffer::Tool subclass.
+    #
+    #--
+    #: (singleton(Riffer::Tool)) -> void
+    def default_activate_tool=(value)
+      raise Riffer::ArgumentError, "default_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+      @default_activate_tool = value
+    end
+  end
+
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
 
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
@@ -61,23 +90,9 @@ class Riffer::Config
     @tool_runtime = value
   end
 
-  # Global skill activation tool class.
-  #
-  # The tool class the LLM calls to activate a skill. Defaults to
-  # <tt>Riffer::Skills::ActivateTool</tt>. Per-agent override is available
-  # via <tt>skills do; activate_tool ...; end</tt>.
-  attr_reader :skill_activate_tool #: singleton(Riffer::Tool)
-
-  # Sets the global skill activation tool class.
-  #
-  # Raises +Riffer::ArgumentError+ if the value is not a Riffer::Tool subclass.
-  #
-  #--
-  #: (singleton(Riffer::Tool)) -> void
-  def skill_activate_tool=(value)
-    raise Riffer::ArgumentError, "skill_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
-    @skill_activate_tool = value
-  end
+  # Skills-related global configuration. Returns a Riffer::Config::Skills
+  # object — see <tt>Riffer.config.skills.default_activate_tool</tt>.
+  attr_reader :skills #: Riffer::Config::Skills
 
   # Strategy for auto-generating message ids. One of +:none+ (default, no id),
   # +:uuid+ (UUIDv4), or +:uuidv7+ (time-ordered UUIDv7).
@@ -112,7 +127,7 @@ class Riffer::Config
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new
-    @skill_activate_tool = Riffer::Skills::ActivateTool
+    @skills = Skills.new
     @message_id_strategy = :none
   end
 end

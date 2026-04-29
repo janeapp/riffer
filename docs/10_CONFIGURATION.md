@@ -54,13 +54,17 @@ end
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
-### Skill Activation Tool
+### Skills
+
+Skills-related global configuration lives under `config.skills`.
+
+#### Default activation tool
 
 Override the tool the LLM calls to activate a skill. Defaults to `Riffer::Skills::ActivateTool`:
 
 ```ruby
 Riffer.configure do |config|
-  config.skill_activate_tool = MyCustomActivateTool
+  config.skills.default_activate_tool = MyCustomActivateTool
 end
 ```
 

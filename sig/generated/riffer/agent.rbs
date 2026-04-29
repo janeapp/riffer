@@ -100,7 +100,7 @@ class Riffer::Agent
   #
   # The activation tool class is resolved from the agent's
   # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
-  # from <tt>Riffer.config.skill_activate_tool</tt>.
+  # from <tt>Riffer.config.skills.default_activate_tool</tt>.
   #
   # Raises Riffer::ArgumentError on tool name conflicts with the skill
   # activation tool.

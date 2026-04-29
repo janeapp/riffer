@@ -142,7 +142,7 @@ The built-in adapters are `Riffer::Skills::MarkdownAdapter` (default) and `Riffe
 
 ## Custom Activation Tool
 
-The activation tool is global. Set it once via `Riffer.config.skill_activate_tool` to apply across all agents, or override per-agent inside the `skills` block.
+The activation tool is global. Set it once via `Riffer.config.skills.default_activate_tool` to apply across all agents, or override per-agent inside the `skills` block.
 
 The recommended approach is to subclass `Riffer::Skills::ActivateTool` so the identifier, description, params, and timeout are inherited — you only override the behavior you need to change:
 
@@ -155,7 +155,7 @@ class InstrumentedActivateTool < Riffer::Skills::ActivateTool
 end
 
 # Global default
-Riffer.config.skill_activate_tool = InstrumentedActivateTool
+Riffer.config.skills.default_activate_tool = InstrumentedActivateTool
 
 # Per-agent override
 class MyAgent < Riffer::Agent
