@@ -1,5 +1,6 @@
 _yardoc
-.bundle
+.bundle/*
+!.bundle/config
 .env
 .vscode
 .yardo

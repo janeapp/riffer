@@ -802,7 +802,10 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Messages::Assistant?
   def extract_final_response
+    # TODO: Replace with rfind when minimum Ruby is 4.0+
+    # rubocop:disable Style/ReverseFind
     @messages.reverse.find { |msg| msg.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
+    # rubocop:enable Style/ReverseFind
   end
 
   #--

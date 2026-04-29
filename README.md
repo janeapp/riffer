@@ -6,7 +6,7 @@ The all-in-one Ruby framework for building AI-powered applications and agents.
 
 ## Requirements
 
-- Ruby 3.3 or later
+- Ruby 3.3, 3.4, or 4.0
 
 ## Installation
 
