@@ -125,24 +125,48 @@ end
 
 ## Custom Adapters
 
-Subclass `Riffer::Skills::Adapter` to customize how the skill catalog is rendered and which tool the LLM uses to activate skills:
+Subclass `Riffer::Skills::Adapter` to customize how the skill catalog is rendered in the system prompt:
 
 ```ruby
 class CustomAdapter < Riffer::Skills::Adapter
   def render_catalog(skills)
     # Return String (skill catalog for the system prompt)
-    # Use `activate_tool.name` to reference the activation tool
-  end
-
-  def activate_tool
-    # Return a Riffer::Tool subclass
-    # Defaults to Riffer::Skills::ActivateTool
-    Riffer::Skills::ActivateTool
+    # Use `skill_activate_tool.name` to reference the activation tool the LLM should call
   end
 end
 ```
 
+The activation tool is set on the adapter at construction (`Riffer::Skills::Adapter.new(skill_activate_tool: ...)`) and exposed via the `skill_activate_tool` reader. The agent wires this up automatically — custom adapters that override `initialize` must call `super`.
+
 The built-in adapters are `Riffer::Skills::MarkdownAdapter` (default) and `Riffer::Skills::XmlAdapter` (used by Anthropic).
+
+## Custom Activation Tool
+
+The activation tool is global. Set it once via `Riffer.config.skills.default_activate_tool` to apply across all agents, or override per-agent inside the `skills` block.
+
+The recommended approach is to subclass `Riffer::Skills::ActivateTool` so the identifier, description, params, and timeout are inherited — you only override the behavior you need to change:
+
+```ruby
+# Wrap the default behavior with telemetry
+class InstrumentedActivateTool < Riffer::Skills::ActivateTool
+  def call(context:, name:)
+    Telemetry.measure("skill_activate", skill: name) { super }
+  end
+end
+
+# Global default
+Riffer.config.skills.default_activate_tool = InstrumentedActivateTool
+
+# Per-agent override
+class MyAgent < Riffer::Agent
+  skills do
+    backend Riffer::Skills::FilesystemBackend.new(".skills")
+    activate_tool InstrumentedActivateTool
+  end
+end
+```
+
+If you need a different parameter shape entirely, subclass `Riffer::Tool` directly and provide your own `identifier`, `description`, `params`, and `call`.
 
 ## Accessing Skills in Tools
 

@@ -54,6 +54,34 @@ end
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
+### Skills
+
+Skills-related global configuration lives under `config.skills`.
+
+#### Default activation tool
+
+Override the tool the LLM calls to activate a skill. Defaults to `Riffer::Skills::ActivateTool`:
+
+```ruby
+Riffer.configure do |config|
+  config.skills.default_activate_tool = MyCustomActivateTool
+end
+```
+
+Per-agent override is available inside the `skills` block via `activate_tool MyCustomActivateTool`. See [Skills — Custom Activation Tool](13_SKILLS.md#custom-activation-tool).
+
+#### Default backend
+
+Set an app-wide default skills backend. Used by any agent that declares a `skills` block without specifying its own `backend`:
+
+```ruby
+Riffer.configure do |config|
+  config.skills.default_backend = Riffer::Skills::FilesystemBackend.new(".skills")
+end
+```
+
+Accepts a `Riffer::Skills::Backend` instance or a `Proc` that receives `context` and returns a backend. Defaults to `nil` — agents that don't set their own backend get no skills, matching pre-existing behavior. Per-agent backends override this default.
+
 ### Message ID Strategy
 
 Opt in to stable identifiers on every message for logging, persistence, or replay:

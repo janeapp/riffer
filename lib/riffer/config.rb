@@ -22,6 +22,57 @@ class Riffer::Config
   OpenAI = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
 
+  # Skills-related global configuration.
+  #
+  # See <tt>Riffer.config.skills.default_activate_tool</tt> and
+  # <tt>Riffer.config.skills.default_backend</tt>.
+  class Skills
+    # Default skill activation tool class.
+    #
+    # The tool class the LLM calls to activate a skill. Defaults to
+    # <tt>Riffer::Skills::ActivateTool</tt>. Per-agent override is available
+    # via <tt>skills do; activate_tool ...; end</tt>.
+    attr_reader :default_activate_tool #: singleton(Riffer::Tool)
+
+    # Default skills backend.
+    #
+    # Used by agents that declare a +skills+ block without specifying a
+    # backend. Accepts a Riffer::Skills::Backend instance or a Proc.
+    # Defaults to +nil+ (no global default).
+    attr_reader :default_backend #: (Riffer::Skills::Backend | Proc)?
+
+    #--
+    #: () -> void
+    def initialize
+      @default_activate_tool = Riffer::Skills::ActivateTool
+      @default_backend = nil
+    end
+
+    # Sets the default skill activation tool class.
+    #
+    # Raises +Riffer::ArgumentError+ if the value is not a Riffer::Tool subclass.
+    #
+    #--
+    #: (singleton(Riffer::Tool)) -> void
+    def default_activate_tool=(value)
+      raise Riffer::ArgumentError, "default_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+      @default_activate_tool = value
+    end
+
+    # Sets the default skills backend.
+    #
+    # Raises +Riffer::ArgumentError+ if the value is not a
+    # Riffer::Skills::Backend instance, a Proc, or +nil+.
+    #
+    #--
+    #: ((Riffer::Skills::Backend | Proc)?) -> void
+    def default_backend=(value)
+      valid = value.nil? || value.is_a?(Riffer::Skills::Backend) || value.is_a?(Proc)
+      raise Riffer::ArgumentError, "default_backend must be a Riffer::Skills::Backend instance, Proc, or nil" unless valid
+      @default_backend = value
+    end
+  end
+
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
 
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
@@ -61,6 +112,10 @@ class Riffer::Config
     @tool_runtime = value
   end
 
+  # Skills-related global configuration. Returns a Riffer::Config::Skills
+  # object — see <tt>Riffer.config.skills.default_activate_tool</tt>.
+  attr_reader :skills #: Riffer::Config::Skills
+
   # Strategy for auto-generating message ids. One of +:none+ (default, no id),
   # +:uuid+ (UUIDv4), or +:uuidv7+ (time-ordered UUIDv7).
   #
@@ -94,6 +149,7 @@ class Riffer::Config
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new
+    @skills = Skills.new
     @message_id_strategy = :none
   end
 end

@@ -1,10 +1,12 @@
 {
   "release-type": "ruby",
+  "bump-minor-pre-major": true,
   "packages": {
     ".": {
       "release-type": "ruby",
       "package-name": "riffer",
-      "version-file": "lib/riffer/version.rb"
+      "version-file": "lib/riffer/version.rb",
+      "bump-minor-pre-major": true
     }
   }
 }

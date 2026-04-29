@@ -132,6 +132,46 @@ class Riffer::Agent
     @tools_config = tools_or_lambda
   end
 
+  # Returns the tool classes the LLM should see for this agent.
+  #
+  # Class-level companion to the instance #resolved_tools. Resolves the
+  # Proc form of +uses_tools+ and appends the skill activation tool when
+  # a +skills+ block is configured. Does not read the skills backend —
+  # the LLM-facing tool schema reflects class-level intent, not the
+  # runtime state of any backend.
+  #
+  # When +uses_tools+ is a Proc, +context+ is forwarded to it.
+  #
+  # The activation tool class is resolved from the agent's
+  # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
+  # from <tt>Riffer.config.skills.default_activate_tool</tt>.
+  #
+  # Raises Riffer::ArgumentError on tool name conflicts with the skill
+  # activation tool.
+  #
+  #--
+  #: (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+  def self.resolved_tool_classes(context: nil)
+    base = resolve_uses_tools_config(context)
+    return base unless skills
+
+    skill_activate_tool_class = skills.activate_tool || Riffer.config.skills.default_activate_tool
+    if base.any? { |t| t.name == skill_activate_tool_class.name }
+      raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
+    end
+    base + [skill_activate_tool_class]
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+  def self.resolve_uses_tools_config(context)
+    config = uses_tools
+    return [] if config.nil?
+    return config unless config.is_a?(Proc)
+    config.arity.zero? ? config.call : config.call(context)
+  end
+  private_class_method :resolve_uses_tools_config
+
   # Gets or sets the tool runtime for this agent.
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
@@ -717,25 +757,7 @@ class Riffer::Agent
   #--
   #: () -> Array[singleton(Riffer::Tool)]
   def resolved_tools
-    @resolved_tools ||= begin
-      config = self.class.uses_tools
-
-      tools = if config.nil?
-        []
-      elsif config.is_a?(Proc)
-        (config.arity == 0) ? config.call : config.call(@context)
-      else
-        config
-      end
-
-      if @skills_state
-        activate_tool = @skills_state.adapter.activate_tool
-        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{activate_tool.name}" if tools.any? { |t| t.name == activate_tool.name }
-        tools + [activate_tool]
-      else
-        tools
-      end
-    end
+    @resolved_tools ||= self.class.resolved_tool_classes(context: @context)
   end
 
   #--
@@ -769,7 +791,7 @@ class Riffer::Agent
   def resolve_skills(context = @context)
     return nil unless self.class.skills
 
-    backend = self.class.skills.backend
+    backend = self.class.skills.backend || Riffer.config.skills.default_backend
     return nil unless backend
 
     backend = backend.is_a?(Proc) ? backend.call(context) : backend
@@ -778,8 +800,13 @@ class Riffer::Agent
 
     skills = skills_list.to_h { |s| [s.name, s] }
     adapter_class = self.class.skills.adapter || provider_class.skills_adapter
+    skill_activate_tool_class = self.class.skills.activate_tool || Riffer.config.skills.default_activate_tool
 
-    skills_context = Riffer::Skills::Context.new(backend: backend, skills: skills, adapter: adapter_class.new)
+    skills_context = Riffer::Skills::Context.new(
+      backend: backend,
+      skills: skills,
+      adapter: adapter_class.new(skill_activate_tool: skill_activate_tool_class)
+    )
     ctx = (context || {}).merge(skills: skills_context)
 
     activate = self.class.skills.activate

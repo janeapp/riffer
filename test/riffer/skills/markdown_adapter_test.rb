@@ -3,7 +3,7 @@
 require "test_helper"
 
 describe Riffer::Skills::MarkdownAdapter do
-  let(:adapter) { Riffer::Skills::MarkdownAdapter.new }
+  let(:adapter) { Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool) }
   let(:skills) do
     [
       Riffer::Skills::Frontmatter.new(name: "code-review", description: "Reviews code for quality."),
@@ -18,6 +18,19 @@ describe Riffer::Skills::MarkdownAdapter do
       assert_includes output, "skill_activate"
       assert_includes output, "- **code-review**: Reviews code for quality."
       assert_includes output, "- **data-analysis**: Analyzes datasets."
+    end
+
+    it "uses the configured skill_activate_tool name in the prompt" do
+      custom = Class.new(Riffer::Tool) do
+        identifier "custom_activate"
+        description "Custom"
+        def call(context:)
+          text("ok")
+        end
+      end
+      custom_adapter = Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: custom)
+      output = custom_adapter.render_catalog(skills)
+      assert_includes output, "`custom_activate`"
     end
   end
 end
