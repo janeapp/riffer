@@ -6,7 +6,7 @@ describe Riffer::Skills::ActivateTool do
   let(:fixtures_path) { File.expand_path("../../../fixtures/skills", __FILE__) }
   let(:backend) { Riffer::Skills::FilesystemBackend.new(fixtures_path) }
   let(:skills) { backend.list_skills.to_h { |s| [s.name, s] } }
-  let(:skills_context) { Riffer::Skills::Context.new(backend: backend, skills: skills, adapter: Riffer::Skills::MarkdownAdapter.new) }
+  let(:skills_context) { Riffer::Skills::Context.new(backend: backend, skills: skills, adapter: Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool)) }
   let(:context) { {skills: skills_context} }
 
   describe "#call" do

@@ -61,6 +61,24 @@ class Riffer::Config
     @tool_runtime = value
   end
 
+  # Global skill activation tool class.
+  #
+  # The tool class the LLM calls to activate a skill. Defaults to
+  # <tt>Riffer::Skills::ActivateTool</tt>. Per-agent override is available
+  # via <tt>skills do; activate_tool ...; end</tt>.
+  attr_reader :skill_activate_tool #: singleton(Riffer::Tool)
+
+  # Sets the global skill activation tool class.
+  #
+  # Raises +Riffer::ArgumentError+ if the value is not a Riffer::Tool subclass.
+  #
+  #--
+  #: (singleton(Riffer::Tool)) -> void
+  def skill_activate_tool=(value)
+    raise Riffer::ArgumentError, "skill_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+    @skill_activate_tool = value
+  end
+
   # Strategy for auto-generating message ids. One of +:none+ (default, no id),
   # +:uuid+ (UUIDv4), or +:uuidv7+ (time-ordered UUIDv7).
   #
@@ -94,6 +112,7 @@ class Riffer::Config
     @openai = OpenAI.new
     @evals = Evals.new
     @tool_runtime = Riffer::ToolRuntime::Inline.new
+    @skill_activate_tool = Riffer::Skills::ActivateTool
     @message_id_strategy = :none
   end
 end

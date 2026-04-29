@@ -3,16 +3,31 @@
 
 # Base class defining the interface for skill adapters.
 #
-# A skill adapter encapsulates the provider-specific behavior for skills:
-# how the skill catalog is rendered in the system prompt, and which tool
-# the LLM calls to activate a skill.
+# A skill adapter encapsulates the provider-specific catalog rendering for
+# skills — how the available-skills section appears in the system prompt.
 #
-# Subclass and override +render_catalog+ and optionally +activate_tool+
-# to customize behavior.
+# Subclass and override +render_catalog+. The activation tool is set at
+# construction time and is exposed via +#skill_activate_tool+ for use in
+# rendered output.
 #
 # See Riffer::Skills::MarkdownAdapter for the default implementation.
 # See Riffer::Skills::XmlAdapter for the Anthropic/Claude variant.
 class Riffer::Skills::Adapter
+  # The activation tool class for this adapter.
+  attr_reader :skill_activate_tool #: singleton(Riffer::Tool)
+
+  # Creates a new adapter.
+  #
+  # [skill_activate_tool] the activation tool class — referenced by name
+  #                       in the rendered catalog so the LLM knows which
+  #                       tool to call.
+  #
+  #--
+  #: (skill_activate_tool: singleton(Riffer::Tool)) -> void
+  def initialize(skill_activate_tool:)
+    @skill_activate_tool = skill_activate_tool
+  end
+
   # Renders a skill catalog section for the system prompt.
   #
   # [skills] array of Frontmatter objects to render.
@@ -23,15 +38,5 @@ class Riffer::Skills::Adapter
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
     raise NotImplementedError, "#{self.class} must implement #render_catalog"
-  end
-
-  # Returns the tool class used to activate skills.
-  #
-  # Override to provide a custom activation tool.
-  #
-  #--
-  #: () -> singleton(Riffer::Tool)
-  def activate_tool
-    Riffer::Skills::ActivateTool
   end
 end

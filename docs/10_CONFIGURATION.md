@@ -54,6 +54,18 @@ end
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
+### Skill Activation Tool
+
+Override the tool the LLM calls to activate a skill. Defaults to `Riffer::Skills::ActivateTool`:
+
+```ruby
+Riffer.configure do |config|
+  config.skill_activate_tool = MyCustomActivateTool
+end
+```
+
+Per-agent override is available inside the `skills` block via `skill_activate_tool MyCustomActivateTool`. See [Skills — Custom Activation Tool](13_SKILLS.md#custom-activation-tool).
+
 ### Message ID Strategy
 
 Opt in to stable identifiers on every message for logging, persistence, or replay:

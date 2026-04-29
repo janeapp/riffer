@@ -88,6 +88,31 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
+  # Returns the tool classes the LLM should see for this agent.
+  #
+  # Class-level companion to the instance #resolved_tools. Resolves the
+  # Proc form of +uses_tools+ and appends the skill activation tool when
+  # a +skills+ block is configured. Does not read the skills backend —
+  # the LLM-facing tool schema reflects class-level intent, not the
+  # runtime state of any backend.
+  #
+  # When +uses_tools+ is a Proc, +context+ is forwarded to it.
+  #
+  # The activation tool class is resolved from the agent's
+  # <tt>skills do; skill_activate_tool ...; end</tt> override when set,
+  # otherwise from <tt>Riffer.config.skill_activate_tool</tt>.
+  #
+  # Raises Riffer::ArgumentError on tool name conflicts with the skill
+  # activation tool.
+  #
+  # --
+  # : (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+  def self.resolved_tool_classes: (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+  def self.resolve_uses_tools_config: (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+
   # Gets or sets the tool runtime for this agent.
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,

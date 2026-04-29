@@ -19,6 +19,7 @@ class Riffer::Skills::Config
     @backend = nil
     @adapter = nil
     @activate = nil
+    @skill_activate_tool = nil
   end
 
   # Gets or sets the skills backend.
@@ -58,5 +59,18 @@ class Riffer::Skills::Config
   def activate(value = nil)
     return @activate if value.nil?
     @activate = value
+  end
+
+  # Gets or sets a per-agent override for the skill activation tool class.
+  #
+  # When unset, falls back to <tt>Riffer.config.skill_activate_tool</tt>.
+  # The override must be a subclass of Riffer::Tool.
+  #
+  #--
+  #: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
+  def skill_activate_tool(value = nil)
+    return @skill_activate_tool if value.nil?
+    raise Riffer::ArgumentError, "skill_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+    @skill_activate_tool = value
   end
 end

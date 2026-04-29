@@ -24,7 +24,8 @@ class Riffer::Skills::Context
   #
   # [backend] the skills backend for reading skill bodies.
   # [skills] skill catalog indexed by name.
-  # [adapter] the adapter used to render skill content.
+  # [adapter] the adapter used to render skill content. The adapter
+  #           carries the activation tool class via its initializer.
   #
   #--
   #: (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void
