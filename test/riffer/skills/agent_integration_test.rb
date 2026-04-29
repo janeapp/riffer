@@ -189,6 +189,89 @@ describe "Agent skills integration" do
     end
   end
 
+  describe ".resolved_tool_classes" do
+    it "returns uses_tools when no skills configured" do
+      tool_class = Class.new(Riffer::Tool) do
+        identifier "my_tool"
+        description "A tool"
+        def call(context:)
+          text("ok")
+        end
+      end
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tool_class]
+      end
+
+      assert_equal ["my_tool"], agent_class.resolved_tool_classes.map(&:name)
+    end
+
+    it "appends skill_activate when skills block is configured, without reading the backend" do
+      backend_class = Class.new(Riffer::Skills::Backend) do
+        def list_skills
+          raise "list_skills should not be called from class-level resolution"
+        end
+
+        def read_skill(name)
+        end
+      end
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend backend_class.new
+        end
+      end
+
+      tool_names = agent_class.resolved_tool_classes.map(&:name)
+      assert_includes tool_names, "skill_activate"
+    end
+
+    it "uses the per-agent skill_activate_tool override" do
+      custom = Class.new(Riffer::Tool) do
+        identifier "my_activate"
+        description "Custom"
+        def call(context:)
+          text("ok")
+        end
+      end
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+          skill_activate_tool custom
+        end
+      end
+
+      tool_names = agent_class.resolved_tool_classes.map(&:name)
+      assert_includes tool_names, "my_activate"
+      refute_includes tool_names, "skill_activate"
+    end
+
+    it "raises on tool name conflict at class level" do
+      conflict_tool = Class.new(Riffer::Tool) do
+        identifier "skill_activate"
+        description "Conflicts"
+        def call(context:)
+          text("ok")
+        end
+      end
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [conflict_tool]
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      error = assert_raises(Riffer::ArgumentError) { agent_class.resolved_tool_classes }
+      assert_match(/Tool name conflict/, error.message)
+    end
+  end
+
   describe "activated skills" do
     it "appends activated skill bodies to skills system message" do
       agent_class = Class.new(Riffer::Agent) do
