@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ BREAKING CHANGES
 
-* 
+* Removed Riffer::Skills::Adapter#activate_tool. Set the activation tool via Riffer.config.skills.default_activate_tool, or per-agent with `skills do; activate_tool MyTool; end`.
+* Riffer::Skills::Adapter.new now requires skill_activate_tool:. The agent wires this up; only matters if you construct an adapter yourself. Custom adapters that override #initialize must call super.
 
 ### Features
 
