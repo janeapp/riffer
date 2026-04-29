@@ -24,7 +24,8 @@ class Riffer::Config
 
   # Skills-related global configuration.
   #
-  # See <tt>Riffer.config.skills.default_activate_tool</tt>.
+  # See <tt>Riffer.config.skills.default_activate_tool</tt> and
+  # <tt>Riffer.config.skills.default_backend</tt>.
   class Skills
     # Default skill activation tool class.
     #
@@ -33,10 +34,18 @@ class Riffer::Config
     # via <tt>skills do; activate_tool ...; end</tt>.
     attr_reader :default_activate_tool #: singleton(Riffer::Tool)
 
+    # Default skills backend.
+    #
+    # Used by agents that declare a +skills+ block without specifying a
+    # backend. Accepts a Riffer::Skills::Backend instance or a Proc.
+    # Defaults to +nil+ (no global default).
+    attr_reader :default_backend #: (Riffer::Skills::Backend | Proc)?
+
     #--
     #: () -> void
     def initialize
       @default_activate_tool = Riffer::Skills::ActivateTool
+      @default_backend = nil
     end
 
     # Sets the default skill activation tool class.
@@ -48,6 +57,19 @@ class Riffer::Config
     def default_activate_tool=(value)
       raise Riffer::ArgumentError, "default_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
       @default_activate_tool = value
+    end
+
+    # Sets the default skills backend.
+    #
+    # Raises +Riffer::ArgumentError+ if the value is not a
+    # Riffer::Skills::Backend instance, a Proc, or +nil+.
+    #
+    #--
+    #: ((Riffer::Skills::Backend | Proc)?) -> void
+    def default_backend=(value)
+      valid = value.nil? || value.is_a?(Riffer::Skills::Backend) || value.is_a?(Proc)
+      raise Riffer::ArgumentError, "default_backend must be a Riffer::Skills::Backend instance, Proc, or nil" unless valid
+      @default_backend = value
     end
   end
 

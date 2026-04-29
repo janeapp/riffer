@@ -187,6 +187,55 @@ describe "Agent skills integration" do
         assert_nil system_message
       end
     end
+
+    it "falls back to Riffer.config.skills.default_backend when agent has no per-agent backend" do
+      original_default = Riffer.config.skills.default_backend
+      Riffer.config.skills.default_backend = Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          # no per-agent backend; should pick up the global default
+        end
+      end
+
+      agent = agent_class.new
+      agent.generate("Hello")
+
+      skills_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Available Skills") }
+      refute_nil skills_message
+      assert_includes skills_message.content, "code-review"
+    ensure
+      Riffer.config.skills.default_backend = original_default
+    end
+
+    it "per-agent backend takes precedence over default_backend" do
+      original_default = Riffer.config.skills.default_backend
+      decoy_backend = Class.new(Riffer::Skills::Backend) do
+        def list_skills
+          raise "default_backend should not be consulted when agent has its own"
+        end
+
+        def read_skill(name)
+        end
+      end.new
+      Riffer.config.skills.default_backend = decoy_backend
+
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      agent = agent_class.new
+      agent.generate("Hello")
+
+      skills_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Available Skills") }
+      refute_nil skills_message
+    ensure
+      Riffer.config.skills.default_backend = original_default
+    end
   end
 
   describe ".resolved_tool_classes" do

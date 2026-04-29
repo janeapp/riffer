@@ -791,7 +791,7 @@ class Riffer::Agent
   def resolve_skills(context = @context)
     return nil unless self.class.skills
 
-    backend = self.class.skills.backend
+    backend = self.class.skills.backend || Riffer.config.skills.default_backend
     return nil unless backend
 
     backend = backend.is_a?(Proc) ? backend.call(context) : backend
