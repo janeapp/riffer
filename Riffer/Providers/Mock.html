@@ -651,6 +651,8 @@
 
         <li ><a href="#method-c-new">new</a></li>
 
+        <li ><a href="#method-c-skills_adapter">skills_adapter</a></li>
+
       </ul>
     </details>
   </div>
@@ -800,7 +802,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 30</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-ivar">@responses</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:responses</span>] <span class="ruby-operator">||</span> []
   <span class="ruby-ivar">@current_index</span> = <span class="ruby-value">0</span>
@@ -815,6 +817,51 @@
 
 
           <p>Initializes the mock provider.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-skills_adapter" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-skills_adapter" title="Link to this method">
+                <span class="method-name">skills_adapter</span>
+                <span class="method-args">(model = nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="skills_adapter-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 18</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills_adapter</span>(<span class="ruby-identifier">model</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">XmlAdapter</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model</span>&amp;.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;claude&quot;</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">MarkdownAdapter</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the preferred skill adapter for the given mock model.</p>
+
+<p><a href="Mock.html"><code>Mock</code></a> is used to stand in for any real provider in tests, so the model string itself is the only signal we have. When the model name contains <code>claude</code> (e.g. <code>mock/claude-sonnet-4-6</code>), pick the XML adapter to mirror what a real Claude-backed provider would do; otherwise fall back to Markdown.</p>
 
 
         </div>
@@ -859,7 +906,7 @@
             </details>
           </div>
           <div class="method-source-code" id="clear_stubs-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 47</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clear_stubs</span>
   <span class="ruby-ivar">@stubbed_responses</span> = []
 <span class="ruby-keyword">end</span></pre>
@@ -901,7 +948,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stub_response-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 32</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stub_response</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> [], <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">formatted_tool_calls</span> = <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">map</span>.<span class="ruby-identifier">with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tc</span>, <span class="ruby-identifier">idx</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolCall</span>.<span class="ruby-identifier">new</span>(

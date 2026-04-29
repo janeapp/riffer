@@ -651,6 +651,8 @@
 
         <li ><a href="#method-c-new">new</a></li>
 
+        <li ><a href="#method-c-skills_adapter">skills_adapter</a></li>
+
       </ul>
     </details>
   </div>
@@ -731,6 +733,14 @@
       </header>
       <dl>
 
+        <dt id="ANTHROPIC_MODEL_PATTERN">ANTHROPIC_MODEL_PATTERN</dt>
+
+        <dd>
+
+          <p>Matches Anthropic models on Bedrock: bare ids like <code>anthropic.claude-3-5-sonnet-20241022-v2:0</code> and cross-region prefixed ids like <code>us.anthropic.claude-sonnet-4-6</code>.</p>
+        </dd>
+
+
         <dt id="BEDROCK_FORMAT_MAP">BEDROCK_FORMAT_MAP</dt>
 
         <dd>
@@ -774,7 +784,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/amazon_bedrock.rb, line 16</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/amazon_bedrock.rb, line 34</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">api_token:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">region:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;aws-sdk-bedrockruntime&quot;</span>
 
@@ -800,6 +810,51 @@
 
 
           <p>Initializes the Amazon Bedrock provider.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-skills_adapter" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-skills_adapter" title="Link to this method">
+                <span class="method-name">skills_adapter</span>
+                <span class="method-args">(model = nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="skills_adapter-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/amazon_bedrock.rb, line 25</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills_adapter</span>(<span class="ruby-identifier">model</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">XmlAdapter</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ANTHROPIC_MODEL_PATTERN</span>.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">model</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">MarkdownAdapter</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the preferred skill adapter for the given Bedrock model.</p>
+
+<p>Bedrock hosts models from multiple vendors. Anthropic models prefer XML-rendered catalogs; everything else falls back to the default Markdown adapter.</p>
 
 
         </div>

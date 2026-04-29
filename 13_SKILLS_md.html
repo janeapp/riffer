@@ -701,7 +701,7 @@ Review the code for:
 <span id="label-Custom+Adapter" class="legacy-anchor"></span>
 <h3 id="custom-adapter"><a href="#custom-adapter">Custom Adapter</a></h3>
 
-<p>The adapter controls how the skill catalog is rendered in the system prompt and which tool the LLM calls to activate a skill. The adapter is auto-selected by provider (Markdown for most, XML for Anthropic). Override with:</p>
+<p>The adapter controls how the skill catalog is rendered in the system prompt and which tool the LLM calls to activate a skill. The adapter is auto-selected by provider, with model-aware fallback for proxy providers — Markdown for most providers, XML for Anthropic, and XML for Anthropic models routed through Amazon Bedrock (e.g. <code>us.anthropic.claude-sonnet-4-6</code>). Override with:</p>
 
 <pre class="ruby"><span class="ruby-identifier">skills</span> <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">backend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">FilesystemBackend</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;.skills&quot;</span>)
