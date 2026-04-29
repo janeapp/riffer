@@ -4,6 +4,18 @@
 #
 # No external gems required.
 class Riffer::Providers::Mock < Riffer::Providers::Base
+  # Returns the preferred skill adapter for the given mock model.
+  #
+  # Mock is used to stand in for any real provider in tests, so the model
+  # string itself is the only signal we have. When the model name contains
+  # +claude+ (e.g. +mock/claude-sonnet-4-6+), pick the XML adapter to
+  # mirror what a real Claude-backed provider would do; otherwise fall
+  # back to Markdown.
+  #
+  # --
+  # : (?String?) -> singleton(Riffer::Skills::Adapter)
+  def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
+
   # Array of recorded method calls for assertions.
   attr_reader calls: Array[Hash[Symbol, untyped]]
 

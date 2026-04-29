@@ -5,6 +5,16 @@ require "test_helper"
 describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
+  describe ".skills_adapter" do
+    it "returns MarkdownAdapter by default" do
+      expect(Riffer::Providers::Base.skills_adapter).must_equal Riffer::Skills::MarkdownAdapter
+    end
+
+    it "ignores the model argument" do
+      expect(Riffer::Providers::Base.skills_adapter("anything/at-all")).must_equal Riffer::Skills::MarkdownAdapter
+    end
+  end
+
   describe "#generate_text" do
     it "raises NotImplementedError when hook methods not implemented" do
       error = expect { provider.generate_text(prompt: "Hello") }.must_raise(NotImplementedError)

@@ -70,7 +70,7 @@ end
 
 ### Custom Adapter
 
-The adapter controls how the skill catalog is rendered in the system prompt and which tool the LLM calls to activate a skill. The adapter is auto-selected by provider (Markdown for most, XML for Anthropic). Override with:
+The adapter controls how the skill catalog is rendered in the system prompt and which tool the LLM calls to activate a skill. The adapter is auto-selected by provider, with model-aware fallback for proxy providers — Markdown for most providers, XML for Anthropic, and XML for Anthropic models routed through Amazon Bedrock (e.g. `us.anthropic.claude-sonnet-4-6`). Override with:
 
 ```ruby
 skills do

@@ -5,6 +5,16 @@ require "test_helper"
 describe Riffer::Providers::Anthropic do
   let(:api_key) { ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") }
 
+  describe ".skills_adapter" do
+    it "returns XmlAdapter without a model" do
+      expect(Riffer::Providers::Anthropic.skills_adapter).must_equal Riffer::Skills::XmlAdapter
+    end
+
+    it "returns XmlAdapter regardless of the model" do
+      expect(Riffer::Providers::Anthropic.skills_adapter("claude-sonnet-4-6")).must_equal Riffer::Skills::XmlAdapter
+    end
+  end
+
   describe "#initialize" do
     it "creates Anthropic client with an api_key" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)

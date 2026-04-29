@@ -9,6 +9,24 @@ require "base64"
 #
 # See https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
+  # Matches Anthropic models on Bedrock: bare ids like
+  # +anthropic.claude-3-5-sonnet-20241022-v2:0+ and cross-region prefixed
+  # ids like +us.anthropic.claude-sonnet-4-6+.
+  ANTHROPIC_MODEL_PATTERN = /(?:^|\.)anthropic\./ #: Regexp
+
+  # Returns the preferred skill adapter for the given Bedrock model.
+  #
+  # Bedrock hosts models from multiple vendors. Anthropic models prefer
+  # XML-rendered catalogs; everything else falls back to the default
+  # Markdown adapter.
+  #
+  #--
+  #: (?String?) -> singleton(Riffer::Skills::Adapter)
+  def self.skills_adapter(model = nil)
+    return Riffer::Skills::XmlAdapter if model && ANTHROPIC_MODEL_PATTERN.match?(model)
+    Riffer::Skills::MarkdownAdapter
+  end
+
   # Initializes the Amazon Bedrock provider.
   #
   #--
