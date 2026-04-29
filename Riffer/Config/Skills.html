@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Skills::XmlAdapter - Riffer Documentation</title>
+<title>class Riffer::Config::Skills - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Skills::XmlAdapter"
+    content="ruby,class,Riffer::Config::Skills"
   >
 
     <meta
       name="description"
-      content="class Riffer::Skills::XmlAdapter: Claude. Renders a skill catalog as XML for the system prompt."
+      content="class Riffer::Config::Skills: Skills-related global configuration. See &lt;tt&gt;Riffer."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Skills::XmlAdapter - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Config::Skills - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Claude. Renders a skill catalog as XML for the system prompt.">
+    <meta property="og:description" content="Skills-related global configuration. See &lt;tt&gt;Riffer.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Skills::XmlAdapter - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Config::Skills - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Claude. Renders a skill catalog as XML for the system prompt.">
+    <meta name="twitter:description" content="Skills-related global configuration. See &lt;tt&gt;Riffer.">
 
 
 
@@ -626,7 +626,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="Adapter.html">Riffer::Skills::Adapter</a><ul><li>Object</li></ul></li></ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -636,6 +636,25 @@
   
 
   
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
 
   <div class="nav-section">
@@ -651,7 +670,9 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-render_catalog">render_catalog</a></li>
+        <li ><a href="#method-i-default_activate_tool-3D">default_activate_tool=</a></li>
+
+        <li ><a href="#method-i-default_backend-3D">default_backend=</a></li>
 
       </ul>
     </details>
@@ -676,7 +697,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-skills-xmladapter">
+<main role="main" aria-labelledby="class-riffer-config-skills">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -689,31 +710,29 @@
       
       <li>
         
-        <a href="../../Riffer/Skills.html">Skills</a><span>::</span>
+        <a href="../../Riffer/Config.html">Config</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>XmlAdapter</span>
+        <span>Skills</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Skills::XmlAdapter" class="legacy-anchor"></span>
-  <h1 id="class-riffer-skills-xmladapter" class="anchor-link class">
-    class Riffer::Skills::XmlAdapter
+  <span id="class-Riffer::Config::Skills" class="legacy-anchor"></span>
+  <h1 id="class-riffer-config-skills" class="anchor-link class">
+    class Riffer::Config::Skills
   </h1>
 
   <section class="description">
     
-<p>XML skill adapter, optimized for Anthropic/Claude.</p>
+<p>Skills-related global configuration.</p>
 
-<p>Renders a skill catalog as XML for the system prompt.</p>
-
-<p>See <a href="MarkdownAdapter.html"><code>Riffer::Skills::MarkdownAdapter</code></a> for the default variant.</p>
+<p>See <code>Riffer.config.skills.default_activate_tool</code> and <code>Riffer.config.skills.default_backend</code>.</p>
 
   </section>
 
@@ -727,10 +746,105 @@
 
 
 
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
+      </header>
+
+
+      <div id="attribute-i-default_activate_tool" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-default_activate_tool" title="Link to this attribute">
+            <span class="method-name">default_activate_tool</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Default skill activation tool class.</p>
+
+<p>The tool class the LLM calls to activate a skill. Defaults to <a href="../Skills/ActivateTool.html"><code>Riffer::Skills::ActivateTool</code></a>. Per-agent override is available via <code>skills do; activate_tool ...; end</code>.</p>
+
+        </div>
+      </div>
+
+      <div id="attribute-i-default_backend" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-default_backend" title="Link to this attribute">
+            <span class="method-name">default_backend</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Default skills backend.</p>
+
+<p>Used by agents that declare a <code>skills</code> block without specifying a backend. Accepts a <a href="../Skills/Backend.html"><code>Riffer::Skills::Backend</code></a> instance or a Proc. Defaults to <code>nil</code> (no global default).</p>
+
+        </div>
+      </div>
+
+    </section>
 
 
 
 
+
+
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
+  <span class="ruby-ivar">@default_activate_tool</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">ActivateTool</span>
+  <span class="ruby-ivar">@default_backend</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
 
 
@@ -744,13 +858,13 @@
        </header>
 
 
-      <div id="method-i-render_catalog" class="method-detail anchor-link ">
+      <div id="method-i-default_activate_tool-3D" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-render_catalog" title="Link to this method">
-                <span class="method-name">render_catalog</span>
-                <span class="method-args">(skills)</span>
+              <a href="#method-i-default_activate_tool-3D" title="Link to this method">
+                <span class="method-name">default_activate_tool=</span>
+                <span class="method-args">(value)</span>
               </a>
             </div>
 
@@ -762,21 +876,11 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="render_catalog-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/xml_adapter.rb, line 18</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render_catalog</span>(<span class="ruby-identifier">skills</span>)
-  <span class="ruby-identifier">lines</span> = []
-  <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;When a user&#39;s request matches a skill description below, call the `#{skill_activate_tool.name}` tool with the skill name. After activation, follow the skill&#39;s instructions.&quot;</span>
-  <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;&quot;</span>
-  <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;&lt;available_skills&gt;&quot;</span>
-  <span class="ruby-identifier">skills</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">skill</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;  &lt;skill&gt;&quot;</span>
-    <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    &lt;name&gt;#{CGI.escapeHTML(skill.name)}&lt;/name&gt;&quot;</span>
-    <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    &lt;description&gt;#{CGI.escapeHTML(skill.description)}&lt;/description&gt;&quot;</span>
-    <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;  &lt;/skill&gt;&quot;</span>
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;&lt;/available_skills&gt;&quot;</span>
-  <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
+          <div class="method-source-code" id="default_activate_tool-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_activate_tool=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;default_activate_tool must be a Riffer::Tool subclass&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-ivar">@default_activate_tool</span> = <span class="ruby-identifier">value</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -785,11 +889,55 @@
         <div class="method-description">
 
 
-          <p>Renders a skill catalog as XML.</p>
-<dl class="rdoc-list label-list"><dt>skills</dt>
-<dd>
-<p>array of Frontmatter objects to render.</p>
-</dd></dl>
+          <p>Sets the default skill activation tool class.</p>
+
+<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if the value is not a <a href="../Tool.html"><code>Riffer::Tool</code></a> subclass.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-default_backend-3D" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-default_backend-3D" title="Link to this method">
+                <span class="method-name">default_backend=</span>
+                <span class="method-args">(value)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="default_backend-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 69</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_backend=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-identifier">valid</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">Backend</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Proc</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;default_backend must be a Riffer::Skills::Backend instance, Proc, or nil&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid</span>
+  <span class="ruby-ivar">@default_backend</span> = <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Sets the default skills backend.</p>
+
+<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if the value is not a <a href="../Skills/Backend.html"><code>Riffer::Skills::Backend</code></a> instance, a Proc, or <code>nil</code>.</p>
 
 
         </div>
