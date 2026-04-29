@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.25.0](https://github.com/janeapp/riffer/compare/riffer/v0.24.2...riffer/v0.25.0) (2026-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed Riffer::Skills::Adapter#activate_tool. Set the activation tool via Riffer.config.skills.default_activate_tool, or per-agent with `skills do; activate_tool MyTool; end`.
+* Riffer::Skills::Adapter.new now requires skill_activate_tool:. The agent wires this up; only matters if you construct an adapter yourself. Custom adapters that override #initialize must call super.
+
+### Features
+
+* class-level tool resolution; lift activation tool to global config ([#230](https://github.com/janeapp/riffer/issues/230)) ([936c4ba](https://github.com/janeapp/riffer/commit/936c4baa6beff4f2cd6c87bfe90be8c20a7f30e1))
+
 ## [0.24.2](https://github.com/janeapp/riffer/compare/riffer/v0.24.1...riffer/v0.24.2) (2026-04-23)
 
 
