@@ -161,7 +161,7 @@ Riffer.config.skill_activate_tool = InstrumentedActivateTool
 class MyAgent < Riffer::Agent
   skills do
     backend Riffer::Skills::FilesystemBackend.new(".skills")
-    skill_activate_tool InstrumentedActivateTool
+    activate_tool InstrumentedActivateTool
   end
 end
 ```

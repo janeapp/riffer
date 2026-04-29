@@ -19,7 +19,7 @@ class Riffer::Skills::Config
     @backend = nil
     @adapter = nil
     @activate = nil
-    @skill_activate_tool = nil
+    @activate_tool = nil
   end
 
   # Gets or sets the skills backend.
@@ -68,9 +68,9 @@ class Riffer::Skills::Config
   #
   #--
   #: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
-  def skill_activate_tool(value = nil)
-    return @skill_activate_tool if value.nil?
-    raise Riffer::ArgumentError, "skill_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
-    @skill_activate_tool = value
+  def activate_tool(value = nil)
+    return @activate_tool if value.nil?
+    raise Riffer::ArgumentError, "activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+    @activate_tool = value
   end
 end

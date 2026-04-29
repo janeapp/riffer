@@ -64,7 +64,7 @@ Riffer.configure do |config|
 end
 ```
 
-Per-agent override is available inside the `skills` block via `skill_activate_tool MyCustomActivateTool`. See [Skills — Custom Activation Tool](13_SKILLS.md#custom-activation-tool).
+Per-agent override is available inside the `skills` block via `activate_tool MyCustomActivateTool`. See [Skills — Custom Activation Tool](13_SKILLS.md#custom-activation-tool).
 
 ### Message ID Strategy
 

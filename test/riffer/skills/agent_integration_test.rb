@@ -228,7 +228,7 @@ describe "Agent skills integration" do
       assert_includes tool_names, "skill_activate"
     end
 
-    it "uses the per-agent skill_activate_tool override" do
+    it "uses the per-agent activate_tool override" do
       custom = Class.new(Riffer::Tool) do
         identifier "my_activate"
         description "Custom"
@@ -241,7 +241,7 @@ describe "Agent skills integration" do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
-          skill_activate_tool custom
+          activate_tool custom
         end
       end
 

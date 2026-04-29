@@ -53,5 +53,5 @@ class Riffer::Skills::Config
   #
   # --
   # : (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
-  def skill_activate_tool: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
+  def activate_tool: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
 end
