@@ -113,6 +113,19 @@ class Riffer::Agent
   # : (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
   def self.resolve_uses_tools_config: (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
 
+  # Opts this agent into tools from all MCP registrations that share any of
+  # the given tag(s).
+  #
+  # +tag+ - a String or Symbol; matched against registration manifest tags.
+  #
+  # : (String | Symbol) -> void
+  def self.use_mcp: (String | Symbol) -> void
+
+  # Returns the accumulated +use_mcp+ configurations for this agent class.
+  #
+  # : () -> Array[Hash[Symbol, untyped]]
+  def self.mcp_configs: () -> Array[Hash[Symbol, untyped]]
+
   # Gets or sets the tool runtime for this agent.
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
@@ -352,6 +365,26 @@ class Riffer::Agent
   def resolve_model: () -> String
 
   # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def resolve_uses_tools_config: () -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def resolve_mcp_tool_classes: () -> Array[singleton(Riffer::Tool)]
+
+  # Each matching MCP registration once, with tag symbols unioned across +use_mcp+ rows.
+  #
+  # : (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
+  def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
+
+  # : (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  def mcp_tools_for_registration: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+
+  # Raises if two or more tool classes share the same +.name+ (ambiguous dispatch).
+  #
+  # : (Array[singleton(Riffer::Tool)]) -> void
+  def assert_distinct_tool_names!: (Array[singleton(Riffer::Tool)]) -> void
+
   # : () -> Array[singleton(Riffer::Tool)]
   def resolved_tools: () -> Array[singleton(Riffer::Tool)]
 

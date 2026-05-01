@@ -1,0 +1,49 @@
+# Generated from lib/riffer/mcp/registration.rb with RBS::Inline
+
+# Per-server state managed by Riffer::Mcp::Registry.
+#
+# Created when a server is registered. Discovers tools via the MCP
+# +tools/list+ call, then generates tool classes.
+class Riffer::Mcp::Registration
+  # The manifest that describes this server.
+  attr_reader manifest: Riffer::Mcp::Manifest
+
+  # Generated Riffer::Tool subclasses.
+  #
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def tools: () -> Array[singleton(Riffer::Tool)]
+
+  # --
+  # : (Riffer::Mcp::Manifest) -> void
+  def initialize: (Riffer::Mcp::Manifest) -> void
+
+  # Retires this registration, preventing in-flight discovery from publishing
+  # state.
+  #
+  # --
+  # : () -> void
+  def retire!: () -> void
+
+  # Returns true if this registration has been retired.
+  #
+  # --
+  # : () -> bool
+  def retired?: () -> bool
+
+  private
+
+  # Runs tool discovery using the configured Runner.
+  #
+  # With +Runner::Sequential+ (default) discovery blocks inline. With
+  # +Runner::Threaded+ discovery runs on a pool thread but +map+ still
+  # blocks the caller — useful for Rails connection-pool isolation.
+  #
+  # --
+  # : () -> void
+  def run_discovery: () -> void
+
+  # --
+  # : () -> Riffer::Mcp::Client
+  def build_client: () -> Riffer::Mcp::Client
+end

@@ -132,9 +132,35 @@ Built-in runtimes:
 
 Context flow: `Agent#execute_tool_calls` → `ToolRuntime#execute(tool_calls, tools:, context:)` → `Runner#map(tool_calls, context:) { dispatch }` → `Tool#call(context:, **args)`
 
+### MCP Integration (`lib/riffer/mcp/`)
+
+Register third-party MCP servers globally; agents opt-in by tag via `use_mcp`. Tags are application-defined (manifests may list several; any overlap with `use_mcp` opts in—see `docs/14_MCP.md`).
+
+```ruby
+Riffer::Mcp.register(
+  name: "github",
+  tags: [:github],
+  endpoint: "https://mcp.github.com",
+  discovery_headers: -> { {"Authorization" => "Bearer #{ENV['GITHUB_TOKEN']}"} }
+)
+
+# Optional: per-run tools/call headers (see docs/14_MCP.md)
+Riffer.configure { |c| c.mcp.credentials = ->(manifest:, matched_tags:, context:) { ... } }
+
+class ResearchAgent < Riffer::Agent
+  model "openai/gpt-5-mini"
+  use_mcp :github                      # picks up any :github-tagged registration
+  use_mcp :search, on_pending: :wait   # per-call override
+end
+```
+
+Key types: `Manifest` (`discovery_headers`, optional `credentials_scope` hint), `Registry` (thread-safe store), `Registration` (spawns discovery thread → `ToolFactory`), `Client` (wraps `mcp` gem), `AuthenticatedTool` (wraps MCP tools when `credentials` proc is set).
+
+**on_pending strategies** (global default `:ignore`): `:ignore` skips the server; `:wait` blocks until ready, re-raises failed discovery immediately, or times out; `:raise` re-raises failed discovery or `NotReadyError` while still pending.
+
 ## Key Patterns
 
-- Model config accepts a `provider/model` string (e.g., `openai/gpt-4`) or a Proc/lambda that returns one
+- Model config accepts a `provider/model` string (e.g., `openai/gpt-5-mini`) or a Proc/lambda that returns one
 - Configuration via `Riffer.configure { |c| c.openai.api_key = "..." }`
 - Providers use `depends_on` helper for runtime dependency checking
 - Zeitwerk for autoloading - file structure must match module/class names
@@ -199,6 +225,14 @@ lib/
       reasoning_done.rb  # Reasoning done event
       web_search_status.rb # Web search status event
       web_search_done.rb   # Web search done event
+    mcp.rb               # MCP public API + error classes
+    mcp/
+      manifest.rb        # Server config value object
+      registry.rb        # Thread-safe global store
+      registration.rb    # Per-server state + discovery thread
+      client.rb          # Thin mcp gem wrapper
+      authenticated_tool.rb  # Wraps MCP tools when credentials proc is configured
+      tool_factory.rb    # Generates Riffer::Tool subclasses from MCP tools
 test/
   test_helper.rb         # Minitest configuration with VCR
   riffer_test.rb         # Main module tests

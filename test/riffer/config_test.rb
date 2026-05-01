@@ -98,4 +98,18 @@ describe Riffer::Config do
       expect { config.message_id_strategy = nil }.must_raise Riffer::ArgumentError
     end
   end
+
+  describe "mcp namespace" do
+    it "initializes credentials to nil" do
+      config = Riffer::Config.new
+      expect(config.mcp.credentials).must_be_nil
+    end
+
+    it "allows setting credentials proc" do
+      config = Riffer::Config.new
+      cred = ->(manifest:, matched_tags:, context:) { {} }
+      config.mcp.credentials = cred
+      expect(config.mcp.credentials).must_equal cred
+    end
+  end
 end

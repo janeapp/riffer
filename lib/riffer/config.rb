@@ -21,6 +21,7 @@ class Riffer::Config
   Gemini = Struct.new(:api_key, :open_timeout, :read_timeout, keyword_init: true)
   OpenAI = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
+  Mcp = Struct.new(:credentials, :discovery_runner, keyword_init: true)
 
   # Skills-related global configuration.
   #
@@ -93,6 +94,17 @@ class Riffer::Config
   # Evals configuration (Struct with +judge_model+).
   attr_reader :evals #: Riffer::Config::Evals
 
+  # MCP configuration (Struct with +credentials+ and +discovery_runner+).
+  #
+  # +credentials+ is an optional Proc for per-run MCP +tools/call+ HTTP headers.
+  # Signature: +->(manifest:, matched_tags:, context:) { Hash or nil }+.
+  # +nil+ from the proc at tool-resolution time omits that server's tools; +nil+
+  # at tool-call time raises Riffer::Mcp::CredentialsDeniedError.
+  #
+  # +discovery_runner+ is the Riffer::Runner used to execute tool discovery
+  # (default +Runner::Sequential+).
+  attr_reader :mcp #: Riffer::Config::Mcp
+
   # Global tool runtime configuration (experimental).
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
@@ -148,6 +160,7 @@ class Riffer::Config
     @gemini = Gemini.new
     @openai = OpenAI.new
     @evals = Evals.new
+    @mcp = Mcp.new(credentials: nil, discovery_runner: Riffer::Runner::Sequential.new)
     @tool_runtime = Riffer::ToolRuntime::Inline.new
     @skills = Skills.new
     @message_id_strategy = :none

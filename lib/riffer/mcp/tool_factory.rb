@@ -1,0 +1,54 @@
+# frozen_string_literal: true
+# rbs_inline: enabled
+
+# Generates anonymous Riffer::Tool subclasses from MCP tool definitions.
+#
+# Each generated class:
+# - Has +.name+, +.description+, and +.parameters_schema+ derived from the MCP tool definition.
+# - Delegates +#call+ to the MCP client's +tools_call+ method.
+# - Skips Riffer's param validation — the MCP server validates inputs.
+#
+module Riffer::Mcp::ToolFactory
+  # Builds one Riffer::Tool subclass per tool definition.
+  #
+  # Tool names are prefixed with the manifest name to avoid collisions
+  # across MCP servers (e.g. +"jira__search"+). The original server-side
+  # name is available via +.mcp_server_tool_name+.
+  #
+  #--
+  #: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+  def self.build(manifest_name, client, tool_defs)
+    tool_defs.map { |td| build_tool_class(manifest_name, client, td) }
+  end
+
+  # Replaces characters that are unsafe in LLM tool names.
+  #: (String) -> String
+  def self.sanitize_name_component(str)
+    str.gsub(/[^a-zA-Z0-9_-]/, "_")
+  end
+  private_class_method :sanitize_name_component
+
+  private_class_method def self.build_tool_class(manifest_name, client, td)
+    prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(td[:name])}"
+
+    Class.new(Riffer::Tool) do
+      @mcp_client = client
+      @mcp_server_tool_name = td[:name]
+      # Set @identifier directly so .identifier does not fall back to
+      # class_name_to_path(nil) on this anonymous class.
+      @identifier = prefixed
+
+      define_singleton_method(:name) { prefixed }
+      define_singleton_method(:mcp_server_tool_name) { td[:name] }
+      define_singleton_method(:description) { td[:description] }
+      define_singleton_method(:parameters_schema) { |strict: false| td[:input_schema] || Riffer::Tool.send(:empty_schema) }
+
+      define_method(:call) do |context:, **kwargs|
+        result = self.class.instance_variable_get(:@mcp_client).tools_call(
+          self.class.instance_variable_get(:@mcp_server_tool_name), kwargs
+        )
+        text(result)
+      end
+    end
+  end
+end

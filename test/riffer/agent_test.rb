@@ -3554,4 +3554,129 @@ describe Riffer::Agent do
       expect(msg.content).must_include "Available Skills"
     end
   end
+
+  describe ".use_mcp / .mcp_configs" do
+    after { clear_mcp_registry! }
+
+    it "returns empty array when no use_mcp calls have been made" do
+      klass = Class.new(Riffer::Agent)
+      expect(klass.mcp_configs).must_equal []
+    end
+
+    it "accumulates mcp_configs from multiple use_mcp calls" do
+      klass = Class.new(Riffer::Agent) do
+        use_mcp :foo
+        use_mcp :bar
+      end
+      expect(klass.mcp_configs.size).must_equal 2
+    end
+
+    it "normalizes tag to symbol" do
+      klass = Class.new(Riffer::Agent) { use_mcp "mytag" }
+      expect(klass.mcp_configs.first[:tags]).must_equal [:mytag]
+    end
+  end
+
+  describe "#resolved_tools with use_mcp" do
+    after { clear_mcp_registry! }
+
+    let(:fake_tool_class) do
+      klass = Class.new(Riffer::Tool)
+      klass.instance_variable_set(:@identifier, "srv__mcp_tool")
+      klass.define_singleton_method(:mcp_server_tool_name) { "mcp_tool" }
+      klass
+    end
+
+    # Builds a stub registration and injects it directly into the registry store.
+    def inject_ready_registration(name:, tags:, tools:)
+      manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com", discovery_headers: {})
+      reg = Riffer::Mcp::Registration.allocate
+      reg.instance_variable_set(:@manifest, manifest)
+      reg.instance_variable_set(:@tools, tools)
+      reg.instance_variable_set(:@mutex, Mutex.new)
+      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
+      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store[name] = reg }
+      reg
+    end
+
+    def resolved_tools_for(klass)
+      instance = klass.allocate
+      instance.instance_variable_set(:@context, nil)
+      instance.send(:resolved_tools)
+    end
+
+    it "merges MCP tools with uses_tools tools" do
+      static_tool = Class.new(Riffer::Tool)
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [static_tool]
+        use_mcp :srv
+      end
+
+      tools = resolved_tools_for(klass)
+      expect(tools).must_include static_tool
+      expect(tools).must_include fake_tool_class
+    end
+
+    it "raises ArgumentError when tools share the same name" do
+      static = Class.new(Riffer::Tool) { identifier "srv__mcp_tool" }
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [static]
+        use_mcp :srv
+      end
+
+      err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/Duplicate tool names:.*srv__mcp_tool/)
+    end
+
+    it "returns MCP tools even when uses_tools is not set" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      expect(resolved_tools_for(klass)).must_include fake_tool_class
+    end
+
+    it "omits MCP tools when credentials proc returns nil at resolve time" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      prev = Riffer.config.mcp.credentials
+      Riffer.config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
+      end
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      expect(resolved_tools_for(klass)).must_be_empty
+    ensure
+      Riffer.config.mcp.credentials = prev
+    end
+
+    it "uses AuthenticatedTool wrappers when credentials proc is set" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      prev = Riffer.config.mcp.credentials
+      Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { {"Authorization" => "Bearer x"} }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv
+      end
+
+      tools = resolved_tools_for(klass)
+      expect(tools.size).must_equal 1
+      expect(tools.first).wont_equal fake_tool_class
+      expect(tools.first.name).must_equal fake_tool_class.name
+    ensure
+      Riffer.config.mcp.credentials = prev
+    end
+  end
 end
