@@ -150,7 +150,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       **params,
       request_options: {extra_headers: {"accept-encoding" => "identity"}}
     )
-    current_state[:stream] = stream
 
     begin
       stream.each do |event|
@@ -173,7 +172,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block_type == "server_tool_use"
           handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block_type == "web_search_tool_result"
         when Anthropic::Streaming::MessageStopEvent
-          handle_message_stop(event, state: current_state, yielder: yielder)
+          handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
       end
     ensure
@@ -287,20 +286,19 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_message_stop(_event, state:, yielder:)
-    final_message = state[:stream].accumulated_message
-    if final_message&.usage
-      usage = final_message.usage
-      yielder << Riffer::StreamEvents::TokenUsageDone.new(
-        token_usage: Riffer::TokenUsage.new(
-          input_tokens: usage.input_tokens,
-          output_tokens: usage.output_tokens,
-          cache_creation_tokens: usage.cache_creation_input_tokens,
-          cache_read_tokens: usage.cache_read_input_tokens
-        )
+  #: (untyped, accumulated_message: Anthropic::Models::Message?, yielder: Enumerator::Yielder) -> void
+  def handle_message_stop(_event, accumulated_message:, yielder:)
+    usage = accumulated_message&.usage
+    return unless usage
+
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(
+      token_usage: Riffer::TokenUsage.new(
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens,
+        cache_creation_tokens: usage.cache_creation_input_tokens,
+        cache_read_tokens: usage.cache_read_input_tokens
       )
-    end
+    )
   end
 
   #--
