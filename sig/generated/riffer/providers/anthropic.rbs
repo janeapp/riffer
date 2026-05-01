@@ -87,8 +87,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def handle_content_block_stop_web_search_result: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_message_stop: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, accumulated_message: Anthropic::Models::Message?, yielder: Enumerator::Yielder) -> void
+  def handle_message_stop: (untyped, accumulated_message: Anthropic::Models::Message?, yielder: Enumerator::Yielder) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
