@@ -152,28 +152,35 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     )
     current_state[:stream] = stream
 
-    stream.each do |event|
-      case event
-      when Anthropic::Models::RawContentBlockStartEvent
-        handle_raw_content_block_start(event, state: current_state)
-      when Anthropic::Models::RawContentBlockDeltaEvent
-        handle_raw_content_block_delta(event, state: current_state)
-      when Anthropic::Streaming::TextEvent
-        handle_text_event(event, state: current_state, yielder: yielder)
-      when Anthropic::Streaming::ThinkingEvent
-        handle_thinking_event(event, state: current_state, yielder: yielder)
-      when Anthropic::Streaming::InputJsonEvent
-        handle_input_json_event(event, state: current_state, yielder: yielder)
-      when Anthropic::Streaming::ContentBlockStopEvent
-        block_type = event.content_block&.type.to_s
-        handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block_type == "text" && current_state[:text]
-        handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
-        handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
-        handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block_type == "server_tool_use"
-        handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block_type == "web_search_tool_result"
-      when Anthropic::Streaming::MessageStopEvent
-        handle_message_stop(event, state: current_state, yielder: yielder)
+    begin
+      stream.each do |event|
+        case event
+        when Anthropic::Models::RawContentBlockStartEvent
+          handle_raw_content_block_start(event, state: current_state)
+        when Anthropic::Models::RawContentBlockDeltaEvent
+          handle_raw_content_block_delta(event, state: current_state)
+        when Anthropic::Streaming::TextEvent
+          handle_text_event(event, state: current_state, yielder: yielder)
+        when Anthropic::Streaming::ThinkingEvent
+          handle_thinking_event(event, state: current_state, yielder: yielder)
+        when Anthropic::Streaming::InputJsonEvent
+          handle_input_json_event(event, state: current_state, yielder: yielder)
+        when Anthropic::Streaming::ContentBlockStopEvent
+          block_type = event.content_block&.type.to_s
+          handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block_type == "text" && current_state[:text]
+          handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
+          handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
+          handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block_type == "server_tool_use"
+          handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block_type == "web_search_tool_result"
+        when Anthropic::Streaming::MessageStopEvent
+          handle_message_stop(event, state: current_state, yielder: yielder)
+        end
       end
+    ensure
+      # Anthropic SDK does not auto-close the underlying HTTP stream when
+      # iteration is interrupted (raise / fiber cancellation), so the SSE
+      # socket leaks until GC. close is idempotent and a no-op after EOF.
+      stream.close
     end
   end
 

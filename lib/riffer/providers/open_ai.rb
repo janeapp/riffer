@@ -124,33 +124,40 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     }
 
     stream = @client.responses.stream(params)
-    stream.each do |event|
-      case event.type
-      when :"response.output_item.added"
-        handle_output_item_added_function_call(event, state: current_state, yielder: yielder) if event.item&.type == :function_call
-      when :"response.output_text.delta"
-        handle_output_text_delta(event, state: current_state, yielder: yielder)
-      when :"response.output_text.done"
-        handle_output_text_done(event, state: current_state, yielder: yielder)
-      when :"response.reasoning_summary_text.delta"
-        handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
-      when :"response.reasoning_summary_text.done"
-        handle_reasoning_summary_text_done(event, state: current_state, yielder: yielder)
-      when :"response.function_call_arguments.delta"
-        handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
-      when :"response.function_call_arguments.done"
-        handle_function_call_arguments_done(event, state: current_state, yielder: yielder)
-      when :"response.web_search_call.in_progress"
-        handle_web_search_status(event, status: "in_progress", yielder: yielder)
-      when :"response.web_search_call.searching"
-        handle_web_search_status(event, status: "searching", yielder: yielder)
-      when :"response.web_search_call.completed"
-        handle_web_search_status(event, status: "completed", yielder: yielder)
-      when :"response.output_item.done"
-        handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
-      when :"response.completed"
-        handle_response_completed(event, state: current_state, yielder: yielder)
+    begin
+      stream.each do |event|
+        case event.type
+        when :"response.output_item.added"
+          handle_output_item_added_function_call(event, state: current_state, yielder: yielder) if event.item&.type == :function_call
+        when :"response.output_text.delta"
+          handle_output_text_delta(event, state: current_state, yielder: yielder)
+        when :"response.output_text.done"
+          handle_output_text_done(event, state: current_state, yielder: yielder)
+        when :"response.reasoning_summary_text.delta"
+          handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
+        when :"response.reasoning_summary_text.done"
+          handle_reasoning_summary_text_done(event, state: current_state, yielder: yielder)
+        when :"response.function_call_arguments.delta"
+          handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
+        when :"response.function_call_arguments.done"
+          handle_function_call_arguments_done(event, state: current_state, yielder: yielder)
+        when :"response.web_search_call.in_progress"
+          handle_web_search_status(event, status: "in_progress", yielder: yielder)
+        when :"response.web_search_call.searching"
+          handle_web_search_status(event, status: "searching", yielder: yielder)
+        when :"response.web_search_call.completed"
+          handle_web_search_status(event, status: "completed", yielder: yielder)
+        when :"response.output_item.done"
+          handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
+        when :"response.completed"
+          handle_response_completed(event, state: current_state, yielder: yielder)
+        end
       end
+    ensure
+      # OpenAI SDK does not auto-close the underlying HTTP stream when
+      # iteration is interrupted (raise / fiber cancellation), so the SSE
+      # socket leaks until GC. close is idempotent and a no-op after EOF.
+      stream.close
     end
   end
 

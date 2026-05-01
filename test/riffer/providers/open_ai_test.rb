@@ -1014,4 +1014,40 @@ describe Riffer::Providers::OpenAI do
       end
     end
   end
+
+  describe "#stream_text resource cleanup" do
+    let(:provider) { Riffer::Providers::OpenAI.new(api_key: "test") }
+
+    def install_stream_double(provider, stream_double)
+      responses_double = Object.new
+      responses_double.define_singleton_method(:stream) { |_params| stream_double }
+      client_double = Object.new
+      client_double.define_singleton_method(:responses) { responses_double }
+      provider.instance_variable_set(:@client, client_double)
+    end
+
+    it "calls stream.close when iteration raises mid-stream" do
+      close_count = 0
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&_block| raise "kaboom" }
+      stream_double.define_singleton_method(:close) { close_count += 1 }
+      install_stream_double(provider, stream_double)
+
+      assert_raises(RuntimeError) do
+        provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+      end
+      expect(close_count).must_equal 1
+    end
+
+    it "calls stream.close exactly once on happy path" do
+      close_count = 0
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&_block| }
+      stream_double.define_singleton_method(:close) { close_count += 1 }
+      install_stream_double(provider, stream_double)
+
+      provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+      expect(close_count).must_equal 1
+    end
+  end
 end
