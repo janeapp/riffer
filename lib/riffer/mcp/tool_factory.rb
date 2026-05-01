@@ -11,29 +11,41 @@
 module Riffer::Mcp::ToolFactory
   # Builds one Riffer::Tool subclass per tool definition.
   #
+  # Tool names are prefixed with the manifest name to avoid collisions
+  # across MCP servers (e.g. +"jira__search"+). The original server-side
+  # name is available via +.mcp_server_tool_name+.
+  #
   #--
-  #: (Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
-  def self.build(client, tool_defs)
-    tool_defs.map { |td| build_tool_class(client, td) }
+  #: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+  def self.build(manifest_name, client, tool_defs)
+    tool_defs.map { |td| build_tool_class(manifest_name, client, td) }
   end
 
-  private_class_method def self.build_tool_class(client, td)
+  # Replaces characters that are unsafe in LLM tool names.
+  #: (String) -> String
+  def self.sanitize_name_component(str)
+    str.gsub(/[^a-zA-Z0-9_-]/, "_")
+  end
+  private_class_method :sanitize_name_component
+
+  private_class_method def self.build_tool_class(manifest_name, client, td)
+    prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(td[:name])}"
+
     Class.new(Riffer::Tool) do
       @mcp_client = client
-      @mcp_tool_name = td[:name]
+      @mcp_server_tool_name = td[:name]
       # Set @identifier directly so .identifier does not fall back to
       # class_name_to_path(nil) on this anonymous class.
-      @identifier = td[:name]
+      @identifier = prefixed
 
-      define_singleton_method(:name) { td[:name] }
+      define_singleton_method(:name) { prefixed }
+      define_singleton_method(:mcp_server_tool_name) { td[:name] }
       define_singleton_method(:description) { td[:description] }
-      # Pass the MCP inputSchema through without strict transforms.
-      # MCP servers are expected to return strict-compatible schemas already.
       define_singleton_method(:parameters_schema) { |strict: false| td[:input_schema] || Riffer::Tool.send(:empty_schema) }
 
       define_method(:call) do |context:, **kwargs|
         result = self.class.instance_variable_get(:@mcp_client).tools_call(
-          self.class.instance_variable_get(:@mcp_tool_name), kwargs
+          self.class.instance_variable_get(:@mcp_server_tool_name), kwargs
         )
         text(result)
       end

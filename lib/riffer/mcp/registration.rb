@@ -59,7 +59,7 @@ class Riffer::Mcp::Registration
     Riffer.config.mcp.discovery_runner.map([nil], context: nil) do |_|
       client = build_client
       tool_defs = client.tools_list
-      tools = Riffer::Mcp::ToolFactory.build(client, tool_defs)
+      tools = Riffer::Mcp::ToolFactory.build(@manifest.name, client, tool_defs)
 
       @mutex.synchronize do
         next if @cancelled

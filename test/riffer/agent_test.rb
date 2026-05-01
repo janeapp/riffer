@@ -3582,7 +3582,8 @@ describe Riffer::Agent do
 
     let(:fake_tool_class) do
       klass = Class.new(Riffer::Tool)
-      klass.instance_variable_set(:@identifier, "mcp_tool")
+      klass.instance_variable_set(:@identifier, "srv__mcp_tool")
+      klass.define_singleton_method(:mcp_server_tool_name) { "mcp_tool" }
       klass
     end
 
@@ -3619,12 +3620,9 @@ describe Riffer::Agent do
       expect(tools).must_include fake_tool_class
     end
 
-    it "raises ArgumentError when static tools and MCP tools share the same name" do
-      static = fake_tool_class
-      conflicting = Class.new(Riffer::Tool) do
-        identifier "mcp_tool"
-      end
-      inject_ready_registration(name: "srv", tags: [:srv], tools: [conflicting])
+    it "raises ArgumentError when tools share the same name" do
+      static = Class.new(Riffer::Tool) { identifier "srv__mcp_tool" }
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
@@ -3633,7 +3631,7 @@ describe Riffer::Agent do
       end
 
       err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
-      expect(err.message).must_match(/Duplicate tool names:.*mcp_tool/)
+      expect(err.message).must_match(/Duplicate tool names:.*srv__mcp_tool/)
     end
 
     it "returns MCP tools even when uses_tools is not set" do

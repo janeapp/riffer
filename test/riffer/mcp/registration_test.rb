@@ -156,7 +156,7 @@ describe Riffer::Mcp::Registration do
       reg.send(:run_discovery)
 
       assert_equal 1, reg.tools.size
-      assert_equal "ping", reg.tools.first.name
+      assert_equal "test-srv__ping", reg.tools.first.name
     end
 
     it "raises when discovery fails" do

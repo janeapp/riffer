@@ -26,6 +26,7 @@ module Riffer::Mcp::AuthenticatedTool
       @identifier = inner.identifier
 
       define_singleton_method(:name) { inner.name }
+      define_singleton_method(:mcp_server_tool_name) { inner.mcp_server_tool_name }
       define_singleton_method(:description) { inner.description }
       define_singleton_method(:parameters_schema) { |strict: false| inner.parameters_schema(strict: strict) }
 
@@ -57,7 +58,7 @@ module Riffer::Mcp::AuthenticatedTool
         end
 
         client = build_call_client(man.endpoint, headers)
-        text(client.tools_call(inner.name, kwargs))
+        text(client.tools_call(inner.mcp_server_tool_name, kwargs))
       end
     end
   end

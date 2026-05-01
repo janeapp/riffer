@@ -5,7 +5,8 @@ require "test_helper"
 describe Riffer::Mcp::AuthenticatedTool do
   let(:inner) do
     Class.new(Riffer::Tool) do
-      define_singleton_method(:name) { "echo" }
+      define_singleton_method(:name) { "srv__echo" }
+      define_singleton_method(:mcp_server_tool_name) { "echo" }
       define_singleton_method(:description) { "E" }
       define_singleton_method(:parameters_schema) { |strict: false| Riffer::Tool.send(:empty_schema) }
 

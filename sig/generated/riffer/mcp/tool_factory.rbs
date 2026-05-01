@@ -9,9 +9,17 @@
 module Riffer::Mcp::ToolFactory
   # Builds one Riffer::Tool subclass per tool definition.
   #
+  # Tool names are prefixed with the manifest name to avoid collisions
+  # across MCP servers (e.g. +"jira__search"+). The original server-side
+  # name is available via +.mcp_server_tool_name+.
+  #
   # --
-  # : (Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
-  def self.build: (Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+  # : (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+  def self.build: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
 
-  def self.build_tool_class: (untyped client, untyped td) -> untyped
+  # Replaces characters that are unsafe in LLM tool names.
+  # : (String) -> String
+  def self.sanitize_name_component: (String) -> String
+
+  def self.build_tool_class: (untyped manifest_name, untyped client, untyped td) -> untyped
 end
