@@ -17,12 +17,13 @@ describe Riffer::Skills::ActivateTool do
       assert_includes result.content, "code review assistant"
     end
 
-    it "returns cached body on re-activation" do
+    it "short-circuits when the skill is already active" do
+      skills_context.activate("code-review")
       tool = Riffer::Skills::ActivateTool.new
-      result1 = tool.call(context: context, name: "code-review")
-      result2 = tool.call(context: context, name: "code-review")
-      assert_equal result1.content, result2.content
-      assert skills_context.activated?("code-review")
+      result = tool.call(context: context, name: "code-review")
+      assert result.success?
+      assert_includes result.content, "already active"
+      refute_includes result.content, "code review assistant"
     end
 
     it "returns error for unknown skill" do

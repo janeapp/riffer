@@ -28,6 +28,10 @@ class Riffer::Skills::ActivateTool < Riffer::Tool
     skills_context = context&.dig(:skills)
     return error("Skills not configured") unless skills_context
 
+    if skills_context.activated?(name)
+      return text("Skill '#{name}' is already active; its instructions are already in your context.")
+    end
+
     text(skills_context.activate(name))
   rescue Riffer::ArgumentError => e
     error(e.message)
