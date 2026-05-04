@@ -102,8 +102,12 @@ class Riffer::Agent
   # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
   # from <tt>Riffer.config.skills.default_activate_tool</tt>.
   #
+  # Each returned tool class is validated via +validate_as_tool!+, so
+  # callers serializing this list to a provider can rely on every entry
+  # having the metadata required for tool use (name + description).
+  #
   # Raises Riffer::ArgumentError on tool name conflicts with the skill
-  # activation tool.
+  # activation tool, or when a tool class fails +validate_as_tool!+.
   #
   # --
   # : (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]

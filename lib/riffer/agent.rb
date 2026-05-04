@@ -146,20 +146,30 @@ class Riffer::Agent
   # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
   # from <tt>Riffer.config.skills.default_activate_tool</tt>.
   #
+  # Each returned tool class is validated via +validate_as_tool!+, so
+  # callers serializing this list to a provider can rely on every entry
+  # having the metadata required for tool use (name + description).
+  #
   # Raises Riffer::ArgumentError on tool name conflicts with the skill
-  # activation tool.
+  # activation tool, or when a tool class fails +validate_as_tool!+.
   #
   #--
   #: (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
   def self.resolved_tool_classes(context: nil)
     base = resolve_uses_tools_config(context)
-    return base unless skills
 
-    skill_activate_tool_class = skills.activate_tool || Riffer.config.skills.default_activate_tool
-    if base.any? { |t| t.name == skill_activate_tool_class.name }
-      raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
+    tools = if skills
+      skill_activate_tool_class = skills.activate_tool || Riffer.config.skills.default_activate_tool
+      if base.any? { |t| t.name == skill_activate_tool_class.name }
+        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
+      end
+      base + [skill_activate_tool_class]
+    else
+      base
     end
-    base + [skill_activate_tool_class]
+
+    tools.each(&:validate_as_tool!)
+    tools
   end
 
   #--
