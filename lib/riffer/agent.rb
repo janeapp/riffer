@@ -834,9 +834,12 @@ class Riffer::Agent
 
   #: () -> Array[singleton(Riffer::Tool)]
   def resolved_tools
-    @resolved_tools ||= self.class.resolved_tool_classes(context: @context) + resolve_mcp_tool_classes
-    assert_distinct_tool_names!(@resolved_tools)
-    @resolved_tools
+    @resolved_tools ||= begin
+      tools = self.class.resolved_tool_classes(context: @context) + resolve_mcp_tool_classes
+      assert_distinct_tool_names!(tools)
+      tools.each(&:validate_as_tool!)
+      tools
+    end
   end
 
   #--
