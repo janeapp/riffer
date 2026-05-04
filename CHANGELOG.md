@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.27.1](https://github.com/janeapp/riffer/compare/riffer/v0.27.0...riffer/v0.27.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* validate tools before sending them to providers ([#240](https://github.com/janeapp/riffer/issues/240)) ([537e2ab](https://github.com/janeapp/riffer/commit/537e2abf16542ba9d19d9fd3ffa649aefbca9c10))
+
 ## [0.27.0](https://github.com/janeapp/riffer/compare/riffer/v0.26.0...riffer/v0.27.0) (2026-05-01)
 
 
