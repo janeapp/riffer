@@ -3581,7 +3581,7 @@ describe Riffer::Agent do
     after { clear_mcp_registry! }
 
     let(:fake_tool_class) do
-      klass = Class.new(Riffer::Tool)
+      klass = Class.new(Riffer::Tool) { description "Fake MCP tool" }
       klass.instance_variable_set(:@identifier, "srv__mcp_tool")
       klass.define_singleton_method(:mcp_server_tool_name) { "mcp_tool" }
       klass
@@ -3606,7 +3606,10 @@ describe Riffer::Agent do
     end
 
     it "merges MCP tools with uses_tools tools" do
-      static_tool = Class.new(Riffer::Tool)
+      static_tool = Class.new(Riffer::Tool) {
+        identifier "static_tool"
+        description "Static tool"
+      }
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
       klass = Class.new(Riffer::Agent) do
@@ -3621,7 +3624,10 @@ describe Riffer::Agent do
     end
 
     it "raises ArgumentError when tools share the same name" do
-      static = Class.new(Riffer::Tool) { identifier "srv__mcp_tool" }
+      static = Class.new(Riffer::Tool) {
+        identifier "srv__mcp_tool"
+        description "Static tool"
+      }
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
       klass = Class.new(Riffer::Agent) do
@@ -3677,6 +3683,23 @@ describe Riffer::Agent do
       expect(tools.first.name).must_equal fake_tool_class.name
     ensure
       Riffer.config.mcp.credentials = prev
+    end
+  end
+
+  describe "#resolved_tools validation" do
+    it "raises when a tool is missing a description" do
+      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [bad_tool]
+      end
+
+      instance = klass.allocate
+      instance.instance_variable_set(:@context, nil)
+
+      err = expect { instance.send(:resolved_tools) }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/must define a description/)
     end
   end
 end
