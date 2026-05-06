@@ -72,6 +72,51 @@ describe Riffer::StructuredOutput do
       expect(result.failure?).must_equal true
     end
 
+    describe "with .from_json_schema" do
+      let(:raw_schema) do
+        {
+          type: "object",
+          properties: {
+            sentiment: {type: "string"},
+            score: {type: "number"}
+          },
+          required: ["sentiment", "score"],
+          additionalProperties: false
+        }
+      end
+
+      it "returns the schema verbatim from json_schema" do
+        so = Riffer::StructuredOutput.from_json_schema(raw_schema)
+        expect(so.json_schema).must_equal raw_schema
+      end
+
+      it "ignores the strict: keyword (the schema is taken as-is)" do
+        so = Riffer::StructuredOutput.from_json_schema(raw_schema)
+        expect(so.json_schema(strict: true)).must_equal raw_schema
+      end
+
+      it "parses JSON and returns the object verbatim" do
+        so = Riffer::StructuredOutput.from_json_schema(raw_schema)
+        result = so.parse_and_validate('{"sentiment":"positive","score":0.9}')
+        expect(result.success?).must_equal true
+        expect(result.object).must_equal({sentiment: "positive", score: 0.9})
+      end
+
+      it "does not validate against the schema (provider enforces it)" do
+        so = Riffer::StructuredOutput.from_json_schema(raw_schema)
+        result = so.parse_and_validate('{"unexpected":"field"}')
+        expect(result.success?).must_equal true
+        expect(result.object).must_equal({unexpected: "field"})
+      end
+
+      it "still surfaces JSON parse errors" do
+        so = Riffer::StructuredOutput.from_json_schema(raw_schema)
+        result = so.parse_and_validate("not json")
+        expect(result.failure?).must_equal true
+        expect(result.error).must_match(/JSON parse error/)
+      end
+    end
+
     describe "with null optional fields" do
       let(:nested_params) do
         params = Riffer::Params.new

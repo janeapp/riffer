@@ -21,6 +21,29 @@ class Riffer::StructuredOutput
     @params = params
   end
 
+  # Builds a StructuredOutput from a pre-built JSON Schema, bypassing the
+  # Params DSL.
+  #
+  # Useful when the schema is generated externally (e.g. from a Pydantic-style
+  # model, dumped JSON, or another tool). The returned object exposes the same
+  # +json_schema+ and +parse_and_validate+ surface as a Params-backed
+  # StructuredOutput. Client-side validation only checks that the LLM produced
+  # parseable JSON whose top level is an object — schema enforcement is left
+  # to the LLM provider, which receives the raw schema verbatim.
+  #
+  #   schema = JSON.parse(File.read("sentiment.schema.json"), symbolize_names: true)
+  #   so = Riffer::StructuredOutput.from_json_schema(schema)
+  #   class SentimentAgent < Riffer::Agent
+  #     model "openai/gpt-5-mini"
+  #     structured_output so
+  #   end
+  #
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::StructuredOutput
+  def self.from_json_schema(schema)
+    new(RawJsonSchema.new(schema))
+  end
+
   # Returns the JSON Schema for this structured output.
   #
   #--
@@ -44,4 +67,31 @@ class Riffer::StructuredOutput
   rescue Riffer::ValidationError => e
     Result.new(error: "Validation error: #{e.message}")
   end
+
+  # Adapter used by StructuredOutput.from_json_schema to make a raw JSON
+  # Schema look like a Riffer::Params for the two methods StructuredOutput
+  # calls on it. Validation is intentionally a pass-through: the LLM provider
+  # already enforces the schema server-side, and bringing in a JSON Schema
+  # validator on the client would be a heavier dependency than this entry
+  # point warrants.
+  class RawJsonSchema
+    #--
+    #: (Hash[Symbol, untyped]) -> void
+    def initialize(schema)
+      @schema = schema
+    end
+
+    #--
+    #: (?strict: bool) -> Hash[Symbol, untyped]
+    def to_json_schema(strict: false)
+      @schema
+    end
+
+    #--
+    #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+    def validate(arguments)
+      arguments
+    end
+  end
+  private_constant :RawJsonSchema
 end

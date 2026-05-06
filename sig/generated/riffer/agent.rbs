@@ -67,11 +67,14 @@ class Riffer::Agent
 
   # Gets or sets the structured output schema for this agent.
   #
-  # Accepts a Riffer::Params instance or a block evaluated against a new Params.
+  # Accepts a Riffer::Params instance, a Riffer::StructuredOutput instance,
+  # or a block evaluated against a new Params. Use
+  # +Riffer::StructuredOutput.from_json_schema+ to pass a pre-built JSON Schema
+  # without going through the Params DSL.
   #
   # --
-  # : (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
-  def self.structured_output: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
+  # : (?(Riffer::Params | Riffer::StructuredOutput)?) ?{ () -> void } -> (Riffer::Params | Riffer::StructuredOutput)?
+  def self.structured_output: (?(Riffer::Params | Riffer::StructuredOutput)?) ?{ () -> void } -> (Riffer::Params | Riffer::StructuredOutput)?
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #

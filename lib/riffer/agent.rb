@@ -95,19 +95,24 @@ class Riffer::Agent
 
   # Gets or sets the structured output schema for this agent.
   #
-  # Accepts a Riffer::Params instance or a block evaluated against a new Params.
+  # Accepts a Riffer::Params instance, a Riffer::StructuredOutput instance,
+  # or a block evaluated against a new Params. Use
+  # +Riffer::StructuredOutput.from_json_schema+ to pass a pre-built JSON Schema
+  # without going through the Params DSL.
   #
   #--
-  #: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
-  def self.structured_output(params = nil, &block)
+  #: (?(Riffer::Params | Riffer::StructuredOutput)?) ?{ () -> void } -> (Riffer::Params | Riffer::StructuredOutput)?
+  def self.structured_output(value = nil, &block)
     if block
       @structured_output = Riffer::Params.new
       @structured_output.instance_eval(&block)
-    elsif params.nil?
+    elsif value.nil?
       @structured_output
     else
-      raise Riffer::ArgumentError, "structured_output must be a Riffer::Params" unless params.is_a?(Riffer::Params)
-      @structured_output = params
+      unless value.is_a?(Riffer::Params) || value.is_a?(Riffer::StructuredOutput)
+        raise Riffer::ArgumentError, "structured_output must be a Riffer::Params or Riffer::StructuredOutput"
+      end
+      @structured_output = value
     end
   end
 
@@ -965,8 +970,12 @@ class Riffer::Agent
   #--
   #: () -> Riffer::StructuredOutput?
   def resolve_structured_output
-    params = self.class.structured_output
-    params ? Riffer::StructuredOutput.new(params) : nil
+    value = self.class.structured_output
+    case value
+    when nil then nil
+    when Riffer::StructuredOutput then value
+    else Riffer::StructuredOutput.new(value)
+    end
   end
 
   #--

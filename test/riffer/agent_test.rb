@@ -750,12 +750,21 @@ describe Riffer::Agent do
       expect(klass.structured_output.parameters.size).must_equal 2
     end
 
-    it "raises ArgumentError for non-Params argument" do
+    it "stores StructuredOutput instance" do
+      so = Riffer::StructuredOutput.from_json_schema({type: "object", properties: {}})
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+      end
+      klass.structured_output(so)
+      expect(klass.structured_output).must_equal so
+    end
+
+    it "raises ArgumentError for non-Params, non-StructuredOutput argument" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
       end
       error = expect { klass.structured_output({sentiment: String}) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/structured_output must be a Riffer::Params/)
+      expect(error.message).must_match(/structured_output must be a Riffer::Params or Riffer::StructuredOutput/)
     end
   end
 
@@ -816,6 +825,28 @@ describe Riffer::Agent do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         structured_output params
+      end
+
+      agent = klass.new
+      provider = agent.send(:provider_instance)
+      provider.stub_response('{"sentiment":"positive"}')
+
+      result = agent.generate("Analyze")
+      expect(result.structured_output).must_equal({sentiment: "positive"})
+    end
+
+    it "works with StructuredOutput.from_json_schema at class level" do
+      schema = {
+        type: "object",
+        properties: {sentiment: {type: "string"}},
+        required: ["sentiment"],
+        additionalProperties: false
+      }
+      so = Riffer::StructuredOutput.from_json_schema(schema)
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        structured_output so
       end
 
       agent = klass.new

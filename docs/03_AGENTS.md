@@ -163,7 +163,7 @@ end
 
 ### structured_output
 
-Configures the agent to return structured JSON responses conforming to a schema. Accepts a `Riffer::Params` instance or a block DSL:
+Configures the agent to return structured JSON responses conforming to a schema. Accepts a `Riffer::Params` instance, a `Riffer::StructuredOutput` instance, or a block DSL:
 
 ```ruby
 class SentimentAgent < Riffer::Agent
@@ -178,6 +178,21 @@ end
 ```
 
 The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
+
+#### From a pre-built JSON Schema
+
+When the schema is generated externally (e.g. exported from another tool or loaded from disk), use `Riffer::StructuredOutput.from_json_schema` to skip the Params DSL:
+
+```ruby
+schema = JSON.parse(File.read("sentiment.schema.json"), symbolize_names: true)
+
+class SentimentAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  structured_output Riffer::StructuredOutput.from_json_schema(schema)
+end
+```
+
+The schema is forwarded verbatim to the provider — no client-side validation runs against it, since the provider enforces the schema server-side. JSON parse errors on the response are still surfaced via `response.structured_output` being `nil`.
 
 #### Nested Objects
 
