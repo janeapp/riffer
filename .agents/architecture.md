@@ -35,6 +35,25 @@ end
 PersonalAgent.generate('Hello!', context: { name: 'Jane' })
 ```
 
+### ExternalAgent (`lib/riffer/external_agent.rb`)
+
+Base class for vendor-mediated agents that drive an external process or SDK rather than the in-process LLM loop. Includes `Riffer::AgentInterface` and provides shared bookkeeping for subclasses: `@messages`, `@token_usage`, and `on_message` callback dispatch via the `record_message` and `accumulate_token_usage` protected helpers. `#generate` and `#stream` inherit `NotImplementedError` bodies from `AgentInterface`; subclasses must override at least `#generate`. Subclasses also implement the abstract `#extract_telemetry(raw_output) -> [TokenUsage, Array<ToolCall>]` hook to keep vendor-output parsing separate from response construction.
+
+```ruby
+class MyExternalAgent < Riffer::ExternalAgent
+  def generate(prompt, files: nil, context: nil)
+    raw = call_vendor(prompt)
+    usage, tool_calls = extract_telemetry(raw)
+    record_message(Riffer::Messages::User.new(prompt))
+    record_message(Riffer::Messages::Assistant.new(raw[:reply]))
+    accumulate_token_usage(usage)
+    Riffer::ExternalAgent::Response.new(raw[:reply], messages: messages.dup, token_usage: token_usage, tool_calls: tool_calls)
+  end
+end
+```
+
+`Riffer::ExternalAgent::Response` extends `AgentResponse` with a `tool_calls` attribute. `Riffer::ExternalAgent::ToolCall` is the value object for each tool invocation (`name`, `arguments`, `result`, `error`).
+
 ### Providers (`lib/riffer/providers/`)
 
 Adapters for LLM APIs. The base class uses a template-method pattern — `generate_text` and `stream_text` orchestrate the flow, delegating to five hook methods each provider implements:
@@ -188,6 +207,10 @@ lib/
     agent_interface.rb   # AgentInterface module (formal contract)
     agent_response.rb    # AgentResponse base class
     agent.rb             # Agent class
+    external_agent.rb    # ExternalAgent base class for vendor-mediated agents
+    external_agent/
+      response.rb        # ExternalAgent::Response (adds tool_calls)
+      tool_call.rb       # ExternalAgent::ToolCall value object
     messages.rb          # Messages namespace/module
     providers.rb         # Providers namespace/module
     param.rb             # Single parameter definition (shared by tools and structured output)

@@ -1,0 +1,24 @@
+# Generated from lib/riffer/external_agent/response.rb with RBS::Inline
+
+# Response from a Riffer::ExternalAgent#generate call.
+#
+# Adds +tool_calls+ to the standard Riffer::AgentResponse surface so callers
+# can introspect the tools the agent invoked during generation.
+#
+#   response = agent.generate("search the docs")
+#   response.content         # the assistant's reply text
+#   response.tool_calls      # Array<Riffer::ExternalAgent::ToolCall>
+class Riffer::ExternalAgent::Response < Riffer::AgentResponse
+  # Tool calls the agent made during this generation.
+  attr_reader tool_calls: Array[Riffer::ExternalAgent::ToolCall]
+
+  # [content] the response content.
+  # [messages] the full message history from the agent conversation.
+  # [token_usage] optional token usage data.
+  # [vendor_metadata] optional provider-specific metadata; frozen on construction.
+  # [tool_calls] tool calls the agent made during this generation.
+  #
+  # --
+  # : (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped], ?tool_calls: Array[Riffer::ExternalAgent::ToolCall]) -> void
+  def initialize: (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped], ?tool_calls: Array[Riffer::ExternalAgent::ToolCall]) -> void
+end

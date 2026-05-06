@@ -1,0 +1,38 @@
+# Generated from lib/riffer/external_agent/tool_call.rb with RBS::Inline
+
+# A single tool invocation made by an external agent during +#generate+.
+#
+# Captures the tool's name, the arguments passed to it, the result it
+# returned, and any error it raised. Populated by an external agent's
+# stream/output parser and exposed via Riffer::ExternalAgent::Response#tool_calls.
+#
+#   call = Riffer::ExternalAgent::ToolCall.new(name: "search", arguments: {q: "ruby"}, result: "match")
+#   call.error?  # => false
+class Riffer::ExternalAgent::ToolCall
+  # The tool's registered name.
+  attr_reader name: String
+
+  # The arguments the agent passed to the tool.
+  attr_reader arguments: Hash[Symbol, untyped]
+
+  # The value the tool returned, or nil if it errored or has not completed.
+  attr_reader result: untyped
+
+  # The error message the tool produced, or nil if it succeeded.
+  attr_reader error: String?
+
+  # [name] the tool's registered name.
+  # [arguments] the arguments the agent passed to the tool.
+  # [result] the value the tool returned.
+  # [error] the error message the tool produced.
+  #
+  # --
+  # : (name: String, arguments: Hash[Symbol, untyped], ?result: untyped, ?error: String?) -> void
+  def initialize: (name: String, arguments: Hash[Symbol, untyped], ?result: untyped, ?error: String?) -> void
+
+  # Returns true if the tool produced an error.
+  #
+  # --
+  # : () -> bool
+  def error?: () -> bool
+end

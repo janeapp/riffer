@@ -32,7 +32,7 @@ describe Riffer::AgentInterface do
 
   describe "#on_message" do
     it "raises NotImplementedError" do
-      expect { stub.on_message { } }.must_raise NotImplementedError
+      expect { stub.on_message {} }.must_raise NotImplementedError
     end
   end
 end
