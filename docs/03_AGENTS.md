@@ -6,6 +6,12 @@ Agents are the central orchestrator in Riffer. They manage the conversation flow
 
 Use an agent when the task is open-ended and the LLM needs to reason, iterate, or call tools to produce a result. If your task follows a fixed sequence of steps with no LLM decision-making, consider a simpler pipeline instead.
 
+## The Agent Contract
+
+`Riffer::AgentInterface` is the formal contract that all agent implementations must satisfy. It declares five instance methods: `#generate`, `#stream`, `#messages`, `#token_usage`, and `#on_message`. `Riffer::Agent` includes this module and provides the full implementation. Third-party or vendor-mediated agent classes should include `Riffer::AgentInterface` and override each method.
+
+All `#generate` and `#stream` implementations return a `Riffer::AgentResponse` (or a subclass). The base response carries `content`, `messages`, `token_usage`, and `vendor_metadata`. `Riffer::Agent::Response` extends this with loop-specific attributes (`tripwire`, `interrupted?`, `structured_output`, etc.).
+
 ## Defining an Agent
 
 Create an agent by subclassing `Riffer::Agent`:

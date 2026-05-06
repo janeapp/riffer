@@ -1,0 +1,58 @@
+# Generated from lib/riffer/agent_interface.rb with RBS::Inline
+
+# Declares the public method contract that any Riffer agent implementation must satisfy.
+#
+# Include this module in any class that wants to act as a Riffer agent.
+# All methods raise +NotImplementedError+ unless overridden by the including class.
+#
+# Riffer::Agent already satisfies this contract. Third-party agent implementations
+# (e.g. vendor-mediated agents) should include this module and override each method.
+#
+#   class MyExternalAgent
+#     include Riffer::AgentInterface
+#
+#     def generate(prompt_or_messages, files: nil, context: nil)
+#       # call the vendor API and return a Riffer::AgentResponse
+#     end
+#
+#     # ...
+#   end
+module Riffer::AgentInterface
+  # Generates a response for the given prompt or messages.
+  #
+  # [prompt_or_messages] a String prompt or Array of message objects.
+  # [files] optional file attachments.
+  # [context] optional context hash forwarded to tools, guardrails, and dynamic config.
+  #
+  # --
+  # : ((String | Array[untyped]), ?files: Array[untyped]?, ?context: Hash[Symbol, untyped]?) -> Riffer::AgentResponse
+  def generate: (String | Array[untyped], ?files: Array[untyped]?, ?context: Hash[Symbol, untyped]?) -> Riffer::AgentResponse
+
+  # Streams a response for the given prompt or messages.
+  #
+  # [prompt_or_messages] a String prompt or Array of message objects.
+  # [files] optional file attachments.
+  # [context] optional context hash forwarded to tools, guardrails, and dynamic config.
+  #
+  # --
+  # : ((String | Array[untyped]), ?files: Array[untyped]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[untyped, void]
+  def stream: (String | Array[untyped], ?files: Array[untyped]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[untyped, void]
+
+  # Returns the message history for this agent.
+  #
+  # --
+  # : () -> Array[Riffer::Messages::Base]
+  def messages: () -> Array[Riffer::Messages::Base]
+
+  # Returns cumulative token usage across all LLM calls.
+  #
+  # --
+  # : () -> Riffer::TokenUsage?
+  def token_usage: () -> Riffer::TokenUsage?
+
+  # Registers a callback invoked when messages are added during generation.
+  #
+  # --
+  # : () { (Riffer::Messages::Base) -> void } -> self
+  def on_message: () { (Riffer::Messages::Base) -> void } -> self
+end

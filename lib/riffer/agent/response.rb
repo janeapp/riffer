@@ -12,10 +12,7 @@
 #   else
 #     puts response.content
 #   end
-class Riffer::Agent::Response
-  # The response content.
-  attr_reader :content #: String
-
+class Riffer::Agent::Response < Riffer::AgentResponse
   # The tripwire if execution was blocked.
   attr_reader :tripwire #: Riffer::Guardrails::Tripwire?
 
@@ -27,9 +24,6 @@ class Riffer::Agent::Response
 
   # The parsed structured output, if structured output was configured.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
-
-  # The full message history from the agent conversation.
-  attr_reader :messages #: Array[Riffer::Messages::Base]
 
   # Creates a new response.
   #
@@ -44,13 +38,12 @@ class Riffer::Agent::Response
   #--
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base]) -> void
   def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [])
-    @content = content
+    super(content, messages: messages)
     @tripwire = tripwire
     @modifications = modifications
     @interrupted = interrupted
     @interrupt_reason = interrupt_reason
     @structured_output = structured_output
-    @messages = messages
   end
 
   # Returns true if the response was blocked by a guardrail.

@@ -1,0 +1,42 @@
+# Generated from lib/riffer/agent_response.rb with RBS::Inline
+
+# Base class for agent generation responses.
+#
+# Carries attributes that are meaningful across all agent implementations:
+# the final content, full message history, token usage, and any
+# vendor-specific metadata. Loop-specific attributes (tripwires, interrupts,
+# structured output) belong on subclasses such as Riffer::Agent::Response.
+#
+#   response = agent.generate("Hello")
+#   puts response.content
+#   puts response.success?
+class Riffer::AgentResponse
+  # The response content.
+  attr_reader content: String
+
+  # The full message history from the agent conversation.
+  attr_reader messages: Array[Riffer::Messages::Base]
+
+  # Cumulative token usage for this response.
+  attr_reader token_usage: Riffer::TokenUsage?
+
+  # Provider-specific metadata, frozen on construction.
+  attr_reader vendor_metadata: Hash[Symbol, untyped]
+
+  # Creates a new agent response.
+  #
+  # [content] the response content.
+  # [messages] the full message history from the agent conversation.
+  # [token_usage] optional token usage data.
+  # [vendor_metadata] optional provider-specific metadata hash; frozen on construction.
+  #
+  # --
+  # : (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped]) -> void
+  def initialize: (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped]) -> void
+
+  # Returns true. Subclasses may override to signal failure.
+  #
+  # --
+  # : () -> bool
+  def success?: () -> bool
+end

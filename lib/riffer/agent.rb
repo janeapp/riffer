@@ -19,6 +19,7 @@ require "json"
 #   agent.generate('Hello!')
 #
 class Riffer::Agent
+  include Riffer::AgentInterface
   include Riffer::Messages::Converter
   extend Riffer::Helpers::ClassNameConverter
   extend Riffer::Helpers::Validations

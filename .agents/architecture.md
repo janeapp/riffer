@@ -2,9 +2,17 @@
 
 ## Core Components
 
+### AgentInterface (`lib/riffer/agent_interface.rb`)
+
+Module that declares the formal public contract for any Riffer agent implementation. Defines five instance methods: `#generate`, `#stream`, `#messages`, `#token_usage`, and `#on_message`. All raise `NotImplementedError` unless overridden. Include this module in any class that should be treated as a Riffer agent without subclassing `Riffer::Agent` (e.g. vendor-mediated external agents).
+
+### AgentResponse (`lib/riffer/agent_response.rb`)
+
+Base class for all agent responses. Carries attributes that are meaningful across all agent implementations: `content`, `messages`, `token_usage`, `vendor_metadata` (frozen Hash), and `success?` (default `true`). Subclasses add implementation-specific attributes. `vendor_metadata` is frozen on construction to prevent accidental mutation.
+
 ### Agent (`lib/riffer/agent.rb`)
 
-Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, `structured_output`, and `skills` to configure. Orchestrates message flow, LLM calls, tool execution, structured output parsing, and skill activation via a generate/stream loop.
+Base class for AI agents. Includes `Riffer::AgentInterface` and satisfies the full interface contract. Subclass and use DSL methods `model`, `instructions`, `structured_output`, and `skills` to configure. Orchestrates message flow, LLM calls, tool execution, structured output parsing, and skill activation via a generate/stream loop.
 
 ```ruby
 class EchoAgent < Riffer::Agent
@@ -177,6 +185,8 @@ lib/
     version.rb           # VERSION constant
     config.rb            # Configuration class
     core.rb              # Core functionality
+    agent_interface.rb   # AgentInterface module (formal contract)
+    agent_response.rb    # AgentResponse base class
     agent.rb             # Agent class
     messages.rb          # Messages namespace/module
     providers.rb         # Providers namespace/module
