@@ -418,4 +418,43 @@ describe Riffer::Params do
       expect(schema[:properties]["name"][:type]).must_equal "string"
     end
   end
+
+  describe "#to_h / .from_h" do
+    it "round-trips an empty params collection" do
+      params = Riffer::Params.new
+      restored = Riffer::Params.from_h(params.to_h)
+      expect(restored.parameters).must_be_empty
+    end
+
+    it "round-trips multiple params preserving order" do
+      params = Riffer::Params.new
+      params.required(:city, String)
+      params.optional(:units, String, default: "celsius", enum: ["celsius", "fahrenheit"])
+
+      restored = Riffer::Params.from_h(params.to_h)
+      expect(restored.parameters.length).must_equal 2
+      expect(restored.parameters[0].name).must_equal :city
+      expect(restored.parameters[0].required).must_equal true
+      expect(restored.parameters[1].name).must_equal :units
+      expect(restored.parameters[1].default).must_equal "celsius"
+      expect(restored.parameters[1].enum).must_equal ["celsius", "fahrenheit"]
+    end
+
+    it "round-trips deeply nested params" do
+      params = Riffer::Params.new
+      params.required(:order, Hash) do
+        required(:items, Array) do
+          required(:sku, String)
+          optional(:quantity, Integer, default: 1)
+        end
+      end
+
+      restored = Riffer::Params.from_h(params.to_h)
+      order = restored.parameters.first
+      items = order.nested_params.parameters.first
+      sku = items.nested_params.parameters.first
+      expect(sku.name).must_equal :sku
+      expect(sku.type).must_equal String
+    end
+  end
 end

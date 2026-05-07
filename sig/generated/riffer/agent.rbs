@@ -203,6 +203,74 @@ class Riffer::Agent
   # : (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 
+  # Serializes the agent class definition into a JSON-safe hash.
+  #
+  # Designed for distributed setups where one process composes the agent
+  # and another runs it. Procs (model, instructions, uses_tools, skills
+  # activate) are resolved against +context+ at call time, so the result
+  # is a frozen snapshot — the receiver gets the values produced for the
+  # given context, not the procs themselves.
+  #
+  # Two slots are intentionally omitted because they are expected to be
+  # carried in the messages array sent alongside the config:
+  #
+  # * +instructions+ — its rendered text lives in the system message
+  #   (use #generate_instruction_message to build it)
+  # * +skills+ block — the catalog and any pre-activated skill bodies
+  #   live in the skills system message (use #generate_skills_message)
+  #
+  # The skill activation tool is still carried via the +tools+ list
+  # (resolved through resolved_tool_classes), so the receiver can expose
+  # it to the LLM. Whether activation is serviceable on the receiver is
+  # an integration concern — it requires +context[:skills]+ to be wired
+  # at run time, which is outside this method's scope.
+  #
+  # Raises Riffer::SerializationError when a slot holds a value that has
+  # no portable representation (e.g. a tool_runtime instance or Proc).
+  #
+  # --
+  # : (?context: Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
+  def self.to_config: (?context: Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
+
+  # Builds a fresh anonymous Agent subclass from a hash produced by
+  # +#to_config+.
+  #
+  # Class names in the hash (tools, tool_runtime, guardrails) are
+  # resolved via +Object.const_get+, so they must be loadable on the
+  # receiving process.
+  #
+  # The +instructions+ and +skills+ slots are not rebuilt here — the
+  # caller is expected to feed pre-built messages (system + skills +
+  # user) into the resulting agent's #generate via the array form, which
+  # bypasses the system-message prepending in #initialize_messages.
+  #
+  #   agent_class = Riffer::Agent.from_config(payload[:config])
+  #   agent_class.new.generate(payload[:messages])
+  #
+  # --
+  # : (Hash[Symbol, untyped]) -> singleton(Riffer::Agent)
+  def self.from_config: (Hash[Symbol, untyped]) -> singleton(Riffer::Agent)
+
+  # --
+  # : (untyped, Hash[Symbol, untyped]?) -> untyped
+  def self.resolve_config_value: (untyped, Hash[Symbol, untyped]?) -> untyped
+
+  # --
+  # : (untyped, String) -> String?
+  def self.serialize_class_ref: (untyped, String) -> String?
+
+  # Returns the Ruby constant name for a class, even when the class
+  # overrides +.name+ (e.g. Riffer::Tool subclasses use +.name+ as the
+  # tool identifier rather than the constant name).
+  #
+  # --
+  # : (Class) -> String
+  def self.ruby_class_name: (Class) -> String
+
+  # --
+  # : (Numeric) -> (Numeric | String)
+  def self.serialize_max_steps: (Numeric) -> (Numeric | String)
+
   # The message history for the agent.
   attr_reader messages: Array[Riffer::Messages::Base]
 

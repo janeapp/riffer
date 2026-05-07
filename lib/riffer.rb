@@ -31,6 +31,10 @@ module Riffer
   # Raised when a tool encounters an expected execution error.
   class ToolExecutionError < Error; end
 
+  # Raised when an agent class cannot be serialized (e.g., a slot holds an
+  # instance or Proc that has no portable representation).
+  class SerializationError < Error; end
+
   # Returns the Riffer configuration.
   #
   #--

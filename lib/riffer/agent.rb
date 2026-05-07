@@ -314,6 +314,142 @@ class Riffer::Agent
     @guardrails[phase] || []
   end
 
+  # Serializes the agent class definition into a JSON-safe hash.
+  #
+  # Designed for distributed setups where one process composes the agent
+  # and another runs it. Procs (model, instructions, uses_tools, skills
+  # activate) are resolved against +context+ at call time, so the result
+  # is a frozen snapshot — the receiver gets the values produced for the
+  # given context, not the procs themselves.
+  #
+  # Two slots are intentionally omitted because they are expected to be
+  # carried in the messages array sent alongside the config:
+  #
+  # * +instructions+ — its rendered text lives in the system message
+  #   (use #generate_instruction_message to build it)
+  # * +skills+ block — the catalog and any pre-activated skill bodies
+  #   live in the skills system message (use #generate_skills_message)
+  #
+  # The skill activation tool is still carried via the +tools+ list
+  # (resolved through resolved_tool_classes), so the receiver can expose
+  # it to the LLM. Whether activation is serviceable on the receiver is
+  # an integration concern — it requires +context[:skills]+ to be wired
+  # at run time, which is outside this method's scope.
+  #
+  # Raises Riffer::SerializationError when a slot holds a value that has
+  # no portable representation (e.g. a tool_runtime instance or Proc).
+  #
+  #--
+  #: (?context: Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
+  def self.to_config(context: nil)
+    {
+      identifier: identifier,
+      model: resolve_config_value(model, context),
+      provider_options: provider_options,
+      model_options: model_options,
+      max_steps: serialize_max_steps(max_steps),
+      structured_output: structured_output&.to_h,
+      tools: resolved_tool_classes(context: context).map { |t| ruby_class_name(t) },
+      tool_runtime: serialize_class_ref(tool_runtime, "tool_runtime"),
+      mcp_configs: mcp_configs.map { |c| {tags: c[:tags].map(&:to_s)} },
+      guardrails: {
+        before: guardrails_for(:before).map { |g| {class: ruby_class_name(g[:class]), options: g[:options]} },
+        after: guardrails_for(:after).map { |g| {class: ruby_class_name(g[:class]), options: g[:options]} }
+      }
+    }
+  end
+
+  # Builds a fresh anonymous Agent subclass from a hash produced by
+  # +#to_config+.
+  #
+  # Class names in the hash (tools, tool_runtime, guardrails) are
+  # resolved via +Object.const_get+, so they must be loadable on the
+  # receiving process.
+  #
+  # The +instructions+ and +skills+ slots are not rebuilt here — the
+  # caller is expected to feed pre-built messages (system + skills +
+  # user) into the resulting agent's #generate via the array form, which
+  # bypasses the system-message prepending in #initialize_messages.
+  #
+  #   agent_class = Riffer::Agent.from_config(payload[:config])
+  #   agent_class.new.generate(payload[:messages])
+  #
+  #--
+  #: (Hash[Symbol, untyped]) -> singleton(Riffer::Agent)
+  def self.from_config(config)
+    klass = Class.new(self) #: singleton(Riffer::Agent)
+    klass.class_eval do
+      identifier config[:identifier] if config[:identifier]
+      model config[:model] if config[:model]
+      provider_options(config[:provider_options]) if config[:provider_options]
+      model_options(config[:model_options]) if config[:model_options]
+      if config.key?(:max_steps)
+        ms = config[:max_steps]
+        max_steps((ms == "infinity") ? Float::INFINITY : ms)
+      end
+
+      if (so = config[:structured_output])
+        structured_output(Riffer::Params.from_h(so))
+      end
+
+      if (tools = config[:tools])
+        uses_tools(tools.map { |n| Object.const_get(n) })
+      end
+
+      if (tr = config[:tool_runtime])
+        tool_runtime(Object.const_get(tr))
+      end
+
+      (config[:mcp_configs] || []).each do |c|
+        (c[:tags] || []).each { |t| use_mcp(t.to_sym) }
+      end
+
+      (config.dig(:guardrails, :before) || []).each do |g|
+        guardrail(:before, with: Object.const_get(g[:class]), **(g[:options] || {}))
+      end
+      (config.dig(:guardrails, :after) || []).each do |g|
+        guardrail(:after, with: Object.const_get(g[:class]), **(g[:options] || {}))
+      end
+    end
+    klass
+  end
+
+  #--
+  #: (untyped, Hash[Symbol, untyped]?) -> untyped
+  def self.resolve_config_value(value, context)
+    return value unless value.is_a?(Proc)
+    value.arity.zero? ? value.call : value.call(context)
+  end
+  private_class_method :resolve_config_value
+
+  #--
+  #: (untyped, String) -> String?
+  def self.serialize_class_ref(value, slot)
+    return nil if value.nil?
+    return ruby_class_name(value) if value.is_a?(Class)
+    raise Riffer::SerializationError,
+      "#{slot} cannot be serialized: expected a class reference, got #{value.class}"
+  end
+  private_class_method :serialize_class_ref
+
+  # Returns the Ruby constant name for a class, even when the class
+  # overrides +.name+ (e.g. Riffer::Tool subclasses use +.name+ as the
+  # tool identifier rather than the constant name).
+  #
+  #--
+  #: (Class) -> String
+  def self.ruby_class_name(klass)
+    Module.instance_method(:name).bind_call(klass)
+  end
+  private_class_method :ruby_class_name
+
+  #--
+  #: (Numeric) -> (Numeric | String)
+  def self.serialize_max_steps(value)
+    (value == Float::INFINITY) ? "infinity" : value
+  end
+  private_class_method :serialize_max_steps
+
   # The message history for the agent.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 

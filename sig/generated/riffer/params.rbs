@@ -36,6 +36,20 @@ class Riffer::Params
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # Returns a JSON-safe hash representation of this Params collection.
+  #
+  # See Riffer::Param#to_h.
+  #
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+
+  # Builds a Params from a hash produced by +#to_h+.
+  #
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Params
+  def self.from_h: (Hash[Symbol, untyped]) -> Riffer::Params
+
   # Converts all parameters to JSON Schema format.
   #
   # When +strict+ is true, every property appears in +required+ and

@@ -98,6 +98,28 @@ class Riffer::Params
     validated
   end
 
+  # Returns a JSON-safe hash representation of this Params collection.
+  #
+  # See Riffer::Param#to_h.
+  #
+  #--
+  #: () -> Hash[Symbol, untyped]
+  def to_h
+    {parameters: @parameters.map(&:to_h)}
+  end
+
+  # Builds a Params from a hash produced by +#to_h+.
+  #
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Params
+  def self.from_h(hash)
+    instance = new
+    (hash[:parameters] || []).each do |param_hash|
+      instance.parameters << Riffer::Param.from_h(param_hash)
+    end
+    instance
+  end
+
   # Converts all parameters to JSON Schema format.
   #
   # When +strict+ is true, every property appears in +required+ and

@@ -42,6 +42,24 @@ class Riffer::Param
   # : () -> String
   def type_name: () -> String
 
+  # Returns a JSON-safe hash representation of this parameter.
+  #
+  # Class objects (+type+, +item_type+) are serialized as their +.name+;
+  # nested params recurse through Riffer::Params#to_h.
+  #
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+
+  # Builds a Param from a hash produced by +#to_h+.
+  #
+  # Class names are resolved via +Object.const_get+, so the named classes
+  # must be loadable on the current process.
+  #
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Param
+  def self.from_h: (Hash[Symbol, untyped]) -> Riffer::Param
+
   # Converts this parameter to JSON Schema format.
   #
   # When +strict+ is true, optional parameters are made nullable

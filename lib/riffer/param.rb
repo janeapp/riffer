@@ -64,6 +64,46 @@ class Riffer::Param
     TYPE_MAPPINGS[type] || type.to_s.downcase
   end
 
+  # Returns a JSON-safe hash representation of this parameter.
+  #
+  # Class objects (+type+, +item_type+) are serialized as their +.name+;
+  # nested params recurse through Riffer::Params#to_h.
+  #
+  #--
+  #: () -> Hash[Symbol, untyped]
+  def to_h
+    {
+      name: name,
+      type: type.name,
+      required: required,
+      description: description,
+      enum: enum,
+      default: default,
+      item_type: item_type&.name,
+      nested_params: nested_params&.to_h
+    }.compact
+  end
+
+  # Builds a Param from a hash produced by +#to_h+.
+  #
+  # Class names are resolved via +Object.const_get+, so the named classes
+  # must be loadable on the current process.
+  #
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Param
+  def self.from_h(hash)
+    new(
+      name: hash[:name].to_sym,
+      type: Object.const_get(hash[:type]),
+      required: hash[:required],
+      description: hash[:description],
+      enum: hash[:enum],
+      default: hash[:default],
+      item_type: hash[:item_type] && Object.const_get(hash[:item_type]),
+      nested_params: hash[:nested_params] && Riffer::Params.from_h(hash[:nested_params])
+    )
+  end
+
   # Converts this parameter to JSON Schema format.
   #
   # When +strict+ is true, optional parameters are made nullable

@@ -194,4 +194,50 @@ describe Riffer::Param do
       expect(schema[:items][:required]).must_equal ["product", "quantity"]
     end
   end
+
+  describe "#to_h / .from_h" do
+    it "round-trips primitive params" do
+      param = Riffer::Param.new(
+        name: :city,
+        type: String,
+        required: true,
+        description: "The city name",
+        enum: ["NYC", "SF"]
+      )
+      restored = Riffer::Param.from_h(param.to_h)
+      expect(restored.name).must_equal :city
+      expect(restored.type).must_equal String
+      expect(restored.required).must_equal true
+      expect(restored.description).must_equal "The city name"
+      expect(restored.enum).must_equal ["NYC", "SF"]
+    end
+
+    it "round-trips Riffer::Boolean type" do
+      param = Riffer::Param.new(name: :verbose, type: Riffer::Boolean, required: false, default: false)
+      restored = Riffer::Param.from_h(param.to_h)
+      expect(restored.type).must_equal Riffer::Boolean
+      expect(restored.default).must_equal false
+    end
+
+    it "round-trips Array params with item_type" do
+      param = Riffer::Param.new(name: :tags, type: Array, required: true, item_type: String)
+      restored = Riffer::Param.from_h(param.to_h)
+      expect(restored.type).must_equal Array
+      expect(restored.item_type).must_equal String
+    end
+
+    it "round-trips nested params" do
+      nested = Riffer::Params.new
+      nested.required(:street, String)
+      param = Riffer::Param.new(name: :address, type: Hash, required: true, nested_params: nested)
+      restored = Riffer::Param.from_h(param.to_h)
+      expect(restored.nested_params).must_be_instance_of Riffer::Params
+      expect(restored.nested_params.parameters.first.name).must_equal :street
+    end
+
+    it "produces a JSON-safe hash" do
+      param = Riffer::Param.new(name: :city, type: String, required: true)
+      JSON.parse(param.to_h.to_json) # must not raise
+    end
+  end
 end
