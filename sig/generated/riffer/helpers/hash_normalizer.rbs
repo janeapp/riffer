@@ -1,0 +1,14 @@
+# Generated from lib/riffer/helpers/hash_normalizer.rb with RBS::Inline
+
+# Helper for normalizing hash keys after deserialization.
+#
+# JSON.parse without +symbolize_names: true+ produces string-keyed
+# hashes; the +from_h+ / +from_config+ entry points use this to accept
+# either form transparently.
+module Riffer::Helpers::HashNormalizer
+  # Recursively converts hash keys to symbols.
+  #
+  # --
+  # : (untyped) -> untyped
+  def self?.deep_symbolize_keys: (untyped) -> untyped
+end

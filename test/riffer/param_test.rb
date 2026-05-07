@@ -235,9 +235,20 @@ describe Riffer::Param do
       expect(restored.nested_params.parameters.first.name).must_equal :street
     end
 
-    it "produces a JSON-safe hash" do
-      param = Riffer::Param.new(name: :city, type: String, required: true)
-      JSON.parse(param.to_h.to_json) # must not raise
+    it "round-trips through JSON without symbolize_names" do
+      param = Riffer::Param.new(
+        name: :city,
+        type: String,
+        required: true,
+        description: "The city name",
+        enum: ["NYC", "SF"]
+      )
+      restored = Riffer::Param.from_h(JSON.parse(param.to_h.to_json))
+      expect(restored.name).must_equal :city
+      expect(restored.type).must_equal String
+      expect(restored.required).must_equal true
+      expect(restored.description).must_equal "The city name"
+      expect(restored.enum).must_equal ["NYC", "SF"]
     end
   end
 end

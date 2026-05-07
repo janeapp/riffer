@@ -110,9 +110,13 @@ class Riffer::Params
 
   # Builds a Params from a hash produced by +#to_h+.
   #
+  # Accepts both symbol-keyed and string-keyed hashes (e.g. from
+  # +JSON.parse+ without +symbolize_names: true+).
+  #
   #--
-  #: (Hash[Symbol, untyped]) -> Riffer::Params
+  #: (Hash[untyped, untyped]) -> Riffer::Params
   def self.from_h(hash)
+    hash = Riffer::Helpers::HashNormalizer.deep_symbolize_keys(hash)
     instance = new
     (hash[:parameters] || []).each do |param_hash|
       instance.parameters << Riffer::Param.from_h(param_hash)

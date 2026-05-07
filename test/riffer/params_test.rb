@@ -440,6 +440,14 @@ describe Riffer::Params do
       expect(restored.parameters[1].enum).must_equal ["celsius", "fahrenheit"]
     end
 
+    it "accepts string-keyed hashes (e.g. JSON.parse without symbolize_names)" do
+      params = Riffer::Params.new
+      params.required(:city, String, description: "where")
+      restored = Riffer::Params.from_h(JSON.parse(params.to_h.to_json))
+      expect(restored.parameters.first.name).must_equal :city
+      expect(restored.parameters.first.description).must_equal "where"
+    end
+
     it "round-trips deeply nested params" do
       params = Riffer::Params.new
       params.required(:order, Hash) do

@@ -89,9 +89,13 @@ class Riffer::Param
   # Class names are resolved via +Object.const_get+, so the named classes
   # must be loadable on the current process.
   #
+  # Accepts both symbol-keyed and string-keyed hashes (e.g. from
+  # +JSON.parse+ without +symbolize_names: true+).
+  #
   #--
-  #: (Hash[Symbol, untyped]) -> Riffer::Param
+  #: (Hash[untyped, untyped]) -> Riffer::Param
   def self.from_h(hash)
+    hash = Riffer::Helpers::HashNormalizer.deep_symbolize_keys(hash)
     new(
       name: hash[:name].to_sym,
       type: Object.const_get(hash[:type]),

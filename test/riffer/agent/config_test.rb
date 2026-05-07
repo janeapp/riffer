@@ -2,34 +2,6 @@
 
 require "test_helper"
 
-# Named fixtures for the round-trip tests — Object.const_get requires real
-# constants, so anonymous classes won't survive serialization.
-module AgentConfigTestFixtures
-  class HelloTool < Riffer::Tool
-    identifier "hello_tool"
-    description "Says hello."
-
-    def call(context:)
-      text("hello")
-    end
-  end
-
-  class GoodbyeTool < Riffer::Tool
-    identifier "goodbye_tool"
-    description "Says goodbye."
-
-    def call(context:)
-      text("bye")
-    end
-  end
-
-  class NoopGuardrail < Riffer::Guardrail
-    def process_input(messages, context:)
-      pass(messages)
-    end
-  end
-end
-
 describe Riffer::Agent do
   describe ".to_config / .from_config" do
     it "round-trips primitive slots" do
@@ -98,51 +70,6 @@ describe Riffer::Agent do
       expect(params[1].type).must_equal Float
     end
 
-    it "round-trips tools as class names and resolves a uses_tools Proc" do
-      hello = AgentConfigTestFixtures::HelloTool
-      bye = AgentConfigTestFixtures::GoodbyeTool
-
-      klass = Class.new(Riffer::Agent) do
-        identifier "t"
-        model "mock/riffer-1"
-        uses_tools ->(ctx) { ctx[:include_bye] ? [hello, bye] : [hello] }
-      end
-
-      config = klass.to_config(context: {include_bye: true})
-      expect(config[:tools]).must_equal [
-        "AgentConfigTestFixtures::HelloTool",
-        "AgentConfigTestFixtures::GoodbyeTool"
-      ]
-
-      restored = Riffer::Agent.from_config(config)
-      expect(restored.uses_tools).must_equal [hello, bye]
-    end
-
-    it "round-trips tool_runtime as a class reference" do
-      klass = Class.new(Riffer::Agent) do
-        identifier "tr"
-        model "mock/riffer-1"
-        tool_runtime Riffer::ToolRuntime::Inline
-      end
-
-      config = klass.to_config
-      expect(config[:tool_runtime]).must_equal "Riffer::ToolRuntime::Inline"
-
-      restored = Riffer::Agent.from_config(config)
-      expect(restored.tool_runtime).must_equal Riffer::ToolRuntime::Inline
-    end
-
-    it "raises SerializationError when tool_runtime is an instance" do
-      klass = Class.new(Riffer::Agent) do
-        identifier "tri"
-        model "mock/riffer-1"
-        tool_runtime Riffer::ToolRuntime::Inline.new
-      end
-
-      err = expect { klass.to_config }.must_raise Riffer::SerializationError
-      expect(err.message).must_match(/tool_runtime/)
-    end
-
     it "round-trips mcp_configs" do
       klass = Class.new(Riffer::Agent) do
         identifier "m"
@@ -158,40 +85,7 @@ describe Riffer::Agent do
       expect(restored.mcp_configs).must_equal [{tags: [:github]}, {tags: [:search]}]
     end
 
-    it "round-trips guardrails with class name and options" do
-      gr = AgentConfigTestFixtures::NoopGuardrail
-
-      klass = Class.new(Riffer::Agent) do
-        identifier "g"
-        model "mock/riffer-1"
-        guardrail :before, with: gr, threshold: 0.5
-        guardrail :after, with: gr
-      end
-
-      config = klass.to_config
-      expect(config[:guardrails][:before].first[:class]).must_equal gr.name
-      expect(config[:guardrails][:before].first[:options]).must_equal({threshold: 0.5})
-
-      restored = Riffer::Agent.from_config(config)
-      expect(restored.guardrails_for(:before).first[:class]).must_equal gr
-      expect(restored.guardrails_for(:before).first[:options]).must_equal({threshold: 0.5})
-      expect(restored.guardrails_for(:after).first[:class]).must_equal gr
-    end
-
-    it "carries the skill activate tool through the tools list when skills are configured" do
-      klass = Class.new(Riffer::Agent) do
-        identifier "sk"
-        model "mock/riffer-1"
-        skills do
-          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
-        end
-      end
-
-      config = klass.to_config(context: nil)
-      expect(config[:tools]).must_include "Riffer::Skills::ActivateTool"
-    end
-
-    it "omits instructions and skills slots from the config" do
+    it "omits slots that are deferred or carried in messages" do
       klass = Class.new(Riffer::Agent) do
         identifier "x"
         model "mock/riffer-1"
@@ -199,18 +93,30 @@ describe Riffer::Agent do
       end
 
       config = klass.to_config
-      refute config.key?(:instructions), "instructions should not be in the config"
-      refute config.key?(:skills), "skills should not be in the config"
+      [:instructions, :skills, :tools, :tool_runtime, :guardrails].each do |slot|
+        refute config.key?(slot), "#{slot} should not be in the config"
+      end
+    end
+
+    it "accepts string-keyed config hashes from JSON.parse" do
+      sender = Class.new(Riffer::Agent) do
+        identifier "string-keys"
+        model "mock/riffer-1"
+        provider_options(api_key: "k")
+      end
+
+      json = JSON.dump(sender.to_config)
+      restored = Riffer::Agent.from_config(JSON.parse(json)) # no symbolize_names
+
+      expect(restored.identifier).must_equal "string-keys"
+      expect(restored.provider_options).must_equal({api_key: "k"})
     end
 
     it "end-to-end: serialize sender, ship messages, run on receiver" do
-      hello = AgentConfigTestFixtures::HelloTool
-
       sender_class = Class.new(Riffer::Agent) do
         identifier "e2e"
         model "mock/riffer-1"
         instructions ->(ctx) { "You are helping #{ctx[:name]}." }
-        uses_tools [hello]
       end
 
       sender = sender_class.new
