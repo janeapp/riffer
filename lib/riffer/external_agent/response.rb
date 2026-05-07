@@ -19,11 +19,12 @@ class Riffer::ExternalAgent::Response < Riffer::AgentResponse
   # [token_usage] optional token usage data.
   # [vendor_metadata] optional provider-specific metadata; frozen on construction.
   # [tool_calls] tool calls the agent made during this generation.
+  # [resolved_identifier] optional agent identifier after alias resolution.
   #
   #--
-  #: (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped], ?tool_calls: Array[Riffer::ExternalAgent::ToolCall]) -> void
-  def initialize(content, messages: [], token_usage: nil, vendor_metadata: {}, tool_calls: [])
-    super(content, messages: messages, token_usage: token_usage, vendor_metadata: vendor_metadata)
+  #: (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped], ?tool_calls: Array[Riffer::ExternalAgent::ToolCall], ?resolved_identifier: String?) -> void
+  def initialize(content, messages: [], token_usage: nil, vendor_metadata: {}, tool_calls: [], resolved_identifier: nil)
+    super(content, messages: messages, token_usage: token_usage, vendor_metadata: vendor_metadata, resolved_identifier: resolved_identifier)
     @tool_calls = tool_calls
   end
 end

@@ -25,20 +25,27 @@ class Riffer::AgentResponse
   # Provider-specific metadata, frozen on construction.
   attr_reader :vendor_metadata #: Hash[Symbol, untyped]
 
+  # The agent identifier this response was produced by, after any
+  # vendor-specific alias resolution. +nil+ when the agent does not
+  # declare an identifier.
+  attr_reader :resolved_identifier #: String?
+
   # Creates a new agent response.
   #
   # [content] the response content.
   # [messages] the full message history from the agent conversation.
   # [token_usage] optional token usage data.
   # [vendor_metadata] optional provider-specific metadata hash; frozen on construction.
+  # [resolved_identifier] optional agent identifier after alias resolution.
   #
   #--
-  #: (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped]) -> void
-  def initialize(content, messages: [], token_usage: nil, vendor_metadata: {})
+  #: (String, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::TokenUsage?, ?vendor_metadata: Hash[Symbol, untyped], ?resolved_identifier: String?) -> void
+  def initialize(content, messages: [], token_usage: nil, vendor_metadata: {}, resolved_identifier: nil)
     @content = content
     @messages = messages
     @token_usage = token_usage
     @vendor_metadata = vendor_metadata.freeze
+    @resolved_identifier = resolved_identifier
   end
 
   # Returns true. Subclasses may override to signal failure.

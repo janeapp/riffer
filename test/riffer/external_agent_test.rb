@@ -91,4 +91,51 @@ describe Riffer::ExternalAgent do
       expect(response.content).must_equal "hello"
     end
   end
+
+  describe ".agent DSL" do
+    it "stores and retrieves an identifier string" do
+      klass = Class.new(Riffer::ExternalAgent) { agent "test-vendor/1.0" }
+      expect(klass.agent).must_equal "test-vendor/1.0"
+    end
+
+    it "returns nil when not set" do
+      klass = Class.new(Riffer::ExternalAgent)
+      expect(klass.agent).must_be_nil
+    end
+
+    it "inherits from parent class" do
+      parent = Class.new(Riffer::ExternalAgent) { agent "v/1" }
+      child = Class.new(parent)
+      expect(child.agent).must_equal "v/1"
+    end
+
+    it "allows subclass to override" do
+      parent = Class.new(Riffer::ExternalAgent) { agent "v/1" }
+      child = Class.new(parent) { agent "v/2" }
+      expect(child.agent).must_equal "v/2"
+      expect(parent.agent).must_equal "v/1"
+    end
+  end
+
+  describe ".parse_identifier" do
+    it "returns an Identifier for a well-formed vendor/name string" do
+      id = Riffer::ExternalAgent.parse_identifier("acme/2.0")
+      expect(id).must_be_instance_of Riffer::ExternalAgent::Identifier
+      expect(id.vendor).must_equal "acme"
+      expect(id.raw).must_equal "2.0"
+      expect(id.resolved).must_equal "2.0"
+    end
+
+    it "raises Riffer::ArgumentError when there is no slash" do
+      expect { Riffer::ExternalAgent.parse_identifier("nodash") }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises Riffer::ArgumentError when vendor part is empty" do
+      expect { Riffer::ExternalAgent.parse_identifier("/name") }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises Riffer::ArgumentError when name part is empty" do
+      expect { Riffer::ExternalAgent.parse_identifier("vendor/") }.must_raise Riffer::ArgumentError
+    end
+  end
 end

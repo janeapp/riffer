@@ -37,6 +37,16 @@ describe Riffer::ExternalAgent::Response do
       expect(response.vendor_metadata).must_equal({model: "claude"})
       expect(response.vendor_metadata.frozen?).must_equal true
     end
+
+    it "defaults resolved_identifier to nil" do
+      response = Riffer::ExternalAgent::Response.new("Hello")
+      expect(response.resolved_identifier).must_be_nil
+    end
+
+    it "passes resolved_identifier through to the parent" do
+      response = Riffer::ExternalAgent::Response.new("Hello", resolved_identifier: "claude-code/2.1.131")
+      expect(response.resolved_identifier).must_equal "claude-code/2.1.131"
+    end
   end
 
   describe "inheritance" do

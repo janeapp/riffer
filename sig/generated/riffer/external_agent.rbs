@@ -26,6 +26,35 @@
 class Riffer::ExternalAgent
   include Riffer::AgentInterface
 
+  # Class-level DSL for declaring the agent identifier a subclass runs as.
+  #
+  # Mirrors the pattern of Riffer::Agent.identifier: call with a string to
+  # set, call without arguments to read. Inherits from the superclass when
+  # the subclass has not declared its own.
+  #
+  #   class MyAgent < Riffer::ExternalAgent
+  #     agent "my-vendor/1.0"
+  #   end
+  #   MyAgent.agent  # => "my-vendor/1.0"
+  #
+  # --
+  # : (?String?) -> String?
+  def self.agent: (?String?) -> String?
+
+  # Parses a +"vendor/name"+ identifier string into a frozen Identifier.
+  #
+  # Subclasses override this to add vendor-specific alias resolution
+  # (e.g. mapping +"latest"+ to a concrete version). The default
+  # implementation validates the +"vendor/name"+ shape and treats
+  # +raw+ and +resolved+ as identical.
+  #
+  # Raises Riffer::ArgumentError when the string is missing a slash or
+  # has empty halves.
+  #
+  # --
+  # : (String) -> Riffer::ExternalAgent::Identifier
+  def self.parse_identifier: (String) -> Riffer::ExternalAgent::Identifier
+
   # The accumulated message history for this agent instance.
   attr_reader messages: Array[Riffer::Messages::Base]
 

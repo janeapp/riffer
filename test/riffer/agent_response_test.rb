@@ -42,6 +42,16 @@ describe Riffer::AgentResponse do
       expect(response.vendor_metadata).must_equal({model: "gpt-4o"})
       expect(response.vendor_metadata.frozen?).must_equal true
     end
+
+    it "defaults resolved_identifier to nil" do
+      response = Riffer::AgentResponse.new("Hello")
+      expect(response.resolved_identifier).must_be_nil
+    end
+
+    it "stores resolved_identifier when given" do
+      response = Riffer::AgentResponse.new("Hello", resolved_identifier: "vendor/1.2.3")
+      expect(response.resolved_identifier).must_equal "vendor/1.2.3"
+    end
   end
 
   describe "#success?" do
