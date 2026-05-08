@@ -826,6 +826,31 @@
 
 <p>See <a href="08_MESSAGES_md.html#ids">Messages — IDs</a> for more details.</p>
 
+<span id="label-Experimental-3A+History+Healing" class="legacy-anchor"></span>
+<h3 id="experimental-history-healing"><a href="#experimental-history-healing">Experimental: History Healing</a></h3>
+
+<blockquote>
+<p><strong>Warning:</strong> This feature is experimental and may change without notice.</p>
+</blockquote>
+
+<p>Opts the agent into keeping the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact on its own:</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">experimental_history_healing</span> = <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>When enabled, two repairs run automatically:</p>
+<ol><li>
+<p><strong>Seeded history.</strong> <code>agent.generate(messages_array)</code> silently drops orphaned <code>tool_use</code> exchanges (assistant <code>tool_call</code> with no matching <code>Tool</code> result) and parentless <code>Tool</code> messages from the seed before the run begins. Pending tool calls on the <strong>resume boundary</strong> — the last assistant whose tail is purely <code>Tool</code> results (or none) — are preserved; <code>execute_pending_tool_calls</code> runs them on the next LLM call.</p>
+</li><li>
+<p><strong>Interrupts.</strong> Any orphan <code>tool_use</code> left when the loop is interrupted (caller-issued <code>interrupt!</code> or the built-in <code>INTERRUPT_MAX_STEPS</code> ceiling) is filled with a placeholder <a href="Riffer/Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> carrying <code>error_type: :interrupted</code> and the content <code>&quot;Tool call interrupted before completion.&quot;</code>. Filled <code>call_id</code>s are exposed on <a href="Riffer/Agent/Response.html#attribute-i-healed_tool_call_ids"><code>Riffer::Agent::Response#healed_tool_call_ids</code></a> (and <a href="Riffer/StreamEvents/Interrupt.html#attribute-i-healed_tool_call_ids"><code>Riffer::StreamEvents::Interrupt#healed_tool_call_ids</code></a> when streaming).</p>
+</li></ol>
+
+<p>Defaults to <code>false</code> — pre-healing behavior. Seeded arrays pass through untouched, and orphan <code>tool_use</code> left by an interrupt remain in history for <code>execute_pending_tool_calls</code> to re-run on the next call.</p>
+
+<p>There is no per-call override and no customizable placeholder. Callers needing finer control can call the <code>replace_tool_result</code> mutator after the interrupt returns to upgrade a placeholder in place. See <a href="04_AGENT_LIFECYCLE_md.html#healing-pending-tool-results-on-interrupt-experimental">Agent Lifecycle — Healing pending tool results on interrupt</a>.</p>
+
 <span id="label-Agent-Level+Configuration" class="legacy-anchor"></span>
 <h2 id="agent-level-configuration"><a href="#agent-level-configuration">Agent-Level Configuration</a></h2>
 

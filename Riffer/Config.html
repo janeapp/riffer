@@ -679,6 +679,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-experimental_history_healing-3D">experimental_history_healing=</a></li>
+
         <li ><a href="#method-i-message_id_strategy-3D">message_id_strategy=</a></li>
 
         <li ><a href="#method-i-tool_runtime-3D">tool_runtime=</a></li>
@@ -902,6 +904,29 @@
         </div>
       </div>
 
+      <div id="attribute-i-experimental_history_healing" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-experimental_history_healing" title="Link to this attribute">
+            <span class="method-name">experimental_history_healing</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Experimental: when <code>true</code>, riffer keeps the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact on its own.</p>
+<ul><li>
+<p>On +Riffer::Agent#generate(messages_array)+, orphaned <code>tool_use</code> exchanges and parentless <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> messages are silently stripped from the seed. Pending tool calls on the resume boundary (last assistant whose tail is purely Tool results) are preserved for <code>execute_pending_tool_calls</code>.</p>
+</li><li>
+<p>On any interrupt (caller-issued <code>interrupt!</code> or <code>INTERRUPT_MAX_STEPS</code>), riffer fills any orphaned <code>tool_use</code> with a placeholder <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> carrying +error_type: :interrupted+, leaving history valid for the next turn. Filled call_ids are exposed on +Riffer::Agent::Response#healed_tool_call_ids+ (and the streaming <a href="StreamEvents/Interrupt.html"><code>Riffer::StreamEvents::Interrupt</code></a> event).</p>
+</li></ul>
+
+<p>Defaults to <code>false</code> — the pre-healing behavior. Experimental: the surface and default may change without notice.</p>
+
+        </div>
+      </div>
+
       <div id="attribute-i-gemini" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-gemini" title="Link to this attribute">
@@ -1038,7 +1063,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 156</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 197</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@amazon_bedrock</span> = <span class="ruby-constant">AmazonBedrock</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@anthropic</span> = <span class="ruby-constant">Anthropic</span>.<span class="ruby-identifier">new</span>
@@ -1050,6 +1075,7 @@
   <span class="ruby-ivar">@tool_runtime</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span><span class="ruby-operator">::</span><span class="ruby-constant">Inline</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@skills</span> = <span class="ruby-constant">Skills</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@message_id_strategy</span> = <span class="ruby-value">:none</span>
+  <span class="ruby-ivar">@experimental_history_healing</span> = <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1082,6 +1108,56 @@
        <header>
          <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
        </header>
+
+
+      <div id="method-i-experimental_history_healing-3D" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-experimental_history_healing-3D" title="Link to this method">
+                <span class="method-name">experimental_history_healing=</span>
+                <span class="method-args">(value)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="experimental_history_healing-3D-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/config.rb, line 185</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">experimental_history_healing=</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-ivar">@experimental_history_healing</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-keyword">true</span>, <span class="ruby-string">&quot;true&quot;</span>, <span class="ruby-value">1</span>, <span class="ruby-string">&quot;1&quot;</span> <span class="ruby-keyword">then</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;false&quot;</span>, <span class="ruby-value">0</span>, <span class="ruby-string">&quot;0&quot;</span>, <span class="ruby-keyword">nil</span> <span class="ruby-keyword">then</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>,
+      <span class="ruby-node">&quot;experimental_history_healing must be a boolean (or &#39;true&#39;/&#39;false&#39;/&#39;1&#39;/&#39;0&#39;/1/0), got #{value.inspect}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Sets the <a href="Config.html#attribute-i-experimental_history_healing"><code>experimental_history_healing</code></a> flag.</p>
+
+<p>Coerces common boolean representations so values pulled from environment variables don’t silently enable healing — the string +“false”+ is truthy in Ruby and would otherwise flip the flag on. Accepts <code>true</code>/<code>false</code>, +“true”<code>/</code>“false”+, <code>1</code>/<code>0</code>, +“1”<code>/</code>“0”+, and <code>nil</code> (treated as <code>false</code>, the default). Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> for any other value.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
 
 
       <div id="method-i-message_id_strategy-3D" class="method-detail anchor-link ">

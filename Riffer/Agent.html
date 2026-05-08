@@ -773,9 +773,23 @@
 
         <li ><a href="#method-i-interrupt-21">interrupt!</a></li>
 
+        <li ><a href="#method-i-last_assistant">last_assistant</a></li>
+
+        <li ><a href="#method-i-message_by_id">message_by_id</a></li>
+
         <li ><a href="#method-i-on_message">on_message</a></li>
 
+        <li ><a href="#method-i-orphaned_tool_call_ids">orphaned_tool_call_ids</a></li>
+
+        <li ><a href="#method-i-remove_message">remove_message</a></li>
+
+        <li ><a href="#method-i-replace_assistant_content">replace_assistant_content</a></li>
+
+        <li ><a href="#method-i-replace_tool_result">replace_tool_result</a></li>
+
         <li ><a href="#method-i-stream">stream</a></li>
+
+        <li ><a href="#method-i-tool_message_for">tool_message_for</a></li>
 
       </ul>
     </details>
@@ -866,6 +880,14 @@
         </dd>
 
 
+        <dt id="HEALING_PLACEHOLDER">HEALING_PLACEHOLDER</dt>
+
+        <dd>
+
+          <p>Placeholder used to fill orphan <code>tool_use</code> blocks when <code>Riffer.config.experimental_history_healing</code> is enabled and an interrupt fires mid-tool-use.</p>
+        </dd>
+
+
         <dt id="INTERRUPT_MAX_STEPS">INTERRUPT_MAX_STEPS</dt>
 
         <dd>
@@ -949,7 +971,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 254</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 261</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
   <span class="ruby-identifier">subclasses</span> <span class="ruby-comment">#: Array[singleton(Riffer::Agent)]</span>
 <span class="ruby-keyword">end</span></pre>
@@ -991,7 +1013,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 246</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 253</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
   <span class="ruby-identifier">all</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">agent_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">agent_class</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -1033,7 +1055,7 @@
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 264</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 271</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-operator">...</span>)
   <span class="ruby-identifier">new</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-operator">...</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1077,7 +1099,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrail-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 287</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 294</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">with:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">valid_phases</span> = [<span class="ruby-operator">*</span><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Guardrails</span><span class="ruby-operator">::</span><span class="ruby-constant">PHASES</span>, <span class="ruby-value">:around</span>]
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid guardrail phase: #{phase}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid_phases</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">phase</span>)
@@ -1146,7 +1168,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrails_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 312</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 319</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
   <span class="ruby-ivar">@guardrails</span> <span class="ruby-operator">||=</span> {<span class="ruby-value">before:</span> [], <span class="ruby-value">after:</span> []}
   <span class="ruby-ivar">@guardrails</span>[<span class="ruby-identifier">phase</span>] <span class="ruby-operator">||</span> []
@@ -1193,7 +1215,7 @@
             </details>
           </div>
           <div class="method-source-code" id="identifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 33</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-identifier">name</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
@@ -1236,7 +1258,7 @@
             </details>
           </div>
           <div class="method-source-code" id="instructions-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 74</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">instructions_or_proc</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@instructions</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">instructions_or_proc</span>.<span class="ruby-identifier">nil?</span>
 
@@ -1294,7 +1316,7 @@
             </details>
           </div>
           <div class="method-source-code" id="max_steps-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 121</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 128</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">max_steps</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@max_steps</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DEFAULT_MAX_STEPS</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@max_steps</span> = <span class="ruby-identifier">value</span>
@@ -1339,7 +1361,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mcp_configs-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 199</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">mcp_configs</span>
   <span class="ruby-ivar">@mcp_configs</span> <span class="ruby-operator">||</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -1383,7 +1405,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 42</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model</span>(<span class="ruby-identifier">model_string_or_proc</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@model</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model_string_or_proc</span>.<span class="ruby-identifier">nil?</span>
 
@@ -1432,7 +1454,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model_options-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 91</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@model_options</span> <span class="ruby-operator">||</span> {} <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@model_options</span> = <span class="ruby-identifier">options</span>
@@ -1475,7 +1497,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 330</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 337</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@messages</span> = []
   <span class="ruby-ivar">@message_callbacks</span> = []
@@ -1531,7 +1553,7 @@
             </details>
           </div>
           <div class="method-source-code" id="provider_options-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 82</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">provider_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@provider_options</span> <span class="ruby-operator">||</span> {} <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@provider_options</span> = <span class="ruby-identifier">options</span>
@@ -1574,7 +1596,7 @@
             </details>
           </div>
           <div class="method-source-code" id="resolved_tool_classes-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 158</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolved_tool_classes</span>(<span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">base</span> = <span class="ruby-identifier">resolve_uses_tools_config</span>(<span class="ruby-identifier">context</span>)
 
@@ -1639,7 +1661,7 @@
             </details>
           </div>
           <div class="method-source-code" id="skills-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 234</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>
     <span class="ruby-ivar">@skills_config</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span>.<span class="ruby-identifier">new</span>
@@ -1694,7 +1716,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 274</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 281</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-operator">...</span>)
   <span class="ruby-identifier">new</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-operator">...</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1738,7 +1760,7 @@
             </details>
           </div>
           <div class="method-source-code" id="structured_output-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 102</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 109</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">structured_output</span>(<span class="ruby-identifier">params</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>
     <span class="ruby-ivar">@structured_output</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
@@ -1790,7 +1812,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tool_runtime-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 213</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 220</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">tool_runtime</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-ivar">@tool_runtime</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">instance_variable_defined?</span>(<span class="ruby-value">:@tool_runtime</span>)
@@ -1841,7 +1863,7 @@
             </details>
           </div>
           <div class="method-source-code" id="use_mcp-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 191</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 198</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">use_mcp</span>(<span class="ruby-identifier">tag</span>)
   <span class="ruby-ivar">@mcp_configs</span> <span class="ruby-operator">||=</span> []
   <span class="ruby-ivar">@mcp_configs</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-value">tags:</span> [<span class="ruby-identifier">tag</span>.<span class="ruby-identifier">to_sym</span>]}
@@ -1889,7 +1911,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="uses_tools-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 130</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 137</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">uses_tools</span>(<span class="ruby-identifier">tools_or_lambda</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@tools_config</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">tools_or_lambda</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@tools_config</span> = <span class="ruby-identifier">tools_or_lambda</span>
@@ -1946,7 +1968,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 350</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 361</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt_or_messages</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@context</span> = <span class="ruby-identifier">context</span>
   <span class="ruby-identifier">prepare_run</span>
@@ -1969,6 +1991,8 @@ the given tag(s).
 
 
           <p>Generates a response from the agent.</p>
+
+<p>When <code>Riffer.config.experimental_history_healing</code> is enabled, seeded message arrays that violate the <code>tool_use</code> ↔ <code>tool_result</code> invariant are silently repaired before the run begins.</p>
 
 
         </div>
@@ -1999,7 +2023,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="generate_instruction_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 412</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 426</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_instruction_message</span>(<span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">build_instruction_message</span>(<span class="ruby-identifier">context</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2045,7 +2069,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="generate_skills_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 425</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 439</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_skills_message</span>(<span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">build_skills_message</span>(<span class="ruby-identifier">resolve_skills</span>(<span class="ruby-identifier">context</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -2091,7 +2115,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="interrupt-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 436</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 457</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupt!</span>(<span class="ruby-identifier">reason</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">throw</span> <span class="ruby-value">:riffer_interrupt</span>, <span class="ruby-identifier">reason</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2105,6 +2129,92 @@ the given tag(s).
           <p>Interrupts the agent loop.</p>
 
 <p>Call from an <a href="Agent.html#method-i-on_message"><code>on_message</code></a> callback to cleanly interrupt the loop. Equivalent to <code>throw :riffer_interrupt, reason</code>.</p>
+
+<p>When <code>Riffer.config.experimental_history_healing</code> is enabled, riffer fills any orphaned <code>tool_use</code> on the way out with a placeholder <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> carrying +error_type: :interrupted+. The filled call_ids are exposed on +Riffer::Agent::Response#healed_tool_call_ids+ (and the streaming <a href="StreamEvents/Interrupt.html"><code>Riffer::StreamEvents::Interrupt</code></a> event).</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-last_assistant" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-last_assistant" title="Link to this method">
+                <span class="method-name">last_assistant</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="last_assistant-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 488</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">last_assistant</span>
+  <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">reverse</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>) } <span class="ruby-comment">#: Riffer::Messages::Assistant?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the most recent <a href="Messages/Assistant.html"><code>Riffer::Messages::Assistant</code></a> in history, or <code>nil</code> when no assistant message has been recorded yet.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-message_by_id" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-message_by_id" title="Link to this method">
+                <span class="method-name">message_by_id</span>
+                <span class="method-args">(id)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="message_by_id-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 465</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">message_by_id</span>(<span class="ruby-identifier">id</span>)
+  <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">id</span> }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the message with the given id, or <code>nil</code> when no message matches.</p>
 
 
         </div>
@@ -2135,7 +2245,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="on_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 397</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 411</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_message</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;on_message requires a block&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
   <span class="ruby-ivar">@message_callbacks</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">block</span>
@@ -2151,6 +2261,233 @@ the given tag(s).
           <p>Registers a callback to be invoked when messages are added during generation.</p>
 
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if no block is given.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-orphaned_tool_call_ids" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-orphaned_tool_call_ids" title="Link to this method">
+                <span class="method-name">orphaned_tool_call_ids</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="orphaned_tool_call_ids-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 501</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">orphaned_tool_call_ids</span>
+  <span class="ruby-identifier">result_ids</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">filter_map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">tool_call_id</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>) }
+  <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">flat_map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">next</span> [] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>)
+    <span class="ruby-identifier">m</span>.<span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">reject</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">tc</span><span class="ruby-operator">|</span> <span class="ruby-identifier">result_ids</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">tc</span>.<span class="ruby-identifier">call_id</span>) }.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:call_id</span>)
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the call_ids of every <code>tool_call</code> on any assistant message that has no matching <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> result anywhere in history.</p>
+
+<p>Zero-cost validation hook for callers that want to check the <code>tool_use</code> ↔ <code>tool_result</code> invariant before mutating or persisting.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-remove_message" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-remove_message" title="Link to this method">
+                <span class="method-name">remove_message</span>
+                <span class="method-args">(id:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="remove_message-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 551</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove_message</span>(<span class="ruby-value">id:</span>)
+  <span class="ruby-identifier">idx</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">index</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">id</span> }
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">idx</span>
+
+  <span class="ruby-identifier">target</span> = <span class="ruby-ivar">@messages</span>[<span class="ruby-identifier">idx</span>]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>,
+      <span class="ruby-string">&quot;remove_message cannot drop a Tool message (would orphan the parent&#39;s tool_use); use replace_tool_result instead&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">target</span>.<span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">child_ids</span> = <span class="ruby-identifier">target</span>.<span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:call_id</span>)
+    <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">reject!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">child_ids</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">m</span>.<span class="ruby-identifier">tool_call_id</span>) }
+    <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">target</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-identifier">idx</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">target</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Removes a message by id. When the target is an assistant message that carries <code>tool_calls</code>, every <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> result whose <code>tool_call_id</code> matches one of those calls is removed atomically — keeping the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> when called on a <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> message — that would orphan the parent’s <code>tool_use</code>. Use <a href="Agent.html#method-i-replace_tool_result"><code>replace_tool_result</code></a> instead.</p>
+
+<p>Returns the removed message, or <code>nil</code> when no message has the given id (idempotent).</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-replace_assistant_content" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-replace_assistant_content" title="Link to this method">
+                <span class="method-name">replace_assistant_content</span>
+                <span class="method-args">(id:, content:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="replace_assistant_content-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 519</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">replace_assistant_content</span>(<span class="ruby-value">id:</span>, <span class="ruby-value">content:</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">remove_message</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">id</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">idx</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">index</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">id</span> }
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;no assistant message with id #{id.inspect}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">idx</span>
+
+  <span class="ruby-identifier">old</span> = <span class="ruby-ivar">@messages</span>[<span class="ruby-identifier">idx</span>] <span class="ruby-comment">#: Riffer::Messages::Assistant</span>
+  <span class="ruby-identifier">replacement</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-identifier">content</span>,
+    <span class="ruby-value">id:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">id</span>,
+    <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">tool_calls</span>,
+    <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">token_usage</span>,
+    <span class="ruby-value">structured_output:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">structured_output</span>
+  )
+  <span class="ruby-ivar">@messages</span>[<span class="ruby-identifier">idx</span>] = <span class="ruby-identifier">replacement</span>
+  <span class="ruby-identifier">replacement</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Replaces the content of an assistant message in place. Preserves <code>id</code>, <code>tool_calls</code>, <a href="Agent.html#attribute-i-token_usage"><code>token_usage</code></a>, and <a href="Agent.html#method-c-structured_output"><code>structured_output</code></a>. Lookup is by id.</p>
+
+<p>When <code>content</code> is empty, delegates to <a href="Agent.html#method-i-remove_message"><code>remove_message</code></a> — including the cascade that drops dependent <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> children.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> when no assistant message has the given id.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-replace_tool_result" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-replace_tool_result" title="Link to this method">
+                <span class="method-name">replace_tool_result</span>
+                <span class="method-args">(tool_call_id:, content:, error: nil, error_type: nil)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="replace_tool_result-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 580</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">replace_tool_result</span>(<span class="ruby-value">tool_call_id:</span>, <span class="ruby-value">content:</span>, <span class="ruby-value">error:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">idx</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">index</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">tool_call_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">tool_call_id</span> }
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;no tool result for tool_call_id #{tool_call_id.inspect}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">idx</span>
+
+  <span class="ruby-identifier">old</span> = <span class="ruby-ivar">@messages</span>[<span class="ruby-identifier">idx</span>] <span class="ruby-comment">#: Riffer::Messages::Tool</span>
+  <span class="ruby-identifier">replacement</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-identifier">content</span>,
+    <span class="ruby-value">id:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">id</span>,
+    <span class="ruby-value">tool_call_id:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">tool_call_id</span>,
+    <span class="ruby-value">name:</span> <span class="ruby-identifier">old</span>.<span class="ruby-identifier">name</span>,
+    <span class="ruby-value">error:</span> <span class="ruby-identifier">error</span>,
+    <span class="ruby-value">error_type:</span> <span class="ruby-identifier">error_type</span>
+  )
+  <span class="ruby-ivar">@messages</span>[<span class="ruby-identifier">idx</span>] = <span class="ruby-identifier">replacement</span>
+  <span class="ruby-identifier">replacement</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Replaces a tool result’s content (and optional error fields) in place. Lookup is by <code>tool_call_id</code>. Preserves the existing message’s <code>name</code> and <code>id</code>.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> when no Tool message exists for the given <code>tool_call_id</code>.</p>
 
 
         </div>
@@ -2181,7 +2518,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 371</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 385</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt_or_messages</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Structured output is not supported with streaming. Use #generate instead.&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">structured_output</span>
 
@@ -2211,6 +2548,50 @@ the given tag(s).
           <p>Streams a response from the agent.</p>
 
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if structured output is configured.</p>
+
+<p>See <a href="Agent.html#method-i-generate"><code>generate</code></a> for the <code>experimental_history_healing</code> behavior on seeded arrays.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-tool_message_for" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-tool_message_for" title="Link to this method">
+                <span class="method-name">tool_message_for</span>
+                <span class="method-args">(tool_call_id)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="tool_message_for-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 476</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tool_message_for</span>(<span class="ruby-identifier">tool_call_id</span>)
+  <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">reverse</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">tool_call_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">tool_call_id</span> } <span class="ruby-comment">#: Riffer::Messages::Tool?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> message that satisfies <code>tool_call_id</code>, or <code>nil</code> when no such tool result exists in history.</p>
 
 
         </div>

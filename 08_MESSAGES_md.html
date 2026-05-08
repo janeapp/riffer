@@ -1002,6 +1002,11 @@
 
 <p>Subclasses implement <code>role</code> and optionally extend <code>to_h</code> with additional fields.</p>
 
+<span id="label-Editing+history+after+the+fact" class="legacy-anchor"></span>
+<h2 id="editing-history-after-the-fact"><a href="#editing-history-after-the-fact">Editing history after the fact</a></h2>
+
+<p>The agent’s <code>messages</code> array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, replace a tool result, fill an orphan <code>tool_use</code> — use the mutators on <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a>. Each mutator enforces the <code>tool_use</code> ↔ <code>tool_result</code> invariant. See <a href="04_AGENT_LIFECYCLE_md.html#mutating-history">Mutating history</a> for the full list.</p>
+
 </main>
 
 <aside class="table-of-contents" role="complementary" aria-label="Table of Contents">

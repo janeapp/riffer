@@ -787,6 +787,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-healed_tool_call_ids" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-healed_tool_call_ids" title="Link to this attribute">
+            <span class="method-name">healed_tool_call_ids</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Call ids of tool_use blocks that riffer filled with placeholder results during this turn — populated when an interrupt left them unanswered and <code>Riffer.config.experimental_history_healing</code> is on. Empty otherwise.</p>
+
+        </div>
+      </div>
+
       <div id="attribute-i-interrupt_reason" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-interrupt_reason" title="Link to this attribute">
@@ -886,7 +902,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [])</span>
+                <span class="method-args">(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [])</span>
               </a>
             </div>
 
@@ -899,8 +915,8 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 46</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">modifications:</span> [], <span class="ruby-value">interrupted:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">interrupt_reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> [])
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">modifications:</span> [], <span class="ruby-value">interrupted:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">interrupt_reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> [], <span class="ruby-value">healed_tool_call_ids:</span> [])
   <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
   <span class="ruby-ivar">@tripwire</span> = <span class="ruby-identifier">tripwire</span>
   <span class="ruby-ivar">@modifications</span> = <span class="ruby-identifier">modifications</span>
@@ -908,6 +924,7 @@
   <span class="ruby-ivar">@interrupt_reason</span> = <span class="ruby-identifier">interrupt_reason</span>
   <span class="ruby-ivar">@structured_output</span> = <span class="ruby-identifier">structured_output</span>
   <span class="ruby-ivar">@messages</span> = <span class="ruby-identifier">messages</span>
+  <span class="ruby-ivar">@healed_tool_call_ids</span> = <span class="ruby-identifier">healed_tool_call_ids</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -938,7 +955,12 @@
 </dd><dt>messages</dt>
 <dd>
 <p>the full message history from the agent conversation.</p>
+</dd><dt><a href="Response.html#attribute-i-healed_tool_call_ids"><code>healed_tool_call_ids</code></a></dt>
+<dd>
+<p>call ids filled with placeholder tool results</p>
 </dd></dl>
+
+<pre>when history healing is enabled.</pre>
 
 
         </div>
@@ -983,7 +1005,7 @@
             </details>
           </div>
           <div class="method-source-code" id="blocked-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 60</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blocked?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">tripwire</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1025,7 +1047,7 @@
             </details>
           </div>
           <div class="method-source-code" id="interrupted-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 77</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupted?</span>
   <span class="ruby-ivar">@interrupted</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1067,7 +1089,7 @@
             </details>
           </div>
           <div class="method-source-code" id="modified-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">modified?</span>
   <span class="ruby-identifier">modifications</span>.<span class="ruby-identifier">any?</span>
 <span class="ruby-keyword">end</span></pre>

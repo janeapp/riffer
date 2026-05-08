@@ -884,7 +884,7 @@
 <pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">HttpToolRuntime</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span>
   <span class="ruby-identifier">private</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dispatch_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">tools:</span>, <span class="ruby-value">context:</span>)
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dispatch_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">tools:</span>, <span class="ruby-value">context:</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-keyword">nil</span>)
     <span class="ruby-comment"># Dispatch tool execution to an external service</span>
     <span class="ruby-identifier">response</span> = <span class="ruby-constant">HttpClient</span>.<span class="ruby-identifier">post</span>(<span class="ruby-string">&quot;/tools/execute&quot;</span>, {
       <span class="ruby-value">name:</span> <span class="ruby-identifier">tool_call</span>.<span class="ruby-identifier">name</span>,
@@ -907,7 +907,7 @@
 <pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">InstrumentedRuntime</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ToolRuntime</span><span class="ruby-operator">::</span><span class="ruby-constant">Inline</span>
   <span class="ruby-identifier">private</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span>)
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-keyword">nil</span>)
     <span class="ruby-identifier">start</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
     <span class="ruby-identifier">result</span> = <span class="ruby-keyword">yield</span>
     <span class="ruby-identifier">duration</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">start</span>
@@ -918,6 +918,12 @@
 </pre>
 
 <p>Subclasses inherit the hook and can override it further.</p>
+
+<p>The <code>assistant_message:</code> kwarg is the <a href="Riffer/Messages/Assistant.html"><code>Riffer::Messages::Assistant</code></a> that produced the tool calls (the same object the agent appends to message history). It is <code>nil</code> when the runtime is invoked outside an agent loop. Use it when your hook or dispatcher needs context that lives on the assistant turn — for example, the accompanying assistant text, the model’s reasoning content, or the full set of sibling tool calls from the same turn. The kwarg is <strong>not</strong> forwarded to <code>Tool#call</code>; tools that need it must read it via a custom <code>dispatch_tool_call</code> override.</p>
+
+<blockquote>
+<p><strong>Note:</strong> Custom runtimes that override <code>around_tool_call</code> or <code>dispatch_tool_call</code> must accept the <code>assistant_message:</code> kwarg (or <code>**kwargs</code>). Older overrides that omit it will raise <code>ArgumentError: unknown keyword: :assistant_message</code>.</p>
+</blockquote>
 
 </main>
 
