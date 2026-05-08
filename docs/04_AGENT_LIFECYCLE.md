@@ -235,6 +235,52 @@ agent.on_message do |msg|
 end
 ```
 
+#### Healing pending tool results on interrupt (experimental)
+
+When an interrupt fires while the assistant has a `tool_use` block that hasn't been answered yet, the LLM will reject the next request unless every `tool_use` has a matching `tool_result`. By default, the next `generate` call re-executes those pending tools (see "Resuming an Interrupted Loop" above).
+
+When the interrupt represents a course-change rather than a pause — e.g. a voice barge-in where the user has moved on — re-execution is the wrong behavior. Opt into history healing to have riffer fill any orphan `tool_use` with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted`, leaving history valid for the next turn:
+
+```ruby
+Riffer.configure { |c| c.experimental_history_healing = true }
+
+agent.on_message do |msg|
+  agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && barge_in?
+end
+
+response = agent.generate("Tell me a story")
+response.healed_tool_call_ids  # => ["call_abc123", ...]
+```
+
+The placeholder content is fixed: `"Tool call interrupted before completion."` with `error_type: :interrupted`. Each placeholder is inserted immediately after its parent assistant message. The list of filled `call_id`s is exposed on `response.healed_tool_call_ids` (and on `Riffer::StreamEvents::Interrupt#healed_tool_call_ids` when streaming).
+
+Healing covers all interrupts uniformly — caller-issued `interrupt!` and the built-in `INTERRUPT_MAX_STEPS` ceiling alike. When the flag is off (the default), orphans remain in history and `execute_pending_tool_calls` re-runs them on the next `generate` call.
+
+If you need finer control over placeholder content (per-call shape, structured metadata, etc.), use the `replace_tool_result` mutator below to upgrade a placeholder after the interrupt returns.
+
+### Mutating history
+
+The agent exposes a small set of in-place mutators that enforce the `tool_use` ↔ `tool_result` invariant on every operation. Use these to align the agent's history with external state (persisted transcript, partial output that wasn't actually delivered, etc.) without rebuilding the agent.
+
+- **`agent.replace_assistant_content(id:, content:)`** — In-place truncation/edit. Preserves `tool_calls`, `token_usage`, and `id`. Empty `content` delegates to `remove_message`.
+- **`agent.remove_message(id:)`** — Removes a message; cascades to its `Tool` children when the target carries `tool_calls`. Raises if called on a `Tool` (use `replace_tool_result`).
+- **`agent.replace_tool_result(tool_call_id:, content:, error:, error_type:)`** — Replace a tool result in place, preserving `name` and `id`. Use this to upgrade an interrupt-time placeholder once the real result is available.
+
+Bulk filling of orphan `tool_use` blocks is handled by `Riffer.config.experimental_history_healing` (see "Healing pending tool results on interrupt" above) — there is no public synthesizer hook.
+
+Read accessors that pair with the mutators:
+
+```ruby
+agent.message_by_id(id)           # => Riffer::Messages::Base or nil
+agent.tool_message_for(call_id)   # => Riffer::Messages::Tool or nil
+agent.last_assistant              # => Riffer::Messages::Assistant or nil
+agent.orphaned_tool_call_ids      # => Array[String]   (zero-cost validation)
+```
+
+Mutating history while a `stream` enumerator is being consumed is undefined; mutators are intended for use between turns.
+
+Mutators do **not** fire `on_message` — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Healing placeholders bypass `on_message` for the same reason; consumers learn that healing happened via `Response#healed_tool_call_ids` (and `StreamEvents::Interrupt#healed_tool_call_ids`).
+
 ### token_usage
 
 Access cumulative token usage across all LLM calls:
@@ -256,17 +302,18 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 `Riffer::Agent::Response` is returned by `generate`:
 
-| Attribute           | Type                        | Description                                        |
-| ------------------- | --------------------------- | -------------------------------------------------- |
-| `content`           | `String`                    | The response text                                  |
-| `structured_output` | `Hash` / `nil`              | Parsed and validated structured output (see below) |
-| `blocked?`          | `Boolean`                   | `true` if a guardrail tripwire fired               |
-| `tripwire`          | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
-| `modified?`         | `Boolean`                   | `true` if a guardrail modified the content         |
-| `modifications`     | `Array`                     | List of guardrail modifications applied            |
-| `interrupted?`      | `Boolean`                   | `true` if the loop was interrupted                 |
-| `interrupt_reason`  | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
-| `messages`          | `Array`                     | Full message history from the conversation         |
+| Attribute              | Type                        | Description                                                                          |
+| ---------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| `content`              | `String`                    | The response text                                                                    |
+| `structured_output`    | `Hash` / `nil`              | Parsed and validated structured output (see below)                                   |
+| `blocked?`             | `Boolean`                   | `true` if a guardrail tripwire fired                                                 |
+| `tripwire`             | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request                                      |
+| `modified?`            | `Boolean`                   | `true` if a guardrail modified the content                                           |
+| `modifications`        | `Array`                     | List of guardrail modifications applied                                              |
+| `interrupted?`         | `Boolean`                   | `true` if the loop was interrupted                                                   |
+| `interrupt_reason`     | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`                                       |
+| `messages`             | `Array`                     | Full message history from the conversation                                           |
+| `healed_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with placeholder results during interrupt healing (else `[]`) |
 
 ### response.structured_output
 

@@ -151,6 +151,47 @@ class Riffer::Config
     @message_id_strategy = value
   end
 
+  # Experimental: when +true+, riffer keeps the +tool_use+ ↔ +tool_result+
+  # invariant intact on its own.
+  #
+  # - On +Riffer::Agent#generate(messages_array)+, orphaned +tool_use+
+  #   exchanges and parentless +Riffer::Messages::Tool+ messages are
+  #   silently stripped from the seed. Pending tool calls on the resume
+  #   boundary (last assistant whose tail is purely Tool results) are
+  #   preserved for +execute_pending_tool_calls+.
+  # - On any interrupt (caller-issued +interrupt!+ or
+  #   +INTERRUPT_MAX_STEPS+), riffer fills any orphaned +tool_use+ with a
+  #   placeholder +Riffer::Messages::Tool+ carrying
+  #   +error_type: :interrupted+, leaving history valid for the next turn.
+  #   Filled call_ids are exposed on
+  #   +Riffer::Agent::Response#healed_tool_call_ids+ (and the streaming
+  #   +Riffer::StreamEvents::Interrupt+ event).
+  #
+  # Defaults to +false+ — the pre-healing behavior. Experimental: the
+  # surface and default may change without notice.
+  attr_reader :experimental_history_healing #: bool
+
+  # Sets the +experimental_history_healing+ flag.
+  #
+  # Coerces common boolean representations so values pulled from
+  # environment variables don't silently enable healing — the string
+  # +"false"+ is truthy in Ruby and would otherwise flip the flag on.
+  # Accepts +true+/+false+, +"true"+/+"false"+, +1+/+0+, +"1"+/+"0"+, and
+  # +nil+ (treated as +false+, the default). Raises
+  # +Riffer::ArgumentError+ for any other value.
+  #
+  #--
+  #: (untyped) -> void
+  def experimental_history_healing=(value)
+    @experimental_history_healing = case value
+    when true, "true", 1, "1" then true
+    when false, "false", 0, "0", nil then false
+    else
+      raise Riffer::ArgumentError,
+        "experimental_history_healing must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
+    end
+  end
+
   #--
   #: () -> void
   def initialize
@@ -164,5 +205,6 @@ class Riffer::Config
     @tool_runtime = Riffer::ToolRuntime::Inline.new
     @skills = Skills.new
     @message_id_strategy = :none
+    @experimental_history_healing = false
   end
 end

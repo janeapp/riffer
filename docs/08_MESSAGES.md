@@ -327,3 +327,7 @@ end
 ```
 
 Subclasses implement `role` and optionally extend `to_h` with additional fields.
+
+## Editing history after the fact
+
+The agent's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, replace a tool result, fill an orphan `tool_use` — use the mutators on `Riffer::Agent`. Each mutator enforces the `tool_use` ↔ `tool_result` invariant. See [Mutating history](04_AGENT_LIFECYCLE.md#mutating-history) for the full list.
