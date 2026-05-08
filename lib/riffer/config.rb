@@ -75,7 +75,6 @@ class Riffer::Config
   end
 
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
-  VALID_ON_INVALID_SEED = %i[ignore raise strip].freeze
 
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
   attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock
@@ -152,32 +151,25 @@ class Riffer::Config
     @message_id_strategy = value
   end
 
-  # Strategy for handling seeded message arrays that violate the
-  # +tool_use+ ↔ +tool_result+ invariant. One of +:ignore+ (default —
-  # pass the seed through untouched, preserving pre-validation behavior),
-  # +:raise+ (raise +Riffer::ArgumentError+ on the first violation), or
-  # +:strip+ (silently drop orphaned tool exchanges and parentless tool
-  # messages).
+  # Experimental: when +true+, riffer keeps the +tool_use+ ↔ +tool_result+
+  # invariant intact on its own.
   #
-  # The two violation kinds detected:
-  # - **orphaned tool_use**: an assistant +tool_call+ with no matching
-  #   +Riffer::Messages::Tool+ result.
-  # - **parentless tool**: a +Riffer::Messages::Tool+ whose +tool_call_id+
-  #   has no matching assistant +tool_call+.
-  attr_reader :on_invalid_seed #: Symbol
-
-  # Sets the +on_invalid_seed+ strategy. Raises +Riffer::ArgumentError+ if
-  # the value is not one of +:ignore+, +:raise+, or +:strip+.
+  # - On +Riffer::Agent#generate(messages_array)+, orphaned +tool_use+
+  #   exchanges and parentless +Riffer::Messages::Tool+ messages are
+  #   silently stripped from the seed. Pending tool calls on the resume
+  #   boundary (last assistant whose tail is purely Tool results) are
+  #   preserved for +execute_pending_tool_calls+.
+  # - On any interrupt (caller-issued +interrupt!+ or
+  #   +INTERRUPT_MAX_STEPS+), riffer fills any orphaned +tool_use+ with a
+  #   placeholder +Riffer::Messages::Tool+ carrying
+  #   +error_type: :interrupted+, leaving history valid for the next turn.
+  #   Filled call_ids are exposed on
+  #   +Riffer::Agent::Response#healed_tool_call_ids+ (and the streaming
+  #   +Riffer::StreamEvents::Interrupt+ event).
   #
-  #--
-  #: (Symbol) -> void
-  def on_invalid_seed=(value)
-    unless VALID_ON_INVALID_SEED.include?(value)
-      raise Riffer::ArgumentError,
-        "on_invalid_seed must be one of #{VALID_ON_INVALID_SEED.inspect}, got #{value.inspect}"
-    end
-    @on_invalid_seed = value
-  end
+  # Defaults to +false+ — the pre-healing behavior. Experimental: the
+  # surface and default may change without notice.
+  attr_accessor :experimental_history_healing #: bool
 
   #--
   #: () -> void
@@ -192,6 +184,6 @@ class Riffer::Config
     @tool_runtime = Riffer::ToolRuntime::Inline.new
     @skills = Skills.new
     @message_id_strategy = :none
-    @on_invalid_seed = :ignore
+    @experimental_history_healing = false
   end
 end

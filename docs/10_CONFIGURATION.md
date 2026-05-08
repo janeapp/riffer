@@ -134,30 +134,26 @@ Missing ids raise `Riffer::ArgumentError` with the offending index.
 
 See [Messages — IDs](08_MESSAGES.md#ids) for more details.
 
-### Invalid Seed Strategy
+### Experimental: History Healing
 
-Controls how `agent.generate(messages_array)` handles seeded history that violates the `tool_use` ↔ `tool_result` invariant — e.g. an assistant `tool_call` with no matching tool result deeper in history, or a `Riffer::Messages::Tool` whose `tool_call_id` has no parent assistant.
+> **Warning:** This feature is experimental and may change without notice.
+
+Opts the agent into keeping the `tool_use` ↔ `tool_result` invariant intact on its own:
 
 ```ruby
 Riffer.configure do |config|
-  config.on_invalid_seed = :strip
+  config.experimental_history_healing = true
 end
 ```
 
-| Value               | Description                                                                                                                                   |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `:ignore` (default) | Pass the seed through untouched. The pre-validation behavior — preserved as the default to avoid breaking existing callers.                   |
-| `:raise`            | Raise `Riffer::ArgumentError` on the first violation, naming the offending `call_id`.                                                         |
-| `:strip`            | Silently drop offending exchanges (orphaned `tool_use` + their siblings, parentless `Tool` messages) and proceed with the surviving messages. |
+When enabled, two repairs run automatically:
 
-Pending tool calls are not a violation when they sit on the **resume boundary** — the last assistant whose subsequent messages are purely `Tool` results (or none). That's the cross-process resume shape, and riffer's `execute_pending_tool_calls` will run those pending calls before the next LLM call. An assistant followed by a `User` (or another `Assistant`) is past the boundary and its orphans are real violations.
+1. **Seeded history.** `agent.generate(messages_array)` silently drops orphaned `tool_use` exchanges (assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages from the seed before the run begins. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved; `execute_pending_tool_calls` runs them on the next LLM call.
+2. **Interrupts.** Any orphan `tool_use` left when the loop is interrupted (caller-issued `interrupt!` or the built-in `INTERRUPT_MAX_STEPS` ceiling) is filled with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted` and the content `"Tool call interrupted before completion."`. Filled `call_id`s are exposed on `Riffer::Agent::Response#healed_tool_call_ids` (and `Riffer::StreamEvents::Interrupt#healed_tool_call_ids` when streaming).
 
-Per-call override:
+Defaults to `false` — pre-healing behavior. Seeded arrays pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.
 
-```ruby
-agent.generate(messages, on_invalid_seed: :strip)
-agent.stream(messages, on_invalid_seed: :strip)
-```
+There is no per-call override and no customizable placeholder. Callers needing finer control can call the `replace_tool_result` mutator after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](04_AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
 
 ## Agent-Level Configuration
 

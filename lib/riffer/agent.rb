@@ -26,13 +26,11 @@ class Riffer::Agent
   DEFAULT_MAX_STEPS = 16 #: Integer
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
-  # Built-in synthesizer used when the +max_steps+ ceiling fires
-  # mid-tool-use, leaving orphan +tool_use+ blocks. Fills them with a
-  # +:interrupted+ tool error so the next inference call has valid history.
-  # Caller-initiated interrupts supply their own synthesizer via
-  # +interrupt!(synthesize:)+.
-  MAX_STEPS_INTERRUPT_SYNTHESIZER = ->(_tool_call) {
-    Riffer::Tools::Response.error("Step budget exhausted before tool execution completed.", type: :interrupted)
+  # Placeholder used to fill orphan +tool_use+ blocks when
+  # +Riffer.config.experimental_history_healing+ is enabled and an
+  # interrupt fires mid-tool-use.
+  HEALING_PLACEHOLDER = ->(_tool_call) {
+    Riffer::Tools::Response.error("Tool call interrupted before completion.", type: :interrupted)
   } #: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
   # Gets or sets the agent identifier.
@@ -354,17 +352,17 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  # +on_invalid_seed:+ overrides +Riffer.config.on_invalid_seed+ for this
-  # call only. Used when seeding an array of messages that may violate the
-  # +tool_use+ ↔ +tool_result+ invariant.
+  # When +Riffer.config.experimental_history_healing+ is enabled, seeded
+  # message arrays that violate the +tool_use+ ↔ +tool_result+ invariant
+  # are silently repaired before the run begins.
   #
   #--
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?, ?on_invalid_seed: Symbol?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, files: nil, context: nil, on_invalid_seed: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, files: nil, context: nil)
     @context = context
     prepare_run
     @structured_output = resolve_structured_output
-    initialize_messages(prompt_or_messages, files: files, on_invalid_seed: on_invalid_seed)
+    initialize_messages(prompt_or_messages, files: files)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
 
@@ -379,17 +377,17 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  # +on_invalid_seed:+ overrides +Riffer.config.on_invalid_seed+ for this
-  # call only. See +#generate+.
+  # See +#generate+ for the +experimental_history_healing+ behavior on
+  # seeded arrays.
   #
   #--
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?, ?on_invalid_seed: Symbol?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, files: nil, context: nil, on_invalid_seed: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, files: nil, context: nil)
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @context = context
     prepare_run
-    initialize_messages(prompt_or_messages, files: files, on_invalid_seed: on_invalid_seed)
+    initialize_messages(prompt_or_messages, files: files)
 
     Enumerator.new do |yielder|
       tripwire, modifications = run_before_guardrails
@@ -447,17 +445,16 @@ class Riffer::Agent
   # Call from an +on_message+ callback to cleanly interrupt the loop.
   # Equivalent to <tt>throw :riffer_interrupt, reason</tt>.
   #
-  # When +synthesize:+ is given, riffer fills any orphaned +tool_use+ on the
-  # way out by calling the block once per orphan. Each block invocation
-  # receives the originating +Riffer::Messages::Assistant::ToolCall+ and must
-  # return a +Riffer::Tools::Response+. The list of synthesized call_ids is
-  # exposed on +Riffer::Agent::Response#synthesized_tool_call_ids+ (and the
-  # streaming +Riffer::StreamEvents::Interrupt+ event).
+  # When +Riffer.config.experimental_history_healing+ is enabled, riffer
+  # fills any orphaned +tool_use+ on the way out with a placeholder
+  # +Riffer::Messages::Tool+ carrying +error_type: :interrupted+. The
+  # filled call_ids are exposed on
+  # +Riffer::Agent::Response#healed_tool_call_ids+ (and the streaming
+  # +Riffer::StreamEvents::Interrupt+ event).
   #
   #--
-  #: (?(String | Symbol)?, ?synthesize: (^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response)?) -> void
-  def interrupt!(reason = nil, synthesize: nil)
-    @interrupt_synthesizer = synthesize
+  #: (?(String | Symbol)?) -> void
+  def interrupt!(reason = nil)
     throw :riffer_interrupt, reason
   end
 
@@ -597,34 +594,23 @@ class Riffer::Agent
     replacement
   end
 
-  # Fills any orphaned +tool_use+ in history with a synthesized
-  # +Riffer::Messages::Tool+ message. The block is called once per orphan
-  # in conversation order, receives the originating
-  # +Riffer::Messages::Assistant::ToolCall+, and must return a
-  # +Riffer::Tools::Response+. Each synthesized Tool message is inserted
-  # immediately after its parent assistant message.
+  private
+
+  # Fills any orphaned +tool_use+ in history with the +HEALING_PLACEHOLDER+
+  # response. Each placeholder Tool message is inserted immediately after
+  # its parent assistant message. Returns the array of call_ids that were
+  # filled, in order; +[]+ when there are no orphans.
   #
-  # Returns the array of call_ids that were synthesized, in order. Returns
-  # an empty array when there are no orphans.
-  #
-  # Raises Riffer::ArgumentError when the block returns a value that is not
-  # a +Riffer::Tools::Response+.
-  #
-  # Synthesized Tool messages do *not* fire +on_message+ — they are
-  # caller-driven mutations (just like the other history mutators), not
-  # results of inference. Consumers learn that synthesis happened via the
-  # structured +Riffer::Agent::Response#synthesized_tool_call_ids+ field
-  # (and the streaming +Interrupt+ event's matching field). That signal
-  # carries the intent — placeholders, not real tool executions — which
-  # +on_message+ alone can't convey.
+  # Bypasses +on_message+ — placeholders are not inference output.
+  # Consumers learn that healing happened via the structured
+  # +Riffer::Agent::Response#healed_tool_call_ids+ field (and the streaming
+  # +Interrupt+ event's matching field).
   #
   #--
-  #: () { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response } -> Array[String]
-  def synthesize_missing_tool_results(&block)
-    raise Riffer::ArgumentError, "synthesize_missing_tool_results requires a block" unless block
-
+  #: () -> Array[String]
+  def heal_orphan_tool_calls
     result_ids = @messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
-    synthesized = [] #: Array[String]
+    healed = [] #: Array[String]
     new_messages = [] #: Array[Riffer::Messages::Base]
 
     @messages.each do |m|
@@ -634,12 +620,7 @@ class Riffer::Agent
       m.tool_calls.each do |tc|
         next if result_ids.include?(tc.call_id)
 
-        response = block.call(tc)
-        unless response.is_a?(Riffer::Tools::Response)
-          raise Riffer::ArgumentError,
-            "synthesize_missing_tool_results block must return a Riffer::Tools::Response, got #{response.class}"
-        end
-
+        response = HEALING_PLACEHOLDER.call(tc)
         new_messages << Riffer::Messages::Tool.new(
           response.content,
           tool_call_id: tc.call_id,
@@ -647,15 +628,13 @@ class Riffer::Agent
           error: response.error_message,
           error_type: response.error_type
         )
-        synthesized << tc.call_id
+        healed << tc.call_id
       end
     end
 
     @messages = new_messages
-    synthesized
+    healed
   end
-
-  private
 
   #--
   #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
@@ -693,10 +672,10 @@ class Riffer::Agent
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
-    synthesized = run_interrupt_synthesizer(reason)
+    healed = Riffer.config.experimental_history_healing ? heal_orphan_tool_calls : []
     response = extract_final_response
 
-    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), synthesized_tool_call_ids: synthesized)
+    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), healed_tool_call_ids: healed)
   end
 
   #--
@@ -715,14 +694,14 @@ class Riffer::Agent
   end
 
   #--
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?on_invalid_seed: Symbol?) -> void
-  def initialize_messages(prompt_or_messages, files: nil, on_invalid_seed: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  def initialize_messages(prompt_or_messages, files: nil)
     if prompt_or_messages.is_a?(Array)
       raise Riffer::ArgumentError, "cannot pass an array of messages on an agent with existing messages; use a string to continue the conversation or a new agent instance to start fresh" if @messages.any?
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead" if files && !files.empty?
       validate_seed_ids!(prompt_or_messages)
       converted = prompt_or_messages.map { |item| convert_to_message_object(item) }
-      @messages = enforce_seed_invariant!(converted, strategy: on_invalid_seed || Riffer.config.on_invalid_seed)
+      @messages = Riffer.config.experimental_history_healing ? heal_seeded_history(converted) : converted
     elsif @messages.any?
       file_parts = (files || []).map { |f| convert_to_file_part(f) }
       @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
@@ -755,29 +734,21 @@ class Riffer::Agent
     end
   end
 
-  # Enforces the +tool_use+ ↔ +tool_result+ invariant on a seeded message
-  # array. With +:ignore+ (the default), the seed is passed through
-  # untouched. With +:raise+, raises +Riffer::ArgumentError+ on the first
-  # violation. With +:strip+, returns a new array with offending exchanges
-  # removed.
+  # Repairs a seeded message array so the +tool_use+ ↔ +tool_result+
+  # invariant holds. Drops orphaned tool exchanges (assistant +tool_call+
+  # with no matching Tool result) and parentless Tool messages. Returns a
+  # new array; the input is not mutated.
   #
-  # Pending tool_calls on the *last* assistant message are not a violation
-  # — they are handled by +execute_pending_tool_calls+ at the start of the
-  # next generate/stream call (the cross-process resume path).
+  # Pending tool_calls on the resume boundary — the last assistant whose
+  # tail is purely Tool results (or empty) — are preserved. They get swept
+  # up by +execute_pending_tool_calls+ at the start of the next
+  # generate/stream call.
+  #
+  # Only invoked when +Riffer.config.experimental_history_healing+ is on.
   #
   #--
-  #: (Array[Riffer::Messages::Base], strategy: Symbol) -> Array[Riffer::Messages::Base]
-  def enforce_seed_invariant!(messages, strategy:)
-    unless Riffer::Config::VALID_ON_INVALID_SEED.include?(strategy)
-      raise Riffer::ArgumentError,
-        "on_invalid_seed must be one of #{Riffer::Config::VALID_ON_INVALID_SEED.inspect}, got #{strategy.inspect}"
-    end
-    return messages if strategy == :ignore
-
-    # Resume boundary: the last assistant whose tail is purely Tool messages
-    # (or empty). Anything past that boundary moved on without resolving the
-    # tool exchange, so its orphans are real violations — not pending state
-    # that +execute_pending_tool_calls+ will sweep up on the next call.
+  #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def heal_seeded_history(messages)
     resume_boundary = (messages.length - 1).downto(0).find { |idx|
       m = messages[idx]
       m.is_a?(Riffer::Messages::Assistant) &&
@@ -789,47 +760,23 @@ class Riffer::Agent
       m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : []
     }
 
-    orphan_call_ids = messages.each_with_index.flat_map { |m, idx|
-      next [] unless m.is_a?(Riffer::Messages::Assistant)
-      next [] if idx == resume_boundary # pending: handled by execute_pending_tool_calls
-      m.tool_calls.reject { |tc| result_ids.include?(tc.call_id) }.map(&:call_id)
-    }
-    parentless_tools = messages.select { |m|
-      m.is_a?(Riffer::Messages::Tool) && !parent_ids.include?(m.tool_call_id)
+    strip_offenders = messages.each_with_index.flat_map { |m, idx|
+      next [] unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
+      next [] if idx == resume_boundary # preserve pending exchange
+      next [] if m.tool_calls.all? { |tc| result_ids.include?(tc.call_id) }
+      m.tool_calls.map(&:call_id)
     }
 
-    return messages if orphan_call_ids.empty? && parentless_tools.empty?
-
-    case strategy
-    when :raise
-      if orphan_call_ids.any?
-        raise Riffer::ArgumentError,
-          "seeded history has orphaned tool_use call_ids: #{orphan_call_ids.inspect} (set Riffer.config.on_invalid_seed = :strip to drop them)"
+    messages.reject { |m|
+      case m
+      when Riffer::Messages::Assistant
+        !m.tool_calls.empty? && m.tool_calls.any? { |tc| strip_offenders.include?(tc.call_id) }
+      when Riffer::Messages::Tool
+        strip_offenders.include?(m.tool_call_id) || !parent_ids.include?(m.tool_call_id)
+      else
+        false
       end
-      raise Riffer::ArgumentError,
-        "seeded history has parentless tool_result messages: #{parentless_tools.map(&:tool_call_id).inspect} (set Riffer.config.on_invalid_seed = :strip to drop them)"
-    when :strip
-      strip_offenders = messages.each_with_index.flat_map { |m, idx|
-        next [] unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
-        next [] if idx == resume_boundary # preserve pending exchange on last assistant
-        next [] if m.tool_calls.all? { |tc| result_ids.include?(tc.call_id) }
-        m.tool_calls.map(&:call_id)
-      }
-      messages.reject { |m|
-        case m
-        when Riffer::Messages::Assistant
-          !m.tool_calls.empty? && m.tool_calls.any? { |tc| strip_offenders.include?(tc.call_id) }
-        when Riffer::Messages::Tool
-          strip_offenders.include?(m.tool_call_id) || !parent_ids.include?(m.tool_call_id)
-        else
-          false
-        end
-      }
-    else
-      # Unreachable — strategy was validated at method entry. Defensive
-      # branch keeps the type checker happy.
-      raise Riffer::ArgumentError, "unreachable: invalid on_invalid_seed strategy #{strategy.inspect}"
-    end
+    }
   end
 
   #--
@@ -926,28 +873,9 @@ class Riffer::Agent
 
     unless completed == :completed
       @interrupted = true
-      synthesized = run_interrupt_synthesizer(completed)
-      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, synthesized_tool_call_ids: synthesized)
+      healed = Riffer.config.experimental_history_healing ? heal_orphan_tool_calls : []
+      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, healed_tool_call_ids: healed)
     end
-  end
-
-  # Resolves the synthesizer to use for an interrupt and runs it. Returns
-  # the call_ids that were filled, or +[]+ when no synthesis applies.
-  #
-  # Caller-initiated interrupts pass a synthesizer through +interrupt!+;
-  # +INTERRUPT_MAX_STEPS+ falls back to +MAX_STEPS_INTERRUPT_SYNTHESIZER+.
-  # Existing tests using raw <tt>throw :riffer_interrupt</tt> bypass
-  # +interrupt!+ and get no synthesis — preserves backward compatibility.
-  #
-  #--
-  #: ((String | Symbol)?) -> Array[String]
-  def run_interrupt_synthesizer(reason)
-    synthesizer = @interrupt_synthesizer
-    synthesizer ||= MAX_STEPS_INTERRUPT_SYNTHESIZER if reason == INTERRUPT_MAX_STEPS
-    return [] unless synthesizer
-
-    @interrupt_synthesizer = nil
-    synthesize_missing_tool_results(&synthesizer)
   end
 
   #--
@@ -1059,7 +987,6 @@ class Riffer::Agent
     @resolved_tool_runtime = nil
     clear_resolved_model
     @interrupted = false
-    @interrupt_synthesizer = nil
     resolve_model
     @skills_state = resolve_skills
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
@@ -1302,8 +1229,8 @@ class Riffer::Agent
   end
 
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?synthesized_tool_call_ids: Array[String]) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, synthesized_tool_call_ids: [])
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: @messages.frozen? ? @messages : @messages.dup.freeze, synthesized_tool_call_ids: synthesized_tool_call_ids)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [])
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: @messages.frozen? ? @messages : @messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids)
   end
 end
