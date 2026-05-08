@@ -1,0 +1,28 @@
+# Generated from lib/riffer/mcp_server/auth_middleware.rb with RBS::Inline
+
+# Rack middleware that validates the +Authorization: Bearer ...+ header
+# against the configured authenticator Proc and stashes the resolved token
+# object in the rack env at +"riffer.mcp_server.token"+.
+#
+# Returns a JSON-RPC 2.0 error envelope with HTTP 401 on rejection. Raises
+# +Riffer::McpServer::ConfigurationError+ when invoked without an
+# authenticator configured — that is a programmer error, not a request
+# error.
+class Riffer::McpServer::AuthMiddleware
+  TOKEN_ENV_KEY: String
+
+  BEARER_PREFIX: String
+
+  PARSE_ERROR_CODE: Integer
+
+  # : (untyped, config: Riffer::McpServer::Config) -> void
+  def initialize: (untyped, config: Riffer::McpServer::Config) -> void
+
+  # : (Hash[String, untyped]) -> [Integer, Hash[String, String], Array[String]]
+  def call: (Hash[String, untyped]) -> [ Integer, Hash[String, String], Array[String] ]
+
+  private
+
+  # : (String) -> [Integer, Hash[String, String], Array[String]]
+  def unauthorized: (String) -> [ Integer, Hash[String, String], Array[String] ]
+end

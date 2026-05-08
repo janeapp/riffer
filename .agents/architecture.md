@@ -185,6 +185,26 @@ Key types: `Manifest` (`discovery_headers`, optional `credentials_scope` hint), 
 
 **on_pending strategies** (global default `:ignore`): `:ignore` skips the server; `:wait` blocks until ready, re-raises failed discovery immediately, or times out; `:raise` re-raises failed discovery or `NotReadyError` while still pending.
 
+### MCP Server (`lib/riffer/mcp_server/`)
+
+The inverse of `Riffer::Mcp`: instead of consuming third-party MCP servers, `Riffer::McpServer` lets a riffer process **host** an MCP-compliant server that exposes registered `Riffer::Tool` subclasses to external clients. Used by external agents (e.g. the riffer-claude-code plugin) for tool callbacks.
+
+```ruby
+Riffer::McpServer.configure do |s|
+  s.expose MyTool, scope: :default
+  s.authenticator = ->(token) { JwtThing.verify(token) || nil }
+  s.context_builder = ->(token_object) { {tenant_id: token_object.tenant_id} }
+end
+
+run Riffer::McpServer.rack_app   # mount in Puma/Falcon
+```
+
+Key types: `Config` (singleton, holds authenticator + context_builder), `Registry` (per-process `Array<{tool_class:, scope:}>`, separate from the client-side `Riffer::Mcp::Registry`), `AuthMiddleware` (Rack middleware enforcing `Authorization: Bearer ...`), `ToolAdapter` (per-tool `MCP::Tool` subclass that dispatches via `Riffer::Tool#call_with_validation` — bypasses `Riffer::ToolRuntime` because the MCP server *is* the outer loop), `RackApp::ContextBridge` (builds a fresh `MCP::Server` per request with the per-request riffer context baked in, avoiding shared mutable state).
+
+The transport runs in stateless + JSON-response mode (no session negotiation). `Riffer::McpServer` and `Riffer::Mcp` share neither registry nor configuration; they are independent namespaces.
+
+See `docs/15_MCP_SERVER.md` for the public API.
+
 ## Key Patterns
 
 - Model config accepts a `provider/model` string (e.g., `openai/gpt-5-mini`) or a Proc/lambda that returns one
@@ -266,6 +286,13 @@ lib/
       client.rb          # Thin mcp gem wrapper
       authenticated_tool.rb  # Wraps MCP tools when credentials proc is configured
       tool_factory.rb    # Generates Riffer::Tool subclasses from MCP tools
+    mcp_server.rb        # Riffer::McpServer public API + error classes
+    mcp_server/
+      config.rb          # Singleton config (authenticator, context_builder)
+      registry.rb        # Per-process exposed-tool store
+      auth_middleware.rb # Rack middleware for Bearer-token auth
+      tool_adapter.rb    # Builds MCP::Tool subclasses from Riffer::Tool subclasses
+      rack_app.rb        # Composes the Rack app + per-request ContextBridge
 test/
   test_helper.rb         # Minitest configuration with VCR
   riffer_test.rb         # Main module tests

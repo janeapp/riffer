@@ -1,0 +1,36 @@
+# Generated from lib/riffer/mcp_server/tool_adapter.rb with RBS::Inline
+
+# Builds MCP-gem-compatible tool classes from +Riffer::Tool+ subclasses.
+#
+# Each call to +.build_for+ returns an anonymous +MCP::Tool+ subclass that:
+#   1. Mirrors the source tool's name, description, and strict input schema.
+#   2. On +self.call+, instantiates the source tool and dispatches via
+#      +Riffer::Tool#call_with_validation+ — so the same validation, timeout,
+#      and return-type guarantees apply at the HTTP boundary as elsewhere.
+#   3. Translates +Riffer::ValidationError+, +Riffer::TimeoutError+, and any
+#      other +StandardError+ into an error +MCP::Tool::Response+ carrying the
+#      message but never the backtrace.
+#
+# Dispatch deliberately bypasses +Riffer::ToolRuntime+: that runtime exists to
+# convert exceptions back into +Response.error+ objects for an outer agent
+# loop, but here the MCP server *is* the outer loop and we want exceptions to
+# surface at the HTTP boundary.
+class Riffer::McpServer::ToolAdapter
+  extend Riffer::Helpers::Dependencies
+
+  # Builds an MCP::Tool subclass that proxies into the given +Riffer::Tool+ class.
+  #
+  # Raises +Riffer::ArgumentError+ if the source tool is missing a description
+  # or identifier (MCP requires both).
+  #
+  # --
+  # : (Class) -> untyped
+  def self.build_for: (Class) -> untyped
+
+  # MCP's draft-04 schema validator rejects an empty +required+ array; strip
+  # it out when the source tool defined no parameters at all.
+  #
+  # --
+  # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def self.sanitize_schema_for_mcp: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+end

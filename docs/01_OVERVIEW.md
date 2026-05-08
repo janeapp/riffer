@@ -134,3 +134,5 @@ Response
 - [Evals](11_EVALS.md) - Evaluating agent quality
 - [Guardrails](12_GUARDRAILS.md) - Input/output validation
 - [Skills](13_SKILLS.md) - Packaged agent capabilities
+- [MCP](14_MCP.md) - Consume third-party MCP servers as tool sources
+- [MCP Server](15_MCP_SERVER.md) - Host an MCP server that exposes Riffer tools to external clients

@@ -46,3 +46,8 @@ SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
+
+# Clears the Riffer::McpServer process-singleton state between tests.
+def clear_mcp_server!
+  Riffer::McpServer.reset!
+end

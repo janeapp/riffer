@@ -1,0 +1,36 @@
+# Generated from lib/riffer/mcp_server/config.rb with RBS::Inline
+
+# Holds the configuration for a +Riffer::McpServer+ instance.
+#
+# +authenticator+ is a Proc that receives the bearer token String and returns
+# either an opaque token object (any object) or +nil+ to deny the request.
+# +context_builder+ is a Proc that receives the token object and returns a
+# Hash to use as the per-request riffer context. The default builder returns
+# an empty Hash.
+class Riffer::McpServer::Config
+  DEFAULT_SERVER_NAME: String
+
+  DEFAULT_SERVER_VERSION: String
+
+  DEFAULT_CONTEXT_BUILDER: ^(untyped) -> Hash[Symbol, untyped]
+
+  attr_accessor authenticator: ^(String) -> untyped | nil
+
+  attr_accessor context_builder: ^(untyped) -> Hash[Symbol, untyped]
+
+  attr_accessor server_name: String
+
+  attr_accessor server_version: String
+
+  attr_reader registry: Riffer::McpServer::Registry
+
+  # : (registry: Riffer::McpServer::Registry) -> void
+  def initialize: (registry: Riffer::McpServer::Registry) -> void
+
+  # Convenience for +configure+ blocks: registers the tool with the
+  # underlying registry under the given scope.
+  #
+  # --
+  # : (Class, ?scope: (Symbol | Array[Symbol])) -> Hash[Symbol, untyped]
+  def expose: (Class, ?scope: Symbol | Array[Symbol]) -> Hash[Symbol, untyped]
+end

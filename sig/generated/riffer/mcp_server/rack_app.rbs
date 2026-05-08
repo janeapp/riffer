@@ -1,0 +1,36 @@
+# Generated from lib/riffer/mcp_server/rack_app.rb with RBS::Inline
+
+# Composes the +Riffer::McpServer+ Rack pipeline:
+#
+#   AuthMiddleware  →  ContextBridge  →  MCP::StreamableHTTPTransport
+#
+# The transport is configured for stateless + JSON-response delivery so
+# clients can issue +tools/list+ / +tools/call+ requests without negotiating
+# a session. Per-request riffer context flows in through the
+# +ContextBridge+, which builds a fresh +MCP::Server+ each call (cheap;
+# avoids racing on a shared mutable +server_context+).
+class Riffer::McpServer::RackApp
+  extend Riffer::Helpers::Dependencies
+
+  # Builds and returns the composed Rack app.
+  #
+  # --
+  # : (config: Riffer::McpServer::Config, registry: Riffer::McpServer::Registry) -> untyped
+  def self.build: (config: Riffer::McpServer::Config, registry: Riffer::McpServer::Registry) -> untyped
+
+  # Inner middleware that translates an authenticated request into a
+  # per-request +MCP::Server+ keyed by the riffer context built from the
+  # token object.
+  class ContextBridge
+    # : (config: Riffer::McpServer::Config, registry: Riffer::McpServer::Registry) -> void
+    def initialize: (config: Riffer::McpServer::Config, registry: Riffer::McpServer::Registry) -> void
+
+    # : (Hash[String, untyped]) -> [Integer, Hash[String, String], untyped]
+    def call: (Hash[String, untyped]) -> [ Integer, Hash[String, String], untyped ]
+
+    private
+
+    # : () -> Array[untyped]
+    def build_adapters: () -> Array[untyped]
+  end
+end

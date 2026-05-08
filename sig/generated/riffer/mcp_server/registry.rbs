@@ -1,0 +1,45 @@
+# Generated from lib/riffer/mcp_server/registry.rb with RBS::Inline
+
+# Thread-safe per-instance store of exposed +Riffer::Tool+ subclasses.
+#
+# Each registration is a +{tool_class:, scope:}+ record. The same tool can be
+# registered multiple times (under different scopes); +#lookup+ returns the
+# most recent record. All public methods are mutex-guarded.
+class Riffer::McpServer::Registry
+  # : () -> void
+  def initialize: () -> void
+
+  # Registers a tool class under the given scope. The same tool may be
+  # registered repeatedly under different scopes.
+  #
+  # --
+  # : (Class, ?scope: (Symbol | Array[Symbol])) -> Hash[Symbol, untyped]
+  def register: (Class, ?scope: Symbol | Array[Symbol]) -> Hash[Symbol, untyped]
+
+  # Returns the most-recently-registered record whose tool name matches.
+  # Returns +nil+ when no record matches.
+  #
+  # --
+  # : (String) -> Hash[Symbol, untyped]?
+  def lookup: (String) -> Hash[Symbol, untyped]?
+
+  # Returns all records whose scope matches +scope+ (Symbol equality, or
+  # Array#include? when the record's scope is an Array).
+  #
+  # --
+  # : (Symbol) -> Array[Hash[Symbol, untyped]]
+  def all_for_scope: (Symbol) -> Array[Hash[Symbol, untyped]]
+
+  # Returns a frozen snapshot of all records. Mutating the snapshot does not
+  # affect the registry.
+  #
+  # --
+  # : () -> Array[Hash[Symbol, untyped]]
+  def all: () -> Array[Hash[Symbol, untyped]]
+
+  # Removes every registration.
+  #
+  # --
+  # : () -> void
+  def clear!: () -> void
+end

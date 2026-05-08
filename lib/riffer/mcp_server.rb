@@ -1,0 +1,85 @@
+# frozen_string_literal: true
+# rbs_inline: enabled
+
+# Riffer::McpServer hosts an MCP-compliant server backed by registered
+# +Riffer::Tool+ subclasses. Applications build the Rack app via
+# +Riffer::McpServer.rack_app+ and mount it under any Rack-compatible
+# server (Puma, Falcon).
+#
+# See +docs/15_MCP_SERVER.md+ for the full guide.
+#
+#   Riffer::McpServer.configure do |s|
+#     s.expose MyTool
+#     s.authenticator = ->(token) { JwtThing.verify(token) || nil }
+#     s.context_builder = ->(token_object) { {tenant_id: token_object.tenant_id} }
+#   end
+#
+#   run Riffer::McpServer.rack_app
+#
+module Riffer::McpServer
+  # Base error for all MCP server failures.
+  class Error < Riffer::Error; end
+
+  # Raised when a request fails authentication and we want to signal that to
+  # internal callers (the rack middleware itself returns a 401 response).
+  class AuthenticationError < Error; end
+
+  # Raised when +rack_app+ is requested before the server is fully configured
+  # (e.g., no authenticator set).
+  class ConfigurationError < Error; end
+
+  class << self
+    # Yields a +Config+ for block-based setup.
+    #
+    #   Riffer::McpServer.configure do |s|
+    #     s.expose MyTool, scope: :default
+    #     s.authenticator = ->(token) { JwtThing.verify(token) || nil }
+    #     s.context_builder = ->(token_object) { {tenant_id: token_object.tenant_id} }
+    #   end
+    #
+    #--
+    #: () { (Riffer::McpServer::Config) -> void } -> Riffer::McpServer::Config
+    def configure
+      yield config
+      config
+    end
+
+    # Returns the process-singleton configuration.
+    #
+    #--
+    #: () -> Riffer::McpServer::Config
+    def config
+      @config ||= Config.new(registry: registry)
+    end
+
+    # Returns the process-singleton registry.
+    #
+    #--
+    #: () -> Riffer::McpServer::Registry
+    def registry
+      @registry ||= Registry.new
+    end
+
+    # Returns the composed Rack app, lazily building it the first time and
+    # memoizing the result. Raises +ConfigurationError+ if no authenticator
+    # has been configured yet.
+    #
+    #--
+    #: () -> untyped
+    def rack_app
+      raise ConfigurationError, "Riffer::McpServer requires an authenticator to be configured before #rack_app can be built" if config.authenticator.nil?
+      @rack_app ||= RackApp.build(config: config, registry: registry)
+    end
+
+    # Test-only: clears all configuration, the registry, and the cached
+    # +rack_app+. Mirrors +clear_mcp_registry!+ for the client-side namespace.
+    #
+    #--
+    #: () -> void
+    def reset!
+      @config = nil
+      @registry = nil
+      @rack_app = nil
+    end
+  end
+end
