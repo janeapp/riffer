@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.28.0](https://github.com/janeapp/riffer/compare/riffer/v0.27.2...riffer/v0.28.0) (2026-05-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Custom subclasses of Riffer::ToolRuntime that override around_tool_call or dispatch_tool_call must accept the new assistant_message: kwarg (or **kwargs). Existing overrides that omit it will raise ArgumentError: unknown keyword: :assistant_message.
+
+### Features
+
+* add history mutation API to Riffer::Agent ([#249](https://github.com/janeapp/riffer/issues/249)) ([d980daa](https://github.com/janeapp/riffer/commit/d980daa1526e476ce08b299be84e93257b746a1b))
+* forward assistant_message to ToolRuntime hooks ([#247](https://github.com/janeapp/riffer/issues/247)) ([3d5f935](https://github.com/janeapp/riffer/commit/3d5f935bf136a39e8fbef1b0a0728fcb87ef0de0))
+
 ## [0.27.2](https://github.com/janeapp/riffer/compare/riffer/v0.27.1...riffer/v0.27.2) (2026-05-04)
 
 
