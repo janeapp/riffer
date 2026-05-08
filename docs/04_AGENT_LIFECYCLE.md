@@ -265,12 +265,16 @@ When the agent itself interrupts (currently: `max_steps` exceeded), riffer fills
 
 The agent exposes a small set of in-place mutators that enforce the `tool_use` ↔ `tool_result` invariant on every operation. Use these to align the agent's history with external state (persisted transcript, partial output that wasn't actually delivered, etc.) without rebuilding the agent.
 
-| Method                                                                    | Purpose                                                                                                                                            |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
-| `agent.replace_assistant_content(id:, content:)`                          | In-place truncation/edit. Preserves `tool_calls`, `token_usage`, and `id`. Empty `content` delegates to `remove_message`.                          |
-| `agent.remove_message(id:)`                                               | Removes a message; cascades to its `Tool` children when the target carries `tool_calls`. Raises if called on a `Tool` (use `replace_tool_result`). |
-| `agent.replace_tool_result(tool_call_id:, content:, error:, error_type:)` | Replace a tool result in place, preserving `name` and `id`.                                                                                        |
-| `agent.synthesize_missing_tool_results {                                  | tc                                                                                                                                                 | Riffer::Tools::Response.error(...) }` | Fill any orphan `tool_use` in history. Returns the `call_id`s that were synthesized. |
+- **`agent.replace_assistant_content(id:, content:)`** — In-place truncation/edit. Preserves `tool_calls`, `token_usage`, and `id`. Empty `content` delegates to `remove_message`.
+- **`agent.remove_message(id:)`** — Removes a message; cascades to its `Tool` children when the target carries `tool_calls`. Raises if called on a `Tool` (use `replace_tool_result`).
+- **`agent.replace_tool_result(tool_call_id:, content:, error:, error_type:)`** — Replace a tool result in place, preserving `name` and `id`.
+- **`agent.synthesize_missing_tool_results(&block)`** — Fill any orphan `tool_use` in history. The block is called once per orphan with the originating `Riffer::Messages::Assistant::ToolCall` and must return a `Riffer::Tools::Response`. Returns the `call_id`s that were synthesized.
+
+```ruby
+agent.synthesize_missing_tool_results do |tool_call|
+  Riffer::Tools::Response.error("interrupted", type: :interrupted)
+end
+```
 
 Read accessors that pair with the mutators:
 
@@ -282,6 +286,8 @@ agent.orphaned_tool_call_ids      # => Array[String]   (zero-cost validation)
 ```
 
 Mutating history while a `stream` enumerator is being consumed is undefined; mutators are intended for use between turns.
+
+Mutators do **not** fire `on_message` — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Consumers learn that synthesis happened via `Response#synthesized_tool_call_ids` (and `StreamEvents::Interrupt#synthesized_tool_call_ids`).
 
 ### token_usage
 
@@ -304,17 +310,18 @@ Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` ob
 
 `Riffer::Agent::Response` is returned by `generate`:
 
-| Attribute           | Type                        | Description                                        |
-| ------------------- | --------------------------- | -------------------------------------------------- |
-| `content`           | `String`                    | The response text                                  |
-| `structured_output` | `Hash` / `nil`              | Parsed and validated structured output (see below) |
-| `blocked?`          | `Boolean`                   | `true` if a guardrail tripwire fired               |
-| `tripwire`          | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request    |
-| `modified?`         | `Boolean`                   | `true` if a guardrail modified the content         |
-| `modifications`     | `Array`                     | List of guardrail modifications applied            |
-| `interrupted?`      | `Boolean`                   | `true` if the loop was interrupted                 |
-| `interrupt_reason`  | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`     |
-| `messages`          | `Array`                     | Full message history from the conversation         |
+| Attribute                   | Type                        | Description                                                                            |
+| --------------------------- | --------------------------- | -------------------------------------------------------------------------------------- |
+| `content`                   | `String`                    | The response text                                                                      |
+| `structured_output`         | `Hash` / `nil`              | Parsed and validated structured output (see below)                                     |
+| `blocked?`                  | `Boolean`                   | `true` if a guardrail tripwire fired                                                   |
+| `tripwire`                  | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request                                        |
+| `modified?`                 | `Boolean`                   | `true` if a guardrail modified the content                                             |
+| `modifications`             | `Array`                     | List of guardrail modifications applied                                                |
+| `interrupted?`              | `Boolean`                   | `true` if the loop was interrupted                                                     |
+| `interrupt_reason`          | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`                                         |
+| `messages`                  | `Array`                     | Full message history from the conversation                                             |
+| `synthesized_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with synthesized results during interrupt synthesis (else `[]`) |
 
 ### response.structured_output
 

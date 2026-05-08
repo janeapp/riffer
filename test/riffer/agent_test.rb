@@ -3979,6 +3979,21 @@ describe Riffer::Agent do
       it "raises when called without a block" do
         expect { agent.synthesize_missing_tool_results }.must_raise Riffer::ArgumentError
       end
+
+      it "does not fire on_message for synthesized Tool messages (caller-driven mutation)" do
+        # Synthesized results aren't real tool executions — they are caller-
+        # driven history mutations like replace_assistant_content and
+        # remove_message, which also bypass on_message. Consumers learn
+        # synthesis happened via Response#synthesized_tool_call_ids.
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [user, orphan_assistant])
+        seen = []
+        a.on_message { |msg| seen << msg }
+
+        a.synthesize_missing_tool_results { |_tc| Riffer::Tools::Response.error("interrupted") }
+
+        expect(seen).must_equal []
+      end
     end
   end
 
@@ -4122,6 +4137,29 @@ describe Riffer::Agent do
         Riffer::Messages::Assistant.new("ok")
       ]
       expect { custom_class.new.generate(messages) }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises with :raise when the trailing assistant has an orphan but the tail contains non-Tool messages" do
+      # The orphan-bearing assistant is the very last Assistant in history,
+      # but it is followed by a User message — so it is NOT the resume
+      # boundary (that's the "execute_pending_tool_calls will sweep this up"
+      # case). Validator must catch the orphan here.
+      Riffer.config.on_invalid_seed = :raise
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
+      messages = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        Riffer::Messages::User.new("never mind")
+      ]
+      expect { custom_class.new.generate(messages) }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises immediately on an unknown strategy even when the seed is clean" do
+      messages = [Riffer::Messages::User.new("hi")]
+      err = expect {
+        custom_class.new.generate(messages, on_invalid_seed: :raze)
+      }.must_raise Riffer::ArgumentError
+      expect(err.message).must_include "on_invalid_seed"
     end
 
     it "raises with :raise when a parentless tool_result is in the seed" do

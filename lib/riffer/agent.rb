@@ -26,10 +26,12 @@ class Riffer::Agent
   DEFAULT_MAX_STEPS = 16 #: Integer
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
-  # Built-in synthesizer used when riffer interrupts itself (today: only the
-  # +max_steps+ ceiling). Caller-initiated interrupts go through
-  # +interrupt!(synthesize:)+ and supply their own synthesizer.
-  DEFAULT_INTERRUPT_SYNTHESIZER = ->(_tool_call) {
+  # Built-in synthesizer used when the +max_steps+ ceiling fires
+  # mid-tool-use, leaving orphan +tool_use+ blocks. Fills them with a
+  # +:interrupted+ tool error so the next inference call has valid history.
+  # Caller-initiated interrupts supply their own synthesizer via
+  # +interrupt!(synthesize:)+.
+  MAX_STEPS_INTERRUPT_SYNTHESIZER = ->(_tool_call) {
     Riffer::Tools::Response.error("Step budget exhausted before tool execution completed.", type: :interrupted)
   } #: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
@@ -608,6 +610,14 @@ class Riffer::Agent
   # Raises Riffer::ArgumentError when the block returns a value that is not
   # a +Riffer::Tools::Response+.
   #
+  # Synthesized Tool messages do *not* fire +on_message+ — they are
+  # caller-driven mutations (just like the other history mutators), not
+  # results of inference. Consumers learn that synthesis happened via the
+  # structured +Riffer::Agent::Response#synthesized_tool_call_ids+ field
+  # (and the streaming +Interrupt+ event's matching field). That signal
+  # carries the intent — placeholders, not real tool executions — which
+  # +on_message+ alone can't convey.
+  #
   #--
   #: () { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response } -> Array[String]
   def synthesize_missing_tool_results(&block)
@@ -758,9 +768,22 @@ class Riffer::Agent
   #--
   #: (Array[Riffer::Messages::Base], strategy: Symbol) -> Array[Riffer::Messages::Base]
   def enforce_seed_invariant!(messages, strategy:)
+    unless Riffer::Config::VALID_ON_INVALID_SEED.include?(strategy)
+      raise Riffer::ArgumentError,
+        "on_invalid_seed must be one of #{Riffer::Config::VALID_ON_INVALID_SEED.inspect}, got #{strategy.inspect}"
+    end
     return messages if strategy == :ignore
 
-    last_assistant_idx = messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
+    # Resume boundary: the last assistant whose tail is purely Tool messages
+    # (or empty). Anything past that boundary moved on without resolving the
+    # tool exchange, so its orphans are real violations — not pending state
+    # that +execute_pending_tool_calls+ will sweep up on the next call.
+    resume_boundary = (messages.length - 1).downto(0).find { |idx|
+      m = messages[idx]
+      m.is_a?(Riffer::Messages::Assistant) &&
+        messages[(idx + 1)..].all? { |later| later.is_a?(Riffer::Messages::Tool) }
+    }
+
     result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
     parent_ids = messages.flat_map { |m|
       m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : []
@@ -768,7 +791,7 @@ class Riffer::Agent
 
     orphan_call_ids = messages.each_with_index.flat_map { |m, idx|
       next [] unless m.is_a?(Riffer::Messages::Assistant)
-      next [] if idx == last_assistant_idx # pending: handled by execute_pending_tool_calls
+      next [] if idx == resume_boundary # pending: handled by execute_pending_tool_calls
       m.tool_calls.reject { |tc| result_ids.include?(tc.call_id) }.map(&:call_id)
     }
     parentless_tools = messages.select { |m|
@@ -788,7 +811,7 @@ class Riffer::Agent
     when :strip
       strip_offenders = messages.each_with_index.flat_map { |m, idx|
         next [] unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
-        next [] if idx == last_assistant_idx # preserve pending exchange on last assistant
+        next [] if idx == resume_boundary # preserve pending exchange on last assistant
         next [] if m.tool_calls.all? { |tc| result_ids.include?(tc.call_id) }
         m.tool_calls.map(&:call_id)
       }
@@ -803,8 +826,9 @@ class Riffer::Agent
         end
       }
     else
-      raise Riffer::ArgumentError,
-        "on_invalid_seed must be one of #{Riffer::Config::VALID_ON_INVALID_SEED.inspect}, got #{strategy.inspect}"
+      # Unreachable — strategy was validated at method entry. Defensive
+      # branch keeps the type checker happy.
+      raise Riffer::ArgumentError, "unreachable: invalid on_invalid_seed strategy #{strategy.inspect}"
     end
   end
 
@@ -911,16 +935,15 @@ class Riffer::Agent
   # the call_ids that were filled, or +[]+ when no synthesis applies.
   #
   # Caller-initiated interrupts pass a synthesizer through +interrupt!+;
-  # riffer-initiated interrupts (today: +INTERRUPT_MAX_STEPS+) fall back to
-  # +DEFAULT_INTERRUPT_SYNTHESIZER+. Existing tests using raw
-  # <tt>throw :riffer_interrupt</tt> bypass +interrupt!+ and get no
-  # synthesis — preserves backward compatibility.
+  # +INTERRUPT_MAX_STEPS+ falls back to +MAX_STEPS_INTERRUPT_SYNTHESIZER+.
+  # Existing tests using raw <tt>throw :riffer_interrupt</tt> bypass
+  # +interrupt!+ and get no synthesis — preserves backward compatibility.
   #
   #--
   #: ((String | Symbol)?) -> Array[String]
   def run_interrupt_synthesizer(reason)
     synthesizer = @interrupt_synthesizer
-    synthesizer ||= DEFAULT_INTERRUPT_SYNTHESIZER if reason == INTERRUPT_MAX_STEPS
+    synthesizer ||= MAX_STEPS_INTERRUPT_SYNTHESIZER if reason == INTERRUPT_MAX_STEPS
     return [] unless synthesizer
 
     @interrupt_synthesizer = nil

@@ -150,7 +150,7 @@ end
 | `:raise`            | Raise `Riffer::ArgumentError` on the first violation, naming the offending `call_id`.                                                         |
 | `:strip`            | Silently drop offending exchanges (orphaned `tool_use` + their siblings, parentless `Tool` messages) and proceed with the surviving messages. |
 
-Pending tool calls on the **last** assistant message are not violations — riffer's cross-process resume path executes them via `execute_pending_tool_calls` before the next LLM call.
+Pending tool calls are not a violation when they sit on the **resume boundary** — the last assistant whose subsequent messages are purely `Tool` results (or none). That's the cross-process resume shape, and riffer's `execute_pending_tool_calls` will run those pending calls before the next LLM call. An assistant followed by a `User` (or another `Assistant`) is past the boundary and its orphans are real violations.
 
 Per-call override:
 

@@ -25,10 +25,12 @@ class Riffer::Agent
 
   INTERRUPT_MAX_STEPS: Symbol
 
-  # Built-in synthesizer used when riffer interrupts itself (today: only the
-  # +max_steps+ ceiling). Caller-initiated interrupts go through
-  # +interrupt!(synthesize:)+ and supply their own synthesizer.
-  DEFAULT_INTERRUPT_SYNTHESIZER: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
+  # Built-in synthesizer used when the +max_steps+ ceiling fires
+  # mid-tool-use, leaving orphan +tool_use+ blocks. Fills them with a
+  # +:interrupted+ tool error so the next inference call has valid history.
+  # Caller-initiated interrupts supply their own synthesizer via
+  # +interrupt!(synthesize:)+.
+  MAX_STEPS_INTERRUPT_SYNTHESIZER: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
   # Gets or sets the agent identifier.
   #
@@ -376,6 +378,14 @@ class Riffer::Agent
   # Raises Riffer::ArgumentError when the block returns a value that is not
   # a +Riffer::Tools::Response+.
   #
+  # Synthesized Tool messages do *not* fire +on_message+ — they are
+  # caller-driven mutations (just like the other history mutators), not
+  # results of inference. Consumers learn that synthesis happened via the
+  # structured +Riffer::Agent::Response#synthesized_tool_call_ids+ field
+  # (and the streaming +Interrupt+ event's matching field). That signal
+  # carries the intent — placeholders, not real tool executions — which
+  # +on_message+ alone can't convey.
+  #
   # --
   # : () { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response } -> Array[String]
   def synthesize_missing_tool_results: () { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response } -> Array[String]
@@ -436,10 +446,9 @@ class Riffer::Agent
   # the call_ids that were filled, or +[]+ when no synthesis applies.
   #
   # Caller-initiated interrupts pass a synthesizer through +interrupt!+;
-  # riffer-initiated interrupts (today: +INTERRUPT_MAX_STEPS+) fall back to
-  # +DEFAULT_INTERRUPT_SYNTHESIZER+. Existing tests using raw
-  # <tt>throw :riffer_interrupt</tt> bypass +interrupt!+ and get no
-  # synthesis — preserves backward compatibility.
+  # +INTERRUPT_MAX_STEPS+ falls back to +MAX_STEPS_INTERRUPT_SYNTHESIZER+.
+  # Existing tests using raw <tt>throw :riffer_interrupt</tt> bypass
+  # +interrupt!+ and get no synthesis — preserves backward compatibility.
   #
   # --
   # : ((String | Symbol)?) -> Array[String]
