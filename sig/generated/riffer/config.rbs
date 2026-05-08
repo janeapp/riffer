@@ -198,7 +198,20 @@ class Riffer::Config
   #
   # Defaults to +false+ — the pre-healing behavior. Experimental: the
   # surface and default may change without notice.
-  attr_accessor experimental_history_healing: bool
+  attr_reader experimental_history_healing: bool
+
+  # Sets the +experimental_history_healing+ flag.
+  #
+  # Coerces common boolean representations so values pulled from
+  # environment variables don't silently enable healing — the string
+  # +"false"+ is truthy in Ruby and would otherwise flip the flag on.
+  # Accepts +true+/+false+, +"true"+/+"false"+, +1+/+0+, +"1"+/+"0"+, and
+  # +nil+ (treated as +false+, the default). Raises
+  # +Riffer::ArgumentError+ for any other value.
+  #
+  # --
+  # : (untyped) -> void
+  def experimental_history_healing=: (untyped) -> void
 
   # --
   # : () -> void
