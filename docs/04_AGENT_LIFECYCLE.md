@@ -235,6 +235,54 @@ agent.on_message do |msg|
 end
 ```
 
+#### Synthesizing pending tool results on interrupt
+
+When an interrupt fires while the assistant has a `tool_use` block that hasn't been answered yet, the LLM will reject the next request unless every `tool_use` has a matching `tool_result`. By default, the next `generate` call re-executes those pending tools (see "Resuming an Interrupted Loop" above).
+
+When the interrupt represents a course-change rather than a pause — e.g. a voice barge-in where the user has moved on — re-execution is the wrong behavior. Pass a `synthesize:` block to fill any orphan `tool_use` with a synthesized result, leaving history valid for the next turn:
+
+```ruby
+agent.on_message do |msg|
+  if msg.is_a?(Riffer::Messages::Assistant) && barge_in?
+    agent.interrupt!(:user_interrupt, synthesize: ->(tool_call) {
+      Riffer::Tools::Response.error(
+        "Tool call interrupted; the user changed direction.",
+        type: :interrupted
+      )
+    })
+  end
+end
+
+response = agent.generate("Tell me a story")
+response.synthesized_tool_call_ids  # => ["call_abc123", ...]
+```
+
+The block is called once per orphan and must return a `Riffer::Tools::Response`. Riffer wraps each response into a `Riffer::Messages::Tool` and inserts it immediately after its parent assistant message. The list of synthesized `call_id`s is exposed on `response.synthesized_tool_call_ids` (and on `Riffer::StreamEvents::Interrupt#synthesized_tool_call_ids` when streaming).
+
+When the agent itself interrupts (currently: `max_steps` exceeded), riffer fills the orphan tool_use with a built-in error response — `synthesized_tool_call_ids` carries those `call_id`s as well.
+
+### Mutating history
+
+The agent exposes a small set of in-place mutators that enforce the `tool_use` ↔ `tool_result` invariant on every operation. Use these to align the agent's history with external state (persisted transcript, partial output that wasn't actually delivered, etc.) without rebuilding the agent.
+
+| Method                                                                    | Purpose                                                                                                                                            |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `agent.replace_assistant_content(id:, content:)`                          | In-place truncation/edit. Preserves `tool_calls`, `token_usage`, and `id`. Empty `content` delegates to `remove_message`.                          |
+| `agent.remove_message(id:)`                                               | Removes a message; cascades to its `Tool` children when the target carries `tool_calls`. Raises if called on a `Tool` (use `replace_tool_result`). |
+| `agent.replace_tool_result(tool_call_id:, content:, error:, error_type:)` | Replace a tool result in place, preserving `name` and `id`.                                                                                        |
+| `agent.synthesize_missing_tool_results {                                  | tc                                                                                                                                                 | Riffer::Tools::Response.error(...) }` | Fill any orphan `tool_use` in history. Returns the `call_id`s that were synthesized. |
+
+Read accessors that pair with the mutators:
+
+```ruby
+agent.message_by_id(id)           # => Riffer::Messages::Base or nil
+agent.tool_message_for(call_id)   # => Riffer::Messages::Tool or nil
+agent.last_assistant              # => Riffer::Messages::Assistant or nil
+agent.orphaned_tool_call_ids      # => Array[String]   (zero-cost validation)
+```
+
+Mutating history while a `stream` enumerator is being consumed is undefined; mutators are intended for use between turns.
+
 ### token_usage
 
 Access cumulative token usage across all LLM calls:

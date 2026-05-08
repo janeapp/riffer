@@ -75,6 +75,7 @@ class Riffer::Config
   end
 
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
+  VALID_ON_INVALID_SEED = %i[ignore raise strip].freeze
 
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
   attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock
@@ -151,6 +152,33 @@ class Riffer::Config
     @message_id_strategy = value
   end
 
+  # Strategy for handling seeded message arrays that violate the
+  # +tool_use+ ↔ +tool_result+ invariant. One of +:ignore+ (default —
+  # pass the seed through untouched, preserving pre-validation behavior),
+  # +:raise+ (raise +Riffer::ArgumentError+ on the first violation), or
+  # +:strip+ (silently drop orphaned tool exchanges and parentless tool
+  # messages).
+  #
+  # The two violation kinds detected:
+  # - **orphaned tool_use**: an assistant +tool_call+ with no matching
+  #   +Riffer::Messages::Tool+ result.
+  # - **parentless tool**: a +Riffer::Messages::Tool+ whose +tool_call_id+
+  #   has no matching assistant +tool_call+.
+  attr_reader :on_invalid_seed #: Symbol
+
+  # Sets the +on_invalid_seed+ strategy. Raises +Riffer::ArgumentError+ if
+  # the value is not one of +:ignore+, +:raise+, or +:strip+.
+  #
+  #--
+  #: (Symbol) -> void
+  def on_invalid_seed=(value)
+    unless VALID_ON_INVALID_SEED.include?(value)
+      raise Riffer::ArgumentError,
+        "on_invalid_seed must be one of #{VALID_ON_INVALID_SEED.inspect}, got #{value.inspect}"
+    end
+    @on_invalid_seed = value
+  end
+
   #--
   #: () -> void
   def initialize
@@ -164,5 +192,6 @@ class Riffer::Config
     @tool_runtime = Riffer::ToolRuntime::Inline.new
     @skills = Skills.new
     @message_id_strategy = :none
+    @on_invalid_seed = :ignore
   end
 end

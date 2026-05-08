@@ -3767,4 +3767,441 @@ describe Riffer::Agent do
       expect(klass.resolved_tool_classes).must_equal [good_tool]
     end
   end
+
+  describe "history read accessors" do
+    let(:user) { Riffer::Messages::User.new("hi", id: "u_1") }
+    let(:assistant) { Riffer::Messages::Assistant.new("hello", id: "a_1") }
+    let(:assistant_with_tool) do
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "t", arguments: "{}")
+      Riffer::Messages::Assistant.new("", id: "a_2", tool_calls: [tc])
+    end
+    let(:tool_msg) { Riffer::Messages::Tool.new("ok", id: "t_1", tool_call_id: "c_1", name: "t") }
+
+    let(:agent) do
+      a = agent_class.new
+      a.instance_variable_set(:@messages, [user, assistant, assistant_with_tool, tool_msg])
+      a
+    end
+
+    describe "#message_by_id" do
+      it "returns the matching message" do
+        expect(agent.message_by_id("a_1")).must_equal assistant
+      end
+
+      it "returns nil when no message matches" do
+        expect(agent.message_by_id("missing")).must_be_nil
+      end
+    end
+
+    describe "#tool_message_for" do
+      it "returns the tool message for the call_id" do
+        expect(agent.tool_message_for("c_1")).must_equal tool_msg
+      end
+
+      it "returns nil when no tool result exists for the call_id" do
+        expect(agent.tool_message_for("missing")).must_be_nil
+      end
+    end
+
+    describe "#last_assistant" do
+      it "returns the most recent assistant message" do
+        expect(agent.last_assistant).must_equal assistant_with_tool
+      end
+
+      it "returns nil when there is no assistant message" do
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [user])
+        expect(a.last_assistant).must_be_nil
+      end
+    end
+
+    describe "#orphaned_tool_call_ids" do
+      it "returns [] when every tool_call has a matching tool result" do
+        expect(agent.orphaned_tool_call_ids).must_equal []
+      end
+
+      it "returns the unmatched call_ids" do
+        tc1 = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_a", name: "t", arguments: "{}")
+        tc2 = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_b", name: "t", arguments: "{}")
+        asst = Riffer::Messages::Assistant.new("", id: "a_x", tool_calls: [tc1, tc2])
+        result = Riffer::Messages::Tool.new("ok", id: "t_x", tool_call_id: "c_a", name: "t")
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [asst, result])
+        expect(a.orphaned_tool_call_ids).must_equal ["c_b"]
+      end
+
+      it "returns [] for an empty agent" do
+        expect(agent_class.new.orphaned_tool_call_ids).must_equal []
+      end
+    end
+  end
+
+  describe "history mutators" do
+    let(:user) { Riffer::Messages::User.new("hi", id: "u_1") }
+    let(:plain_assistant) { Riffer::Messages::Assistant.new("hello", id: "a_1") }
+    let(:tc) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "weather", arguments: "{}") }
+    let(:tool_assistant) { Riffer::Messages::Assistant.new("", id: "a_2", tool_calls: [tc]) }
+    let(:tool_msg) { Riffer::Messages::Tool.new("sunny", id: "t_1", tool_call_id: "c_1", name: "weather") }
+
+    let(:agent) do
+      a = agent_class.new
+      a.instance_variable_set(:@messages, [user, plain_assistant, tool_assistant, tool_msg])
+      a
+    end
+
+    describe "#replace_assistant_content" do
+      it "replaces content while preserving id, tool_calls, token_usage" do
+        result = agent.replace_assistant_content(id: "a_2", content: "I checked.")
+        expect(result.content).must_equal "I checked."
+        expect(result.id).must_equal "a_2"
+        expect(result.tool_calls).must_equal [tc]
+        expect(agent.message_by_id("a_2").content).must_equal "I checked."
+      end
+
+      it "raises Riffer::ArgumentError on unknown id" do
+        expect { agent.replace_assistant_content(id: "missing", content: "x") }.must_raise Riffer::ArgumentError
+      end
+
+      it "delegates to #remove_message when content is empty" do
+        agent.replace_assistant_content(id: "a_1", content: "")
+        expect(agent.message_by_id("a_1")).must_be_nil
+      end
+
+      it "removes Tool children when content is empty and the assistant has tool_calls" do
+        agent.replace_assistant_content(id: "a_2", content: "")
+        expect(agent.message_by_id("a_2")).must_be_nil
+        expect(agent.tool_message_for("c_1")).must_be_nil
+      end
+    end
+
+    describe "#remove_message" do
+      it "removes a plain assistant message" do
+        result = agent.remove_message(id: "a_1")
+        expect(result).must_equal plain_assistant
+        expect(agent.message_by_id("a_1")).must_be_nil
+      end
+
+      it "cascades to Tool children when the target carries tool_calls" do
+        agent.remove_message(id: "a_2")
+        expect(agent.message_by_id("a_2")).must_be_nil
+        expect(agent.tool_message_for("c_1")).must_be_nil
+      end
+
+      it "removes user and system messages" do
+        sys_msg = Riffer::Messages::System.new("hi", id: "s_1")
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [sys_msg, user])
+        a.remove_message(id: "u_1")
+        expect(a.message_by_id("u_1")).must_be_nil
+        a.remove_message(id: "s_1")
+        expect(a.message_by_id("s_1")).must_be_nil
+      end
+
+      it "raises Riffer::ArgumentError when called on a Tool message" do
+        expect { agent.remove_message(id: "t_1") }.must_raise Riffer::ArgumentError
+      end
+
+      it "returns nil when no message matches" do
+        expect(agent.remove_message(id: "missing")).must_be_nil
+      end
+    end
+
+    describe "#replace_tool_result" do
+      it "replaces content; preserves name and id" do
+        result = agent.replace_tool_result(tool_call_id: "c_1", content: "rainy")
+        expect(result.content).must_equal "rainy"
+        expect(result.tool_call_id).must_equal "c_1"
+        expect(result.name).must_equal "weather"
+        expect(result.id).must_equal "t_1"
+      end
+
+      it "plumbs error and error_type" do
+        result = agent.replace_tool_result(tool_call_id: "c_1", content: "boom", error: "failed", error_type: :execution_error)
+        expect(result.error).must_equal "failed"
+        expect(result.error_type).must_equal :execution_error
+        expect(result.error?).must_equal true
+      end
+
+      it "raises Riffer::ArgumentError on unknown tool_call_id" do
+        expect { agent.replace_tool_result(tool_call_id: "missing", content: "x") }.must_raise Riffer::ArgumentError
+      end
+    end
+
+    describe "#synthesize_missing_tool_results" do
+      let(:orphan_tc) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}") }
+      let(:orphan_assistant) { Riffer::Messages::Assistant.new("", id: "a_orphan", tool_calls: [orphan_tc]) }
+
+      it "returns [] when there are no orphans" do
+        result = agent.synthesize_missing_tool_results { |_tc| Riffer::Tools::Response.error("nope") }
+        expect(result).must_equal []
+      end
+
+      it "fills a single orphan and returns its call_id" do
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [user, orphan_assistant])
+        result = a.synthesize_missing_tool_results { |tc|
+          Riffer::Tools::Response.error("interrupted: #{tc.name}", type: :interrupted)
+        }
+        expect(result).must_equal ["c_orphan"]
+        tool = a.tool_message_for("c_orphan")
+        refute_nil tool
+        expect(tool.content).must_equal "interrupted: t"
+        expect(tool.error_type).must_equal :interrupted
+      end
+
+      it "inserts the synthesized Tool message immediately after its parent" do
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [user, orphan_assistant])
+        a.synthesize_missing_tool_results { |_tc| Riffer::Tools::Response.error("x") }
+        ids = a.messages.map(&:id)
+        parent_idx = ids.index("a_orphan")
+        expect(a.messages[parent_idx + 1]).must_be_kind_of Riffer::Messages::Tool
+        expect(a.messages[parent_idx + 1].tool_call_id).must_equal "c_orphan"
+      end
+
+      it "skips siblings that already have a result" do
+        tc_a = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_a", name: "t", arguments: "{}")
+        tc_b = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_b", name: "t", arguments: "{}")
+        asst = Riffer::Messages::Assistant.new("", id: "a_xy", tool_calls: [tc_a, tc_b])
+        result_a = Riffer::Messages::Tool.new("done", id: "t_a", tool_call_id: "c_a", name: "t")
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [asst, result_a])
+        result = a.synthesize_missing_tool_results { |_tc| Riffer::Tools::Response.error("interrupted") }
+        expect(result).must_equal ["c_b"]
+      end
+
+      it "raises when the block returns a non-Response value" do
+        a = agent_class.new
+        a.instance_variable_set(:@messages, [orphan_assistant])
+        expect { a.synthesize_missing_tool_results { |_tc| "just a string" } }.must_raise Riffer::ArgumentError
+      end
+
+      it "raises when called without a block" do
+        expect { agent.synthesize_missing_tool_results }.must_raise Riffer::ArgumentError
+      end
+    end
+  end
+
+  describe "#interrupt! with synthesize:" do
+    let(:tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Slow tool"
+        def call(context:)
+          text("done")
+        end
+      end.tap { |t| t.identifier("interrupt_synth_tool") }
+    end
+
+    it "fills orphans and exposes synthesized_tool_call_ids on the response" do
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+      end
+
+      agent = custom_class.new
+      provider = agent.send(:provider_instance)
+      provider.stub_response("", tool_calls: [
+        {name: "interrupt_synth_tool", arguments: "{}"},
+        {name: "interrupt_synth_tool", arguments: "{}"}
+      ])
+
+      agent.on_message do |msg|
+        if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
+          agent.interrupt!(:user_interrupt, synthesize: ->(call) {
+            Riffer::Tools::Response.error("synth #{call.call_id}", type: :interrupted)
+          })
+        end
+      end
+
+      result = agent.generate("Call tools")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.synthesized_tool_call_ids.length).must_equal 2
+      expect(agent.orphaned_tool_call_ids).must_equal []
+      tools = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(tools.length).must_equal 2
+      expect(tools.first.error_type).must_equal :interrupted
+    end
+
+    it "preserves the legacy no-synthesize path when interrupt! is called without a block" do
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+      end
+
+      agent = custom_class.new
+      provider = agent.send(:provider_instance)
+      provider.stub_response("", tool_calls: [{name: "interrupt_synth_tool", arguments: "{}"}])
+
+      agent.on_message do |msg|
+        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
+      end
+
+      result = agent.generate("Call tools")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.synthesized_tool_call_ids).must_equal []
+      expect(agent.orphaned_tool_call_ids.length).must_equal 1
+    end
+  end
+
+  describe "max_steps interrupt synthesizes orphans" do
+    let(:tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Loop tool"
+        def call(context:)
+          text("ok")
+        end
+      end.tap { |t| t.identifier("max_steps_synth_tool") }
+    end
+
+    it "fills orphan tool_use with the built-in synthesizer when the step budget is hit" do
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+        max_steps 1
+      end
+
+      agent = custom_class.new
+      provider = agent.send(:provider_instance)
+      # Two responses: the first hits max_steps, leaving the orphan.
+      provider.stub_response("", tool_calls: [{name: "max_steps_synth_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{name: "max_steps_synth_tool", arguments: "{}"}])
+
+      result = agent.generate("Loop forever")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.synthesized_tool_call_ids.length).must_equal 1
+      expect(agent.orphaned_tool_call_ids).must_equal []
+      synth = agent.messages.last
+      expect(synth).must_be_kind_of Riffer::Messages::Tool
+      expect(synth.error_type).must_equal :interrupted
+    end
+  end
+
+  describe "seeded history validation" do
+    let(:custom_class) { Class.new(Riffer::Agent) { model "mock/riffer-1" } }
+
+    after { Riffer.config.on_invalid_seed = :ignore }
+
+    it "ignores invariant violations by default (preserves legacy behavior)" do
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
+      messages = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
+        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        Riffer::Messages::User.new("follow up"),
+        Riffer::Messages::Assistant.new("ok")
+      ]
+      agent = custom_class.new
+      agent.send(:provider_instance).stub_response("Hello!")
+      agent.generate(messages)
+
+      # All seeded messages survived untouched — including the parentless
+      # Tool and the orphaned tool_use.
+      assistant_with_orphan = agent.messages.find { |m|
+        m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
+      }
+      refute_nil assistant_with_orphan
+      parentless = agent.messages.find { |m|
+        m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
+      }
+      refute_nil parentless
+    end
+
+    it "raises with :raise when a non-last assistant has an orphaned tool_use" do
+      Riffer.config.on_invalid_seed = :raise
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
+      messages = [
+        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        Riffer::Messages::User.new("anyway"),
+        Riffer::Messages::Assistant.new("ok")
+      ]
+      expect { custom_class.new.generate(messages) }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises with :raise when a parentless tool_result is in the seed" do
+      Riffer.config.on_invalid_seed = :raise
+      messages = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t")
+      ]
+      expect { custom_class.new.generate(messages) }.must_raise Riffer::ArgumentError
+    end
+
+    it "allows a pending tool_use on the LAST assistant (cross-process resume)" do
+      Riffer.config.on_invalid_seed = :raise
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "t", arguments: "{}")
+      messages = [
+        Riffer::Messages::User.new("Call tool"),
+        Riffer::Messages::Assistant.new("", tool_calls: [tc])
+      ]
+      tool = Class.new(Riffer::Tool) do
+        description "Pending tool"
+        def call(context:)
+          text("done")
+        end
+      end.tap { |t| t.identifier("pending_seed_tool") }
+      with_tools = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tool]
+      end
+      tc.name = "pending_seed_tool"
+      provider = with_tools.new.send(:provider_instance)
+      provider.stub_response("All done!")
+
+      agent = with_tools.new
+      agent.send(:provider_instance).stub_response("All done!")
+      result = agent.generate(messages)
+      expect(result.interrupted?).must_equal false
+    end
+
+    it ":strip drops orphaned tool exchanges from non-last assistants" do
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_drop", name: "t", arguments: "{}")
+      messages = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        Riffer::Messages::User.new("anyway"),
+        Riffer::Messages::Assistant.new("never mind")
+      ]
+
+      agent = custom_class.new
+      agent.send(:provider_instance).stub_response("Hello!")
+      agent.generate(messages, on_invalid_seed: :strip)
+
+      expect(agent.messages.none? { |m| m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_drop" } }).must_equal true
+    end
+
+    it ":strip drops parentless tool messages" do
+      messages = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
+        Riffer::Messages::User.new("follow-up")
+      ]
+      provider = custom_class.new.send(:provider_instance)
+      provider.stub_response("Hello!")
+
+      agent = custom_class.new
+      agent.send(:provider_instance).stub_response("Hello!")
+      agent.generate(messages, on_invalid_seed: :strip)
+
+      expect(agent.messages.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
+    end
+
+    it "honors the global Riffer.config.on_invalid_seed default" do
+      Riffer.config.on_invalid_seed = :strip
+      messages = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t")
+      ]
+      agent = custom_class.new
+      agent.send(:provider_instance).stub_response("Hello!")
+      agent.generate(messages)
+      expect(agent.messages.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
+    end
+  end
 end

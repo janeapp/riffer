@@ -31,6 +31,12 @@ class Riffer::Agent::Response
   # The full message history from the agent conversation.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 
+  # Call ids of tool_use blocks that were filled with synthesized tool
+  # results during this turn — typically because an interrupt left them
+  # unanswered. Empty unless the turn ended in an interrupt with a
+  # synthesizer (caller-provided or riffer's max_steps default).
+  attr_reader :synthesized_tool_call_ids #: Array[String]
+
   # Creates a new response.
   #
   # [content] the response content.
@@ -40,10 +46,11 @@ class Riffer::Agent::Response
   # [interrupt_reason] optional reason passed via <tt>throw :riffer_interrupt, reason</tt>.
   # [structured_output] parsed structured output when structured output is configured.
   # [messages] the full message history from the agent conversation.
+  # [synthesized_tool_call_ids] call ids filled with synthesized tool results.
   #
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base]) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [])
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?synthesized_tool_call_ids: Array[String]) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], synthesized_tool_call_ids: [])
     @content = content
     @tripwire = tripwire
     @modifications = modifications
@@ -51,6 +58,7 @@ class Riffer::Agent::Response
     @interrupt_reason = interrupt_reason
     @structured_output = structured_output
     @messages = messages
+    @synthesized_tool_call_ids = synthesized_tool_call_ids
   end
 
   # Returns true if the response was blocked by a guardrail.

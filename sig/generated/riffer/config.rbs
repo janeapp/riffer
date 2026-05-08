@@ -115,6 +115,8 @@ class Riffer::Config
 
   VALID_MESSAGE_ID_STRATEGIES: untyped
 
+  VALID_ON_INVALID_SEED: untyped
+
   # Amazon Bedrock configuration (Struct with +api_token+ and +region+).
   attr_reader amazon_bedrock: Riffer::Config::AmazonBedrock
 
@@ -179,6 +181,27 @@ class Riffer::Config
   # --
   # : (Symbol) -> void
   def message_id_strategy=: (Symbol) -> void
+
+  # Strategy for handling seeded message arrays that violate the
+  # +tool_use+ ↔ +tool_result+ invariant. One of +:ignore+ (default —
+  # pass the seed through untouched, preserving pre-validation behavior),
+  # +:raise+ (raise +Riffer::ArgumentError+ on the first violation), or
+  # +:strip+ (silently drop orphaned tool exchanges and parentless tool
+  # messages).
+  #
+  # The two violation kinds detected:
+  # - **orphaned tool_use**: an assistant +tool_call+ with no matching
+  #   +Riffer::Messages::Tool+ result.
+  # - **parentless tool**: a +Riffer::Messages::Tool+ whose +tool_call_id+
+  #   has no matching assistant +tool_call+.
+  attr_reader on_invalid_seed: Symbol
+
+  # Sets the +on_invalid_seed+ strategy. Raises +Riffer::ArgumentError+ if
+  # the value is not one of +:ignore+, +:raise+, or +:strip+.
+  #
+  # --
+  # : (Symbol) -> void
+  def on_invalid_seed=: (Symbol) -> void
 
   # --
   # : () -> void

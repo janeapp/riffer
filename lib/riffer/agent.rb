@@ -26,6 +26,13 @@ class Riffer::Agent
   DEFAULT_MAX_STEPS = 16 #: Integer
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
+  # Built-in synthesizer used when riffer interrupts itself (today: only the
+  # +max_steps+ ceiling). Caller-initiated interrupts go through
+  # +interrupt!(synthesize:)+ and supply their own synthesizer.
+  DEFAULT_INTERRUPT_SYNTHESIZER = ->(_tool_call) {
+    Riffer::Tools::Response.error("Step budget exhausted before tool execution completed.", type: :interrupted)
+  } #: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
+
   # Gets or sets the agent identifier.
   #
   #--
@@ -345,13 +352,17 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
+  # +on_invalid_seed:+ overrides +Riffer.config.on_invalid_seed+ for this
+  # call only. Used when seeding an array of messages that may violate the
+  # +tool_use+ ↔ +tool_result+ invariant.
+  #
   #--
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate(prompt_or_messages, files: nil, context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?, ?on_invalid_seed: Symbol?) -> Riffer::Agent::Response
+  def generate(prompt_or_messages, files: nil, context: nil, on_invalid_seed: nil)
     @context = context
     prepare_run
     @structured_output = resolve_structured_output
-    initialize_messages(prompt_or_messages, files: files)
+    initialize_messages(prompt_or_messages, files: files, on_invalid_seed: on_invalid_seed)
 
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
 
@@ -366,14 +377,17 @@ class Riffer::Agent
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
+  # +on_invalid_seed:+ overrides +Riffer.config.on_invalid_seed+ for this
+  # call only. See +#generate+.
+  #
   #--
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt_or_messages, files: nil, context: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?, ?on_invalid_seed: Symbol?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt_or_messages, files: nil, context: nil, on_invalid_seed: nil)
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
 
     @context = context
     prepare_run
-    initialize_messages(prompt_or_messages, files: files)
+    initialize_messages(prompt_or_messages, files: files, on_invalid_seed: on_invalid_seed)
 
     Enumerator.new do |yielder|
       tripwire, modifications = run_before_guardrails
@@ -431,10 +445,204 @@ class Riffer::Agent
   # Call from an +on_message+ callback to cleanly interrupt the loop.
   # Equivalent to <tt>throw :riffer_interrupt, reason</tt>.
   #
+  # When +synthesize:+ is given, riffer fills any orphaned +tool_use+ on the
+  # way out by calling the block once per orphan. Each block invocation
+  # receives the originating +Riffer::Messages::Assistant::ToolCall+ and must
+  # return a +Riffer::Tools::Response+. The list of synthesized call_ids is
+  # exposed on +Riffer::Agent::Response#synthesized_tool_call_ids+ (and the
+  # streaming +Riffer::StreamEvents::Interrupt+ event).
+  #
   #--
-  #: (?(String | Symbol)?) -> void
-  def interrupt!(reason = nil)
+  #: (?(String | Symbol)?, ?synthesize: (^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response)?) -> void
+  def interrupt!(reason = nil, synthesize: nil)
+    @interrupt_synthesizer = synthesize
     throw :riffer_interrupt, reason
+  end
+
+  # Returns the message with the given id, or +nil+ when no message matches.
+  #
+  #--
+  #: (String) -> Riffer::Messages::Base?
+  def message_by_id(id)
+    @messages.find { |m| m.id == id }
+  end
+
+  # Returns the +Riffer::Messages::Tool+ message that satisfies +tool_call_id+,
+  # or +nil+ when no such tool result exists in history.
+  #
+  #--
+  #: (String) -> Riffer::Messages::Tool?
+  # TODO: Replace with rfind when minimum Ruby is 4.0+
+  # rubocop:disable Style/ReverseFind
+  def tool_message_for(tool_call_id)
+    @messages.reverse.find { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == tool_call_id } #: Riffer::Messages::Tool?
+  end
+  # rubocop:enable Style/ReverseFind
+
+  # Returns the most recent +Riffer::Messages::Assistant+ in history, or
+  # +nil+ when no assistant message has been recorded yet.
+  #
+  #--
+  #: () -> Riffer::Messages::Assistant?
+  # TODO: Replace with rfind when minimum Ruby is 4.0+
+  # rubocop:disable Style/ReverseFind
+  def last_assistant
+    @messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
+  end
+  # rubocop:enable Style/ReverseFind
+
+  # Returns the call_ids of every +tool_call+ on any assistant message that
+  # has no matching +Riffer::Messages::Tool+ result anywhere in history.
+  #
+  # Zero-cost validation hook for callers that want to check the
+  # +tool_use+ ↔ +tool_result+ invariant before mutating or persisting.
+  #
+  #--
+  #: () -> Array[String]
+  def orphaned_tool_call_ids
+    result_ids = @messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
+    @messages.flat_map { |m|
+      next [] unless m.is_a?(Riffer::Messages::Assistant)
+      m.tool_calls.reject { |tc| result_ids.include?(tc.call_id) }.map(&:call_id)
+    }
+  end
+
+  # Replaces the content of an assistant message in place. Preserves +id+,
+  # +tool_calls+, +token_usage+, and +structured_output+. Lookup is by id.
+  #
+  # When +content+ is empty, delegates to +remove_message+ — including the
+  # cascade that drops dependent +Riffer::Messages::Tool+ children.
+  #
+  # Raises Riffer::ArgumentError when no assistant message has the given id.
+  #
+  #--
+  #: (id: String, content: String) -> Riffer::Messages::Base?
+  def replace_assistant_content(id:, content:)
+    return remove_message(id: id) if content.empty?
+
+    idx = @messages.index { |m| m.is_a?(Riffer::Messages::Assistant) && m.id == id }
+    raise Riffer::ArgumentError, "no assistant message with id #{id.inspect}" unless idx
+
+    old = @messages[idx] #: Riffer::Messages::Assistant
+    replacement = Riffer::Messages::Assistant.new(
+      content,
+      id: old.id,
+      tool_calls: old.tool_calls,
+      token_usage: old.token_usage,
+      structured_output: old.structured_output
+    )
+    @messages[idx] = replacement
+    replacement
+  end
+
+  # Removes a message by id. When the target is an assistant message that
+  # carries +tool_calls+, every +Riffer::Messages::Tool+ result whose
+  # +tool_call_id+ matches one of those calls is removed atomically — keeping
+  # the +tool_use+ ↔ +tool_result+ invariant intact.
+  #
+  # Raises Riffer::ArgumentError when called on a +Riffer::Messages::Tool+
+  # message — that would orphan the parent's +tool_use+. Use
+  # +replace_tool_result+ instead.
+  #
+  # Returns the removed message, or +nil+ when no message has the given id
+  # (idempotent).
+  #
+  #--
+  #: (id: String) -> Riffer::Messages::Base?
+  def remove_message(id:)
+    idx = @messages.index { |m| m.id == id }
+    return nil unless idx
+
+    target = @messages[idx]
+    if target.is_a?(Riffer::Messages::Tool)
+      raise Riffer::ArgumentError,
+        "remove_message cannot drop a Tool message (would orphan the parent's tool_use); use replace_tool_result instead"
+    end
+
+    if target.is_a?(Riffer::Messages::Assistant) && !target.tool_calls.empty?
+      child_ids = target.tool_calls.map(&:call_id)
+      @messages.reject! { |m| m.is_a?(Riffer::Messages::Tool) && child_ids.include?(m.tool_call_id) }
+      @messages.delete(target)
+    else
+      @messages.delete_at(idx)
+    end
+    target
+  end
+
+  # Replaces a tool result's content (and optional error fields) in place.
+  # Lookup is by +tool_call_id+. Preserves the existing message's +name+ and
+  # +id+.
+  #
+  # Raises Riffer::ArgumentError when no Tool message exists for the given
+  # +tool_call_id+.
+  #
+  #--
+  #: (tool_call_id: String, content: String, ?error: String?, ?error_type: Symbol?) -> Riffer::Messages::Tool
+  def replace_tool_result(tool_call_id:, content:, error: nil, error_type: nil)
+    idx = @messages.index { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == tool_call_id }
+    raise Riffer::ArgumentError, "no tool result for tool_call_id #{tool_call_id.inspect}" unless idx
+
+    old = @messages[idx] #: Riffer::Messages::Tool
+    replacement = Riffer::Messages::Tool.new(
+      content,
+      id: old.id,
+      tool_call_id: old.tool_call_id,
+      name: old.name,
+      error: error,
+      error_type: error_type
+    )
+    @messages[idx] = replacement
+    replacement
+  end
+
+  # Fills any orphaned +tool_use+ in history with a synthesized
+  # +Riffer::Messages::Tool+ message. The block is called once per orphan
+  # in conversation order, receives the originating
+  # +Riffer::Messages::Assistant::ToolCall+, and must return a
+  # +Riffer::Tools::Response+. Each synthesized Tool message is inserted
+  # immediately after its parent assistant message.
+  #
+  # Returns the array of call_ids that were synthesized, in order. Returns
+  # an empty array when there are no orphans.
+  #
+  # Raises Riffer::ArgumentError when the block returns a value that is not
+  # a +Riffer::Tools::Response+.
+  #
+  #--
+  #: () { (Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response } -> Array[String]
+  def synthesize_missing_tool_results(&block)
+    raise Riffer::ArgumentError, "synthesize_missing_tool_results requires a block" unless block
+
+    result_ids = @messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
+    synthesized = [] #: Array[String]
+    new_messages = [] #: Array[Riffer::Messages::Base]
+
+    @messages.each do |m|
+      new_messages << m
+      next unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
+
+      m.tool_calls.each do |tc|
+        next if result_ids.include?(tc.call_id)
+
+        response = block.call(tc)
+        unless response.is_a?(Riffer::Tools::Response)
+          raise Riffer::ArgumentError,
+            "synthesize_missing_tool_results block must return a Riffer::Tools::Response, got #{response.class}"
+        end
+
+        new_messages << Riffer::Messages::Tool.new(
+          response.content,
+          tool_call_id: tc.call_id,
+          name: tc.name,
+          error: response.error_message,
+          error_type: response.error_type
+        )
+        synthesized << tc.call_id
+      end
+    end
+
+    @messages = new_messages
+    synthesized
   end
 
   private
@@ -475,9 +683,10 @@ class Riffer::Agent
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
     @interrupted = true
+    synthesized = run_interrupt_synthesizer(reason)
     response = extract_final_response
 
-    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response))
+    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), synthesized_tool_call_ids: synthesized)
   end
 
   #--
@@ -496,13 +705,14 @@ class Riffer::Agent
   end
 
   #--
-  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-  def initialize_messages(prompt_or_messages, files: nil)
+  #: ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?on_invalid_seed: Symbol?) -> void
+  def initialize_messages(prompt_or_messages, files: nil, on_invalid_seed: nil)
     if prompt_or_messages.is_a?(Array)
       raise Riffer::ArgumentError, "cannot pass an array of messages on an agent with existing messages; use a string to continue the conversation or a new agent instance to start fresh" if @messages.any?
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead" if files && !files.empty?
       validate_seed_ids!(prompt_or_messages)
-      @messages = prompt_or_messages.map { |item| convert_to_message_object(item) }
+      converted = prompt_or_messages.map { |item| convert_to_message_object(item) }
+      @messages = enforce_seed_invariant!(converted, strategy: on_invalid_seed || Riffer.config.on_invalid_seed)
     elsif @messages.any?
       file_parts = (files || []).map { |f| convert_to_file_part(f) }
       @messages << Riffer::Messages::User.new(prompt_or_messages, files: file_parts)
@@ -532,6 +742,69 @@ class Riffer::Agent
       next unless raw_id.nil?
       raise Riffer::ArgumentError,
         "seeded message at index #{idx} is missing :id (required when Riffer.config.message_id_strategy = #{strategy.inspect})"
+    end
+  end
+
+  # Enforces the +tool_use+ ↔ +tool_result+ invariant on a seeded message
+  # array. With +:ignore+ (the default), the seed is passed through
+  # untouched. With +:raise+, raises +Riffer::ArgumentError+ on the first
+  # violation. With +:strip+, returns a new array with offending exchanges
+  # removed.
+  #
+  # Pending tool_calls on the *last* assistant message are not a violation
+  # — they are handled by +execute_pending_tool_calls+ at the start of the
+  # next generate/stream call (the cross-process resume path).
+  #
+  #--
+  #: (Array[Riffer::Messages::Base], strategy: Symbol) -> Array[Riffer::Messages::Base]
+  def enforce_seed_invariant!(messages, strategy:)
+    return messages if strategy == :ignore
+
+    last_assistant_idx = messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
+    result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
+    parent_ids = messages.flat_map { |m|
+      m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : []
+    }
+
+    orphan_call_ids = messages.each_with_index.flat_map { |m, idx|
+      next [] unless m.is_a?(Riffer::Messages::Assistant)
+      next [] if idx == last_assistant_idx # pending: handled by execute_pending_tool_calls
+      m.tool_calls.reject { |tc| result_ids.include?(tc.call_id) }.map(&:call_id)
+    }
+    parentless_tools = messages.select { |m|
+      m.is_a?(Riffer::Messages::Tool) && !parent_ids.include?(m.tool_call_id)
+    }
+
+    return messages if orphan_call_ids.empty? && parentless_tools.empty?
+
+    case strategy
+    when :raise
+      if orphan_call_ids.any?
+        raise Riffer::ArgumentError,
+          "seeded history has orphaned tool_use call_ids: #{orphan_call_ids.inspect} (set Riffer.config.on_invalid_seed = :strip to drop them)"
+      end
+      raise Riffer::ArgumentError,
+        "seeded history has parentless tool_result messages: #{parentless_tools.map(&:tool_call_id).inspect} (set Riffer.config.on_invalid_seed = :strip to drop them)"
+    when :strip
+      strip_offenders = messages.each_with_index.flat_map { |m, idx|
+        next [] unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
+        next [] if idx == last_assistant_idx # preserve pending exchange on last assistant
+        next [] if m.tool_calls.all? { |tc| result_ids.include?(tc.call_id) }
+        m.tool_calls.map(&:call_id)
+      }
+      messages.reject { |m|
+        case m
+        when Riffer::Messages::Assistant
+          !m.tool_calls.empty? && m.tool_calls.any? { |tc| strip_offenders.include?(tc.call_id) }
+        when Riffer::Messages::Tool
+          strip_offenders.include?(m.tool_call_id) || !parent_ids.include?(m.tool_call_id)
+        else
+          false
+        end
+      }
+    else
+      raise Riffer::ArgumentError,
+        "on_invalid_seed must be one of #{Riffer::Config::VALID_ON_INVALID_SEED.inspect}, got #{strategy.inspect}"
     end
   end
 
@@ -629,8 +902,29 @@ class Riffer::Agent
 
     unless completed == :completed
       @interrupted = true
-      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed)
+      synthesized = run_interrupt_synthesizer(completed)
+      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, synthesized_tool_call_ids: synthesized)
     end
+  end
+
+  # Resolves the synthesizer to use for an interrupt and runs it. Returns
+  # the call_ids that were filled, or +[]+ when no synthesis applies.
+  #
+  # Caller-initiated interrupts pass a synthesizer through +interrupt!+;
+  # riffer-initiated interrupts (today: +INTERRUPT_MAX_STEPS+) fall back to
+  # +DEFAULT_INTERRUPT_SYNTHESIZER+. Existing tests using raw
+  # <tt>throw :riffer_interrupt</tt> bypass +interrupt!+ and get no
+  # synthesis — preserves backward compatibility.
+  #
+  #--
+  #: ((String | Symbol)?) -> Array[String]
+  def run_interrupt_synthesizer(reason)
+    synthesizer = @interrupt_synthesizer
+    synthesizer ||= DEFAULT_INTERRUPT_SYNTHESIZER if reason == INTERRUPT_MAX_STEPS
+    return [] unless synthesizer
+
+    @interrupt_synthesizer = nil
+    synthesize_missing_tool_results(&synthesizer)
   end
 
   #--
@@ -742,6 +1036,7 @@ class Riffer::Agent
     @resolved_tool_runtime = nil
     clear_resolved_model
     @interrupted = false
+    @interrupt_synthesizer = nil
     resolve_model
     @skills_state = resolve_skills
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
@@ -984,8 +1279,8 @@ class Riffer::Agent
   end
 
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil)
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: @messages.frozen? ? @messages : @messages.dup.freeze)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?synthesized_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, synthesized_tool_call_ids: [])
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: @messages.frozen? ? @messages : @messages.dup.freeze, synthesized_tool_call_ids: synthesized_tool_call_ids)
   end
 end

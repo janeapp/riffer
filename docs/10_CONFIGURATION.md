@@ -65,11 +65,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Value                           | Description                                                                                        |
-| ------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `Riffer::ToolRuntime` subclass  | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`)  |
-| `Riffer::ToolRuntime` instance  | Custom runtime with specific options                                                               |
-| `Proc`                          | Dynamic resolution                                                                                 |
+| Value                          | Description                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `Riffer::ToolRuntime` subclass | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`) |
+| `Riffer::ToolRuntime` instance | Custom runtime with specific options                                                              |
+| `Proc`                         | Dynamic resolution                                                                                |
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
@@ -133,6 +133,31 @@ agent.generate([
 Missing ids raise `Riffer::ArgumentError` with the offending index.
 
 See [Messages — IDs](08_MESSAGES.md#ids) for more details.
+
+### Invalid Seed Strategy
+
+Controls how `agent.generate(messages_array)` handles seeded history that violates the `tool_use` ↔ `tool_result` invariant — e.g. an assistant `tool_call` with no matching tool result deeper in history, or a `Riffer::Messages::Tool` whose `tool_call_id` has no parent assistant.
+
+```ruby
+Riffer.configure do |config|
+  config.on_invalid_seed = :strip
+end
+```
+
+| Value               | Description                                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:ignore` (default) | Pass the seed through untouched. The pre-validation behavior — preserved as the default to avoid breaking existing callers.                   |
+| `:raise`            | Raise `Riffer::ArgumentError` on the first violation, naming the offending `call_id`.                                                         |
+| `:strip`            | Silently drop offending exchanges (orphaned `tool_use` + their siblings, parentless `Tool` messages) and proceed with the surviving messages. |
+
+Pending tool calls on the **last** assistant message are not violations — riffer's cross-process resume path executes them via `execute_pending_tool_calls` before the next LLM call.
+
+Per-call override:
+
+```ruby
+agent.generate(messages, on_invalid_seed: :strip)
+agent.stream(messages, on_invalid_seed: :strip)
+```
 
 ## Agent-Level Configuration
 
