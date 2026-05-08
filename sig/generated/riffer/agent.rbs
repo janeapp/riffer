@@ -344,7 +344,13 @@ class Riffer::Agent
   # returns immediately when there is nothing pending.
   def execute_pending_tool_calls: () -> void
 
-  def pending_tool_calls: () -> untyped
+  # Returns +[assistant, pending_tool_calls]+ for the last assistant message.
+  # When there is no assistant message or no pending calls, the second
+  # element is an empty array.
+  #
+  # --
+  # : () -> [untyped, Array[Riffer::Messages::Assistant::ToolCall]]
+  def pending_tool_calls: () -> [ untyped, Array[Riffer::Messages::Assistant::ToolCall] ]
 
   # --
   # : () -> void

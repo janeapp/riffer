@@ -671,7 +671,7 @@ class Riffer::Agent
   #: (Riffer::Messages::Assistant) -> void
   def execute_tool_calls(response)
     runtime = resolve_tool_runtime
-    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @context)
+    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @context, assistant_message: response)
 
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
@@ -698,11 +698,11 @@ class Riffer::Agent
   # have a corresponding tool result. Safe to call unconditionally —
   # returns immediately when there is nothing pending.
   def execute_pending_tool_calls
-    pending = pending_tool_calls
+    assistant, pending = pending_tool_calls
     return if pending.empty?
 
     runtime = resolve_tool_runtime
-    results = runtime.execute(pending, tools: resolved_tools, context: @context)
+    results = runtime.execute(pending, tools: resolved_tools, context: @context, assistant_message: assistant)
 
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
@@ -715,18 +715,24 @@ class Riffer::Agent
     end
   end
 
+  # Returns +[assistant, pending_tool_calls]+ for the last assistant message.
+  # When there is no assistant message or no pending calls, the second
+  # element is an empty array.
+  #
+  #--
+  #: () -> [untyped, Array[Riffer::Messages::Assistant::ToolCall]]
   def pending_tool_calls
     last_assistant_idx = @messages.rindex { |m| m.is_a?(Riffer::Messages::Assistant) }
-    return [] unless last_assistant_idx
+    return [nil, []] unless last_assistant_idx
 
     assistant = @messages[last_assistant_idx]
-    return [] if assistant.tool_calls.empty?
+    return [assistant, []] if assistant.tool_calls.empty?
 
     executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
       m.is_a?(Riffer::Messages::Tool)
     }.map(&:tool_call_id)
 
-    assistant.tool_calls.reject { |tc| executed_ids.include?(tc.call_id) }
+    [assistant, assistant.tool_calls.reject { |tc| executed_ids.include?(tc.call_id) }]
   end
 
   #--
