@@ -32,13 +32,17 @@ class Riffer::ToolRuntime
   # [tool_calls] the tool calls to execute.
   # [tools] the resolved tool classes.
   # [context] the context hash.
+  # [assistant_message] the assistant message that produced these tool
+  #   calls, when known. Forwarded to +around_tool_call+ and
+  #   +dispatch_tool_call+ so subclasses can access it (e.g. for
+  #   instrumentation that needs the accompanying assistant text).
   #
   #--
-  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
-  def execute(tool_calls, tools:, context:)
+  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  def execute(tool_calls, tools:, context:, assistant_message: nil)
     @runner.map(tool_calls, context: context) do |tool_call|
-      result = around_tool_call(tool_call, context: context) do
-        dispatch_tool_call(tool_call, tools: tools, context: context)
+      result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
+        dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
       end
       [tool_call, result]
     end
@@ -52,7 +56,7 @@ class Riffer::ToolRuntime
   #   class InstrumentedRuntime < Riffer::ToolRuntime::Inline
   #     private
   #
-  #     def around_tool_call(tool_call, context:)
+  #     def around_tool_call(tool_call, context:, assistant_message: nil)
   #       start = Time.now
   #       result = yield
   #       Rails.logger.info("Tool #{tool_call.name} took #{Time.now - start}s")
@@ -61,8 +65,8 @@ class Riffer::ToolRuntime
   #   end
   #
   #--
-  #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
-  def around_tool_call(tool_call, context:)
+  #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  def around_tool_call(tool_call, context:, assistant_message: nil)
     yield
   end
 
@@ -74,10 +78,12 @@ class Riffer::ToolRuntime
   # [tool_call] the tool call to execute.
   # [tools] the resolved tool classes.
   # [context] the context hash.
+  # [assistant_message] the assistant message that produced this tool
+  #   call, when known.
   #
   #--
-  #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?) -> Riffer::Tools::Response
-  def dispatch_tool_call(tool_call, tools:, context:)
+  #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
+  def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
     tool_class = tools.find { |tc| tc.name == tool_call.name }
 
     if tool_class.nil?

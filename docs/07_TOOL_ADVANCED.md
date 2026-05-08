@@ -215,7 +215,7 @@ Create a custom runtime by subclassing `Riffer::ToolRuntime` and overriding the 
 class HttpToolRuntime < Riffer::ToolRuntime
   private
 
-  def dispatch_tool_call(tool_call, tools:, context:)
+  def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
     # Dispatch tool execution to an external service
     response = HttpClient.post("/tools/execute", {
       name: tool_call.name,
@@ -238,7 +238,7 @@ Each tool call is wrapped by the `around_tool_call` method, which yields by defa
 class InstrumentedRuntime < Riffer::ToolRuntime::Inline
   private
 
-  def around_tool_call(tool_call, context:)
+  def around_tool_call(tool_call, context:, assistant_message: nil)
     start = Time.now
     result = yield
     duration = Time.now - start
@@ -249,3 +249,7 @@ end
 ```
 
 Subclasses inherit the hook and can override it further.
+
+The `assistant_message:` kwarg is the `Riffer::Messages::Assistant` that produced the tool calls (the same object the agent appends to message history). It is `nil` when the runtime is invoked outside an agent loop. Use it when your hook or dispatcher needs context that lives on the assistant turn — for example, the accompanying assistant text, the model's reasoning content, or the full set of sibling tool calls from the same turn. The kwarg is **not** forwarded to `Tool#call`; tools that need it must read it via a custom `dispatch_tool_call` override.
+
+> **Note:** Custom runtimes that override `around_tool_call` or `dispatch_tool_call` must accept the `assistant_message:` kwarg (or `**kwargs`). Older overrides that omit it will raise `ArgumentError: unknown keyword: :assistant_message`.

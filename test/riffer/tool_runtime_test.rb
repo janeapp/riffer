@@ -184,7 +184,7 @@ describe Riffer::ToolRuntime do
     it "can be overridden in a subclass" do
       log = []
       runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
-        define_method(:around_tool_call) do |tool_call, context:, &block|
+        define_method(:around_tool_call) do |tool_call, **, &block|
           log << "before:#{tool_call.name}"
           result = block.call
           log << "after:#{tool_call.name}"
@@ -201,7 +201,7 @@ describe Riffer::ToolRuntime do
     it "is inherited by subclasses" do
       log = []
       parent = Class.new(Riffer::ToolRuntime::Inline) do
-        define_method(:around_tool_call) do |tool_call, context:, &block|
+        define_method(:around_tool_call) do |tool_call, **, &block|
           log << "parent"
           block.call
         end
@@ -217,14 +217,14 @@ describe Riffer::ToolRuntime do
     it "allows subclass to override" do
       log = []
       parent = Class.new(Riffer::ToolRuntime::Inline) do
-        define_method(:around_tool_call) do |_, context:, &block|
+        define_method(:around_tool_call) do |_, **, &block|
           log << "parent"
           block.call
         end
       end
 
       child = Class.new(parent) do
-        define_method(:around_tool_call) do |_, context:, &block|
+        define_method(:around_tool_call) do |_, **, &block|
           log << "child"
           block.call
         end
@@ -234,6 +234,55 @@ describe Riffer::ToolRuntime do
       child.new.execute([tool_call], tools: tools, context: context)
 
       expect(log).must_equal ["child"]
+    end
+
+    it "forwards assistant_message to the hook" do
+      seen = []
+      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
+        define_method(:around_tool_call) do |_tool_call, context:, assistant_message: nil, &block|
+          seen << assistant_message
+          block.call
+        end
+      end
+
+      assistant = Riffer::Messages::Assistant.new("here you go", tool_calls: [])
+      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
+      runtime_class.new.execute([tool_call], tools: tools, context: context, assistant_message: assistant)
+
+      expect(seen).must_equal [assistant]
+    end
+
+    it "defaults assistant_message to nil when not supplied" do
+      seen = []
+      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
+        define_method(:around_tool_call) do |_tool_call, context:, assistant_message: nil, &block|
+          seen << assistant_message
+          block.call
+        end
+      end
+
+      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
+      runtime_class.new.execute([tool_call], tools: tools, context: context)
+
+      expect(seen).must_equal [nil]
+    end
+  end
+
+  describe "#dispatch_tool_call" do
+    it "forwards assistant_message to overrides" do
+      seen = []
+      runtime_class = Class.new(Riffer::ToolRuntime::Inline) do
+        define_method(:dispatch_tool_call) do |_tool_call, tools:, context:, assistant_message: nil|
+          seen << assistant_message
+          Riffer::Tools::Response.text("ok")
+        end
+      end
+
+      assistant = Riffer::Messages::Assistant.new("calling tool", tool_calls: [])
+      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
+      runtime_class.new.execute([tool_call], tools: tools, context: context, assistant_message: assistant)
+
+      expect(seen).must_equal [assistant]
     end
   end
 end
