@@ -92,6 +92,10 @@ end
 - String keys are only used at serialization boundaries (JSON Schema output, external API payloads)
 - Do not write dual-access patterns like `hash[:key] || hash["key"]` — normalize to symbol keys at the boundary instead
 
+## Reserved Tool Identifiers
+
+- Internal-use-only tools use plain descriptive names without a prefix (e.g. `mcp_search`, `mcp_call`, `evaluation`, `skill_activate`)
+
 ## Module Structure
 
 ```ruby

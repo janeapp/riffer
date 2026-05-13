@@ -207,14 +207,29 @@ describe Riffer::Agent::Config do
     it "appends a tag entry with the tag symbolized" do
       config = Riffer::Agent::Config.new
       config.add_mcp("weather")
-      expect(config.mcp_configs).must_equal [{tags: [:weather]}]
+      expect(config.mcp_configs).must_equal [{tags: [:weather], progressive: true}]
     end
 
     it "accumulates additively across calls" do
       config = Riffer::Agent::Config.new
       config.add_mcp(:a)
       config.add_mcp(:b)
-      expect(config.mcp_configs).must_equal [{tags: [:a]}, {tags: [:b]}]
+      expect(config.mcp_configs).must_equal [{tags: [:a], progressive: true}, {tags: [:b], progressive: true}]
+    end
+
+    it "stores progressive flag for mixed progressive and non-progressive servers" do
+      config = Riffer::Agent::Config.new
+      config.add_mcp(:github)
+      config.add_mcp(:jira, progressive: false)
+      expect(config.mcp_configs).must_equal [
+        {tags: [:github], progressive: true},
+        {tags: [:jira], progressive: false}
+      ]
+    end
+
+    it "raises ArgumentError for non-boolean progressive values" do
+      config = Riffer::Agent::Config.new
+      expect { config.add_mcp(:x, progressive: "false") }.must_raise Riffer::ArgumentError
     end
   end
 

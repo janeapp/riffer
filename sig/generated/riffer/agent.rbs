@@ -80,11 +80,35 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
-  # Opts this agent into tools from all MCP registrations sharing any of the
-  # given tag(s).
+  # Returns the tool classes the LLM should see for this agent.
   #
-  # : (String | Symbol) -> void
-  def self.use_mcp: (String | Symbol) -> void
+  # Class-level companion to the instance +#tools+. Resolves the Proc form
+  # of +uses_tools+ and appends the skill activation tool when a +skills+
+  # block is configured. Does not include MCP tools — those require a live
+  # registry and per-instance context.
+  #
+  # When +uses_tools+ is a Proc, +context+ is forwarded to it.
+  #
+  # Each returned tool class is validated via +validate_as_tool!+.
+  #
+  # Raises Riffer::ArgumentError on tool name conflicts with the skill
+  # activation tool, or when a tool class fails +validate_as_tool!+.
+  #
+  # --
+  # : (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
+  def self.resolved_tool_classes: (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
+
+  # Opts this agent into tools from all MCP registrations that share any of
+  # the given tag(s).
+  #
+  # +tag+ - a String or Symbol; matched against registration manifest tags.
+  # +progressive+ - when +false+, all tools from matching registrations are
+  #   injected directly (opt-out of context-saving). Defaults to +true+: tools
+  #   are exposed via +mcp_search+ and +mcp_call+ meta-tools
+  #   and the LLM discovers and invokes them on demand.
+  #
+  # : (String | Symbol, ?progressive: bool) -> void
+  def self.use_mcp: (String | Symbol, ?progressive: bool) -> void
 
   # Returns the accumulated +use_mcp+ configurations for this agent class.
   #
@@ -282,9 +306,14 @@ class Riffer::Agent
   # : () -> Array[singleton(Riffer::Tool)]
   def resolve_mcp_tool_classes: () -> Array[singleton(Riffer::Tool)]
 
-  # --
-  # : (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
-  def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
+  # Each matching MCP registration once, split by the +:progressive+ flag,
+  # with tag symbols unioned across +use_mcp+ rows.
+  #
+  # Returns +[regular, progressive]+ — two Hashes mapping a registration to
+  # its accumulated matched tags.
+  #
+  # : (Array[Hash[Symbol, untyped]]) -> [Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]]]
+  def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> [ Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]] ]
 
   # --
   # : (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]

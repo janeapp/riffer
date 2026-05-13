@@ -120,9 +120,10 @@ class Riffer::Agent::Config
   # Appends an MCP tag entry to +mcp_configs+.
   #
   #--
-  #: (String | Symbol) -> Array[Hash[Symbol, untyped]]
-  def add_mcp(tag)
-    @mcp_configs << {tags: [tag.to_sym]}
+  #: (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
+  def add_mcp(tag, progressive: true)
+    raise Riffer::ArgumentError, "progressive must be a boolean" unless progressive == true || progressive == false
+    @mcp_configs << {tags: [tag.to_sym], progressive: progressive}
   end
 
   # Appends a guardrail entry to +guardrails+ for the given phase; +:around+

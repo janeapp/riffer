@@ -462,6 +462,71 @@ describe Riffer::Agent do
     end
   end
 
+  describe "#tool_runtime" do
+    def runtime_for(klass)
+      agent = klass.new
+      agent.tool_runtime
+    end
+
+    it "defaults to inline when no config" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+      end
+      expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
+    end
+
+    it "resolves a ToolRuntime class to an instance" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime Riffer::Tools::Runtime::Threaded
+      end
+      expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
+    end
+
+    it "uses global config as fallback" do
+      original = Riffer.config.tool_runtime
+      begin
+        Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+        end
+        expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
+      ensure
+        Riffer.config.tool_runtime = original
+      end
+    end
+
+    it "per-agent config overrides global config" do
+      original = Riffer.config.tool_runtime
+      begin
+        Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          tool_runtime Riffer::Tools::Runtime::Inline
+        end
+        expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
+      ensure
+        Riffer.config.tool_runtime = original
+      end
+    end
+
+    it "resolves freshly per agent instance, threading context into the Proc" do
+      received_contexts = []
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        tool_runtime ->(context) {
+          received_contexts << context
+          Riffer::Tools::Runtime::Inline.new
+        }
+      end
+
+      klass.new(context: {a: 1}).tool_runtime
+      klass.new(context: {b: 2}).tool_runtime
+
+      expect(received_contexts.map { |c| c[:a] || c[:b] }).must_equal [1, 2]
+    end
+  end
+
   describe ".guardrail" do
     let(:pass_guardrail_class) do
       Class.new(Riffer::Guardrail)
@@ -555,12 +620,15 @@ describe Riffer::Agent do
   describe ".use_mcp / .mcp_configs" do
     after { clear_mcp_registry! }
 
-    it "accumulates mcp_configs from multiple use_mcp calls" do
+    it "accumulates mcp_configs with progressive flag per call" do
       klass = Class.new(Riffer::Agent) do
-        use_mcp :foo
-        use_mcp :bar
+        use_mcp :github
+        use_mcp :jira, progressive: false
       end
-      expect(klass.mcp_configs.size).must_equal 2
+      expect(klass.mcp_configs).must_equal [
+        {tags: [:github], progressive: true},
+        {tags: [:jira], progressive: false}
+      ]
     end
   end
 
@@ -589,62 +657,185 @@ describe Riffer::Agent do
       klass.new.tools
     end
 
-    describe "with use_mcp" do
-      it "merges MCP tools with uses_tools tools" do
-        static_tool = Class.new(Riffer::Tool) {
-          identifier "static_tool"
-          description "Static tool"
-        }
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+    def resolved_tools_and_context_for(klass)
+      agent = klass.new
+      [agent.tools, agent.context]
+    end
+
+    it "merges MCP tools with uses_tools tools" do
+      static_tool = Class.new(Riffer::Tool) {
+        identifier "static_tool"
+        description "Static tool"
+      }
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [static_tool]
+        use_mcp :srv, progressive: false
+      end
+
+      tools = resolved_tools_for(klass)
+      expect(tools).must_include static_tool
+      expect(tools).must_include fake_tool_class
+    end
+
+    it "raises ArgumentError when tools share the same name" do
+      static = Class.new(Riffer::Tool) {
+        identifier "srv__mcp_tool"
+        description "Static tool"
+      }
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [static]
+        use_mcp :srv, progressive: false
+      end
+
+      err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/Duplicate tool names:.*srv__mcp_tool/)
+    end
+
+    it "returns MCP tools even when uses_tools is not set" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, progressive: false
+      end
+
+      expect(resolved_tools_for(klass)).must_include fake_tool_class
+    end
+
+    it "omits MCP tools when credentials proc returns nil at resolve time" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      prev = Riffer.config.mcp.credentials
+      Riffer.config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
+      end
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, progressive: false
+      end
+
+      expect(resolved_tools_for(klass)).must_be_empty
+    ensure
+      Riffer.config.mcp.credentials = prev
+    end
+
+    it "uses AuthenticatedTool wrappers when credentials proc is set" do
+      inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      prev = Riffer.config.mcp.credentials
+      Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { {"Authorization" => "Bearer x"} }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        use_mcp :srv, progressive: false
+      end
+
+      tools = resolved_tools_for(klass)
+      expect(tools.size).must_equal 1
+      expect(tools.first).wont_equal fake_tool_class
+      expect(tools.first.name).must_equal fake_tool_class.name
+    ensure
+      Riffer.config.mcp.credentials = prev
+    end
+
+    describe "progressive mode" do
+      let(:fake_tool_a) do
+        klass = Class.new(Riffer::Tool) { description "Tool A" }
+        klass.instance_variable_set(:@identifier, "srv__tool_a")
+        klass.define_singleton_method(:mcp_server_tool_name) { "tool_a" }
+        klass
+      end
+
+      let(:fake_tool_b) do
+        klass = Class.new(Riffer::Tool) { description "Tool B" }
+        klass.instance_variable_set(:@identifier, "srv__tool_b")
+        klass.define_singleton_method(:mcp_server_tool_name) { "tool_b" }
+        klass
+      end
+
+      it "returns mcp_search and mcp_call instead of individual tool classes" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a, fake_tool_b])
 
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          uses_tools [static_tool]
-          use_mcp :srv
+          use_mcp :srv, progressive: true
         end
 
         tools = resolved_tools_for(klass)
-        expect(tools).must_include static_tool
-        expect(tools).must_include fake_tool_class
+        names = tools.map(&:name)
+        expect(tools.size).must_equal 2
+        expect(names).must_include "mcp_search"
+        expect(names).must_include "mcp_call"
       end
 
-      it "raises ArgumentError when tools share the same name" do
-        static = Class.new(Riffer::Tool) {
-          identifier "srv__mcp_tool"
-          description "Static tool"
-        }
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      it "search tool can find inner tools" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
 
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          uses_tools [static]
-          use_mcp :srv
+          use_mcp :srv, progressive: true
         end
 
-        err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
-        expect(err.message).must_match(/Duplicate tool names:.*srv__mcp_tool/)
+        tools, ctx = resolved_tools_and_context_for(klass)
+        st = tools.find { |t| t.name == "mcp_search" }
+        resp = st.new.call(context: ctx, query: "")
+        expect(resp.success?).must_equal true
+        expect(resp.content).must_include "srv__tool_a"
       end
 
-      it "returns MCP tools even when uses_tools is not set" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      it "mixes regular and progressive use_mcp in the same agent" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
+        inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
 
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          use_mcp :srv
+          use_mcp :other, progressive: false
+          use_mcp :srv, progressive: true
         end
 
-        expect(resolved_tools_for(klass)).must_include fake_tool_class
+        tools, ctx = resolved_tools_and_context_for(klass)
+        names = tools.map(&:name)
+        expect(names).must_include "srv__tool_b"
+        expect(names).must_include "mcp_search"
+        expect(names).must_include "mcp_call"
+
+        st = tools.find { |t| t.name == "mcp_search" }
+        resp = st.new.call(context: ctx, query: "")
+        expect(resp.content).must_include "srv__tool_a"
+        expect(resp.content).wont_include "srv__tool_b"
       end
 
-      it "omits MCP tools when credentials proc returns nil at resolve time" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
+      it "accumulates tools from multiple progressive registrations into one pair" do
+        inject_ready_registration(name: "srv1", tags: [:g1], tools: [fake_tool_a])
+        inject_ready_registration(name: "srv2", tags: [:g2], tools: [fake_tool_b])
+
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          use_mcp :g1, progressive: true
+          use_mcp :g2, progressive: true
+        end
+
+        tools, ctx = resolved_tools_and_context_for(klass)
+        expect(tools.count { |t| t.name == "mcp_search" }).must_equal 1
+        expect(tools.count { |t| t.name == "mcp_call" }).must_equal 1
+
+        resp = tools.find { |t| t.name == "mcp_search" }.new.call(context: ctx, query: "")
+        expect(resp.content).must_include "srv__tool_a"
+        expect(resp.content).must_include "srv__tool_b"
+      end
+
+      it "omits progressive tools when credentials proc returns nil" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
         prev = Riffer.config.mcp.credentials
-        Riffer.config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
-        end
+        Riffer.config.mcp.credentials = ->(**) {}
 
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          use_mcp :srv
+          use_mcp :srv, progressive: true
         end
 
         expect(resolved_tools_for(klass)).must_be_empty
@@ -652,141 +843,299 @@ describe Riffer::Agent do
         Riffer.config.mcp.credentials = prev
       end
 
-      it "uses AuthenticatedTool wrappers when credentials proc is set" do
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
-        prev = Riffer.config.mcp.credentials
-        Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { {"Authorization" => "Bearer x"} }
-
+      it "mcp_configs stores the progressive flag" do
         klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          use_mcp :srv
+          use_mcp :foo                       # default: true
+          use_mcp :bar, progressive: false   # explicit opt-out
         end
-
-        tools = resolved_tools_for(klass)
-        expect(tools.size).must_equal 1
-        expect(tools.first).wont_equal fake_tool_class
-        expect(tools.first.name).must_equal fake_tool_class.name
-      ensure
-        Riffer.config.mcp.credentials = prev
-      end
-    end
-
-    describe "validation" do
-      it "raises when a tool is missing a description" do
-        bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
-
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          uses_tools [bad_tool]
-        end
-
-        err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
-        expect(err.message).must_match(/must define a description/)
+        configs = klass.mcp_configs
+        expect(configs.first[:progressive]).must_equal true
+        expect(configs.last[:progressive]).must_equal false
       end
 
-      it "raises when an MCP tool is missing a description" do
-        bad_mcp_tool = Class.new(Riffer::Tool) { identifier "bad_mcp_tool" }
-        inject_ready_registration(name: "srv", tags: [:srv], tools: [bad_mcp_tool])
-
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          use_mcp :srv
-        end
-
-        err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
-        expect(err.message).must_match(/must define a description/)
-      end
-
-      it "raises when uses_tools is a Proc returning an invalid tool" do
-        bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
-
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          uses_tools ->(_ctx) { [bad_tool] }
-        end
-
-        err = expect { resolved_tools_for(klass) }.must_raise Riffer::ArgumentError
-        expect(err.message).must_match(/must define a description/)
-      end
-
-      it "returns valid tool classes unchanged" do
-        good_tool = Class.new(Riffer::Tool) {
-          identifier "good_tool"
-          description "Good tool"
-        }
-
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          uses_tools [good_tool]
-        end
-
-        expect(resolved_tools_for(klass)).must_equal [good_tool]
+      it "defaults progressive to true when not specified" do
+        klass = Class.new(Riffer::Agent) { use_mcp :foo }
+        expect(klass.mcp_configs.first[:progressive]).must_equal true
       end
     end
   end
 
-  describe "#tool_runtime" do
-    def runtime_for(klass)
-      agent = klass.new
-      agent.tool_runtime
-    end
+  describe "#tools validation" do
+    it "raises when a tool is missing a description" do
+      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
 
-    it "defaults to inline when no config" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
+        uses_tools [bad_tool]
       end
-      expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
+
+      err = expect { klass.new }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/must define a description/)
     end
 
-    it "resolves a ToolRuntime class to an instance" do
+    it "raises when an MCP tool is missing a description" do
+      bad_mcp_tool = Class.new(Riffer::Tool) { identifier "bad_mcp_tool" }
+
+      manifest = Riffer::Mcp::Manifest.new(name: "srv", tags: [:srv], endpoint: "https://x.com", discovery_headers: {})
+      reg = Riffer::Mcp::Registration.allocate
+      reg.instance_variable_set(:@manifest, manifest)
+      reg.instance_variable_set(:@tools, [bad_mcp_tool])
+      reg.instance_variable_set(:@mutex, Mutex.new)
+      store = Riffer::Mcp::Registry.instance_variable_get(:@store)
+      Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store["srv"] = reg }
+
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime Riffer::Tools::Runtime::Threaded
+        use_mcp :srv, progressive: false
       end
-      expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
+
+      err = expect { klass.new }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/must define a description/)
+    ensure
+      clear_mcp_registry!
+    end
+  end
+
+  describe ".resolved_tool_classes validation" do
+    it "raises when a tool is missing a description" do
+      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [bad_tool]
+      end
+
+      err = expect { klass.resolved_tool_classes }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/must define a description/)
     end
 
-    it "uses global config as fallback" do
-      original = Riffer.config.tool_runtime
-      begin
-        Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
+    it "raises when uses_tools is a Proc returning an invalid tool" do
+      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools ->(_ctx) { [bad_tool] }
+      end
+
+      err = expect { klass.resolved_tool_classes(context: {}) }.must_raise Riffer::ArgumentError
+      expect(err.message).must_match(/must define a description/)
+    end
+
+    it "returns valid tool classes unchanged" do
+      good_tool = Class.new(Riffer::Tool) {
+        identifier "good_tool"
+        description "Good tool"
+      }
+
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [good_tool]
+      end
+
+      expect(klass.resolved_tool_classes).must_equal [good_tool]
+    end
+  end
+
+  describe "interrupt! with experimental_history_healing" do
+    let(:tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Slow tool"
+        def call(context:)
+          text("done")
         end
-        expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
-      ensure
-        Riffer.config.tool_runtime = original
-      end
+      end.tap { |t| t.identifier("interrupt_heal_tool") }
     end
 
-    it "per-agent config overrides global config" do
-      original = Riffer.config.tool_runtime
-      begin
-        Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          tool_runtime Riffer::Tools::Runtime::Inline
-        end
-        expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
-      ensure
-        Riffer.config.tool_runtime = original
-      end
-    end
+    after { Riffer.config.experimental_history_healing = false }
 
-    it "resolves freshly per agent instance, threading context into the Proc" do
-      received_contexts = []
-      klass = Class.new(Riffer::Agent) do
+    it "fills orphans and exposes healed_tool_call_ids when healing is on" do
+      Riffer.config.experimental_history_healing = true
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime ->(context) {
-          received_contexts << context
-          Riffer::Tools::Runtime::Inline.new
-        }
+        uses_tools [tc]
       end
 
-      klass.new(context: {a: 1}).tool_runtime
-      klass.new(context: {b: 2}).tool_runtime
+      agent = custom_class.new
+      provider = agent.provider
+      provider.stub_response("", tool_calls: [
+        {name: "interrupt_heal_tool", arguments: "{}"},
+        {name: "interrupt_heal_tool", arguments: "{}"}
+      ])
 
-      expect(received_contexts.map { |c| c[:a] || c[:b] }).must_equal [1, 2]
+      agent.session.on_message do |msg|
+        agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
+      end
+
+      result = agent.generate("Call tools")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.healed_tool_call_ids.length).must_equal 2
+      expect(agent.session.orphaned_tool_call_ids).must_equal []
+      tools = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(tools.length).must_equal 2
+      expect(tools.first.error_type).must_equal :interrupted
+      expect(tools.first.content).must_equal "Tool call interrupted before completion."
+    end
+
+    it "leaves orphans in place when healing is off (default)" do
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+      end
+
+      agent = custom_class.new
+      provider = agent.provider
+      provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
+
+      agent.session.on_message do |msg|
+        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
+      end
+
+      result = agent.generate("Call tools")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.healed_tool_call_ids).must_equal []
+      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
+    end
+
+    it "does not fire on_message for placeholder tool messages" do
+      Riffer.config.experimental_history_healing = true
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+      end
+
+      agent = custom_class.new
+      provider = agent.provider
+      provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
+
+      seen = []
+      agent.session.on_message do |msg|
+        seen << msg
+        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
+      end
+
+      agent.generate("Call tools")
+
+      # The assistant message is observed, but the placeholder Tool result
+      # is not — placeholders bypass on_message because they aren't
+      # inference output.
+      expect(seen.count { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal 0
+    end
+  end
+
+  describe "max_steps interrupt with experimental_history_healing" do
+    let(:tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Loop tool"
+        def call(context:)
+          text("ok")
+        end
+      end.tap { |t| t.identifier("max_steps_heal_tool") }
+    end
+
+    after { Riffer.config.experimental_history_healing = false }
+
+    it "fills orphan tool_use with the placeholder when healing is on" do
+      Riffer.config.experimental_history_healing = true
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+        max_steps 1
+      end
+
+      agent = custom_class.new
+      provider = agent.provider
+      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+
+      result = agent.generate("Loop forever")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.healed_tool_call_ids.length).must_equal 1
+      expect(agent.session.orphaned_tool_call_ids).must_equal []
+      synth = agent.session.messages.last
+      expect(synth).must_be_kind_of Riffer::Messages::Tool
+      expect(synth.error_type).must_equal :interrupted
+    end
+
+    it "leaves orphan tool_use when healing is off" do
+      tc = tool_class
+      custom_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tc]
+        max_steps 1
+      end
+
+      agent = custom_class.new
+      provider = agent.provider
+      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+
+      result = agent.generate("Loop forever")
+
+      expect(result.interrupted?).must_equal true
+      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.healed_tool_call_ids).must_equal []
+      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
+    end
+  end
+
+  describe "seeded history with experimental_history_healing" do
+    let(:custom_class) { Class.new(Riffer::Agent) { model "mock/riffer-1" } }
+
+    after { Riffer.config.experimental_history_healing = false }
+
+    it "passes seeded history through untouched when healing is off (default)" do
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
+      seeded = Riffer::Agent::Session.new(messages: [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
+        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        Riffer::Messages::User.new("follow up"),
+        Riffer::Messages::Assistant.new("ok")
+      ])
+      agent = custom_class.new(session: seeded)
+      agent.provider.stub_response("Hello!")
+      agent.generate
+
+      assistant_with_orphan = agent.session.messages.find { |m|
+        m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
+      }
+      refute_nil assistant_with_orphan
+      parentless = agent.session.messages.find { |m|
+        m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
+      }
+      refute_nil parentless
+    end
+
+    it "preserves a pending tool_use on the resume boundary even when healing is on" do
+      Riffer.config.experimental_history_healing = true
+      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
+      seeded = Riffer::Agent::Session.new(messages: [
+        Riffer::Messages::User.new("Call tool"),
+        Riffer::Messages::Assistant.new("", tool_calls: [tc])
+      ])
+      tool = Class.new(Riffer::Tool) do
+        description "Pending tool"
+        def call(context:)
+          text("done")
+        end
+      end.tap { |t| t.identifier("pending_seed_tool") }
+      with_tools = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        uses_tools [tool]
+      end
+
+      agent = with_tools.new(session: seeded)
+      agent.provider.stub_response("All done!")
+      result = agent.generate
+      expect(result.interrupted?).must_equal false
     end
   end
 end

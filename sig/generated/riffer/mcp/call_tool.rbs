@@ -1,0 +1,28 @@
+# Generated from lib/riffer/mcp/call_tool.rb with RBS::Inline
+
+# Progressive-discovery call tool. Invokes an MCP tool by its name as returned by mcp_search (e.g. 'github__create_pr').
+#
+# Reads the per-agent set of auth-wrapped MCP tool classes from
+# +context[:mcp_progressive_tools]+ (populated by Riffer::Agent when a
+# progressive +use_mcp+ matches at least one registration).
+#
+# Arguments are passed as a JSON-encoded string because strict-mode
+# providers prohibit open-ended object schemas.
+#
+# See Riffer::Agent.use_mcp and docs/14_MCP.md.
+class Riffer::Mcp::CallTool < Riffer::Tool
+  IDENTIFIER: String
+
+  # [context]   tool context containing +:mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
+  # [tool_name] tool name to invoke (as returned by mcp_search).
+  # [arguments] JSON-encoded object of arguments, or nil/"" for no arguments.
+  #
+  # --
+  # : (context: Hash[Symbol, untyped]?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
+  def call: (context: Hash[Symbol, untyped]?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
+
+  private
+
+  # : (String?) -> (Hash[Symbol, untyped] | Riffer::Tools::Response)
+  def parse_arguments: (String?) -> (Hash[Symbol, untyped] | Riffer::Tools::Response)
+end

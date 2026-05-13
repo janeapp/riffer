@@ -75,7 +75,21 @@ class Riffer::Agent::Context
     @data[key]
   end
 
-  # Hash-style dig, preserved for tools using <tt>context&.dig(:user_id)</tt>.
+  # Hash-style write for non-reserved keys. Used by the framework to store
+  # per-agent internal state (e.g. progressive MCP tool lists).
+  #
+  # Raises Riffer::ArgumentError for reserved keys (+:skills+, +:token_usage+).
+  #
+  #--
+  #: (Symbol, untyped) -> untyped
+  def []=(key, value)
+    raise Riffer::ArgumentError, "Cannot set reserved key :#{key}" if RESERVED_KEYS.include?(key)
+    @data[key] = value
+  end
+
+  # Hash-style dig. Preserved for tools using
+  # <tt>context&.dig(:user_id)</tt>.
+  #
   #--
   #: (*Symbol) -> untyped
   def dig(*keys)
