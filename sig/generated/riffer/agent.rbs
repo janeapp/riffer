@@ -448,8 +448,8 @@ class Riffer::Agent
   def has_tool_calls?: (Riffer::Messages::Assistant) -> bool
 
   # --
-  # : (Riffer::Messages::Assistant) -> void
-  def execute_tool_calls: (Riffer::Messages::Assistant) -> void
+  # : (Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  def execute_tool_calls: (Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
 
   # Executes tool calls left unfinished by a prior interrupt.
   #
@@ -457,13 +457,11 @@ class Riffer::Agent
   # from the last assistant message may not have been executed yet. This
   # method detects those gaps by comparing the tool call ids requested by the
   # last assistant message against the tool result messages that follow it,
-  # then executes any that are missing.
+  # then executes any that are missing. Safe to call unconditionally —
+  # returns immediately when there is nothing pending.
   #
   # --
   # : () -> void
-  # Executes tool calls from the last assistant message that don't yet
-  # have a corresponding tool result. Safe to call unconditionally —
-  # returns immediately when there is nothing pending.
   def execute_pending_tool_calls: () -> void
 
   # Returns +[assistant, pending_tool_calls]+ for the last assistant message.
