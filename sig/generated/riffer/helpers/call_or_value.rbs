@@ -1,0 +1,9 @@
+# Generated from lib/riffer/helpers/call_or_value.rb with RBS::Inline
+
+# Resolves the "Proc-or-value" idiom: if +thing+ is a Proc, calls it
+# (passing +context+ when its arity is non-zero); otherwise returns
+# +thing+ unchanged. When +thing+ is +nil+, returns +default+.
+module Riffer::Helpers::CallOrValue
+  # : (untyped, ?context: untyped, ?default: untyped) -> untyped
+  def resolve: (untyped, ?context: untyped, ?default: untyped) -> untyped
+end
