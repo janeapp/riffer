@@ -913,10 +913,12 @@ class Riffer::Agent
   end
 
   #--
-  #: (Riffer::Messages::Assistant) -> void
-  def execute_tool_calls(response)
+  #: (Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  def execute_tool_calls(assistant_message, tool_calls: assistant_message.tool_calls)
+    return if tool_calls.empty?
+
     runtime = resolve_tool_runtime
-    results = runtime.execute(response.tool_calls, tools: resolved_tools, context: @context, assistant_message: response)
+    results = runtime.execute(tool_calls, tools: resolved_tools, context: @context, assistant_message: assistant_message)
 
     results.each do |tool_call, result|
       add_message(Riffer::Messages::Tool.new(
@@ -935,29 +937,14 @@ class Riffer::Agent
   # from the last assistant message may not have been executed yet. This
   # method detects those gaps by comparing the tool call ids requested by the
   # last assistant message against the tool result messages that follow it,
-  # then executes any that are missing.
+  # then executes any that are missing. Safe to call unconditionally —
+  # returns immediately when there is nothing pending.
   #
   #--
   #: () -> void
-  # Executes tool calls from the last assistant message that don't yet
-  # have a corresponding tool result. Safe to call unconditionally —
-  # returns immediately when there is nothing pending.
   def execute_pending_tool_calls
-    assistant, pending = pending_tool_calls
-    return if pending.empty?
-
-    runtime = resolve_tool_runtime
-    results = runtime.execute(pending, tools: resolved_tools, context: @context, assistant_message: assistant)
-
-    results.each do |tool_call, result|
-      add_message(Riffer::Messages::Tool.new(
-        result.content,
-        tool_call_id: tool_call.call_id,
-        name: tool_call.name,
-        error: result.error_message,
-        error_type: result.error_type
-      ))
-    end
+    assistant_message, pending = pending_tool_calls
+    execute_tool_calls(assistant_message, tool_calls: pending) if assistant_message
   end
 
   # Returns +[assistant, pending_tool_calls]+ for the last assistant message.
