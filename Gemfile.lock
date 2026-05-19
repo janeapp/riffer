@@ -155,9 +155,9 @@ GEM
       logger
       prism (>= 1.6.0)
       tsort
-    rbs-inline (0.13.0)
+    rbs-inline (0.14.0)
       prism (>= 0.29)
-      rbs (>= 3.8.0)
+      rbs (~> 4.0)
     rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
