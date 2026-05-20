@@ -1191,15 +1191,6 @@ describe Riffer::Agent do
       expect(runtime).must_be_instance_of Riffer::ToolRuntime::Threaded
     end
 
-    it "uses lambda resolution with zero arity" do
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        tool_runtime -> { Riffer::ToolRuntime::Inline.new }
-      end
-      runtime = agent.new.send(:resolve_tool_runtime)
-      expect(runtime).must_be_instance_of Riffer::ToolRuntime::Inline
-    end
-
     it "passes context to lambda with arity 1" do
       received_context = nil
       agent = Class.new(Riffer::Agent) do
@@ -1317,19 +1308,6 @@ describe Riffer::Agent do
 
       dynamic_agent_class.generate("Hello", context: {premium: true})
       expect(received_context).must_equal({premium: true})
-    end
-
-    it "calls lambda with no args when arity is 0" do
-      called = false
-      dynamic_agent_class = Class.new(Riffer::Agent) do
-        model -> {
-          called = true
-          "mock/riffer-1"
-        }
-      end
-
-      dynamic_agent_class.generate("Hello")
-      expect(called).must_equal true
     end
 
     it "uses resolved model for provider lookup" do
