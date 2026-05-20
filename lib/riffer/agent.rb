@@ -182,10 +182,7 @@ class Riffer::Agent
   #--
   #: (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
   def self.resolve_uses_tools_config(context)
-    config = uses_tools
-    return [] if config.nil?
-    return config unless config.is_a?(Proc)
-    config.arity.zero? ? config.call : config.call(context)
+    Riffer::Helpers::CallOrValue.resolve(uses_tools, context: context, default: [])
   end
   private_class_method :resolve_uses_tools_config
 
@@ -995,11 +992,7 @@ class Riffer::Agent
   #--
   #: (?Hash[Symbol, untyped]?) -> String?
   def generate_instructions(context = @context)
-    if @instructions_config.is_a?(Proc)
-      (@instructions_config.arity == 0) ? @instructions_config.call : @instructions_config.call(context)
-    else
-      @instructions_config
-    end
+    Riffer::Helpers::CallOrValue.resolve(@instructions_config, context: context)
   end
 
   attr_reader :resolved_model #: String?
@@ -1007,12 +1000,10 @@ class Riffer::Agent
   #--
   #: () -> String
   def resolve_model
-    @resolved_model ||= if @model_config.is_a?(Proc)
-      model_string = (@model_config.arity == 0) ? @model_config.call : @model_config.call(@context)
-      parse_model_string!(model_string)
-      model_string
-    else
-      @model_config
+    @resolved_model ||= begin
+      value = Riffer::Helpers::CallOrValue.resolve(@model_config, context: @context)
+      parse_model_string!(value) if @model_config.is_a?(Proc)
+      value
     end
   end
 
@@ -1077,12 +1068,7 @@ class Riffer::Agent
   def resolve_tool_runtime
     @resolved_tool_runtime ||= begin
       config = self.class.tool_runtime || Riffer.config.tool_runtime
-
-      runtime = if config.is_a?(Proc)
-        (config.arity == 0) ? config.call : config.call(@context)
-      else
-        config
-      end
+      runtime = Riffer::Helpers::CallOrValue.resolve(config, context: @context)
 
       case runtime
       when Class then runtime.new
@@ -1106,7 +1092,7 @@ class Riffer::Agent
     backend = self.class.skills.backend || Riffer.config.skills.default_backend
     return nil unless backend
 
-    backend = backend.is_a?(Proc) ? backend.call(context) : backend
+    backend = Riffer::Helpers::CallOrValue.resolve(backend, context: context)
     skills_list = backend.list_skills
     return nil if skills_list.empty?
 
@@ -1123,7 +1109,7 @@ class Riffer::Agent
 
     activate = self.class.skills.activate
     if activate
-      names = activate.is_a?(Proc) ? activate.call(ctx) : Array(activate)
+      names = Array(Riffer::Helpers::CallOrValue.resolve(activate, context: ctx))
       names.each { |name| skills_context.activate(name) }
     end
 

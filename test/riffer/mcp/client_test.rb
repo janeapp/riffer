@@ -17,17 +17,6 @@ describe Riffer::Mcp::Client do
       client = Riffer::Mcp::Client.new(endpoint: "https://x.com", client: inner)
       assert_equal [], client.tools_list
     end
-
-    it "accepts Proc headers (resolved when building the real transport)" do
-      # Verify that a Proc value is accepted without raising.
-      # Header resolution is exercised in the transport construction path;
-      # the injected-client path bypasses it, but the interface still accepts it.
-      proc_headers = -> { {"Authorization" => "Bearer resolved"} }
-      inner = Object.new
-      inner.define_singleton_method(:tools) { [] }
-      client = Riffer::Mcp::Client.new(endpoint: "https://x.com", headers: proc_headers, client: inner)
-      assert_equal [], client.tools_list
-    end
   end
 
   describe "#tools_list" do

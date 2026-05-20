@@ -23,7 +23,7 @@ class Riffer::Mcp::Client
     depends_on "faraday"
 
     @client = client || begin
-      resolved_headers = headers.is_a?(Proc) ? headers.call : headers
+      resolved_headers = Riffer::Helpers::CallOrValue.resolve(headers)
       transport = MCP::Client::HTTP.new(url: endpoint, headers: resolved_headers)
       MCP::Client.new(transport: transport)
     end
