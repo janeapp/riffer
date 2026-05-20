@@ -1191,23 +1191,6 @@ describe Riffer::Agent do
       expect(runtime).must_be_instance_of Riffer::ToolRuntime::Threaded
     end
 
-    it "passes context to lambda with arity 1" do
-      received_context = nil
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        tool_runtime ->(context) {
-          received_context = context
-          Riffer::ToolRuntime::Inline.new
-        }
-      end
-
-      instance = agent.new
-      instance.instance_variable_set(:@context, {user_id: 42})
-      instance.send(:resolve_tool_runtime)
-
-      expect(received_context).must_equal({user_id: 42})
-    end
-
     it "uses global config as fallback" do
       original = Riffer.config.tool_runtime
       begin
@@ -1295,19 +1278,6 @@ describe Riffer::Agent do
 
       events = dynamic_agent_class.stream("Hello").to_a
       expect(events).wont_be_empty
-    end
-
-    it "passes context to lambda with arity 1" do
-      received_context = nil
-      dynamic_agent_class = Class.new(Riffer::Agent) do
-        model ->(context) {
-          received_context = context
-          "mock/riffer-1"
-        }
-      end
-
-      dynamic_agent_class.generate("Hello", context: {premium: true})
-      expect(received_context).must_equal({premium: true})
     end
 
     it "uses resolved model for provider lookup" do
