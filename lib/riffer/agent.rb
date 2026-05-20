@@ -338,7 +338,6 @@ class Riffer::Agent
     @messages = []
     @message_callbacks = []
     @token_usage = nil
-    @interrupted = false
     @model_config = self.class.model
     @instructions_config = self.class.instructions
 
@@ -671,7 +670,6 @@ class Riffer::Agent
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
-    @interrupted = true
     healed = Riffer.config.experimental_history_healing ? heal_orphan_tool_calls : []
     response = extract_final_response
 
@@ -872,7 +870,6 @@ class Riffer::Agent
     end
 
     unless completed == :completed
-      @interrupted = true
       healed = Riffer.config.experimental_history_healing ? heal_orphan_tool_calls : []
       yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, healed_tool_call_ids: healed)
     end
@@ -973,7 +970,6 @@ class Riffer::Agent
     @resolved_tools = nil
     @resolved_tool_runtime = nil
     clear_resolved_model
-    @interrupted = false
     resolve_model
     @skills_state = resolve_skills
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
