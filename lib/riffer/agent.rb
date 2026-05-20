@@ -1022,20 +1022,6 @@ class Riffer::Agent
 
   #--
   #: () -> Array[singleton(Riffer::Tool)]
-  def resolve_uses_tools_config
-    config = self.class.uses_tools
-
-    if config.nil?
-      []
-    elsif config.is_a?(Proc)
-      (config.arity == 0) ? config.call : config.call(@context)
-    else
-      config
-    end
-  end
-
-  #--
-  #: () -> Array[singleton(Riffer::Tool)]
   def resolve_mcp_tool_classes
     configs = self.class.mcp_configs
     return [] if configs.empty?

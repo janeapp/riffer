@@ -496,10 +496,6 @@ class Riffer::Agent
 
   # --
   # : () -> Array[singleton(Riffer::Tool)]
-  def resolve_uses_tools_config: () -> Array[singleton(Riffer::Tool)]
-
-  # --
-  # : () -> Array[singleton(Riffer::Tool)]
   def resolve_mcp_tool_classes: () -> Array[singleton(Riffer::Tool)]
 
   # Each matching MCP registration once, with tag symbols unioned across +use_mcp+ rows.
