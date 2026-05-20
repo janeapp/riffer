@@ -107,9 +107,22 @@ describe Riffer::Agent do
   end
 
   describe "#initialize" do
-    it "initializes with empty messages" do
+    it "seeds the session with the configured instruction system message" do
       agent = agent_class.new
-      expect(agent.messages).must_equal []
+      expect(agent.session.messages.map(&:role)).must_equal [:system]
+      expect(agent.session.messages.first.content).must_equal "You are a helpful assistant."
+    end
+
+    it "leaves the session empty when no instructions or skills are configured" do
+      bare = Class.new(Riffer::Agent) { model "mock/riffer-1" }.new
+      expect(bare.session.messages).must_equal []
+    end
+
+    it "uses the provided session as-is when passed" do
+      seeded = Riffer::Session.new(messages: [Riffer::Messages::User.new("Hi")])
+      agent = agent_class.new(session: seeded)
+      expect(agent.session).must_be_same_as seeded
+      expect(agent.session.messages.map(&:role)).must_equal [:user]
     end
 
     it "initializes with nil token_usage" do
@@ -260,21 +273,21 @@ describe Riffer::Agent do
       it "adds system message to messages when instructions are provided" do
         agent = agent_class.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).wont_be_nil
       end
 
       it "adds user message to messages" do
         agent = agent_class.new
         agent.generate("Hello")
-        user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+        user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
         expect(user_message).wont_be_nil
       end
 
       it "adds assistant message to messages" do
         agent = agent_class.new
         agent.generate("Hello")
-        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+        assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
         expect(assistant_message).wont_be_nil
       end
 
@@ -282,141 +295,6 @@ describe Riffer::Agent do
         agent = agent_class.new
         result = agent.generate("Hello")
         expect(result.content).must_be_instance_of String
-      end
-    end
-
-    describe "with an array of messages" do
-      it "accepts an array of messages" do
-        agent = agent_class.new
-        messages = [
-          Riffer::Messages::User.new("Hello"),
-          Riffer::Messages::Assistant.new("Hi there!"),
-          Riffer::Messages::User.new("How are you?")
-        ]
-        result = agent.generate(messages)
-        expect(result).must_be_instance_of Riffer::Agent::Response
-      end
-
-      it "uses messages as-is without prepending system message" do
-        agent = agent_class.new
-        messages = [Riffer::Messages::User.new("Hello")]
-        agent.generate(messages)
-        expect(agent.messages.first).must_be_instance_of Riffer::Messages::User
-      end
-
-      it "preserves all provided messages" do
-        agent = agent_class.new
-        messages = [
-          Riffer::Messages::User.new("First message"),
-          Riffer::Messages::Assistant.new("Response"),
-          Riffer::Messages::User.new("Second message")
-        ]
-        agent.generate(messages)
-        user_messages = agent.messages.select { |msg| msg.is_a?(Riffer::Messages::User) }
-        expect(user_messages.length).must_be :>=, 2
-      end
-
-      it "raises when passing an array on an agent with existing messages" do
-        agent = agent_class.new
-        agent.generate("Hello")
-        error = expect {
-          agent.generate([Riffer::Messages::User.new("Follow up")])
-        }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/cannot pass an array/)
-      end
-    end
-
-    describe "seed id validation" do
-      before { @original_strategy = Riffer.config.message_id_strategy }
-      after { Riffer.config.message_id_strategy = @original_strategy }
-
-      it "does not require id when strategy is :none" do
-        Riffer.config.message_id_strategy = :none
-        agent = agent_class.new
-        agent.generate([{role: "user", content: "Hi"}])
-        expect(agent.messages.any? { |m| m.is_a?(Riffer::Messages::User) }).must_equal true
-      end
-
-      it "raises when a seeded hash lacks :id and strategy is set" do
-        Riffer.config.message_id_strategy = :uuidv7
-        agent = agent_class.new
-        error = expect {
-          agent.generate([{role: "user", content: "Hi"}])
-        }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/index 0 is missing :id/)
-      end
-
-      it "preserves the seeded id when provided" do
-        Riffer.config.message_id_strategy = :uuidv7
-        agent = agent_class.new
-        agent.generate([{role: "user", content: "Hi", id: "seed-123"}])
-        user = agent.messages.find { |m| m.is_a?(Riffer::Messages::User) }
-        expect(user.id).must_equal "seed-123"
-      end
-
-      it "raises when a seeded message object has nil id and strategy is set" do
-        Riffer.config.message_id_strategy = :none
-        msg = Riffer::Messages::User.new("Hi") # built while strategy is :none → id is nil
-        Riffer.config.message_id_strategy = :uuidv7
-        agent = agent_class.new
-        error = expect {
-          agent.generate([msg])
-        }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/index 0 is missing :id/)
-      end
-
-      it "reports the index of the offending seed message" do
-        Riffer.config.message_id_strategy = :uuidv7
-        agent = agent_class.new
-        error = expect {
-          agent.generate([
-            {role: "user", content: "first", id: "ok-1"},
-            {role: "assistant", content: "no-id-here"}
-          ])
-        }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/index 1 is missing :id/)
-      end
-
-      it "raises ArgumentError (not NoMethodError) for invalid seed types" do
-        Riffer.config.message_id_strategy = :uuidv7
-        agent = agent_class.new
-        expect {
-          agent.generate([42])
-        }.must_raise(Riffer::ArgumentError)
-      end
-
-      it "assigns auto-generated ids to agent-created messages when strategy is set" do
-        Riffer.config.message_id_strategy = :uuidv7
-        agent = agent_class.new
-        agent.generate("Hello")
-        agent.messages.each do |msg|
-          expect(msg.id).wont_be_nil
-        end
-      end
-    end
-
-    describe "with an array of hashes" do
-      it "accepts an array of hashes and converts them to messages" do
-        agent = agent_class.new
-        messages = [
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi there!"},
-          {role: "user", content: "How are you?"}
-        ]
-        result = agent.generate(messages)
-        expect(result).must_be_instance_of Riffer::Agent::Response
-      end
-
-      it "supports mixed hash and message objects" do
-        agent = agent_class.new
-        messages = [
-          {role: "user", content: "First"},
-          Riffer::Messages::Assistant.new("Second"),
-          {role: "user", content: "Third"}
-        ]
-        agent.generate(messages)
-        user_messages = agent.messages.select { |msg| msg.is_a?(Riffer::Messages::User) }
-        expect(user_messages.length).must_be :>=, 2
       end
     end
 
@@ -430,7 +308,7 @@ describe Riffer::Agent do
       it "does not add system message" do
         agent = no_instructions_agent_class.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).must_be_nil
       end
     end
@@ -444,7 +322,7 @@ describe Riffer::Agent do
 
         agent = klass.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message.content).must_equal "Dynamic instructions"
       end
 
@@ -454,9 +332,9 @@ describe Riffer::Agent do
           instructions ->(context) { "You are assisting #{context[:name]}" }
         end
 
-        agent = klass.new
-        agent.generate("Hello", context: {name: "Jane"})
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        agent = klass.new(context: {name: "Jane"})
+        agent.generate("Hello")
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message.content).must_equal "You are assisting Jane"
       end
 
@@ -468,7 +346,7 @@ describe Riffer::Agent do
 
         agent = klass.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message.content).must_equal "No context"
       end
 
@@ -481,7 +359,7 @@ describe Riffer::Agent do
 
         agent = klass.new
         agent.generate("Hello")
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).must_be_nil
       end
     end
@@ -622,62 +500,29 @@ describe Riffer::Agent do
       it "adds system message to messages when instructions are provided" do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).wont_be_nil
       end
 
       it "adds user message to messages" do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
-        user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+        user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
         expect(user_message).wont_be_nil
       end
 
       it "adds assistant message to messages" do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
-        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+        assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
         expect(assistant_message).wont_be_nil
       end
 
       it "accumulates content from TextDelta events" do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
-        assistant_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+        assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
         expect(assistant_message.content).wont_be_empty
-      end
-    end
-
-    describe "with an array of messages" do
-      it "accepts an array of messages" do
-        agent = agent_class.new
-        messages = [
-          Riffer::Messages::User.new("Hello"),
-          Riffer::Messages::Assistant.new("Hi there!"),
-          Riffer::Messages::User.new("How are you?")
-        ]
-        result = agent.stream(messages)
-        expect(result).must_be_instance_of Enumerator
-      end
-
-      it "uses messages as-is without prepending system message" do
-        agent = agent_class.new
-        messages = [Riffer::Messages::User.new("Hello")]
-        agent.stream(messages).each { |_| }
-        expect(agent.messages.first).must_be_instance_of Riffer::Messages::User
-      end
-    end
-
-    describe "with an array of hashes" do
-      it "accepts an array of hashes and converts them to messages" do
-        agent = agent_class.new
-        messages = [
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi there!"},
-          {role: "user", content: "How are you?"}
-        ]
-        result = agent.stream(messages)
-        expect(result).must_be_instance_of Enumerator
       end
     end
 
@@ -691,7 +536,7 @@ describe Riffer::Agent do
       it "does not add system message" do
         agent = no_instructions_agent_class.new
         agent.stream("Hello").each { |_| }
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message).must_be_nil
       end
     end
@@ -703,9 +548,9 @@ describe Riffer::Agent do
           instructions ->(context) { "You are assisting #{context[:name]}" }
         end
 
-        agent = klass.new
-        agent.stream("Hello", context: {name: "Jane"}).each { |_| }
-        system_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        agent = klass.new(context: {name: "Jane"})
+        agent.stream("Hello").each { |_| }
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
         expect(system_message.content).must_equal "You are assisting Jane"
       end
     end
@@ -832,7 +677,7 @@ describe Riffer::Agent do
       expect(result.structured_output).must_be_nil
     end
 
-    it "stores structured_output hash on the assistant message in agent.messages" do
+    it "stores structured_output hash on the assistant message in agent.session.messages" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         structured_output do
@@ -846,7 +691,7 @@ describe Riffer::Agent do
 
       agent.generate("Analyze sentiment")
       # TODO: Replace with rfind when minimum Ruby is 4.0+
-      last_assistant = agent.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) } # rubocop:disable Style/ReverseFind
+      last_assistant = agent.session.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) } # rubocop:disable Style/ReverseFind
       expect(last_assistant.structured_output?).must_equal true
       expect(last_assistant.structured_output).must_equal({sentiment: "positive"})
     end
@@ -864,7 +709,7 @@ describe Riffer::Agent do
       provider.stub_response('{"sentiment":"positive"}')
 
       callback_msg = nil
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         callback_msg = msg if msg.is_a?(Riffer::Messages::Assistant)
       end
       agent.generate("Analyze sentiment")
@@ -899,39 +744,30 @@ describe Riffer::Agent do
       agent = agent_class.new
       file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.generate("Describe this", files: [file])
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files.length).must_equal 1
     end
 
     it "converts file hashes to FilePart objects" do
       agent = agent_class.new
       agent.generate("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files.first).must_be_instance_of Riffer::FilePart
     end
 
     it "defaults to empty files when not provided" do
       agent = agent_class.new
       agent.generate("Hello")
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files).must_equal []
     end
 
-    it "raises when files and messages array are both provided" do
+    it "raises when files: is provided without a prompt" do
       agent = agent_class.new
-      messages = [{role: "user", content: "Hello"}]
       error = expect {
-        agent.generate(messages, files: [{data: "aGVsbG8=", media_type: "image/png"}])
+        agent.generate(nil, files: [{data: "aGVsbG8=", media_type: "image/png"}])
       }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/cannot provide both files and messages/)
-    end
-
-    it "supports files in messages array" do
-      agent = agent_class.new
-      messages = [{role: "user", content: "Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}]}]
-      agent.generate(messages)
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
-      expect(user_message.files.length).must_equal 1
+      expect(error.message).must_match(/files: requires a prompt/)
     end
   end
 
@@ -940,14 +776,14 @@ describe Riffer::Agent do
       agent = agent_class.new
       file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.stream("Describe this", files: [file]).each { |_| }
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files.length).must_equal 1
     end
 
     it "converts file hashes to FilePart objects" do
       agent = agent_class.new
       agent.stream("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}]).each { |_| }
-      user_message = agent.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+      user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files.first).must_be_instance_of Riffer::FilePart
     end
   end
@@ -1291,7 +1127,7 @@ describe Riffer::Agent do
       expect(provider).must_be_instance_of Riffer::Providers::Mock
     end
 
-    it "re-evaluates lambda for each generate call" do
+    it "evaluates the model lambda once per agent instance" do
       call_count = 0
       dynamic_agent_class = Class.new(Riffer::Agent) do
         model -> {
@@ -1300,13 +1136,12 @@ describe Riffer::Agent do
         }
       end
 
-      agent = dynamic_agent_class.new
-      agent.generate("Hello")
-      agent.generate("Hello again")
+      dynamic_agent_class.new
+      dynamic_agent_class.new
       expect(call_count).must_equal 2
     end
 
-    it "can change model between calls based on context" do
+    it "resolves model per agent instance based on context" do
       models_used = []
       dynamic_agent_class = Class.new(Riffer::Agent) do
         model ->(context) {
@@ -1316,9 +1151,8 @@ describe Riffer::Agent do
         }
       end
 
-      agent = dynamic_agent_class.new
-      agent.generate("Hello", context: {premium: false})
-      agent.generate("Hello", context: {premium: true})
+      dynamic_agent_class.new(context: {premium: false}).generate("Hello")
+      dynamic_agent_class.new(context: {premium: true}).generate("Hello")
       expect(models_used).must_equal ["mock/riffer-basic", "mock/riffer-premium"]
     end
 
@@ -1338,8 +1172,7 @@ describe Riffer::Agent do
         model -> { "invalid-format" }
       end
 
-      agent = dynamic_agent_class.new
-      error = expect { agent.generate("Hello") }.must_raise(Riffer::ArgumentError)
+      error = expect { dynamic_agent_class.new }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/Invalid model string: invalid-format/)
     end
 
@@ -1349,8 +1182,7 @@ describe Riffer::Agent do
         model -> { value }
       end
 
-      agent = dynamic_agent_class.new
-      error = expect { agent.generate("Hello") }.must_raise(Riffer::ArgumentError)
+      error = expect { dynamic_agent_class.new }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/Invalid model string/)
     end
 
@@ -1411,7 +1243,7 @@ describe Riffer::Agent do
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 1
       end
 
@@ -1432,7 +1264,7 @@ describe Riffer::Agent do
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "Weather in Toronto: 20 degrees"
       end
 
@@ -1464,16 +1296,16 @@ describe Riffer::Agent do
           uses_tools [tool_class]
         end
 
-        agent = agent_class.new
+        agent = agent_class.new(context: {user_name: "Alice"})
         provider = agent.send(:provider_instance)
         provider.stub_response("", tool_calls: [
           {name: "context_tool", arguments: '{"field":"user_name"}'}
         ])
         provider.stub_response("Your name is Alice!")
 
-        agent.generate("Get my name", context: {user_name: "Alice"})
+        agent.generate("Get my name")
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "Alice"
       end
 
@@ -1492,7 +1324,7 @@ describe Riffer::Agent do
 
         agent.generate("Call nonexistent tool")
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_match(/Unknown tool/)
       end
 
@@ -1511,7 +1343,7 @@ describe Riffer::Agent do
 
         agent.generate("Call nonexistent tool")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal true
         expect(tool_message.error).must_equal "Unknown tool 'nonexistent_tool'"
         expect(tool_message.error_type).must_equal :unknown_tool
@@ -1534,7 +1366,7 @@ describe Riffer::Agent do
 
         agent.generate("What's the weather?")
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_match(/city is required/)
       end
 
@@ -1555,7 +1387,7 @@ describe Riffer::Agent do
 
         agent.generate("What's the weather?")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal true
         expect(tool_message.error_type).must_equal :validation_error
       end
@@ -1577,7 +1409,7 @@ describe Riffer::Agent do
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal false
         expect(tool_message.error).must_be_nil
         expect(tool_message.error_type).must_be_nil
@@ -1653,7 +1485,7 @@ describe Riffer::Agent do
 
         agent.stream("What's the weather?").each { |_| }
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 1
       end
 
@@ -1665,16 +1497,16 @@ describe Riffer::Agent do
           uses_tools [tool_class]
         end
 
-        agent = agent_class.new
+        agent = agent_class.new(context: {user_id: "12345"})
         provider = agent.send(:provider_instance)
         provider.stub_response("", tool_calls: [
           {name: "context_tool", arguments: '{"field":"user_id"}'}
         ])
         provider.stub_response("Your ID is 12345!")
 
-        agent.stream("Get my id", context: {user_id: "12345"}).each { |_| }
+        agent.stream("Get my id").each { |_| }
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "12345"
       end
     end
@@ -1720,7 +1552,7 @@ describe Riffer::Agent do
 
         agent.generate("Run the slow tool")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal true
       end
 
@@ -1742,7 +1574,7 @@ describe Riffer::Agent do
 
         agent.generate("Run the slow tool")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.content).must_match(/timed out/)
         expect(tool_message.error_type).must_equal :timeout_error
       end
@@ -1765,7 +1597,7 @@ describe Riffer::Agent do
 
         agent.generate("Run the slow tool")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal true
         expect(tool_message.error).must_match(/0\.01 seconds/)
       end
@@ -1788,7 +1620,7 @@ describe Riffer::Agent do
 
         agent.generate("Run the fast tool")
 
-        tool_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_message.error?).must_equal false
         expect(tool_message.content).must_equal "fast result"
       end
@@ -1827,9 +1659,9 @@ describe Riffer::Agent do
           }
         end
 
-        agent = agent_class.new
         context = {user_id: 123, admin: true}
-        agent.generate("Hello", context: context)
+        agent = agent_class.new(context: context)
+        agent.generate("Hello")
 
         expect(received_context).must_equal context
       end
@@ -1856,23 +1688,23 @@ describe Riffer::Agent do
           }
         end
 
-        admin_agent = agent_class.new
+        admin_agent = agent_class.new(context: {admin: true})
         provider = admin_agent.send(:provider_instance)
         provider.stub_response("Done")
-        admin_agent.generate("Hello", context: {admin: true})
+        admin_agent.generate("Hello")
         admin_tools = provider.calls.last[:tools]
 
-        regular_agent = agent_class.new
+        regular_agent = agent_class.new(context: {admin: false})
         provider2 = regular_agent.send(:provider_instance)
         provider2.stub_response("Done")
-        regular_agent.generate("Hello", context: {admin: false})
+        regular_agent.generate("Hello")
         regular_tools = provider2.calls.last[:tools]
 
         expect(admin_tools.length).must_equal 2
         expect(regular_tools.length).must_equal 1
       end
 
-      it "re-evaluates lambda for each generate call" do
+      it "evaluates lambda once per agent instance" do
         tool_class = weather_tool_class
         tool_class.identifier("weather_tool")
         contexts_received = []
@@ -1885,48 +1717,12 @@ describe Riffer::Agent do
           }
         end
 
-        agent = agent_class.new
-        agent.generate("Hello", context: {call: 1})
-        agent.generate("Hello again", context: {call: 2})
+        agent_class.new(context: {call: 1}).generate("Hello")
+        agent_class.new(context: {call: 2}).generate("Hello again")
 
         expect(contexts_received.length).must_equal 2
         expect(contexts_received[0]).must_equal({call: 1})
         expect(contexts_received[1]).must_equal({call: 2})
-      end
-    end
-  end
-
-  describe "#on_message" do
-    it "raises error without block" do
-      agent = agent_class.new
-      error = expect { agent.on_message }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/on_message requires a block/)
-    end
-
-    it "returns self for chaining" do
-      agent = agent_class.new
-      result = agent.on_message { |_| }
-      expect(result).must_equal agent
-    end
-
-    describe "with multiple callbacks" do
-      let(:callbacks_called) { [] }
-      let(:agent) do
-        a = agent_class.new
-        a.on_message { |_| callbacks_called << 1 }
-        a.on_message { |_| callbacks_called << 2 }
-        a.generate("Hello")
-        a
-      end
-
-      it "calls first callback" do
-        agent
-        expect(callbacks_called).must_include 1
-      end
-
-      it "calls second callback" do
-        agent
-        expect(callbacks_called).must_include 2
       end
     end
   end
@@ -1936,7 +1732,7 @@ describe Riffer::Agent do
       let(:emitted) { [] }
       let(:agent) do
         a = agent_class.new
-        a.on_message { |msg| emitted << msg }
+        a.session.on_message { |msg| emitted << msg }
         a.generate("Hello")
         a
       end
@@ -1980,7 +1776,7 @@ describe Riffer::Agent do
         ])
         provider.stub_response("The weather is nice!")
 
-        a.on_message { |msg| emitted << msg }
+        a.session.on_message { |msg| emitted << msg }
         a.generate("What's the weather?")
         a
       end
@@ -2039,7 +1835,7 @@ describe Riffer::Agent do
         ])
         provider.stub_response("Tool failed.")
 
-        agent.on_message { |msg| emitted << msg }
+        agent.session.on_message { |msg| emitted << msg }
         agent.generate("Call tool")
 
         emitted.find { |m| m.is_a?(Riffer::Messages::Tool) }
@@ -2058,21 +1854,21 @@ describe Riffer::Agent do
   describe "interruptible callbacks with #generate" do
     it "returns response with interrupted? true" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt }
+      agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
       expect(result.interrupted?).must_equal true
     end
 
     it "returns accumulated content" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt }
+      agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
       expect(result.content).must_be_instance_of String
     end
 
     it "captures interrupt reason" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt, "needs approval" }
+      agent.session.on_message { |_msg| throw :riffer_interrupt, "needs approval" }
       result = agent.generate("Hello")
       expect(result.interrupted?).must_equal true
       expect(result.interrupt_reason).must_equal "needs approval"
@@ -2080,7 +1876,7 @@ describe Riffer::Agent do
 
     it "returns nil interrupt_reason when no reason given" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt }
+      agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
       expect(result.interrupt_reason).must_be_nil
     end
@@ -2111,7 +1907,7 @@ describe Riffer::Agent do
         provider.stub_response("Done!")
 
         tool_count = 0
-        agent.on_message do |msg|
+        agent.session.on_message do |msg|
           if msg.is_a?(Riffer::Messages::Tool)
             tool_count += 1
             throw :riffer_interrupt if tool_count == 1
@@ -2121,12 +1917,12 @@ describe Riffer::Agent do
         result = agent.generate("Call tools")
 
         expect(result.interrupted?).must_equal true
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 1
 
         result = agent.generate("Continue")
         expect(result.interrupted?).must_equal false
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 2
       end
 
@@ -2146,7 +1942,7 @@ describe Riffer::Agent do
         provider.stub_response("Done!")
 
         interrupted_once = false
-        agent.on_message do |msg|
+        agent.session.on_message do |msg|
           if msg.is_a?(Riffer::Messages::Assistant) && !interrupted_once
             interrupted_once = true
             throw :riffer_interrupt
@@ -2156,12 +1952,12 @@ describe Riffer::Agent do
         result = agent.generate("Call tools")
 
         expect(result.interrupted?).must_equal true
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 0
 
         result = agent.generate("Continue")
         expect(result.interrupted?).must_equal false
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 2
       end
     end
@@ -2170,8 +1966,8 @@ describe Riffer::Agent do
       it "earlier callbacks still fire" do
         agent = agent_class.new
         first_called = false
-        agent.on_message { |_msg| first_called = true }
-        agent.on_message { |_msg| throw :riffer_interrupt }
+        agent.session.on_message { |_msg| first_called = true }
+        agent.session.on_message { |_msg| throw :riffer_interrupt }
         agent.generate("Hello")
         expect(first_called).must_equal true
       end
@@ -2180,21 +1976,21 @@ describe Riffer::Agent do
     describe "#interrupt!" do
       it "interrupts the agent loop" do
         agent = agent_class.new
-        agent.on_message { |_msg| agent.interrupt! }
+        agent.session.on_message { |_msg| agent.interrupt! }
         result = agent.generate("Hello")
         expect(result.interrupted?).must_equal true
       end
 
       it "passes reason to interrupt_reason" do
         agent = agent_class.new
-        agent.on_message { |_msg| agent.interrupt!(:needs_approval) }
+        agent.session.on_message { |_msg| agent.interrupt!(:needs_approval) }
         result = agent.generate("Hello")
         expect(result.interrupt_reason).must_equal :needs_approval
       end
 
       it "defaults reason to nil" do
         agent = agent_class.new
-        agent.on_message { |_msg| agent.interrupt! }
+        agent.session.on_message { |_msg| agent.interrupt! }
         result = agent.generate("Hello")
         expect(result.interrupt_reason).must_be_nil
       end
@@ -2213,7 +2009,7 @@ describe Riffer::Agent do
     it "returns a Response" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2227,7 +2023,7 @@ describe Riffer::Agent do
     it "returns non-interrupted response on successful resume" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2241,7 +2037,7 @@ describe Riffer::Agent do
     it "returns nil interrupt_reason on successful resume" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt, "needs approval"
@@ -2255,22 +2051,22 @@ describe Riffer::Agent do
     it "preserves messages from original generate" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
         end
       end
       agent.generate("Hello")
-      messages_before = agent.messages.length
+      messages_before = agent.session.messages.length
       agent.generate("Continue")
-      expect(agent.messages.length).must_be :>, messages_before
+      expect(agent.session.messages.length).must_be :>, messages_before
     end
 
     it "does not duplicate system message" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2278,7 +2074,7 @@ describe Riffer::Agent do
       end
       agent.generate("Hello")
       agent.generate("Continue")
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       expect(system_messages.length).must_equal 1
     end
 
@@ -2310,7 +2106,7 @@ describe Riffer::Agent do
         provider.stub_response("The weather is nice!")
 
         interrupted_once = false
-        agent.on_message do |msg|
+        agent.session.on_message do |msg|
           if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
             interrupted_once = true
             throw :riffer_interrupt
@@ -2326,39 +2122,36 @@ describe Riffer::Agent do
       end
     end
 
-    describe "with persisted messages" do
-      it "resumes from message objects" do
-        agent = agent_class.new
+    describe "with a seeded session" do
+      it "resumes from a session constructed with persisted messages" do
         messages = [
           Riffer::Messages::System.new("You are a helpful assistant."),
           Riffer::Messages::User.new("Hello"),
           Riffer::Messages::Assistant.new("Hi there!")
         ]
-        result = agent.generate(messages)
+        agent = agent_class.new(session: Riffer::Session.new(messages: messages))
+        result = agent.generate
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
-      it "resumes from hashes" do
-        agent = agent_class.new
-        messages = [
-          {role: "system", content: "You are a helpful assistant."},
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi there!"}
-        ]
-        result = agent.generate(messages)
-        expect(result).must_be_instance_of Riffer::Agent::Response
-      end
-
-      it "does not require prior interruption" do
-        agent = agent_class.new
-        messages = [
-          Riffer::Messages::User.new("Hello")
-        ]
-        result = agent.generate(messages)
+      it "runs the loop without a prompt when the session already has the last user message" do
+        agent = agent_class.new(session: Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
+        result = agent.generate
         expect(result.interrupted?).must_equal false
       end
 
-      it "sets context" do
+      it "accepts a new prompt to continue the seeded conversation" do
+        agent = agent_class.new(session: Riffer::Session.new(messages: [
+          Riffer::Messages::User.new("Hi"),
+          Riffer::Messages::Assistant.new("Hello!")
+        ]))
+        agent.generate("How are you?")
+        user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+        expect(user_messages.length).must_equal 2
+        expect(user_messages.last.content).must_equal "How are you?"
+      end
+
+      it "uses init context for tool execution" do
         context_tool = Class.new(Riffer::Tool) do
           description "Gets user info"
           params do
@@ -2375,33 +2168,33 @@ describe Riffer::Agent do
           uses_tools [tc]
         end
 
-        agent = custom_agent_class.new
+        session = Riffer::Session.new(messages: [Riffer::Messages::User.new("Get my name")])
+        agent = custom_agent_class.new(session: session, context: {user_name: "Alice"})
         provider = agent.send(:provider_instance)
         provider.stub_response("", tool_calls: [
           {name: "resume_context_tool", arguments: '{"field":"user_name"}'}
         ])
         provider.stub_response("Your name is Alice!")
 
-        messages = [Riffer::Messages::User.new("Get my name")]
-        agent.generate(messages, context: {user_name: "Alice"})
+        agent.generate
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.first.content).must_equal "Alice"
       end
 
-      it "does not prepend system message" do
-        agent = agent_class.new
+      it "does not prepend the agent's configured instructions" do
         messages = [
           Riffer::Messages::System.new("Custom instructions."),
           Riffer::Messages::User.new("Hello")
         ]
-        agent.generate(messages)
-        system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+        agent = agent_class.new(session: Riffer::Session.new(messages: messages))
+        agent.generate
+        system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
         expect(system_messages.length).must_equal 1
         expect(system_messages.first.content).must_equal "Custom instructions."
       end
 
-      it "executes pending tool calls from hash-serialized messages" do
+      it "executes pending tool calls left by a prior interrupt" do
         tc = Class.new(Riffer::Tool) do
           description "Simple tool"
           def call(context:)
@@ -2415,29 +2208,27 @@ describe Riffer::Agent do
           uses_tools [tool]
         end
 
-        agent = custom_agent_class.new
+        messages = [
+          Riffer::Messages::User.new("Call tool"),
+          Riffer::Messages::Assistant.new("", tool_calls: [
+            Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}")
+          ])
+        ]
+        agent = custom_agent_class.new(session: Riffer::Session.new(messages: messages))
         provider = agent.send(:provider_instance)
         provider.stub_response("All done!")
 
-        messages = [
-          {role: "user", content: "Call tool"},
-          {role: "assistant", content: "", tool_calls: [{call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}"}]}
-        ]
-        result = agent.generate(messages)
+        result = agent.generate
         expect(result.interrupted?).must_equal false
 
-        tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
         expect(tool_messages.length).must_equal 1
         expect(tool_messages.first.content).must_equal "done"
       end
 
-      it "clears context when not provided on cross-process resume" do
-        agent = agent_class.new
-        agent.generate([Riffer::Messages::User.new("Hello")], context: {user: "Alice"})
-
-        fresh_agent = agent_class.new
-        fresh_agent.generate([Riffer::Messages::User.new("Hello")])
-        expect(fresh_agent.send(:instance_variable_get, :@context)).must_be_nil
+      it "defaults context to nil when not provided" do
+        agent = agent_class.new(session: Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
+        expect(agent.send(:instance_variable_get, :@context)).must_be_nil
       end
     end
 
@@ -2465,7 +2256,7 @@ describe Riffer::Agent do
 
         # First generate: runs 2 steps then gets interrupted by callback
         interrupted_once = false
-        agent.on_message do |msg|
+        agent.session.on_message do |msg|
           if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
             interrupted_once = true
             throw :riffer_interrupt
@@ -2489,18 +2280,19 @@ describe Riffer::Agent do
           uses_tools [tc]
         end
 
-        agent = custom_agent_class.new
-        provider = agent.send(:provider_instance)
-        # Only 1 more step fits before max_steps (3 prior + 1 = 4)
-        provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}])
-
-        result = agent.generate([
+        seeded = Riffer::Session.new(messages: [
           Riffer::Messages::User.new("Original prompt"),
           Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
           Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
           Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
           Riffer::Messages::User.new("Continue")
         ])
+        agent = custom_agent_class.new(session: seeded)
+        provider = agent.send(:provider_instance)
+        # Only 1 more step fits before max_steps (3 prior + 1 = 4)
+        provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}])
+
+        result = agent.generate
         expect(result.interrupted?).must_equal true
         expect(result.interrupt_reason).must_equal :max_steps
       end
@@ -2520,7 +2312,7 @@ describe Riffer::Agent do
         provider.stub_response('{"sentiment":"positive"}')
 
         interrupted_once = false
-        agent.on_message do |_msg|
+        agent.session.on_message do |_msg|
           unless interrupted_once
             interrupted_once = true
             throw :riffer_interrupt
@@ -2565,7 +2357,7 @@ describe Riffer::Agent do
     it "returns an Enumerator" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2579,7 +2371,7 @@ describe Riffer::Agent do
     it "yields stream events on in-memory resume" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2594,7 +2386,7 @@ describe Riffer::Agent do
     it "does not yield Interrupt event on successful resume" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2642,18 +2434,18 @@ describe Riffer::Agent do
     it "continues conversation when calling generate with a string on an agent with existing messages" do
       agent = agent_class.new
       agent.generate("Hello")
-      messages_before = agent.messages.length
+      messages_before = agent.session.messages.length
 
       result = agent.generate("Follow up")
       expect(result).must_be_instance_of Riffer::Agent::Response
-      expect(agent.messages.length).must_be :>, messages_before
+      expect(agent.session.messages.length).must_be :>, messages_before
     end
 
     it "does not duplicate system messages on continuation" do
       agent = agent_class.new
       agent.generate("Hello")
       agent.generate("Follow up")
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       expect(system_messages.length).must_equal 1
     end
 
@@ -2661,7 +2453,7 @@ describe Riffer::Agent do
       agent = agent_class.new
       agent.generate("Hello")
       agent.generate("Follow up")
-      user_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
       expect(user_messages.length).must_equal 2
       expect(user_messages.last.content).must_equal "Follow up"
     end
@@ -2669,7 +2461,7 @@ describe Riffer::Agent do
     it "resumes after interrupt with a new user message" do
       agent = agent_class.new
       interrupted_once = false
-      agent.on_message do |_msg|
+      agent.session.on_message do |_msg|
         unless interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2681,7 +2473,7 @@ describe Riffer::Agent do
 
       result = agent.generate("Continue please")
       expect(result.interrupted?).must_equal false
-      user_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
       expect(user_messages.length).must_equal 2
     end
 
@@ -2708,7 +2500,7 @@ describe Riffer::Agent do
       provider.stub_response("Done!")
 
       tool_count = 0
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         if msg.is_a?(Riffer::Messages::Tool)
           tool_count += 1
           throw :riffer_interrupt if tool_count == 1
@@ -2717,12 +2509,12 @@ describe Riffer::Agent do
 
       result = agent.generate("Call tools")
       expect(result.interrupted?).must_equal true
-      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tool_messages.length).must_equal 1
 
       result = agent.generate("Go ahead")
       expect(result.interrupted?).must_equal false
-      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tool_messages.length).must_equal 2
     end
 
@@ -2746,7 +2538,7 @@ describe Riffer::Agent do
       3.times { provider.stub_response("", tool_calls: [{name: "continuation_step_tool", arguments: "{}"}]) }
 
       interrupted_once = false
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
           interrupted_once = true
           throw :riffer_interrupt
@@ -2769,7 +2561,7 @@ describe Riffer::Agent do
       text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
       expect(text_events).wont_be_empty
 
-      user_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
       expect(user_messages.length).must_equal 2
     end
   end
@@ -2798,7 +2590,7 @@ describe Riffer::Agent do
 
       result = agent.generate("Call tool")
       expect(result.interrupted?).must_equal false
-      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tool_messages.length).must_equal 1
     end
   end
@@ -2827,7 +2619,7 @@ describe Riffer::Agent do
       provider.stub_response("Done!")
 
       tool_count = 0
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         if msg.is_a?(Riffer::Messages::Tool)
           tool_count += 1
           throw :riffer_interrupt if tool_count == 1
@@ -2837,13 +2629,13 @@ describe Riffer::Agent do
       events = agent.stream("Call tools").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event).wont_be_nil
-      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tool_messages.length).must_equal 1
 
       events = agent.stream("Continue").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event).must_be_nil
-      tool_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tool_messages.length).must_equal 2
     end
   end
@@ -2851,7 +2643,7 @@ describe Riffer::Agent do
   describe "interruptible callbacks with #stream" do
     it "yields Interrupt event" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt }
+      agent.session.on_message { |_msg| throw :riffer_interrupt }
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event).wont_be_nil
@@ -2859,7 +2651,7 @@ describe Riffer::Agent do
 
     it "yields Interrupt event with reason" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt, "budget exceeded" }
+      agent.session.on_message { |_msg| throw :riffer_interrupt, "budget exceeded" }
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event.reason).must_equal "budget exceeded"
@@ -2867,7 +2659,7 @@ describe Riffer::Agent do
 
     it "yields Interrupt event with nil reason when none given" do
       agent = agent_class.new
-      agent.on_message { |_msg| throw :riffer_interrupt }
+      agent.session.on_message { |_msg| throw :riffer_interrupt }
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
       expect(interrupt_event.reason).must_be_nil
@@ -2879,7 +2671,7 @@ describe Riffer::Agent do
       let(:emitted) { [] }
       let(:agent) do
         a = agent_class.new
-        a.on_message { |msg| emitted << msg }
+        a.session.on_message { |msg| emitted << msg }
         a.stream("Hello").each { |_| }
         a
       end
@@ -2923,7 +2715,7 @@ describe Riffer::Agent do
         ])
         provider.stub_response("The weather is nice!")
 
-        a.on_message { |msg| emitted << msg }
+        a.session.on_message { |msg| emitted << msg }
         a.stream("What's the weather?").each { |_| }
         a
       end
@@ -3003,7 +2795,7 @@ describe Riffer::Agent do
       provider = agent.send(:provider_instance)
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.generate("Hi")
-      assistant = agent.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+      assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
       expect(assistant.token_usage).must_equal token_usage
     end
   end
@@ -3035,7 +2827,7 @@ describe Riffer::Agent do
       provider = agent.send(:provider_instance)
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.stream("Hi").each { |_| }
-      assistant = agent.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+      assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
       expect(assistant.token_usage).must_equal token_usage
     end
 
@@ -3286,7 +3078,7 @@ describe Riffer::Agent do
       it "transforms input messages" do
         agent = agent_with_transform.new
         agent.generate("Hello")
-        user_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::User) }
+        user_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::User) }
         expect(user_message.content).must_equal "[INPUT] Hello"
       end
 
@@ -3467,7 +3259,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         instructions ->(context) { "Helping #{context[:name]}" }
       end
-      agent = klass.new
+      agent = klass.new(context: {name: "init"})
       msg = agent.generate_instruction_message(context: {name: "Alice"})
       expect(msg.content).must_equal "Helping Alice"
     end
@@ -3716,166 +3508,6 @@ describe Riffer::Agent do
     end
   end
 
-  describe "history read accessors" do
-    let(:user) { Riffer::Messages::User.new("hi", id: "u_1") }
-    let(:assistant) { Riffer::Messages::Assistant.new("hello", id: "a_1") }
-    let(:assistant_with_tool) do
-      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "t", arguments: "{}")
-      Riffer::Messages::Assistant.new("", id: "a_2", tool_calls: [tc])
-    end
-    let(:tool_msg) { Riffer::Messages::Tool.new("ok", id: "t_1", tool_call_id: "c_1", name: "t") }
-
-    let(:agent) do
-      a = agent_class.new
-      a.instance_variable_set(:@messages, [user, assistant, assistant_with_tool, tool_msg])
-      a
-    end
-
-    describe "#message_by_id" do
-      it "returns the matching message" do
-        expect(agent.message_by_id("a_1")).must_equal assistant
-      end
-
-      it "returns nil when no message matches" do
-        expect(agent.message_by_id("missing")).must_be_nil
-      end
-    end
-
-    describe "#tool_message_for" do
-      it "returns the tool message for the call_id" do
-        expect(agent.tool_message_for("c_1")).must_equal tool_msg
-      end
-
-      it "returns nil when no tool result exists for the call_id" do
-        expect(agent.tool_message_for("missing")).must_be_nil
-      end
-    end
-
-    describe "#last_assistant" do
-      it "returns the most recent assistant message" do
-        expect(agent.last_assistant).must_equal assistant_with_tool
-      end
-
-      it "returns nil when there is no assistant message" do
-        a = agent_class.new
-        a.instance_variable_set(:@messages, [user])
-        expect(a.last_assistant).must_be_nil
-      end
-    end
-
-    describe "#orphaned_tool_call_ids" do
-      it "returns [] when every tool_call has a matching tool result" do
-        expect(agent.orphaned_tool_call_ids).must_equal []
-      end
-
-      it "returns the unmatched call_ids" do
-        tc1 = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_a", name: "t", arguments: "{}")
-        tc2 = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_b", name: "t", arguments: "{}")
-        asst = Riffer::Messages::Assistant.new("", id: "a_x", tool_calls: [tc1, tc2])
-        result = Riffer::Messages::Tool.new("ok", id: "t_x", tool_call_id: "c_a", name: "t")
-        a = agent_class.new
-        a.instance_variable_set(:@messages, [asst, result])
-        expect(a.orphaned_tool_call_ids).must_equal ["c_b"]
-      end
-
-      it "returns [] for an empty agent" do
-        expect(agent_class.new.orphaned_tool_call_ids).must_equal []
-      end
-    end
-  end
-
-  describe "history mutators" do
-    let(:user) { Riffer::Messages::User.new("hi", id: "u_1") }
-    let(:plain_assistant) { Riffer::Messages::Assistant.new("hello", id: "a_1") }
-    let(:tc) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "weather", arguments: "{}") }
-    let(:tool_assistant) { Riffer::Messages::Assistant.new("", id: "a_2", tool_calls: [tc]) }
-    let(:tool_msg) { Riffer::Messages::Tool.new("sunny", id: "t_1", tool_call_id: "c_1", name: "weather") }
-
-    let(:agent) do
-      a = agent_class.new
-      a.instance_variable_set(:@messages, [user, plain_assistant, tool_assistant, tool_msg])
-      a
-    end
-
-    describe "#replace_assistant_content" do
-      it "replaces content while preserving id, tool_calls, token_usage" do
-        result = agent.replace_assistant_content(id: "a_2", content: "I checked.")
-        expect(result.content).must_equal "I checked."
-        expect(result.id).must_equal "a_2"
-        expect(result.tool_calls).must_equal [tc]
-        expect(agent.message_by_id("a_2").content).must_equal "I checked."
-      end
-
-      it "raises Riffer::ArgumentError on unknown id" do
-        expect { agent.replace_assistant_content(id: "missing", content: "x") }.must_raise Riffer::ArgumentError
-      end
-
-      it "delegates to #remove_message when content is empty" do
-        agent.replace_assistant_content(id: "a_1", content: "")
-        expect(agent.message_by_id("a_1")).must_be_nil
-      end
-
-      it "removes Tool children when content is empty and the assistant has tool_calls" do
-        agent.replace_assistant_content(id: "a_2", content: "")
-        expect(agent.message_by_id("a_2")).must_be_nil
-        expect(agent.tool_message_for("c_1")).must_be_nil
-      end
-    end
-
-    describe "#remove_message" do
-      it "removes a plain assistant message" do
-        result = agent.remove_message(id: "a_1")
-        expect(result).must_equal plain_assistant
-        expect(agent.message_by_id("a_1")).must_be_nil
-      end
-
-      it "cascades to Tool children when the target carries tool_calls" do
-        agent.remove_message(id: "a_2")
-        expect(agent.message_by_id("a_2")).must_be_nil
-        expect(agent.tool_message_for("c_1")).must_be_nil
-      end
-
-      it "removes user and system messages" do
-        sys_msg = Riffer::Messages::System.new("hi", id: "s_1")
-        a = agent_class.new
-        a.instance_variable_set(:@messages, [sys_msg, user])
-        a.remove_message(id: "u_1")
-        expect(a.message_by_id("u_1")).must_be_nil
-        a.remove_message(id: "s_1")
-        expect(a.message_by_id("s_1")).must_be_nil
-      end
-
-      it "raises Riffer::ArgumentError when called on a Tool message" do
-        expect { agent.remove_message(id: "t_1") }.must_raise Riffer::ArgumentError
-      end
-
-      it "returns nil when no message matches" do
-        expect(agent.remove_message(id: "missing")).must_be_nil
-      end
-    end
-
-    describe "#replace_tool_result" do
-      it "replaces content; preserves name and id" do
-        result = agent.replace_tool_result(tool_call_id: "c_1", content: "rainy")
-        expect(result.content).must_equal "rainy"
-        expect(result.tool_call_id).must_equal "c_1"
-        expect(result.name).must_equal "weather"
-        expect(result.id).must_equal "t_1"
-      end
-
-      it "plumbs error and error_type" do
-        result = agent.replace_tool_result(tool_call_id: "c_1", content: "boom", error: "failed", error_type: :execution_error)
-        expect(result.error).must_equal "failed"
-        expect(result.error_type).must_equal :execution_error
-        expect(result.error?).must_equal true
-      end
-
-      it "raises Riffer::ArgumentError on unknown tool_call_id" do
-        expect { agent.replace_tool_result(tool_call_id: "missing", content: "x") }.must_raise Riffer::ArgumentError
-      end
-    end
-  end
-
   describe "interrupt! with experimental_history_healing" do
     let(:tool_class) do
       Class.new(Riffer::Tool) do
@@ -3903,7 +3535,7 @@ describe Riffer::Agent do
         {name: "interrupt_heal_tool", arguments: "{}"}
       ])
 
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
       end
 
@@ -3911,8 +3543,8 @@ describe Riffer::Agent do
 
       expect(result.interrupted?).must_equal true
       expect(result.healed_tool_call_ids.length).must_equal 2
-      expect(agent.orphaned_tool_call_ids).must_equal []
-      tools = agent.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      expect(agent.session.orphaned_tool_call_ids).must_equal []
+      tools = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
       expect(tools.length).must_equal 2
       expect(tools.first.error_type).must_equal :interrupted
       expect(tools.first.content).must_equal "Tool call interrupted before completion."
@@ -3929,7 +3561,7 @@ describe Riffer::Agent do
       provider = agent.send(:provider_instance)
       provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
 
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
       end
 
@@ -3937,7 +3569,7 @@ describe Riffer::Agent do
 
       expect(result.interrupted?).must_equal true
       expect(result.healed_tool_call_ids).must_equal []
-      expect(agent.orphaned_tool_call_ids.length).must_equal 1
+      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
     end
 
     it "does not fire on_message for placeholder tool messages" do
@@ -3953,7 +3585,7 @@ describe Riffer::Agent do
       provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
 
       seen = []
-      agent.on_message do |msg|
+      agent.session.on_message do |msg|
         seen << msg
         agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
       end
@@ -3998,8 +3630,8 @@ describe Riffer::Agent do
       expect(result.interrupted?).must_equal true
       expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
       expect(result.healed_tool_call_ids.length).must_equal 1
-      expect(agent.orphaned_tool_call_ids).must_equal []
-      synth = agent.messages.last
+      expect(agent.session.orphaned_tool_call_ids).must_equal []
+      synth = agent.session.messages.last
       expect(synth).must_be_kind_of Riffer::Messages::Tool
       expect(synth.error_type).must_equal :interrupted
     end
@@ -4022,7 +3654,7 @@ describe Riffer::Agent do
       expect(result.interrupted?).must_equal true
       expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
       expect(result.healed_tool_call_ids).must_equal []
-      expect(agent.orphaned_tool_call_ids.length).must_equal 1
+      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
     end
   end
 
@@ -4033,22 +3665,22 @@ describe Riffer::Agent do
 
     it "passes seeded history through untouched when healing is off (default)" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
-      messages = [
+      seeded = Riffer::Session.new(messages: [
         Riffer::Messages::User.new("hi"),
         Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
         Riffer::Messages::Assistant.new("", tool_calls: [tc]),
         Riffer::Messages::User.new("follow up"),
         Riffer::Messages::Assistant.new("ok")
-      ]
-      agent = custom_class.new
+      ])
+      agent = custom_class.new(session: seeded)
       agent.send(:provider_instance).stub_response("Hello!")
-      agent.generate(messages)
+      agent.generate
 
-      assistant_with_orphan = agent.messages.find { |m|
+      assistant_with_orphan = agent.session.messages.find { |m|
         m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
       }
       refute_nil assistant_with_orphan
-      parentless = agent.messages.find { |m|
+      parentless = agent.session.messages.find { |m|
         m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
       }
       refute_nil parentless
@@ -4057,42 +3689,42 @@ describe Riffer::Agent do
     it "strips orphaned tool exchanges from non-last assistants when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_drop", name: "t", arguments: "{}")
-      messages = [
+      seeded = Riffer::Session.new(messages: [
         Riffer::Messages::User.new("hi"),
         Riffer::Messages::Assistant.new("", tool_calls: [tc]),
         Riffer::Messages::User.new("anyway"),
         Riffer::Messages::Assistant.new("never mind")
-      ]
+      ])
 
-      agent = custom_class.new
+      agent = custom_class.new(session: seeded)
       agent.send(:provider_instance).stub_response("Hello!")
-      agent.generate(messages)
+      agent.generate
 
-      expect(agent.messages.none? { |m| m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_drop" } }).must_equal true
+      expect(agent.session.messages.none? { |m| m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_drop" } }).must_equal true
     end
 
     it "strips parentless tool messages when healing is on" do
       Riffer.config.experimental_history_healing = true
-      messages = [
+      seeded = Riffer::Session.new(messages: [
         Riffer::Messages::User.new("hi"),
         Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
         Riffer::Messages::User.new("follow-up")
-      ]
+      ])
 
-      agent = custom_class.new
+      agent = custom_class.new(session: seeded)
       agent.send(:provider_instance).stub_response("Hello!")
-      agent.generate(messages)
+      agent.generate
 
-      expect(agent.messages.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
+      expect(agent.session.messages.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
     end
 
     it "preserves a pending tool_use on the resume boundary even when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
-      messages = [
+      seeded = Riffer::Session.new(messages: [
         Riffer::Messages::User.new("Call tool"),
         Riffer::Messages::Assistant.new("", tool_calls: [tc])
-      ]
+      ])
       tool = Class.new(Riffer::Tool) do
         description "Pending tool"
         def call(context:)
@@ -4104,9 +3736,9 @@ describe Riffer::Agent do
         uses_tools [tool]
       end
 
-      agent = with_tools.new
+      agent = with_tools.new(session: seeded)
       agent.send(:provider_instance).stub_response("All done!")
-      result = agent.generate(messages)
+      result = agent.generate
       expect(result.interrupted?).must_equal false
     end
   end

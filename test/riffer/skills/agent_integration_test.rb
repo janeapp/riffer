@@ -18,7 +18,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       assert_equal 2, system_messages.length
       assert_includes system_messages[0].content, "You are helpful."
       assert_includes system_messages[1].content, "Available Skills"
@@ -37,7 +37,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_message = system_messages.find { |m| m.content.include?("Available Skills") }
       assert_includes skills_message.content, "## Available Skills"
       assert_includes skills_message.content, "- **code-review**"
@@ -55,7 +55,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_message = system_messages.find { |m| m.content.include?("available_skills") }
       assert_includes skills_message.content, "<available_skills>"
     end
@@ -71,7 +71,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_message = system_messages.find { |m| m.content.include?("<available_skills>") }
       refute_nil skills_message
       assert_includes skills_message.content, "<available_skills>"
@@ -91,7 +91,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_message = system_messages.find { |m| m.content.include?("Available Skills") }
       refute_nil skills_message
       assert_includes skills_message.content, "## Available Skills"
@@ -105,10 +105,10 @@ describe "Agent skills integration" do
         end
       end
 
-      # prepare_run resolves the model and skills without instantiating
-      # the AWS client, so we can assert the adapter without VCR.
+      # The constructor resolves model + skills eagerly without
+      # instantiating the AWS client, so we can assert the adapter
+      # without VCR.
       agent = agent_class.new
-      agent.send(:prepare_run)
 
       skills_state = agent.instance_variable_get(:@skills_state)
       refute_nil skills_state
@@ -124,7 +124,6 @@ describe "Agent skills integration" do
       end
 
       agent = agent_class.new
-      agent.send(:prepare_run)
 
       skills_state = agent.instance_variable_get(:@skills_state)
       refute_nil skills_state
@@ -218,7 +217,7 @@ describe "Agent skills integration" do
       agent.instance_variable_set(:@provider_instance, provider)
       agent.generate("Hello")
 
-      tool_msg = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "spy_tool" }
+      tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "spy_tool" }
       refute_nil tool_msg
       assert_includes tool_msg.content, "code-review"
       assert_includes tool_msg.content, "data-analysis"
@@ -237,7 +236,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_msg = system_messages.find { |m| m.content.include?("code-review") }
       refute_nil skills_msg
     end
@@ -254,7 +253,7 @@ describe "Agent skills integration" do
         agent = agent_class.new
         agent.generate("Hello")
 
-        system_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) }
+        system_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::System) }
         assert_nil system_message
       end
     end
@@ -273,7 +272,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      skills_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Available Skills") }
+      skills_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Available Skills") }
       refute_nil skills_message
       assert_includes skills_message.content, "code-review"
     ensure
@@ -302,7 +301,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      skills_message = agent.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Available Skills") }
+      skills_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Available Skills") }
       refute_nil skills_message
     ensure
       Riffer.config.skills.default_backend = original_default
@@ -406,7 +405,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       assert_equal 2, system_messages.length
       assert_includes system_messages[0].content, "Base instructions."
       skills_msg = system_messages[1]
@@ -429,7 +428,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_msg = system_messages.find { |m| m.content.include?("code review assistant") }
       refute_nil skills_msg
       refute_includes skills_msg.content, "Available Skills"
@@ -446,8 +445,7 @@ describe "Agent skills integration" do
         end
       end
 
-      agent = agent_class.new
-      error = assert_raises(Riffer::ArgumentError) { agent.generate("Hello") }
+      error = assert_raises(Riffer::ArgumentError) { agent_class.new }
       assert_match(/Unknown skill/, error.message)
     end
 
@@ -460,10 +458,10 @@ describe "Agent skills integration" do
         end
       end
 
-      agent = agent_class.new
-      agent.generate("Hello", context: {activate_skills: ["data-analysis"]})
+      agent = agent_class.new(context: {activate_skills: ["data-analysis"]})
+      agent.generate("Hello")
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       skills_msg = system_messages.find { |m| m.content.include?("data analysis assistant") }
       refute_nil skills_msg
     end
@@ -482,7 +480,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.stream("Hello").each { |_| }
 
-      system_messages = agent.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
       assert_equal 2, system_messages.length
       skills_msg = system_messages.find { |m| m.content.include?("Available Skills") }
       refute_nil skills_msg
@@ -554,7 +552,7 @@ describe "Agent skills integration" do
 
       assert_equal "Here is my review.", response.content
 
-      tool_msg = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
+      tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
       refute_nil tool_msg
       assert_includes tool_msg.content, "code review assistant"
       refute tool_msg.error
@@ -576,7 +574,7 @@ describe "Agent skills integration" do
       agent.instance_variable_set(:@provider_instance, provider)
       agent.generate("Use nonexistent skill")
 
-      tool_msg = agent.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
+      tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
       refute_nil tool_msg
       assert_includes tool_msg.content, "Unknown skill"
     end

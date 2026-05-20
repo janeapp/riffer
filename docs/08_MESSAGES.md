@@ -183,45 +183,38 @@ This creates a `User` message internally.
 
 ### Message Arrays
 
-For multi-turn conversations, pass an array of messages:
+For multi-turn conversations restored from persisted state, construct a `Riffer::Session` with the message history and hand it to a new agent:
 
 ```ruby
-messages = [
-  {role: :user, content: "What's the weather?"},
-  {role: :assistant, content: "I'll check that for you."},
-  {role: :user, content: "Thanks, I meant in Tokyo specifically."}
-]
+session = Riffer::Session.new(messages: [
+  Riffer::Messages::User.new("What's the weather?"),
+  Riffer::Messages::Assistant.new("I'll check that for you."),
+  Riffer::Messages::User.new("Thanks, I meant in Tokyo specifically.")
+])
 
-response = agent.generate(messages)
+agent = MyAgent.new(session: session)
+response = agent.generate   # session already carries the last user turn
 ```
 
-Messages can be hashes or `Riffer::Messages::Base` objects:
-
-```ruby
-messages = [
-  Riffer::Messages::User.new("Hello"),
-  Riffer::Messages::Assistant.new("Hi there!"),
-  Riffer::Messages::User.new("How are you?")
-]
-
-response = agent.generate(messages)
-```
+`Riffer::Session.new(messages:)` accepts `Riffer::Messages::Base` objects. If your persistence layer hands back hashes, normalize them first via `Riffer::Messages::Converter#convert_to_message_object` or your own adapter (e.g. jane's `to_riffer`).
 
 ### Accessing Message History
 
-After calling `generate` or `stream`, access the full conversation:
+Conversation state lives on `agent.session` — a `Riffer::Session` instance. After calling `generate` or `stream`, access the full conversation:
 
 ```ruby
 agent = MyAgent.new
 agent.generate("Hello!")
 
-agent.messages.each do |msg|
+agent.session.messages.each do |msg|
   puts "[#{msg.role}] #{msg.content}"
 end
 # [system] You are a helpful assistant.
 # [user] Hello!
 # [assistant] Hi there! How can I help you today?
 ```
+
+`Riffer::Session` includes `Enumerable`, so `find`, `select`, `count`, `reverse_each` etc. work directly on the session without going through `.messages`.
 
 ## Tool Call Structure
 
@@ -264,19 +257,19 @@ Without this step, the same model can receive different input depending on the p
 When a context message is injected before the user's turn, two consecutive user messages are merged into one:
 
 ```ruby
-messages = [
+session = Riffer::Session.new(messages: [
   Riffer::Messages::System.new("You are a code reviewer."),
   Riffer::Messages::User.new("The repository uses RSpec for testing."),
   Riffer::Messages::User.new("Review this pull request.")
-]
+])
 
-agent.generate(messages)
+MyAgent.new(session: session).generate
 # The provider receives two messages:
 #   1. System  — "You are a code reviewer."
 #   2. User    — "The repository uses RSpec for testing.\n\nReview this pull request."
 ```
 
-Merging happens at serialization time only. The agent's `messages` array still contains the original separate messages for logging, evals, and debugging.
+Merging happens at serialization time only. The session's `messages` array still contains the original separate messages for logging, evals, and debugging.
 
 ## IDs
 
@@ -330,4 +323,4 @@ Subclasses implement `role` and optionally extend `to_h` with additional fields.
 
 ## Editing history after the fact
 
-The agent's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, replace a tool result, fill an orphan `tool_use` — use the mutators on `Riffer::Agent`. Each mutator enforces the `tool_use` ↔ `tool_result` invariant. See [Mutating history](04_AGENT_LIFECYCLE.md#mutating-history) for the full list.
+The session's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, rewrite a tool result, fill an orphan `tool_use` — use the mutators on `agent.session` (`update`, `remove`). Each one enforces the `tool_use` ↔ `tool_result` invariant. See [Mutating history](04_AGENT_LIFECYCLE.md#mutating-history) for the full list.

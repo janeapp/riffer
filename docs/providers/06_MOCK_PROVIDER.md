@@ -121,7 +121,8 @@ class MyAgentTest < Minitest::Test
     ])
     @provider.stub_response("Done.")
 
-    @agent.generate("Do something", context: {user_id: 123})
+    agent = TestableAgent.new(context: {user_id: 123})
+    agent.generate("Do something")
 
     # Tool receives the context
   end

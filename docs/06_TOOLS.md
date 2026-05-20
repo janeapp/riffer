@@ -176,7 +176,7 @@ class UserOrdersTool < Riffer::Tool
 end
 
 # Usage
-agent.generate("Show my orders", context: {user_id: 123})
+MyAgent.new(context: {user_id: 123}).generate("Show my orders")
 ```
 
 ## Response Objects
