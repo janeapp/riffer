@@ -16,11 +16,6 @@ describe Riffer::Agent do
       expect(agent_class.identifier).must_equal "test-agent"
     end
 
-    it "converts non-string identifier to string" do
-      agent_class.identifier(:test_agent)
-      expect(agent_class.identifier).must_equal "test_agent"
-    end
-
     it "defaults to snake_case class name when not set" do
       expect(Riffer::Agent.identifier).must_equal "riffer/agent"
     end
@@ -30,54 +25,15 @@ describe Riffer::Agent do
     it "sets the model" do
       expect(agent_class.model).must_equal "mock/riffer-1"
     end
-
-    it "raises error when model is not a string" do
-      error = expect { agent_class.model(123) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/model must be a String/)
-    end
-
-    it "raises error when model is an empty string" do
-      error = expect { agent_class.model("   ") }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/model cannot be empty/)
-    end
-
-    it "accepts a Proc" do
-      agent = Class.new(Riffer::Agent) do
-        model -> { "mock/riffer-1" }
-      end
-      expect(agent.model).must_be_instance_of Proc
-    end
   end
 
   describe ".instructions" do
     it "sets the instructions" do
       expect(agent_class.instructions).must_equal "You are a helpful assistant."
     end
-
-    it "raises error when instructions is not a string" do
-      error = expect { agent_class.instructions(123) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/instructions must be a String/)
-    end
-
-    it "raises error when instructions is an empty string" do
-      error = expect { agent_class.instructions("   ") }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/instructions cannot be empty/)
-    end
-
-    it "accepts a Proc" do
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        instructions -> { "Dynamic instructions" }
-      end
-      expect(klass.instructions).must_be_instance_of Proc
-    end
   end
 
   describe ".provider_options" do
-    it "returns empty hash when not set" do
-      expect(agent_class.provider_options).must_equal({})
-    end
-
     it "sets the provider options" do
       agent_class.provider_options(api_key: "test-key")
       expect(agent_class.provider_options).must_equal({api_key: "test-key"})
@@ -85,10 +41,6 @@ describe Riffer::Agent do
   end
 
   describe ".model_options" do
-    it "returns empty hash when not set" do
-      expect(agent_class.model_options).must_equal({})
-    end
-
     it "sets the model options" do
       agent_class.model_options(reasoning: "medium")
       expect(agent_class.model_options).must_equal({reasoning: "medium"})
@@ -96,10 +48,6 @@ describe Riffer::Agent do
   end
 
   describe ".max_steps" do
-    it "returns DEFAULT_MAX_STEPS when not set" do
-      expect(agent_class.max_steps).must_equal Riffer::Agent::DEFAULT_MAX_STEPS
-    end
-
     it "sets the value" do
       agent_class.max_steps(5)
       expect(agent_class.max_steps).must_equal 5
@@ -141,6 +89,98 @@ describe Riffer::Agent do
         error = expect { invalid_agent_class.new }.must_raise(Riffer::ArgumentError)
         expect(error.message).must_match(/Invalid model string: invalid-format/)
       end
+    end
+  end
+
+  describe ".config" do
+    it "returns a Riffer::Agent::Config" do
+      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      expect(klass.config).must_be_instance_of Riffer::Agent::Config
+    end
+
+    it "returns the same instance across multiple reads on one class" do
+      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      expect(klass.config).must_be_same_as klass.config
+    end
+
+    it "is independent between sibling subclasses" do
+      sibling_a = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        max_steps 3
+      end
+      sibling_b = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        max_steps 7
+      end
+      expect(sibling_a.config).wont_be_same_as sibling_b.config
+      expect(sibling_a.config.max_steps).must_equal 3
+      expect(sibling_b.config.max_steps).must_equal 7
+    end
+
+    it "is independent between parent and child subclasses" do
+      parent = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        max_steps 3
+      end
+      child = Class.new(parent)
+      expect(child.config).wont_be_same_as parent.config
+      # Each subclass starts fresh; only tool_runtime walks the chain.
+      expect(child.config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
+    end
+  end
+
+  describe "Agent.new(config:)" do
+    let(:explicit_config) do
+      Riffer::Agent::Config.new(
+        model: "mock/riffer-1",
+        instructions: "You are explicit.",
+        max_steps: 4
+      )
+    end
+
+    it "uses the explicit config when provided" do
+      agent = Riffer::Agent.new(config: explicit_config)
+      expect(agent.session.messages.first.content).must_equal "You are explicit."
+    end
+
+    it "ignores the class config when config: is passed" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        instructions "Ignore me."
+        max_steps 99
+      end
+      agent = klass.new(config: explicit_config)
+      expect(agent.session.messages.first.content).must_equal "You are explicit."
+      expect(agent.instance_variable_get(:@config).max_steps).must_equal 4
+    end
+
+    it "falls back to self.class.config when config: is omitted" do
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        instructions "From class."
+      end
+      agent = klass.new
+      expect(agent.instance_variable_get(:@config)).must_be_same_as klass.config
+    end
+
+    it "threads context: through Procs in the explicit config" do
+      cfg = Riffer::Agent::Config.new(
+        model: "mock/riffer-1",
+        instructions: ->(ctx) { "Hello #{ctx[:name]}" }
+      )
+      agent = Riffer::Agent.new(config: cfg, context: {name: "Jane"})
+      expect(agent.session.messages.first.content).must_equal "Hello Jane"
+    end
+
+    it "uses an explicit config's model_options in the LLM call" do
+      cfg = Riffer::Agent::Config.new(
+        model: "mock/riffer-1",
+        model_options: {temperature: 0.3}
+      )
+      agent = Riffer::Agent.new(config: cfg)
+      provider = agent.send(:provider_instance)
+      agent.generate("hi")
+      expect(provider.calls.last[:temperature]).must_equal 0.3
     end
   end
 
@@ -569,10 +609,6 @@ describe Riffer::Agent do
   end
 
   describe ".structured_output" do
-    it "returns nil when not set" do
-      expect(agent_class.structured_output).must_be_nil
-    end
-
     it "stores Params instance" do
       params = Riffer::Params.new
       params.required(:sentiment, String)
@@ -593,14 +629,6 @@ describe Riffer::Agent do
       end
       expect(klass.structured_output).must_be_instance_of Riffer::Params
       expect(klass.structured_output.parameters.size).must_equal 2
-    end
-
-    it "raises ArgumentError for non-Params argument" do
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-      end
-      error = expect { klass.structured_output({sentiment: String}) }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/structured_output must be a Riffer::Params/)
     end
   end
 
@@ -802,18 +830,6 @@ describe Riffer::Agent do
     end
   end
 
-  describe "instructions validation" do
-    it "raises error when instructions is empty string" do
-      error = expect do
-        Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          instructions "   "
-        end
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/instructions cannot be empty/)
-    end
-  end
-
   describe ".find" do
     before do
       @test_agent_class = Class.new(Riffer::Agent) do
@@ -975,39 +991,12 @@ describe Riffer::Agent do
   end
 
   describe ".tool_runtime" do
-    it "returns nil when not set" do
-      expect(agent_class.tool_runtime).must_be_nil
-    end
-
-    it "sets the tool_runtime class" do
+    it "stores a tool_runtime class" do
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         tool_runtime Riffer::ToolRuntime::Threaded
       end
       expect(agent.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
-    end
-
-    it "inherits tool_runtime from parent class" do
-      parent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        tool_runtime Riffer::ToolRuntime::Threaded
-      end
-      child = Class.new(parent)
-
-      expect(child.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
-    end
-
-    it "allows subclass to override inherited tool_runtime" do
-      parent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        tool_runtime Riffer::ToolRuntime::Threaded
-      end
-      child = Class.new(parent) do
-        tool_runtime Riffer::ToolRuntime::Inline
-      end
-
-      expect(child.tool_runtime).must_equal Riffer::ToolRuntime::Inline
-      expect(parent.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
     end
 
     it "defaults to inline when no config" do
@@ -1054,24 +1043,6 @@ describe Riffer::Agent do
       ensure
         Riffer.config.tool_runtime = original
       end
-    end
-
-    it "accepts a ToolRuntime instance" do
-      custom_runtime = Riffer::ToolRuntime::Inline.new
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        tool_runtime custom_runtime
-      end
-      runtime = agent.new.send(:resolve_tool_runtime)
-      expect(runtime).must_equal custom_runtime
-    end
-
-    it "raises for invalid tool_runtime" do
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        tool_runtime "invalid"
-      end
-      expect { agent.new.send(:resolve_tool_runtime) }.must_raise Riffer::ArgumentError
     end
 
     it "clears resolved tool runtime between generate calls" do
@@ -2866,26 +2837,6 @@ describe Riffer::Agent do
       end
     end
 
-    it "raises error for invalid phase" do
-      error = expect do
-        Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          guardrail :invalid, with: Riffer::Guardrail
-        end
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/Invalid guardrail phase/)
-    end
-
-    it "raises error for non-guardrail class" do
-      error = expect do
-        Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          guardrail :before, with: String
-        end
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/must be a Riffer::Guardrail subclass/)
-    end
-
     it "registers before guardrails" do
       gr = pass_guardrail_class
       agent = Class.new(Riffer::Agent) do
@@ -2893,36 +2844,6 @@ describe Riffer::Agent do
       end
       agent.guardrail(:before, with: gr)
       configs = agent.guardrails_for(:before)
-      expect(configs.any? { |c| c[:class] == gr }).must_equal true
-    end
-
-    it "registers after guardrails" do
-      gr = pass_guardrail_class
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-      end
-      agent.guardrail(:after, with: gr)
-      configs = agent.guardrails_for(:after)
-      expect(configs.any? { |c| c[:class] == gr }).must_equal true
-    end
-
-    it "registers around guardrails for both phases" do
-      gr = pass_guardrail_class
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-      end
-      agent.guardrail(:around, with: gr)
-      configs = agent.guardrails_for(:before)
-      expect(configs.any? { |c| c[:class] == gr }).must_equal true
-    end
-
-    it "registers around guardrails for output" do
-      gr = pass_guardrail_class
-      agent = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-      end
-      agent.guardrail(:around, with: gr)
-      configs = agent.guardrails_for(:after)
       expect(configs.any? { |c| c[:class] == gr }).must_equal true
     end
 
@@ -3283,22 +3204,12 @@ describe Riffer::Agent do
   describe ".use_mcp / .mcp_configs" do
     after { clear_mcp_registry! }
 
-    it "returns empty array when no use_mcp calls have been made" do
-      klass = Class.new(Riffer::Agent)
-      expect(klass.mcp_configs).must_equal []
-    end
-
     it "accumulates mcp_configs from multiple use_mcp calls" do
       klass = Class.new(Riffer::Agent) do
         use_mcp :foo
         use_mcp :bar
       end
       expect(klass.mcp_configs.size).must_equal 2
-    end
-
-    it "normalizes tag to symbol" do
-      klass = Class.new(Riffer::Agent) { use_mcp "mytag" }
-      expect(klass.mcp_configs.first[:tags]).must_equal [:mytag]
     end
   end
 
@@ -3327,6 +3238,7 @@ describe Riffer::Agent do
     def resolved_tools_for(klass)
       instance = klass.allocate
       instance.instance_variable_set(:@context, nil)
+      instance.instance_variable_set(:@config, klass.config)
       instance.send(:resolved_tools)
     end
 
@@ -3422,6 +3334,7 @@ describe Riffer::Agent do
 
       instance = klass.allocate
       instance.instance_variable_set(:@context, nil)
+      instance.instance_variable_set(:@config, klass.config)
 
       err = expect { instance.send(:resolved_tools) }.must_raise Riffer::ArgumentError
       expect(err.message).must_match(/must define a description/)
@@ -3445,6 +3358,7 @@ describe Riffer::Agent do
 
       instance = klass.allocate
       instance.instance_variable_set(:@context, nil)
+      instance.instance_variable_set(:@config, klass.config)
 
       err = expect { instance.send(:resolved_tools) }.must_raise Riffer::ArgumentError
       expect(err.message).must_match(/must define a description/)

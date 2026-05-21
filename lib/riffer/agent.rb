@@ -21,33 +21,32 @@ require "json"
 class Riffer::Agent
   include Riffer::Messages::Converter
   extend Riffer::Helpers::ClassNameConverter
-  extend Riffer::Helpers::Validations
 
-  DEFAULT_MAX_STEPS = 16 #: Integer
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
+
+  # Returns the per-class Riffer::Agent::Config value object holding every
+  # DSL setting. Lazily initialized on first read; each subclass has its own.
+  #
+  #--
+  #: () -> Riffer::Agent::Config
+  def self.config
+    @config ||= Riffer::Agent::Config.new
+  end
 
   # Gets or sets the agent identifier.
   #
   #--
   #: (?String?) -> String
   def self.identifier(value = nil)
-    return @identifier || class_name_to_path(name) if value.nil?
-    @identifier = value.to_s
+    value.nil? ? (config.identifier || class_name_to_path(name)) : (config.identifier = value)
   end
 
   # Gets or sets the model string (e.g., "openai/gpt-4o") or Proc.
   #
   #--
   #: (?(String | Proc)?) -> (String | Proc)?
-  def self.model(model_string_or_proc = nil)
-    return @model if model_string_or_proc.nil?
-
-    if model_string_or_proc.is_a?(Proc)
-      @model = model_string_or_proc
-    else
-      validate_is_string!(model_string_or_proc, "model")
-      @model = model_string_or_proc
-    end
+  def self.model(value = nil)
+    value.nil? ? config.model : (config.model = value)
   end
 
   # Gets or sets the agent instructions.
@@ -64,15 +63,8 @@ class Riffer::Agent
   #
   #--
   #: (?(String | Proc)?) -> (String | Proc)?
-  def self.instructions(instructions_or_proc = nil)
-    return @instructions if instructions_or_proc.nil?
-
-    if instructions_or_proc.is_a?(Proc)
-      @instructions = instructions_or_proc
-    else
-      validate_is_string!(instructions_or_proc, "instructions")
-      @instructions = instructions_or_proc
-    end
+  def self.instructions(value = nil)
+    value.nil? ? config.instructions : (config.instructions = value)
   end
 
   # Gets or sets provider options passed to the provider client.
@@ -80,8 +72,7 @@ class Riffer::Agent
   #--
   #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.provider_options(options = nil)
-    return @provider_options || {} if options.nil?
-    @provider_options = options
+    options.nil? ? config.provider_options : (config.provider_options = options)
   end
 
   # Gets or sets model options passed to generate_text/stream_text.
@@ -89,8 +80,7 @@ class Riffer::Agent
   #--
   #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.model_options(options = nil)
-    return @model_options || {} if options.nil?
-    @model_options = options
+    options.nil? ? config.model_options : (config.model_options = options)
   end
 
   # Gets or sets the structured output schema for this agent.
@@ -101,35 +91,30 @@ class Riffer::Agent
   #: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
   def self.structured_output(params = nil, &block)
     if block
-      @structured_output = Riffer::Params.new
-      @structured_output.instance_eval(&block)
-    elsif params.nil?
-      @structured_output
-    else
-      raise Riffer::ArgumentError, "structured_output must be a Riffer::Params" unless params.is_a?(Riffer::Params)
-      @structured_output = params
+      params = Riffer::Params.new
+      params.instance_eval(&block)
     end
+    config.structured_output = params if params
+    config.structured_output
   end
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #
-  # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
-  # unlimited steps.
+  # Defaults to Riffer::Agent::Config::DEFAULT_MAX_STEPS (16). Set to
+  # +Float::INFINITY+ for unlimited steps.
   #
   #--
   #: (?Numeric?) -> Numeric
   def self.max_steps(value = nil)
-    return @max_steps || DEFAULT_MAX_STEPS if value.nil?
-    @max_steps = value
+    value.nil? ? config.max_steps : (config.max_steps = value)
   end
 
   # Gets or sets the tools used by this agent.
   #
   #--
   #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
-  def self.uses_tools(tools_or_lambda = nil)
-    return @tools_config if tools_or_lambda.nil?
-    @tools_config = tools_or_lambda
+  def self.uses_tools(value = nil)
+    value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
   # Returns the tool classes the LLM should see for this agent.
@@ -154,12 +139,13 @@ class Riffer::Agent
   # activation tool, or when a tool class fails +validate_as_tool!+.
   #
   #--
-  #: (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
-  def self.resolved_tool_classes(context: nil)
-    base = resolve_uses_tools_config(context)
+  #: (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
+  def self.resolved_tool_classes(context: nil, config: self.config)
+    base = Riffer::Helpers::CallOrValue.resolve(config.tools_config, context: context, default: [])
+    skills_cfg = config.skills_config
 
-    tools = if skills
-      skill_activate_tool_class = skills.activate_tool || Riffer.config.skills.default_activate_tool
+    tools = if skills_cfg
+      skill_activate_tool_class = skills_cfg.activate_tool || Riffer.config.skills.default_activate_tool
       if base.any? { |t| t.name == skill_activate_tool_class.name }
         raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
       end
@@ -172,13 +158,6 @@ class Riffer::Agent
     tools
   end
 
-  #--
-  #: (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
-  def self.resolve_uses_tools_config(context)
-    Riffer::Helpers::CallOrValue.resolve(uses_tools, context: context, default: [])
-  end
-  private_class_method :resolve_uses_tools_config
-
   # Opts this agent into tools from all MCP registrations that share any of
   # the given tag(s).
   #
@@ -186,34 +165,25 @@ class Riffer::Agent
   #
   #: (String | Symbol) -> void
   def self.use_mcp(tag)
-    @mcp_configs ||= []
-    @mcp_configs << {tags: [tag.to_sym]}
+    config.add_mcp(tag)
   end
 
   # Returns the accumulated +use_mcp+ configurations for this agent class.
   #
   #: () -> Array[Hash[Symbol, untyped]]
   def self.mcp_configs
-    @mcp_configs || []
+    config.mcp_configs
   end
 
   # Gets or sets the tool runtime for this agent.
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
-  # or a Proc.
-  #
-  # Inherited by subclasses. When unset, walks the ancestor chain and
-  # falls back to the global <tt>Riffer.config.tool_runtime</tt>.
+  # or a Proc. Defaults to <tt>Riffer.config.tool_runtime</tt> when unset.
   #
   #--
-  #: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
+  #: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
   def self.tool_runtime(value = nil)
-    if value.nil?
-      return @tool_runtime if instance_variable_defined?(:@tool_runtime)
-      superclass.respond_to?(:tool_runtime) ? superclass.tool_runtime : nil
-    else
-      @tool_runtime = value
-    end
+    value.nil? ? config.tool_runtime : (config.tool_runtime = value)
   end
 
   # Configures skills for this agent via a block DSL.
@@ -230,10 +200,11 @@ class Riffer::Agent
   #: () ?{ () -> void } -> Riffer::Skills::Config?
   def self.skills(&block)
     if block
-      @skills_config = Riffer::Skills::Config.new
-      @skills_config.instance_eval(&block)
+      skills_config = Riffer::Skills::Config.new
+      skills_config.instance_eval(&block)
+      config.skills_config = skills_config
     end
-    @skills_config
+    config.skills_config
   end
 
   # Finds an agent class by identifier.
@@ -284,22 +255,7 @@ class Riffer::Agent
   #--
   #: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
   def self.guardrail(phase, with:, **options)
-    valid_phases = [*Riffer::Guardrails::PHASES, :around]
-    raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
-    raise Riffer::ArgumentError, "Guardrail must be a Riffer::Guardrail subclass" unless with.is_a?(Class) && with <= Riffer::Guardrail
-
-    @guardrails ||= {before: [], after: []}
-    config = {class: with, options: options}
-
-    case phase
-    when :before
-      @guardrails[:before] << config
-    when :after
-      @guardrails[:after] << config
-    when :around
-      @guardrails[:before] << config
-      @guardrails[:after] << config
-    end
+    config.add_guardrail(phase, klass: with, options: options)
   end
 
   # Returns the registered guardrail configs for a given phase.
@@ -309,8 +265,7 @@ class Riffer::Agent
   #--
   #: (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for(phase)
-    @guardrails ||= {before: [], after: []}
-    @guardrails[phase] || []
+    config.guardrails_for(phase)
   end
 
   # The conversation handle. See Riffer::Session.
@@ -348,11 +303,12 @@ class Riffer::Agent
   # (must be "provider/model" format).
   #
   #--
-  #: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?) -> void
-  def initialize(session: nil, context: nil)
+  #: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
+  def initialize(session: nil, context: nil, config: nil)
+    @config = config || self.class.config
     @token_usage = nil
-    @model_config = self.class.model
-    @instructions_config = self.class.instructions
+    @model_config = @config.model
+    @instructions_config = @config.instructions
     @context = context
 
     if @model_config.is_a?(Proc)
@@ -410,7 +366,7 @@ class Riffer::Agent
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt = nil, files: nil)
-    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if self.class.structured_output
+    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @config.structured_output
     raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
 
     append_user_message(prompt, files: files) if prompt
@@ -471,7 +427,7 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
-        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= self.class.max_steps
+        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= @config.max_steps
 
         execute_tool_calls(processed_response)
       end
@@ -584,7 +540,7 @@ class Riffer::Agent
 
         break unless has_tool_calls?(processed_response)
 
-        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= self.class.max_steps
+        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= @config.max_steps
 
         execute_tool_calls(processed_response)
       end
@@ -623,7 +579,7 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Providers::Base
   def provider_instance
-    @provider_instance ||= provider_class.new(**self.class.provider_options)
+    @provider_instance ||= provider_class.new(**@config.provider_options)
   end
 
   #--
@@ -698,7 +654,7 @@ class Riffer::Agent
   #--
   #: () -> Array[singleton(Riffer::Tool)]
   def resolve_mcp_tool_classes
-    configs = self.class.mcp_configs
+    configs = @config.mcp_configs
     return [] if configs.empty?
 
     cred = Riffer.config.mcp.credentials
@@ -744,7 +700,7 @@ class Riffer::Agent
   #: () -> Array[singleton(Riffer::Tool)]
   def resolved_tools
     @resolved_tools ||= begin
-      tools = self.class.resolved_tool_classes(context: @context) + resolve_mcp_tool_classes
+      tools = self.class.resolved_tool_classes(context: @context, config: @config) + resolve_mcp_tool_classes
       assert_distinct_tool_names!(tools)
       tools.each(&:validate_as_tool!)
       tools
@@ -755,14 +711,8 @@ class Riffer::Agent
   #: () -> Riffer::ToolRuntime
   def resolve_tool_runtime
     @resolved_tool_runtime ||= begin
-      config = self.class.tool_runtime || Riffer.config.tool_runtime
-      runtime = Riffer::Helpers::CallOrValue.resolve(config, context: @context)
-
-      case runtime
-      when Class then runtime.new
-      when Riffer::ToolRuntime then runtime
-      else raise Riffer::ArgumentError, "Invalid tool_runtime: #{runtime.inspect}"
-      end
+      runtime = Riffer::Helpers::CallOrValue.resolve(@config.tool_runtime, context: @context)
+      runtime.is_a?(Class) ? runtime.new : runtime
     end
   end
 
@@ -775,9 +725,10 @@ class Riffer::Agent
   #--
   #: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
   def resolve_skills(context = @context)
-    return nil unless self.class.skills
+    skills_config = @config.skills_config
+    return nil unless skills_config
 
-    backend = self.class.skills.backend || Riffer.config.skills.default_backend
+    backend = skills_config.backend || Riffer.config.skills.default_backend
     return nil unless backend
 
     backend = Riffer::Helpers::CallOrValue.resolve(backend, context: context)
@@ -785,8 +736,8 @@ class Riffer::Agent
     return nil if skills_list.empty?
 
     skills = skills_list.to_h { |s| [s.name, s] }
-    adapter_class = self.class.skills.adapter || provider_class.skills_adapter(@model_name)
-    skill_activate_tool_class = self.class.skills.activate_tool || Riffer.config.skills.default_activate_tool
+    adapter_class = skills_config.adapter || provider_class.skills_adapter(@model_name)
+    skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
 
     skills_context = Riffer::Skills::Context.new(
       backend: backend,
@@ -795,7 +746,7 @@ class Riffer::Agent
     )
     ctx = (context || {}).merge(skills: skills_context)
 
-    activate = self.class.skills.activate
+    activate = skills_config.activate
     if activate
       names = Array(Riffer::Helpers::CallOrValue.resolve(activate, context: ctx))
       names.each { |name| skills_context.activate(name) }
@@ -824,7 +775,7 @@ class Riffer::Agent
   #--
   #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_before_guardrails
-    guardrails = self.class.guardrails_for(:before)
+    guardrails = @config.guardrails_for(:before)
     return [nil, []] if guardrails.empty?
 
     runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: @context)
@@ -836,7 +787,7 @@ class Riffer::Agent
   #--
   #: (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run_after_guardrails(response)
-    guardrails = self.class.guardrails_for(:after)
+    guardrails = @config.guardrails_for(:after)
     return [response, nil, []] if guardrails.empty?
 
     runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: @context)
@@ -859,14 +810,14 @@ class Riffer::Agent
   #--
   #: () -> Riffer::StructuredOutput?
   def resolve_structured_output
-    params = self.class.structured_output
+    params = @config.structured_output
     params ? Riffer::StructuredOutput.new(params) : nil
   end
 
   #--
   #: () -> Hash[Symbol, untyped]
   def merged_model_options
-    opts = self.class.model_options.dup
+    opts = @config.model_options.dup
     opts[:structured_output] = @structured_output if @structured_output
     opts
   end

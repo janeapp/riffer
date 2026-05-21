@@ -19,11 +19,14 @@ class Riffer::Agent
 
   extend Riffer::Helpers::ClassNameConverter
 
-  extend Riffer::Helpers::Validations
-
-  DEFAULT_MAX_STEPS: Integer
-
   INTERRUPT_MAX_STEPS: Symbol
+
+  # Returns the per-class Riffer::Agent::Config value object holding every
+  # DSL setting. Lazily initialized on first read; each subclass has its own.
+  #
+  # --
+  # : () -> Riffer::Agent::Config
+  def self.config: () -> Riffer::Agent::Config
 
   # Gets or sets the agent identifier.
   #
@@ -75,8 +78,8 @@ class Riffer::Agent
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #
-  # Defaults to DEFAULT_MAX_STEPS (16). Set to +Float::INFINITY+ for
-  # unlimited steps.
+  # Defaults to Riffer::Agent::Config::DEFAULT_MAX_STEPS (16). Set to
+  # +Float::INFINITY+ for unlimited steps.
   #
   # --
   # : (?Numeric?) -> Numeric
@@ -110,12 +113,8 @@ class Riffer::Agent
   # activation tool, or when a tool class fails +validate_as_tool!+.
   #
   # --
-  # : (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
-  def self.resolved_tool_classes: (?context: Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
-
-  # --
-  # : (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
-  def self.resolve_uses_tools_config: (Hash[Symbol, untyped]?) -> Array[singleton(Riffer::Tool)]
+  # : (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
+  def self.resolved_tool_classes: (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
 
   # Opts this agent into tools from all MCP registrations that share any of
   # the given tag(s).
@@ -133,14 +132,11 @@ class Riffer::Agent
   # Gets or sets the tool runtime for this agent.
   #
   # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
-  # or a Proc.
-  #
-  # Inherited by subclasses. When unset, walks the ancestor chain and
-  # falls back to the global <tt>Riffer.config.tool_runtime</tt>.
+  # or a Proc. Defaults to <tt>Riffer.config.tool_runtime</tt> when unset.
   #
   # --
-  # : (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
-  def self.tool_runtime: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?
+  # : (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
+  def self.tool_runtime: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
 
   # Configures skills for this agent via a block DSL.
   #
@@ -240,8 +236,8 @@ class Riffer::Agent
   # (must be "provider/model" format).
   #
   # --
-  # : (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?) -> void
-  def initialize: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?) -> void
+  # : (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
+  def initialize: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
 
   # Generates a response from the agent.
   #

@@ -6,6 +6,8 @@
 
 Base class for AI agents. Subclass and use DSL methods `model`, `instructions`, `structured_output`, and `skills` to configure. Orchestrates message flow, LLM calls, tool execution, structured output parsing, and skill activation via a generate/stream loop.
 
+Class-level DSL settings live on a per-class `Riffer::Agent::Config` object accessible via `MyAgent.config`. DSL methods read and mutate this Config in place. Instances read from `@config`, which defaults to `self.class.config` but can be replaced via `Agent.new(config: ...)`.
+
 ```ruby
 class EchoAgent < Riffer::Agent
   model 'openai/gpt-5-mini' # provider/model
@@ -178,6 +180,8 @@ lib/
     config.rb            # Configuration class
     core.rb              # Core functionality
     agent.rb             # Agent class
+    agent/
+      config.rb          # Per-class DSL configuration value object
     messages.rb          # Messages namespace/module
     providers.rb         # Providers namespace/module
     param.rb             # Single parameter definition (shared by tools and structured output)
@@ -200,7 +204,6 @@ lib/
     helpers/
       class_name_converter.rb  # Class name conversion utilities
       dependencies.rb          # Dependency management
-      validations.rb           # Validation helpers
     file_part.rb         # File attachment (images and documents)
     messages/
       base.rb            # Base message class
