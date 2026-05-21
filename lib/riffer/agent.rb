@@ -370,7 +370,7 @@ class Riffer::Agent
     @skills_message = build_skills_message
 
     @session = session || Riffer::Session.new(messages: [@instruction_message, @skills_message].compact)
-    @session.set(Riffer::Session::Healer.heal_seeded_session(@session.messages)) if session
+    @session.set(Riffer::Session::Repair.prune_orphans(@session.messages)) if session
   end
 
   # Generates a response from the agent.
@@ -483,11 +483,11 @@ class Riffer::Agent
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
-    new_messages, healed = Riffer::Session::Healer.heal_orphans(@session.messages)
+    new_messages, filled = Riffer::Session::Repair.fill_orphans(@session.messages)
     @session.set(new_messages)
     response = final_assistant_message
 
-    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), healed_tool_call_ids: healed)
+    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), healed_tool_call_ids: filled)
   end
 
   #--
@@ -592,9 +592,9 @@ class Riffer::Agent
     end
 
     unless completed == :completed
-      new_messages, healed = Riffer::Session::Healer.heal_orphans(@session.messages)
+      new_messages, filled = Riffer::Session::Repair.fill_orphans(@session.messages)
       @session.set(new_messages)
-      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, healed_tool_call_ids: healed)
+      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, healed_tool_call_ids: filled)
     end
   end
 

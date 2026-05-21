@@ -2,12 +2,12 @@
 
 require "test_helper"
 
-describe Riffer::Session::Healer do
+describe Riffer::Session::Repair do
   def tool_call(call_id, name: "t", arguments: "{}")
     Riffer::Messages::Assistant::ToolCall.new(call_id: call_id, name: name, arguments: arguments)
   end
 
-  describe ".heal_orphans" do
+  describe ".fill_orphans" do
     after { Riffer.config.experimental_history_healing = false }
 
     describe "when experimental_history_healing is off" do
@@ -19,13 +19,13 @@ describe Riffer::Session::Healer do
       end
 
       it "returns the same array reference" do
-        new_messages, _ = Riffer::Session::Healer.heal_orphans(messages)
+        new_messages, _ = Riffer::Session::Repair.fill_orphans(messages)
         expect(new_messages).must_be_same_as messages
       end
 
-      it "returns an empty healed array" do
-        _, healed = Riffer::Session::Healer.heal_orphans(messages)
-        expect(healed).must_equal []
+      it "returns an empty filled array" do
+        _, filled = Riffer::Session::Repair.fill_orphans(messages)
+        expect(filled).must_equal []
       end
     end
 
@@ -39,16 +39,16 @@ describe Riffer::Session::Healer do
           Riffer::Messages::Tool.new("ok", tool_call_id: "c_1", name: "t")
         ]
 
-        new_messages, healed = Riffer::Session::Healer.heal_orphans(messages)
+        new_messages, filled = Riffer::Session::Repair.fill_orphans(messages)
         expect(new_messages.length).must_equal 3
-        expect(healed).must_equal []
+        expect(filled).must_equal []
       end
 
       it "inserts a placeholder Tool message immediately after the parent assistant" do
         assistant = Riffer::Messages::Assistant.new("", tool_calls: [tool_call("c_orphan")])
         messages = [Riffer::Messages::User.new("hi"), assistant]
 
-        new_messages, _ = Riffer::Session::Healer.heal_orphans(messages)
+        new_messages, _ = Riffer::Session::Repair.fill_orphans(messages)
         placeholder = new_messages[2] #: Riffer::Messages::Tool
         expect(placeholder).must_be_kind_of Riffer::Messages::Tool
         expect(placeholder.tool_call_id).must_equal "c_orphan"
@@ -57,24 +57,24 @@ describe Riffer::Session::Healer do
       it "stamps the placeholder with error_type :interrupted" do
         messages = [Riffer::Messages::Assistant.new("", tool_calls: [tool_call("c_orphan")])]
 
-        new_messages, _ = Riffer::Session::Healer.heal_orphans(messages)
+        new_messages, _ = Riffer::Session::Repair.fill_orphans(messages)
         expect(new_messages.last.error_type).must_equal :interrupted
       end
 
       it "uses the canned placeholder content" do
         messages = [Riffer::Messages::Assistant.new("", tool_calls: [tool_call("c_orphan")])]
 
-        new_messages, _ = Riffer::Session::Healer.heal_orphans(messages)
+        new_messages, _ = Riffer::Session::Repair.fill_orphans(messages)
         expect(new_messages.last.content).must_equal "Tool call interrupted before completion."
       end
 
-      it "returns every healed call_id in order" do
+      it "returns every filled call_id in order" do
         messages = [
           Riffer::Messages::Assistant.new("", tool_calls: [tool_call("c_a"), tool_call("c_b")])
         ]
 
-        _, healed = Riffer::Session::Healer.heal_orphans(messages)
-        expect(healed).must_equal ["c_a", "c_b"]
+        _, filled = Riffer::Session::Repair.fill_orphans(messages)
+        expect(filled).must_equal ["c_a", "c_b"]
       end
 
       it "skips tool_calls that already have a matching Tool result" do
@@ -83,21 +83,21 @@ describe Riffer::Session::Healer do
           Riffer::Messages::Tool.new("ok", tool_call_id: "c_done", name: "t")
         ]
 
-        _, healed = Riffer::Session::Healer.heal_orphans(messages)
-        expect(healed).must_equal ["c_orphan"]
+        _, filled = Riffer::Session::Repair.fill_orphans(messages)
+        expect(filled).must_equal ["c_orphan"]
       end
 
       it "does not mutate the input array" do
         messages = [Riffer::Messages::Assistant.new("", tool_calls: [tool_call("c_orphan")])]
         original_length = messages.length
 
-        Riffer::Session::Healer.heal_orphans(messages)
+        Riffer::Session::Repair.fill_orphans(messages)
         expect(messages.length).must_equal original_length
       end
     end
   end
 
-  describe ".heal_seeded_session" do
+  describe ".prune_orphans" do
     after { Riffer.config.experimental_history_healing = false }
 
     describe "when experimental_history_healing is off" do
@@ -107,7 +107,7 @@ describe Riffer::Session::Healer do
           Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t")
         ]
 
-        expect(Riffer::Session::Healer.heal_seeded_session(messages)).must_be_same_as messages
+        expect(Riffer::Session::Repair.prune_orphans(messages)).must_be_same_as messages
       end
     end
 
@@ -123,7 +123,7 @@ describe Riffer::Session::Healer do
           Riffer::Messages::Assistant.new("never mind")
         ]
 
-        result = Riffer::Session::Healer.heal_seeded_session(messages)
+        result = Riffer::Session::Repair.prune_orphans(messages)
         kept_calls = result.flat_map { |m| m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : [] }
         expect(kept_calls).must_equal []
       end
@@ -135,7 +135,7 @@ describe Riffer::Session::Healer do
           Riffer::Messages::User.new("follow-up")
         ]
 
-        result = Riffer::Session::Healer.heal_seeded_session(messages)
+        result = Riffer::Session::Repair.prune_orphans(messages)
         expect(result.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
       end
 
@@ -146,7 +146,7 @@ describe Riffer::Session::Healer do
           Riffer::Messages::Assistant.new("", tool_calls: [tc])
         ]
 
-        result = Riffer::Session::Healer.heal_seeded_session(messages)
+        result = Riffer::Session::Repair.prune_orphans(messages)
         kept_calls = result.flat_map { |m| m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : [] }
         expect(kept_calls).must_equal ["c_pending"]
       end
@@ -160,7 +160,7 @@ describe Riffer::Session::Healer do
           Riffer::Messages::Assistant.new("all good")
         ]
 
-        result = Riffer::Session::Healer.heal_seeded_session(messages)
+        result = Riffer::Session::Repair.prune_orphans(messages)
         expect(result.length).must_equal 4
       end
 
@@ -173,7 +173,7 @@ describe Riffer::Session::Healer do
         ]
         original_length = messages.length
 
-        Riffer::Session::Healer.heal_seeded_session(messages)
+        Riffer::Session::Repair.prune_orphans(messages)
         expect(messages.length).must_equal original_length
       end
     end
