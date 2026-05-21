@@ -307,15 +307,13 @@ class Riffer::Agent
   def initialize(session: nil, context: nil, config: nil)
     @config = config || self.class.config
     @token_usage = nil
-    @model_config = @config.model
-    @instructions_config = @config.instructions
     @context = context
 
-    if @model_config.is_a?(Proc)
+    if @config.model.is_a?(Proc)
       @provider_name = nil
       @model_name = nil
     else
-      parse_model_string!(@model_config)
+      parse_model_string!(@config.model)
     end
 
     resolve_model
@@ -636,7 +634,7 @@ class Riffer::Agent
   #--
   #: () -> String?
   def generate_instructions
-    Riffer::Helpers::CallOrValue.resolve(@instructions_config, context: @context)
+    Riffer::Helpers::CallOrValue.resolve(@config.instructions, context: @context)
   end
 
   attr_reader :resolved_model #: String?
@@ -645,8 +643,9 @@ class Riffer::Agent
   #: () -> String
   def resolve_model
     @resolved_model ||= begin
-      value = Riffer::Helpers::CallOrValue.resolve(@model_config, context: @context)
-      parse_model_string!(value) if @model_config.is_a?(Proc)
+      model = @config.model
+      value = Riffer::Helpers::CallOrValue.resolve(model, context: @context)
+      parse_model_string!(value) if model.is_a?(Proc)
       value
     end
   end
