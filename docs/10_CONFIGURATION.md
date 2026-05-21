@@ -119,18 +119,7 @@ end
 
 When the strategy is not `:none`, every `Riffer::Messages::Base` instance — user prompts, system instructions, assistant responses, and tool results — gets an auto-generated `id` at construction time. IDs are included in `message.to_h` when present and omitted when `nil`. Provider API payloads are unaffected; the `id` stays on the Ruby side.
 
-Seeded messages passed to `agent.generate([...])` must carry their own `:id` when the strategy is enabled — Riffer never fabricates identifiers for pre-existing history:
-
-```ruby
-Riffer.configure { |c| c.message_id_strategy = :uuidv7 }
-
-agent.generate([
-  {role: :user, content: "Hi", id: "msg-001"},
-  {role: :assistant, content: "Hello!", id: "msg-002"}
-])
-```
-
-Missing ids raise `Riffer::ArgumentError` with the offending index.
+When constructing a `Riffer::Session` from persisted history with the strategy enabled, supply ids on every seeded message yourself — Riffer never fabricates identifiers for pre-existing history. Messages built via the `Riffer::Messages::*` constructors auto-generate ids per the strategy, so as long as those constructors are used at message-creation time, ids flow through.
 
 See [Messages — IDs](08_MESSAGES.md#ids) for more details.
 
@@ -148,12 +137,12 @@ end
 
 When enabled, two repairs run automatically:
 
-1. **Seeded history.** `agent.generate(messages_array)` silently drops orphaned `tool_use` exchanges (assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages from the seed before the run begins. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved; `execute_pending_tool_calls` runs them on the next LLM call.
+1. **Seeded session.** Passing a pre-populated `Riffer::Session` to `Agent.new(session: ...)` silently drops orphaned `tool_use` exchanges (assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages before the next inference call. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved; `execute_pending_tool_calls` runs them on the next LLM call.
 2. **Interrupts.** Any orphan `tool_use` left when the loop is interrupted (caller-issued `interrupt!` or the built-in `INTERRUPT_MAX_STEPS` ceiling) is filled with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted` and the content `"Tool call interrupted before completion."`. Filled `call_id`s are exposed on `Riffer::Agent::Response#healed_tool_call_ids` (and `Riffer::StreamEvents::Interrupt#healed_tool_call_ids` when streaming).
 
-Defaults to `false` — pre-healing behavior. Seeded arrays pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.
+Defaults to `false` — pre-healing behavior. Seeded sessions pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.
 
-There is no per-call override and no customizable placeholder. Callers needing finer control can call the `replace_tool_result` mutator after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](04_AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
+There is no per-call override and no customizable placeholder. Callers needing finer control can call `agent.session.update(tool_call_id:, ...)` after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](04_AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
 
 ## Agent-Level Configuration
 

@@ -58,7 +58,7 @@ Callbacks registered with `on_message` can call `agent.interrupt!` (or `throw :r
 
 ```ruby
 agent = MyAgent.new
-agent.on_message do |msg|
+agent.session.on_message do |msg|
   agent.interrupt!("approval needed") if requires_approval?(msg)
 end
 

@@ -175,19 +175,21 @@ class Riffer::Agent
 
   # Generates a response using a new agent instance.
   #
-  # See #generate for parameters and return value.
+  # +context:+ is threaded into +new+; +prompt+ and +files:+ are forwarded
+  # to +#generate+.
   #
   # --
-  # : (*untyped, **untyped) -> Riffer::Agent::Response
-  def self.generate: (*untyped, **untyped) -> Riffer::Agent::Response
+  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  def self.generate: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
 
   # Streams a response using a new agent instance.
   #
-  # See #stream for parameters and return value.
+  # +context:+ is threaded into +new+; +prompt+ and +files:+ are forwarded
+  # to +#stream+.
   #
   # --
-  # : (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def self.stream: (*untyped, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def self.stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # Registers a guardrail for input, output, or both phases.
   #
@@ -208,71 +210,68 @@ class Riffer::Agent
   # : (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 
-  # The message history for the agent.
-  attr_reader messages: Array[Riffer::Messages::Base]
+  # The conversation handle. See Riffer::Session.
+  attr_reader session: Riffer::Session
+
+  # The system message built from the configured +instructions+, or +nil+
+  # when no instructions are configured. Built once at +Agent.new+ using the
+  # constructor +context:+ and cached. Useful for persistence flows.
+  attr_reader instruction_message: Riffer::Messages::System?
+
+  # The system message describing the configured skills catalog, or +nil+
+  # when skills are unconfigured or the catalog is empty. Built once at
+  # +Agent.new+ and cached.
+  attr_reader skills_message: Riffer::Messages::System?
 
   # Cumulative token usage across all LLM calls.
   attr_reader token_usage: Riffer::TokenUsage?
 
   # Initializes a new agent.
   #
+  # When +session:+ is omitted, a fresh +Riffer::Session+ is built and seeded
+  # with the system instruction message and skills catalog (when configured),
+  # using +context:+. When +session:+ is provided, the agent uses it as-is —
+  # the caller is responsible for the session's contents (typical use case:
+  # cross-process resume from persisted history). With
+  # +Riffer.config.experimental_history_healing+ on, a provided session is
+  # healed at construction time so the +tool_use+ ↔ +tool_result+ invariant
+  # holds before the next inference call.
+  #
+  # +context:+ flows through Proc-based instructions, model, skills resolution,
+  # tool resolution, guardrails, and tool runtime. It is fixed for the
+  # lifetime of the agent.
+  #
   # Raises Riffer::ArgumentError if the configured model string is invalid
   # (must be "provider/model" format).
   #
   # --
-  # : () -> void
-  def initialize: () -> void
+  # : (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?) -> void
+  def initialize: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?) -> void
 
   # Generates a response from the agent.
   #
-  # When +Riffer.config.experimental_history_healing+ is enabled, seeded
-  # message arrays that violate the +tool_use+ ↔ +tool_result+ invariant
-  # are silently repaired before the run begins.
+  # When +prompt+ is given, a new +Riffer::Messages::User+ is appended to the
+  # session (silently — +on_message+ does not fire for user inputs) and then
+  # the inference loop runs. When +prompt+ is omitted, the loop runs against
+  # the current session — useful for resuming a persisted conversation whose
+  # last turn is already a user message, or for picking up pending tool calls
+  # after an interrupt.
+  #
+  # +files:+ requires +prompt+. Pass files to attach to the new user message.
   #
   # --
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def generate: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
+  def generate: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
 
   # Streams a response from the agent.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
-  # See +#generate+ for the +experimental_history_healing+ behavior on
-  # seeded arrays.
+  # See +#generate+ for prompt/files semantics.
   #
   # --
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-
-  # Registers a callback to be invoked when messages are added during generation.
-  #
-  # Raises Riffer::ArgumentError if no block is given.
-  #
-  # --
-  # : () { (Riffer::Messages::Base) -> void } -> self
-  def on_message: () { (Riffer::Messages::Base) -> void } -> self
-
-  # Generates the instruction system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no instructions are configured.
-  #
-  # --
-  # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def generate_instruction_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-
-  # Generates the skills catalog system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no skills are configured or the catalog is empty.
-  #
-  # --
-  # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def generate_skills_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # Interrupts the agent loop.
   #
@@ -289,79 +288,6 @@ class Riffer::Agent
   # --
   # : (?(String | Symbol)?) -> void
   def interrupt!: (?(String | Symbol)?) -> void
-
-  # Returns the message with the given id, or +nil+ when no message matches.
-  #
-  # --
-  # : (String) -> Riffer::Messages::Base?
-  def message_by_id: (String) -> Riffer::Messages::Base?
-
-  # Returns the +Riffer::Messages::Tool+ message that satisfies +tool_call_id+,
-  # or +nil+ when no such tool result exists in history.
-  #
-  # --
-  # : (String) -> Riffer::Messages::Tool?
-  # TODO: Replace with rfind when minimum Ruby is 4.0+
-  # rubocop:disable Style/ReverseFind
-  def tool_message_for: (String) -> Riffer::Messages::Tool?
-
-  # Returns the most recent +Riffer::Messages::Assistant+ in history, or
-  # +nil+ when no assistant message has been recorded yet.
-  #
-  # --
-  # : () -> Riffer::Messages::Assistant?
-  # TODO: Replace with rfind when minimum Ruby is 4.0+
-  # rubocop:disable Style/ReverseFind
-  def last_assistant: () -> Riffer::Messages::Assistant?
-
-  # Returns the call_ids of every +tool_call+ on any assistant message that
-  # has no matching +Riffer::Messages::Tool+ result anywhere in history.
-  #
-  # Zero-cost validation hook for callers that want to check the
-  # +tool_use+ ↔ +tool_result+ invariant before mutating or persisting.
-  #
-  # --
-  # : () -> Array[String]
-  def orphaned_tool_call_ids: () -> Array[String]
-
-  # Replaces the content of an assistant message in place. Preserves +id+,
-  # +tool_calls+, +token_usage+, and +structured_output+. Lookup is by id.
-  #
-  # When +content+ is empty, delegates to +remove_message+ — including the
-  # cascade that drops dependent +Riffer::Messages::Tool+ children.
-  #
-  # Raises Riffer::ArgumentError when no assistant message has the given id.
-  #
-  # --
-  # : (id: String, content: String) -> Riffer::Messages::Base?
-  def replace_assistant_content: (id: String, content: String) -> Riffer::Messages::Base?
-
-  # Removes a message by id. When the target is an assistant message that
-  # carries +tool_calls+, every +Riffer::Messages::Tool+ result whose
-  # +tool_call_id+ matches one of those calls is removed atomically — keeping
-  # the +tool_use+ ↔ +tool_result+ invariant intact.
-  #
-  # Raises Riffer::ArgumentError when called on a +Riffer::Messages::Tool+
-  # message — that would orphan the parent's +tool_use+. Use
-  # +replace_tool_result+ instead.
-  #
-  # Returns the removed message, or +nil+ when no message has the given id
-  # (idempotent).
-  #
-  # --
-  # : (id: String) -> Riffer::Messages::Base?
-  def remove_message: (id: String) -> Riffer::Messages::Base?
-
-  # Replaces a tool result's content (and optional error fields) in place.
-  # Lookup is by +tool_call_id+. Preserves the existing message's +name+ and
-  # +id+.
-  #
-  # Raises Riffer::ArgumentError when no Tool message exists for the given
-  # +tool_call_id+.
-  #
-  # --
-  # : (tool_call_id: String, content: String, ?error: String?, ?error_type: Symbol?) -> Riffer::Messages::Tool
-  def replace_tool_result: (tool_call_id: String, content: String, ?error: String?, ?error_type: Symbol?) -> Riffer::Messages::Tool
 
   private
 
@@ -384,20 +310,16 @@ class Riffer::Agent
   def run_generate_loop: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
 
   # --
-  # : (Riffer::Messages::Base) -> void
-  def add_message: (Riffer::Messages::Base) -> void
-
-  # --
   # : (Riffer::TokenUsage?) -> void
   def track_token_usage: (Riffer::TokenUsage?) -> void
 
   # --
-  # : ((String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]), ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-  def initialize_messages: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  # : () -> void
+  def apply_seed_healing: () -> void
 
   # --
-  # : (Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
-  def validate_seed_ids!: (Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> void
+  # : (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  def append_user_message: (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
 
   # Repairs a seeded message array so the +tool_use+ ↔ +tool_result+
   # invariant holds. Drops orphaned tool exchanges (assistant +tool_call+
@@ -416,16 +338,12 @@ class Riffer::Agent
   def heal_seeded_history: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
 
   # --
-  # : (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def build_instruction_message: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  # : () -> Riffer::Messages::System?
+  def build_instruction_message: () -> Riffer::Messages::System?
 
   # --
-  # : (?Riffer::Skills::Context?) -> Riffer::Messages::System?
-  def build_skills_message: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
-
-  # --
-  # : () -> Integer
-  def count_assistant_messages: () -> Integer
+  # : () -> Riffer::Messages::System?
+  def build_skills_message: () -> Riffer::Messages::System?
 
   # --
   # : (Enumerator::Yielder) -> void
@@ -464,29 +382,13 @@ class Riffer::Agent
   # : () -> void
   def execute_pending_tool_calls: () -> void
 
-  # Returns +[assistant, pending_tool_calls]+ for the last assistant message.
-  # When there is no assistant message or no pending calls, the second
-  # element is an empty array.
-  #
-  # --
-  # : () -> [untyped, Array[Riffer::Messages::Assistant::ToolCall]]
-  def pending_tool_calls: () -> [ untyped, Array[Riffer::Messages::Assistant::ToolCall] ]
-
-  # --
-  # : () -> void
-  def prepare_run: () -> void
-
   # --
   # : (untyped) -> void
   def parse_model_string!: (untyped) -> void
 
   # --
-  # : () -> void
-  def clear_resolved_model: () -> void
-
-  # --
-  # : (?Hash[Symbol, untyped]?) -> String?
-  def generate_instructions: (?Hash[Symbol, untyped]?) -> String?
+  # : () -> String?
+  def generate_instructions: () -> String?
 
   attr_reader resolved_model: String?
 
@@ -534,7 +436,7 @@ class Riffer::Agent
 
   # --
   # : () -> Riffer::Messages::Assistant?
-  def extract_final_response: () -> Riffer::Messages::Assistant?
+  def final_assistant_message: () -> Riffer::Messages::Assistant?
 
   # --
   # : () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]

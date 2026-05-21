@@ -145,7 +145,7 @@ class MyAgent < Riffer::Agent
   }
 end
 
-agent.generate("Do work", context: {parallel: true})
+MyAgent.new(context: {parallel: true}).generate("Do work")
 ```
 
 When the lambda accepts a parameter, it receives the `context`. Zero-arity lambdas are also supported.

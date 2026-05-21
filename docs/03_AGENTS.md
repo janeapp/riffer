@@ -84,7 +84,7 @@ end
 MyAgent.generate('Hello!', context: { name: 'Jane' })
 ```
 
-The lambda is re-evaluated on each `generate` or `stream` call, so instructions can change between calls based on runtime context.
+The lambda is evaluated once at `Agent.new` time using the context passed to the constructor. To change instructions for a new context, construct a new agent.
 
 ### identifier
 
