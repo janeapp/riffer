@@ -387,8 +387,8 @@ class Riffer::Agent
   def parse_model_string!: (untyped) -> void
 
   # --
-  # : (?Hash[Symbol, untyped]?) -> String?
-  def generate_instructions: (?Hash[Symbol, untyped]?) -> String?
+  # : () -> String?
+  def generate_instructions: () -> String?
 
   attr_reader resolved_model: String?
 

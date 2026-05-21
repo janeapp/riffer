@@ -774,9 +774,9 @@ class Riffer::Agent
   end
 
   #--
-  #: (?Hash[Symbol, untyped]?) -> String?
-  def generate_instructions(context = @context)
-    Riffer::Helpers::CallOrValue.resolve(@instructions_config, context: context)
+  #: () -> String?
+  def generate_instructions
+    Riffer::Helpers::CallOrValue.resolve(@instructions_config, context: @context)
   end
 
   attr_reader :resolved_model #: String?
