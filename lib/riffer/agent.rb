@@ -26,13 +26,6 @@ class Riffer::Agent
   DEFAULT_MAX_STEPS = 16 #: Integer
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
-  # Placeholder used to fill orphan +tool_use+ blocks when
-  # +Riffer.config.experimental_history_healing+ is enabled and an
-  # interrupt fires mid-tool-use.
-  HEALING_PLACEHOLDER = ->(_tool_call) {
-    Riffer::Tools::Response.error("Tool call interrupted before completion.", type: :interrupted)
-  } #: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
-
   # Gets or sets the agent identifier.
   #
   #--
@@ -377,7 +370,7 @@ class Riffer::Agent
     @skills_message = build_skills_message
 
     @session = session || Riffer::Session.new(messages: [@instruction_message, @skills_message].compact)
-    apply_seed_healing if session && Riffer.config.experimental_history_healing
+    @session.set(Riffer::Session::Healer.heal_seeded_session(@session.messages)) if session
   end
 
   # Generates a response from the agent.
@@ -455,46 +448,6 @@ class Riffer::Agent
 
   private
 
-  # Fills any orphaned +tool_use+ in history with the +HEALING_PLACEHOLDER+
-  # response. Each placeholder Tool message is inserted immediately after
-  # its parent assistant message. Returns the array of call_ids that were
-  # filled, in order; +[]+ when there are no orphans.
-  #
-  # Bypasses +on_message+ — placeholders are not inference output.
-  # Consumers learn that healing happened via the structured
-  # +Riffer::Agent::Response#healed_tool_call_ids+ field (and the streaming
-  # +Interrupt+ event's matching field).
-  #
-  #--
-  #: () -> Array[String]
-  def heal_orphan_tool_calls
-    result_ids = @session.messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
-    healed = [] #: Array[String]
-    new_messages = [] #: Array[Riffer::Messages::Base]
-
-    @session.messages.each do |m|
-      new_messages << m
-      next unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
-
-      m.tool_calls.each do |tc|
-        next if result_ids.include?(tc.call_id)
-
-        response = HEALING_PLACEHOLDER.call(tc)
-        new_messages << Riffer::Messages::Tool.new(
-          response.content,
-          tool_call_id: tc.call_id,
-          name: tc.name,
-          error: response.error_message,
-          error_type: response.error_type
-        )
-        healed << tc.call_id
-      end
-    end
-
-    @session.set(new_messages)
-    healed
-  end
-
   #--
   #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def run_generate_loop(all_modifications = [])
@@ -530,7 +483,8 @@ class Riffer::Agent
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
-    healed = Riffer.config.experimental_history_healing ? heal_orphan_tool_calls : []
+    new_messages, healed = Riffer::Session::Healer.heal_orphans(@session.messages)
+    @session.set(new_messages)
     response = final_assistant_message
 
     build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), healed_tool_call_ids: healed)
@@ -545,61 +499,10 @@ class Riffer::Agent
   end
 
   #--
-  #: () -> void
-  def apply_seed_healing
-    @session.set(heal_seeded_history(@session.messages))
-  end
-
-  #--
   #: (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def append_user_message(prompt, files:)
     file_parts = (files || []).map { |f| convert_to_file_part(f) }
     @session.set(@session.messages + [Riffer::Messages::User.new(prompt, files: file_parts)])
-  end
-
-  # Repairs a seeded message array so the +tool_use+ ↔ +tool_result+
-  # invariant holds. Drops orphaned tool exchanges (assistant +tool_call+
-  # with no matching Tool result) and parentless Tool messages. Returns a
-  # new array; the input is not mutated.
-  #
-  # Pending tool_calls on the resume boundary — the last assistant whose
-  # tail is purely Tool results (or empty) — are preserved. They get swept
-  # up by +execute_pending_tool_calls+ at the start of the next
-  # generate/stream call.
-  #
-  # Only invoked when +Riffer.config.experimental_history_healing+ is on.
-  #
-  #--
-  #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
-  def heal_seeded_history(messages)
-    resume_boundary = (messages.length - 1).downto(0).find { |idx|
-      m = messages[idx]
-      m.is_a?(Riffer::Messages::Assistant) &&
-        messages[(idx + 1)..].all? { |later| later.is_a?(Riffer::Messages::Tool) }
-    }
-
-    result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
-    parent_ids = messages.flat_map { |m|
-      m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : []
-    }
-
-    strip_offenders = messages.each_with_index.flat_map { |m, idx|
-      next [] unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
-      next [] if idx == resume_boundary # preserve pending exchange
-      next [] if m.tool_calls.all? { |tc| result_ids.include?(tc.call_id) }
-      m.tool_calls.map(&:call_id)
-    }
-
-    messages.reject { |m|
-      case m
-      when Riffer::Messages::Assistant
-        !m.tool_calls.empty? && m.tool_calls.any? { |tc| strip_offenders.include?(tc.call_id) }
-      when Riffer::Messages::Tool
-        strip_offenders.include?(m.tool_call_id) || !parent_ids.include?(m.tool_call_id)
-      else
-        false
-      end
-    }
   end
 
   #--
@@ -689,7 +592,8 @@ class Riffer::Agent
     end
 
     unless completed == :completed
-      healed = Riffer.config.experimental_history_healing ? heal_orphan_tool_calls : []
+      new_messages, healed = Riffer::Session::Healer.heal_orphans(@session.messages)
+      @session.set(new_messages)
       yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, healed_tool_call_ids: healed)
     end
   end

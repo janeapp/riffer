@@ -25,11 +25,6 @@ class Riffer::Agent
 
   INTERRUPT_MAX_STEPS: Symbol
 
-  # Placeholder used to fill orphan +tool_use+ blocks when
-  # +Riffer.config.experimental_history_healing+ is enabled and an
-  # interrupt fires mid-tool-use.
-  HEALING_PLACEHOLDER: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
-
   # Gets or sets the agent identifier.
   #
   # --
@@ -291,20 +286,6 @@ class Riffer::Agent
 
   private
 
-  # Fills any orphaned +tool_use+ in history with the +HEALING_PLACEHOLDER+
-  # response. Each placeholder Tool message is inserted immediately after
-  # its parent assistant message. Returns the array of call_ids that were
-  # filled, in order; +[]+ when there are no orphans.
-  #
-  # Bypasses +on_message+ — placeholders are not inference output.
-  # Consumers learn that healing happened via the structured
-  # +Riffer::Agent::Response#healed_tool_call_ids+ field (and the streaming
-  # +Interrupt+ event's matching field).
-  #
-  # --
-  # : () -> Array[String]
-  def heal_orphan_tool_calls: () -> Array[String]
-
   # --
   # : (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def run_generate_loop: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
@@ -314,28 +295,8 @@ class Riffer::Agent
   def track_token_usage: (Riffer::TokenUsage?) -> void
 
   # --
-  # : () -> void
-  def apply_seed_healing: () -> void
-
-  # --
   # : (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def append_user_message: (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-
-  # Repairs a seeded message array so the +tool_use+ ↔ +tool_result+
-  # invariant holds. Drops orphaned tool exchanges (assistant +tool_call+
-  # with no matching Tool result) and parentless Tool messages. Returns a
-  # new array; the input is not mutated.
-  #
-  # Pending tool_calls on the resume boundary — the last assistant whose
-  # tail is purely Tool results (or empty) — are preserved. They get swept
-  # up by +execute_pending_tool_calls+ at the start of the next
-  # generate/stream call.
-  #
-  # Only invoked when +Riffer.config.experimental_history_healing+ is on.
-  #
-  # --
-  # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
-  def heal_seeded_history: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
 
   # --
   # : () -> Riffer::Messages::System?

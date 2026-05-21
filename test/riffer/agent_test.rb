@@ -3671,38 +3671,6 @@ describe Riffer::Agent do
       refute_nil parentless
     end
 
-    it "strips orphaned tool exchanges from non-last assistants when healing is on" do
-      Riffer.config.experimental_history_healing = true
-      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_drop", name: "t", arguments: "{}")
-      seeded = Riffer::Session.new(messages: [
-        Riffer::Messages::User.new("hi"),
-        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-        Riffer::Messages::User.new("anyway"),
-        Riffer::Messages::Assistant.new("never mind")
-      ])
-
-      agent = custom_class.new(session: seeded)
-      agent.send(:provider_instance).stub_response("Hello!")
-      agent.generate
-
-      expect(agent.session.messages.none? { |m| m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_drop" } }).must_equal true
-    end
-
-    it "strips parentless tool messages when healing is on" do
-      Riffer.config.experimental_history_healing = true
-      seeded = Riffer::Session.new(messages: [
-        Riffer::Messages::User.new("hi"),
-        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
-        Riffer::Messages::User.new("follow-up")
-      ])
-
-      agent = custom_class.new(session: seeded)
-      agent.send(:provider_instance).stub_response("Hello!")
-      agent.generate
-
-      expect(agent.session.messages.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
-    end
-
     it "preserves a pending tool_use on the resume boundary even when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
