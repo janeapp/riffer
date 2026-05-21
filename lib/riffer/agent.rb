@@ -323,6 +323,16 @@ class Riffer::Agent
   # The conversation handle. See Riffer::Session.
   attr_reader :session #: Riffer::Session
 
+  # The system message built from the configured +instructions+, or +nil+
+  # when no instructions are configured. Built once at +Agent.new+ using the
+  # constructor +context:+ and cached. Useful for persistence flows.
+  attr_reader :instruction_message #: Riffer::Messages::System?
+
+  # The system message describing the configured skills catalog, or +nil+
+  # when skills are unconfigured or the catalog is empty. Built once at
+  # +Agent.new+ and cached.
+  attr_reader :skills_message #: Riffer::Messages::System?
+
   # Cumulative token usage across all LLM calls.
   attr_reader :token_usage #: Riffer::TokenUsage?
 
@@ -363,7 +373,10 @@ class Riffer::Agent
     @skills_state = resolve_skills
     @context = (@context || {}).merge(skills: @skills_state) if @skills_state
 
-    @session = session || build_initial_session
+    @instruction_message = build_instruction_message
+    @skills_message = build_skills_message
+
+    @session = session || Riffer::Session.new(messages: [@instruction_message, @skills_message].compact)
     apply_seed_healing if session && Riffer.config.experimental_history_healing
   end
 
@@ -420,32 +433,6 @@ class Riffer::Agent
 
       run_stream_loop(yielder)
     end
-  end
-
-  # Generates the instruction system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no instructions are configured.
-  #
-  #--
-  #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def generate_instruction_message(context: nil)
-    build_instruction_message(context)
-  end
-
-  # Generates the skills catalog system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no skills are configured or the catalog is empty.
-  #
-  #--
-  #: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def generate_skills_message(context: nil)
-    build_skills_message(resolve_skills(context))
   end
 
   # Interrupts the agent loop.
@@ -558,14 +545,6 @@ class Riffer::Agent
   end
 
   #--
-  #: () -> Riffer::Session
-  def build_initial_session
-    sys = build_instruction_message
-    skills = build_skills_message
-    Riffer::Session.new(messages: [sys, skills].compact)
-  end
-
-  #--
   #: () -> void
   def apply_seed_healing
     @session.set(heal_seeded_history(@session.messages))
@@ -624,17 +603,17 @@ class Riffer::Agent
   end
 
   #--
-  #: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def build_instruction_message(context = @context)
-    content = generate_instructions(context)
+  #: () -> Riffer::Messages::System?
+  def build_instruction_message
+    content = generate_instructions
     return nil if content.nil? || content.empty?
     Riffer::Messages::System.new(content)
   end
 
   #--
-  #: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
-  def build_skills_message(skills_state = @skills_state)
-    content = skills_state&.system_prompt
+  #: () -> Riffer::Messages::System?
+  def build_skills_message
+    content = @skills_state&.system_prompt
     return nil if content.nil? || content.empty?
     Riffer::Messages::System.new(content)
   end

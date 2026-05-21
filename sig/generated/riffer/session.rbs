@@ -110,8 +110,10 @@ class Riffer::Session
   def pending_tool_calls: () -> [ Riffer::Messages::Assistant?, Array[Riffer::Messages::Assistant::ToolCall] ]
 
   # --
+  # : () -> Enumerator[Riffer::Messages::Base, self]
   # : () { (Riffer::Messages::Base) -> void } -> untyped
-  def each: () { (Riffer::Messages::Base) -> void } -> untyped
+  def each: () -> Enumerator[Riffer::Messages::Base, self]
+          | () { (Riffer::Messages::Base) -> void } -> untyped
 
   private
 

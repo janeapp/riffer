@@ -10,9 +10,7 @@ describe Riffer::Session do
   let(:tool_msg) { Riffer::Messages::Tool.new("sunny", id: "t_1", tool_call_id: "c_1", name: "weather") }
 
   let(:session) do
-    s = Riffer::Session.new
-    s.instance_variable_set(:@messages, [user, plain_assistant, tool_assistant, tool_msg])
-    s
+    Riffer::Session.new(messages: [user, plain_assistant, tool_assistant, tool_msg])
   end
 
   describe "#initialize" do

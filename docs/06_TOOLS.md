@@ -158,7 +158,7 @@ end
 
 ### Accessing Context
 
-The `context` argument receives whatever was passed as `context:` to `generate`:
+The `context` argument receives whatever was passed as `context:` to `Agent.new`:
 
 ```ruby
 class UserOrdersTool < Riffer::Tool

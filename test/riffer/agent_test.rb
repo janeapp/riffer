@@ -2334,12 +2334,12 @@ describe Riffer::Agent do
           end
         end
 
-        agent = klass.new
+        session = Riffer::Session.new(messages: [Riffer::Messages::User.new("Analyze sentiment")])
+        agent = klass.new(session: session)
         provider = agent.send(:provider_instance)
         provider.stub_response('{"sentiment":"positive"}')
 
-        messages = [Riffer::Messages::User.new("Analyze sentiment")]
-        result = agent.generate(messages)
+        result = agent.generate
         expect(result.structured_output).must_equal({sentiment: "positive"})
       end
     end
@@ -2398,32 +2398,22 @@ describe Riffer::Agent do
       expect(interrupt_event).must_be_nil
     end
 
-    describe "with persisted messages" do
-      it "resumes from message objects" do
-        agent = agent_class.new
-        messages = [
+    describe "with a seeded session" do
+      it "resumes from a session constructed with persisted messages" do
+        session = Riffer::Session.new(messages: [
           Riffer::Messages::System.new("You are a helpful assistant."),
           Riffer::Messages::User.new("Hello")
-        ]
-        events = agent.stream(messages).to_a
+        ])
+        agent = agent_class.new(session: session)
+        events = agent.stream.to_a
         text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
         expect(text_events).wont_be_empty
       end
 
-      it "resumes from hashes" do
-        agent = agent_class.new
-        messages = [
-          {role: "system", content: "You are a helpful assistant."},
-          {role: "user", content: "Hello"}
-        ]
-        events = agent.stream(messages).to_a
-        expect(events).wont_be_empty
-      end
-
-      it "does not require prior interruption" do
-        agent = agent_class.new
-        messages = [Riffer::Messages::User.new("Hello")]
-        events = agent.stream(messages).to_a
+      it "runs the stream loop without a prompt when the session already has the last user message" do
+        session = Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")])
+        agent = agent_class.new(session: session)
+        events = agent.stream.to_a
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
         expect(interrupt_event).must_be_nil
       end
@@ -3238,30 +3228,27 @@ describe Riffer::Agent do
     end
   end
 
-  describe "#generate_instruction_message" do
+  describe "#instruction_message" do
     it "returns a System message with instructions" do
       agent = agent_class.new
-      msg = agent.generate_instruction_message
-      expect(msg).must_be_instance_of Riffer::Messages::System
-      expect(msg.content).must_equal "You are a helpful assistant."
+      expect(agent.instruction_message).must_be_instance_of Riffer::Messages::System
+      expect(agent.instruction_message.content).must_equal "You are a helpful assistant."
     end
 
     it "returns nil when no instructions configured" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
       end
-      agent = klass.new
-      expect(agent.generate_instruction_message).must_be_nil
+      expect(klass.new.instruction_message).must_be_nil
     end
 
-    it "resolves dynamic instructions with context" do
+    it "resolves dynamic instructions using the init context" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         instructions ->(context) { "Helping #{context[:name]}" }
       end
-      agent = klass.new(context: {name: "init"})
-      msg = agent.generate_instruction_message(context: {name: "Alice"})
-      expect(msg.content).must_equal "Helping Alice"
+      agent = klass.new(context: {name: "Alice"})
+      expect(agent.instruction_message.content).must_equal "Helping Alice"
     end
 
     it "returns nil when Proc returns nil" do
@@ -3270,15 +3257,14 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         instructions returner
       end
-      agent = klass.new
-      expect(agent.generate_instruction_message).must_be_nil
+      expect(klass.new.instruction_message).must_be_nil
     end
   end
 
-  describe "#generate_skills_message" do
+  describe "#skills_message" do
     it "returns nil when no skills configured" do
       agent = agent_class.new
-      expect(agent.generate_skills_message).must_be_nil
+      expect(agent.skills_message).must_be_nil
     end
 
     it "returns a System message when skills are configured" do
@@ -3289,9 +3275,8 @@ describe Riffer::Agent do
         end
       end
       agent = klass.new
-      msg = agent.generate_skills_message
-      expect(msg).must_be_instance_of Riffer::Messages::System
-      expect(msg.content).must_include "Available Skills"
+      expect(agent.skills_message).must_be_instance_of Riffer::Messages::System
+      expect(agent.skills_message.content).must_include "Available Skills"
     end
   end
 

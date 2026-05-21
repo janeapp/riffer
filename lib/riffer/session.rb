@@ -185,6 +185,7 @@ class Riffer::Session
   end
 
   #--
+  #: () -> Enumerator[Riffer::Messages::Base, self]
   #: () { (Riffer::Messages::Base) -> void } -> untyped
   def each(&block)
     @messages.each(&block)

@@ -211,16 +211,16 @@ agent.stream.each do |event|
 end
 ```
 
-### Building System Messages for Persistence
+### Reading System Messages for Persistence
 
-Use `generate_instruction_message` and `generate_skills_message` to generate system messages independently. This is useful for database persistence workflows where you need to store and later reconstruct message histories.
+Read the agent's instruction and skills system messages from `agent.instruction_message` and `agent.skills_message`. Both are built once at `Agent.new` time using the constructor `context:` and cached — they reflect the agent's configured `instructions` and `skills` DSL output. Useful for database persistence workflows where you need to store and later reconstruct message histories.
 
-Both methods return a `Riffer::Messages::System` or `nil` (when unconfigured). They accept an optional `context:` keyword that overrides the agent's init context for a one-off evaluation.
+Both return `Riffer::Messages::System` or `nil` (when unconfigured / empty).
 
 ```ruby
 agent = MyAgent.new(context: ctx)
-sys = agent.generate_instruction_message              # => Riffer::Messages::System or nil
-skills = agent.generate_skills_message                # => Riffer::Messages::System or nil
+sys = agent.instruction_message     # => Riffer::Messages::System or nil
+skills = agent.skills_message       # => Riffer::Messages::System or nil
 
 # Store in DB, then later resume in a new process:
 session = Riffer::Session.new(messages: [sys, skills, user_msg].compact)

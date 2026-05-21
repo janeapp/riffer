@@ -213,6 +213,16 @@ class Riffer::Agent
   # The conversation handle. See Riffer::Session.
   attr_reader session: Riffer::Session
 
+  # The system message built from the configured +instructions+, or +nil+
+  # when no instructions are configured. Built once at +Agent.new+ using the
+  # constructor +context:+ and cached. Useful for persistence flows.
+  attr_reader instruction_message: Riffer::Messages::System?
+
+  # The system message describing the configured skills catalog, or +nil+
+  # when skills are unconfigured or the catalog is empty. Built once at
+  # +Agent.new+ and cached.
+  attr_reader skills_message: Riffer::Messages::System?
+
   # Cumulative token usage across all LLM calls.
   attr_reader token_usage: Riffer::TokenUsage?
 
@@ -263,28 +273,6 @@ class Riffer::Agent
   # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
-  # Generates the instruction system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no instructions are configured.
-  #
-  # --
-  # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def generate_instruction_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-
-  # Generates the skills catalog system message for this agent.
-  #
-  # Useful for database persistence workflows where the system messages
-  # need to be stored independently.
-  #
-  # Returns +nil+ when no skills are configured or the catalog is empty.
-  #
-  # --
-  # : (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def generate_skills_message: (?context: Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-
   # Interrupts the agent loop.
   #
   # Call from an +on_message+ callback to cleanly interrupt the loop.
@@ -326,10 +314,6 @@ class Riffer::Agent
   def track_token_usage: (Riffer::TokenUsage?) -> void
 
   # --
-  # : () -> Riffer::Session
-  def build_initial_session: () -> Riffer::Session
-
-  # --
   # : () -> void
   def apply_seed_healing: () -> void
 
@@ -354,12 +338,12 @@ class Riffer::Agent
   def heal_seeded_history: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
 
   # --
-  # : (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
-  def build_instruction_message: (?Hash[Symbol, untyped]?) -> Riffer::Messages::System?
+  # : () -> Riffer::Messages::System?
+  def build_instruction_message: () -> Riffer::Messages::System?
 
   # --
-  # : (?Riffer::Skills::Context?) -> Riffer::Messages::System?
-  def build_skills_message: (?Riffer::Skills::Context?) -> Riffer::Messages::System?
+  # : () -> Riffer::Messages::System?
+  def build_skills_message: () -> Riffer::Messages::System?
 
   # --
   # : (Enumerator::Yielder) -> void
