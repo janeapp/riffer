@@ -643,9 +643,8 @@ class Riffer::Agent
   #: () -> String
   def resolve_model
     @resolved_model ||= begin
-      model = @config.model
-      value = Riffer::Helpers::CallOrValue.resolve(model, context: @context)
-      parse_model_string!(value) if model.is_a?(Proc)
+      value = Riffer::Helpers::CallOrValue.resolve(@config.model, context: @context)
+      parse_model_string!(value) if @config.model.is_a?(Proc)
       value
     end
   end
