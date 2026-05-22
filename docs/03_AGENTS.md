@@ -263,7 +263,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::ToolRuntime` subclass, a `Riffer::ToolRuntime` instance, or a `Proc`. Inherited by subclasses. When unset, falls back to `Riffer.config.tool_runtime`. See [Tools — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::ToolRuntime` subclass, a `Riffer::ToolRuntime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ### guardrail
 
@@ -285,6 +285,37 @@ end
 ```
 
 See [Guardrails](12_GUARDRAILS.md) for detailed documentation.
+
+## Configuration Object
+
+Every DSL setting above is stored on a `Riffer::Agent::Config` instance accessible via the class. Each subclass has its own:
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  max_steps 8
+end
+
+MyAgent.config            # => #<Riffer::Agent::Config ...>
+MyAgent.config.max_steps  # => 8
+```
+
+The DSL methods read and mutate this Config in place.
+
+For advanced composition or testing, build a Config directly and pass it via `config:` to bypass class-level DSL entirely:
+
+```ruby
+config = Riffer::Agent::Config.new(
+  model: 'openai/gpt-5-mini',
+  instructions: 'You are a helpful assistant.',
+  max_steps: 4
+)
+
+agent = Riffer::Agent.new(config: config)
+agent.generate('Hello')
+```
+
+When `config:` is supplied, the class-level configuration is ignored for that instance.
 
 ## Expand Your Agent
 
