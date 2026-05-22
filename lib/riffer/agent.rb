@@ -117,47 +117,6 @@ class Riffer::Agent
     value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
-  # Returns the tool classes the LLM should see for this agent.
-  #
-  # Class-level companion to the instance #resolved_tools. Resolves the
-  # Proc form of +uses_tools+ and appends the skill activation tool when
-  # a +skills+ block is configured. Does not read the skills backend —
-  # the LLM-facing tool schema reflects class-level intent, not the
-  # runtime state of any backend.
-  #
-  # When +uses_tools+ is a Proc, +context+ is forwarded to it.
-  #
-  # The activation tool class is resolved from the agent's
-  # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
-  # from <tt>Riffer.config.skills.default_activate_tool</tt>.
-  #
-  # Each returned tool class is validated via +validate_as_tool!+, so
-  # callers serializing this list to a provider can rely on every entry
-  # having the metadata required for tool use (name + description).
-  #
-  # Raises Riffer::ArgumentError on tool name conflicts with the skill
-  # activation tool, or when a tool class fails +validate_as_tool!+.
-  #
-  #--
-  #: (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
-  def self.resolved_tool_classes(context: nil, config: self.config)
-    base = Riffer::Helpers::CallOrValue.resolve(config.tools_config, context: context, default: [])
-    skills_cfg = config.skills_config
-
-    tools = if skills_cfg
-      skill_activate_tool_class = skills_cfg.activate_tool || Riffer.config.skills.default_activate_tool
-      if base.any? { |t| t.name == skill_activate_tool_class.name }
-        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
-      end
-      base + [skill_activate_tool_class]
-    else
-      base
-    end
-
-    tools.each(&:validate_as_tool!)
-    tools
-  end
-
   # Opts this agent into tools from all MCP registrations that share any of
   # the given tag(s).
   #
@@ -271,6 +230,10 @@ class Riffer::Agent
   # The conversation handle. See Riffer::Session.
   attr_reader :session #: Riffer::Session
 
+  # The per-instance Riffer::Agent::Config. Either the class-level default or
+  # an explicit Config passed to +Agent.new(config:)+.
+  attr_reader :config #: Riffer::Agent::Config
+
   # The system message built from the configured +instructions+, or +nil+
   # when no instructions are configured. Built once at +Agent.new+ using the
   # constructor +context:+ and cached. Useful for persistence flows.
@@ -281,8 +244,39 @@ class Riffer::Agent
   # +Agent.new+ and cached.
   attr_reader :skills_message #: Riffer::Messages::System?
 
-  # Cumulative token usage across all LLM calls.
-  attr_reader :token_usage #: Riffer::TokenUsage?
+  # The mutable runtime context. A Hash threaded into every Proc-based DSL
+  # setting, guardrail, tool runtime, and skills resolution, and shared
+  # with every +Riffer::Agent::Run+ this agent executes. Carries:
+  #
+  # - +context[:skills]+ — the resolved +Riffer::Skills::Context+ (when
+  #   skills are configured), set at +Agent.new+ time.
+  # - +context[:token_usage]+ — the cumulative +Riffer::TokenUsage+, mutated
+  #   by each Run as the loop progresses.
+  # - any caller-provided keys (e.g. +context[:agent]+, +context[:tenant]+).
+  attr_reader :context #: Hash[Symbol, untyped]
+
+  # The resolved model name (the part after "provider/"), used as the model
+  # argument on every LLM call. Resolved eagerly at +Agent.new+.
+  attr_reader :model_name #: String
+
+  # The provider client. Built eagerly at +Agent.new+ from the configured
+  # provider class and +Config#provider_options+, then handed to every
+  # +Riffer::Agent::Run+ this agent executes. Public so tests can pre-queue
+  # responses on +Riffer::Providers::Mock+ before calling +#generate+.
+  attr_reader :provider #: Riffer::Providers::Base
+
+  # The +Riffer::StructuredOutput+ wrapping the configured schema, or +nil+
+  # when structured output is not configured. Resolved eagerly at +Agent.new+.
+  attr_reader :structured_output #: Riffer::StructuredOutput?
+
+  # The tool classes the LLM sees on every call this agent makes. Resolved
+  # eagerly at +Agent.new+ (Proc-form +uses_tools+ is called against
+  # +context+ once; MCP tools and the skill_activate tool are merged in).
+  attr_reader :tools #: Array[singleton(Riffer::Tool)]
+
+  # The tool runtime instance used to execute tool calls. Resolved eagerly
+  # at +Agent.new+ (Proc-form +tool_runtime+ is called against +context+ once).
+  attr_reader :tool_runtime #: Riffer::ToolRuntime
 
   # Initializes a new agent.
   #
@@ -306,56 +300,46 @@ class Riffer::Agent
   #: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
   def initialize(session: nil, context: nil, config: nil)
     @config = config || self.class.config
-    @token_usage = nil
-    @context = context
+    @context = (context || {}).dup
 
-    if @config.model.is_a?(Proc)
-      @provider_name = nil
-      @model_name = nil
-    else
-      parse_model_string!(@config.model)
-    end
+    provider_class, @model_name = resolve_provider_and_model
+    @provider = provider_class.new(**@config.provider_options)
 
-    resolve_model
-    @skills_state = resolve_skills
-    @context = (@context || {}).merge(skills: @skills_state) if @skills_state
+    @context[:skills] = resolve_skills(provider_class)
+
+    @structured_output = resolve_structured_output
+    @tools = resolve_tools
+    @tool_runtime = resolve_tool_runtime
 
     @instruction_message = build_instruction_message
     @skills_message = build_skills_message
 
     @session = session || Riffer::Session.new(messages: [@instruction_message, @skills_message].compact)
-    @session.set(Riffer::Session::Repair.prune_orphans(@session.messages)) if session
+    @session.set(Riffer::Session::Repair.prune_orphans(@session.messages))
   end
 
   # Generates a response from the agent.
   #
-  # When +prompt+ is given, a new +Riffer::Messages::User+ is appended to the
-  # session (silently — +on_message+ does not fire for user inputs) and then
-  # the inference loop runs. When +prompt+ is omitted, the loop runs against
-  # the current session — useful for resuming a persisted conversation whose
-  # last turn is already a user message, or for picking up pending tool calls
-  # after an interrupt.
+  # Runs the inference loop via +Riffer::Agent::Run.generate+. When +prompt+
+  # is given, a new +Riffer::Messages::User+ is appended to the session
+  # (silently — +on_message+ does not fire for user inputs) and then the
+  # loop runs. When +prompt+ is omitted, the loop runs against the current
+  # session — useful for resuming a persisted conversation whose last turn
+  # is already a user message, or for picking up pending tool calls after
+  # an interrupt.
   #
   # +files:+ requires +prompt+. Pass files to attach to the new user message.
   #
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
   def generate(prompt = nil, files: nil)
-    raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
-
-    append_user_message(prompt, files: files) if prompt
-    @structured_output = resolve_structured_output
-
-    all_modifications = [] #: Array[Riffer::Guardrails::Modification]
-
-    tripwire, modifications = run_before_guardrails
-    all_modifications.concat(modifications)
-    return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
-
-    run_generate_loop(all_modifications)
+    Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files)
   end
 
   # Streams a response from the agent.
+  #
+  # Runs the inference loop via +Riffer::Agent::Run.stream+, returning an
+  # +Enumerator+ of +Riffer::StreamEvents+.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
@@ -364,22 +348,8 @@ class Riffer::Agent
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt = nil, files: nil)
-    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @config.structured_output
-    raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
-
-    append_user_message(prompt, files: files) if prompt
-
-    Enumerator.new do |yielder|
-      tripwire, modifications = run_before_guardrails
-      modifications.each { |m| yielder << Riffer::StreamEvents::GuardrailModification.new(m) }
-
-      if tripwire
-        yielder << Riffer::StreamEvents::GuardrailTripwire.new(tripwire)
-        next
-      end
-
-      run_stream_loop(yielder)
-    end
+    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @structured_output
+    Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files)
   end
 
   # Interrupts the agent loop.
@@ -403,66 +373,9 @@ class Riffer::Agent
   private
 
   #--
-  #: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def run_generate_loop(all_modifications = [])
-    step = @session.count { |m| m.is_a?(Riffer::Messages::Assistant) }
-
-    reason = catch(:riffer_interrupt) do
-      execute_pending_tool_calls
-
-      loop do
-        response = call_llm
-        step += 1
-
-        track_token_usage(response.token_usage)
-
-        processed_response, tripwire, modifications = run_after_guardrails(response)
-        all_modifications.concat(modifications)
-
-        return build_response("", tripwire: tripwire, modifications: all_modifications) if tripwire
-
-        @session.add(processed_response)
-
-        break unless has_tool_calls?(processed_response)
-
-        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= @config.max_steps
-
-        execute_tool_calls(processed_response)
-      end
-
-      response = final_assistant_message
-
-      return build_response(response&.content || "", modifications: all_modifications, structured_output: validate_structured_output(response))
-    end
-
-    # catch returns the thrown value when throw :riffer_interrupt fires;
-    # the return above exits on the successful (non-interrupted) path.
-    new_messages, filled = Riffer::Session::Repair.fill_orphans(@session.messages)
-    @session.set(new_messages)
-    response = final_assistant_message
-
-    build_response(response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(response), healed_tool_call_ids: filled)
-  end
-
-  #--
-  #: (Riffer::TokenUsage?) -> void
-  def track_token_usage(usage)
-    return unless usage
-
-    @token_usage = @token_usage ? @token_usage + usage : usage
-  end
-
-  #--
-  #: (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-  def append_user_message(prompt, files:)
-    file_parts = (files || []).map { |f| convert_to_file_part(f) }
-    @session.set(@session.messages + [Riffer::Messages::User.new(prompt, files: file_parts)])
-  end
-
-  #--
   #: () -> Riffer::Messages::System?
   def build_instruction_message
-    content = generate_instructions
+    content = Riffer::Helpers::CallOrValue.resolve(@config.instructions, context: @context)
     return nil if content.nil? || content.empty?
     Riffer::Messages::System.new(content)
   end
@@ -470,183 +383,113 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Messages::System?
   def build_skills_message
-    content = @skills_state&.system_prompt
-    return nil if content.nil? || content.empty?
-    Riffer::Messages::System.new(content)
+    return nil unless @context[:skills]&.system_prompt
+    Riffer::Messages::System.new(@context[:skills].system_prompt)
   end
 
-  #--
-  #: (Enumerator::Yielder) -> void
-  def run_stream_loop(yielder)
-    step = @session.count { |m| m.is_a?(Riffer::Messages::Assistant) }
-
-    if @skills_state
-      @skills_state.on_activate = ->(name) { yielder << Riffer::StreamEvents::SkillActivation.new(name) }
-    end
-
-    completed = catch(:riffer_interrupt) do
-      execute_pending_tool_calls
-
-      loop do
-        accumulated_content = ""
-        accumulated_tool_calls = []
-        accumulated_token_usage = nil
-        current_tool_call = nil
-
-        call_llm_stream.each do |event|
-          yielder << event
-
-          case event
-          when Riffer::StreamEvents::TextDelta
-            accumulated_content += event.content
-          when Riffer::StreamEvents::TextDone
-            accumulated_content = event.content
-          when Riffer::StreamEvents::ToolCallDelta
-            current_tool_call ||= {item_id: event.item_id, name: event.name, arguments: ""}
-            current_tool_call[:arguments] += event.arguments_delta
-            current_tool_call[:name] ||= event.name
-          when Riffer::StreamEvents::ToolCallDone
-            accumulated_tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-              call_id: event.call_id,
-              name: event.name,
-              arguments: event.arguments
-            )
-            current_tool_call = nil
-          when Riffer::StreamEvents::TokenUsageDone
-            accumulated_token_usage = event.token_usage
-          end
-        end
-
-        response = Riffer::Messages::Assistant.new(
-          accumulated_content,
-          tool_calls: accumulated_tool_calls,
-          token_usage: accumulated_token_usage
-        )
-
-        track_token_usage(accumulated_token_usage)
-        step += 1
-
-        processed_response, tripwire, modifications = run_after_guardrails(response)
-        modifications.each { |m| yielder << Riffer::StreamEvents::GuardrailModification.new(m) }
-
-        if tripwire
-          yielder << Riffer::StreamEvents::GuardrailTripwire.new(tripwire)
-          break
-        end
-
-        @session.add(processed_response)
-
-        break unless has_tool_calls?(processed_response)
-
-        throw :riffer_interrupt, INTERRUPT_MAX_STEPS if step >= @config.max_steps
-
-        execute_tool_calls(processed_response)
-      end
-      :completed
-    end
-
-    unless completed == :completed
-      new_messages, filled = Riffer::Session::Repair.fill_orphans(@session.messages)
-      @session.set(new_messages)
-      yielder << Riffer::StreamEvents::Interrupt.new(reason: completed, healed_tool_call_ids: filled)
-    end
-  end
-
-  #--
-  #: () -> Riffer::Messages::Assistant
-  def call_llm
-    provider_instance.generate_text(
-      messages: @session.messages,
-      model: @model_name,
-      tools: resolved_tools,
-      **merged_model_options
-    )
-  end
-
-  #--
-  #: () -> Enumerator[Riffer::StreamEvents::Base, void]
-  def call_llm_stream
-    provider_instance.stream_text(
-      messages: @session.messages,
-      model: @model_name,
-      tools: resolved_tools,
-      **merged_model_options
-    )
-  end
-
-  #--
-  #: () -> Riffer::Providers::Base
-  def provider_instance
-    @provider_instance ||= provider_class.new(**@config.provider_options)
-  end
-
-  #--
-  #: (Riffer::Messages::Assistant) -> bool
-  def has_tool_calls?(response)
-    response.is_a?(Riffer::Messages::Assistant) && !response.tool_calls.empty?
-  end
-
-  #--
-  #: (Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-  def execute_tool_calls(assistant_message, tool_calls: assistant_message.tool_calls)
-    return if tool_calls.empty?
-
-    runtime = resolve_tool_runtime
-    results = runtime.execute(tool_calls, tools: resolved_tools, context: @context, assistant_message: assistant_message)
-
-    results.each do |tool_call, result|
-      @session.add(Riffer::Messages::Tool.new(
-        result.content,
-        tool_call_id: tool_call.call_id,
-        name: tool_call.name,
-        error: result.error_message,
-        error_type: result.error_type
-      ))
-    end
-  end
-
-  # Executes tool calls left unfinished by a prior interrupt.
+  # Resolves +Config#model+ to a "provider/model" string (calling the Proc
+  # form against +@context+), parses it, and looks up the provider class.
   #
-  # When an interrupt fires mid-way through tool execution, some tool calls
-  # from the last assistant message may not have been executed yet. This
-  # method detects those gaps by comparing the tool call ids requested by the
-  # last assistant message against the tool result messages that follow it,
-  # then executes any that are missing. Safe to call unconditionally —
-  # returns immediately when there is nothing pending.
+  # Returns +[provider_class, model_name]+. Raises Riffer::ArgumentError on
+  # an invalid model string or an unregistered provider.
   #
   #--
-  #: () -> void
-  def execute_pending_tool_calls
-    assistant_message, pending = @session.pending_tool_calls
-    execute_tool_calls(assistant_message, tool_calls: pending) if assistant_message
-  end
-
-  #--
-  #: (untyped) -> void
-  def parse_model_string!(model_string)
+  #: () -> [singleton(Riffer::Providers::Base), String]
+  def resolve_provider_and_model
+    model_string = Riffer::Helpers::CallOrValue.resolve(@config.model, context: @context)
     raise Riffer::ArgumentError, "Invalid model string: #{model_string}" unless model_string.is_a?(String)
+
     provider_name, model_name = model_string.split("/", 2)
-    raise Riffer::ArgumentError, "Invalid model string: #{model_string}" unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
-    @provider_name = provider_name
-    @model_name = model_name
-  end
 
-  #--
-  #: () -> String?
-  def generate_instructions
-    Riffer::Helpers::CallOrValue.resolve(@config.instructions, context: @context)
-  end
-
-  attr_reader :resolved_model #: String?
-
-  #--
-  #: () -> String
-  def resolve_model
-    @resolved_model ||= begin
-      value = Riffer::Helpers::CallOrValue.resolve(@config.model, context: @context)
-      parse_model_string!(value) if @config.model.is_a?(Proc)
-      value
+    unless provider_name.is_a?(String) && !provider_name.strip.empty? && model_name.is_a?(String) && !model_name.strip.empty?
+      raise Riffer::ArgumentError, "Invalid model string: #{model_string}"
     end
+
+    provider_class = Riffer::Providers::Repository.find(provider_name)
+    raise Riffer::ArgumentError, "Provider not found: #{provider_name}" unless provider_class
+
+    [provider_class, model_name]
+  end
+
+  # Resolves the skills backend, lists skills, and selects an adapter.
+  # Returns nil if skills are unconfigured or the backend is empty.
+  #
+  #--
+  #: (singleton(Riffer::Providers::Base)) -> Riffer::Skills::Context?
+  def resolve_skills(provider_class)
+    skills_config = @config.skills_config
+    return nil unless skills_config
+
+    backend = skills_config.backend || Riffer.config.skills.default_backend
+    return nil unless backend
+
+    backend = Riffer::Helpers::CallOrValue.resolve(backend, context: @context)
+    return nil if backend.list_skills.empty?
+
+    skills = backend.list_skills.to_h { |s| [s.name, s] }
+    adapter_class = skills_config.adapter || provider_class.skills_adapter(@model_name)
+    skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
+
+    skills_context = Riffer::Skills::Context.new(
+      backend: backend,
+      skills: skills,
+      adapter: adapter_class.new(skill_activate_tool: skill_activate_tool_class)
+    )
+
+    if skills_config.activate
+      names = Array(Riffer::Helpers::CallOrValue.resolve(skills_config.activate, context: @context))
+      names.each { |name| skills_context.activate(name) }
+    end
+
+    skills_context
+  end
+
+  #--
+  #: () -> Riffer::StructuredOutput?
+  def resolve_structured_output
+    params = @config.structured_output
+    params ? Riffer::StructuredOutput.new(params) : nil
+  end
+
+  # Resolves the full tool catalog for the agent:
+  #
+  # - The configured +uses_tools+ value (Proc-form resolved against +context+).
+  # - The skill activation tool, when a +skills+ block is configured. The
+  #   activation tool class comes from the per-agent +skills do; activate_tool ...; end+
+  #   override when set, otherwise from +Riffer.config.skills.default_activate_tool+.
+  # - All MCP tools matching any +use_mcp+ tag, optionally wrapped in
+  #   AuthenticatedTool when +Riffer.config.mcp.credentials+ is configured.
+  #
+  # Raises Riffer::ArgumentError on tool name conflicts with the skill
+  # activation tool, on duplicate tool names across sources, or on tool
+  # classes missing required metadata (description, params).
+  #
+  #--
+  #: () -> Array[singleton(Riffer::Tool)]
+  def resolve_tools
+    tools = Riffer::Helpers::CallOrValue.resolve(@config.tools_config, context: @context, default: [])
+
+    if @config.skills_config
+      skill_activate_tool_class = @config.skills_config.activate_tool || Riffer.config.skills.default_activate_tool
+
+      if tools.any? { |t| t.name == skill_activate_tool_class.name }
+        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
+      end
+
+      tools += [skill_activate_tool_class]
+    end
+
+    tools += resolve_mcp_tool_classes
+    assert_distinct_tool_names!(tools)
+    tools.each(&:validate_as_tool!)
+    tools
+  end
+
+  #--
+  #: () -> Riffer::ToolRuntime
+  def resolve_tool_runtime
+    runtime = Riffer::Helpers::CallOrValue.resolve(@config.tool_runtime, context: @context)
+    runtime.is_a?(Class) ? runtime.new : runtime
   end
 
   #--
@@ -693,137 +536,5 @@ class Riffer::Agent
     return if dupes.empty?
 
     raise Riffer::ArgumentError, "Duplicate tool names: #{dupes.sort.join(", ")}"
-  end
-
-  #: () -> Array[singleton(Riffer::Tool)]
-  def resolved_tools
-    @resolved_tools ||= begin
-      tools = self.class.resolved_tool_classes(context: @context, config: @config) + resolve_mcp_tool_classes
-      assert_distinct_tool_names!(tools)
-      tools.each(&:validate_as_tool!)
-      tools
-    end
-  end
-
-  #--
-  #: () -> Riffer::ToolRuntime
-  def resolve_tool_runtime
-    @resolved_tool_runtime ||= begin
-      runtime = Riffer::Helpers::CallOrValue.resolve(@config.tool_runtime, context: @context)
-      runtime.is_a?(Class) ? runtime.new : runtime
-    end
-  end
-
-  # Resolves the skills backend, lists skills, and selects an adapter.
-  #
-  # Returns nil if skills are not configured or empty.
-  # Does not mutate instance state — callers are responsible for
-  # assigning the returned context.
-  #
-  #--
-  #: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
-  def resolve_skills(context = @context)
-    skills_config = @config.skills_config
-    return nil unless skills_config
-
-    backend = skills_config.backend || Riffer.config.skills.default_backend
-    return nil unless backend
-
-    backend = Riffer::Helpers::CallOrValue.resolve(backend, context: context)
-    skills_list = backend.list_skills
-    return nil if skills_list.empty?
-
-    skills = skills_list.to_h { |s| [s.name, s] }
-    adapter_class = skills_config.adapter || provider_class.skills_adapter(@model_name)
-    skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
-
-    skills_context = Riffer::Skills::Context.new(
-      backend: backend,
-      skills: skills,
-      adapter: adapter_class.new(skill_activate_tool: skill_activate_tool_class)
-    )
-    ctx = (context || {}).merge(skills: skills_context)
-
-    activate = skills_config.activate
-    if activate
-      names = Array(Riffer::Helpers::CallOrValue.resolve(activate, context: ctx))
-      names.each { |name| skills_context.activate(name) }
-    end
-
-    skills_context
-  end
-
-  #--
-  #: () -> singleton(Riffer::Providers::Base)
-  def provider_class
-    klass = Riffer::Providers::Repository.find(@provider_name)
-    raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless klass
-    klass
-  end
-
-  #--
-  #: () -> Riffer::Messages::Assistant?
-  def final_assistant_message
-    # TODO: Replace with rfind when minimum Ruby is 4.0+
-    # rubocop:disable Style/ReverseFind
-    @session.reverse_each.find { |msg| msg.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
-    # rubocop:enable Style/ReverseFind
-  end
-
-  #--
-  #: () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
-  def run_before_guardrails
-    guardrails = @config.guardrails_for(:before)
-    return [nil, []] if guardrails.empty?
-
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: @context)
-    processed_messages, tripwire, modifications = runner.run(@session.messages)
-    @session.set(processed_messages) unless tripwire
-    [tripwire, modifications]
-  end
-
-  #--
-  #: (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
-  def run_after_guardrails(response)
-    guardrails = @config.guardrails_for(:after)
-    return [response, nil, []] if guardrails.empty?
-
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: @context)
-    processed_response, tripwire, modifications = runner.run(response, messages: @session.messages)
-
-    response_index = @session.messages.length
-    modifications.each { |m| m.message_indices.map! { response_index } }
-
-    [processed_response, tripwire, modifications]
-  end
-
-  #--
-  #: (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
-  def validate_structured_output(response)
-    return unless response&.structured_output? && @structured_output
-
-    @structured_output.parse_and_validate(response.content).object
-  end
-
-  #--
-  #: () -> Riffer::StructuredOutput?
-  def resolve_structured_output
-    params = @config.structured_output
-    params ? Riffer::StructuredOutput.new(params) : nil
-  end
-
-  #--
-  #: () -> Hash[Symbol, untyped]
-  def merged_model_options
-    opts = @config.model_options.dup
-    opts[:structured_output] = @structured_output if @structured_output
-    opts
-  end
-
-  #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
-  def build_response(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [])
-    messages = @session.messages
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: messages.frozen? ? messages : messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids)
   end
 end

@@ -91,31 +91,6 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
-  # Returns the tool classes the LLM should see for this agent.
-  #
-  # Class-level companion to the instance #resolved_tools. Resolves the
-  # Proc form of +uses_tools+ and appends the skill activation tool when
-  # a +skills+ block is configured. Does not read the skills backend —
-  # the LLM-facing tool schema reflects class-level intent, not the
-  # runtime state of any backend.
-  #
-  # When +uses_tools+ is a Proc, +context+ is forwarded to it.
-  #
-  # The activation tool class is resolved from the agent's
-  # <tt>skills do; activate_tool ...; end</tt> override when set, otherwise
-  # from <tt>Riffer.config.skills.default_activate_tool</tt>.
-  #
-  # Each returned tool class is validated via +validate_as_tool!+, so
-  # callers serializing this list to a provider can rely on every entry
-  # having the metadata required for tool use (name + description).
-  #
-  # Raises Riffer::ArgumentError on tool name conflicts with the skill
-  # activation tool, or when a tool class fails +validate_as_tool!+.
-  #
-  # --
-  # : (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
-  def self.resolved_tool_classes: (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
-
   # Opts this agent into tools from all MCP registrations that share any of
   # the given tag(s).
   #
@@ -204,6 +179,10 @@ class Riffer::Agent
   # The conversation handle. See Riffer::Session.
   attr_reader session: Riffer::Session
 
+  # The per-instance Riffer::Agent::Config. Either the class-level default or
+  # an explicit Config passed to +Agent.new(config:)+.
+  attr_reader config: Riffer::Agent::Config
+
   # The system message built from the configured +instructions+, or +nil+
   # when no instructions are configured. Built once at +Agent.new+ using the
   # constructor +context:+ and cached. Useful for persistence flows.
@@ -214,8 +193,39 @@ class Riffer::Agent
   # +Agent.new+ and cached.
   attr_reader skills_message: Riffer::Messages::System?
 
-  # Cumulative token usage across all LLM calls.
-  attr_reader token_usage: Riffer::TokenUsage?
+  # The mutable runtime context. A Hash threaded into every Proc-based DSL
+  # setting, guardrail, tool runtime, and skills resolution, and shared
+  # with every +Riffer::Agent::Run+ this agent executes. Carries:
+  #
+  # - +context[:skills]+ — the resolved +Riffer::Skills::Context+ (when
+  #   skills are configured), set at +Agent.new+ time.
+  # - +context[:token_usage]+ — the cumulative +Riffer::TokenUsage+, mutated
+  #   by each Run as the loop progresses.
+  # - any caller-provided keys (e.g. +context[:agent]+, +context[:tenant]+).
+  attr_reader context: Hash[Symbol, untyped]
+
+  # The resolved model name (the part after "provider/"), used as the model
+  # argument on every LLM call. Resolved eagerly at +Agent.new+.
+  attr_reader model_name: String
+
+  # The provider client. Built eagerly at +Agent.new+ from the configured
+  # provider class and +Config#provider_options+, then handed to every
+  # +Riffer::Agent::Run+ this agent executes. Public so tests can pre-queue
+  # responses on +Riffer::Providers::Mock+ before calling +#generate+.
+  attr_reader provider: Riffer::Providers::Base
+
+  # The +Riffer::StructuredOutput+ wrapping the configured schema, or +nil+
+  # when structured output is not configured. Resolved eagerly at +Agent.new+.
+  attr_reader structured_output: Riffer::StructuredOutput?
+
+  # The tool classes the LLM sees on every call this agent makes. Resolved
+  # eagerly at +Agent.new+ (Proc-form +uses_tools+ is called against
+  # +context+ once; MCP tools and the skill_activate tool are merged in).
+  attr_reader tools: Array[singleton(Riffer::Tool)]
+
+  # The tool runtime instance used to execute tool calls. Resolved eagerly
+  # at +Agent.new+ (Proc-form +tool_runtime+ is called against +context+ once).
+  attr_reader tool_runtime: Riffer::ToolRuntime
 
   # Initializes a new agent.
   #
@@ -241,12 +251,13 @@ class Riffer::Agent
 
   # Generates a response from the agent.
   #
-  # When +prompt+ is given, a new +Riffer::Messages::User+ is appended to the
-  # session (silently — +on_message+ does not fire for user inputs) and then
-  # the inference loop runs. When +prompt+ is omitted, the loop runs against
-  # the current session — useful for resuming a persisted conversation whose
-  # last turn is already a user message, or for picking up pending tool calls
-  # after an interrupt.
+  # Runs the inference loop via +Riffer::Agent::Run.generate+. When +prompt+
+  # is given, a new +Riffer::Messages::User+ is appended to the session
+  # (silently — +on_message+ does not fire for user inputs) and then the
+  # loop runs. When +prompt+ is omitted, the loop runs against the current
+  # session — useful for resuming a persisted conversation whose last turn
+  # is already a user message, or for picking up pending tool calls after
+  # an interrupt.
   #
   # +files:+ requires +prompt+. Pass files to attach to the new user message.
   #
@@ -255,6 +266,9 @@ class Riffer::Agent
   def generate: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
 
   # Streams a response from the agent.
+  #
+  # Runs the inference loop via +Riffer::Agent::Run.stream+, returning an
+  # +Enumerator+ of +Riffer::StreamEvents+.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
@@ -283,18 +297,6 @@ class Riffer::Agent
   private
 
   # --
-  # : (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def run_generate_loop: (?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-
-  # --
-  # : (Riffer::TokenUsage?) -> void
-  def track_token_usage: (Riffer::TokenUsage?) -> void
-
-  # --
-  # : (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-  def append_user_message: (String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-
-  # --
   # : () -> Riffer::Messages::System?
   def build_instruction_message: () -> Riffer::Messages::System?
 
@@ -302,56 +304,47 @@ class Riffer::Agent
   # : () -> Riffer::Messages::System?
   def build_skills_message: () -> Riffer::Messages::System?
 
-  # --
-  # : (Enumerator::Yielder) -> void
-  def run_stream_loop: (Enumerator::Yielder) -> void
-
-  # --
-  # : () -> Riffer::Messages::Assistant
-  def call_llm: () -> Riffer::Messages::Assistant
-
-  # --
-  # : () -> Enumerator[Riffer::StreamEvents::Base, void]
-  def call_llm_stream: () -> Enumerator[Riffer::StreamEvents::Base, void]
-
-  # --
-  # : () -> Riffer::Providers::Base
-  def provider_instance: () -> Riffer::Providers::Base
-
-  # --
-  # : (Riffer::Messages::Assistant) -> bool
-  def has_tool_calls?: (Riffer::Messages::Assistant) -> bool
-
-  # --
-  # : (Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-  def execute_tool_calls: (Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-
-  # Executes tool calls left unfinished by a prior interrupt.
+  # Resolves +Config#model+ to a "provider/model" string (calling the Proc
+  # form against +@context+), parses it, and looks up the provider class.
   #
-  # When an interrupt fires mid-way through tool execution, some tool calls
-  # from the last assistant message may not have been executed yet. This
-  # method detects those gaps by comparing the tool call ids requested by the
-  # last assistant message against the tool result messages that follow it,
-  # then executes any that are missing. Safe to call unconditionally —
-  # returns immediately when there is nothing pending.
+  # Returns +[provider_class, model_name]+. Raises Riffer::ArgumentError on
+  # an invalid model string or an unregistered provider.
   #
   # --
-  # : () -> void
-  def execute_pending_tool_calls: () -> void
+  # : () -> [singleton(Riffer::Providers::Base), String]
+  def resolve_provider_and_model: () -> [ singleton(Riffer::Providers::Base), String ]
+
+  # Resolves the skills backend, lists skills, and selects an adapter.
+  # Returns nil if skills are unconfigured or the backend is empty.
+  #
+  # --
+  # : (singleton(Riffer::Providers::Base)) -> Riffer::Skills::Context?
+  def resolve_skills: (singleton(Riffer::Providers::Base)) -> Riffer::Skills::Context?
 
   # --
-  # : (untyped) -> void
-  def parse_model_string!: (untyped) -> void
+  # : () -> Riffer::StructuredOutput?
+  def resolve_structured_output: () -> Riffer::StructuredOutput?
+
+  # Resolves the full tool catalog for the agent:
+  #
+  # - The configured +uses_tools+ value (Proc-form resolved against +context+).
+  # - The skill activation tool, when a +skills+ block is configured. The
+  #   activation tool class comes from the per-agent +skills do; activate_tool ...; end+
+  #   override when set, otherwise from +Riffer.config.skills.default_activate_tool+.
+  # - All MCP tools matching any +use_mcp+ tag, optionally wrapped in
+  #   AuthenticatedTool when +Riffer.config.mcp.credentials+ is configured.
+  #
+  # Raises Riffer::ArgumentError on tool name conflicts with the skill
+  # activation tool, on duplicate tool names across sources, or on tool
+  # classes missing required metadata (description, params).
+  #
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]
+  def resolve_tools: () -> Array[singleton(Riffer::Tool)]
 
   # --
-  # : () -> String?
-  def generate_instructions: () -> String?
-
-  attr_reader resolved_model: String?
-
-  # --
-  # : () -> String
-  def resolve_model: () -> String
+  # : () -> Riffer::ToolRuntime
+  def resolve_tool_runtime: () -> Riffer::ToolRuntime
 
   # --
   # : () -> Array[singleton(Riffer::Tool)]
@@ -369,53 +362,4 @@ class Riffer::Agent
   #
   # : (Array[singleton(Riffer::Tool)]) -> void
   def assert_distinct_tool_names!: (Array[singleton(Riffer::Tool)]) -> void
-
-  # : () -> Array[singleton(Riffer::Tool)]
-  def resolved_tools: () -> Array[singleton(Riffer::Tool)]
-
-  # --
-  # : () -> Riffer::ToolRuntime
-  def resolve_tool_runtime: () -> Riffer::ToolRuntime
-
-  # Resolves the skills backend, lists skills, and selects an adapter.
-  #
-  # Returns nil if skills are not configured or empty.
-  # Does not mutate instance state — callers are responsible for
-  # assigning the returned context.
-  #
-  # --
-  # : (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
-  def resolve_skills: (?Hash[Symbol, untyped]?) -> Riffer::Skills::Context?
-
-  # --
-  # : () -> singleton(Riffer::Providers::Base)
-  def provider_class: () -> singleton(Riffer::Providers::Base)
-
-  # --
-  # : () -> Riffer::Messages::Assistant?
-  def final_assistant_message: () -> Riffer::Messages::Assistant?
-
-  # --
-  # : () -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
-  def run_before_guardrails: () -> [ Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
-
-  # --
-  # : (Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
-  def run_after_guardrails: (Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
-
-  # --
-  # : (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
-  def validate_structured_output: (Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
-
-  # --
-  # : () -> Riffer::StructuredOutput?
-  def resolve_structured_output: () -> Riffer::StructuredOutput?
-
-  # --
-  # : () -> Hash[Symbol, untyped]
-  def merged_model_options: () -> Hash[Symbol, untyped]
-
-  # --
-  # : (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
-  def build_response: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
 end

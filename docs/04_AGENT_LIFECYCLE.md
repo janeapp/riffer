@@ -283,22 +283,21 @@ Mutating history while a `stream` enumerator is being consumed is undefined; mut
 
 Mutators do **not** fire `on_message` — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Healing placeholders bypass `on_message` for the same reason; consumers learn that healing happened via `Response#healed_tool_call_ids` (and `StreamEvents::Interrupt#healed_tool_call_ids`).
 
-### token_usage
+### context
 
-Access cumulative token usage across all LLM calls:
+The mutable runtime context. A `Hash` threaded into every Proc-based DSL setting, guardrail, tool runtime, and skills resolution, and shared with every `Riffer::Agent::Run` this agent executes. Carries:
+
+- `context[:skills]` — the resolved `Riffer::Skills::Context` when skills are configured.
+- `context[:token_usage]` — the cumulative `Riffer::TokenUsage`, mutated by each Run as the loop progresses.
+- any caller-provided keys passed via `Agent.new(context: ...)`.
 
 ```ruby
 agent = MyAgent.new
 agent.generate("Hello!")
 
-if agent.token_usage
-  puts "Total tokens: #{agent.token_usage.total_tokens}"
-  puts "Input: #{agent.token_usage.input_tokens}"
-  puts "Output: #{agent.token_usage.output_tokens}"
-end
+agent.context[:token_usage]   # cumulative TokenUsage across all calls
+agent.context[:skills]        # the Skills::Context, if skills configured
 ```
-
-Returns `nil` if the provider doesn't report usage, or a `Riffer::TokenUsage` object with accumulated totals.
 
 ## Response Attributes
 

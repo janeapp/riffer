@@ -66,7 +66,7 @@ class Riffer::Skills::Config
   # Returns the configured override when set, or +nil+ when unset. The
   # global fallback to <tt>Riffer.config.skills.default_activate_tool</tt>
   # is applied by the agent at resolution time (see
-  # Riffer::Agent.resolved_tool_classes), not by this getter.
+  # Riffer::Agent#resolve_tools), not by this getter.
   #
   # The override must be a subclass of Riffer::Tool.
   #

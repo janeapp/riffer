@@ -31,6 +31,61 @@ describe Riffer::Providers::Mock do
     it "initializes calls to empty array" do
       expect(provider.calls).must_equal []
     end
+
+    describe "with responses: kwarg" do
+      it "serves the first response" do
+        provider = Riffer::Providers::Mock.new(responses: [
+          {content: "First"},
+          {content: "Second"}
+        ])
+        expect(provider.generate_text(prompt: "x").content).must_equal "First"
+      end
+
+      it "serves the second response on the second call" do
+        provider = Riffer::Providers::Mock.new(responses: [
+          {content: "First"},
+          {content: "Second"}
+        ])
+        provider.generate_text(prompt: "x")
+        expect(provider.generate_text(prompt: "y").content).must_equal "Second"
+      end
+
+      it "normalises raw tool_calls hashes into ToolCall instances" do
+        provider = Riffer::Providers::Mock.new(responses: [
+          {content: "", tool_calls: [{name: "weather", arguments: '{"city":"Toronto"}'}]}
+        ])
+        result = provider.generate_text(prompt: "x")
+        expect(result.tool_calls.first).must_be_instance_of Riffer::Messages::Assistant::ToolCall
+        expect(result.tool_calls.first.name).must_equal "weather"
+        expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
+      end
+
+      it "generates a default call_id when omitted" do
+        provider = Riffer::Providers::Mock.new(responses: [
+          {content: "", tool_calls: [{name: "t", arguments: "{}"}]}
+        ])
+        result = provider.generate_text(prompt: "x")
+        expect(result.tool_calls.first.call_id).must_equal "mock_call_0"
+      end
+
+      it "passes through pre-built ToolCall instances unchanged" do
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "custom_id", name: "t", arguments: "{}")
+        provider = Riffer::Providers::Mock.new(responses: [
+          {content: "", tool_calls: [tool_call]}
+        ])
+        result = provider.generate_text(prompt: "x")
+        expect(result.tool_calls.first.call_id).must_equal "custom_id"
+      end
+
+      it "preserves token_usage on a queued response" do
+        usage = Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+        provider = Riffer::Providers::Mock.new(responses: [
+          {content: "Hello", token_usage: usage}
+        ])
+        result = provider.generate_text(prompt: "x")
+        expect(result.token_usage).must_equal usage
+      end
+    end
   end
 
   describe "#stub_response" do

@@ -1,0 +1,101 @@
+# Generated from lib/riffer/agent/run.rb with RBS::Inline
+
+# Riffer::Agent::Run is the generation loop. A pure module of functions over an
+# +agent+ — Agent owns every per-call value (provider, model, tools, tool
+# runtime, structured output, session, context); Run just orchestrates.
+#
+# Tools and user code see the agent's +context+ unchanged through the
+# loop, so downstream tool runtimes can read +context[:agent]+ or
+# +context[:skills]+. Cumulative token usage is mutated into
+# +agent.context[:token_usage]+ as the loop progresses.
+#
+#   Riffer::Agent::Run.generate(agent: my_agent, prompt: "Hello")
+#   Riffer::Agent::Run.stream(agent: my_agent, prompt: "Hello")
+module Riffer::Agent::Run
+  include Riffer::Messages::Converter
+
+  # Runs the generate loop for the given agent. See Riffer::Agent#generate
+  # for prompt/files semantics.
+  #
+  # --
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
+  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
+
+  # Runs the streaming loop for the given agent. See Riffer::Agent#stream
+  # for prompt/files semantics.
+  #
+  # --
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+
+  private
+
+  # --
+  # : (Riffer::Agent, ?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  def run_generate_loop: (Riffer::Agent, ?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+
+  # --
+  # : (Riffer::Agent, Enumerator::Yielder) -> void
+  def run_stream_loop: (Riffer::Agent, Enumerator::Yielder) -> void
+
+  # --
+  # : (Riffer::Agent) -> Riffer::Messages::Assistant
+  def call_llm: (Riffer::Agent) -> Riffer::Messages::Assistant
+
+  # --
+  # : (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def call_llm_stream: (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
+
+  # --
+  # : (Riffer::Messages::Assistant) -> bool
+  def has_tool_calls?: (Riffer::Messages::Assistant) -> bool
+
+  # --
+  # : (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+
+  # Executes tool calls left unfinished by a prior interrupt.
+  #
+  # Detects gaps between the last assistant message's requested tool calls
+  # and the tool result messages that follow it, executing any that are
+  # missing. Safe to call unconditionally.
+  #
+  # --
+  # : (Riffer::Agent) -> void
+  def execute_pending_tool_calls: (Riffer::Agent) -> void
+
+  # --
+  # : (Riffer::Agent) -> [Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
+  def run_before_guardrails: (Riffer::Agent) -> [ Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
+
+  # --
+  # : (Riffer::Agent, Riffer::Messages::Assistant) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
+  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
+
+  # --
+  # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+  def validate_structured_output: (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (Riffer::Agent) -> Hash[Symbol, untyped]
+  def merged_model_options: (Riffer::Agent) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Agent) -> Riffer::Messages::Assistant?
+  def final_assistant_message: (Riffer::Agent) -> Riffer::Messages::Assistant?
+
+  # --
+  # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  def build_response: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+
+  # --
+  # : (Riffer::Agent, String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  def append_user_message: (Riffer::Agent, String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+
+  # Accumulates token usage into +agent.context[:token_usage]+. Mutates the
+  # context Hash so cumulative usage persists across every run on the agent.
+  #
+  # --
+  # : (Riffer::Agent, Riffer::TokenUsage?) -> void
+  def track_token_usage: (Riffer::Agent, Riffer::TokenUsage?) -> void
+end

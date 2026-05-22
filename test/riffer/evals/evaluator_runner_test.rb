@@ -157,7 +157,7 @@ describe Riffer::Evals::EvaluatorRunner do
         context: {user_id: 42}
       )
 
-      expect(received_context).must_equal({user_id: 42})
+      expect(received_context[:user_id]).must_equal 42
     end
 
     it "allows per-scenario context to override top-level" do
@@ -180,8 +180,8 @@ describe Riffer::Evals::EvaluatorRunner do
         context: {user_id: 42}
       )
 
-      expect(received_contexts[0]).must_equal({user_id: 99})
-      expect(received_contexts[1]).must_equal({user_id: 42})
+      expect(received_contexts[0][:user_id]).must_equal 99
+      expect(received_contexts[1][:user_id]).must_equal 42
     end
   end
 
