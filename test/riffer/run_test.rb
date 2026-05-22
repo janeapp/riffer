@@ -677,7 +677,8 @@ describe Riffer::Agent::Run do
       end.tap { |t| t.identifier("interrupt_heal_tool") }
     end
 
-    after { Riffer.config.experimental_history_healing = false }
+    before { @original_history_healing = Riffer.config.experimental_history_healing }
+    after { Riffer.config.experimental_history_healing = @original_history_healing }
 
     it "fills orphans and exposes healed_tool_call_ids when healing is on" do
       Riffer.config.experimental_history_healing = true
@@ -768,7 +769,8 @@ describe Riffer::Agent::Run do
       end.tap { |t| t.identifier("max_steps_heal_tool") }
     end
 
-    after { Riffer.config.experimental_history_healing = false }
+    before { @original_history_healing = Riffer.config.experimental_history_healing }
+    after { Riffer.config.experimental_history_healing = @original_history_healing }
 
     it "fills orphan tool_use with the placeholder when healing is on" do
       Riffer.config.experimental_history_healing = true
@@ -820,7 +822,8 @@ describe Riffer::Agent::Run do
   describe "seeded history with experimental_history_healing" do
     let(:custom_class) { Class.new(Riffer::Agent) { model "mock/riffer-1" } }
 
-    after { Riffer.config.experimental_history_healing = false }
+    before { @original_history_healing = Riffer.config.experimental_history_healing }
+    after { Riffer.config.experimental_history_healing = @original_history_healing }
 
     it "passes seeded history through untouched when healing is off (default)" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
