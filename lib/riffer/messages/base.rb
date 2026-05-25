@@ -40,6 +40,16 @@ class Riffer::Messages::Base
     raise NotImplementedError, "Subclasses must implement #role"
   end
 
+  # Whether this message carries pending tool calls. Defaults to +false+;
+  # +Riffer::Messages::Assistant+ overrides this when its +tool_calls+
+  # array is non-empty.
+  #
+  #--
+  #: () -> bool
+  def has_tool_calls?
+    false
+  end
+
   private
 
   #: () -> String?

@@ -100,17 +100,15 @@ describe "Agent skills integration" do
     it "selects XmlAdapter for amazon_bedrock with an Anthropic model id" do
       agent_class = Class.new(Riffer::Agent) do
         model "amazon_bedrock/us.anthropic.claude-sonnet-4-6"
+        provider_options region: "us-west-2"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
         end
       end
 
-      # The constructor resolves model + skills eagerly without
-      # instantiating the AWS client, so we can assert the adapter
-      # without VCR.
       agent = agent_class.new
 
-      skills_state = agent.instance_variable_get(:@skills_state)
+      skills_state = agent.context[:skills]
       refute_nil skills_state
       assert_kind_of Riffer::Skills::XmlAdapter, skills_state.adapter
     end
@@ -118,6 +116,7 @@ describe "Agent skills integration" do
     it "selects MarkdownAdapter for amazon_bedrock with a non-Anthropic model id" do
       agent_class = Class.new(Riffer::Agent) do
         model "amazon_bedrock/us.amazon.nova-lite-v1:0"
+        provider_options region: "us-west-2"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
         end
@@ -125,7 +124,7 @@ describe "Agent skills integration" do
 
       agent = agent_class.new
 
-      skills_state = agent.instance_variable_get(:@skills_state)
+      skills_state = agent.context[:skills]
       refute_nil skills_state
       assert_kind_of Riffer::Skills::MarkdownAdapter, skills_state.adapter
     end
@@ -141,7 +140,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      tool_names = agent.send(:resolved_tools).map(&:name)
+      tool_names = agent.tools.map(&:name)
       assert_includes tool_names, "skill_activate"
     end
 
@@ -165,7 +164,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      tool_names = agent.send(:resolved_tools).map(&:name)
+      tool_names = agent.tools.map(&:name)
       assert_includes tool_names, "my_tool"
       assert_includes tool_names, "skill_activate"
     end
@@ -187,8 +186,7 @@ describe "Agent skills integration" do
         end
       end
 
-      agent = agent_class.new
-      error = assert_raises(Riffer::ArgumentError) { agent.generate("Hello") }
+      error = assert_raises(Riffer::ArgumentError) { agent_class.new }
       assert_match(/Tool name conflict/, error.message)
     end
 
@@ -209,12 +207,9 @@ describe "Agent skills integration" do
         end
       end
 
-      provider = Riffer::Providers::Mock.new
-      provider.stub_response("", tool_calls: [{name: "spy_tool", arguments: "{}"}])
-      provider.stub_response("Done")
-
       agent = agent_class.new
-      agent.instance_variable_set(:@provider_instance, provider)
+      agent.provider.stub_response("", tool_calls: [{name: "spy_tool", arguments: "{}"}])
+      agent.provider.stub_response("Done")
       agent.generate("Hello")
 
       tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "spy_tool" }
@@ -308,7 +303,7 @@ describe "Agent skills integration" do
     end
   end
 
-  describe ".resolved_tool_classes" do
+  describe "#tools" do
     it "returns uses_tools when no skills configured" do
       tool_class = Class.new(Riffer::Tool) do
         identifier "my_tool"
@@ -323,27 +318,18 @@ describe "Agent skills integration" do
         uses_tools [tool_class]
       end
 
-      assert_equal ["my_tool"], agent_class.resolved_tool_classes.map(&:name)
+      assert_equal ["my_tool"], agent_class.new.tools.map(&:name)
     end
 
-    it "appends skill_activate when skills block is configured, without reading the backend" do
-      backend_class = Class.new(Riffer::Skills::Backend) do
-        def list_skills
-          raise "list_skills should not be called from class-level resolution"
-        end
-
-        def read_skill(name)
-        end
-      end
-
+    it "appends skill_activate when skills block is configured" do
       agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         skills do
-          backend backend_class.new
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
         end
       end
 
-      tool_names = agent_class.resolved_tool_classes.map(&:name)
+      tool_names = agent_class.new.tools.map(&:name)
       assert_includes tool_names, "skill_activate"
     end
 
@@ -364,30 +350,9 @@ describe "Agent skills integration" do
         end
       end
 
-      tool_names = agent_class.resolved_tool_classes.map(&:name)
+      tool_names = agent_class.new.tools.map(&:name)
       assert_includes tool_names, "my_activate"
       refute_includes tool_names, "skill_activate"
-    end
-
-    it "raises on tool name conflict at class level" do
-      conflict_tool = Class.new(Riffer::Tool) do
-        identifier "skill_activate"
-        description "Conflicts"
-        def call(context:)
-          text("ok")
-        end
-      end
-
-      agent_class = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        uses_tools [conflict_tool]
-        skills do
-          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
-        end
-      end
-
-      error = assert_raises(Riffer::ArgumentError) { agent_class.resolved_tool_classes }
-      assert_match(/Tool name conflict/, error.message)
     end
   end
 
@@ -497,12 +462,9 @@ describe "Agent skills integration" do
         end
       end
 
-      provider = Riffer::Providers::Mock.new
-      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
-      provider.stub_response("Here is my review.")
-
       agent = agent_class.new
-      agent.instance_variable_set(:@provider_instance, provider)
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("Here is my review.")
 
       events = agent.stream("Review this code").select { |e| e.is_a?(Riffer::StreamEvents::SkillActivation) }
 
@@ -519,13 +481,10 @@ describe "Agent skills integration" do
         end
       end
 
-      provider = Riffer::Providers::Mock.new
-      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
-      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
-      provider.stub_response("Done.")
-
       agent = agent_class.new
-      agent.instance_variable_set(:@provider_instance, provider)
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("Done.")
 
       events = agent.stream("Review").select { |e| e.is_a?(Riffer::StreamEvents::SkillActivation) }
 
@@ -542,12 +501,9 @@ describe "Agent skills integration" do
         end
       end
 
-      provider = Riffer::Providers::Mock.new
-      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
-      provider.stub_response("Here is my review.")
-
       agent = agent_class.new
-      agent.instance_variable_set(:@provider_instance, provider)
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("Here is my review.")
       response = agent.generate("Review this code")
 
       assert_equal "Here is my review.", response.content
@@ -566,12 +522,9 @@ describe "Agent skills integration" do
         end
       end
 
-      provider = Riffer::Providers::Mock.new
-      provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"nonexistent"}'}])
-      provider.stub_response("Sorry, skill not found.")
-
       agent = agent_class.new
-      agent.instance_variable_set(:@provider_instance, provider)
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"nonexistent"}'}])
+      agent.provider.stub_response("Sorry, skill not found.")
       agent.generate("Use nonexistent skill")
 
       tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }

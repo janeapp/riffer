@@ -36,9 +36,14 @@ class Riffer::Session
 
   # Appends +message+ and fires every registered callback once with it.
   #
+  # Pass +silent: true+ to skip +on_message+ callbacks — used for
+  # non-inference inputs like user messages, which subscribers don't
+  # expect to observe through the callback channel. Inference-produced
+  # messages (Assistant, Tool) always go through +add+ without +silent+.
+  #
   # --
-  # : (Riffer::Messages::Base) -> Riffer::Messages::Base
-  def add: (Riffer::Messages::Base) -> Riffer::Messages::Base
+  # : (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
+  def add: (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
 
   # Replaces the message history wholesale. Does NOT fire +on_message+
   # callbacks; registered callbacks persist across the swap.
@@ -114,6 +119,21 @@ class Riffer::Session
   # : () { (Riffer::Messages::Base) -> void } -> untyped
   def each: () -> Enumerator[Riffer::Messages::Base, self]
           | () { (Riffer::Messages::Base) -> void } -> untyped
+
+  # The number of LLM steps completed in this session, derived from the
+  # count of assistant messages. Used by the agent loop to enforce
+  # +max_steps+ on resume.
+  #
+  # --
+  # : () -> Integer
+  def steps: () -> Integer
+
+  # The most recent +Riffer::Messages::Assistant+ in the session, or +nil+
+  # when none exists.
+  #
+  # --
+  # : () -> Riffer::Messages::Assistant?
+  def final_assistant_message: () -> Riffer::Messages::Assistant?
 
   private
 

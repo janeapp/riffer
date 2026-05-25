@@ -25,10 +25,21 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
   # Initializes the mock provider.
   #
+  # +responses:+ accepts an array of response hashes in the same shape
+  # +#stub_response+ takes — raw +tool_calls:+ hashes are normalised to
+  # +Riffer::Messages::Assistant::ToolCall+ instances. This is the canonical
+  # way to pre-configure canned LLM responses on an agent via
+  # +provider_options responses: [...]+.
+  #
+  #   Riffer::Providers::Mock.new(responses: [
+  #     {content: "", tool_calls: [{name: "tool_a", arguments: "{}"}]},
+  #     {content: "Final answer"}
+  #   ])
+  #
   #--
   #: (**untyped) -> void
   def initialize(**options)
-    @responses = options[:responses] || []
+    @responses = (options[:responses] || []).map { |r| normalize_response(r) }
     @current_index = 0
     @calls = []
     @stubbed_responses = []
@@ -45,14 +56,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #--
   #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -> void
   def stub_response(content, tool_calls: [], token_usage: nil)
-    formatted_tool_calls = tool_calls.map.with_index do |tc, idx|
-      Riffer::Messages::Assistant::ToolCall.new(
-        call_id: tc[:call_id] || tc[:id] || "mock_call_#{idx}",
-        name: tc[:name],
-        arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
-      )
-    end
-    @stubbed_responses << {role: "assistant", content: content, tool_calls: formatted_tool_calls, token_usage: token_usage}
+    @stubbed_responses << normalize_response(content: content, tool_calls: tool_calls, token_usage: token_usage)
   end
 
   # Clears all stubbed responses.
@@ -64,6 +68,30 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   private
+
+  # Normalises a response hash into Mock's internal format. Accepts the
+  # +#stub_response+ kwargs shape (+content:+, +tool_calls:+, +token_usage:+)
+  # or a pre-built hash with already-converted ToolCall instances. Raw
+  # +tool_calls:+ hashes are wrapped in +Riffer::Messages::Assistant::ToolCall+.
+  #
+  #--
+  #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def normalize_response(response)
+    formatted_tool_calls = (response[:tool_calls] || []).map.with_index do |tc, idx|
+      next tc if tc.is_a?(Riffer::Messages::Assistant::ToolCall)
+      Riffer::Messages::Assistant::ToolCall.new(
+        call_id: tc[:call_id] || tc[:id] || "mock_call_#{idx}",
+        name: tc[:name],
+        arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
+      )
+    end
+    {
+      role: response[:role] || "assistant",
+      content: response[:content] || "",
+      tool_calls: formatted_tool_calls,
+      token_usage: response[:token_usage]
+    }
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

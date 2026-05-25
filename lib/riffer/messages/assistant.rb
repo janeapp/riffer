@@ -44,6 +44,12 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   end
 
   #--
+  #: () -> bool
+  def has_tool_calls?
+    !@tool_calls.empty?
+  end
+
+  #--
   #: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +(other)
     self.class.new("#{content}\n\n#{other.content}", tool_calls: tool_calls + other.tool_calls)

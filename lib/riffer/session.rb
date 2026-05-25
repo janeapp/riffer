@@ -45,11 +45,16 @@ class Riffer::Session
 
   # Appends +message+ and fires every registered callback once with it.
   #
+  # Pass +silent: true+ to skip +on_message+ callbacks — used for
+  # non-inference inputs like user messages, which subscribers don't
+  # expect to observe through the callback channel. Inference-produced
+  # messages (Assistant, Tool) always go through +add+ without +silent+.
+  #
   #--
-  #: (Riffer::Messages::Base) -> Riffer::Messages::Base
-  def add(message)
+  #: (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
+  def add(message, silent: false)
     @messages << message
-    @callbacks.each { |callback| callback.call(message) }
+    @callbacks.each { |callback| callback.call(message) } unless silent
     message
   end
 
@@ -189,6 +194,28 @@ class Riffer::Session
   #: () { (Riffer::Messages::Base) -> void } -> untyped
   def each(&block)
     @messages.each(&block)
+  end
+
+  # The number of LLM steps completed in this session, derived from the
+  # count of assistant messages. Used by the agent loop to enforce
+  # +max_steps+ on resume.
+  #
+  #--
+  #: () -> Integer
+  def steps
+    @messages.count { |m| m.is_a?(Riffer::Messages::Assistant) }
+  end
+
+  # The most recent +Riffer::Messages::Assistant+ in the session, or +nil+
+  # when none exists.
+  #
+  #--
+  #: () -> Riffer::Messages::Assistant?
+  def final_assistant_message
+    # TODO: Replace with rfind when minimum Ruby is 4.0+
+    # rubocop:disable Style/ReverseFind
+    @messages.reverse_each.find { |m| m.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
+    # rubocop:enable Style/ReverseFind
   end
 
   private
