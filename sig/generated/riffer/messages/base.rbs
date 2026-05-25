@@ -28,6 +28,14 @@ class Riffer::Messages::Base
   # : () -> Symbol
   def role: () -> Symbol
 
+  # Whether this message carries pending tool calls. Defaults to +false+;
+  # +Riffer::Messages::Assistant+ overrides this when its +tool_calls+
+  # array is non-empty.
+  #
+  # --
+  # : () -> bool
+  def has_tool_calls?: () -> bool
+
   private
 
   # : () -> String?

@@ -47,10 +47,6 @@ module Riffer::Agent::Run
   def call_llm_stream: (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # --
-  # : (Riffer::Messages::Assistant) -> bool
-  def has_tool_calls?: (Riffer::Messages::Assistant) -> bool
-
-  # --
   # : (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
   def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
 
@@ -79,10 +75,6 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Agent) -> Hash[Symbol, untyped]
   def merged_model_options: (Riffer::Agent) -> Hash[Symbol, untyped]
-
-  # --
-  # : (Riffer::Agent) -> Riffer::Messages::Assistant?
-  def final_assistant_message: (Riffer::Agent) -> Riffer::Messages::Assistant?
 
   # --
   # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response

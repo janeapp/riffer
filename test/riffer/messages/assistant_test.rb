@@ -47,6 +47,19 @@ describe Riffer::Messages::Assistant do
     end
   end
 
+  describe "#has_tool_calls?" do
+    it "returns false when tool_calls is empty" do
+      message = Riffer::Messages::Assistant.new("hi")
+      expect(message.has_tool_calls?).must_equal false
+    end
+
+    it "returns true when tool_calls is non-empty" do
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "t", arguments: "{}")
+      message = Riffer::Messages::Assistant.new("", tool_calls: [tool_call])
+      expect(message.has_tool_calls?).must_equal true
+    end
+  end
+
   describe "#+" do
     it "concatenates content" do
       a = Riffer::Messages::Assistant.new("Part one")

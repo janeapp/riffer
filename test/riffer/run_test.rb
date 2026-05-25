@@ -1556,83 +1556,6 @@ describe Riffer::Agent::Run do
         expect(result.content).must_be_instance_of String
       end
     end
-
-    describe "without instructions" do
-      let(:no_instructions_agent_class) do
-        Class.new(Riffer::Agent) do
-          model "mock/gpt-4o"
-        end
-      end
-
-      it "does not add system message" do
-        agent = no_instructions_agent_class.new
-        agent.generate("Hello")
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message).must_be_nil
-      end
-    end
-
-    describe "with dynamic instructions" do
-      it "resolves the Proc at generate time" do
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          instructions -> { "Dynamic instructions" }
-        end
-
-        agent = klass.new
-        agent.generate("Hello")
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message.content).must_equal "Dynamic instructions"
-      end
-
-      it "passes context to the Proc" do
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          instructions ->(context) { "You are assisting #{context[:name]}" }
-        end
-
-        agent = klass.new(context: {name: "Jane"})
-        agent.generate("Hello")
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message.content).must_equal "You are assisting Jane"
-      end
-
-      it "passes an empty context Hash when not provided" do
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          instructions ->(context) { context[:name].nil? ? "No name" : "With name #{context[:name]}" }
-        end
-
-        agent = klass.new
-        agent.generate("Hello")
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message.content).must_equal "No name"
-      end
-
-      it "does not add system message when Proc returns nil" do
-        returner = ->(_context) {}
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          instructions returner
-        end
-
-        agent = klass.new
-        agent.generate("Hello")
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message).must_be_nil
-      end
-    end
-
-    describe "with invalid provider" do
-      it "raises Riffer::ArgumentError at Agent.new when provider is not registered" do
-        invalid_agent_class = Class.new(Riffer::Agent) do
-          model "nonexistent/gpt-4"
-        end
-
-        error = expect { invalid_agent_class.new }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/Provider not found: nonexistent/)
-      end
-    end
   end
 
   describe "#stream" do
@@ -1781,46 +1704,6 @@ describe Riffer::Agent::Run do
         agent.stream("Hello").each { |_| }
         assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
         expect(assistant_message.content).wont_be_empty
-      end
-    end
-
-    describe "without instructions" do
-      let(:no_instructions_agent_class) do
-        Class.new(Riffer::Agent) do
-          model "mock/gpt-4o"
-        end
-      end
-
-      it "does not add system message" do
-        agent = no_instructions_agent_class.new
-        agent.stream("Hello").each { |_| }
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message).must_be_nil
-      end
-    end
-
-    describe "with dynamic instructions" do
-      it "resolves the Proc with context" do
-        klass = Class.new(Riffer::Agent) do
-          model "mock/riffer-1"
-          instructions ->(context) { "You are assisting #{context[:name]}" }
-        end
-
-        agent = klass.new(context: {name: "Jane"})
-        agent.stream("Hello").each { |_| }
-        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
-        expect(system_message.content).must_equal "You are assisting Jane"
-      end
-    end
-
-    describe "with invalid provider" do
-      it "raises Riffer::ArgumentError at Agent.new when provider is not registered" do
-        invalid_agent_class = Class.new(Riffer::Agent) do
-          model "nonexistent/gpt-4"
-        end
-
-        error = expect { invalid_agent_class.new }.must_raise(Riffer::ArgumentError)
-        expect(error.message).must_match(/Provider not found: nonexistent/)
       end
     end
   end

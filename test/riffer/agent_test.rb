@@ -104,6 +104,63 @@ describe Riffer::Agent do
         expect(error.message).must_match(/Invalid model string: invalid-format/)
       end
     end
+
+    describe "with unregistered provider" do
+      it "raises Riffer::ArgumentError at Agent.new" do
+        klass = Class.new(Riffer::Agent) do
+          model "nonexistent/gpt-4"
+        end
+        error = expect { klass.new }.must_raise(Riffer::ArgumentError)
+        expect(error.message).must_match(/Provider not found: nonexistent/)
+      end
+    end
+
+    describe "with dynamic instructions" do
+      it "resolves the Proc at Agent.new and seeds the session" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions -> { "Dynamic instructions" }
+        end
+
+        agent = klass.new
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "Dynamic instructions"
+      end
+
+      it "passes context to the Proc" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions ->(context) { "You are assisting #{context[:name]}" }
+        end
+
+        agent = klass.new(context: {name: "Jane"})
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "You are assisting Jane"
+      end
+
+      it "passes an empty context Hash when not provided" do
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions ->(context) { context[:name].nil? ? "No name" : "With name #{context[:name]}" }
+        end
+
+        agent = klass.new
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message.content).must_equal "No name"
+      end
+
+      it "does not add a system message when the Proc returns nil" do
+        returner = ->(_context) {}
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          instructions returner
+        end
+
+        agent = klass.new
+        system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+        expect(system_message).must_be_nil
+      end
+    end
   end
 
   describe ".config" do

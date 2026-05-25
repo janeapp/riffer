@@ -42,6 +42,10 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   def structured_output?: () -> bool
 
   # --
+  # : () -> bool
+  def has_tool_calls?: () -> bool
+
+  # --
   # : (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
 

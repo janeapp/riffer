@@ -83,6 +83,14 @@ describe Riffer::Session do
       s.remove(id: "a_1")
       expect(fired).must_equal []
     end
+
+    it "does not fire callbacks on #add when silent: true" do
+      fired = []
+      s = Riffer::Session.new
+      s.on_message { |m| fired << m }
+      s.add(user, silent: true)
+      expect(fired).must_equal []
+    end
   end
 
   describe "#add" do
@@ -95,6 +103,12 @@ describe Riffer::Session do
     it "returns the appended message" do
       s = Riffer::Session.new
       expect(s.add(user)).must_be_same_as user
+    end
+
+    it "still appends to #messages when silent: true" do
+      s = Riffer::Session.new
+      s.add(user, silent: true)
+      expect(s.messages).must_equal [user]
     end
   end
 
@@ -309,6 +323,35 @@ describe Riffer::Session do
 
     it "returns an Enumerator when #each is called without a block" do
       expect(session.each).must_be_kind_of Enumerator
+    end
+  end
+
+  describe "#steps" do
+    it "is zero when there are no assistant messages" do
+      s = Riffer::Session.new(messages: [user])
+      expect(s.steps).must_equal 0
+    end
+
+    it "counts assistant messages only" do
+      s = Riffer::Session.new(messages: [user, plain_assistant, tool_msg, tool_assistant])
+      expect(s.steps).must_equal 2
+    end
+  end
+
+  describe "#final_assistant_message" do
+    it "returns nil when there are no assistant messages" do
+      s = Riffer::Session.new(messages: [user])
+      expect(s.final_assistant_message).must_be_nil
+    end
+
+    it "returns the most recent assistant message" do
+      s = Riffer::Session.new(messages: [user, plain_assistant, user, tool_assistant])
+      expect(s.final_assistant_message).must_equal tool_assistant
+    end
+
+    it "ignores trailing non-assistant messages" do
+      s = Riffer::Session.new(messages: [user, plain_assistant, tool_msg])
+      expect(s.final_assistant_message).must_equal plain_assistant
     end
   end
 end

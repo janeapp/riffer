@@ -24,6 +24,16 @@ describe Riffer::Messages::Base do
     end
   end
 
+  describe "#has_tool_calls?" do
+    it "defaults to false" do
+      expect(base_message.has_tool_calls?).must_equal false
+    end
+
+    it "is false on non-assistant subclasses" do
+      expect(Riffer::Messages::User.new("Hi").has_tool_calls?).must_equal false
+    end
+  end
+
   describe "#id" do
     before { @original_strategy = Riffer.config.message_id_strategy }
     after { Riffer.config.message_id_strategy = @original_strategy }

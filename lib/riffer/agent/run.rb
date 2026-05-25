@@ -64,7 +64,7 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, ?Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def run_generate_loop(agent, all_modifications = [])
-    step = agent.session.count { |m| m.is_a?(Riffer::Messages::Assistant) }
+    step = agent.session.steps
 
     reason = catch(:riffer_interrupt) do
       execute_pending_tool_calls(agent)
@@ -82,14 +82,14 @@ module Riffer::Agent::Run
 
         agent.session.add(processed_response)
 
-        break unless has_tool_calls?(processed_response)
+        break unless processed_response.has_tool_calls?
 
         throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if step >= agent.config.max_steps
 
         execute_tool_calls(agent, processed_response)
       end
 
-      response = final_assistant_message(agent)
+      response = agent.session.final_assistant_message
 
       return build_response(agent, response&.content || "", modifications: all_modifications, structured_output: validate_structured_output(agent, response))
     end
@@ -98,7 +98,7 @@ module Riffer::Agent::Run
     # the return above exits on the successful (non-interrupted) path.
     new_messages, filled = Riffer::Session::Repair.fill_orphans(agent.session.messages)
     agent.session.set(new_messages)
-    response = final_assistant_message(agent)
+    response = agent.session.final_assistant_message
 
     build_response(agent, response&.content || "", modifications: all_modifications, interrupted: true, interrupt_reason: reason, structured_output: validate_structured_output(agent, response), healed_tool_call_ids: filled)
   end
@@ -106,7 +106,7 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, Enumerator::Yielder) -> void
   def run_stream_loop(agent, yielder)
-    step = agent.session.count { |m| m.is_a?(Riffer::Messages::Assistant) }
+    step = agent.session.steps
 
     skills = agent.context[:skills]
     if skills
@@ -165,7 +165,7 @@ module Riffer::Agent::Run
 
         agent.session.add(processed_response)
 
-        break unless has_tool_calls?(processed_response)
+        break unless processed_response.has_tool_calls?
 
         throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if step >= agent.config.max_steps
 
@@ -201,12 +201,6 @@ module Riffer::Agent::Run
       tools: agent.tools,
       **merged_model_options(agent)
     )
-  end
-
-  #--
-  #: (Riffer::Messages::Assistant) -> bool
-  def has_tool_calls?(response)
-    response.is_a?(Riffer::Messages::Assistant) && !response.tool_calls.empty?
   end
 
   #--
@@ -284,15 +278,6 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent) -> Riffer::Messages::Assistant?
-  def final_assistant_message(agent)
-    # TODO: Replace with rfind when minimum Ruby is 4.0+
-    # rubocop:disable Style/ReverseFind
-    agent.session.reverse_each.find { |msg| msg.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
-    # rubocop:enable Style/ReverseFind
-  end
-
-  #--
   #: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
   def build_response(agent, content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [])
     messages = agent.session.messages
@@ -303,7 +288,7 @@ module Riffer::Agent::Run
   #: (Riffer::Agent, String, files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
   def append_user_message(agent, prompt, files:)
     file_parts = (files || []).map { |f| convert_to_file_part(f) }
-    agent.session.set(agent.session.messages + [Riffer::Messages::User.new(prompt, files: file_parts)])
+    agent.session.add(Riffer::Messages::User.new(prompt, files: file_parts), silent: true)
   end
 
   # Accumulates token usage into +agent.context[:token_usage]+. Mutates the
