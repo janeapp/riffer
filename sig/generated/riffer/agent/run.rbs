@@ -38,8 +38,8 @@ module Riffer::Agent::Run
   # and whether per-step events are emitted.
   #
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
-  def run_loop: (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
+  # : (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  def run_loop: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
 
   # Consumes one provider stream, forwarding every event to +stream_yielder+
   # and folding it into an +Assistant+ message.

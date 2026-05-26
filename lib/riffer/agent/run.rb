@@ -24,7 +24,7 @@ module Riffer::Agent::Run
   #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
   def generate(agent:, prompt: nil, files: nil)
     append_user_message(agent, prompt, files: files)
-    run_loop(agent, nil)
+    run_loop(agent)
   end
 
   # Runs the streaming loop for the given agent. See Riffer::Agent#stream
@@ -34,7 +34,7 @@ module Riffer::Agent::Run
   #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(agent:, prompt: nil, files: nil)
     append_user_message(agent, prompt, files: files)
-    Enumerator.new { |stream_yielder| run_loop(agent, stream_yielder) }
+    Enumerator.new { |stream_yielder| run_loop(agent, stream_yielder: stream_yielder) }
   end
 
   private
@@ -47,8 +47,8 @@ module Riffer::Agent::Run
   # and whether per-step events are emitted.
   #
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
-  def run_loop(agent, stream_yielder)
+  #: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  def run_loop(agent, stream_yielder: nil)
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
 
     run_before_guardrails(agent, stream_yielder, all_modifications) { |tripped| return tripped }
