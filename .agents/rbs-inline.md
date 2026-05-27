@@ -116,8 +116,8 @@ DEFAULTS = {}.freeze #: Hash[Symbol, untyped]
 
 After changing type annotations:
 
-1. Run `bundle exec rake rbs:generate` to regenerate `sig/generated/` files
+1. Run `bin/rbs` to regenerate `sig/generated/` files
 2. Commit both the source changes and the generated `.rbs` files
 3. CI checks for drift between source annotations and committed `.rbs` files
 
-Use `bundle exec rake rbs:watch` during development to auto-regenerate on file changes.
+Use `bin/rbs-watch` during development to auto-regenerate on file changes.

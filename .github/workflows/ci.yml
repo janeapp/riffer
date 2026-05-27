@@ -12,7 +12,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: bundle exec rake standard
+      - run: bin/lint
 
   test:
     runs-on: ubuntu-latest
@@ -32,7 +32,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec rake test
+      - run: bin/test
 
   rbs:
     runs-on: ubuntu-latest
@@ -43,8 +43,8 @@ jobs:
         with:
           bundler-cache: true
       - name: Generate RBS files
-        run: bundle exec rake rbs:generate
+        run: bin/rbs
       - name: Check for RBS drift
         run: git diff --exit-code sig/generated/
       - name: Run Steep type check
-        run: bundle exec steep check
+        run: bin/typecheck

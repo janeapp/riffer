@@ -4,7 +4,7 @@
 
 - Use StandardRB for linting and formatting
 - Custom rules are defined in `.standard.yml`
-- Run `bundle exec rake standard` to check, `bundle exec rake standard:fix` to auto-fix
+- Run `bin/lint` to check, `bin/lint --fix` to auto-fix
 
 ## Required Header
 

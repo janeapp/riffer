@@ -68,7 +68,7 @@ For comprehensive documentation, see the [docs](docs/) directory:
 Generate the full API documentation with:
 
 ```bash
-bundle exec rake docs
+bin/docs
 ```
 
 Then open `doc/index.html` in your browser.
@@ -81,24 +81,23 @@ After checking out the repo, run:
 bin/setup
 ```
 
-Run the test suite:
+Common workflows are wrapped in `bin/`. Each is a thin `exec bundle exec …` script — use them
+instead of typing `bundle exec` yourself:
 
-```bash
-bundle exec rake test
-```
+| Command         | Description                                  |
+| --------------- | -------------------------------------------- |
+| `bin/rake`      | Default task: test + standard + steep:check  |
+| `bin/test`      | Run tests                                    |
+| `bin/lint`      | Check code style (pass `--fix` to auto-fix)  |
+| `bin/typecheck` | Run Steep type checker                       |
+| `bin/rbs`       | Generate RBS type signatures                 |
+| `bin/rbs-watch` | Watch and regenerate RBS files               |
+| `bin/docs`      | Build RDoc HTML                              |
+| `bin/build`     | Build the gem package                        |
+| `bin/console`   | Interactive console                          |
 
-Check and fix code style:
-
-```bash
-bundle exec rake standard
-bundle exec rake standard:fix
-```
-
-Run the interactive console:
-
-```bash
-bin/console
-```
+`bin/rake <task>` is the escape hatch for any rake task without a named wrapper (e.g.
+`bin/rake test:slow`, `bin/rake release`).
 
 ### Recording VCR Cassettes
 
@@ -125,7 +124,7 @@ VCR records the HTTP interactions to `test/fixtures/vcr_cassettes/` on the first
 ## Contributing
 
 1. Fork the repository and create your branch: `git checkout -b feature/foo`
-2. Run tests and linters locally: `bundle exec rake`
+2. Run tests and linters locally: `bin/rake`
 3. Submit a pull request with a clear description of the change
 
 Please follow the [Code of Conduct](https://github.com/janeapp/riffer/blob/main/CODE_OF_CONDUCT.md).

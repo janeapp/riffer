@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -e
+
+# No args: run the full suite via rake.
+if [ $# -eq 0 ]; then
+  exec bundle exec rake test
+fi
+
+# Split file args from flag args. Anything starting with `-` is a flag; for the
+# Minitest flags that take a value, consume the next arg as that value (so
+# `--name /pattern/` parses correctly regardless of file/flag ordering).
+files=()
+opts=()
+expect_value=false
+for arg in "$@"; do
+  if $expect_value; then
+    opts+=("$arg")
+    expect_value=false
+  elif [[ "$arg" == -* ]]; then
+    opts+=("$arg")
+    case "$arg" in
+      --name|-n|--seed|-s|--exclude|-e|--include|-I) expect_value=true ;;
+    esac
+  else
+    files+=("$arg")
+  fi
+done
+
+# Only flags, no files: run the full suite via rake, forwarding to Minitest.
+if [ ${#files[@]} -eq 0 ]; then
+  exec bundle exec rake test TESTOPTS="${opts[*]}"
+fi
+
+# Files (and optional flags): load each file via `ruby -r`, forward flags to Minitest.
+requires=()
+for f in "${files[@]}"; do
+  case "$f" in
+    /*) requires+=("-r" "$f") ;;
+    *)  requires+=("-r" "./$f") ;;
+  esac
+done
+
+exec bundle exec ruby -Ilib:test "${requires[@]}" -e "" -- "${opts[@]}"
