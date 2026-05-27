@@ -5,7 +5,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 ## Quick Reference
 
 - **Ruby**: 3.3.0+ (CI: 3.3, 3.4, 4.0)
-- **Lint + Test**: `bundle exec rake`
+- **Lint + Test**: `bin/rake` (runs the default task: test + standard + steep:check)
 - **Autoloading**: Zeitwerk (file paths must match module/class names)
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)
 - **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/10_CONFIGURATION.md`, `docs/08_MESSAGES.md`). RDoc ≠ user docs.
@@ -21,12 +21,19 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 
 ## Commands
 
-| Command                         | Description                    |
-| ------------------------------- | ------------------------------ |
-| `bundle exec rake`              | Run tests + lint (default)     |
-| `bundle exec rake test`         | Run tests only                 |
-| `bundle exec rake standard`     | Check code style               |
-| `bundle exec rake standard:fix` | Auto-fix style issues          |
-| `bundle exec rake rbs:generate` | Generate RBS type signatures   |
-| `bundle exec rake rbs:watch`    | Watch and regenerate RBS files |
-| `bin/console`                   | Interactive console            |
+All wrappers `exec bundle exec …` under the hood.
+
+| Command         | Description                                  |
+| --------------- | -------------------------------------------- |
+| `bin/rake`      | Default task: test + standard + steep:check  |
+| `bin/test`      | Run tests                                    |
+| `bin/lint`      | Check code style (pass `--fix` to auto-fix)  |
+| `bin/typecheck` | Run Steep type checker                       |
+| `bin/rbs`       | Generate RBS type signatures                 |
+| `bin/rbs-watch` | Watch and regenerate RBS files               |
+| `bin/docs`      | Build RDoc HTML                              |
+| `bin/build`     | Build the gem package                        |
+| `bin/console`   | Interactive console                          |
+| `bin/setup`     | Install dependencies                         |
+
+`bin/rake <task>` is the escape hatch for any rake task without a named wrapper.

@@ -46,11 +46,15 @@ Record external API interactions in `test/fixtures/vcr_cassettes/`.
 
 ```bash
 # Run all tests
-bundle exec rake test
+bin/test
 
-# Run a single test file
-bundle exec ruby -Ilib:test test/riffer/agent_test.rb
+# Run a single test file (or multiple files)
+bin/test test/riffer/agent_test.rb
+bin/test test/riffer/agent_test.rb test/riffer/config_test.rb
 
-# Run a specific test by name
-bundle exec ruby -Ilib:test test/riffer/agent_test.rb --name "test_something"
+# Filter by test name (regex or substring)
+bin/test test/riffer/agent_test.rb --name /generates/
+
+# Filter across the whole suite
+bin/test --name /generates/
 ```
