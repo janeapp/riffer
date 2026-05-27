@@ -19,13 +19,14 @@ class Riffer::Skills::ActivateTool < Riffer::Tool
 
   # Activates a skill by name and returns its body.
   #
-  # [context] tool context containing +:skills+ (a Riffer::Skills::Context).
+  # [context] the agent's +Riffer::Agent::Context+, exposing +#skills+
+  #           (a +Riffer::Skills::Context+).
   # [name] the skill name to activate.
   #
   #--
-  #: (context: Hash[Symbol, untyped]?, name: String) -> Riffer::Tools::Response
+  #: (context: Riffer::Agent::Context?, name: String) -> Riffer::Tools::Response
   def call(context:, name:)
-    skills_context = context&.dig(:skills)
+    skills_context = context&.skills
     return error("Skills not configured") unless skills_context
 
     text(skills_context.activate(name))

@@ -484,9 +484,9 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.generate("Hi")
-      expect(agent.context[:token_usage]).wont_be_nil
-      expect(agent.context[:token_usage].input_tokens).must_equal 100
-      expect(agent.context[:token_usage].output_tokens).must_equal 50
+      expect(agent.context.token_usage).wont_be_nil
+      expect(agent.context.token_usage.input_tokens).must_equal 100
+      expect(agent.context.token_usage.output_tokens).must_equal 50
     end
 
     it "accumulates token usage across tool loops" do
@@ -512,8 +512,8 @@ describe Riffer::Agent::Run do
 
       agent.generate("Call tool")
 
-      expect(agent.context[:token_usage].input_tokens).must_equal 250
-      expect(agent.context[:token_usage].output_tokens).must_equal 125
+      expect(agent.context.token_usage.input_tokens).must_equal 250
+      expect(agent.context.token_usage.output_tokens).must_equal 125
     end
 
     it "does not track nil token usage" do
@@ -521,7 +521,7 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       provider.stub_response("Hello!")
       agent.generate("Hi")
-      expect(agent.context[:token_usage]).must_be_nil
+      expect(agent.context.token_usage).must_be_nil
     end
 
     it "attaches token usage to assistant messages" do
@@ -542,9 +542,9 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.stream("Hi").each { |_| }
-      expect(agent.context[:token_usage]).wont_be_nil
-      expect(agent.context[:token_usage].input_tokens).must_equal 100
-      expect(agent.context[:token_usage].output_tokens).must_equal 50
+      expect(agent.context.token_usage).wont_be_nil
+      expect(agent.context.token_usage.input_tokens).must_equal 100
+      expect(agent.context.token_usage.output_tokens).must_equal 50
     end
 
     it "yields TokenUsageDone event" do
@@ -588,8 +588,8 @@ describe Riffer::Agent::Run do
 
       agent.stream("Call tool").each { |_| }
 
-      expect(agent.context[:token_usage].input_tokens).must_equal 250
-      expect(agent.context[:token_usage].output_tokens).must_equal 125
+      expect(agent.context.token_usage.input_tokens).must_equal 250
+      expect(agent.context.token_usage.output_tokens).must_equal 125
     end
   end
 
@@ -2354,9 +2354,10 @@ describe Riffer::Agent::Run do
         expect(tool_messages.first.content).must_equal "done"
       end
 
-      it "defaults context to a Hash with nil :skills when not provided" do
+      it "defaults context to a Riffer::Agent::Context with nil skills when not provided" do
         agent = agent_class.new(session: Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
-        expect(agent.context).must_equal({skills: nil})
+        expect(agent.context).must_be_instance_of Riffer::Agent::Context
+        expect(agent.context.skills).must_be_nil
       end
     end
 

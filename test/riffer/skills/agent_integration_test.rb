@@ -108,7 +108,7 @@ describe "Agent skills integration" do
 
       agent = agent_class.new
 
-      skills_state = agent.context[:skills]
+      skills_state = agent.context.skills
       refute_nil skills_state
       assert_kind_of Riffer::Skills::XmlAdapter, skills_state.adapter
     end
@@ -124,7 +124,7 @@ describe "Agent skills integration" do
 
       agent = agent_class.new
 
-      skills_state = agent.context[:skills]
+      skills_state = agent.context.skills
       refute_nil skills_state
       assert_kind_of Riffer::Skills::MarkdownAdapter, skills_state.adapter
     end

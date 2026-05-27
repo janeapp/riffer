@@ -5,8 +5,8 @@
 # Coordinates skill discovery, activation, and prompt rendering.
 # Tracks activations with caching to avoid redundant backend reads.
 #
-# Built by the agent at the start of generate/stream and passed to
-# tools via +context[:skills]+.
+# Built by the agent during +Agent.new+ and exposed to tools via
+# <tt>context.skills</tt> on the agent's +Riffer::Agent::Context+.
 #
 # See Riffer::Skills::Backend, Riffer::Skills::Frontmatter.
 class Riffer::Skills::Context
