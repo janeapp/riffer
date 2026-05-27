@@ -6,15 +6,21 @@ if [ $# -eq 0 ]; then
   exec bundle exec rake test
 fi
 
-# Split positional file args from flag args. Once we see a flag, everything
-# after it is treated as a flag/value (handles `--name /pattern/` correctly).
+# Split file args from flag args. Anything starting with `-` is a flag; for the
+# Minitest flags that take a value, consume the next arg as that value (so
+# `--name /pattern/` parses correctly regardless of file/flag ordering).
 files=()
 opts=()
-seen_flag=false
+expect_value=false
 for arg in "$@"; do
-  if $seen_flag || [[ "$arg" == -* ]]; then
-    seen_flag=true
+  if $expect_value; then
     opts+=("$arg")
+    expect_value=false
+  elif [[ "$arg" == -* ]]; then
+    opts+=("$arg")
+    case "$arg" in
+      --name|-n|--seed|-s|--exclude|-e|--include|-I) expect_value=true ;;
+    esac
   else
     files+=("$arg")
   fi
