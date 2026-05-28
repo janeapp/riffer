@@ -24,6 +24,14 @@ describe Riffer::Providers::Repository do
       expect(result).must_equal Riffer::Providers::AmazonBedrock
     end
 
+    it "returns the OpenRouter provider class for :openrouter symbol" do
+      expect(Riffer::Providers::Repository.find(:openrouter)).must_equal Riffer::Providers::OpenRouter
+    end
+
+    it "returns the OpenRouter provider class for 'openrouter' string" do
+      expect(Riffer::Providers::Repository.find("openrouter")).must_equal Riffer::Providers::OpenRouter
+    end
+
     it "returns the Mock provider class for :mock symbol" do
       expect(Riffer::Providers::Repository.find(:mock)).must_equal Riffer::Providers::Mock
     end

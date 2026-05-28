@@ -46,6 +46,19 @@ describe Riffer::Config do
     end
   end
 
+  describe "openrouter namespace" do
+    it "initializes with nil api_key" do
+      config = Riffer::Config.new
+      expect(config.openrouter.api_key).must_be_nil
+    end
+
+    it "allows setting the api_key" do
+      config = Riffer::Config.new
+      config.openrouter.api_key = "sk-or-test"
+      expect(config.openrouter.api_key).must_equal "sk-or-test"
+    end
+  end
+
   describe "evals namespace" do
     it "initializes with nil judge_model" do
       config = Riffer::Config.new

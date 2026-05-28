@@ -10,6 +10,7 @@ class Riffer::Providers::Repository
     azure_openai: -> { Riffer::Providers::AzureOpenAI },
     gemini: -> { Riffer::Providers::Gemini },
     openai: -> { Riffer::Providers::OpenAI },
+    openrouter: -> { Riffer::Providers::OpenRouter },
     mock: -> { Riffer::Providers::Mock }
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 

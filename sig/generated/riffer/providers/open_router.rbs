@@ -1,0 +1,85 @@
+# Generated from lib/riffer/providers/open_router.rb with RBS::Inline
+
+# OpenRouter provider for the OpenRouter unified gateway (https://openrouter.ai).
+#
+# Requires the +openai+ gem to be installed. OpenRouter exposes an
+# OpenAI-compatible Chat Completions endpoint, so this provider reuses
+# the OpenAI Ruby SDK with a +base_url+ override.
+#
+# The +api_key+ falls back to <tt>Riffer.config.openrouter.api_key</tt>
+# and then to +OPENROUTER_API_KEY+.
+class Riffer::Providers::OpenRouter < Riffer::Providers::Base
+  BASE_URL: String
+
+  # Initializes the OpenRouter provider.
+  #
+  # --
+  # : (?api_key: String?, **untyped) -> void
+  def initialize: (?api_key: String?, **untyped) -> void
+
+  private
+
+  # --
+  # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Hash[Symbol, untyped]) -> OpenAI::Models::Chat::ChatCompletion
+  def execute_generate: (Hash[Symbol, untyped]) -> OpenAI::Models::Chat::ChatCompletion
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletion) -> Riffer::TokenUsage?
+  def extract_token_usage: (OpenAI::Models::Chat::ChatCompletion) -> Riffer::TokenUsage?
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletion) -> String
+  def extract_content: (OpenAI::Models::Chat::ChatCompletion) -> String
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletion) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (OpenAI::Models::Chat::ChatCompletion) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletionChunk, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_stream_chunk: (OpenAI::Models::Chat::ChatCompletionChunk, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_text_delta: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # --
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_reasoning_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_tool_call_deltas: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # --
+  # : (state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def emit_tool_call_done_events: (state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+
+  # --
+  # : (OpenAI::Models::Chat::ChatCompletionChunk::Choice) -> bool
+  def finish_reason_is_tool_calls?: (OpenAI::Models::Chat::ChatCompletionChunk::Choice) -> bool
+
+  # --
+  # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
+  def convert_messages_to_chat_completions_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
+
+  # --
+  # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def convert_assistant_to_chat_completions_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_chat_completions_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
+
+  # --
+  # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool_to_chat_completions_format: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+end
