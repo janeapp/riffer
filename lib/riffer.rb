@@ -11,7 +11,8 @@ require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect(
   "open_ai" => "OpenAI",
-  "azure_open_ai" => "AzureOpenAI"
+  "azure_open_ai" => "AzureOpenAI",
+  "open_router" => "OpenRouter"
 )
 loader.setup
 

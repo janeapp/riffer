@@ -11,6 +11,8 @@
 #
 #   Riffer.config.anthropic.api_key = "sk-ant-..."
 #
+#   Riffer.config.openrouter.api_key = "sk-or-..."
+#
 #   Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
 class Riffer::Config
   class AmazonBedrock < Struct[untyped]
@@ -50,6 +52,13 @@ class Riffer::Config
   end
 
   class OpenAI < Struct[untyped]
+    attr_accessor api_key(): untyped
+
+    def self.new: (?api_key: untyped) -> instance
+                | ({ ?api_key: untyped }) -> instance
+  end
+
+  class OpenRouter < Struct[untyped]
     attr_accessor api_key(): untyped
 
     def self.new: (?api_key: untyped) -> instance
@@ -129,6 +138,9 @@ class Riffer::Config
 
   # OpenAI configuration (Struct with +api_key+).
   attr_reader openai: Riffer::Config::OpenAI
+
+  # OpenRouter configuration (Struct with +api_key+).
+  attr_reader openrouter: Riffer::Config::OpenRouter
 
   # Evals configuration (Struct with +judge_model+).
   attr_reader evals: Riffer::Config::Evals

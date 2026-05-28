@@ -11,6 +11,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
 | Gemini         | `gemini`         | None                     |
+| OpenRouter     | `openrouter`     | `openai`                 |
 | Mock           | `mock`           | None                     |
 
 ## Model String Format
@@ -24,6 +25,7 @@ class MyAgent < Riffer::Agent
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
   model 'gemini/gemini-2.5-flash-lite'                                # Gemini
+  model 'openrouter/anthropic/claude-sonnet-4.6'                      # OpenRouter
   model 'mock/any'                                                    # Mock provider
 end
 ```
@@ -165,6 +167,9 @@ Riffer::Providers::Repository.find(:anthropic)
 Riffer::Providers::Repository.find(:gemini)
 # => Riffer::Providers::Gemini
 
+Riffer::Providers::Repository.find(:openrouter)
+# => Riffer::Providers::OpenRouter
+
 Riffer::Providers::Repository.find(:mock)
 # => Riffer::Providers::Mock
 ```
@@ -178,3 +183,4 @@ Riffer::Providers::Repository.find(:mock)
 - [Mock](06_MOCK_PROVIDER.md) - Mock provider for testing
 - [Custom Providers](07_CUSTOM_PROVIDERS.md) - Creating your own provider
 - [Gemini](08_GEMINI.md) - Gemini models via Google GenAI API
+- [OpenRouter](09_OPENROUTER.md) - Unified gateway across many vendors

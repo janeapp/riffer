@@ -1,0 +1,314 @@
+# frozen_string_literal: true
+# rbs_inline: enabled
+
+require "json"
+
+# OpenRouter provider for the OpenRouter unified gateway (https://openrouter.ai).
+#
+# Requires the +openai+ gem to be installed. OpenRouter exposes an
+# OpenAI-compatible Chat Completions endpoint, so this provider reuses
+# the OpenAI Ruby SDK with a +base_url+ override.
+#
+# The +api_key+ falls back to <tt>Riffer.config.openrouter.api_key</tt>
+# and then to +OPENROUTER_API_KEY+.
+class Riffer::Providers::OpenRouter < Riffer::Providers::Base
+  BASE_URL = "https://openrouter.ai/api/v1" #: String
+
+  # Initializes the OpenRouter provider.
+  #
+  #--
+  #: (?api_key: String?, **untyped) -> void
+  def initialize(api_key: nil, **options)
+    depends_on "openai"
+
+    api_key ||= Riffer.config.openrouter.api_key || ENV["OPENROUTER_API_KEY"]
+
+    @client = ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL, **options)
+  end
+
+  private
+
+  #--
+  #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def build_request_params(messages, model, options)
+    reasoning = options[:reasoning]
+    tools = options[:tools]
+    structured_output = options[:structured_output]
+
+    params = {
+      model: model,
+      messages: convert_messages_to_chat_completions_format(messages),
+      **options.except(:reasoning, :tools, :structured_output)
+    }
+
+    if reasoning
+      params[:reasoning] = reasoning.is_a?(String) ? {effort: reasoning} : reasoning
+    end
+
+    if tools && !tools.empty?
+      params[:tools] = tools.map { |t| convert_tool_to_chat_completions_format(t) }
+    end
+
+    if structured_output
+      params[:response_format] = {
+        type: "json_schema",
+        json_schema: {
+          name: "response",
+          schema: structured_output.json_schema(strict: true),
+          strict: true
+        }
+      }
+    end
+
+    params.compact
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> OpenAI::Models::Chat::ChatCompletion
+  def execute_generate(params)
+    @client.chat.completions.create(**params)
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletion) -> Riffer::TokenUsage?
+  def extract_token_usage(response)
+    usage = response.usage
+    return nil unless usage
+
+    Riffer::TokenUsage.new(
+      input_tokens: usage.prompt_tokens,
+      output_tokens: usage.completion_tokens
+    )
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletion) -> String
+  def extract_content(response)
+    response.choices.first&.message&.content || ""
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletion) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls(response)
+    message = response.choices.first&.message
+    return [] unless message
+
+    tool_calls = message.tool_calls
+    return [] if tool_calls.nil? || tool_calls.empty?
+
+    tool_calls.map do |tc|
+      Riffer::Messages::Assistant::ToolCall.new(
+        call_id: tc.id,
+        name: decode_tool_name(tc.function.name, tools: @current_tools),
+        arguments: tc.function.arguments
+      )
+    end
+  end
+
+  #--
+  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  def execute_stream(params, yielder)
+    # OpenRouter omits usage from streams unless explicitly opted in.
+    stream_options = (params[:stream_options] || {}).merge(include_usage: true)
+    stream_params = params.merge(stream_options: stream_options)
+
+    state = {
+      text: +"",
+      reasoning: +"",
+      tool_calls: {}
+    }
+
+    # Use stream_raw (not stream) — the latter yields a higher-level
+    # ChatChunkEvent helper that aggregates content/tool calls into typed
+    # events. We want raw ChatCompletionChunk objects with
+    # +choices.first.delta+ so we can map deltas to Riffer::StreamEvents
+    # ourselves.
+    stream = @client.chat.completions.stream_raw(**stream_params)
+    begin
+      stream.each do |chunk|
+        handle_stream_chunk(chunk, state: state, yielder: yielder)
+      end
+    ensure
+      # The OpenAI SDK does not auto-close the SSE socket on iteration
+      # interrupt, so close explicitly. Idempotent and a no-op after EOF.
+      stream.close
+    end
+
+    # Chat Completions has no per-tool terminal event, so flush any leftover
+    # tool calls here in case finish_reason is missing or not "tool_calls".
+    emit_tool_call_done_events(state: state, yielder: yielder) unless state[:tool_calls].empty?
+
+    yielder << Riffer::StreamEvents::TextDone.new(state[:text]) unless state[:text].empty?
+    yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning]) unless state[:reasoning].empty?
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletionChunk, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_stream_chunk(chunk, state:, yielder:)
+    choice = chunk.choices&.first
+    delta = choice&.delta
+
+    if delta
+      handle_text_delta(delta, state: state, yielder: yielder)
+      handle_reasoning_delta(delta, state: state, yielder: yielder)
+      handle_tool_call_deltas(delta, state: state, yielder: yielder)
+    end
+
+    if choice && finish_reason_is_tool_calls?(choice)
+      emit_tool_call_done_events(state: state, yielder: yielder)
+    end
+
+    return unless chunk.usage
+
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(
+      token_usage: Riffer::TokenUsage.new(
+        input_tokens: chunk.usage.prompt_tokens,
+        output_tokens: chunk.usage.completion_tokens
+      )
+    )
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_text_delta(delta, state:, yielder:)
+    content = delta.content
+    return if content.nil? || content.empty?
+
+    state[:text] << content
+    yielder << Riffer::StreamEvents::TextDelta.new(content)
+  end
+
+  #--
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_reasoning_delta(delta, state:, yielder:)
+    # The openai gem's typed Delta model strips fields not in OpenAI's spec
+    # (so +delta.reasoning+ raises NoMethodError), but the underlying data
+    # hash retains them. Access via +#[]+ which reads from BaseModel#@data.
+    reasoning = delta[:reasoning] if delta.respond_to?(:[])
+    return if reasoning.nil? || reasoning.empty?
+
+    state[:reasoning] << reasoning
+    yielder << Riffer::StreamEvents::ReasoningDelta.new(reasoning)
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_tool_call_deltas(delta, state:, yielder:)
+    tool_calls = delta.tool_calls
+    return if tool_calls.nil? || tool_calls.empty?
+
+    tool_calls.each do |tc|
+      entry = state[:tool_calls][tc.index] ||= {id: nil, name: nil, arguments: +""}
+      entry[:id] = tc.id if tc.id
+
+      fn = tc.function
+      next unless fn
+
+      entry[:name] = decode_tool_name(fn.name, tools: @current_tools) if fn.name
+
+      args_delta = fn.arguments
+      next if args_delta.nil? || args_delta.empty?
+
+      entry[:arguments] << args_delta
+      yielder << Riffer::StreamEvents::ToolCallDelta.new(
+        item_id: entry[:id] || "tool_#{tc.index}",
+        name: entry[:name],
+        arguments_delta: args_delta
+      )
+    end
+  end
+
+  #--
+  #: (state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def emit_tool_call_done_events(state:, yielder:)
+    state[:tool_calls].each do |index, entry|
+      fallback = "tool_#{index}"
+      yielder << Riffer::StreamEvents::ToolCallDone.new(
+        item_id: entry[:id] || fallback,
+        call_id: entry[:id] || fallback,
+        name: entry[:name],
+        arguments: entry[:arguments]
+      )
+    end
+    state[:tool_calls] = {}
+  end
+
+  #--
+  #: (OpenAI::Models::Chat::ChatCompletionChunk::Choice) -> bool
+  def finish_reason_is_tool_calls?(choice)
+    choice.finish_reason.to_s == "tool_calls"
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
+  def convert_messages_to_chat_completions_format(messages)
+    messages.flat_map do |message|
+      case message
+      when Riffer::Messages::System
+        {role: "system", content: message.content}
+      when Riffer::Messages::User
+        if message.files.empty?
+          {role: "user", content: message.content}
+        else
+          content = [{type: "text", text: message.content}]
+          message.files.each { |file| content << convert_file_part_to_chat_completions_format(file) }
+          {role: "user", content: content}
+        end
+      when Riffer::Messages::Assistant
+        convert_assistant_to_chat_completions_format(message)
+      when Riffer::Messages::Tool
+        {role: "tool", tool_call_id: message.tool_call_id, content: message.content}
+      end
+    end
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+  def convert_assistant_to_chat_completions_format(message)
+    msg = {role: "assistant"}
+    msg[:content] = message.content if message.content && !message.content.empty?
+
+    unless message.tool_calls.empty?
+      msg[:tool_calls] = message.tool_calls.map do |tc|
+        {
+          id: tc.call_id,
+          type: "function",
+          function: {
+            name: encode_tool_name(tc.name),
+            arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json
+          }
+        }
+      end
+    end
+
+    msg
+  end
+
+  #--
+  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_chat_completions_format(file)
+    if file.image?
+      image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"
+      {type: "image_url", image_url: {url: image_url}}
+    else
+      data_uri = "data:#{file.media_type};base64,#{file.data}"
+      block = {type: "file", file: {file_data: data_uri}}
+      block[:file][:filename] = file.filename if file.filename
+      block
+    end
+  end
+
+  #--
+  #: (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]
+  def convert_tool_to_chat_completions_format(tool)
+    {
+      type: "function",
+      function: {
+        name: encode_tool_name(tool.name),
+        description: tool.description,
+        parameters: tool.parameters_schema(strict: true),
+        strict: true
+      }
+    }
+  end
+end

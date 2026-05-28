@@ -12,6 +12,8 @@
 #
 #   Riffer.config.anthropic.api_key = "sk-ant-..."
 #
+#   Riffer.config.openrouter.api_key = "sk-or-..."
+#
 #   Riffer.config.evals.judge_model = "anthropic/claude-sonnet-4-20250514"
 #
 class Riffer::Config
@@ -20,6 +22,7 @@ class Riffer::Config
   AzureOpenAI = Struct.new(:api_key, :endpoint, keyword_init: true)
   Gemini = Struct.new(:api_key, :open_timeout, :read_timeout, keyword_init: true)
   OpenAI = Struct.new(:api_key, keyword_init: true)
+  OpenRouter = Struct.new(:api_key, keyword_init: true)
   Evals = Struct.new(:judge_model, keyword_init: true)
   Mcp = Struct.new(:credentials, :discovery_runner, keyword_init: true)
 
@@ -90,6 +93,9 @@ class Riffer::Config
 
   # OpenAI configuration (Struct with +api_key+).
   attr_reader :openai #: Riffer::Config::OpenAI
+
+  # OpenRouter configuration (Struct with +api_key+).
+  attr_reader :openrouter #: Riffer::Config::OpenRouter
 
   # Evals configuration (Struct with +judge_model+).
   attr_reader :evals #: Riffer::Config::Evals
@@ -200,6 +206,7 @@ class Riffer::Config
     @azure_openai = AzureOpenAI.new
     @gemini = Gemini.new
     @openai = OpenAI.new
+    @openrouter = OpenRouter.new
     @evals = Evals.new
     @mcp = Mcp.new(credentials: nil, discovery_runner: Riffer::Runner::Sequential.new)
     @tool_runtime = Riffer::ToolRuntime::Inline.new
