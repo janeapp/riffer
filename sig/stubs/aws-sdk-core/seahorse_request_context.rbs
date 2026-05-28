@@ -1,0 +1,7 @@
+module Seahorse
+  module Client
+    class RequestContext
+      def initialize: (operation_name: Symbol) -> void
+    end
+  end
+end

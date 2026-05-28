@@ -26,7 +26,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     api_key ||= Riffer.config.anthropic.api_key
 
-    @client = Anthropic::Client.new(api_key: api_key, **options)
+    @client = ::Anthropic::Client.new(api_key: api_key, **options)
   end
 
   private
@@ -154,24 +154,24 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     begin
       stream.each do |event|
         case event
-        when Anthropic::Models::RawContentBlockStartEvent
+        when ::Anthropic::Models::RawContentBlockStartEvent
           handle_raw_content_block_start(event, state: current_state)
-        when Anthropic::Models::RawContentBlockDeltaEvent
+        when ::Anthropic::Models::RawContentBlockDeltaEvent
           handle_raw_content_block_delta(event, state: current_state)
-        when Anthropic::Streaming::TextEvent
+        when ::Anthropic::Helpers::Streaming::TextEvent
           handle_text_event(event, state: current_state, yielder: yielder)
-        when Anthropic::Streaming::ThinkingEvent
+        when ::Anthropic::Helpers::Streaming::ThinkingEvent
           handle_thinking_event(event, state: current_state, yielder: yielder)
-        when Anthropic::Streaming::InputJsonEvent
+        when ::Anthropic::Helpers::Streaming::InputJsonEvent
           handle_input_json_event(event, state: current_state, yielder: yielder)
-        when Anthropic::Streaming::ContentBlockStopEvent
+        when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
           block_type = event.content_block&.type.to_s
           handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block_type == "text" && current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
           handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
           handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block_type == "server_tool_use"
           handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block_type == "web_search_tool_result"
-        when Anthropic::Streaming::MessageStopEvent
+        when ::Anthropic::Helpers::Streaming::MessageStopEvent
           handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
       end
