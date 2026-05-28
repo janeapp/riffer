@@ -73,8 +73,8 @@ class Riffer::Agent
   # Accepts a Riffer::Params instance or a block evaluated against a new Params.
   #
   # --
-  # : (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
-  def self.structured_output: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
+  # : (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def self.structured_output: (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #
@@ -124,8 +124,8 @@ class Riffer::Agent
   #   end
   #
   # --
-  # : () ?{ () -> void } -> Riffer::Skills::Config?
-  def self.skills: () ?{ () -> void } -> Riffer::Skills::Config?
+  # : () ?{ (Riffer::Skills::Config) [self: Riffer::Skills::Config] -> void } -> Riffer::Skills::Config?
+  def self.skills: () ?{ (Riffer::Skills::Config) [self: Riffer::Skills::Config] -> void } -> Riffer::Skills::Config?
 
   # Finds an agent class by identifier.
   #
@@ -359,8 +359,8 @@ class Riffer::Agent
   # : (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
   def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
 
-  # : (Riffer::Mcp::Registration, Array[Symbol], Proc?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
-  def mcp_tools_for_registration: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
+  # : (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
+  def mcp_tools_for_registration: (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
 
   # Raises if two or more tool classes share the same +.name+ (ambiguous dispatch).
   #

@@ -88,7 +88,7 @@ class Riffer::Agent
   # Accepts a Riffer::Params instance or a block evaluated against a new Params.
   #
   #--
-  #: (?Riffer::Params?) ?{ () -> void } -> Riffer::Params?
+  #: (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def self.structured_output(params = nil, &block)
     if block
       params = Riffer::Params.new
@@ -156,7 +156,7 @@ class Riffer::Agent
   #   end
   #
   #--
-  #: () ?{ () -> void } -> Riffer::Skills::Config?
+  #: () ?{ (Riffer::Skills::Config) [self: Riffer::Skills::Config] -> void } -> Riffer::Skills::Config?
   def self.skills(&block)
     if block
       skills_config = Riffer::Skills::Config.new
@@ -387,8 +387,9 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Messages::System?
   def build_skills_message
-    return nil unless @context.skills&.system_prompt
-    Riffer::Messages::System.new(@context.skills.system_prompt)
+    skills = @context.skills
+    return nil unless skills&.system_prompt
+    Riffer::Messages::System.new(skills.system_prompt)
   end
 
   # Resolves +Config#model+ to a "provider/model" string (calling the Proc
@@ -473,8 +474,10 @@ class Riffer::Agent
   def resolve_tools
     tools = Riffer::Helpers::CallOrValue.resolve(@config.tools_config, context: @context, default: [])
 
-    if @config.skills_config
-      skill_activate_tool_class = @config.skills_config.activate_tool || Riffer.config.skills.default_activate_tool
+    skills_config = @config.skills_config
+
+    if skills_config
+      skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
 
       if tools.any? { |t| t.name == skill_activate_tool_class.name }
         raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
@@ -514,7 +517,7 @@ class Riffer::Agent
   #
   #: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
   def gather_mcp_registrations_with_tags(configs)
-    by_reg = {}
+    by_reg = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]
     configs.each do |cfg|
       Riffer::Mcp::Registry.find_by_tags(cfg[:tags]).each do |reg|
         (by_reg[reg] ||= []).concat(cfg[:tags] & reg.manifest.tags)
@@ -523,7 +526,7 @@ class Riffer::Agent
     by_reg
   end
 
-  #: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
+  #: (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
   def mcp_tools_for_registration(reg, matched_tags, cred, ctx)
     return reg.tools unless cred
     return [] if cred.call(manifest: reg.manifest, matched_tags: matched_tags, context: ctx).nil?
