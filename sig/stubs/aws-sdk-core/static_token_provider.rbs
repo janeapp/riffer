@@ -1,0 +1,5 @@
+module Aws
+  class StaticTokenProvider
+    def initialize: (String token, ?Time? expiration) -> void
+  end
+end
