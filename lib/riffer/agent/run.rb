@@ -5,10 +5,12 @@
 # +agent+ — Agent owns every per-call value (provider, model, tools, tool
 # runtime, structured output, session, context); Run just orchestrates.
 #
-# Tools and user code see the agent's +context+ unchanged through the
-# loop, so downstream tool runtimes can read +context[:agent]+ or
-# +context[:skills]+. Cumulative token usage is mutated into
-# +agent.context[:token_usage]+ as the loop progresses.
+# Tools and user code see the agent's +context+ (a +Riffer::Agent::Context+)
+# unchanged through the loop, so downstream tool runtimes can read
+# caller-provided keys via <tt>context[:agent]</tt> /
+# <tt>context.dig(:key)</tt>, or the framework built-ins via
+# +context.skills+. Cumulative token usage is updated into
+# +agent.context.token_usage+ as the loop progresses.
 #
 #   Riffer::Agent::Run.generate(agent: my_agent, prompt: "Hello")
 #   Riffer::Agent::Run.stream(agent: my_agent, prompt: "Hello")
@@ -53,7 +55,7 @@ module Riffer::Agent::Run
 
     run_before_guardrails(agent, stream_yielder, all_modifications) { |tripped| return tripped }
 
-    skills = agent.context[:skills]
+    skills = agent.context.skills
 
     if stream_yielder && skills
       skills.on_activate = ->(name) { stream_yielder << Riffer::StreamEvents::SkillActivation.new(name) }
@@ -292,15 +294,15 @@ module Riffer::Agent::Run
     agent.session.add(Riffer::Messages::User.new(prompt, files: file_parts), silent: true)
   end
 
-  # Accumulates token usage into +agent.context[:token_usage]+. Mutates the
-  # context Hash so cumulative usage persists across every run on the agent.
+  # Accumulates token usage into +agent.context.token_usage+. Updates the
+  # context so cumulative usage persists across every run on the agent.
   #
   #--
   #: (Riffer::Agent, Riffer::TokenUsage?) -> void
   def track_token_usage(agent, usage)
     return unless usage
 
-    current = agent.context[:token_usage]
-    agent.context[:token_usage] = current ? current + usage : usage
+    current = agent.context.token_usage
+    agent.context.token_usage = current ? current + usage : usage
   end
 end

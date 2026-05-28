@@ -158,7 +158,7 @@ end
 
 ### Accessing Context
 
-The `context` argument receives whatever was passed as `context:` to `Agent.new`:
+The `context` argument is a `Riffer::Agent::Context` — a typed value object wrapping the Hash passed as `context:` to `Agent.new`. Caller-provided keys are read with `context[:key]` or `context&.dig(:key)`:
 
 ```ruby
 class UserOrdersTool < Riffer::Tool
@@ -178,6 +178,11 @@ end
 # Usage
 MyAgent.new(context: {user_id: 123}).generate("Show my orders")
 ```
+
+Two keys are framework-managed and exposed as typed accessors:
+
+- `context.skills` — the resolved `Riffer::Skills::Context` when the agent has skills configured, otherwise `nil`.
+- `context.token_usage` — the cumulative `Riffer::TokenUsage` across every run on the agent, or `nil` before the first response.
 
 ## Response Objects
 

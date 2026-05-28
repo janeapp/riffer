@@ -244,16 +244,20 @@ class Riffer::Agent
   # +Agent.new+ and cached.
   attr_reader :skills_message #: Riffer::Messages::System?
 
-  # The mutable runtime context. A Hash threaded into every Proc-based DSL
-  # setting, guardrail, tool runtime, and skills resolution, and shared
-  # with every +Riffer::Agent::Run+ this agent executes. Carries:
+  # The mutable runtime context, a +Riffer::Agent::Context+ value object
+  # threaded into every Proc-based DSL setting, guardrail, tool runtime,
+  # and skills resolution, and shared with every +Riffer::Agent::Run+
+  # this agent executes. Exposes:
   #
-  # - +context[:skills]+ — the resolved +Riffer::Skills::Context+ (when
+  # - +context.skills+ — the resolved +Riffer::Skills::Context+ (when
   #   skills are configured), set at +Agent.new+ time.
-  # - +context[:token_usage]+ — the cumulative +Riffer::TokenUsage+, mutated
-  #   by each Run as the loop progresses.
-  # - any caller-provided keys (e.g. +context[:agent]+, +context[:tenant]+).
-  attr_reader :context #: Hash[Symbol, untyped]
+  # - +context.token_usage+ — the cumulative +Riffer::TokenUsage+,
+  #   updated by each Run as the loop progresses.
+  # - +context[:key]+ / <tt>context.dig(:key)</tt> — Hash-style reads for
+  #   caller-provided keys (e.g. <tt>context[:agent]</tt>,
+  #   <tt>context[:tenant]</tt>). +:skills+ and +:token_usage+ are
+  #   reserved and cannot be passed by the caller.
+  attr_reader :context #: Riffer::Agent::Context
 
   # The resolved model name (the part after "provider/"), used as the model
   # argument on every LLM call. Resolved eagerly at +Agent.new+.
@@ -300,12 +304,12 @@ class Riffer::Agent
   #: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
   def initialize(session: nil, context: nil, config: nil)
     @config = config || self.class.config
-    @context = (context || {}).dup
+    @context = Riffer::Agent::Context.new(context || {})
 
     provider_class, @model_name = resolve_provider_and_model
     @provider = provider_class.new(**@config.provider_options)
 
-    @context[:skills] = resolve_skills(provider_class)
+    @context.skills = resolve_skills(provider_class)
 
     @structured_output = resolve_structured_output
     @tools = resolve_tools
@@ -383,8 +387,8 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Messages::System?
   def build_skills_message
-    return nil unless @context[:skills]&.system_prompt
-    Riffer::Messages::System.new(@context[:skills].system_prompt)
+    return nil unless @context.skills&.system_prompt
+    Riffer::Messages::System.new(@context.skills.system_prompt)
   end
 
   # Resolves +Config#model+ to a "provider/model" string (calling the Proc
@@ -519,7 +523,7 @@ class Riffer::Agent
     by_reg
   end
 
-  #: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Hash[Symbol, untyped]) -> Array[singleton(Riffer::Tool)]
+  #: (Riffer::Mcp::Registration, Array[Symbol], Proc?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]
   def mcp_tools_for_registration(reg, matched_tags, cred, ctx)
     return reg.tools unless cred
     return [] if cred.call(manifest: reg.manifest, matched_tags: matched_tags, context: ctx).nil?

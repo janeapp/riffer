@@ -75,7 +75,7 @@ describe Riffer::Agent do
 
     it "initializes with nil token_usage" do
       agent = agent_class.new
-      expect(agent.context[:token_usage]).must_be_nil
+      expect(agent.context.token_usage).must_be_nil
     end
 
     it "does not mutate a caller-supplied context Hash" do
