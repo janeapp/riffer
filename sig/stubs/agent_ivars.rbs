@@ -1,0 +1,7 @@
+# Class-level instance variable declarations for Riffer::Agent.
+#
+# The `#:` inline syntax used in lib/ can't declare class-level ivars, so we
+# stub them here instead.
+class Riffer::Agent
+  self.@config: Riffer::Agent::Config?
+end
