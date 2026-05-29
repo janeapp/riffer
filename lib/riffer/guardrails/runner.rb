@@ -80,7 +80,8 @@ class Riffer::Guardrails::Runner
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Guardrail
   def instantiate_guardrail(config)
-    config[:class].new(**config[:options])
+    options = config[:options] #: Hash[Symbol, untyped]
+    config[:class].new(**options)
   end
 
   #--
@@ -101,7 +102,7 @@ class Riffer::Guardrails::Runner
     when :before
       guardrail.process_input(data, context: context)
     when :after
-      guardrail.process_output(data, messages: messages, context: context)
+      guardrail.process_output(data, messages: messages || [], context: context)
     else
       raise Riffer::Error, "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(", ")}"
     end

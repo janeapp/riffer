@@ -31,7 +31,11 @@ module Riffer::Mcp::ToolFactory
   private_class_method def self.build_tool_class(manifest_name, client, td)
     prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(td[:name])}"
 
+    # steep cannot type the body of a dynamically created anonymous class:
+    # its ivars and `self` inside define_method are unresolvable, so the
+    # block is ignored wholesale (cf. AuthenticatedTool.wrap_one).
     Class.new(Riffer::Tool) do
+      # steep:ignore:start
       @mcp_client = client
       @mcp_server_tool_name = td[:name]
       # Set @identifier directly so .identifier does not fall back to
@@ -49,6 +53,7 @@ module Riffer::Mcp::ToolFactory
         )
         text(result)
       end
+      # steep:ignore:end
     end
   end
 end

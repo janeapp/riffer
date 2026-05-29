@@ -31,7 +31,11 @@ class Riffer::Evals::Evaluator
     #--
     #: (?bool?) -> bool
     def higher_is_better(value = nil)
-      return @higher_is_better.nil? || @higher_is_better if value.nil?
+      if value.nil?
+        current = @higher_is_better
+        return true if current.nil?
+        return current
+      end
       @higher_is_better = value
     end
 
@@ -87,8 +91,14 @@ class Riffer::Evals::Evaluator
     return input if input.is_a?(String)
 
     input.map do |msg|
-      role = msg.is_a?(Hash) ? (msg[:role] || msg["role"]) : msg.role
-      content = msg.is_a?(Hash) ? (msg[:content] || msg["content"]) : msg.content
+      if msg.is_a?(Hash)
+        hash = msg #: Hash[untyped, untyped]
+        role = hash[:role] || hash["role"]
+        content = hash[:content] || hash["content"]
+      else
+        role = msg.role
+        content = msg.content
+      end
       "#{role}: #{content}"
     end.join("\n\n")
   end

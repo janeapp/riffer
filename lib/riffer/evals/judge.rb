@@ -30,7 +30,7 @@ class Riffer::Evals::Judge
     end
 
     #--
-    #: (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
+    #: (context: Riffer::Agent::Context?, score: Float, reason: String) -> Riffer::Tools::Response
     def call(context:, score:, reason:)
       json({score: score, reason: reason})
     end
@@ -94,7 +94,7 @@ class Riffer::Evals::Judge
   #--
   #: (input: String, output: String, ?ground_truth: String?) -> String
   def build_user_message(input:, output:, ground_truth: nil)
-    parts = []
+    parts = [] #: Array[String]
     parts << "## Input\n\n#{input}"
     parts << "## Output\n\n#{output}"
     parts << "## Ground Truth\n\n#{ground_truth}" if ground_truth

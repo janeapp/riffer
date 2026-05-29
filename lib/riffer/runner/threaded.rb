@@ -25,7 +25,7 @@ class Riffer::Runner::Threaded < Riffer::Runner
   end
 
   #--
-  #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  #: (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)
     return [] if items.empty?
 

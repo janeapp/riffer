@@ -62,8 +62,8 @@ module Riffer::Tools::Toolable
   # Defines parameters using the Params DSL.
   #
   # --
-  # : () ?{ () -> void } -> Riffer::Params?
-  def params: () ?{ () -> void } -> Riffer::Params?
+  # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def params: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
   # Returns the JSON Schema for the tool's parameters.
   #

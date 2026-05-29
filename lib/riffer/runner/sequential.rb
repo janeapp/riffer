@@ -7,7 +7,7 @@
 #
 class Riffer::Runner::Sequential < Riffer::Runner
   #--
-  #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  #: (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)
     items.map(&block)
   end

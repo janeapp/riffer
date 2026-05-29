@@ -28,7 +28,7 @@ class Riffer::Runner::Fibers < Riffer::Runner
   end
 
   #--
-  #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  #: (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)
     return [] if items.empty?
 
@@ -37,8 +37,9 @@ class Riffer::Runner::Fibers < Riffer::Runner
 
     Async do
       barrier = Async::Barrier.new
-      parent = if @max_concurrency
-        Async::Semaphore.new(@max_concurrency, parent: barrier)
+      max = @max_concurrency
+      parent = if max
+        Async::Semaphore.new(max, parent: barrier)
       else
         barrier
       end

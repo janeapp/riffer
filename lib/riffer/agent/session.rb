@@ -182,9 +182,9 @@ class Riffer::Agent::Session
     assistant = @messages[last_assistant_idx] #: Riffer::Messages::Assistant
     return [assistant, []] if assistant.tool_calls.empty?
 
-    executed_ids = @messages[(last_assistant_idx + 1)..].select { |m|
-      m.is_a?(Riffer::Messages::Tool)
-    }.map(&:tool_call_id)
+    executed_ids = (@messages[(last_assistant_idx + 1)..] || []).filter_map { |m|
+      m.tool_call_id if m.is_a?(Riffer::Messages::Tool)
+    }
 
     [assistant, assistant.tool_calls.reject { |tc| executed_ids.include?(tc.call_id) }]
   end
@@ -193,6 +193,7 @@ class Riffer::Agent::Session
   #: () -> Enumerator[Riffer::Messages::Base, self]
   #: () { (Riffer::Messages::Base) -> void } -> untyped
   def each(&block)
+    return @messages.each unless block
     @messages.each(&block)
   end
 

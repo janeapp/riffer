@@ -31,8 +31,8 @@ module Riffer::Tools::Toolable
   #: (Module) -> void
   def self.extended(base)
     base.extend Riffer::Helpers::ClassNameConverter
-    @extenders ||= []
-    @extenders << base
+    extenders = (@extenders ||= []) #: Array[Module]
+    extenders << base
   end
 
   # Returns all classes that have extended Toolable.
@@ -82,11 +82,12 @@ module Riffer::Tools::Toolable
   # Defines parameters using the Params DSL.
   #
   #--
-  #: () ?{ () -> void } -> Riffer::Params?
+  #: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def params(&block)
     return @params_builder if block.nil?
-    @params_builder = Riffer::Params.new
-    @params_builder.instance_eval(&block)
+    builder = Riffer::Params.new
+    builder.instance_eval(&block)
+    @params_builder = builder
   end
 
   # Returns the JSON Schema for the tool's parameters.
@@ -135,6 +136,8 @@ module Riffer::Tools::Toolable
   private
 
   def empty_schema # :nodoc:
-    {type: "object", properties: {}, required: [], additionalProperties: false}
+    properties = {} #: Hash[Symbol, untyped]
+    required = [] #: Array[untyped]
+    {type: "object", properties: properties, required: required, additionalProperties: false}
   end
 end

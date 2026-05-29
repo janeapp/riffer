@@ -31,8 +31,8 @@ class Riffer::Tools::Runtime
   #   instrumentation that needs the accompanying assistant text).
   #
   # --
-  # : (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
-  def execute: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]
+  # : (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  def execute: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]
 
   # Hook that wraps each tool call execution. Override in subclasses
   # to customize. Must +yield+ to continue execution.
@@ -51,8 +51,8 @@ class Riffer::Tools::Runtime
   #   end
   #
   # --
-  # : (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
-  def around_tool_call: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  # : (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  def around_tool_call: (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
 
   private
 
@@ -66,8 +66,8 @@ class Riffer::Tools::Runtime
   #   call, when known.
   #
   # --
-  # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
-  def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
+  # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
+  def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
 
   # --
   # : (String?) -> Hash[Symbol, untyped]

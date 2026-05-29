@@ -80,7 +80,7 @@ class Riffer::Params::Param
     nullable = strict && !required
 
     if nullable && enum
-      schema = {anyOf: [{type: type_name, enum: enum}, {type: "null"}]}
+      schema = {anyOf: [{type: type_name, enum: enum}, {type: "null"}]} #: Hash[Symbol, untyped]
       schema[:description] = description if description
       return schema
     end
@@ -88,7 +88,7 @@ class Riffer::Params::Param
     type = type_name
     type = [type, "null"] if nullable
 
-    schema = {type: type}
+    schema = {type: type} #: Hash[Symbol, untyped]
     schema[:description] = description if description
     schema[:enum] = enum if enum
 

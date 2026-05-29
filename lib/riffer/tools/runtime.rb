@@ -38,7 +38,7 @@ class Riffer::Tools::Runtime
   #   instrumentation that needs the accompanying assistant text).
   #
   #--
-  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:, assistant_message: nil)
     @runner.map(tool_calls, context: context) do |tool_call|
       result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
@@ -65,7 +65,7 @@ class Riffer::Tools::Runtime
   #   end
   #
   #--
-  #: (Riffer::Messages::Assistant::ToolCall, context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
+  #: (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
   def around_tool_call(tool_call, context:, assistant_message: nil)
     yield
   end
@@ -82,7 +82,7 @@ class Riffer::Tools::Runtime
   #   call, when known.
   #
   #--
-  #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Hash[Symbol, untyped]?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
+  #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
   def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
     tool_class = tools.find { |tc| tc.name == tool_call.name }
 

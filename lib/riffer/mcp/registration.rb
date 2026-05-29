@@ -23,7 +23,7 @@ class Riffer::Mcp::Registration
   def initialize(manifest)
     @manifest = manifest
     @cancelled = false
-    @tools = []
+    @tools = [] #: Array[singleton(Riffer::Tool)]
     @mutex = Mutex.new
     run_discovery
   end
@@ -62,8 +62,7 @@ class Riffer::Mcp::Registration
       tools = Riffer::Mcp::ToolFactory.build(@manifest.name, client, tool_defs)
 
       @mutex.synchronize do
-        next if @cancelled
-        @tools = tools.freeze
+        @tools = tools.freeze unless @cancelled
       end
     end
   end

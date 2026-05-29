@@ -18,8 +18,8 @@ class Riffer::Evals::Judge
   # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
     # --
-    # : (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
-    def call: (context: Hash[Symbol, untyped]?, score: Float, reason: String) -> Riffer::Tools::Response
+    # : (context: Riffer::Agent::Context?, score: Float, reason: String) -> Riffer::Tools::Response
+    def call: (context: Riffer::Agent::Context?, score: Float, reason: String) -> Riffer::Tools::Response
   end
 
   # The model string (provider/model format).

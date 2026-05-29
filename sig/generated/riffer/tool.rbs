@@ -27,8 +27,8 @@ class Riffer::Tool
   # Raises NotImplementedError if not implemented by subclass.
   #
   # --
-  # : (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
-  def call: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
+  # : (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
+  def call: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
 
   # Creates a text response. Shorthand for Riffer::Tools::Response.text.
   #
@@ -55,6 +55,6 @@ class Riffer::Tool
   # Raises Riffer::Error if the tool does not return a Response object.
   #
   # --
-  # : (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
-  def call_with_validation: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
+  # : (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
+  def call_with_validation: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
 end

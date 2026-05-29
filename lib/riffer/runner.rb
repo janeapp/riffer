@@ -19,7 +19,7 @@ class Riffer::Runner
   # Raises NotImplementedError if not implemented by subclass.
   #
   #--
-  #: (Array[untyped], context: Hash[Symbol, untyped]?) { (untyped) -> untyped } -> Array[untyped]
+  #: (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)
     raise NotImplementedError, "#{self.class} must implement #map"
   end

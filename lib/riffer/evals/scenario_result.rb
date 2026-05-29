@@ -47,7 +47,8 @@ class Riffer::Evals::ScenarioResult
   #--
   #: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores
-    results.each_with_object({}) do |result, hash|
+    acc = {} #: Hash[singleton(Riffer::Evals::Evaluator), Float]
+    results.each_with_object(acc) do |result, hash|
       hash[result.evaluator] = result.score
     end
   end

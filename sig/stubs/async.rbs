@@ -1,0 +1,24 @@
+# Minimal signatures for the optional `async` gem, which ships no RBS.
+#
+# Only the surface used by Riffer::Runner::Fibers is declared; the gem is
+# loaded lazily via depends_on, so this stub keeps Steep aware of the
+# constants without adding a hard `library` dependency.
+module Async
+  class Barrier
+    def initialize: () -> void
+
+    def async: () { () -> void } -> untyped
+
+    def wait: () -> void
+  end
+
+  class Semaphore
+    def initialize: (Integer, ?parent: untyped) -> void
+
+    def async: () { () -> void } -> untyped
+  end
+end
+
+module Kernel
+  def Async: () { () -> void } -> untyped
+end
