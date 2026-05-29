@@ -1,0 +1,101 @@
+# Instance/module variable declarations for non-provider lib/ classes.
+#
+# rbs-inline's `#:` syntax types an assignment expression (a Steep assertion)
+# but doesn't declare the instance variable itself, so we stub the ivar types
+# here instead (mirrors sig/stubs/agent_ivars.rbs and provider_ivars.rbs).
+
+class Riffer::Mcp::Registration
+  @cancelled: bool
+  @tools: Array[singleton(Riffer::Tool)]
+  @mutex: Thread::Mutex
+end
+
+module Riffer::Mcp::Registry
+  self.@mutex: Thread::Mutex
+  self.@store: Hash[String, Riffer::Mcp::Registration]
+end
+
+class Riffer::Mcp::Client
+  @client: untyped
+end
+
+# Toolable is extended onto tool classes; its instance methods run as class
+# methods on the extender, which is also extended with ClassNameConverter
+# (see Toolable.extended). The include models that method availability for Steep.
+module Riffer::Tools::Toolable
+  include Riffer::Helpers::ClassNameConverter
+
+  self.@extenders: Array[Module]?
+  @description: String?
+  @identifier: String?
+  @timeout: (Integer | Float)?
+  @params_builder: Riffer::Params?
+  @kind: Symbol?
+end
+
+class Riffer::Evals::Judge
+  @provider_options: Hash[Symbol, untyped]
+  @provider_instance: Riffer::Providers::Base?
+  @provider_name: String?
+  @model_name: String?
+end
+
+class Riffer::Evals::Evaluator
+  self.@instructions: String?
+  self.@higher_is_better: bool?
+  self.@judge_model: String?
+  @judge: Riffer::Evals::Judge?
+end
+
+class Riffer::Skills::Context
+  @backend: Riffer::Skills::Backend
+  @activated: Hash[String, String]
+end
+
+class Riffer::Skills::Config
+  @backend: (Riffer::Skills::Backend | Proc)?
+  @adapter: singleton(Riffer::Skills::Adapter)?
+  @activate: (Array[String] | Proc)?
+  @activate_tool: singleton(Riffer::Tool)?
+end
+
+class Riffer::Skills::FilesystemBackend
+  @paths: Array[String]
+  @skills_cache: Hash[String, String]?
+end
+
+module Riffer
+  self.@config: Riffer::Config?
+end
+
+class Riffer::Agent::Session
+  @callbacks: Array[^(Riffer::Messages::Base) -> void]
+end
+
+class Riffer::Agent::Context
+  @data: Hash[Symbol, untyped]
+end
+
+class Riffer::Agent::Response
+  @interrupted: bool
+end
+
+class Riffer::Tools::Response
+  @success: bool
+end
+
+class Riffer::Tools::Runtime
+  @runner: Riffer::Runner
+end
+
+class Riffer::Runner::Threaded
+  @max_concurrency: Integer
+end
+
+class Riffer::Runner::Fibers
+  @max_concurrency: Integer?
+end
+
+class Riffer::Messages::FilePart
+  @url_string: String?
+end

@@ -1,0 +1,12 @@
+# Minimal signatures for the `zeitwerk` gem (autoloader), which ships no RBS.
+#
+# Only the surface used in lib/riffer.rb to set up the loader is declared.
+module Zeitwerk
+  class Loader
+    def self.for_gem: (*untyped) -> Zeitwerk::Loader
+
+    def inflector: () -> untyped
+
+    def setup: () -> void
+  end
+end

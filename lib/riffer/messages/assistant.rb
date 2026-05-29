@@ -60,7 +60,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = {role: role, content: content}
+    hash = {role: role, content: content} #: Hash[Symbol, untyped]
     hash[:id] = id unless id.nil?
     hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
     hash[:token_usage] = token_usage.to_h if token_usage

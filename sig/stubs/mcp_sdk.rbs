@@ -1,0 +1,22 @@
+# Minimal signatures for the optional `mcp` gem (v0.8+), which ships no RBS.
+#
+# Only the surface used by Riffer::Mcp::Client is declared; the gem is loaded
+# lazily via depends_on, so this stub keeps Steep aware of the constants
+# without adding a hard `library` dependency (mirrors provider_sdk_methods.rbs).
+module MCP
+  class Client
+    class HTTP
+      def initialize: (url: untyped, headers: untyped) -> void
+    end
+
+    class Tool
+      def initialize: (name: untyped, ?description: untyped, ?input_schema: untyped) -> void
+    end
+
+    def initialize: (transport: untyped) -> void
+
+    def tools: () -> untyped
+
+    def call_tool: (tool: untyped, arguments: untyped) -> untyped
+  end
+end

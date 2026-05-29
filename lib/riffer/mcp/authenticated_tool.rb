@@ -23,6 +23,9 @@ module Riffer::Mcp::AuthenticatedTool
     tags = matched_tags
 
     Class.new(Riffer::Tool) do
+      # steep cannot type the body of a dynamically created anonymous class:
+      # its ivars and `self` inside define_method are unresolvable.
+      # steep:ignore:start
       @identifier = inner.identifier
 
       define_singleton_method(:name) { inner.name }
@@ -60,6 +63,7 @@ module Riffer::Mcp::AuthenticatedTool
         client = build_call_client(man.endpoint, headers)
         text(client.tools_call(inner.mcp_server_tool_name, kwargs))
       end
+      # steep:ignore:end
     end
   end
 end

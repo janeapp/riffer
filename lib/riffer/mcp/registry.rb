@@ -18,7 +18,9 @@ module Riffer::Mcp::Registry
     #--
     #: ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
     def register(manifest_or_hash)
-      manifest = manifest_or_hash.is_a?(Riffer::Mcp::Manifest) ? manifest_or_hash : Riffer::Mcp::Manifest.new(**manifest_or_hash)
+      # steep cannot verify that an untyped Hash splat supplies Manifest's
+      # required name:/endpoint: keywords; Manifest validates them at runtime.
+      manifest = manifest_or_hash.is_a?(Riffer::Mcp::Manifest) ? manifest_or_hash : Riffer::Mcp::Manifest.new(**manifest_or_hash) # steep:ignore InsufficientKeywordArguments
       registration = Riffer::Mcp::Registration.new(manifest)
       old = @mutex.synchronize do
         previous = @store[manifest.name]

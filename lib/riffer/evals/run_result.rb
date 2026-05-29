@@ -40,7 +40,8 @@ class Riffer::Evals::RunResult
       end
     end
 
-    totals.each_with_object({}) do |(evaluator, total), hash|
+    averages = {} #: Hash[singleton(Riffer::Evals::Evaluator), Float]
+    totals.each_with_object(averages) do |(evaluator, total), hash|
       hash[evaluator] = total / counts[evaluator]
     end
   end

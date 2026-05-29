@@ -15,7 +15,7 @@ class Riffer::Skills::MarkdownAdapter < Riffer::Skills::Adapter
   #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
-    lines = []
+    lines = [] #: Array[String]
     lines << "## Available Skills"
     lines << ""
     lines << "When a user's request matches a skill description below, call the `#{skill_activate_tool.name}` tool with the skill name. After activation, follow the skill's instructions."

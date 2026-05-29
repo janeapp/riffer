@@ -31,8 +31,9 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   #--
   #: () -> Array[Riffer::Skills::Frontmatter]
   def list_skills
-    @skills_cache = {}
-    frontmatters = []
+    cache = {} #: Hash[String, String]
+    @skills_cache = cache
+    frontmatters = [] #: Array[Riffer::Skills::Frontmatter]
 
     @paths.each do |path|
       next unless File.directory?(path)
@@ -45,10 +46,10 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
         frontmatter = Riffer::Skills::Frontmatter.parse_frontmatter(File.read(skill_file))
 
         validate_dirname_matches_name!(dirname, frontmatter.name)
-        next if @skills_cache.key?(frontmatter.name)
+        next if cache.key?(frontmatter.name)
 
         frontmatters << frontmatter
-        @skills_cache[frontmatter.name] = dir
+        cache[frontmatter.name] = dir
       end
     end
 
@@ -65,7 +66,8 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   #: (String) -> String
   def read_skill(name)
     list_skills unless @skills_cache
-    dir = @skills_cache[name]
+    cache = @skills_cache #: Hash[String, String]
+    dir = cache[name]
     raise Riffer::ArgumentError, "Skill not found: '#{name}'" unless dir
 
     _, body = Riffer::Skills::Frontmatter.parse(File.read(File.join(dir, SKILL_FILENAME)))

@@ -33,7 +33,7 @@ class Riffer::Tool
   # Raises NotImplementedError if not implemented by subclass.
   #
   #--
-  #: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
+  #: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
   def call(context:, **kwargs)
     raise NotImplementedError, "#{self.class} must implement #call"
   end
@@ -69,7 +69,7 @@ class Riffer::Tool
   # Raises Riffer::Error if the tool does not return a Response object.
   #
   #--
-  #: (context: Hash[Symbol, untyped]?, **untyped) -> Riffer::Tools::Response
+  #: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params
     validated_args = params_builder ? params_builder.validate(kwargs) : kwargs

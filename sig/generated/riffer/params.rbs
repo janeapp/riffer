@@ -19,14 +19,14 @@ class Riffer::Params
   # Defines a required parameter.
   #
   # --
-  # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
-  def required: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
+  # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def required: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # Defines an optional parameter.
   #
   # --
-  # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
-  def optional: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
+  # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  def optional: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
   # Validates arguments against parameter definitions.
   #
@@ -49,8 +49,8 @@ class Riffer::Params
   private
 
   # --
-  # : (Class, Class?) ?{ () -> void } -> Riffer::Params?
-  def build_nested: (Class, Class?) ?{ () -> void } -> Riffer::Params?
+  # : (Class, Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def build_nested: (Class, Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
   # --
   # : (Riffer::Params::Param, untyped, Array[String]) -> untyped

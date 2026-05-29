@@ -23,7 +23,7 @@ class Riffer::Params
   # Defines a required parameter.
   #
   #--
-  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
+  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
     @parameters << Riffer::Params::Param.new(
@@ -40,7 +40,7 @@ class Riffer::Params
   # Defines an optional parameter.
   #
   #--
-  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
+  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
     @parameters << Riffer::Params::Param.new(
@@ -62,8 +62,8 @@ class Riffer::Params
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate(arguments)
-    validated = {}
-    errors = []
+    validated = {} #: Hash[Symbol, untyped]
+    errors = [] #: Array[String]
 
     @parameters.each do |param|
       value = arguments[param.name]
@@ -107,8 +107,8 @@ class Riffer::Params
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)
-    properties = {}
-    required_params = []
+    properties = {} #: Hash[String, untyped]
+    required_params = [] #: Array[String]
 
     @parameters.each do |param|
       properties[param.name.to_s] = param.to_json_schema(strict: strict)
@@ -126,7 +126,7 @@ class Riffer::Params
   private
 
   #--
-  #: (Class, Class?) ?{ () -> void } -> Riffer::Params?
+  #: (Class, Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested(type, of, &block)
     if of && block
       raise Riffer::ArgumentError, "cannot use both of: and a block"
@@ -171,7 +171,9 @@ class Riffer::Params
   #--
   #: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
   def validate_nested_hash(param, value, errors)
-    param.nested_params.validate(value)
+    nested = param.nested_params
+    return value unless nested
+    nested.validate(value)
   rescue Riffer::ValidationError => e
     e.message.split("; ").each do |msg|
       errors << "#{param.name}.#{msg}"
@@ -182,12 +184,14 @@ class Riffer::Params
   #--
   #: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects(param, value, errors)
+    nested = param.nested_params
+    return value unless nested
     value.map.with_index do |item, i|
       unless item.is_a?(Hash)
         errors << "#{param.name}[#{i}] must be an object"
         next item
       end
-      param.nested_params.validate(item)
+      nested.validate(item)
     rescue Riffer::ValidationError => e
       e.message.split("; ").each do |msg|
         errors << "#{param.name}[#{i}].#{msg}"
@@ -199,12 +203,14 @@ class Riffer::Params
   #--
   #: (Riffer::Params::Param, Array[untyped], Array[String]) -> void
   def validate_typed_array(param, value, errors)
-    type_name = Riffer::Params::Param::TYPE_MAPPINGS[param.item_type]
+    item_type = param.item_type
+    return unless item_type
+    type_name = Riffer::Params::Param::TYPE_MAPPINGS[item_type]
     value.each_with_index do |item, i|
-      valid = if param.item_type == Riffer::Params::Boolean || param.item_type == TrueClass || param.item_type == FalseClass
+      valid = if item_type == Riffer::Params::Boolean || item_type == TrueClass || item_type == FalseClass
         item == true || item == false
       else
-        item.is_a?(param.item_type)
+        item.is_a?(item_type)
       end
       errors << "#{param.name}[#{i}] must be a #{type_name}" unless valid
     end

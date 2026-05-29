@@ -66,7 +66,7 @@ class Riffer::Messages::FilePart
   #: (String, ?media_type: String?) -> Riffer::Messages::FilePart
   def self.from_url(url, media_type: nil)
     unless media_type
-      ext = ::File.extname(URI.parse(url).path).downcase
+      ext = ::File.extname(URI.parse(url).path.to_s).downcase
       media_type = MEDIA_TYPES[ext]
       raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" unless media_type
     end
@@ -114,7 +114,7 @@ class Riffer::Messages::FilePart
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = {media_type: media_type}
+    hash = {media_type: media_type} #: Hash[Symbol, untyped]
     hash[:data] = @data if @data
     hash[:url] = @url_string if @url_string
     hash[:filename] = filename if filename

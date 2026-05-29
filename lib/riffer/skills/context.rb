@@ -66,7 +66,7 @@ class Riffer::Skills::Context
   #: () -> String
   def system_prompt
     available = available_skills
-    parts = []
+    parts = [] #: Array[String]
     parts << @adapter.render_catalog(available) unless available.empty?
     @activated.each_value { |body| parts << body }
     parts.join("\n\n")
