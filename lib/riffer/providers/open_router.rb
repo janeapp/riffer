@@ -39,7 +39,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       model: model,
       messages: convert_messages_to_chat_completions_format(messages),
       **options.except(:reasoning, :tools, :structured_output)
-    }
+    } #: Hash[Symbol, untyped]
 
     if reasoning
       params[:reasoning] = reasoning.is_a?(String) ? {effort: reasoning} : reasoning
@@ -96,7 +96,9 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     tool_calls = message.tool_calls
     return [] if tool_calls.nil? || tool_calls.empty?
 
-    tool_calls.map do |tc|
+    tool_calls.filter_map do |tc|
+      next unless tc.is_a?(::OpenAI::Models::Chat::ChatCompletionMessageFunctionToolCall)
+
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: tc.id,
         name: decode_tool_name(tc.function.name, tools: @current_tools),
@@ -116,7 +118,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       text: +"",
       reasoning: +"",
       tool_calls: {}
-    }
+    } #: Hash[Symbol, untyped]
 
     # Use stream_raw (not stream) — the latter yields a higher-level
     # ChatChunkEvent helper that aggregates content/tool calls into typed
@@ -258,6 +260,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
         convert_assistant_to_chat_completions_format(message)
       when Riffer::Messages::Tool
         {role: "tool", tool_call_id: message.tool_call_id, content: message.content}
+      else
+        raise Riffer::ArgumentError, "unsupported message type: #{message.class}"
       end
     end
   end
@@ -265,7 +269,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_chat_completions_format(message)
-    msg = {role: "assistant"}
+    msg = {role: "assistant"} #: Hash[Symbol, untyped]
     msg[:content] = message.content if message.content && !message.content.empty?
 
     unless message.tool_calls.empty?
@@ -292,7 +296,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       {type: "image_url", image_url: {url: image_url}}
     else
       data_uri = "data:#{file.media_type};base64,#{file.data}"
-      block = {type: "file", file: {file_data: data_uri}}
+      block = {type: "file", file: {file_data: data_uri}} #: Hash[Symbol, untyped]
       block[:file][:filename] = file.filename if file.filename
       block
     end

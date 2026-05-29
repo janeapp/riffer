@@ -36,7 +36,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     params = {
       model: model,
       contents: partitioned[:contents]
-    }
+    } #: Hash[Symbol, untyped]
 
     params[:systemInstruction] = partitioned[:system_instruction] if partitioned[:system_instruction]
 
@@ -114,6 +114,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     body = params.except(:model)
 
     uri = URI("#{BASE_URI}/#{api_path(model, "streamGenerateContent")}?alt=sse")
+    host = uri.hostname #: String
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
     request["x-goog-api-key"] = @api_key
@@ -126,7 +127,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       buffer << chunk
 
       while (match = buffer.match(/\r?\n\r?\n/))
-        frame = buffer.slice!(0, match.end(0)).strip
+        match_end = match.end(0) #: Integer
+        frame = buffer.slice!(0, match_end).to_s.strip
         next unless frame.start_with?("data: ")
 
         json_str = frame.delete_prefix("data: ").strip
@@ -164,7 +166,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) do |http|
+    Net::HTTP.start(host, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) do |http|
       http.request(request) do |response|
         handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
 
@@ -182,8 +184,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
-    system_parts = []
-    contents = []
+    system_parts = [] #: Array[Hash[Symbol, untyped]]
+    contents = [] #: Array[Hash[Symbol, untyped]]
 
     messages.each do |message|
       case message
@@ -212,7 +214,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    result = {contents: contents}
+    result = {contents: contents} #: Hash[Symbol, untyped]
     result[:system_instruction] = {parts: system_parts} unless system_parts.empty?
     result
   end
@@ -220,7 +222,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
-    parts = []
+    parts = [] #: Array[Hash[Symbol, untyped]]
     parts << {text: message.content} if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
@@ -268,11 +270,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
   def post_request(path, body)
     uri = URI("#{BASE_URI}/#{path}")
+    host = uri.hostname #: String
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
     request["x-goog-api-key"] = @api_key
     request.body = body.to_json
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) { |http| http.request(request) }
+    Net::HTTP.start(host, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) { |http| http.request(request) }
   end
 
   #--

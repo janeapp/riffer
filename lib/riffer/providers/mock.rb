@@ -174,7 +174,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def next_response
     if @stubbed_responses.any?
       @stubbed_responses.shift
-    elsif @responses[@current_index]
+    elsif @current_index < @responses.size
       response = @responses[@current_index]
       @current_index += 1
       response

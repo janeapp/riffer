@@ -36,6 +36,16 @@ class Riffer::Messages::Base
   # : () -> bool
   def has_tool_calls?: () -> bool
 
+  # Merges another same-role message into this one.
+  #
+  # Raises NotImplementedError unless implemented by subclass. Mergeable
+  # message types (+User+, +Assistant+, +System+) override this; +Tool+
+  # messages are never merged.
+  #
+  # --
+  # : (untyped) -> Riffer::Messages::Base
+  def +: (untyped) -> Riffer::Messages::Base
+
   private
 
   # : () -> String?

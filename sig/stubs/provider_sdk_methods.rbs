@@ -1,0 +1,50 @@
+# Accurate signatures for SDK resource methods whose shipped RBS doesn't match
+# the real API.
+#
+# The OpenAI and Anthropic gems implement these as positional `def x(params)`
+# methods (a single options hash), but their generated RBS advertises
+# keyword-only signatures — and the Anthropic gem omits `Messages#stream`
+# altogether. The providers call them with a positional hash (`x(params)`) or a
+# keyword splat (`x(**params)`); both reach the same positional parameter at
+# runtime, so we accept either here (`| ...` extends the gem's existing
+# overloads). Streaming methods are typed to return `untyped`: the event
+# objects are a ~60-member union dispatched dynamically on `#type`, which the
+# providers (and their `untyped` event handlers) already treat as dynamic.
+module OpenAI
+  module Resources
+    class Responses
+      def create: (Hash[Symbol, untyped] params) -> OpenAI::Models::Responses::Response
+                | (**untyped) -> OpenAI::Models::Responses::Response
+                | ...
+      def stream: (Hash[Symbol, untyped] params) -> untyped
+                | (**untyped) -> untyped
+                | ...
+    end
+
+    class Chat
+      class Completions
+        def create: (Hash[Symbol, untyped] params) -> OpenAI::Models::Chat::ChatCompletion
+                  | (**untyped) -> OpenAI::Models::Chat::ChatCompletion
+                  | ...
+        def stream_raw: (Hash[Symbol, untyped] params) -> untyped
+                      | (**untyped) -> untyped
+                      | ...
+      end
+    end
+  end
+end
+
+module Anthropic
+  module Resources
+    class Messages
+      def create: (Hash[Symbol, untyped] params) -> Anthropic::Models::Message
+                | (**untyped) -> Anthropic::Models::Message
+                | ...
+
+      # Omitted from the gem's RBS; present at runtime (returns a MessageStream
+      # helper iterated with `#each` / `#accumulated_message` / `#close`).
+      def stream: (Hash[Symbol, untyped] params) -> untyped
+                | (**untyped) -> untyped
+    end
+  end
+end

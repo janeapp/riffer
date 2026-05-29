@@ -50,6 +50,18 @@ class Riffer::Messages::Base
     false
   end
 
+  # Merges another same-role message into this one.
+  #
+  # Raises NotImplementedError unless implemented by subclass. Mergeable
+  # message types (+User+, +Assistant+, +System+) override this; +Tool+
+  # messages are never merged.
+  #
+  #--
+  #: (untyped) -> Riffer::Messages::Base
+  def +(other)
+    raise NotImplementedError, "Subclasses must implement #+"
+  end
+
   private
 
   #: () -> String?
