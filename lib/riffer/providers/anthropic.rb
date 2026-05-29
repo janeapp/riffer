@@ -46,11 +46,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
       **options.except(:tools, :max_tokens, :structured_output, :web_search)
-    }
+    } #: Hash[Symbol, untyped]
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
 
-    anthropic_tools = []
+    anthropic_tools = [] #: Array[Hash[Symbol, untyped]]
     anthropic_tools.concat(tools.map { |t| convert_tool_to_anthropic_format(t) }) if tools && !tools.empty?
 
     if web_search
@@ -86,7 +86,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (Anthropic::Models::Message) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
-    return nil unless usage
 
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
@@ -105,7 +104,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     text_content = ""
 
     content_blocks.each do |block|
-      text_content = block.text if block.type.to_s == "text"
+      text_content = block.text if block.is_a?(::Anthropic::Models::TextBlock)
     end
 
     text_content
@@ -117,10 +116,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     content_blocks = response.content
     return [] if content_blocks.nil? || content_blocks.empty?
 
-    tool_calls = []
+    tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
     content_blocks.each do |block|
-      if block.type.to_s == "tool_use"
+      if block.is_a?(::Anthropic::Models::ToolUseBlock)
         tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           call_id: block.id,
           name: decode_tool_name(block.name, tools: @current_tools),
@@ -142,7 +141,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       web_search_index: nil,
       web_search_json: nil,
       web_search_query: nil
-    }
+    } #: Hash[Symbol, untyped]
 
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
@@ -165,12 +164,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::InputJsonEvent
           handle_input_json_event(event, state: current_state, yielder: yielder)
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
-          block_type = event.content_block&.type.to_s
-          handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block_type == "text" && current_state[:text]
-          handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block_type == "tool_use"
-          handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block_type == "thinking" && current_state[:reasoning]
-          handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block_type == "server_tool_use"
-          handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block_type == "web_search_tool_result"
+          block = event.content_block
+          handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::TextBlock) && current_state[:text]
+          handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::ToolUseBlock)
+          handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::ThinkingBlock) && current_state[:reasoning]
+          handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::ServerToolUseBlock)
+          handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::WebSearchToolResultBlock)
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
           handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
@@ -304,8 +303,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
-    system_prompts = []
-    conversation_messages = []
+    system_prompts = [] #: Array[Hash[Symbol, untyped]]
+    conversation_messages = [] #: Array[Hash[Symbol, untyped]]
 
     messages.each do |message|
       case message
@@ -342,7 +341,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
-    content = []
+    content = [] #: Array[Hash[Symbol, untyped]]
     content << {type: "text", text: message.content} if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|

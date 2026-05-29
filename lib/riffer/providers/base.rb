@@ -42,7 +42,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    @current_tools = options[:tools] || []
+    @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
@@ -68,7 +68,7 @@ class Riffer::Providers::Base
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
-    @current_tools = options[:tools] || []
+    @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
@@ -87,7 +87,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (String, tools: Array[Riffer::Tool]) -> String
+  #: (String, tools: Array[singleton(Riffer::Tool)]) -> String
   def decode_tool_name(wire_name, tools:)
     tool = tools.find { |t| encode_tool_name(t.name) == wire_name }
     tool ? tool.name : wire_name
@@ -176,10 +176,11 @@ class Riffer::Providers::Base
       return messages.map { |msg| convert_to_message_object(msg) }
     end
 
-    result = []
+    result = [] #: Array[Riffer::Messages::Base]
     result << Riffer::Messages::System.new(system) if system
     file_parts = (files || []).map { |f| convert_to_file_part(f) }
-    result << Riffer::Messages::User.new(prompt, files: file_parts)
+    prompt_text = prompt #: String
+    result << Riffer::Messages::User.new(prompt_text, files: file_parts)
     result
   end
 

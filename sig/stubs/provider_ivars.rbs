@@ -1,0 +1,36 @@
+# Instance variable declarations for the provider adapters.
+#
+# rbs-inline's `#:` syntax types an assignment expression (a Steep assertion)
+# but doesn't declare the instance variable itself, so we stub the ivar types
+# here instead.
+class Riffer::Providers::Base
+  @current_tools: Array[singleton(Riffer::Tool)]
+end
+
+class Riffer::Providers::Anthropic
+  @client: ::Anthropic::Client
+end
+
+class Riffer::Providers::OpenAI
+  @client: ::OpenAI::Client
+end
+
+class Riffer::Providers::OpenRouter
+  @client: ::OpenAI::Client
+end
+
+class Riffer::Providers::AmazonBedrock
+  @client: ::Aws::BedrockRuntime::Client
+end
+
+class Riffer::Providers::Gemini
+  @api_key: String?
+  @open_timeout: Integer
+  @read_timeout: Integer
+end
+
+class Riffer::Providers::Mock
+  @responses: Array[Hash[Symbol, untyped]]
+  @current_index: Integer
+  @stubbed_responses: Array[Hash[Symbol, untyped]]
+end

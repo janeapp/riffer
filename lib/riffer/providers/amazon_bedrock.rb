@@ -63,7 +63,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
       **options.except(:tools, :structured_output)
-    }
+    } #: Hash[Symbol, untyped]
 
     if tools && !tools.empty?
       params[:tool_config] = {
@@ -92,16 +92,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
+  #: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Client::_ConverseResponseSuccess
   def execute_generate(params)
     @client.converse(**params)
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::Providers::TokenUsage?
+  #: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
-    return nil unless usage
 
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
@@ -112,7 +111,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> String
+  #: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> String
   def extract_content(response)
     content_blocks = response.output&.message&.content
     return "" if content_blocks.nil? || content_blocks.empty?
@@ -127,12 +126,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Array[Riffer::Messages::Assistant::ToolCall]
+  #: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
     content_blocks = response.output&.message&.content
     return [] if content_blocks.nil? || content_blocks.empty?
 
-    tool_calls = []
+    tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
     content_blocks.each do |block|
       if block.respond_to?(:tool_use) && block.tool_use
@@ -153,7 +152,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     current_state = {
       text: nil,
       tool_call: nil
-    }
+    } #: Hash[Symbol, untyped]
 
     @client.converse_stream(**params) do |stream|
       stream.on_event do |event|
@@ -196,7 +195,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_start_tool_use(event, state:, yielder:)
     state[:tool_call] = {
       id: event.start.tool_use.tool_use_id,
@@ -206,7 +205,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     delta_text = event.delta.text
     state[:text] ||= ""
@@ -215,7 +214,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_delta_tool_use(event, state:, yielder:)
     input_delta = event.delta.tool_use.input
 
@@ -229,14 +228,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_tool_use(_event, state:, yielder:)
     tool_call = state[:tool_call]
     yielder << Riffer::StreamEvents::ToolCallDone.new(
@@ -249,7 +248,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
+  #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_metadata_usage(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
       token_usage: Riffer::Providers::TokenUsage.new(
@@ -264,8 +263,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages(messages)
-    system_prompts = []
-    conversation_messages = []
+    system_prompts = [] #: Array[Hash[Symbol, untyped]]
+    conversation_messages = [] #: Array[Hash[Symbol, untyped]]
 
     messages.each do |message|
       case message
@@ -291,7 +290,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
-    content = []
+    content = [] #: Array[Hash[Symbol, untyped]]
     content << {text: message.content} if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|

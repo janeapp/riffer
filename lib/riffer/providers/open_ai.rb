@@ -36,9 +36,9 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         summary: "auto"
       },
       **options.except(:reasoning, :tools, :structured_output, :web_search)
-    }
+    } #: Hash[Symbol, untyped]
 
-    openai_tools = []
+    openai_tools = [] #: Array[Hash[Symbol, untyped]]
     openai_tools.concat(tools.map { |t| convert_tool_to_openai_format(t) }) if tools && !tools.empty?
 
     if web_search
@@ -89,10 +89,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     text_content = ""
 
     response.output.each do |item|
-      if item.type == :message
-        text_block = item.content&.find { |c| c.type == :output_text }
-        text_content = text_block&.text || "" if text_block
-      end
+      next unless item.is_a?(::OpenAI::Models::Responses::ResponseOutputMessage)
+
+      text_block = item.content.find { |c| c.is_a?(::OpenAI::Models::Responses::ResponseOutputText) }
+      text_content = text_block.text if text_block.is_a?(::OpenAI::Models::Responses::ResponseOutputText)
     end
 
     text_content
@@ -101,16 +101,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
-    tool_calls = []
+    tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
     response.output.each do |item|
-      if item.type == :function_call
-        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          call_id: item.call_id,
-          name: decode_tool_name(item.name, tools: @current_tools),
-          arguments: item.arguments
-        )
-      end
+      next unless item.is_a?(::OpenAI::Models::Responses::ResponseFunctionToolCall)
+
+      tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+        call_id: item.call_id,
+        name: decode_tool_name(item.name, tools: @current_tools),
+        arguments: item.arguments
+      )
     end
 
     tool_calls
@@ -121,7 +121,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def execute_stream(params, yielder)
     current_state = {
       tool_info: {}
-    }
+    } #: Hash[Symbol, untyped]
 
     stream = @client.responses.stream(params)
     begin
@@ -242,11 +242,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def handle_output_item_done_web_search(event, yielder:)
     action = event.item.action
     case action
-    when OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::OpenPage
+    when ::OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::OpenPage
       # OpenPage carries a url but no query or sources, so it doesn't fit
       # WebSearchDone — emit as a status notification instead.
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: action.url)
-    when OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search
+    when ::OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search
       sources = (action.sources || []).map { |s| {title: nil, url: s.url} }
       yielder << Riffer::StreamEvents::WebSearchDone.new(action.query, sources: sources)
     end
@@ -275,6 +275,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           call_id: message.tool_call_id,
           output: message.content
         }
+      else
+        raise Riffer::ArgumentError, "unsupported message type: #{message.class}"
       end
     end
   end
@@ -285,7 +287,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     if message.tool_calls.empty?
       {role: "assistant", content: message.content}
     else
-      items = []
+      items = [] #: Array[Hash[Symbol, untyped]]
       items << {type: "message", role: "assistant", content: message.content} if message.content && !message.content.empty?
       message.tool_calls.each do |tc|
         items << {

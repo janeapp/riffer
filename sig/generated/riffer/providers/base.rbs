@@ -51,8 +51,8 @@ class Riffer::Providers::Base
   def encode_tool_name: (String) -> String
 
   # --
-  # : (String, tools: Array[Riffer::Tool]) -> String
-  def decode_tool_name: (String, tools: Array[Riffer::Tool]) -> String
+  # : (String, tools: Array[singleton(Riffer::Tool)]) -> String
+  def decode_tool_name: (String, tools: Array[singleton(Riffer::Tool)]) -> String
 
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
