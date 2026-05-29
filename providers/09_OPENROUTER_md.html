@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>09_OPENROUTER - Riffer Documentation</title>
+
+
+  <meta name="keywords" content="ruby,documentation,09_OPENROUTER">
+  <meta
+    name="description"
+    content="09_OPENROUTER: openrouter. ai) — a unified gateway that exposes hundreds of LLMs from many vendors (Anthropic, OpenAI, Meta, Mistral, DeepSeek, Google, Grok, Qwen, a"
+  >
+
+
+
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="09_OPENROUTER - Riffer Documentation">
+
+
+
+    <meta property="og:description" content="openrouter. ai) — a unified gateway that exposes hundreds of LLMs from many vendors (Anthropic, OpenAI, Meta, Mistral, DeepSeek, Google, Grok, Qwen, a">
+
+
+
+
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="09_OPENROUTER - Riffer Documentation">
+
+
+
+    <meta name="twitter:description" content="openrouter. ai) — a unified gateway that exposes hundreds of LLMs from many vendors (Anthropic, OpenAI, Meta, Mistral, DeepSeek, Google, Grok, Qwen, a">
+
+
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script
+  src="../js/theme-toggle.js?v=7.2.0"
+></script>
+
+<script
+  src="../js/search_navigation.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../js/search_data.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../js/search_ranker.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../js/search_controller.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../js/c_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../js/bash_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="../js/aliki.js?v=7.2.0"
+  defer
+></script>
+
+<link
+  href="../css/rdoc.css?v=7.2.0"
+  rel="stylesheet"
+>
+
+
+
+
+<body role="document" class="file has-toc">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- Chevron (right arrow) - used for expand/collapse -->
+  <symbol
+    id="icon-chevron"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </symbol>
+
+  <!-- File/Document - Pages section -->
+  <symbol
+    id="icon-file"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+    ></path>
+
+    <polyline points="14 2 14 8 20 8"></polyline>
+  </symbol>
+
+  <!-- Layers/Stack - Classes and Modules section -->
+  <symbol
+    id="icon-layers"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+    <polyline points="2 17 12 22 22 17"></polyline>
+    <polyline points="2 12 12 17 22 12"></polyline>
+  </symbol>
+
+  <!-- Curly braces with C - Class Methods section -->
+  <symbol
+    id="icon-class-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      C
+    </text>
+  </symbol>
+
+  <!-- Curly braces with I - Instance Methods section -->
+  <symbol
+    id="icon-instance-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      I
+    </text>
+  </symbol>
+
+  <!-- Double chevrons up - Ancestors section -->
+  <symbol
+    id="icon-ancestors"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </symbol>
+
+  <!-- User with plus - Included Modules section -->
+  <symbol
+    id="icon-includes"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+
+    <line
+      x1="20"
+      y1="8"
+      x2="20"
+      y2="14"
+    ></line>
+
+    <line
+      x1="23"
+      y1="11"
+      x2="17"
+      y2="11"
+    ></line>
+  </symbol>
+
+  <!-- User with check - Extended Modules section -->
+  <symbol
+    id="icon-extends"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+    <polyline points="17 11 19 13 23 9"></polyline>
+  </symbol>
+
+  <!-- List - Sections section -->
+  <symbol
+    id="icon-list"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <line
+      x1="8"
+      y1="6"
+      x2="21"
+      y2="6"
+    ></line>
+
+    <line
+      x1="8"
+      y1="12"
+      x2="21"
+      y2="12"
+    ></line>
+
+    <line
+      x1="8"
+      y1="18"
+      x2="21"
+      y2="18"
+    ></line>
+
+    <line
+      x1="3"
+      y1="6"
+      x2="3.01"
+      y2="6"
+    ></line>
+
+    <line
+      x1="3"
+      y1="12"
+      x2="3.01"
+      y2="12"
+    ></line>
+
+    <line
+      x1="3"
+      y1="18"
+      x2="3.01"
+      y2="18"
+    ></line>
+  </symbol>
+</svg>
+
+<header class="top-navbar">
+  <a href="../index.html" class="navbar-brand">
+    Riffer Documentation
+  </a>
+
+  <!-- Desktop search bar -->
+  <div class="navbar-search navbar-search-desktop" role="search">
+    <form action="#" method="get" accept-charset="utf-8">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results-desktop"
+             type="text" name="search" placeholder="Search (/) for a class, method..."
+             spellcheck="false" autocomplete="off"
+             title="Type to search, Up and Down to navigate, Enter to load">
+      <ul id="search-results-desktop" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="initially-hidden search-results"></ul>
+    </form>
+  </div>
+
+  <!-- Mobile search icon button -->
+  <button id="search-toggle" class="navbar-search-mobile" aria-label="Open search" type="button">
+    <span aria-hidden="true">🔍</span>
+  </button>
+
+  <!-- Theme toggle button -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+    <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+  </button>
+</header>
+
+<!-- Search Modal (Mobile) -->
+<div id="search-modal" class="search-modal" hidden aria-modal="true" role="dialog" aria-label="Search">
+  <div class="search-modal-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <form class="search-modal-form" action="#" method="get" accept-charset="utf-8">
+        <span class="search-modal-icon" aria-hidden="true">🔍</span>
+        <input id="search-field-mobile" role="combobox" aria-label="Search"
+               aria-autocomplete="list" aria-controls="search-results-mobile"
+               type="text" name="search" placeholder="Search documentation"
+               spellcheck="false" autocomplete="off">
+        <button type="button" class="search-modal-close" aria-label="Close search" id="search-modal-close">
+          <span aria-hidden="true">esc</span>
+        </button>
+      </form>
+    </div>
+    <div class="search-modal-body">
+      <ul id="search-results-mobile" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="search-results search-modal-results initially-hidden"></ul>
+      <div class="search-modal-empty">
+        <p>No recent searches</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="navigation-toggle" role="button" tabindex="0" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="navigation">
+  <span aria-hidden="true">&#9776;</span>
+</div>
+
+
+<nav id="navigation" role="navigation" hidden>
+  
+
+
+
+
+
+
+  <div id="fileindex-section" class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg>
+            <use href="#icon-file"></use>
+          </svg>
+        </span>
+
+        <span class="nav-section-title">Pages</span>
+
+        <span class="nav-section-chevron">
+          <svg>
+            <use href="#icon-chevron"></use>
+          </svg>
+        </span>
+      </summary>
+
+      <ul class="nav-list">
+
+
+
+
+
+
+            <li>
+              <a href="../01_OVERVIEW_md.html">
+                01_OVERVIEW
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../02_GETTING_STARTED_md.html">
+                02_GETTING_STARTED
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../03_AGENTS_md.html">
+                03_AGENTS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../04_AGENT_LIFECYCLE_md.html">
+                04_AGENT_LIFECYCLE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../05_AGENT_LOOP_md.html">
+                05_AGENT_LOOP
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../06_TOOLS_md.html">
+                06_TOOLS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../07_TOOL_ADVANCED_md.html">
+                07_TOOL_ADVANCED
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../08_MESSAGES_md.html">
+                08_MESSAGES
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../09_STREAM_EVENTS_md.html">
+                09_STREAM_EVENTS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../10_CONFIGURATION_md.html">
+                10_CONFIGURATION
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../11_EVALS_md.html">
+                11_EVALS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../12_GUARDRAILS_md.html">
+                12_GUARDRAILS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../13_SKILLS_md.html">
+                13_SKILLS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../14_MCP_md.html">
+                14_MCP
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../CHANGELOG_md.html">
+                CHANGELOG
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../LICENSE_txt.html">
+                LICENSE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="../README_md.html">
+                README
+              </a>
+            </li>
+
+
+
+
+
+          <li>
+            <details  open>
+              <summary>
+                
+                  providers
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="../providers/01_PROVIDERS_md.html">
+                      01_PROVIDERS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/02_AMAZON_BEDROCK_md.html">
+                      02_AMAZON_BEDROCK
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/03_ANTHROPIC_md.html">
+                      03_ANTHROPIC
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/04_OPENAI_md.html">
+                      04_OPENAI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/05_AZURE_OPENAI_md.html">
+                      05_AZURE_OPENAI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/06_MOCK_PROVIDER_md.html">
+                      06_MOCK_PROVIDER
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/07_CUSTOM_PROVIDERS_md.html">
+                      07_CUSTOM_PROVIDERS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/08_GEMINI_md.html">
+                      08_GEMINI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="../providers/09_OPENROUTER_md.html">
+                      09_OPENROUTER
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+      </ul>
+    </details>
+  </div>
+
+
+  <div id="classindex-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-layers"></use></svg>
+      </span>
+      <span class="nav-section-title">Classes and Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+  </details>
+</div>
+
+</nav>
+
+<main role="main" aria-label="Page providers/09_OPENROUTER.md">
+
+<span id="label-OpenRouter+Provider" class="legacy-anchor"></span>
+<h1 id="openrouter-provider"><a href="#openrouter-provider">OpenRouter Provider</a></h1>
+
+<p>The OpenRouter provider connects <a href="../Riffer.html"><code>Riffer</code></a> to <a href="https://openrouter.ai">OpenRouter</a> — a unified gateway that exposes hundreds of LLMs from many vendors (Anthropic, OpenAI, Meta, Mistral, DeepSeek, Google, Grok, Qwen, and more) behind a single OpenAI-compatible Chat Completions endpoint.</p>
+
+<p>OpenRouter is useful when you want one credential, one model-string format, and access to models <a href="../Riffer.html"><code>Riffer</code></a> doesn’t have a direct provider for. It also offers built-in routing, fallback, and prompt transforms.</p>
+
+<blockquote>
+<p><strong>Note:</strong> OpenRouter exposes only the OpenAI <strong>Chat Completions</strong> API, not the Responses API. That’s why this provider does not subclass <a href="../Riffer/Providers/OpenAI.html"><code>Riffer::Providers::OpenAI</code></a> (which uses Responses). It implements the five hook methods independently against Chat Completions while still sharing the <code>openai</code> Ruby gem.</p>
+</blockquote>
+
+<span id="label-Installation" class="legacy-anchor"></span>
+<h2 id="installation"><a href="#installation">Installation</a></h2>
+
+<p>Add the OpenAI gem to your Gemfile — OpenRouter reuses it:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;openai&#39;</span>
+</pre>
+
+<span id="label-Configuration" class="legacy-anchor"></span>
+<h2 id="configuration"><a href="#configuration">Configuration</a></h2>
+
+<p>Set your API key globally:</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openrouter</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENROUTER_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Or per-agent:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/anthropic/claude-sonnet-4.6&#39;</span>
+  <span class="ruby-identifier">provider_options</span> <span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;MY_OR_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>The <code>api_key</code> resolves in order: keyword arg → <code>Riffer.config.openrouter.api_key</code> → <code>ENV[&#39;OPENROUTER_API_KEY&#39;]</code>.</p>
+
+<span id="label-Supported+Models" class="legacy-anchor"></span>
+<h2 id="supported-models"><a href="#supported-models">Supported Models</a></h2>
+
+<p>Use any OpenRouter model in the <code>openrouter/&lt;openrouter-model-id&gt;</code> format. The OpenRouter model ID is everything after the first slash:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/anthropic/claude-sonnet-4.6&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/openai/gpt-4o-mini&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/meta-llama/llama-3.1-70b-instruct&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/deepseek/deepseek-r1&#39;</span>
+<span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/mistralai/mixtral-8x22b-instruct&#39;</span>
+</pre>
+
+<p>See OpenRouter’s <a href="https://openrouter.ai/models">model catalog</a> for the full list.</p>
+
+<span id="label-Model+Options" class="legacy-anchor"></span>
+<h2 id="model-options"><a href="#model-options">Model Options</a></h2>
+
+<span id="label-temperature-2C+max_tokens-2C+top_p-2C+etc." class="legacy-anchor"></span>
+<h3 id="temperature-maxtokens-topp-etc"><a href="#temperature-maxtokens-topp-etc">temperature, max_tokens, top_p, etc.</a></h3>
+
+<p>Standard sampling options pass through to the underlying model:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">temperature:</span> <span class="ruby-value">0.5</span>, <span class="ruby-value">max_tokens:</span> <span class="ruby-value">2048</span>
+</pre>
+
+<span id="label-reasoning" class="legacy-anchor"></span>
+<h3 id="reasoning"><a href="#reasoning">reasoning</a></h3>
+
+<p>For reasoning models (DeepSeek R1, OpenAI o-series via OpenRouter, etc.):</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;high&#39;</span>  <span class="ruby-comment"># &#39;low&#39; | &#39;medium&#39; | &#39;high&#39;</span>
+</pre>
+
+<p>Pass a hash for finer control:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">reasoning:</span> {<span class="ruby-value">effort:</span> <span class="ruby-string">&#39;medium&#39;</span>, <span class="ruby-value">max_tokens:</span> <span class="ruby-value">5000</span>}
+</pre>
+
+<p>Streaming yields <a href="../Riffer/StreamEvents/ReasoningDelta.html"><code>Riffer::StreamEvents::ReasoningDelta</code></a> and <code>ReasoningDone</code> events when the model returns reasoning content.</p>
+
+<span id="label-provider+-28routing+preferences-29" class="legacy-anchor"></span>
+<h3 id="provider-routing-preferences"><a href="#provider-routing-preferences">provider (routing preferences)</a></h3>
+
+<p>Pin which upstream provider OpenRouter should use, set allow/deny lists, or prefer a sort order:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">provider:</span> {
+  <span class="ruby-value">order:</span> [<span class="ruby-string">&#39;anthropic&#39;</span>, <span class="ruby-string">&#39;openai&#39;</span>],
+  <span class="ruby-value">allow_fallbacks:</span> <span class="ruby-keyword">false</span>
+}
+</pre>
+
+<p>See OpenRouter’s <a href="https://openrouter.ai/docs/provider-routing">provider routing docs</a> for the full schema.</p>
+
+<span id="label-models+-28fallback+chain-29" class="legacy-anchor"></span>
+<h3 id="models-fallback-chain"><a href="#models-fallback-chain">models (fallback chain)</a></h3>
+
+<p>If the primary model is unavailable, OpenRouter will try the next one in the list:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">models:</span> [<span class="ruby-string">&#39;openai/gpt-4o&#39;</span>, <span class="ruby-string">&#39;anthropic/claude-sonnet-4.6&#39;</span>]
+</pre>
+
+<span id="label-transforms" class="legacy-anchor"></span>
+<h3 id="transforms"><a href="#transforms">transforms</a></h3>
+
+<p>Prompt transforms applied by OpenRouter (e.g. middle-out auto-truncation):</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">transforms:</span> [<span class="ruby-string">&#39;middle-out&#39;</span>]
+</pre>
+
+<span id="label-Example" class="legacy-anchor"></span>
+<h2 id="example"><a href="#example">Example</a></h2>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">config</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">openrouter</span>.<span class="ruby-identifier">api_key</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENROUTER_API_KEY&#39;</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">TranslateAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/anthropic/claude-sonnet-4.6&#39;</span>
+  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You translate English to French.&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">puts</span> <span class="ruby-constant">TranslateAgent</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Hello, world!&#39;</span>)
+</pre>
+
+<span id="label-Streaming" class="legacy-anchor"></span>
+<h2 id="streaming"><a href="#streaming">Streaming</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&#39;Explain Ruby blocks&#39;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;[thinking] #{event.content}&quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TokenUsageDone</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;\n[tokens: #{event.token_usage.total_tokens}]&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>The provider opts into <code>stream_options: {include_usage: true}</code> automatically so <code>TokenUsageDone</code> fires reliably.</p>
+
+<span id="label-Tool+Calling" class="legacy-anchor"></span>
+<h2 id="tool-calling"><a href="#tool-calling">Tool Calling</a></h2>
+
+<p>Tools are converted to OpenAI Chat Completions function format. The provider handles tool name encoding/decoding (slashes in tool names are wire-encoded with <code>__</code>) just like the OpenAI and Anthropic providers.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CalculatorTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">description</span> <span class="ruby-string">&#39;Performs basic math&#39;</span>
+  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:operation</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&#39;add&#39;</span>, <span class="ruby-string">&#39;subtract&#39;</span>, <span class="ruby-string">&#39;multiply&#39;</span>, <span class="ruby-string">&#39;divide&#39;</span>]
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:a</span>, <span class="ruby-constant">Float</span>
+    <span class="ruby-identifier">required</span> <span class="ruby-value">:b</span>, <span class="ruby-constant">Float</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">operation:</span>, <span class="ruby-value">a:</span>, <span class="ruby-value">b:</span>)
+    <span class="ruby-identifier">result</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">operation</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;add&#39;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;subtract&#39;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;multiply&#39;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;divide&#39;</span> <span class="ruby-keyword">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">text</span>(<span class="ruby-identifier">result</span>.<span class="ruby-identifier">to_s</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">MathAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/openai/gpt-4o-mini&#39;</span>
+  <span class="ruby-identifier">uses_tools</span> [<span class="ruby-constant">CalculatorTool</span>]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<span id="label-Reasoning+Models" class="legacy-anchor"></span>
+<h2 id="reasoning-models"><a href="#reasoning-models">Reasoning Models</a></h2>
+
+<p>Reasoning models surface their thought process via OpenRouter’s normalised <code>reasoning</code> field. Enable it with the <code>reasoning</code> option:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">ThinkAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/deepseek/deepseek-r1&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">reasoning:</span> <span class="ruby-string">&#39;medium&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-constant">ThinkAgent</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&#39;What is 2+2? Think step by step.&#39;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">event</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">ReasoningDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;[reasoning] #{event.content}&quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamEvents</span><span class="ruby-operator">::</span><span class="ruby-constant">TextDelta</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">content</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<span id="label-Routing+-26+Fallbacks" class="legacy-anchor"></span>
+<h2 id="routing--fallbacks"><a href="#routing--fallbacks">Routing &amp; Fallbacks</a></h2>
+
+<p>Survive an upstream outage by chaining models:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">ResilientAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
+  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openrouter/openai/gpt-4o-mini&#39;</span>
+  <span class="ruby-identifier">model_options</span> <span class="ruby-value">models:</span> [
+    <span class="ruby-string">&#39;openai/gpt-4o-mini&#39;</span>,
+    <span class="ruby-string">&#39;anthropic/claude-haiku-4.5&#39;</span>,
+    <span class="ruby-string">&#39;google/gemini-flash-1.5&#39;</span>
+  ]
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Pin to a specific upstream when consistency matters:</p>
+
+<pre class="ruby"><span class="ruby-identifier">model_options</span> <span class="ruby-value">provider:</span> {<span class="ruby-value">order:</span> [<span class="ruby-string">&#39;anthropic&#39;</span>], <span class="ruby-value">allow_fallbacks:</span> <span class="ruby-keyword">false</span>}
+</pre>
+
+<span id="label-Message+Format" class="legacy-anchor"></span>
+<h2 id="message-format"><a href="#message-format">Message Format</a></h2>
+
+<p><a href="../Riffer.html"><code>Riffer</code></a> messages convert to Chat Completions roles:</p>
+
+<table role="table">
+<thead>
+<tr>
+<th><a href="../Riffer.html"><code>Riffer</code></a> Message</th>
+<th>Chat Completions Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>System</code></td>
+<td><code>system</code></td>
+</tr>
+<tr>
+<td><code>User</code></td>
+<td><code>user</code></td>
+</tr>
+<tr>
+<td><code>Assistant</code></td>
+<td><code>assistant</code></td>
+</tr>
+<tr>
+<td><code>Tool</code></td>
+<td><code>tool</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>User messages with files become multi-part content (<code>image_url</code> for images, <code>file</code> for documents). Assistant tool calls go into a nested <code>tool_calls</code> array on the assistant message.</p>
+
+<span id="label-Limitations+-28v1-29" class="legacy-anchor"></span>
+<h2 id="limitations-v1"><a href="#limitations-v1">Limitations (v1)</a></h2>
+<ul><li>
+<p><strong>No unified web search.</strong> OpenRouter doesn’t expose a cross-vendor web-search tool — capability varies per upstream model.</p>
+</li><li>
+<p><strong>Audio and image generation models</strong> are not supported.</p>
+</li><li>
+<p><strong>Responses API features</strong> (e.g. OpenAI’s <code>response.id</code> for continuation) are unavailable — OpenRouter implements only Chat Completions.</p>
+</li></ul>
+
+<span id="label-Direct+Provider+Usage" class="legacy-anchor"></span>
+<h2 id="direct-provider-usage"><a href="#direct-provider-usage">Direct Provider Usage</a></h2>
+
+<pre class="ruby"><span class="ruby-identifier">provider</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenRouter</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">api_key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPENROUTER_API_KEY&#39;</span>])
+
+<span class="ruby-identifier">response</span> = <span class="ruby-identifier">provider</span>.<span class="ruby-identifier">generate_text</span>(
+  <span class="ruby-value">prompt:</span> <span class="ruby-string">&#39;Hello!&#39;</span>,
+  <span class="ruby-value">model:</span> <span class="ruby-string">&#39;anthropic/claude-sonnet-4.6&#39;</span>,
+  <span class="ruby-value">temperature:</span> <span class="ruby-value">0.7</span>
+)
+
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">token_usage</span>.<span class="ruby-identifier">total_tokens</span>
+</pre>
+
+</main>
+
+<aside class="table-of-contents" role="complementary" aria-label="Table of Contents">
+  <div class="toc-sticky">
+    <h3 class="toc-heading">On This Page</h3>
+    <nav class="toc-nav" id="toc-nav" aria-label="Page sections">
+      <!-- Generated by JavaScript based on page headings -->
+    </nav>
+  </div>
+</aside>
+
+
+<footer class="site-footer">
+  
+
+  <div class="footer-bottom">
+    <p>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.2.0</a>
+      using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+
