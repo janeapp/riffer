@@ -17,13 +17,13 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
 
   # Token usage data for this response.
-  attr_reader :token_usage #: Riffer::TokenUsage?
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage?
 
   # Parsed structured output hash, or nil when not applicable.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
 
   #--
-  #: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  #: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
   def initialize(content, id: nil, tool_calls: [], token_usage: nil, structured_output: nil)
     super(content, id: id)
     @tool_calls = tool_calls

@@ -129,7 +129,7 @@ describe Riffer::Providers::Gemini do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gemini-2.5-flash-lite",
@@ -145,7 +145,7 @@ describe Riffer::Providers::Gemini do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gemini-2.5-flash-lite",
@@ -161,7 +161,7 @@ describe Riffer::Providers::Gemini do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gemini-2.5-flash-lite",
@@ -177,7 +177,7 @@ describe Riffer::Providers::Gemini do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gemini-2.5-flash-lite",
@@ -194,7 +194,7 @@ describe Riffer::Providers::Gemini do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gemini-2.5-flash-lite",
@@ -218,7 +218,7 @@ describe Riffer::Providers::Gemini do
           optional :postal_code, String, description: "Postal or zip code"
           optional :country, String, description: "Country"
         end
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns valid JSON with nested object keys" do
@@ -245,7 +245,7 @@ describe Riffer::Providers::Gemini do
         params = Riffer::Params.new
         params.required(:tags, Array, of: String, description: "Descriptive tags")
         params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns valid JSON with typed array content" do
@@ -276,7 +276,7 @@ describe Riffer::Providers::Gemini do
           required :price, Float, description: "Price in dollars"
           optional :quantity, Integer, description: "Quantity ordered"
         end
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns valid JSON with array of objects content" do
@@ -367,7 +367,7 @@ describe Riffer::Providers::Gemini do
       params = Riffer::Params.new
       params.required(:sentiment, String)
       params.required(:score, Float)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {structured_output: structured_output})
@@ -379,7 +379,7 @@ describe Riffer::Providers::Gemini do
       provider = Riffer::Providers::Gemini.new(api_key: api_key)
       params = Riffer::Params.new
       params.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {structured_output: structured_output})
@@ -400,7 +400,7 @@ describe Riffer::Providers::Gemini do
       provider = Riffer::Providers::Gemini.new(api_key: api_key)
       params = Riffer::Params.new
       params.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {structured_output: structured_output})
@@ -596,7 +596,7 @@ describe Riffer::Providers::Gemini do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -605,7 +605,7 @@ describe Riffer::Providers::Gemini do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
           expect(result.content).wont_be_empty
         end

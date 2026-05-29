@@ -24,7 +24,7 @@ require "timeout"
 #   end
 #
 class Riffer::Tool
-  extend Riffer::Toolable
+  extend Riffer::Tools::Toolable
 
   kind :tool
 

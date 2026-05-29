@@ -24,7 +24,7 @@ class Riffer::Agent::Config
   attr_accessor :max_steps #: Numeric
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)?
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]]
-  attr_reader :tool_runtime #: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
+  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   attr_accessor :skills_config #: Riffer::Skills::Config?
   attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]]
 
@@ -35,7 +35,7 @@ class Riffer::Agent::Config
   # as a non-String, non-Proc value (or as an empty String).
   #
   #--
-  #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
   def initialize(
     identifier: nil,
     model: nil,
@@ -83,16 +83,16 @@ class Riffer::Agent::Config
     @structured_output = value
   end
 
-  # Sets +tool_runtime+. Accepts a Riffer::ToolRuntime subclass, a
-  # Riffer::ToolRuntime instance, or a Proc.
+  # Sets +tool_runtime+. Accepts a Riffer::Tools::Runtime subclass, a
+  # Riffer::Tools::Runtime instance, or a Proc.
   #
   # Raises Riffer::ArgumentError on any other type.
   #
   #--
-  #: ((singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
+  #: ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def tool_runtime=(value)
-    valid = (value.is_a?(Class) && value < Riffer::ToolRuntime) || value.is_a?(Riffer::ToolRuntime) || value.is_a?(Proc)
-    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::ToolRuntime subclass, instance, or a Proc" unless valid
+    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) || value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
+    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc" unless valid
     @tool_runtime = value
   end
 

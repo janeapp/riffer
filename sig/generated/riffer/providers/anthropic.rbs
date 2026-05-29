@@ -31,8 +31,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> Anthropic::Models::Message
 
   # --
-  # : (Anthropic::Models::Message) -> Riffer::TokenUsage?
-  def extract_token_usage: (Anthropic::Models::Message) -> Riffer::TokenUsage?
+  # : (Anthropic::Models::Message) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (Anthropic::Models::Message) -> Riffer::Providers::TokenUsage?
 
   # --
   # : (Anthropic::Models::Message) -> String
@@ -99,8 +99,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def convert_assistant_to_anthropic_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_anthropic_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_anthropic_format: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
 
   # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

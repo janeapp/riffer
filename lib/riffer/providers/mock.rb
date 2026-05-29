@@ -51,10 +51,10 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
-  #   provider.stub_response("Final response", token_usage: Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+  #   provider.stub_response("Final response", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
   #
   #--
-  #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::TokenUsage?) -> void
+  #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?) -> void
   def stub_response(content, tool_calls: [], token_usage: nil)
     @stubbed_responses << normalize_response(content: content, tool_calls: tool_calls, token_usage: token_usage)
   end
@@ -110,7 +110,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Riffer::TokenUsage?
+  #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     response[:token_usage]
   end

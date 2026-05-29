@@ -70,12 +70,12 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletion) -> Riffer::TokenUsage?
+  #: (OpenAI::Models::Chat::ChatCompletion) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage.prompt_tokens,
       output_tokens: usage.completion_tokens
     )
@@ -161,7 +161,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     return unless chunk.usage
 
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::TokenUsage.new(
+      token_usage: Riffer::Providers::TokenUsage.new(
         input_tokens: chunk.usage.prompt_tokens,
         output_tokens: chunk.usage.completion_tokens
       )
@@ -285,7 +285,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_chat_completions_format(file)
     if file.image?
       image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"

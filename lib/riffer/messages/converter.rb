@@ -21,19 +21,19 @@ module Riffer::Messages::Converter
     convert_hash_to_message(msg)
   end
 
-  # Converts a hash or FilePart object to a Riffer::FilePart.
+  # Converts a hash or FilePart object to a Riffer::Messages::FilePart.
   #
   # Accepts:
-  # - +Riffer::FilePart+ objects (passed through)
+  # - +Riffer::Messages::FilePart+ objects (passed through)
   # - <tt>{url: "https://...", media_type: "..."}</tt> (URL source)
   # - <tt>{data: "...", media_type: "..."}</tt> (raw base64)
   #
   # Raises Riffer::ArgumentError if the hash format is invalid.
   #
   #--
-  #: ((Hash[Symbol, untyped] | Riffer::FilePart)) -> Riffer::FilePart
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
   def convert_to_file_part(file)
-    return file if file.is_a?(Riffer::FilePart)
+    return file if file.is_a?(Riffer::Messages::FilePart)
 
     unless file.is_a?(Hash)
       raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}"
@@ -45,9 +45,9 @@ module Riffer::Messages::Converter
     filename = file[:filename]
 
     if url
-      Riffer::FilePart.from_url(url, media_type: media_type)
+      Riffer::Messages::FilePart.from_url(url, media_type: media_type)
     elsif data && media_type
-      Riffer::FilePart.new(data: data, media_type: media_type, filename: filename)
+      Riffer::Messages::FilePart.new(data: data, media_type: media_type, filename: filename)
     else
       raise Riffer::ArgumentError, "File hash must include :url or :data with :media_type"
     end

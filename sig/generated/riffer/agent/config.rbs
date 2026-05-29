@@ -32,7 +32,7 @@ class Riffer::Agent::Config
 
   attr_reader mcp_configs: Array[Hash[Symbol, untyped]]
 
-  attr_reader tool_runtime: singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc
+  attr_reader tool_runtime: singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc
 
   attr_accessor skills_config: Riffer::Skills::Config?
 
@@ -45,8 +45,8 @@ class Riffer::Agent::Config
   # as a non-String, non-Proc value (or as an empty String).
   #
   # --
-  # : (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
-  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  # : (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
 
   # Sets +identifier+. Accepts +nil+ or any value, coerced to String.
   #
@@ -62,14 +62,14 @@ class Riffer::Agent::Config
   # : (Riffer::Params?) -> Riffer::Params?
   def structured_output=: (Riffer::Params?) -> Riffer::Params?
 
-  # Sets +tool_runtime+. Accepts a Riffer::ToolRuntime subclass, a
-  # Riffer::ToolRuntime instance, or a Proc.
+  # Sets +tool_runtime+. Accepts a Riffer::Tools::Runtime subclass, a
+  # Riffer::Tools::Runtime instance, or a Proc.
   #
   # Raises Riffer::ArgumentError on any other type.
   #
   # --
-  # : ((singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
-  def tool_runtime=: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
+  # : ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
+  def tool_runtime=: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
 
   # Sets +model+. Accepts a String ("provider/model"), a Proc, or +nil+.
   #

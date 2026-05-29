@@ -7,16 +7,16 @@
 #   msg.content  # => "Hello!"
 #
 #   msg = Riffer::Messages::User.new("Describe this image", files: [file_part])
-#   msg.files    # => [#<Riffer::FilePart ...>]
+#   msg.files    # => [#<Riffer::Messages::FilePart ...>]
 class Riffer::Messages::User < Riffer::Messages::Base
   # File attachments for this message.
-  attr_reader files: Array[Riffer::FilePart]
+  attr_reader files: Array[Riffer::Messages::FilePart]
 
   # Initializes a user message.
   #
   # --
-  # : (String, ?id: String?, ?files: Array[Riffer::FilePart]) -> void
-  def initialize: (String, ?id: String?, ?files: Array[Riffer::FilePart]) -> void
+  # : (String, ?id: String?, ?files: Array[Riffer::Messages::FilePart]) -> void
+  def initialize: (String, ?id: String?, ?files: Array[Riffer::Messages::FilePart]) -> void
 
   # --
   # : () -> Symbol

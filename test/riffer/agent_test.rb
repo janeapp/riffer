@@ -67,7 +67,7 @@ describe Riffer::Agent do
     end
 
     it "uses the provided session as-is when passed" do
-      seeded = Riffer::Session.new(messages: [Riffer::Messages::User.new("Hi")])
+      seeded = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hi")])
       agent = agent_class.new(session: seeded)
       expect(agent.session).must_be_same_as seeded
       expect(agent.session.messages.map(&:role)).must_equal [:user]
@@ -456,9 +456,9 @@ describe Riffer::Agent do
     it "stores a tool_runtime class" do
       agent = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime Riffer::ToolRuntime::Threaded
+        tool_runtime Riffer::Tools::Runtime::Threaded
       end
-      expect(agent.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
+      expect(agent.tool_runtime).must_equal Riffer::Tools::Runtime::Threaded
     end
   end
 
@@ -735,25 +735,25 @@ describe Riffer::Agent do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
       end
-      expect(runtime_for(klass)).must_be_instance_of Riffer::ToolRuntime::Inline
+      expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
     end
 
     it "resolves a ToolRuntime class to an instance" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime Riffer::ToolRuntime::Threaded
+        tool_runtime Riffer::Tools::Runtime::Threaded
       end
-      expect(runtime_for(klass)).must_be_instance_of Riffer::ToolRuntime::Threaded
+      expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
     end
 
     it "uses global config as fallback" do
       original = Riffer.config.tool_runtime
       begin
-        Riffer.config.tool_runtime = Riffer::ToolRuntime::Threaded
+        Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
         end
-        expect(runtime_for(klass)).must_be_instance_of Riffer::ToolRuntime::Threaded
+        expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
       ensure
         Riffer.config.tool_runtime = original
       end
@@ -762,12 +762,12 @@ describe Riffer::Agent do
     it "per-agent config overrides global config" do
       original = Riffer.config.tool_runtime
       begin
-        Riffer.config.tool_runtime = Riffer::ToolRuntime::Threaded
+        Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          tool_runtime Riffer::ToolRuntime::Inline
+          tool_runtime Riffer::Tools::Runtime::Inline
         end
-        expect(runtime_for(klass)).must_be_instance_of Riffer::ToolRuntime::Inline
+        expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
       ensure
         Riffer.config.tool_runtime = original
       end
@@ -779,7 +779,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         tool_runtime ->(context) {
           received_contexts << context
-          Riffer::ToolRuntime::Inline.new
+          Riffer::Tools::Runtime::Inline.new
         }
       end
 

@@ -159,19 +159,19 @@ describe Riffer::Agent::Config do
   describe "#tool_runtime=" do
     it "stores a ToolRuntime subclass as-is" do
       config = Riffer::Agent::Config.new
-      config.tool_runtime = Riffer::ToolRuntime::Threaded
-      expect(config.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
+      config.tool_runtime = Riffer::Tools::Runtime::Threaded
+      expect(config.tool_runtime).must_equal Riffer::Tools::Runtime::Threaded
     end
 
     it "stores a ToolRuntime instance as-is" do
-      runtime = Riffer::ToolRuntime::Threaded.new
+      runtime = Riffer::Tools::Runtime::Threaded.new
       config = Riffer::Agent::Config.new
       config.tool_runtime = runtime
       expect(config.tool_runtime).must_be_same_as runtime
     end
 
     it "stores a Proc as-is" do
-      proc_value = ->(_) { Riffer::ToolRuntime::Inline.new }
+      proc_value = ->(_) { Riffer::Tools::Runtime::Inline.new }
       config = Riffer::Agent::Config.new
       config.tool_runtime = proc_value
       expect(config.tool_runtime).must_be_same_as proc_value
@@ -180,13 +180,13 @@ describe Riffer::Agent::Config do
     it "raises on invalid values" do
       config = Riffer::Agent::Config.new
       error = expect { config.tool_runtime = "invalid" }.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/tool_runtime must be a Riffer::ToolRuntime subclass, instance, or a Proc/)
+      expect(error.message).must_match(/tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc/)
     end
   end
 
   describe "#initialize with tool_runtime:" do
     it "uses the explicit value when passed" do
-      runtime = Riffer::ToolRuntime::Threaded.new
+      runtime = Riffer::Tools::Runtime::Threaded.new
       config = Riffer::Agent::Config.new(tool_runtime: runtime)
       expect(config.tool_runtime).must_be_same_as runtime
     end
@@ -194,7 +194,7 @@ describe Riffer::Agent::Config do
     it "snapshots Riffer.config.tool_runtime when omitted" do
       original = Riffer.config.tool_runtime
       begin
-        threaded = Riffer::ToolRuntime::Threaded.new
+        threaded = Riffer::Tools::Runtime::Threaded.new
         Riffer.config.tool_runtime = threaded
         expect(Riffer::Agent::Config.new.tool_runtime).must_be_same_as threaded
       ensure

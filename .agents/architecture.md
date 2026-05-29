@@ -63,11 +63,11 @@ Support for the [Agent Skills spec](https://agentskills.io/). Skills are package
 Typed message objects that extend `Riffer::Messages::Base`:
 
 - `System` - system instructions
-- `User` - user input (supports file attachments via `Riffer::FilePart`)
+- `User` - user input (supports file attachments via `Riffer::Messages::FilePart`)
 - `Assistant` - AI responses
 - `Tool` - tool execution results
 
-`Riffer::FilePart` represents file attachments (images and documents) that can be included with User messages. Supports file paths, URLs, and raw base64 data.
+`Riffer::Messages::FilePart` represents file attachments (images and documents) that can be included with User messages. Supports file paths, URLs, and raw base64 data.
 
 The `Converter` module handles hash-to-object conversion, including file hash-to-`FilePart` conversion.
 
@@ -123,7 +123,7 @@ runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
 runner.map(items, context: ctx) { |item| process(item) }
 ```
 
-### ToolRuntime (`lib/riffer/tool_runtime.rb`)
+### Tools::Runtime (`lib/riffer/tools/runtime.rb`)
 
 Composes with a Runner to execute tool calls. Provides `#execute` as the public entry point and `#around_tool_call` as a hook for instrumentation. Passes the agent context through to the runner.
 
@@ -132,7 +132,7 @@ Built-in runtimes:
 - `Inline` — uses `Runner::Sequential` (default)
 - `Threaded` — uses `Runner::Threaded`
 
-Context flow: `Agent#execute_tool_calls` → `ToolRuntime#execute(tool_calls, tools:, context:)` → `Runner#map(tool_calls, context:) { dispatch }` → `Tool#call(context:, **args)`
+Context flow: `Agent#execute_tool_calls` → `Tools::Runtime#execute(tool_calls, tools:, context:)` → `Runner#map(tool_calls, context:) { dispatch }` → `Tool#call(context:, **args)`
 
 ### MCP Integration (`lib/riffer/mcp/`)
 
@@ -178,15 +178,21 @@ lib/
   riffer/
     version.rb           # VERSION constant
     config.rb            # Configuration class
-    core.rb              # Core functionality
     agent.rb             # Agent class
     agent/
       config.rb          # Per-class DSL configuration value object
+      session.rb         # Conversation handle (message array + invariants)
+      session/
+        repair.rb        # tool_use ↔ tool_result invariant repair
+      structured_output.rb # Structured output schema wrapper
+      structured_output/
+        result.rb        # Parse/validation result object
     messages.rb          # Messages namespace/module
     providers.rb         # Providers namespace/module
-    param.rb             # Single parameter definition (shared by tools and structured output)
     params.rb            # Parameter collection with DSL and validation
-    structured_output.rb # Structured output schema wrapper
+    params/
+      param.rb           # Single parameter definition (shared by tools and structured output)
+      boolean.rb         # Boolean sentinel type
     stream_events.rb     # Stream events namespace/module
     skills.rb            # Skills namespace/module
     skills/
@@ -199,12 +205,9 @@ lib/
       frontmatter.rb     # Parsed YAML frontmatter value object with .parse
       context.rb         # Skills context for a generation cycle
       activate_tool.rb   # Default skill_activate tool
-    structured_output/
-      result.rb          # Parse/validation result object
     helpers/
       class_name_converter.rb  # Class name conversion utilities
       dependencies.rb          # Dependency management
-    file_part.rb         # File attachment (images and documents)
     messages/
       base.rb            # Base message class
       assistant.rb       # Assistant message
@@ -212,6 +215,7 @@ lib/
       system.rb          # System message
       user.rb            # User message
       tool.rb            # Tool message
+      file_part.rb       # File attachment (images and documents)
     providers/
       base.rb            # Base provider class
       open_ai.rb         # OpenAI provider

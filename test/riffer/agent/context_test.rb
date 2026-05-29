@@ -84,8 +84,8 @@ describe Riffer::Agent::Context do
       expect(context.token_usage).must_be_nil
     end
 
-    it "accepts a Riffer::TokenUsage" do
-      usage = Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+    it "accepts a Riffer::Providers::TokenUsage" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
       context.token_usage = usage
       expect(context.token_usage).must_be_same_as usage
     end
@@ -95,7 +95,7 @@ describe Riffer::Agent::Context do
     end
 
     it "exposes the written value via #[] (hash-style read still works)" do
-      usage = Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
       context.token_usage = usage
       expect(context[:token_usage]).must_be_same_as usage
     end

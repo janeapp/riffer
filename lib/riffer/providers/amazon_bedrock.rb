@@ -98,12 +98,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
+  #: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_creation_tokens: usage.cache_write_input_tokens,
@@ -252,7 +252,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator[Riffer::StreamEvents::Base, void]) -> void
   def handle_metadata_usage(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::TokenUsage.new(
+      token_usage: Riffer::Providers::TokenUsage.new(
         input_tokens: event.usage.input_tokens,
         output_tokens: event.usage.output_tokens,
         cache_creation_tokens: event.usage.cache_write_input_tokens,
@@ -326,7 +326,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format(file)
     format = bedrock_format(file.media_type)
 

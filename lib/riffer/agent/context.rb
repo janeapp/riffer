@@ -11,7 +11,7 @@
 # at construction; they are owned by Riffer and written through the typed
 # setters. Type invariants are enforced on write — +skills+ must be a
 # +Riffer::Skills::Context+ (or nil); +token_usage+ must be a
-# +Riffer::TokenUsage+ (or nil).
+# +Riffer::Providers::TokenUsage+ (or nil).
 #
 #   context = Riffer::Agent::Context.new(user_id: 42)
 #   context[:user_id]    # => 42
@@ -70,11 +70,11 @@ class Riffer::Agent::Context
     @data[:skills] = value
   end
 
-  # The cumulative +Riffer::TokenUsage+ across every Run on this agent,
+  # The cumulative +Riffer::Providers::TokenUsage+ across every Run on this agent,
   # or +nil+ before the first response is recorded.
   #
   #--
-  #: () -> Riffer::TokenUsage?
+  #: () -> Riffer::Providers::TokenUsage?
   def token_usage
     @data[:token_usage]
   end
@@ -83,14 +83,14 @@ class Riffer::Agent::Context
   # each LLM response.
   #
   # Raises Riffer::ArgumentError if +value+ is neither +nil+ nor a
-  # +Riffer::TokenUsage+.
+  # +Riffer::Providers::TokenUsage+.
   #
   #--
-  #: (Riffer::TokenUsage?) -> Riffer::TokenUsage?
+  #: (Riffer::Providers::TokenUsage?) -> Riffer::Providers::TokenUsage?
   def token_usage=(value)
-    unless value.nil? || value.is_a?(Riffer::TokenUsage)
+    unless value.nil? || value.is_a?(Riffer::Providers::TokenUsage)
       raise Riffer::ArgumentError,
-        "token_usage must be a Riffer::TokenUsage or nil, got #{value.class}"
+        "token_usage must be a Riffer::Providers::TokenUsage or nil, got #{value.class}"
     end
     @data[:token_usage] = value
   end

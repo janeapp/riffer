@@ -103,15 +103,15 @@ The LLM receives the error message and can decide how to respond (retry, apologi
 
 > **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
 
-By default, tool calls are executed sequentially in the current thread using `Riffer::ToolRuntime::Inline`. You can change how tool calls are executed by configuring a different tool runtime.
+By default, tool calls are executed sequentially in the current thread using `Riffer::Tools::Runtime::Inline`. You can change how tool calls are executed by configuring a different tool runtime.
 
 ### Built-in Runtimes
 
 | Runtime                         | Description                                    |
 | ------------------------------- | ---------------------------------------------- |
-| `Riffer::ToolRuntime::Inline`   | Executes tool calls sequentially (default)     |
-| `Riffer::ToolRuntime::Threaded` | Executes tool calls concurrently using threads |
-| `Riffer::ToolRuntime::Fibers`   | Executes tool calls concurrently using fibers  |
+| `Riffer::Tools::Runtime::Inline`   | Executes tool calls sequentially (default)     |
+| `Riffer::Tools::Runtime::Threaded` | Executes tool calls concurrently using threads |
+| `Riffer::Tools::Runtime::Fibers`   | Executes tool calls concurrently using fibers  |
 
 ### Per-Agent Configuration
 
@@ -121,14 +121,14 @@ Use the `tool_runtime` class method on your agent:
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime Riffer::ToolRuntime::Threaded
+  tool_runtime Riffer::Tools::Runtime::Threaded
 end
 ```
 
 Accepted values:
 
-- A `Riffer::ToolRuntime` subclass — instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`)
-- A `Riffer::ToolRuntime` instance — for custom runtimes with specific options
+- A `Riffer::Tools::Runtime` subclass — instantiated automatically (e.g., `Riffer::Tools::Runtime::Inline`, `Riffer::Tools::Runtime::Threaded`)
+- A `Riffer::Tools::Runtime` instance — for custom runtimes with specific options
 - A `Proc` — evaluated at runtime (see below)
 
 ### Dynamic Resolution
@@ -141,7 +141,7 @@ class MyAgent < Riffer::Agent
   uses_tools [WeatherTool, SearchTool]
 
   tool_runtime ->(context) {
-    context&.dig(:parallel) ? Riffer::ToolRuntime::Threaded.new : Riffer::ToolRuntime::Inline.new
+    context&.dig(:parallel) ? Riffer::Tools::Runtime::Threaded.new : Riffer::Tools::Runtime::Inline.new
   }
 end
 
@@ -156,7 +156,7 @@ Set a default tool runtime for all agents:
 
 ```ruby
 Riffer.configure do |config|
-  config.tool_runtime = Riffer::ToolRuntime::Threaded
+  config.tool_runtime = Riffer::Tools::Runtime::Threaded
 end
 ```
 
@@ -164,7 +164,7 @@ Per-agent configuration overrides the global default.
 
 ### Threaded Runtime Considerations
 
-When using `Riffer::ToolRuntime::Threaded`, each tool call runs in its own thread. The `around_tool_call` hook also runs inside that thread. Be mindful of thread-local state — for example, `ActiveRecord::Base.connection`, `RequestStore`, or any `Thread.current[]` values may not be available or may behave differently across threads. Ensure your tools and hooks are thread-safe.
+When using `Riffer::Tools::Runtime::Threaded`, each tool call runs in its own thread. The `around_tool_call` hook also runs inside that thread. Be mindful of thread-local state — for example, `ActiveRecord::Base.connection`, `RequestStore`, or any `Thread.current[]` values may not be available or may behave differently across threads. Ensure your tools and hooks are thread-safe.
 
 ### Threaded Runtime Options
 
@@ -174,7 +174,7 @@ The threaded runtime accepts a `max_concurrency` option (default: 5):
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime Riffer::ToolRuntime::Threaded.new(max_concurrency: 3)
+  tool_runtime Riffer::Tools::Runtime::Threaded.new(max_concurrency: 3)
 end
 ```
 
@@ -191,7 +191,7 @@ gem "async"
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime Riffer::ToolRuntime::Fibers
+  tool_runtime Riffer::Tools::Runtime::Fibers
 end
 ```
 
@@ -201,7 +201,7 @@ By default, all tool calls run as fibers without a concurrency limit. You can op
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime Riffer::ToolRuntime::Fibers.new(max_concurrency: 10)
+  tool_runtime Riffer::Tools::Runtime::Fibers.new(max_concurrency: 10)
 end
 ```
 
@@ -209,10 +209,10 @@ Fibers use cooperative scheduling — they yield control at I/O boundaries (netw
 
 ### Custom Runtimes
 
-Create a custom runtime by subclassing `Riffer::ToolRuntime` and overriding the private `dispatch_tool_call` method:
+Create a custom runtime by subclassing `Riffer::Tools::Runtime` and overriding the private `dispatch_tool_call` method:
 
 ```ruby
-class HttpToolRuntime < Riffer::ToolRuntime
+class HttpToolRuntime < Riffer::Tools::Runtime
   private
 
   def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
@@ -235,7 +235,7 @@ end
 Each tool call is wrapped by the `around_tool_call` method, which yields by default. Override it in a subclass to add instrumentation, logging, or other cross-cutting concerns:
 
 ```ruby
-class InstrumentedRuntime < Riffer::ToolRuntime::Inline
+class InstrumentedRuntime < Riffer::Tools::Runtime::Inline
   private
 
   def around_tool_call(tool_call, context:, assistant_message: nil)

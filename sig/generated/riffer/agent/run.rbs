@@ -20,15 +20,15 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
-  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
+  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
 
   # Runs the streaming loop for the given agent. See Riffer::Agent#stream
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   private
 
@@ -132,13 +132,13 @@ module Riffer::Agent::Run
   # anchor the attachments.
   #
   # --
-  # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
-  def append_user_message: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
+  def append_user_message: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
 
   # Accumulates token usage into +agent.context.token_usage+. Updates the
   # context so cumulative usage persists across every run on the agent.
   #
   # --
-  # : (Riffer::Agent, Riffer::TokenUsage?) -> void
-  def track_token_usage: (Riffer::Agent, Riffer::TokenUsage?) -> void
+  # : (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
+  def track_token_usage: (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
 end

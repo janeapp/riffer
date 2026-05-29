@@ -32,9 +32,9 @@ msg.to_h     # => {role: :user, content: "Hello, how are you?"}
 User messages can include file attachments:
 
 ```ruby
-file = Riffer::FilePart.from_path("photo.jpg")
+file = Riffer::Messages::FilePart.from_path("photo.jpg")
 msg = Riffer::Messages::User.new("Describe this image", files: [file])
-msg.files    # => [#<Riffer::FilePart ...>]
+msg.files    # => [#<Riffer::Messages::FilePart ...>]
 msg.to_h     # => {role: :user, content: "Describe this image", files: [{...}]}
 ```
 
@@ -48,7 +48,7 @@ msg = Riffer::Messages::Assistant.new("I'm doing well, thank you!")
 msg.role         # => :assistant
 msg.content      # => "I'm doing well, thank you!"
 msg.tool_calls   # => []
-msg.token_usage  # => nil or Riffer::TokenUsage
+msg.token_usage  # => nil or Riffer::Providers::TokenUsage
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -118,7 +118,7 @@ msg.error_type  # => :execution_error
 
 ## File Parts
 
-`Riffer::FilePart` represents a file attachment (image or document) that can be included with user messages.
+`Riffer::Messages::FilePart` represents a file attachment (image or document) that can be included with user messages.
 
 ### Supported Media Types
 
@@ -130,18 +130,18 @@ msg.error_type  # => :execution_error
 
 ```ruby
 # From a file path (reads eagerly, detects media type from extension)
-file = Riffer::FilePart.from_path("photo.jpg")
+file = Riffer::Messages::FilePart.from_path("photo.jpg")
 file.media_type  # => "image/jpeg"
 file.filename    # => "photo.jpg"
 file.image?      # => true
 
 # From a URL (stored directly, resolved lazily if provider needs bytes)
-file = Riffer::FilePart.from_url("https://example.com/doc.pdf")
+file = Riffer::Messages::FilePart.from_url("https://example.com/doc.pdf")
 file.url?        # => true
 file.document?   # => true
 
 # From raw base64 data
-file = Riffer::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
+file = Riffer::Messages::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
 ```
 
 ### Hash Shorthand
@@ -183,10 +183,10 @@ This creates a `User` message internally.
 
 ### Message Arrays
 
-For multi-turn conversations restored from persisted state, construct a `Riffer::Session` with the message history and hand it to a new agent:
+For multi-turn conversations restored from persisted state, construct a `Riffer::Agent::Session` with the message history and hand it to a new agent:
 
 ```ruby
-session = Riffer::Session.new(messages: [
+session = Riffer::Agent::Session.new(messages: [
   Riffer::Messages::User.new("What's the weather?"),
   Riffer::Messages::Assistant.new("I'll check that for you."),
   Riffer::Messages::User.new("Thanks, I meant in Tokyo specifically.")
@@ -196,11 +196,11 @@ agent = MyAgent.new(session: session)
 response = agent.generate   # session already carries the last user turn
 ```
 
-`Riffer::Session.new(messages:)` accepts `Riffer::Messages::Base` objects. If your persistence layer hands back hashes, normalize them first via `Riffer::Messages::Converter#convert_to_message_object` or your own adapter (e.g. jane's `to_riffer`).
+`Riffer::Agent::Session.new(messages:)` accepts `Riffer::Messages::Base` objects. If your persistence layer hands back hashes, normalize them first via `Riffer::Messages::Converter#convert_to_message_object` or your own adapter (e.g. jane's `to_riffer`).
 
 ### Accessing Message History
 
-Conversation state lives on `agent.session` — a `Riffer::Session` instance. After calling `generate` or `stream`, access the full conversation:
+Conversation state lives on `agent.session` — a `Riffer::Agent::Session` instance. After calling `generate` or `stream`, access the full conversation:
 
 ```ruby
 agent = MyAgent.new
@@ -214,7 +214,7 @@ end
 # [assistant] Hi there! How can I help you today?
 ```
 
-`Riffer::Session` includes `Enumerable`, so `find`, `select`, `count`, `reverse_each` etc. work directly on the session without going through `.messages`.
+`Riffer::Agent::Session` includes `Enumerable`, so `find`, `select`, `count`, `reverse_each` etc. work directly on the session without going through `.messages`.
 
 ## Tool Call Structure
 
@@ -257,7 +257,7 @@ Without this step, the same model can receive different input depending on the p
 When a context message is injected before the user's turn, two consecutive user messages are merged into one:
 
 ```ruby
-session = Riffer::Session.new(messages: [
+session = Riffer::Agent::Session.new(messages: [
   Riffer::Messages::System.new("You are a code reviewer."),
   Riffer::Messages::User.new("The repository uses RSpec for testing."),
   Riffer::Messages::User.new("Review this pull request.")

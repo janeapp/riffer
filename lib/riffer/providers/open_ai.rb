@@ -72,12 +72,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Responses::Response) -> Riffer::TokenUsage?
+  #: (OpenAI::Models::Responses::Response) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens
     )
@@ -224,7 +224,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     return unless usage
 
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::TokenUsage.new(
+      token_usage: Riffer::Providers::TokenUsage.new(
         input_tokens: usage.input_tokens,
         output_tokens: usage.output_tokens
       )
@@ -300,7 +300,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_openai_format(file)
     if file.image?
       image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"

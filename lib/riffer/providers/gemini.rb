@@ -96,12 +96,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Riffer::TokenUsage?
+  #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response[:usageMetadata]
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage[:promptTokenCount] || 0,
       output_tokens: usage[:candidatesTokenCount] || 0
     )
@@ -155,7 +155,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
         usage = parsed[:usageMetadata]
         if usage && usage[:candidatesTokenCount]
           yielder << Riffer::StreamEvents::TokenUsageDone.new(
-            token_usage: Riffer::TokenUsage.new(
+            token_usage: Riffer::Providers::TokenUsage.new(
               input_tokens: usage[:promptTokenCount] || 0,
               output_tokens: usage[:candidatesTokenCount] || 0
             )
@@ -236,7 +236,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_gemini_format(file)
     if file.url?
       raise Riffer::ArgumentError,

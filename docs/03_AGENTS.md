@@ -259,11 +259,11 @@ Configures how tool calls are executed. Defaults to sequential (inline) executio
 class MyAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
   uses_tools [WeatherTool, SearchTool]
-  tool_runtime Riffer::ToolRuntime::Threaded
+  tool_runtime Riffer::Tools::Runtime::Threaded
 end
 ```
 
-Accepts a `Riffer::ToolRuntime` subclass, a `Riffer::ToolRuntime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ### guardrail
 

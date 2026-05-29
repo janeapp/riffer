@@ -477,7 +477,7 @@ describe Riffer::Agent::Run do
   end
 
   describe "token usage tracking with #generate" do
-    let(:token_usage) { Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
+    let(:token_usage) { Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 
     it "tracks token usage from response" do
       agent = agent_class.new
@@ -505,8 +505,8 @@ describe Riffer::Agent::Run do
 
       agent = agent_with_tools.new
       provider = agent.provider
-      token_usage1 = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
-      token_usage2 = Riffer::TokenUsage.new(input_tokens: 150, output_tokens: 75)
+      token_usage1 = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      token_usage2 = Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75)
       provider.stub_response("", tool_calls: [{name: "token_usage_test_tool", arguments: "{}"}], token_usage: token_usage1)
       provider.stub_response("Done!", token_usage: token_usage2)
 
@@ -535,7 +535,7 @@ describe Riffer::Agent::Run do
   end
 
   describe "token usage tracking with #stream" do
-    let(:token_usage) { Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
+    let(:token_usage) { Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 
     it "tracks token usage from TokenUsageDone event" do
       agent = agent_class.new
@@ -581,8 +581,8 @@ describe Riffer::Agent::Run do
 
       agent = agent_with_tools.new
       provider = agent.provider
-      token_usage1 = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
-      token_usage2 = Riffer::TokenUsage.new(input_tokens: 150, output_tokens: 75)
+      token_usage1 = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      token_usage2 = Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75)
       provider.stub_response("", tool_calls: [{name: "stream_token_usage_test_tool", arguments: "{}"}], token_usage: token_usage1)
       provider.stub_response("Done!", token_usage: token_usage2)
 
@@ -827,7 +827,7 @@ describe Riffer::Agent::Run do
 
     it "passes seeded history through untouched when healing is off (default)" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
-      seeded = Riffer::Session.new(messages: [
+      seeded = Riffer::Agent::Session.new(messages: [
         Riffer::Messages::User.new("hi"),
         Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
         Riffer::Messages::Assistant.new("", tool_calls: [tc]),
@@ -851,7 +851,7 @@ describe Riffer::Agent::Run do
     it "preserves a pending tool_use on the resume boundary even when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
-      seeded = Riffer::Session.new(messages: [
+      seeded = Riffer::Agent::Session.new(messages: [
         Riffer::Messages::User.new("Call tool"),
         Riffer::Messages::Assistant.new("", tool_calls: [tc])
       ])
@@ -1711,7 +1711,7 @@ describe Riffer::Agent::Run do
   describe "#generate with files" do
     it "attaches files to user message" do
       agent = agent_class.new
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.generate("Describe this", files: [file])
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files.length).must_equal 1
@@ -1721,7 +1721,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
-      expect(user_message.files.first).must_be_instance_of Riffer::FilePart
+      expect(user_message.files.first).must_be_instance_of Riffer::Messages::FilePart
     end
 
     it "defaults to empty files when not provided" do
@@ -1743,7 +1743,7 @@ describe Riffer::Agent::Run do
   describe "#stream with files" do
     it "attaches files to user message" do
       agent = agent_class.new
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.stream("Describe this", files: [file]).each { |_| }
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
       expect(user_message.files.length).must_equal 1
@@ -1753,7 +1753,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.stream("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}]).each { |_| }
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
-      expect(user_message.files.first).must_be_instance_of Riffer::FilePart
+      expect(user_message.files.first).must_be_instance_of Riffer::Messages::FilePart
     end
   end
 
@@ -2257,19 +2257,19 @@ describe Riffer::Agent::Run do
           Riffer::Messages::User.new("Hello"),
           Riffer::Messages::Assistant.new("Hi there!")
         ]
-        agent = agent_class.new(session: Riffer::Session.new(messages: messages))
+        agent = agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         result = agent.generate
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
       it "runs the loop without a prompt when the session already has the last user message" do
-        agent = agent_class.new(session: Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
+        agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
         result = agent.generate
         expect(result.interrupted?).must_equal false
       end
 
       it "accepts a new prompt to continue the seeded conversation" do
-        agent = agent_class.new(session: Riffer::Session.new(messages: [
+        agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [
           Riffer::Messages::User.new("Hi"),
           Riffer::Messages::Assistant.new("Hello!")
         ]))
@@ -2296,7 +2296,7 @@ describe Riffer::Agent::Run do
           uses_tools [tc]
         end
 
-        session = Riffer::Session.new(messages: [Riffer::Messages::User.new("Get my name")])
+        session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Get my name")])
         agent = custom_agent_class.new(session: session, context: {user_name: "Alice"})
         provider = agent.provider
         provider.stub_response("", tool_calls: [
@@ -2315,7 +2315,7 @@ describe Riffer::Agent::Run do
           Riffer::Messages::System.new("Custom instructions."),
           Riffer::Messages::User.new("Hello")
         ]
-        agent = agent_class.new(session: Riffer::Session.new(messages: messages))
+        agent = agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         agent.generate
         system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
         expect(system_messages.length).must_equal 1
@@ -2342,7 +2342,7 @@ describe Riffer::Agent::Run do
             Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}")
           ])
         ]
-        agent = custom_agent_class.new(session: Riffer::Session.new(messages: messages))
+        agent = custom_agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         provider = agent.provider
         provider.stub_response("All done!")
 
@@ -2355,7 +2355,7 @@ describe Riffer::Agent::Run do
       end
 
       it "defaults context to a Riffer::Agent::Context with nil skills when not provided" do
-        agent = agent_class.new(session: Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
+        agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
         expect(agent.context).must_be_instance_of Riffer::Agent::Context
         expect(agent.context.skills).must_be_nil
       end
@@ -2409,7 +2409,7 @@ describe Riffer::Agent::Run do
           uses_tools [tc]
         end
 
-        seeded = Riffer::Session.new(messages: [
+        seeded = Riffer::Agent::Session.new(messages: [
           Riffer::Messages::User.new("Original prompt"),
           Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
           Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
@@ -2463,7 +2463,7 @@ describe Riffer::Agent::Run do
           end
         end
 
-        session = Riffer::Session.new(messages: [Riffer::Messages::User.new("Analyze sentiment")])
+        session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Analyze sentiment")])
         agent = klass.new(session: session)
         provider = agent.provider
         provider.stub_response('{"sentiment":"positive"}')
@@ -2529,7 +2529,7 @@ describe Riffer::Agent::Run do
 
     describe "with a seeded session" do
       it "resumes from a session constructed with persisted messages" do
-        session = Riffer::Session.new(messages: [
+        session = Riffer::Agent::Session.new(messages: [
           Riffer::Messages::System.new("You are a helpful assistant."),
           Riffer::Messages::User.new("Hello")
         ])
@@ -2540,7 +2540,7 @@ describe Riffer::Agent::Run do
       end
 
       it "runs the stream loop without a prompt when the session already has the last user message" do
-        session = Riffer::Session.new(messages: [Riffer::Messages::User.new("Hello")])
+        session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hello")])
         agent = agent_class.new(session: session)
         events = agent.stream.to_a
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
