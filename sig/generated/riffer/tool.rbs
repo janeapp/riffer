@@ -20,7 +20,7 @@
 #     end
 #   end
 class Riffer::Tool
-  extend Riffer::Toolable
+  extend Riffer::Tools::Toolable
 
   # Executes the tool with the given arguments.
   #

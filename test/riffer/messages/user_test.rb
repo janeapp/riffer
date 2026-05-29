@@ -17,13 +17,13 @@ describe Riffer::Messages::User do
     end
 
     it "stores file parts" do
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       message = Riffer::Messages::User.new("Describe this", files: [file])
       expect(message.files.length).must_equal 1
     end
 
     it "returns the provided file parts" do
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       message = Riffer::Messages::User.new("Describe this", files: [file])
       expect(message.files.first).must_equal file
     end
@@ -71,8 +71,8 @@ describe Riffer::Messages::User do
     end
 
     it "combines files from both messages" do
-      file_a = Riffer::FilePart.new(data: "abc", media_type: "image/png")
-      file_b = Riffer::FilePart.new(data: "def", media_type: "image/jpeg")
+      file_a = Riffer::Messages::FilePart.new(data: "abc", media_type: "image/png")
+      file_b = Riffer::Messages::FilePart.new(data: "def", media_type: "image/jpeg")
       a = Riffer::Messages::User.new("With image", files: [file_a])
       b = Riffer::Messages::User.new("Another", files: [file_b])
 
@@ -103,13 +103,13 @@ describe Riffer::Messages::User do
     end
 
     it "includes files when present" do
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       message = Riffer::Messages::User.new("Describe this", files: [file])
       expect(message.to_h[:files]).must_be_instance_of Array
     end
 
     it "serializes files as hashes" do
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       message = Riffer::Messages::User.new("Describe this", files: [file])
       expect(message.to_h[:files].first[:media_type]).must_equal "image/png"
     end

@@ -17,7 +17,7 @@ describe Riffer::Messages::Assistant do
     end
 
     it "returns usage when provided" do
-      usage = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
       message = Riffer::Messages::Assistant.new("I can help", token_usage: usage)
       expect(message.token_usage).must_equal usage
     end
@@ -91,7 +91,7 @@ describe Riffer::Messages::Assistant do
     end
 
     it "discards token_usage and structured_output" do
-      usage = Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
       a = Riffer::Messages::Assistant.new("First", token_usage: usage, structured_output: {key: "val"})
       b = Riffer::Messages::Assistant.new("Second")
 
@@ -120,7 +120,7 @@ describe Riffer::Messages::Assistant do
     end
 
     it "includes usage when provided" do
-      usage = Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
       message = Riffer::Messages::Assistant.new("I can help", token_usage: usage)
       expect(message.to_h[:token_usage]).must_equal({input_tokens: 100, output_tokens: 50})
     end

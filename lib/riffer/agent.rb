@@ -136,11 +136,11 @@ class Riffer::Agent
 
   # Gets or sets the tool runtime for this agent.
   #
-  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
+  # Accepts a Riffer::Tools::Runtime subclass, a Riffer::Tools::Runtime instance,
   # or a Proc. Defaults to <tt>Riffer.config.tool_runtime</tt> when unset.
   #
   #--
-  #: (?(singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)?) -> (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
+  #: (?(singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def self.tool_runtime(value = nil)
     value.nil? ? config.tool_runtime : (config.tool_runtime = value)
   end
@@ -188,7 +188,7 @@ class Riffer::Agent
   # to +#generate+.
   #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
   def self.generate(prompt = nil, files: nil, context: nil)
     new(context: context).generate(prompt, files: files)
   end
@@ -199,7 +199,7 @@ class Riffer::Agent
   # to +#stream+.
   #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def self.stream(prompt = nil, files: nil, context: nil)
     new(context: context).stream(prompt, files: files)
   end
@@ -227,8 +227,8 @@ class Riffer::Agent
     config.guardrails_for(phase)
   end
 
-  # The conversation handle. See Riffer::Session.
-  attr_reader :session #: Riffer::Session
+  # The conversation handle. See Riffer::Agent::Session.
+  attr_reader :session #: Riffer::Agent::Session
 
   # The per-instance Riffer::Agent::Config. Either the class-level default or
   # an explicit Config passed to +Agent.new(config:)+.
@@ -251,7 +251,7 @@ class Riffer::Agent
   #
   # - +context.skills+ — the resolved +Riffer::Skills::Context+ (when
   #   skills are configured), set at +Agent.new+ time.
-  # - +context.token_usage+ — the cumulative +Riffer::TokenUsage+,
+  # - +context.token_usage+ — the cumulative +Riffer::Providers::TokenUsage+,
   #   updated by each Run as the loop progresses.
   # - +context[:key]+ / <tt>context.dig(:key)</tt> — Hash-style reads for
   #   caller-provided keys (e.g. <tt>context[:agent]</tt>,
@@ -269,9 +269,9 @@ class Riffer::Agent
   # responses on +Riffer::Providers::Mock+ before calling +#generate+.
   attr_reader :provider #: Riffer::Providers::Base
 
-  # The +Riffer::StructuredOutput+ wrapping the configured schema, or +nil+
+  # The +Riffer::Agent::StructuredOutput+ wrapping the configured schema, or +nil+
   # when structured output is not configured. Resolved eagerly at +Agent.new+.
-  attr_reader :structured_output #: Riffer::StructuredOutput?
+  attr_reader :structured_output #: Riffer::Agent::StructuredOutput?
 
   # The tool classes the LLM sees on every call this agent makes. Resolved
   # eagerly at +Agent.new+ (Proc-form +uses_tools+ is called against
@@ -280,11 +280,11 @@ class Riffer::Agent
 
   # The tool runtime instance used to execute tool calls. Resolved eagerly
   # at +Agent.new+ (Proc-form +tool_runtime+ is called against +context+ once).
-  attr_reader :tool_runtime #: Riffer::ToolRuntime
+  attr_reader :tool_runtime #: Riffer::Tools::Runtime
 
   # Initializes a new agent.
   #
-  # When +session:+ is omitted, a fresh +Riffer::Session+ is built and seeded
+  # When +session:+ is omitted, a fresh +Riffer::Agent::Session+ is built and seeded
   # with the system instruction message and skills catalog (when configured),
   # using +context:+. When +session:+ is provided, the agent uses it as-is —
   # the caller is responsible for the session's contents (typical use case:
@@ -301,7 +301,7 @@ class Riffer::Agent
   # (must be "provider/model" format).
   #
   #--
-  #: (?session: Riffer::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
+  #: (?session: Riffer::Agent::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
   def initialize(session: nil, context: nil, config: nil)
     @config = config || self.class.config
     @context = Riffer::Agent::Context.new(context || {})
@@ -318,8 +318,8 @@ class Riffer::Agent
     @instruction_message = build_instruction_message
     @skills_message = build_skills_message
 
-    @session = session || Riffer::Session.new(messages: [@instruction_message, @skills_message].compact)
-    @session.set(Riffer::Session::Repair.prune_orphans(@session.messages))
+    @session = session || Riffer::Agent::Session.new(messages: [@instruction_message, @skills_message].compact)
+    @session.set(Riffer::Agent::Session::Repair.prune_orphans(@session.messages))
   end
 
   # Generates a response from the agent.
@@ -335,7 +335,7 @@ class Riffer::Agent
   # +files:+ requires +prompt+. Pass files to attach to the new user message.
   #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
   def generate(prompt = nil, files: nil)
     Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files)
   end
@@ -350,7 +350,7 @@ class Riffer::Agent
   # See +#generate+ for prompt/files semantics.
   #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt = nil, files: nil)
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @structured_output
     Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files)
@@ -450,10 +450,10 @@ class Riffer::Agent
   end
 
   #--
-  #: () -> Riffer::StructuredOutput?
+  #: () -> Riffer::Agent::StructuredOutput?
   def resolve_structured_output
     params = @config.structured_output
-    params ? Riffer::StructuredOutput.new(params) : nil
+    params ? Riffer::Agent::StructuredOutput.new(params) : nil
   end
 
   # Resolves the full tool catalog for the agent:
@@ -493,7 +493,7 @@ class Riffer::Agent
   end
 
   #--
-  #: () -> Riffer::ToolRuntime
+  #: () -> Riffer::Tools::Runtime
   def resolve_tool_runtime
     runtime = Riffer::Helpers::CallOrValue.resolve(@config.tool_runtime, context: @context)
     runtime.is_a?(Class) ? runtime.new : runtime

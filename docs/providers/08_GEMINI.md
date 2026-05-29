@@ -90,7 +90,7 @@ end
 params = Riffer::Params.new
 params.required(:sentiment, String)
 params.required(:score, Float)
-structured_output = Riffer::StructuredOutput.new(params)
+structured_output = Riffer::Agent::StructuredOutput.new(params)
 
 response = provider.generate_text(
   prompt: "Analyze: 'This is great!'",
@@ -125,7 +125,7 @@ response = provider.generate_text(
 Gemini supports inline base64-encoded files (images and documents):
 
 ```ruby
-file = Riffer::FilePart.new(data: base64_data, media_type: "image/png")
+file = Riffer::Messages::FilePart.new(data: base64_data, media_type: "image/png")
 response = provider.generate_text(
   prompt: "Describe this image",
   model: "gemini-2.5-flash-lite",

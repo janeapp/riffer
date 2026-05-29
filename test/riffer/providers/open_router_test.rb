@@ -76,7 +76,7 @@ describe Riffer::Providers::OpenRouter do
     it "does not leak structured_output kwarg to the request body" do
       params_obj = Riffer::Params.new
       params_obj.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params_obj)
+      structured_output = Riffer::Agent::StructuredOutput.new(params_obj)
 
       params = provider.send(:build_request_params, [user_message], "openai/gpt-4o-mini", {structured_output: structured_output})
       expect(params.key?(:structured_output)).must_equal false
@@ -85,7 +85,7 @@ describe Riffer::Providers::OpenRouter do
     it "converts structured_output to response_format json_schema" do
       params_obj = Riffer::Params.new
       params_obj.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params_obj)
+      structured_output = Riffer::Agent::StructuredOutput.new(params_obj)
 
       params = provider.send(:build_request_params, [user_message], "openai/gpt-4o-mini", {structured_output: structured_output})
       expect(params[:response_format][:type]).must_equal "json_schema"
@@ -141,7 +141,7 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "maps User messages with image files to multi-part content" do
-      file = Riffer::FilePart.new(data: "abc", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "abc", media_type: "image/png")
       result = provider.send(:convert_messages_to_chat_completions_format, [Riffer::Messages::User.new("Look", files: [file])])
       content = result.first[:content]
       expect(content.first).must_equal({type: "text", text: "Look"})
@@ -179,19 +179,19 @@ describe Riffer::Providers::OpenRouter do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
 
     it "encodes base64 images as a data URL" do
-      file = Riffer::FilePart.new(data: "xyz", media_type: "image/jpeg")
+      file = Riffer::Messages::FilePart.new(data: "xyz", media_type: "image/jpeg")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
       expect(result).must_equal({type: "image_url", image_url: {url: "data:image/jpeg;base64,xyz"}})
     end
 
     it "passes through image URLs without re-encoding" do
-      file = Riffer::FilePart.new(url: "https://example.com/cat.png", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(url: "https://example.com/cat.png", media_type: "image/png")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
       expect(result[:image_url][:url]).must_equal "https://example.com/cat.png"
     end
 
     it "encodes documents under the file content type" do
-      file = Riffer::FilePart.new(data: "pdfdata", media_type: "application/pdf", filename: "doc.pdf")
+      file = Riffer::Messages::FilePart.new(data: "pdfdata", media_type: "application/pdf", filename: "doc.pdf")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
       expect(result[:type]).must_equal "file"
       expect(result[:file][:file_data]).must_equal "data:application/pdf;base64,pdfdata"
@@ -285,7 +285,7 @@ describe Riffer::Providers::OpenRouter do
       params = Riffer::Params.new
       params.required(:sentiment, String)
       params.required(:score, Float)
-      Riffer::StructuredOutput.new(params)
+      Riffer::Agent::StructuredOutput.new(params)
     end
 
     it "returns valid JSON content" do
@@ -424,7 +424,7 @@ describe Riffer::Providers::OpenRouter do
       it "returns an Assistant message with content" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image briefly",
             model: "openai/gpt-4o-mini",

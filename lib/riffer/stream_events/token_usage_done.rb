@@ -11,10 +11,10 @@
 #
 class Riffer::StreamEvents::TokenUsageDone < Riffer::StreamEvents::Base
   # The token usage data for this response.
-  attr_reader :token_usage #: Riffer::TokenUsage
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage
 
   #--
-  #: (token_usage: Riffer::TokenUsage, ?role: Symbol) -> void
+  #: (token_usage: Riffer::Providers::TokenUsage, ?role: Symbol) -> void
   def initialize(token_usage:, role: :assistant)
     super(role: role)
     @token_usage = token_usage

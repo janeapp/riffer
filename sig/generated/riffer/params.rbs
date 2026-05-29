@@ -10,7 +10,7 @@
 #     optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
 #   end
 class Riffer::Params
-  attr_reader parameters: Array[Riffer::Param]
+  attr_reader parameters: Array[Riffer::Params::Param]
 
   # --
   # : () -> void
@@ -53,18 +53,18 @@ class Riffer::Params
   def build_nested: (Class, Class?) ?{ () -> void } -> Riffer::Params?
 
   # --
-  # : (Riffer::Param, untyped, Array[String]) -> untyped
-  def validate_nested: (Riffer::Param, untyped, Array[String]) -> untyped
+  # : (Riffer::Params::Param, untyped, Array[String]) -> untyped
+  def validate_nested: (Riffer::Params::Param, untyped, Array[String]) -> untyped
 
   # --
-  # : (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
-  def validate_nested_hash: (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
+  # : (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
+  def validate_nested_hash: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
-  def validate_nested_array_of_objects: (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
+  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
+  def validate_nested_array_of_objects: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
 
   # --
-  # : (Riffer::Param, Array[untyped], Array[String]) -> void
-  def validate_typed_array: (Riffer::Param, Array[untyped], Array[String]) -> void
+  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> void
+  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> void
 end

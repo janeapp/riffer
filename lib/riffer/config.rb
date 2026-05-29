@@ -113,9 +113,9 @@ class Riffer::Config
 
   # Global tool runtime configuration (experimental).
   #
-  # Accepts a Riffer::ToolRuntime subclass, a Riffer::ToolRuntime instance,
-  # or a Proc. Defaults to <tt>Riffer::ToolRuntime::Inline.new</tt>.
-  attr_reader :tool_runtime #: (singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)
+  # Accepts a Riffer::Tools::Runtime subclass, a Riffer::Tools::Runtime instance,
+  # or a Proc. Defaults to <tt>Riffer::Tools::Runtime::Inline.new</tt>.
+  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
 
   # Sets the global tool runtime.
   #
@@ -123,10 +123,10 @@ class Riffer::Config
   # (ToolRuntime subclass, ToolRuntime instance, or Proc).
   #
   #--
-  #: ((singleton(Riffer::ToolRuntime) | Riffer::ToolRuntime | Proc)) -> void
+  #: ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> void
   def tool_runtime=(value)
-    valid = (value.is_a?(Class) && value < Riffer::ToolRuntime) || value.is_a?(Riffer::ToolRuntime) || value.is_a?(Proc)
-    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::ToolRuntime subclass, instance, or a Proc" unless valid
+    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) || value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
+    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc" unless valid
     @tool_runtime = value
   end
 
@@ -209,7 +209,7 @@ class Riffer::Config
     @openrouter = OpenRouter.new
     @evals = Evals.new
     @mcp = Mcp.new(credentials: nil, discovery_runner: Riffer::Runner::Sequential.new)
-    @tool_runtime = Riffer::ToolRuntime::Inline.new
+    @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
     @message_id_strategy = :none
     @experimental_history_healing = false

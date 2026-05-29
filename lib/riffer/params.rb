@@ -12,7 +12,7 @@
 #   end
 #
 class Riffer::Params
-  attr_reader :parameters #: Array[Riffer::Param]
+  attr_reader :parameters #: Array[Riffer::Params::Param]
 
   #--
   #: () -> void
@@ -26,7 +26,7 @@ class Riffer::Params
   #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ () -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
-    @parameters << Riffer::Param.new(
+    @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
       required: true,
@@ -43,7 +43,7 @@ class Riffer::Params
   #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
-    @parameters << Riffer::Param.new(
+    @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
       required: false,
@@ -136,9 +136,9 @@ class Riffer::Params
       unless type == Array
         raise Riffer::ArgumentError, "of: can only be used with Array type, got #{type}"
       end
-      unless Riffer::Param::PRIMITIVE_TYPES.include?(of)
+      unless Riffer::Params::Param::PRIMITIVE_TYPES.include?(of)
         raise Riffer::ArgumentError,
-          "of: must be a primitive type (#{Riffer::Param::PRIMITIVE_TYPES.map(&:name).join(", ")}), got #{of}"
+          "of: must be a primitive type (#{Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(", ")}), got #{of}"
       end
       return nil
     end
@@ -154,7 +154,7 @@ class Riffer::Params
   end
 
   #--
-  #: (Riffer::Param, untyped, Array[String]) -> untyped
+  #: (Riffer::Params::Param, untyped, Array[String]) -> untyped
   def validate_nested(param, value, errors)
     if param.type == Hash && param.nested_params
       validate_nested_hash(param, value, errors)
@@ -169,7 +169,7 @@ class Riffer::Params
   end
 
   #--
-  #: (Riffer::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
+  #: (Riffer::Params::Param, Hash[Symbol, untyped], Array[String]) -> Hash[Symbol, untyped]
   def validate_nested_hash(param, value, errors)
     param.nested_params.validate(value)
   rescue Riffer::ValidationError => e
@@ -180,7 +180,7 @@ class Riffer::Params
   end
 
   #--
-  #: (Riffer::Param, Array[untyped], Array[String]) -> Array[untyped]
+  #: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects(param, value, errors)
     value.map.with_index do |item, i|
       unless item.is_a?(Hash)
@@ -197,11 +197,11 @@ class Riffer::Params
   end
 
   #--
-  #: (Riffer::Param, Array[untyped], Array[String]) -> void
+  #: (Riffer::Params::Param, Array[untyped], Array[String]) -> void
   def validate_typed_array(param, value, errors)
-    type_name = Riffer::Param::TYPE_MAPPINGS[param.item_type]
+    type_name = Riffer::Params::Param::TYPE_MAPPINGS[param.item_type]
     value.each_with_index do |item, i|
-      valid = if param.item_type == Riffer::Boolean || param.item_type == TrueClass || param.item_type == FalseClass
+      valid = if param.item_type == Riffer::Params::Boolean || param.item_type == TrueClass || param.item_type == FalseClass
         item == true || item == false
       else
         item.is_a?(param.item_type)

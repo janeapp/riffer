@@ -3,7 +3,7 @@
 require "test_helper"
 
 describe Riffer::StreamEvents::TokenUsageDone do
-  let(:token_usage) { Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
+  let(:token_usage) { Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 
   describe "#initialize" do
     it "sets the token_usage" do
@@ -34,7 +34,7 @@ describe Riffer::StreamEvents::TokenUsageDone do
     end
 
     it "includes cache tokens in token_usage when present" do
-      token_usage_with_cache = Riffer::TokenUsage.new(
+      token_usage_with_cache = Riffer::Providers::TokenUsage.new(
         input_tokens: 100,
         output_tokens: 50,
         cache_creation_tokens: 25,

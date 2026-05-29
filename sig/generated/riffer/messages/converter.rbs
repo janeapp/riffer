@@ -12,18 +12,18 @@ module Riffer::Messages::Converter
   # : ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def convert_to_message_object: (Hash[Symbol, untyped] | Riffer::Messages::Base) -> Riffer::Messages::Base
 
-  # Converts a hash or FilePart object to a Riffer::FilePart.
+  # Converts a hash or FilePart object to a Riffer::Messages::FilePart.
   #
   # Accepts:
-  # - +Riffer::FilePart+ objects (passed through)
+  # - +Riffer::Messages::FilePart+ objects (passed through)
   # - <tt>{url: "https://...", media_type: "..."}</tt> (URL source)
   # - <tt>{data: "...", media_type: "..."}</tt> (raw base64)
   #
   # Raises Riffer::ArgumentError if the hash format is invalid.
   #
   # --
-  # : ((Hash[Symbol, untyped] | Riffer::FilePart)) -> Riffer::FilePart
-  def convert_to_file_part: (Hash[Symbol, untyped] | Riffer::FilePart) -> Riffer::FilePart
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
+  def convert_to_file_part: (Hash[Symbol, untyped] | Riffer::Messages::FilePart) -> Riffer::Messages::FilePart
 
   private
 

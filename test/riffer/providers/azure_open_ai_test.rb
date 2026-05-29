@@ -61,7 +61,7 @@ describe Riffer::Providers::AzureOpenAI do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gpt-5-mini",
@@ -77,7 +77,7 @@ describe Riffer::Providers::AzureOpenAI do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gpt-5-mini",

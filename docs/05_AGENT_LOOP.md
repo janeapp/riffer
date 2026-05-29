@@ -5,7 +5,7 @@
 When an agent receives a response with tool calls:
 
 1. Agent detects `tool_calls` in the assistant message
-2. The configured tool runtime executes the tool calls (sequentially by default, or concurrently with `Riffer::ToolRuntime::Threaded`):
+2. The configured tool runtime executes the tool calls (sequentially by default, or concurrently with `Riffer::Tools::Runtime::Threaded`):
    - Finds the matching tool class
    - Validates arguments against the tool's parameter schema
    - Calls the tool's `call` method with `context` and arguments

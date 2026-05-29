@@ -108,12 +108,12 @@ Options:
 | `String`                   | `string`         |
 | `Integer`                  | `integer`        |
 | `Float`                    | `number`         |
-| `Riffer::Boolean`          | `boolean`        |
+| `Riffer::Params::Boolean`          | `boolean`        |
 | `TrueClass` / `FalseClass` | `boolean`        |
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
 
-`Riffer::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
+`Riffer::Params::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
 
 ### Nested Parameters
 
@@ -182,7 +182,7 @@ MyAgent.new(context: {user_id: 123}).generate("Show my orders")
 Two keys are framework-managed and exposed as typed accessors:
 
 - `context.skills` — the resolved `Riffer::Skills::Context` when the agent has skills configured, otherwise `nil`.
-- `context.token_usage` — the cumulative `Riffer::TokenUsage` across every run on the agent, or `nil` before the first response.
+- `context.token_usage` — the cumulative `Riffer::Providers::TokenUsage` across every run on the agent, or `nil` before the first response.
 
 ## Response Objects
 

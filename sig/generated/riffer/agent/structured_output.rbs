@@ -1,0 +1,31 @@
+# Generated from lib/riffer/agent/structured_output.rb with RBS::Inline
+
+# Riffer::Agent::StructuredOutput provides parse/validate for structured JSON
+# responses from LLM providers.
+#
+#   params = Riffer::Params.new
+#   params.required(:sentiment, String)
+#   so = Riffer::Agent::StructuredOutput.new(params)
+#   result = so.parse_and_validate('{"sentiment":"positive","score":0.9}')
+#   result.object  #=> {sentiment: "positive", score: 0.9}
+class Riffer::Agent::StructuredOutput
+  attr_reader params: Riffer::Params
+
+  # --
+  # : (Riffer::Params) -> void
+  def initialize: (Riffer::Params) -> void
+
+  # Returns the JSON Schema for this structured output.
+  #
+  # --
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def json_schema: (?strict: bool) -> Hash[Symbol, untyped]
+
+  # Parses a JSON string and validates it against the schema.
+  #
+  # Returns a Result with the validated object on success, or an error message on failure.
+  #
+  # --
+  # : (String) -> Riffer::Agent::StructuredOutput::Result
+  def parse_and_validate: (String) -> Riffer::Agent::StructuredOutput::Result
+end

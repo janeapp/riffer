@@ -38,8 +38,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Types::ConverseResponse
 
   # --
-  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
-  def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::TokenUsage?
+  # : (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (Aws::BedrockRuntime::Types::ConverseResponse) -> Riffer::Providers::TokenUsage?
 
   # --
   # : (Aws::BedrockRuntime::Types::ConverseResponse) -> String
@@ -103,8 +103,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
   # --
-  # : (Riffer::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_bedrock_format: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_bedrock_format: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
 
   BEDROCK_FORMAT_MAP: Hash[String, String]
 

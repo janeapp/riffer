@@ -78,7 +78,7 @@ describe Riffer::Providers::Mock do
       end
 
       it "preserves token_usage on a queued response" do
-        usage = Riffer::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+        usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
         provider = Riffer::Providers::Mock.new(responses: [
           {content: "Hello", token_usage: usage}
         ])
@@ -339,7 +339,7 @@ describe Riffer::Providers::Mock do
   end
 
   describe "usage tracking" do
-    let(:usage) { Riffer::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
+    let(:usage) { Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 
     describe "#stub_response with usage" do
       it "returns usage in generate_text response" do

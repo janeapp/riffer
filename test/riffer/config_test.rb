@@ -26,13 +26,13 @@ describe Riffer::Config do
   describe "tool_runtime" do
     it "defaults to Inline instance" do
       config = Riffer::Config.new
-      expect(config.tool_runtime).must_be_instance_of Riffer::ToolRuntime::Inline
+      expect(config.tool_runtime).must_be_instance_of Riffer::Tools::Runtime::Inline
     end
 
     it "allows setting tool_runtime" do
       config = Riffer::Config.new
-      config.tool_runtime = Riffer::ToolRuntime::Threaded
-      expect(config.tool_runtime).must_equal Riffer::ToolRuntime::Threaded
+      config.tool_runtime = Riffer::Tools::Runtime::Threaded
+      expect(config.tool_runtime).must_equal Riffer::Tools::Runtime::Threaded
     end
 
     it "raises for invalid tool_runtime" do

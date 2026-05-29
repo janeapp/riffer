@@ -117,8 +117,8 @@ describe Riffer::Providers::Base do
     end
 
     it "combines files when merging consecutive user messages" do
-      file_a = Riffer::FilePart.new(data: "abc", media_type: "image/png")
-      file_b = Riffer::FilePart.new(data: "def", media_type: "image/jpeg")
+      file_a = Riffer::Messages::FilePart.new(data: "abc", media_type: "image/png")
+      file_b = Riffer::Messages::FilePart.new(data: "def", media_type: "image/jpeg")
       messages = [
         Riffer::Messages::User.new("With image", files: [file_a]),
         Riffer::Messages::User.new("Another image", files: [file_b])

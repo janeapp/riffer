@@ -23,7 +23,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Riffer::Agent::Response
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
   def generate(agent:, prompt: nil, files: nil)
     append_user_message(agent, prompt, files: files)
     run_loop(agent)
@@ -33,7 +33,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(agent:, prompt: nil, files: nil)
     append_user_message(agent, prompt, files: files)
     Enumerator.new { |stream_yielder| run_loop(agent, stream_yielder: stream_yielder) }
@@ -87,7 +87,7 @@ module Riffer::Agent::Run
 
     # catch returns the thrown value when throw :riffer_interrupt fires;
     # the return above exits on the successful (non-interrupted) path.
-    new_messages, filled = Riffer::Session::Repair.fill_orphans(agent.session.messages)
+    new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
     agent.session.set(new_messages)
     stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason, healed_tool_call_ids: filled) if stream_yielder
     final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled)
@@ -101,7 +101,7 @@ module Riffer::Agent::Run
   def accumulate_streamed_response(agent, stream_yielder)
     accumulated_content = ""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
-    accumulated_token_usage = nil #: Riffer::TokenUsage?
+    accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
 
     call_llm_stream(agent).each do |event|
       stream_yielder << event
@@ -285,7 +285,7 @@ module Riffer::Agent::Run
   # anchor the attachments.
   #
   #--
-  #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::FilePart]?) -> void
+  #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
   def append_user_message(agent, prompt, files: nil)
     raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
     return unless prompt
@@ -298,7 +298,7 @@ module Riffer::Agent::Run
   # context so cumulative usage persists across every run on the agent.
   #
   #--
-  #: (Riffer::Agent, Riffer::TokenUsage?) -> void
+  #: (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
   def track_token_usage(agent, usage)
     return unless usage
 

@@ -158,11 +158,11 @@ describe Riffer::Messages::Converter do
           content: "Describe this",
           files: [{data: "aGVsbG8=", media_type: "image/png"}]
         })
-        expect(result.files.first).must_be_instance_of Riffer::FilePart
+        expect(result.files.first).must_be_instance_of Riffer::Messages::FilePart
       end
 
       it "preserves FilePart objects" do
-        file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+        file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
         result = instance.convert_to_message_object({
           role: "user",
           content: "Describe this",
@@ -180,20 +180,20 @@ describe Riffer::Messages::Converter do
 
   describe "#convert_to_file_part" do
     it "passes through FilePart objects" do
-      file = Riffer::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       result = instance.convert_to_file_part(file)
       expect(result).must_equal file
     end
 
     it "converts url hash" do
       result = instance.convert_to_file_part({url: "https://example.com/photo.jpg", media_type: "image/jpeg"})
-      expect(result).must_be_instance_of Riffer::FilePart
+      expect(result).must_be_instance_of Riffer::Messages::FilePart
       expect(result.url).must_equal "https://example.com/photo.jpg"
     end
 
     it "converts data hash" do
       result = instance.convert_to_file_part({data: "aGVsbG8=", media_type: "image/png"})
-      expect(result).must_be_instance_of Riffer::FilePart
+      expect(result).must_be_instance_of Riffer::Messages::FilePart
       expect(result.data).must_equal "aGVsbG8="
     end
 

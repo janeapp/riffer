@@ -83,12 +83,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Anthropic::Models::Message) -> Riffer::TokenUsage?
+  #: (Anthropic::Models::Message) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     usage = response.usage
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_creation_tokens: usage.cache_creation_input_tokens,
@@ -292,7 +292,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     return unless usage
 
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::TokenUsage.new(
+      token_usage: Riffer::Providers::TokenUsage.new(
         input_tokens: usage.input_tokens,
         output_tokens: usage.output_tokens,
         cache_creation_tokens: usage.cache_creation_input_tokens,
@@ -358,7 +358,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_anthropic_format(file)
     type = file.image? ? "image" : "document"
 

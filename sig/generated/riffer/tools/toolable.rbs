@@ -1,0 +1,99 @@
+# Generated from lib/riffer/tools/toolable.rb with RBS::Inline
+
+# Riffer::Tools::Toolable provides the shared class-level DSL for anything that can
+# present as a tool to an LLM — tools today, and subagents/workflows in the
+# future.
+#
+# Extend this module to make a class discoverable as a tool by LLM providers.
+# Provides identifier, description, params, timeout, and JSON schema
+# generation.
+#
+# Instance-level execution concerns (+call+, +call_with_validation+, etc.)
+# are NOT part of Toolable — those belong on Riffer::Tool.
+#
+#   class MyTool
+#     extend Riffer::Tools::Toolable
+#
+#     description "Does something useful"
+#
+#     params do
+#       required :input, String
+#     end
+#   end
+module Riffer::Tools::Toolable
+  DEFAULT_TIMEOUT: Integer
+
+  # Tracks all classes that extend Toolable.
+  #
+  # --
+  # : (Module) -> void
+  def self.extended: (Module) -> void
+
+  # Returns all classes that have extended Toolable.
+  #
+  # --
+  # : () -> Array[Module]
+  def self.all: () -> Array[Module]
+
+  # Gets or sets the tool description.
+  #
+  # --
+  # : (?String?) -> String?
+  def description: (?String?) -> String?
+
+  # Gets or sets the tool identifier/name.
+  #
+  # --
+  # : (?String?) -> String
+  def identifier: (?String?) -> String
+
+  # Alias for identifier — used by providers.
+  #
+  # --
+  # : (?String?) -> String
+  def name: (?String?) -> String
+
+  # Gets or sets the tool timeout in seconds.
+  #
+  # --
+  # : (?(Integer | Float)?) -> (Integer | Float)
+  def timeout: (?(Integer | Float)?) -> (Integer | Float)
+
+  # Defines parameters using the Params DSL.
+  #
+  # --
+  # : () ?{ () -> void } -> Riffer::Params?
+  def params: () ?{ () -> void } -> Riffer::Params?
+
+  # Returns the JSON Schema for the tool's parameters.
+  #
+  # --
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def parameters_schema: (?strict: bool) -> Hash[Symbol, untyped]
+
+  # Returns the kind of toolable entity.
+  #
+  # Defaults to +:tool+. Extensible to +:agent+, +:workflow+, etc.
+  #
+  # --
+  # : (?Symbol?) -> Symbol
+  def kind: (?Symbol?) -> Symbol
+
+  # Returns a provider-agnostic tool schema hash.
+  #
+  # --
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def to_tool_schema: (?strict: bool) -> Hash[Symbol, untyped]
+
+  # Validates that the minimum required metadata is present for LLM tool use.
+  #
+  # Raises Riffer::ArgumentError if validation fails.
+  #
+  # --
+  # : () -> true
+  def validate_as_tool!: () -> true
+
+  private
+
+  def empty_schema: () -> untyped
+end

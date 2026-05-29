@@ -161,7 +161,7 @@ describe Riffer::Providers::AmazonBedrock do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -177,7 +177,7 @@ describe Riffer::Providers::AmazonBedrock do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -193,7 +193,7 @@ describe Riffer::Providers::AmazonBedrock do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -209,7 +209,7 @@ describe Riffer::Providers::AmazonBedrock do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -226,7 +226,7 @@ describe Riffer::Providers::AmazonBedrock do
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
-          structured_output = Riffer::StructuredOutput.new(params)
+          structured_output = Riffer::Agent::StructuredOutput.new(params)
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -250,7 +250,7 @@ describe Riffer::Providers::AmazonBedrock do
           optional :postal_code, String, description: "Postal or zip code"
           optional :country, String, description: "Country"
         end
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns valid JSON with nested object content" do
@@ -282,7 +282,7 @@ describe Riffer::Providers::AmazonBedrock do
           optional :postal_code, String, description: "Postal or zip code"
           optional :country, String, description: "Country"
         end
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns null for optional fields when info is unavailable" do
@@ -312,7 +312,7 @@ describe Riffer::Providers::AmazonBedrock do
         params = Riffer::Params.new
         params.required(:name, String, description: "Session name")
         params.optional(:session_type, String, enum: session_types, description: "Type of session")
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns an enum value when present" do
@@ -351,7 +351,7 @@ describe Riffer::Providers::AmazonBedrock do
         params = Riffer::Params.new
         params.required(:tags, Array, of: String, description: "Descriptive tags")
         params.required(:scores, Array, of: Float, description: "Relevance scores between 0 and 1")
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns valid JSON with typed array content" do
@@ -382,7 +382,7 @@ describe Riffer::Providers::AmazonBedrock do
           required :price, Float, description: "Price in dollars"
           optional :quantity, Integer, description: "Quantity ordered"
         end
-        Riffer::StructuredOutput.new(params)
+        Riffer::Agent::StructuredOutput.new(params)
       end
 
       it "returns valid JSON with array of objects content" do
@@ -656,7 +656,7 @@ describe Riffer::Providers::AmazonBedrock do
       params = Riffer::Params.new
       params.required(:sentiment, String)
       params.required(:score, Float)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "us.anthropic.claude-haiku-4-5-20251001-v1:0", {structured_output: structured_output})
@@ -668,7 +668,7 @@ describe Riffer::Providers::AmazonBedrock do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
       params = Riffer::Params.new
       params.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "us.anthropic.claude-haiku-4-5-20251001-v1:0", {structured_output: structured_output})
@@ -680,7 +680,7 @@ describe Riffer::Providers::AmazonBedrock do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
       params = Riffer::Params.new
       params.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "us.anthropic.claude-haiku-4-5-20251001-v1:0", {structured_output: structured_output})
@@ -704,7 +704,7 @@ describe Riffer::Providers::AmazonBedrock do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
       params = Riffer::Params.new
       params.required(:sentiment, String)
-      structured_output = Riffer::StructuredOutput.new(params)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
       params = provider.send(:build_request_params, messages, "us.anthropic.claude-haiku-4-5-20251001-v1:0", {structured_output: structured_output})
@@ -720,7 +720,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -729,7 +729,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
           expect(result.content).wont_be_empty
         end
@@ -741,7 +741,7 @@ describe Riffer::Providers::AmazonBedrock do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
           pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
-          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           result = provider.generate_text(prompt: "What is in this document?", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -751,7 +751,7 @@ describe Riffer::Providers::AmazonBedrock do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
           pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
-          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           result = provider.generate_text(prompt: "What is in this document?", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file])
           expect(result.content).wont_be_empty
         end
@@ -763,7 +763,7 @@ describe Riffer::Providers::AmazonBedrock do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
           pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
-          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           events = provider.stream_text(prompt: "What is in this document?", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file]).to_a
           expect(events).wont_be_empty
         end
@@ -773,7 +773,7 @@ describe Riffer::Providers::AmazonBedrock do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
           pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
-          file = Riffer::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           events = provider.stream_text(prompt: "What is in this document?", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           expect(done).wont_be_nil
@@ -785,7 +785,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(prompt: "Describe this image", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file]).to_a
           expect(events).wont_be_empty
         end
@@ -794,7 +794,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-          file = Riffer::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(prompt: "Describe this image", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           expect(done).wont_be_nil
@@ -809,7 +809,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
           result = provider.generate_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file])
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -818,7 +818,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
           result = provider.generate_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file])
           expect(result.content).wont_be_empty
         end
@@ -829,7 +829,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
+          file = Riffer::Messages::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           result = provider.generate_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file])
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -838,7 +838,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
+          file = Riffer::Messages::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           result = provider.generate_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file])
           expect(result.content).wont_be_empty
         end
@@ -849,7 +849,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
           events = provider.stream_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
           expect(events).wont_be_empty
         end
@@ -858,7 +858,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
           events = provider.stream_text(prompt: "Describe this image", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           expect(done).wont_be_nil
@@ -870,7 +870,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
+          file = Riffer::Messages::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           events = provider.stream_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
           expect(events).wont_be_empty
         end
@@ -879,7 +879,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2")
-          file = Riffer::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
+          file = Riffer::Messages::FilePart.new(media_type: "application/pdf", filename: "super-secret-document", url: document_s3_uri)
           events = provider.stream_text(prompt: "What is in this document?", model: "us.amazon.nova-lite-v1:0", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           expect(done).wont_be_nil
@@ -890,7 +890,7 @@ describe Riffer::Providers::AmazonBedrock do
     describe "with unsupported URL source" do
       it "raises ArgumentError for non-S3 URLs" do
         provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-        file = Riffer::FilePart.from_url("https://example.com/image.png")
+        file = Riffer::Messages::FilePart.from_url("https://example.com/image.png")
         expect { provider.generate_text(prompt: "Describe this", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", files: [file]) }
           .must_raise Riffer::ArgumentError
       end

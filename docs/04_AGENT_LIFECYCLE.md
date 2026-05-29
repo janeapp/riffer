@@ -8,7 +8,7 @@
 Agent.new(session: nil, context: nil)
 ```
 
-- **`session:`** — an existing `Riffer::Session`. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. With `Riffer.config.experimental_history_healing` on, a provided session is healed at construction time so the `tool_use` ↔ `tool_result` invariant holds before the next inference call.
+- **`session:`** — an existing `Riffer::Agent::Session`. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. With `Riffer.config.experimental_history_healing` on, a provided session is healed at construction time so the `tool_use` ↔ `tool_result` invariant holds before the next inference call.
 - **`context:`** — a `Hash` carried for the lifetime of the agent. Used to evaluate Proc-based `instructions`, `model`, `uses_tools`, and skill activation at construction time, and threaded through tool execution and guardrails on every `generate`/`stream` call.
 
 When `session:` is omitted, the agent constructs a fresh session and seeds it with `[instruction_message, skills_message].compact` eagerly. To swap context, construct a new agent — context is fixed for the lifetime of an agent instance.
@@ -46,7 +46,7 @@ agent.generate('Hello')
 agent.generate('Tell me more')   # continues with full history
 
 # Resume from persisted messages (cross-process)
-session = Riffer::Session.new(messages: persisted_messages)
+session = Riffer::Agent::Session.new(messages: persisted_messages)
 agent = MyAgent.new(session: session, context: {user_id: 123})
 response = agent.generate  # no prompt — session already has the last user message
 
@@ -92,7 +92,7 @@ end
 
 ### session
 
-Conversation state lives on `agent.session` — a `Riffer::Session` instance that owns the message array, the `on_message` callback list, and the `tool_use` ↔ `tool_result` invariant. The methods below are all on the session, not on the agent itself.
+Conversation state lives on `agent.session` — a `Riffer::Agent::Session` instance that owns the message array, the `on_message` callback list, and the `tool_use` ↔ `tool_result` invariant. The methods below are all on the session, not on the agent itself.
 
 Access the message history after a generate/stream call:
 
@@ -105,7 +105,7 @@ agent.session.messages.each do |msg|
 end
 ```
 
-`Riffer::Session` includes `Enumerable`, so `find`, `select`, `count`, `reverse_each` all work directly on the session:
+`Riffer::Agent::Session` includes `Enumerable`, so `find`, `select`, `count`, `reverse_each` all work directly on the session:
 
 ```ruby
 agent.session.find { |m| m.id == 'a_1' }
@@ -195,12 +195,12 @@ if response.interrupted?
 end
 ```
 
-**Cross-process resume** — when the agent is gone (process restart, async approval, etc.), construct a `Riffer::Session` from the persisted messages and pass it to a new agent. The agent uses the session as-is (no system messages added). Pending tool calls on the resume boundary are executed on the next `generate`/`stream`.
+**Cross-process resume** — when the agent is gone (process restart, async approval, etc.), construct a `Riffer::Agent::Session` from the persisted messages and pass it to a new agent. The agent uses the session as-is (no system messages added). Pending tool calls on the resume boundary are executed on the next `generate`/`stream`.
 
 ```ruby
 # During generation, persist each new message via on_message
 # Later, in a new process:
-session = Riffer::Session.new(messages: persisted_messages)
+session = Riffer::Agent::Session.new(messages: persisted_messages)
 agent = MyAgent.new(session: session, context: {user_id: 123})
 response = agent.generate  # session already has the last user turn
 
@@ -223,7 +223,7 @@ sys = agent.instruction_message     # => Riffer::Messages::System or nil
 skills = agent.skills_message       # => Riffer::Messages::System or nil
 
 # Store in DB, then later resume in a new process:
-session = Riffer::Session.new(messages: [sys, skills, user_msg].compact)
+session = Riffer::Agent::Session.new(messages: [sys, skills, user_msg].compact)
 MyAgent.new(session: session, context: ctx).generate
 ```
 
@@ -288,7 +288,7 @@ Mutators do **not** fire `on_message` — that callback is reserved for messages
 The mutable runtime context. A `Hash` threaded into every Proc-based DSL setting, guardrail, tool runtime, and skills resolution, and shared with every `Riffer::Agent::Run` this agent executes. Carries:
 
 - `context[:skills]` — the resolved `Riffer::Skills::Context` when skills are configured.
-- `context[:token_usage]` — the cumulative `Riffer::TokenUsage`, mutated by each Run as the loop progresses.
+- `context[:token_usage]` — the cumulative `Riffer::Providers::TokenUsage`, mutated by each Run as the loop progresses.
 - any caller-provided keys passed via `Agent.new(context: ...)`.
 
 ```ruby

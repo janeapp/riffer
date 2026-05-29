@@ -249,7 +249,7 @@ Emitted when token usage data is available at the end of a response:
 ```ruby
 event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage)
 event.role                          # => :assistant
-event.token_usage                   # => Riffer::TokenUsage
+event.token_usage                   # => Riffer::Providers::TokenUsage
 event.token_usage.input_tokens      # => 100
 event.token_usage.output_tokens     # => 50
 event.token_usage.total_tokens      # => 150

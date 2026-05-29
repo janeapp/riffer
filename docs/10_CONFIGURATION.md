@@ -61,14 +61,14 @@ Configure the default tool runtime for all agents:
 
 ```ruby
 Riffer.configure do |config|
-  config.tool_runtime = Riffer::ToolRuntime::Threaded
+  config.tool_runtime = Riffer::Tools::Runtime::Threaded
 end
 ```
 
 | Value                          | Description                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `Riffer::ToolRuntime` subclass | Instantiated automatically (e.g., `Riffer::ToolRuntime::Inline`, `Riffer::ToolRuntime::Threaded`) |
-| `Riffer::ToolRuntime` instance | Custom runtime with specific options                                                              |
+| `Riffer::Tools::Runtime` subclass | Instantiated automatically (e.g., `Riffer::Tools::Runtime::Inline`, `Riffer::Tools::Runtime::Threaded`) |
+| `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                              |
 | `Proc`                         | Dynamic resolution                                                                                |
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
@@ -119,7 +119,7 @@ end
 
 When the strategy is not `:none`, every `Riffer::Messages::Base` instance — user prompts, system instructions, assistant responses, and tool results — gets an auto-generated `id` at construction time. IDs are included in `message.to_h` when present and omitted when `nil`. Provider API payloads are unaffected; the `id` stays on the Ruby side.
 
-When constructing a `Riffer::Session` from persisted history with the strategy enabled, supply ids on every seeded message yourself — Riffer never fabricates identifiers for pre-existing history. Messages built via the `Riffer::Messages::*` constructors auto-generate ids per the strategy, so as long as those constructors are used at message-creation time, ids flow through.
+When constructing a `Riffer::Agent::Session` from persisted history with the strategy enabled, supply ids on every seeded message yourself — Riffer never fabricates identifiers for pre-existing history. Messages built via the `Riffer::Messages::*` constructors auto-generate ids per the strategy, so as long as those constructors are used at message-creation time, ids flow through.
 
 See [Messages — IDs](08_MESSAGES.md#ids) for more details.
 
@@ -137,7 +137,7 @@ end
 
 When enabled, two repairs run automatically:
 
-1. **Seeded session.** Passing a pre-populated `Riffer::Session` to `Agent.new(session: ...)` silently drops orphaned `tool_use` exchanges (assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages before the next inference call. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved; `execute_pending_tool_calls` runs them on the next LLM call.
+1. **Seeded session.** Passing a pre-populated `Riffer::Agent::Session` to `Agent.new(session: ...)` silently drops orphaned `tool_use` exchanges (assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages before the next inference call. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved; `execute_pending_tool_calls` runs them on the next LLM call.
 2. **Interrupts.** Any orphan `tool_use` left when the loop is interrupted (caller-issued `interrupt!` or the built-in `INTERRUPT_MAX_STEPS` ceiling) is filled with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted` and the content `"Tool call interrupted before completion."`. Filled `call_id`s are exposed on `Riffer::Agent::Response#healed_tool_call_ids` (and `Riffer::StreamEvents::Interrupt#healed_tool_call_ids` when streaming).
 
 Defaults to `false` — pre-healing behavior. Seeded sessions pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.

@@ -24,14 +24,14 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
 
   # Token usage data for this response.
-  attr_reader token_usage: Riffer::TokenUsage?
+  attr_reader token_usage: Riffer::Providers::TokenUsage?
 
   # Parsed structured output hash, or nil when not applicable.
   attr_reader structured_output: Hash[Symbol, untyped]?
 
   # --
-  # : (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
-  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  # : (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
 
   # --
   # : () -> Symbol

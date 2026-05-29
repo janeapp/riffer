@@ -60,7 +60,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     usage = response.usage
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens
     )
@@ -234,7 +234,7 @@ Riffer::StreamEvents::WebSearchDone.new(
 
 # Token usage (emit at end of stream)
 Riffer::StreamEvents::TokenUsageDone.new(
-  token_usage: Riffer::TokenUsage.new(
+  token_usage: Riffer::Providers::TokenUsage.new(
     input_tokens: 100,
     output_tokens: 50
   )
@@ -309,7 +309,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
         yielder << Riffer::StreamEvents::TextDone.new(accumulated_text)
       when :usage
         yielder << Riffer::StreamEvents::TokenUsageDone.new(
-          token_usage: Riffer::TokenUsage.new(
+          token_usage: Riffer::Providers::TokenUsage.new(
             input_tokens: event.usage.input_tokens,
             output_tokens: event.usage.output_tokens
           )
@@ -322,7 +322,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     usage = response.usage
     return nil unless usage
 
-    Riffer::TokenUsage.new(
+    Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens
     )
