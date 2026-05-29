@@ -19,5 +19,5 @@ target :lib do
   library "uri"
   library "yaml"
 
-  configure_code_diagnostics(D::Ruby.lenient)
+  configure_code_diagnostics(D::Ruby.strict)
 end
