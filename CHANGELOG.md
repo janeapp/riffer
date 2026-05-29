@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.29.0](https://github.com/janeapp/riffer/compare/riffer/v0.28.0...riffer/v0.29.0) (2026-05-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* move leaf types out of root Riffer namespace ([#282](https://github.com/janeapp/riffer/issues/282))
+* Public API reshape on `Riffer::Agent`. Downstream consumers must migrate the following surfaces:
+
+### Features
+
+* add bin/ wrappers for common dev commands ([#276](https://github.com/janeapp/riffer/issues/276)) ([6812ba2](https://github.com/janeapp/riffer/commit/6812ba254d0b9220dae5ed0bbfbc4d8fee5b14e1))
+* add OpenRouter provider ([#280](https://github.com/janeapp/riffer/issues/280)) ([0d615b6](https://github.com/janeapp/riffer/commit/0d615b60ec3bb65091df16142a8e67f2afceea74))
+
+
+### Code Refactoring
+
+* extract Riffer::Agent::Run, eagerly resolve per-agent state ([#268](https://github.com/janeapp/riffer/issues/268)) ([1d9e141](https://github.com/janeapp/riffer/commit/1d9e141e8a381eaac13f107ca29b726b4d84b3f3))
+* move leaf types out of root Riffer namespace ([#282](https://github.com/janeapp/riffer/issues/282)) ([3637a53](https://github.com/janeapp/riffer/commit/3637a53ae8160e70bdaeae3d49812adfefac2c4b))
+
 ## [0.28.0](https://github.com/janeapp/riffer/compare/riffer/v0.27.2...riffer/v0.28.0) (2026-05-08)
 
 
