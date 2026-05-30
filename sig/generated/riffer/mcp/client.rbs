@@ -14,6 +14,8 @@
 class Riffer::Mcp::Client
   include Riffer::Helpers::Dependencies
 
+  @client: untyped
+
   # --
   # : (endpoint: String, ?headers: (Hash[String, String] | Proc), ?client: untyped?) -> void
   def initialize: (endpoint: String, ?headers: Hash[String, String] | Proc, ?client: untyped?) -> void
