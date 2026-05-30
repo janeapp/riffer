@@ -24,48 +24,48 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
-  # : (Hash[Symbol, untyped]) -> OpenAI::Models::Chat::ChatCompletion
-  def execute_generate: (Hash[Symbol, untyped]) -> OpenAI::Models::Chat::ChatCompletion
+  # : (Hash[Symbol, untyped]) -> untyped
+  def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletion) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (OpenAI::Models::Chat::ChatCompletion) -> Riffer::Providers::TokenUsage?
+  # : (untyped) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletion) -> String
-  def extract_content: (OpenAI::Models::Chat::ChatCompletion) -> String
+  # : (untyped) -> String
+  def extract_content: (untyped) -> String
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletion) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (OpenAI::Models::Chat::ChatCompletion) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletionChunk, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_stream_chunk: (OpenAI::Models::Chat::ChatCompletionChunk, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_stream_chunk: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_text_delta: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_reasoning_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_tool_call_deltas: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_tool_call_deltas: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
   # : (state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def emit_tool_call_done_events: (state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (OpenAI::Models::Chat::ChatCompletionChunk::Choice) -> bool
-  def finish_reason_is_tool_calls?: (OpenAI::Models::Chat::ChatCompletionChunk::Choice) -> bool
+  # : (untyped) -> bool
+  def finish_reason_is_tool_calls?: (untyped) -> bool
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]

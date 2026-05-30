@@ -6,6 +6,9 @@
 # Keyed by manifest name. All public methods are mutex-guarded.
 #
 module Riffer::Mcp::Registry
+  # @rbs self.@mutex: Thread::Mutex
+  # @rbs self.@store: Hash[String, Riffer::Mcp::Registration]
+
   @mutex = Mutex.new
   @store = {} #: Hash[String, Riffer::Mcp::Registration]
 

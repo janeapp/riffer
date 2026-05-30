@@ -21,6 +21,18 @@
 #     end
 #   end
 module Riffer::Tools::Toolable
+  @kind: Symbol?
+
+  @params_builder: Riffer::Params?
+
+  @timeout: (Integer | Float)?
+
+  @identifier: String?
+
+  @description: String?
+
+  self.@extenders: Array[Module]?
+
   DEFAULT_TIMEOUT: Integer
 
   # Tracks all classes that extend Toolable.

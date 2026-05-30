@@ -19,6 +19,8 @@
 #   context.token_usage  # => nil
 #
 class Riffer::Agent::Context
+  # @rbs @data: Hash[Symbol, untyped]
+
   # Keys reserved for framework use. Passing any of these to the
   # constructor raises +Riffer::ArgumentError+.
   RESERVED_KEYS = [:skills, :token_usage].freeze #: Array[Symbol]

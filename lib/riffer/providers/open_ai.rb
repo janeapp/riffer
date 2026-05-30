@@ -66,15 +66,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
+  #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
     @client.responses.create(params)
   end
 
   #--
-  #: (OpenAI::Models::Responses::Response) -> Riffer::Providers::TokenUsage?
+  #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
-    usage = response.usage
+    typed_response = response #: OpenAI::Models::Responses::Response
+    usage = typed_response.usage
     return nil unless usage
 
     Riffer::Providers::TokenUsage.new(
@@ -84,11 +85,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Responses::Response) -> String
+  #: (untyped) -> String
   def extract_content(response)
+    typed_response = response #: OpenAI::Models::Responses::Response
     text_content = ""
 
-    response.output.each do |item|
+    typed_response.output.each do |item|
       next unless item.is_a?(::OpenAI::Models::Responses::ResponseOutputMessage)
 
       text_block = item.content.find { |c| c.is_a?(::OpenAI::Models::Responses::ResponseOutputText) }
@@ -99,11 +101,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
+    typed_response = response #: OpenAI::Models::Responses::Response
     tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
-    response.output.each do |item|
+    typed_response.output.each do |item|
       next unless item.is_a?(::OpenAI::Models::Responses::ResponseFunctionToolCall)
 
       tool_calls << Riffer::Messages::Assistant::ToolCall.new(

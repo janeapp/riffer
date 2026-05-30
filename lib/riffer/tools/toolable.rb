@@ -23,6 +23,13 @@
 #   end
 #
 module Riffer::Tools::Toolable
+  # @rbs self.@extenders: Array[Module]?
+  # @rbs @description: String?
+  # @rbs @identifier: String?
+  # @rbs @timeout: (Integer | Float)?
+  # @rbs @params_builder: Riffer::Params?
+  # @rbs @kind: Symbol?
+
   DEFAULT_TIMEOUT = 10 #: Integer
 
   # Tracks all classes that extend Toolable.

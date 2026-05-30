@@ -17,6 +17,8 @@ loader.inflector.inflect(
 loader.setup
 
 module Riffer
+  # @rbs self.@config: Riffer::Config?
+
   # Base error class for Riffer.
   class Error < StandardError; end
 

@@ -17,6 +17,8 @@ require "json"
 # [extract_content] extract text content from the SDK response
 # [extract_tool_calls] extract tool calls from the SDK response
 class Riffer::Providers::Base
+  # @rbs @current_tools: Array[singleton(Riffer::Tool)]
+
   include Riffer::Helpers::Dependencies
   include Riffer::Messages::Converter
 

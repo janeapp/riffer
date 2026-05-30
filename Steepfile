@@ -2,7 +2,8 @@ D = Steep::Diagnostic
 
 target :lib do
   signature "sig/generated"
-  signature "sig/stubs"
+  signature "sig/manual"
+  signature "sig/_private"
 
   check "lib"
 

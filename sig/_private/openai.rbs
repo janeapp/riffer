@@ -1,0 +1,29 @@
+# Arity patch for the `openai` gem. Its Resources methods are positional
+# `def x(params)` at runtime, but the gem's shipped RBS advertises keyword-only
+# signatures. We accept a positional hash or a keyword splat (`| ...` extends the
+# gem's existing overloads). Streaming returns `untyped` — the event objects are a
+# ~60-member union dispatched dynamically on `#type`. Loaded only for riffer's own
+# Steep run (consumers skip sig/_private).
+module OpenAI
+  module Resources
+    class Responses
+      def create: (Hash[Symbol, untyped] params) -> OpenAI::Models::Responses::Response
+                | (**untyped) -> OpenAI::Models::Responses::Response
+                | ...
+      def stream: (Hash[Symbol, untyped] params) -> untyped
+                | (**untyped) -> untyped
+                | ...
+    end
+
+    class Chat
+      class Completions
+        def create: (Hash[Symbol, untyped] params) -> OpenAI::Models::Chat::ChatCompletion
+                  | (**untyped) -> OpenAI::Models::Chat::ChatCompletion
+                  | ...
+        def stream_raw: (Hash[Symbol, untyped] params) -> untyped
+                      | (**untyped) -> untyped
+                      | ...
+      end
+    end
+  end
+end

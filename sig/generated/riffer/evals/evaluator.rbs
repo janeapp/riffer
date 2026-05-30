@@ -14,6 +14,14 @@
 #     judge_model "anthropic/claude-opus-4-5-20251101"
 #   end
 class Riffer::Evals::Evaluator
+  self.@instructions: String?
+
+  self.@higher_is_better: bool?
+
+  self.@judge_model: String?
+
+  @judge: Riffer::Evals::Judge?
+
   # Gets or sets the evaluation instructions (criteria and scoring rubric).
   #
   # --

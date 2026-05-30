@@ -1,6 +1,8 @@
 # Generated from lib/riffer.rb with RBS::Inline
 
 module Riffer
+  self.@config: Riffer::Config?
+
   # Base error class for Riffer.
   class Error < StandardError
   end

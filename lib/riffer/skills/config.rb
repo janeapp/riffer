@@ -11,6 +11,11 @@
 #     activate ["code-review"]
 #   end
 class Riffer::Skills::Config
+  # @rbs @backend: (Riffer::Skills::Backend | Proc)?
+  # @rbs @adapter: singleton(Riffer::Skills::Adapter)?
+  # @rbs @activate: (Array[String] | Proc)?
+  # @rbs @activate_tool: singleton(Riffer::Tool)?
+
   # Creates a new Config with all options unset.
   #
   #--

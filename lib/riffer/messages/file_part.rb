@@ -15,6 +15,8 @@ require "uri"
 #   file.document?   # => true
 #
 class Riffer::Messages::FilePart
+  # @rbs @url_string: String?
+
   MEDIA_TYPES = {
     ".jpg" => "image/jpeg",
     ".jpeg" => "image/jpeg",

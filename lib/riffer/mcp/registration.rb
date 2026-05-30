@@ -7,6 +7,10 @@
 # +tools/list+ call, then generates tool classes.
 #
 class Riffer::Mcp::Registration
+  # @rbs @cancelled: bool
+  # @rbs @tools: Array[singleton(Riffer::Tool)]
+  # @rbs @mutex: Thread::Mutex
+
   # The manifest that describes this server.
   attr_reader :manifest #: Riffer::Mcp::Manifest
 

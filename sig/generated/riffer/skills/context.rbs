@@ -10,6 +10,10 @@
 #
 # See Riffer::Skills::Backend, Riffer::Skills::Frontmatter.
 class Riffer::Skills::Context
+  @backend: Riffer::Skills::Backend
+
+  @activated: Hash[String, String]
+
   # Skill catalog indexed by name.
   attr_reader skills: Hash[String, Riffer::Skills::Frontmatter]
 

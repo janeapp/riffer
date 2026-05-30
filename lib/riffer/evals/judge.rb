@@ -19,6 +19,11 @@ require "json"
 #   result[:reason] # => "The response is relevant..."
 #
 class Riffer::Evals::Judge
+  # @rbs @provider_options: Hash[Symbol, untyped]
+  # @rbs @provider_instance: Riffer::Providers::Base?
+  # @rbs @provider_name: String?
+  # @rbs @model_name: String?
+
   # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
     identifier "evaluation"

@@ -1,0 +1,16 @@
+# Arity patch for the `anthropic` gem (see openai.rbs for the rationale).
+# `Messages#create` is positional at runtime but typed keyword-only in the gem's
+# RBS; `Messages#stream` is omitted from the gem's RBS but present at runtime
+# (returns a MessageStream helper). Loaded only for riffer's own Steep run.
+module Anthropic
+  module Resources
+    class Messages
+      def create: (Hash[Symbol, untyped] params) -> Anthropic::Models::Message
+                | (**untyped) -> Anthropic::Models::Message
+                | ...
+
+      def stream: (Hash[Symbol, untyped] params) -> untyped
+                | (**untyped) -> untyped
+    end
+  end
+end

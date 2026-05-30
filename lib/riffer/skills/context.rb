@@ -11,6 +11,9 @@
 #
 # See Riffer::Skills::Backend, Riffer::Skills::Frontmatter.
 class Riffer::Skills::Context
+  # @rbs @backend: Riffer::Skills::Backend
+  # @rbs @activated: Hash[String, String]
+
   # Skill catalog indexed by name.
   attr_reader :skills #: Hash[String, Riffer::Skills::Frontmatter]
 

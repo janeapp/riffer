@@ -15,6 +15,14 @@
 #   result[:score]  # => 0.85
 #   result[:reason] # => "The response is relevant..."
 class Riffer::Evals::Judge
+  @provider_options: Hash[Symbol, untyped]
+
+  @provider_instance: Riffer::Providers::Base?
+
+  @provider_name: String?
+
+  @model_name: String?
+
   # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
     # --

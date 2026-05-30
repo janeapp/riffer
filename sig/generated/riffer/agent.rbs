@@ -15,6 +15,8 @@
 #   agent = MyAgent.new
 #   agent.generate('Hello!')
 class Riffer::Agent
+  self.@config: Riffer::Agent::Config?
+
   include Riffer::Messages::Converter
 
   extend Riffer::Helpers::ClassNameConverter
