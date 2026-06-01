@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.29.1](https://github.com/janeapp/riffer/compare/riffer/v0.29.0...riffer/v0.29.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* **rbs:** ship consumer-safe RBS signatures ([#286](https://github.com/janeapp/riffer/issues/286)) ([ac8ce6c](https://github.com/janeapp/riffer/commit/ac8ce6c40ab665456cee6cd9275649024492f4a0))
+
 ## [0.29.0](https://github.com/janeapp/riffer/compare/riffer/v0.28.0...riffer/v0.29.0) (2026-05-29)
 
 
