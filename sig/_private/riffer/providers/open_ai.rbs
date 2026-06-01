@@ -1,0 +1,4 @@
+# `@client` is typed against the SDK, so this ivar stub stays in _private (never ships)
+class Riffer::Providers::OpenAI
+  @client: ::OpenAI::Client
+end

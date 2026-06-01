@@ -19,6 +19,8 @@ require "json"
 #   agent.generate('Hello!')
 #
 class Riffer::Agent
+  # @rbs self.@config: Riffer::Agent::Config?
+
   include Riffer::Messages::Converter
   extend Riffer::Helpers::ClassNameConverter
 

@@ -5,6 +5,12 @@
 # Created when a server is registered. Discovers tools via the MCP
 # +tools/list+ call, then generates tool classes.
 class Riffer::Mcp::Registration
+  @cancelled: bool
+
+  @tools: Array[singleton(Riffer::Tool)]
+
+  @mutex: Thread::Mutex
+
   # The manifest that describes this server.
   attr_reader manifest: Riffer::Mcp::Manifest
 

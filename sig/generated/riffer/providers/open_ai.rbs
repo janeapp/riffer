@@ -19,20 +19,20 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
-  # : (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
-  def execute_generate: (Hash[Symbol, untyped]) -> OpenAI::Models::Responses::Response
+  # : (Hash[Symbol, untyped]) -> untyped
+  def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
   # --
-  # : (OpenAI::Models::Responses::Response) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (OpenAI::Models::Responses::Response) -> Riffer::Providers::TokenUsage?
+  # : (untyped) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
   # --
-  # : (OpenAI::Models::Responses::Response) -> String
-  def extract_content: (OpenAI::Models::Responses::Response) -> String
+  # : (untyped) -> String
+  def extract_content: (untyped) -> String
 
   # --
-  # : (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (OpenAI::Models::Responses::Response) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void

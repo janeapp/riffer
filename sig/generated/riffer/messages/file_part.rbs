@@ -10,6 +10,8 @@
 #   file.url?        # => true
 #   file.document?   # => true
 class Riffer::Messages::FilePart
+  @url_string: String?
+
   MEDIA_TYPES: Hash[String, String]
 
   SUPPORTED_MEDIA_TYPES: Array[String]

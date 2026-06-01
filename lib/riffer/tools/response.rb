@@ -18,6 +18,8 @@ require "json"
 #   end
 #
 class Riffer::Tools::Response
+  # @rbs @success: bool
+
   VALID_FORMATS = %i[text json].freeze #: Array[Symbol]
 
   attr_reader :content #: String

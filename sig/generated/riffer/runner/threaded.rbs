@@ -12,6 +12,8 @@
 #   runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
 #   runner.map(items) { |item| expensive_operation(item) }
 class Riffer::Runner::Threaded < Riffer::Runner
+  @max_concurrency: Integer
+
   DEFAULT_MAX_CONCURRENCY: Integer
 
   # [max_concurrency] maximum number of threads to run simultaneously.

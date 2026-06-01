@@ -15,6 +15,8 @@ require "json"
 #   results = runtime.execute(tool_calls, tools: tools, context: context)
 #
 class Riffer::Tools::Runtime
+  # @rbs @runner: Riffer::Runner
+
   # [runner] the concurrency runner to use for batch execution.
   #
   # Subclasses must provide a runner; instantiating Riffer::Tools::Runtime directly

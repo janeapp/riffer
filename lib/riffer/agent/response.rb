@@ -13,6 +13,8 @@
 #     puts response.content
 #   end
 class Riffer::Agent::Response
+  # @rbs @interrupted: bool
+
   # The response content.
   attr_reader :content #: String
 

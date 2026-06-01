@@ -4,6 +4,10 @@
 #
 # Keyed by manifest name. All public methods are mutex-guarded.
 module Riffer::Mcp::Registry
+  self.@mutex: Thread::Mutex
+
+  self.@store: Hash[String, Riffer::Mcp::Registration]
+
   # Registers an MCP server and starts async tool discovery.
   #
   # Accepts a Manifest instance or a hash of manifest keyword arguments.

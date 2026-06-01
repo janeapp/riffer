@@ -64,15 +64,16 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> OpenAI::Models::Chat::ChatCompletion
+  #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
     @client.chat.completions.create(**params)
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletion) -> Riffer::Providers::TokenUsage?
+  #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
-    usage = response.usage
+    typed_response = response #: OpenAI::Models::Chat::ChatCompletion
+    usage = typed_response.usage
     return nil unless usage
 
     Riffer::Providers::TokenUsage.new(
@@ -82,15 +83,17 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletion) -> String
+  #: (untyped) -> String
   def extract_content(response)
-    response.choices.first&.message&.content || ""
+    typed_response = response #: OpenAI::Models::Chat::ChatCompletion
+    typed_response.choices.first&.message&.content || ""
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletion) -> Array[Riffer::Messages::Assistant::ToolCall]
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
-    message = response.choices.first&.message
+    typed_response = response #: OpenAI::Models::Chat::ChatCompletion
+    message = typed_response.choices.first&.message
     return [] unless message
 
     tool_calls = message.tool_calls
@@ -145,9 +148,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletionChunk, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_stream_chunk(chunk, state:, yielder:)
-    choice = chunk.choices&.first
+    typed_chunk = chunk #: OpenAI::Models::Chat::ChatCompletionChunk
+    choice = typed_chunk.choices&.first
     delta = choice&.delta
 
     if delta
@@ -160,20 +164,21 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       emit_tool_call_done_events(state: state, yielder: yielder)
     end
 
-    return unless chunk.usage
+    return unless typed_chunk.usage
 
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
       token_usage: Riffer::Providers::TokenUsage.new(
-        input_tokens: chunk.usage.prompt_tokens,
-        output_tokens: chunk.usage.completion_tokens
+        input_tokens: typed_chunk.usage.prompt_tokens,
+        output_tokens: typed_chunk.usage.completion_tokens
       )
     )
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_text_delta(delta, state:, yielder:)
-    content = delta.content
+    typed_delta = delta #: OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta
+    content = typed_delta.content
     return if content.nil? || content.empty?
 
     state[:text] << content
@@ -194,9 +199,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_tool_call_deltas(delta, state:, yielder:)
-    tool_calls = delta.tool_calls
+    typed_delta = delta #: OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta
+    tool_calls = typed_delta.tool_calls
     return if tool_calls.nil? || tool_calls.empty?
 
     tool_calls.each do |tc|
@@ -236,9 +242,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (OpenAI::Models::Chat::ChatCompletionChunk::Choice) -> bool
+  #: (untyped) -> bool
   def finish_reason_is_tool_calls?(choice)
-    choice.finish_reason.to_s == "tool_calls"
+    typed_choice = choice #: OpenAI::Models::Chat::ChatCompletionChunk::Choice
+    typed_choice.finish_reason.to_s == "tool_calls"
   end
 
   #--

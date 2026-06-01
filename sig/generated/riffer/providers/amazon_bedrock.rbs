@@ -34,20 +34,20 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
   # --
-  # : (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Client::_ConverseResponseSuccess
-  def execute_generate: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+  # : (Hash[Symbol, untyped]) -> untyped
+  def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
   # --
-  # : (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Riffer::Providers::TokenUsage?
-  def extract_token_usage: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Riffer::Providers::TokenUsage?
+  # : (untyped) -> Riffer::Providers::TokenUsage?
+  def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
   # --
-  # : (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> String
-  def extract_content: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> String
+  # : (untyped) -> String
+  def extract_content: (untyped) -> String
 
   # --
-  # : (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Array[Riffer::Messages::Assistant::ToolCall]
-  def extract_tool_calls: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Array[Riffer::Messages::Assistant::ToolCall]
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+  def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
@@ -67,28 +67,28 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def raise_if_stream_exception!: (untyped) -> void
 
   # --
-  # : (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_start_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_delta_text_delta: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_delta_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_delta_tool_use: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_delta_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_text_delta: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_tool_use: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
-  # : (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_metadata_usage: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  def handle_metadata_usage: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

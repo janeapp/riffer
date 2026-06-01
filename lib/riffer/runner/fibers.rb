@@ -14,6 +14,8 @@
 #   runner.map(items) { |item| expensive_operation(item) }
 #
 class Riffer::Runner::Fibers < Riffer::Runner
+  # @rbs @max_concurrency: Integer?
+
   include Riffer::Helpers::Dependencies
 
   # [max_concurrency] maximum number of fibers to run simultaneously.

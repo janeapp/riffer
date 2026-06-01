@@ -10,6 +10,14 @@
 #     activate ["code-review"]
 #   end
 class Riffer::Skills::Config
+  @backend: (Riffer::Skills::Backend | Proc)?
+
+  @adapter: singleton(Riffer::Skills::Adapter)?
+
+  @activate: (Array[String] | Proc)?
+
+  @activate_tool: singleton(Riffer::Tool)?
+
   # Creates a new Config with all options unset.
   #
   # --

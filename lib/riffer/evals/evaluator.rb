@@ -16,6 +16,11 @@
 #   end
 #
 class Riffer::Evals::Evaluator
+  # @rbs self.@instructions: String?
+  # @rbs self.@higher_is_better: bool?
+  # @rbs self.@judge_model: String?
+  # @rbs @judge: Riffer::Evals::Judge?
+
   class << self
     # Gets or sets the evaluation instructions (criteria and scoring rubric).
     #

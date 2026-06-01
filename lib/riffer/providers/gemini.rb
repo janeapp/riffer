@@ -8,6 +8,10 @@ require "uri"
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
+  # @rbs @api_key: String?
+  # @rbs @open_timeout: Integer
+  # @rbs @read_timeout: Integer
+
   BASE_URI = URI("https://generativelanguage.googleapis.com") #: URI::Generic
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
   DEFAULT_OPEN_TIMEOUT = 10 #: Integer

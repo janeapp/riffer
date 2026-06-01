@@ -5,6 +5,10 @@
 #
 # No external gems required.
 class Riffer::Providers::Mock < Riffer::Providers::Base
+  # @rbs @responses: Array[Hash[Symbol, untyped]]
+  # @rbs @current_index: Integer
+  # @rbs @stubbed_responses: Array[Hash[Symbol, untyped]]
+
   # Returns the preferred skill adapter for the given mock model.
   #
   # Mock is used to stand in for any real provider in tests, so the model

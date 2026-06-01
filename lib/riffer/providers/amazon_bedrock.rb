@@ -92,15 +92,16 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+  #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
     @client.converse(**params)
   end
 
   #--
-  #: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Riffer::Providers::TokenUsage?
+  #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
-    usage = response.usage
+    typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+    usage = typed_response.usage
 
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
@@ -111,9 +112,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> String
+  #: (untyped) -> String
   def extract_content(response)
-    content_blocks = response.output&.message&.content
+    typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+    content_blocks = typed_response.output&.message&.content
     return "" if content_blocks.nil? || content_blocks.empty?
 
     text_content = ""
@@ -126,9 +128,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Client::_ConverseResponseSuccess) -> Array[Riffer::Messages::Assistant::ToolCall]
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
-    content_blocks = response.output&.message&.content
+    typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+    content_blocks = typed_response.output&.message&.content
     return [] if content_blocks.nil? || content_blocks.empty?
 
     tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
@@ -195,28 +198,31 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockStartEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_start_tool_use(event, state:, yielder:)
+    typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockStartEvent
     state[:tool_call] = {
-      id: event.start.tool_use.tool_use_id,
-      name: decode_tool_name(event.start.tool_use.name, tools: @current_tools),
+      id: typed_event.start.tool_use.tool_use_id,
+      name: decode_tool_name(typed_event.start.tool_use.name, tools: @current_tools),
       arguments: ""
     }
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_delta_text_delta(event, state:, yielder:)
-    delta_text = event.delta.text
+    typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
+    delta_text = typed_event.delta.text
     state[:text] ||= ""
     state[:text] += delta_text
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockDeltaEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_delta_tool_use(event, state:, yielder:)
-    input_delta = event.delta.tool_use.input
+    typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
+    input_delta = typed_event.delta.tool_use.input
 
     state[:tool_call][:arguments] += input_delta
 
@@ -228,14 +234,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ContentBlockStopEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_content_block_stop_tool_use(_event, state:, yielder:)
     tool_call = state[:tool_call]
     yielder << Riffer::StreamEvents::ToolCallDone.new(
@@ -248,14 +254,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_metadata_usage(event, state:, yielder:)
+    typed_event = event #: Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
       token_usage: Riffer::Providers::TokenUsage.new(
-        input_tokens: event.usage.input_tokens,
-        output_tokens: event.usage.output_tokens,
-        cache_creation_tokens: event.usage.cache_write_input_tokens,
-        cache_read_tokens: event.usage.cache_read_input_tokens
+        input_tokens: typed_event.usage.input_tokens,
+        output_tokens: typed_event.usage.output_tokens,
+        cache_creation_tokens: typed_event.usage.cache_write_input_tokens,
+        cache_read_tokens: typed_event.usage.cache_read_input_tokens
       )
     )
   end

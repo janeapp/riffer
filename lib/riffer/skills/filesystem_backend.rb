@@ -11,6 +11,9 @@
 #   backend.read_skill("code-review")  # => "Full skill instructions..."
 #
 class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
+  # @rbs @paths: Array[String]
+  # @rbs @skills_cache: Hash[String, String]?
+
   # Creates a new FilesystemBackend.
   #
   # [paths] one or more directory paths to scan for skills.

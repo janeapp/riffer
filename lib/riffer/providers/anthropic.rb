@@ -77,15 +77,16 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped]) -> Anthropic::Models::Message
+  #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
     @client.messages.create(**params)
   end
 
   #--
-  #: (Anthropic::Models::Message) -> Riffer::Providers::TokenUsage?
+  #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
-    usage = response.usage
+    message = response #: Anthropic::Models::Message
+    usage = message.usage
 
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
@@ -96,9 +97,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Anthropic::Models::Message) -> String
+  #: (untyped) -> String
   def extract_content(response)
-    content_blocks = response.content
+    message = response #: Anthropic::Models::Message
+    content_blocks = message.content
     return "" if content_blocks.nil? || content_blocks.empty?
 
     text_content = ""
@@ -111,9 +113,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Anthropic::Models::Message) -> Array[Riffer::Messages::Assistant::ToolCall]
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls(response)
-    content_blocks = response.content
+    message = response #: Anthropic::Models::Message
+    content_blocks = message.content
     return [] if content_blocks.nil? || content_blocks.empty?
 
     tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
@@ -285,9 +288,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, accumulated_message: Anthropic::Models::Message?, yielder: Enumerator::Yielder) -> void
+  #: (untyped, accumulated_message: untyped, yielder: Enumerator::Yielder) -> void
   def handle_message_stop(_event, accumulated_message:, yielder:)
-    usage = accumulated_message&.usage
+    message = accumulated_message #: Anthropic::Models::Message?
+    usage = message&.usage
     return unless usage
 
     yielder << Riffer::StreamEvents::TokenUsageDone.new(

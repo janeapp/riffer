@@ -9,6 +9,10 @@
 #   backend.list_skills  # => [Riffer::Skills::Frontmatter, ...]
 #   backend.read_skill("code-review")  # => "Full skill instructions..."
 class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
+  @paths: Array[String]
+
+  @skills_cache: Hash[String, String]?
+
   # Creates a new FilesystemBackend.
   #
   # [paths] one or more directory paths to scan for skills.

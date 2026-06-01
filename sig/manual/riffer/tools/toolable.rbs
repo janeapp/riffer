@@ -1,0 +1,6 @@
+# Toolable is extended onto tool classes; its instance methods run as class
+# methods on the extender, which is also extended with ClassNameConverter
+# (see Toolable.extended). The include models that method availability for Steep.
+module Riffer::Tools::Toolable
+  include Riffer::Helpers::ClassNameConverter
+end
