@@ -761,7 +761,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find_by_tags-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 57</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_by_tags</span>(<span class="ruby-identifier">tags</span>)
   <span class="ruby-identifier">normalized</span> = <span class="ruby-identifier">tags</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_sym</span>)
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
@@ -808,7 +808,7 @@
             </details>
           </div>
           <div class="method-source-code" id="register-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 20</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">register</span>(<span class="ruby-identifier">manifest_or_hash</span>)
   <span class="ruby-comment"># steep cannot verify that an untyped Hash splat supplies Manifest&#39;s</span>
   <span class="ruby-comment"># required name:/endpoint: keywords; Manifest validates them at runtime.</span>
@@ -862,7 +862,7 @@
             </details>
           </div>
           <div class="method-source-code" id="registrations-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 47</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 50</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">registrations</span>
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> { <span class="ruby-ivar">@store</span>.<span class="ruby-identifier">dup</span>.<span class="ruby-identifier">freeze</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -904,7 +904,7 @@
             </details>
           </div>
           <div class="method-source-code" id="unregister-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 38</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registry.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unregister</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-identifier">removed</span> = <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> { <span class="ruby-ivar">@store</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>) }
   <span class="ruby-identifier">removed</span>&amp;.<span class="ruby-identifier">retire!</span>

@@ -820,7 +820,7 @@ client.call_tool(tool:, arguments:)    — raw JSON-RPC response Hash</pre>
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/client.rb, line 21</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/client.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">endpoint:</span>, <span class="ruby-value">headers:</span> {}, <span class="ruby-value">client:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;mcp&quot;</span>
   <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;faraday&quot;</span>
@@ -883,7 +883,7 @@ client.call_tool(tool:, arguments:)    — raw JSON-RPC response Hash</pre>
             </details>
           </div>
           <div class="method-source-code" id="tools_call-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/client.rb, line 51</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/client.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tools_call</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">arguments</span> = {})
   <span class="ruby-identifier">tool</span> = <span class="ruby-constant">MCP</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">description:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">input_schema:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">response</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">call_tool</span>(<span class="ruby-value">tool:</span> <span class="ruby-identifier">tool</span>, <span class="ruby-value">arguments:</span> <span class="ruby-identifier">arguments</span>)
@@ -938,7 +938,7 @@ client.call_tool(tool:, arguments:)    — raw JSON-RPC response Hash</pre>
             </details>
           </div>
           <div class="method-source-code" id="tools_list-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/client.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/client.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tools_list</span>
   <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">tools</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tool</span><span class="ruby-operator">|</span>
     {

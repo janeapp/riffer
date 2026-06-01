@@ -817,7 +817,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 41</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-ivar">@responses</span> = (<span class="ruby-identifier">options</span>[<span class="ruby-value">:responses</span>] <span class="ruby-operator">||</span> []).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">normalize_response</span>(<span class="ruby-identifier">r</span>) }
   <span class="ruby-ivar">@current_index</span> = <span class="ruby-value">0</span>
@@ -870,7 +870,7 @@
             </details>
           </div>
           <div class="method-source-code" id="skills_adapter-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 18</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills_adapter</span>(<span class="ruby-identifier">model</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">XmlAdapter</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model</span>&amp;.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;claude&quot;</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">MarkdownAdapter</span>
@@ -929,7 +929,7 @@
             </details>
           </div>
           <div class="method-source-code" id="clear_stubs-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 66</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clear_stubs</span>
   <span class="ruby-ivar">@stubbed_responses</span> = []
 <span class="ruby-keyword">end</span></pre>
@@ -971,7 +971,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stub_response-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/mock.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stub_response</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> [], <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@stubbed_responses</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">normalize_response</span>(<span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>)
 <span class="ruby-keyword">end</span></pre>

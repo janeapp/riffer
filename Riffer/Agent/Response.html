@@ -921,7 +921,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 54</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-value">tripwire:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">modifications:</span> [], <span class="ruby-value">interrupted:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">interrupt_reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">structured_output:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> [], <span class="ruby-value">healed_tool_call_ids:</span> [])
   <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
   <span class="ruby-ivar">@tripwire</span> = <span class="ruby-identifier">tripwire</span>
@@ -1011,7 +1011,7 @@
             </details>
           </div>
           <div class="method-source-code" id="blocked-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blocked?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">tripwire</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1053,7 +1053,7 @@
             </details>
           </div>
           <div class="method-source-code" id="interrupted-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 86</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupted?</span>
   <span class="ruby-ivar">@interrupted</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1095,7 +1095,7 @@
             </details>
           </div>
           <div class="method-source-code" id="modified-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 77</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/response.rb, line 79</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">modified?</span>
   <span class="ruby-identifier">modifications</span>.<span class="ruby-identifier">any?</span>
 <span class="ruby-keyword">end</span></pre>

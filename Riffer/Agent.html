@@ -1072,7 +1072,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 181</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 183</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
   <span class="ruby-identifier">subclasses</span> <span class="ruby-comment">#: Array[singleton(Riffer::Agent)]</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1114,7 +1114,7 @@
             </details>
           </div>
           <div class="method-source-code" id="config-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 32</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 34</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">config</span>
   <span class="ruby-ivar">@config</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1156,7 +1156,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 173</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 175</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
   <span class="ruby-identifier">all</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">agent_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">agent_class</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -1198,7 +1198,7 @@
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 192</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 194</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1242,7 +1242,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrail-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 216</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 218</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">with:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">add_guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">klass:</span> <span class="ruby-identifier">with</span>, <span class="ruby-value">options:</span> <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1296,7 +1296,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrails_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 226</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1342,7 +1342,7 @@
             </details>
           </div>
           <div class="method-source-code" id="identifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 40</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-identifier">name</span>)) <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1384,7 +1384,7 @@
             </details>
           </div>
           <div class="method-source-code" id="instructions-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 66</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">instructions</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">instructions</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1435,7 +1435,7 @@
             </details>
           </div>
           <div class="method-source-code" id="max_steps-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 108</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 110</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">max_steps</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">max_steps</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">max_steps</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1479,7 +1479,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mcp_configs-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 133</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">mcp_configs</span>
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">mcp_configs</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1523,7 +1523,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 48</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 50</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">model</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">model</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1565,7 +1565,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model_options-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 82</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 84</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">model_options</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">model_options</span> = <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1607,7 +1607,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 305</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 307</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">config:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">config</span>
   <span class="ruby-ivar">@context</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">context</span> <span class="ruby-operator">||</span> {})
@@ -1671,7 +1671,7 @@
             </details>
           </div>
           <div class="method-source-code" id="provider_options-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 74</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">provider_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">provider_options</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">provider_options</span> = <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1713,7 +1713,7 @@
             </details>
           </div>
           <div class="method-source-code" id="skills-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 160</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 162</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>
     <span class="ruby-identifier">skills_config</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span>.<span class="ruby-identifier">new</span>
@@ -1769,7 +1769,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 203</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 205</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">stream</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1813,7 +1813,7 @@
             </details>
           </div>
           <div class="method-source-code" id="structured_output-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 92</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 94</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">structured_output</span>(<span class="ruby-identifier">params</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>
     <span class="ruby-identifier">params</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
@@ -1862,7 +1862,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tool_runtime-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 144</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">tool_runtime</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">tool_runtime</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">tool_runtime</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1906,7 +1906,7 @@
             </details>
           </div>
           <div class="method-source-code" id="use_mcp-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 126</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 128</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">use_mcp</span>(<span class="ruby-identifier">tag</span>)
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">add_mcp</span>(<span class="ruby-identifier">tag</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1953,7 +1953,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="uses_tools-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 116</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 118</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">uses_tools</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">tools_config</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">tools_config</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2009,7 +2009,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 339</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 341</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2055,7 +2055,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="interrupt-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 373</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 375</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupt!</span>(<span class="ruby-identifier">reason</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">throw</span> <span class="ruby-value">:riffer_interrupt</span>, <span class="ruby-identifier">reason</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2101,7 +2101,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 354</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 356</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Structured output is not supported with streaming. Use #generate instead.&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@structured_output</span>
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)

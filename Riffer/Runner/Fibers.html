@@ -817,7 +817,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/fibers.rb, line 24</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/fibers.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">max_concurrency:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;async&quot;</span>
   <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;async/semaphore&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">max_concurrency</span>
@@ -880,7 +880,7 @@
             </details>
           </div>
           <div class="method-source-code" id="map-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/fibers.rb, line 32</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/fibers.rb, line 34</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">map</span>(<span class="ruby-identifier">items</span>, <span class="ruby-value">context:</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">items</span>.<span class="ruby-identifier">empty?</span>
 

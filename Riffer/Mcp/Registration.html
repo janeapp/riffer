@@ -817,7 +817,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 23</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">manifest</span>)
   <span class="ruby-ivar">@manifest</span> = <span class="ruby-identifier">manifest</span>
   <span class="ruby-ivar">@cancelled</span> = <span class="ruby-keyword">false</span>
@@ -877,7 +877,7 @@
             </details>
           </div>
           <div class="method-source-code" id="retire-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 36</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retire!</span>
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> { <span class="ruby-ivar">@cancelled</span> = <span class="ruby-keyword">true</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -919,7 +919,7 @@
             </details>
           </div>
           <div class="method-source-code" id="retired-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 44</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retired?</span>
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> { <span class="ruby-ivar">@cancelled</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -961,7 +961,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tools-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 17</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/registration.rb, line 21</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tools</span>
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> { <span class="ruby-ivar">@tools</span> }
 <span class="ruby-keyword">end</span></pre>

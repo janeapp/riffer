@@ -806,7 +806,7 @@
             </details>
           </div>
           <div class="method-source-code" id="higher_is_better-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 33</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">higher_is_better</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">current</span> = <span class="ruby-ivar">@higher_is_better</span>
@@ -853,7 +853,7 @@
             </details>
           </div>
           <div class="method-source-code" id="instructions-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 24</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@instructions</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@instructions</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
@@ -896,7 +896,7 @@
             </details>
           </div>
           <div class="method-source-code" id="judge_model-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 46</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">judge_model</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@judge_model</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@judge_model</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
@@ -953,7 +953,7 @@
             </details>
           </div>
           <div class="method-source-code" id="evaluate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 66</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">evaluate</span>(<span class="ruby-value">input:</span>, <span class="ruby-value">output:</span>, <span class="ruby-value">ground_truth:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> [])
   <span class="ruby-identifier">instr</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instructions</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-node">&quot;#{self.class} must set instructions or implement #evaluate&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">instr</span>
@@ -1031,7 +1031,7 @@
             </details>
           </div>
           <div class="method-source-code" id="judge-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 112</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">judge</span>
   <span class="ruby-ivar">@judge</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">model</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">judge_model</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Riffer</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">evals</span>.<span class="ruby-identifier">judge_model</span>
@@ -1077,7 +1077,7 @@
             </details>
           </div>
           <div class="method-source-code" id="result-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 124</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">result</span>(<span class="ruby-value">score:</span>, <span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">metadata:</span> {})
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">evaluator:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>,

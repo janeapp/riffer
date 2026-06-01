@@ -853,7 +853,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 32</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">backend:</span>, <span class="ruby-value">skills:</span>, <span class="ruby-value">adapter:</span>)
   <span class="ruby-ivar">@backend</span> = <span class="ruby-identifier">backend</span>
   <span class="ruby-ivar">@skills</span> = <span class="ruby-identifier">skills</span>
@@ -922,7 +922,7 @@
             </details>
           </div>
           <div class="method-source-code" id="activate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 45</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">activate</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unknown skill: &#39;#{name}&#39;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">skills</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@activated</span>[<span class="ruby-identifier">name</span>] <span class="ruby-keyword">if</span> <span class="ruby-ivar">@activated</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
@@ -970,7 +970,7 @@
             </details>
           </div>
           <div class="method-source-code" id="activated-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 57</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">activated?</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-ivar">@activated</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1012,7 +1012,7 @@
             </details>
           </div>
           <div class="method-source-code" id="system_prompt-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/context.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">system_prompt</span>
   <span class="ruby-identifier">available</span> = <span class="ruby-identifier">available_skills</span>
   <span class="ruby-identifier">parts</span> = [] <span class="ruby-comment">#: Array[String]</span>

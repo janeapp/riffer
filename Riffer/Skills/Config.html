@@ -802,7 +802,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 18</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@backend</span> = <span class="ruby-keyword">nil</span>
   <span class="ruby-ivar">@adapter</span> = <span class="ruby-keyword">nil</span>
@@ -861,7 +861,7 @@
             </details>
           </div>
           <div class="method-source-code" id="activate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 59</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">activate</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@activate</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@activate</span> = <span class="ruby-identifier">value</span>
@@ -908,7 +908,7 @@
             </details>
           </div>
           <div class="method-source-code" id="activate_tool-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 75</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">activate_tool</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@activate_tool</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;activate_tool must be a Riffer::Tool subclass&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Class</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
@@ -956,7 +956,7 @@
             </details>
           </div>
           <div class="method-source-code" id="adapter-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 44</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">adapter</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@adapter</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@adapter</span> = <span class="ruby-identifier">value</span>
@@ -1001,7 +1001,7 @@
             </details>
           </div>
           <div class="method-source-code" id="backend-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 32</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/config.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">backend</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@backend</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@backend</span> = <span class="ruby-identifier">value</span>

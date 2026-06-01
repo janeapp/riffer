@@ -856,7 +856,7 @@
             </details>
           </div>
           <div class="method-source-code" id="skills_adapter-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 35</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills_adapter</span>(<span class="ruby-identifier">model</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">MarkdownAdapter</span>
 <span class="ruby-keyword">end</span></pre>
@@ -914,7 +914,7 @@
             </details>
           </div>
           <div class="method-source-code" id="generate_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 43</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
   <span class="ruby-ivar">@current_tools</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tools</span>] <span class="ruby-operator">||</span> [] <span class="ruby-comment">#: Array[singleton(Riffer::Tool)]</span>
@@ -974,7 +974,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
   <span class="ruby-ivar">@current_tools</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tools</span>] <span class="ruby-operator">||</span> [] <span class="ruby-comment">#: Array[singleton(Riffer::Tool)]</span>
