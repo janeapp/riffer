@@ -22,6 +22,16 @@ class Riffer::Agent::Response
   # The modifications made by guardrails during processing.
   attr_reader :modifications #: Array[Riffer::Guardrails::Modification]
 
+  # The per-unit execution timings (guardrails, tool calls, and LLM calls), in
+  # execution order. Empty unless +Riffer.config.report_timings+ is enabled.
+  # Discriminate entries with +Riffer::Timing#kind+.
+  attr_reader :timings #: Array[Riffer::Timing]
+
+  # The total run time in seconds, measured with a monotonic clock. Always
+  # populated for +generate+ (independent of +Riffer.config.report_timings+);
+  # +nil+ for responses built outside the generation loop.
+  attr_reader :duration #: Float?
+
   # The reason provided with the interrupt, if any.
   attr_reader :interrupt_reason #: (String | Symbol)?
 
@@ -35,12 +45,29 @@ class Riffer::Agent::Response
   # turn (when an interrupt left them unanswered and history healing is on).
   attr_reader :healed_tool_call_ids #: Array[String]
 
+  # Creates a new response.
+  #
+  # [content] the response content.
+  # [tripwire] optional tripwire for blocked responses.
+  # [modifications] guardrail modifications applied during processing.
+  # [timings] per-unit execution timings (empty unless
+  #   +Riffer.config.report_timings+ is enabled).
+  # [duration] total run time in seconds (+nil+ outside the generation loop).
+  # [interrupted] whether the agent loop was interrupted by a callback.
+  # [interrupt_reason] optional reason passed via <tt>throw :riffer_interrupt, reason</tt>.
+  # [structured_output] parsed structured output when structured output is configured.
+  # [messages] the full message history from the agent conversation.
+  # [healed_tool_call_ids] call ids filled with placeholder tool results
+  #   when history healing is enabled.
+  #
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String]) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [])
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?timings: Array[Riffer::Timing], ?duration: Float?, ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String]) -> void
+  def initialize(content, tripwire: nil, modifications: [], timings: [], duration: nil, interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [])
     @content = content
     @tripwire = tripwire
     @modifications = modifications
+    @timings = timings
+    @duration = duration
     @interrupted = interrupted
     @interrupt_reason = interrupt_reason
     @structured_output = structured_output

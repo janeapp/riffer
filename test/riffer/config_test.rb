@@ -164,6 +164,58 @@ describe Riffer::Config do
     end
   end
 
+  describe "report_timings" do
+    it "defaults to false" do
+      expect(Riffer::Config.new.report_timings).must_equal false
+    end
+
+    it "accepts true and false" do
+      config = Riffer::Config.new
+      config.report_timings = true
+      expect(config.report_timings).must_equal true
+      config.report_timings = false
+      expect(config.report_timings).must_equal false
+    end
+
+    it "coerces ENV-style truthy strings" do
+      config = Riffer::Config.new
+      config.report_timings = "true"
+      expect(config.report_timings).must_equal true
+      config.report_timings = "1"
+      expect(config.report_timings).must_equal true
+      config.report_timings = 1
+      expect(config.report_timings).must_equal true
+    end
+
+    it "coerces ENV-style falsy strings" do
+      config = Riffer::Config.new
+      config.report_timings = true
+      config.report_timings = "false"
+      expect(config.report_timings).must_equal false
+      config.report_timings = "0"
+      expect(config.report_timings).must_equal false
+      config.report_timings = 0
+      expect(config.report_timings).must_equal false
+    end
+
+    it "treats nil as false (ENV-not-set)" do
+      config = Riffer::Config.new
+      config.report_timings = true
+      config.report_timings = nil
+      expect(config.report_timings).must_equal false
+    end
+
+    it "raises for other strings" do
+      config = Riffer::Config.new
+      expect { config.report_timings = "yes" }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for unrelated values" do
+      config = Riffer::Config.new
+      expect { config.report_timings = :on }.must_raise Riffer::ArgumentError
+    end
+  end
+
   describe "mcp namespace" do
     it "initializes credentials to nil" do
       config = Riffer::Config.new

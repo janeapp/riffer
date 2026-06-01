@@ -131,6 +131,37 @@ class Riffer::Config
     end
   end
 
+  # When +true+, riffer measures how long each unit of work takes — guardrails,
+  # tool calls, and LLM calls — and exposes the per-unit results, in execution
+  # order, on +Riffer::Agent::Response#timings+ (and, when streaming, as
+  # +Riffer::StreamEvents::Timing+ events).
+  #
+  # Defaults to +false+, in which case no per-unit timing is collected and
+  # +timings+ is empty. This flag does not gate +Riffer::Agent::Response#duration+
+  # (the total run time), which is always measured.
+  attr_reader :report_timings #: bool
+
+  # Sets the +report_timings+ flag.
+  #
+  # Coerces common boolean representations so values pulled from
+  # environment variables behave predictably — the string +"false"+ is
+  # truthy in Ruby and would otherwise flip the flag on. Accepts
+  # +true+/+false+, +"true"+/+"false"+, +1+/+0+, +"1"+/+"0"+, and +nil+
+  # (treated as +false+, the default). Raises +Riffer::ArgumentError+ for
+  # any other value.
+  #
+  #--
+  #: (untyped) -> void
+  def report_timings=(value)
+    @report_timings = case value
+    when true, "true", 1, "1" then true
+    when false, "false", 0, "0", nil then false
+    else
+      raise Riffer::ArgumentError,
+        "report_timings must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
+    end
+  end
+
   #--
   #: () -> void
   def initialize
@@ -146,5 +177,6 @@ class Riffer::Config
     @skills = Skills.new
     @message_id_strategy = :none
     @experimental_history_healing = false
+    @report_timings = false
   end
 end

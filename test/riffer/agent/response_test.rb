@@ -42,6 +42,38 @@ describe Riffer::Agent::Response do
     end
   end
 
+  describe "#timings" do
+    it "defaults to empty array" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.timings).must_equal []
+    end
+
+    it "returns provided timings of any kind" do
+      guardrail_timing = Riffer::Guardrails::Timing.new(
+        guardrail: Riffer::Guardrail,
+        phase: :before,
+        duration: 0.01,
+        result_type: :pass
+      )
+      tool_timing = Riffer::Tools::Timing.new(tool_name: "t", call_id: "c1", duration: 0.02)
+      response = Riffer::Agent::Response.new("Hello!", timings: [guardrail_timing, tool_timing])
+      expect(response.timings).must_equal [guardrail_timing, tool_timing]
+      expect(response.timings.map(&:kind)).must_equal %i[guardrail tool]
+    end
+  end
+
+  describe "#duration" do
+    it "defaults to nil" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.duration).must_be_nil
+    end
+
+    it "stores the total run duration" do
+      response = Riffer::Agent::Response.new("Hello!", duration: 1.5)
+      expect(response.duration).must_equal 1.5
+    end
+  end
+
   describe "#modified?" do
     it "returns false when no modifications" do
       response = Riffer::Agent::Response.new("Hello!")

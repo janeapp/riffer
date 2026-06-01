@@ -102,3 +102,29 @@ If a guardrail, provider call, or other internal code raises an exception, it pr
 | Response flag | `blocked?`                           | `interrupted?`                       | `interrupted?`                       |
 | Stream event  | `GuardrailTripwire`                  | `Interrupt`                          | `Interrupt`                          |
 | Purpose       | Policy enforcement                   | Flow control                         | Runaway loop prevention              |
+
+## Timing
+
+`Riffer::Agent::Response#duration` (seconds, `Float`) reports the **total run time** for `generate` — from the start of the loop through the final response. It's measured with a monotonic clock and is **always populated**, regardless of `Riffer.config.report_timings`. (Streaming returns an `Enumerator`, not a `Response`, so time your own iteration there.)
+
+```ruby
+response = MyAgent.generate("Hello")
+puts "Took #{response.duration.round(3)}s"
+```
+
+Set `Riffer.config.report_timings = true` to also collect a per-call breakdown. Each LLM call in the loop produces a `:llm`-kind entry in `response.timings`:
+
+```ruby
+Riffer.config.report_timings = true
+response = MyAgent.generate("Plan a trip")
+
+response.timings.select { |t| t.kind == :llm }.each do |timing|
+  line = "step #{timing.step} (#{timing.model}): #{timing.duration_ms.round(2)}ms"
+  line += " — first token at #{timing.ttft_ms.round(2)}ms" if timing.ttft
+  puts line
+end
+```
+
+Each `Riffer::Providers::Timing` exposes `model`, `step` (which loop iteration produced the call), `duration`/`duration_ms`, and — for **streamed** calls — `ttft`/`ttft_ms`, the time to first token (the first generated text, reasoning, or tool-call delta). `ttft` is `nil` for non-streaming `generate`.
+
+These `:llm` timings interleave with `:guardrail` and `:tool` timings in `response.timings`, in execution order. See [Configuration — Timing Reporting](10_CONFIGURATION.md#timing-reporting) for the full model.

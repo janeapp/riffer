@@ -244,6 +244,48 @@ MyAgent.stream("Hello").each do |event|
 end
 ```
 
+### Timing
+
+Set `Riffer.config.report_timings = true` to measure how long each guardrail takes (alongside tool and LLM calls). Guardrail timings are the `:guardrail`-kind entries in `response.timings`, in execution order:
+
+```ruby
+Riffer.config.report_timings = true
+
+response = MyAgent.generate("Hello")
+
+response.timings.select { |t| t.kind == :guardrail }.each do |timing|
+  puts "#{timing.guardrail} (#{timing.phase}): #{timing.duration_ms.round(2)}ms — #{timing.result_type}"
+end
+```
+
+Each `Riffer::Guardrails::Timing` exposes:
+
+| Method        | Description                                                      |
+| ------------- | ---------------------------------------------------------------- |
+| `guardrail`   | The guardrail class that ran.                                    |
+| `phase`       | `:before` or `:after`.                                           |
+| `duration`    | Execution time in seconds (monotonic clock), as a `Float`.       |
+| `duration_ms` | Convenience accessor for the duration in milliseconds.           |
+| `result_type` | What the guardrail returned: `:pass`, `:transform`, or `:block`. |
+
+The duration covers only the guardrail's `process_input`/`process_output` call, not its instantiation. When a guardrail blocks, its timing is recorded (with `result_type: :block`) and timing stops there, since later guardrails do not run. When the flag is off (the default), `response.timings` is empty and no per-unit timing is collected.
+
+During streaming, a `Riffer::StreamEvents::Timing` event is emitted after each guardrail runs (use `kind` to pick out guardrails):
+
+```ruby
+MyAgent.stream("Hello").each do |event|
+  case event
+  when Riffer::StreamEvents::Timing
+    next unless event.kind == :guardrail
+    puts "#{event.timing.guardrail} (#{event.timing.phase}): #{event.duration}s"
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+See [Configuration — Timing Reporting](10_CONFIGURATION.md#timing-reporting) for the full timing model and the config flag.
+
 ## Streaming with Guardrails
 
 Guardrails work with streaming. If blocked, a `Riffer::StreamEvents::GuardrailTripwire` event is yielded:

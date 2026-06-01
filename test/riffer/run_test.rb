@@ -476,6 +476,210 @@ describe Riffer::Agent::Run do
     end
   end
 
+  describe "timing reporting" do
+    before { @original_report_timings = Riffer.config.report_timings }
+    after { Riffer.config.report_timings = @original_report_timings }
+
+    let(:pass_guardrail_class) do
+      Class.new(Riffer::Guardrail) do
+        def process_input(messages, context:)
+          pass(messages)
+        end
+
+        def process_output(response, messages:, context:)
+          pass(response)
+        end
+      end
+    end
+
+    let(:agent_with_around_guardrail) do
+      gr = pass_guardrail_class
+      klass = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+      end
+      klass.guardrail(:around, with: gr)
+      klass
+    end
+
+    let(:weather_tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Gets the weather"
+        params { required :city, String }
+        def call(context:, city:)
+          text("Weather in #{city}: 20 degrees")
+        end
+      end.tap { |t| t.identifier("timing_weather_tool") }
+    end
+
+    describe "total duration (always on)" do
+      it "is populated on #generate even when the flag is off" do
+        Riffer.config.report_timings = false
+        result = agent_class.generate("Hello")
+        expect(result.duration).must_be_kind_of Float
+        expect(result.duration).must_be :>=, 0.0
+      end
+
+      it "is populated on a blocked response" do
+        Riffer.config.report_timings = false
+        gr = Class.new(Riffer::Guardrail) do
+          def process_input(messages, context:)
+            block("nope")
+          end
+        end
+        klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+        klass.guardrail(:before, with: gr)
+        result = klass.generate("Hello")
+        expect(result.blocked?).must_equal true
+        expect(result.duration).must_be_kind_of Float
+      end
+    end
+
+    describe "guardrail timings with #generate" do
+      it "is empty when the flag is off" do
+        Riffer.config.report_timings = false
+        result = agent_with_around_guardrail.generate("Hello")
+        expect(result.timings).must_be_empty
+      end
+
+      it "records one guardrail timing per phase when the flag is on" do
+        Riffer.config.report_timings = true
+        result = agent_with_around_guardrail.generate("Hello")
+        guardrail_timings = result.timings.select { |t| t.kind == :guardrail }
+        expect(guardrail_timings.length).must_equal 2
+        expect(guardrail_timings.map(&:phase).sort).must_equal %i[after before]
+      end
+
+      it "attaches timings to a blocked response" do
+        Riffer.config.report_timings = true
+        gr = Class.new(Riffer::Guardrail) do
+          def process_input(messages, context:)
+            block("nope")
+          end
+        end
+        klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+        klass.guardrail(:before, with: gr)
+        result = klass.generate("Hello")
+        expect(result.blocked?).must_equal true
+        guardrail_timings = result.timings.select { |t| t.kind == :guardrail }
+        expect(guardrail_timings.length).must_equal 1
+        expect(guardrail_timings.first.result_type).must_equal :block
+      end
+    end
+
+    describe "llm timings with #generate" do
+      it "records one llm timing per step" do
+        Riffer.config.report_timings = true
+        tc = weather_tool_class
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          uses_tools [tc]
+        end
+        agent = klass.new
+        provider = agent.provider
+        provider.stub_response("", tool_calls: [{name: "timing_weather_tool", arguments: '{"city":"Toronto"}'}])
+        provider.stub_response("Nice and sunny!")
+
+        result = agent.generate("Weather?")
+        llm_timings = result.timings.select { |t| t.kind == :llm }
+        expect(llm_timings.length).must_equal 2
+        expect(llm_timings.map(&:step)).must_equal [1, 2]
+        expect(llm_timings.first.model).must_equal "riffer-1"
+      end
+
+      it "does not set ttft for non-streaming calls" do
+        Riffer.config.report_timings = true
+        result = agent_class.generate("Hello")
+        llm_timing = result.timings.find { |t| t.kind == :llm }
+        expect(llm_timing.ttft).must_be_nil
+      end
+    end
+
+    describe "tool timings with #generate" do
+      it "records a tool timing per tool call, including outcome" do
+        Riffer.config.report_timings = true
+        tc = weather_tool_class
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          uses_tools [tc]
+        end
+        agent = klass.new
+        provider = agent.provider
+        provider.stub_response("", tool_calls: [{name: "timing_weather_tool", arguments: '{"city":"Toronto"}'}])
+        provider.stub_response("Done!")
+
+        result = agent.generate("Weather?")
+        tool_timings = result.timings.select { |t| t.kind == :tool }
+        expect(tool_timings.length).must_equal 1
+        expect(tool_timings.first.tool_name).must_equal "timing_weather_tool"
+        expect(tool_timings.first.success?).must_equal true
+      end
+
+      it "times a failed tool call too" do
+        Riffer.config.report_timings = true
+        tc = weather_tool_class
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          uses_tools [tc]
+        end
+        agent = klass.new
+        provider = agent.provider
+        provider.stub_response("", tool_calls: [{name: "timing_weather_tool", arguments: "{}"}])
+        provider.stub_response("Sorry.")
+
+        result = agent.generate("Weather?")
+        tool_timing = result.timings.find { |t| t.kind == :tool }
+        expect(tool_timing).wont_be_nil
+        expect(tool_timing.error_type).must_equal :validation_error
+        expect(tool_timing.success?).must_equal false
+      end
+
+      it "collects guardrail, llm, and tool timings together in execution order" do
+        Riffer.config.report_timings = true
+        tc = weather_tool_class
+        klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+        klass.uses_tools([tc])
+        klass.guardrail(:before, with: pass_guardrail_class)
+        agent = klass.new
+        provider = agent.provider
+        provider.stub_response("", tool_calls: [{name: "timing_weather_tool", arguments: '{"city":"Toronto"}'}])
+        provider.stub_response("Done!")
+
+        result = agent.generate("Weather?")
+        kinds = result.timings.map(&:kind)
+        expect(kinds.first).must_equal :guardrail
+        expect(kinds).must_include :llm
+        expect(kinds).must_include :tool
+      end
+    end
+
+    describe "with #stream" do
+      it "emits no Timing events when the flag is off" do
+        Riffer.config.report_timings = false
+        events = agent_with_around_guardrail.stream("Hello").to_a
+        timing_events = events.select { |e| e.is_a?(Riffer::StreamEvents::Timing) }
+        expect(timing_events).must_be_empty
+      end
+
+      it "emits Timing events for guardrails and the llm call when on" do
+        Riffer.config.report_timings = true
+        events = agent_with_around_guardrail.stream("Hello").to_a
+        timing_events = events.select { |e| e.is_a?(Riffer::StreamEvents::Timing) }
+        kinds = timing_events.map(&:kind)
+        expect(kinds.count(:guardrail)).must_equal 2
+        expect(kinds).must_include :llm
+      end
+
+      it "captures time-to-first-token on the streamed llm timing" do
+        Riffer.config.report_timings = true
+        events = agent_class.stream("Hello").to_a
+        llm_event = events.select { |e| e.is_a?(Riffer::StreamEvents::Timing) }.find { |e| e.kind == :llm }
+        expect(llm_event).wont_be_nil
+        expect(llm_event.timing.ttft).must_be_kind_of Float
+        expect(llm_event.timing.ttft).must_be :<=, llm_event.timing.duration
+      end
+    end
+  end
+
   describe "token usage tracking with #generate" do
     let(:token_usage) { Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50) }
 

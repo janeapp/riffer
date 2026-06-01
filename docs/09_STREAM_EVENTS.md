@@ -186,6 +186,22 @@ end
 
 See [Guardrails](12_GUARDRAILS.md) for more information.
 
+### Timing
+
+Emitted after each timed unit of work — a guardrail, a tool call, or an LLM call — when `Riffer.config.report_timings` is enabled. The wrapped `Riffer::Timing` carries the details; use `kind` to discriminate:
+
+```ruby
+agent.stream("Hello").each do |event|
+  case event
+  when Riffer::StreamEvents::Timing
+    puts "#{event.kind}: #{event.duration}s"   # :guardrail, :tool, or :llm
+    # event.timing is the full Riffer::Timing record
+  end
+end
+```
+
+Off by default. See [Configuration — Timing Reporting](10_CONFIGURATION.md#timing-reporting) for the timing model and the config flag.
+
 ### SkillActivation
 
 Emitted when a skill is activated during streaming. Fired when the LLM calls the skill activation tool:

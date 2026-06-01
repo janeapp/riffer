@@ -108,7 +108,7 @@ Options:
 | `String`                   | `string`         |
 | `Integer`                  | `integer`        |
 | `Float`                    | `number`         |
-| `Riffer::Params::Boolean`          | `boolean`        |
+| `Riffer::Params::Boolean`  | `boolean`        |
 | `TrueClass` / `FalseClass` | `boolean`        |
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
@@ -281,3 +281,24 @@ error_response.error?         # => true
 error_response.error_message  # => "failed"
 error_response.error_type     # => :not_found
 ```
+
+## Timing
+
+Set `Riffer.config.report_timings = true` to measure how long each tool call takes. Tool timings are the `:tool`-kind entries in `response.timings`:
+
+```ruby
+Riffer.config.report_timings = true
+
+response = MyAgent.generate("What's the weather in Toronto?")
+
+response.timings.select { |t| t.kind == :tool }.each do |timing|
+  status = timing.success? ? "ok" : timing.error_type
+  puts "#{timing.tool_name} (#{timing.call_id}): #{timing.duration_ms.round(2)}ms — #{status}"
+end
+```
+
+Each `Riffer::Tools::Timing` exposes `tool_name`, `call_id`, `duration`/`duration_ms`, `error_type` (`nil` on success), and `success?`. The duration spans the dispatch and any `around_tool_call` wrapper, and is captured per call — so it's correct under any tool runtime (sequential, threaded, or fibers). Because concurrent tool calls overlap, their durations are wall-clock per call.
+
+A tool that errors or times out is **still timed** (unlike a guardrail, whose raise aborts the run): the runtime captures the failure into a response, so `error_type` records the outcome and `duration` covers the failed attempt. The `call_id` disambiguates parallel calls to the same tool. MCP tool calls route through the same runtime, so they're timed too.
+
+During streaming, a `Riffer::StreamEvents::Timing` event with `kind: :tool` is emitted after each tool call. See [Configuration — Timing Reporting](10_CONFIGURATION.md#timing-reporting) for the full model.

@@ -23,21 +23,53 @@ module Riffer::Agent::Run
   # : (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
 
+  # Returns the current monotonic clock reading, in seconds.
   # --
-  # : (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
-  def accumulate_streamed_response: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
+  # : () -> Float
+  def monotonic_now: () -> Float
+
+  # Calls the LLM (streamed or not) and, when +Riffer.config.report_timings+ is
+  # enabled, records a Riffer::Providers::Timing for the call — total duration
+  # plus, for streamed calls, time-to-first-token.
+  # --
+  # : (Riffer::Agent, Integer, Enumerator::Yielder?, Array[Riffer::Timing]) -> Riffer::Messages::Assistant
+  def perform_llm_call: (Riffer::Agent, Integer, Enumerator::Yielder?, Array[Riffer::Timing]) -> Riffer::Messages::Assistant
+
+  # Consumes the provider's stream, yielding each event downstream and
+  # accumulating the assistant message. When +on_first_content+ is given, it is
+  # invoked once, on the first generated-content event (text, reasoning, or
+  # tool-call delta) — used to capture time-to-first-token.
+  # --
+  # : (Riffer::Agent, Enumerator::Yielder, ?on_first_content: (^() -> void)?) -> Riffer::Messages::Assistant
+  def accumulate_streamed_response: (Riffer::Agent, Enumerator::Yielder, ?on_first_content: (^() -> void)?) -> Riffer::Messages::Assistant
+
+  # Returns true for the first generated-content events — text, reasoning, or
+  # tool-call deltas — used to mark time-to-first-token.
+  # --
+  # : (Riffer::StreamEvents::Base) -> bool
+  def first_content_event?: (Riffer::StreamEvents::Base) -> bool
 
   # --
   # : (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
   def record_modifications!: (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
 
+  # Appends +new_timings+ to +all_timings+ and emits a +Timing+ event for each
+  # one when streaming.
+  #
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def tripwire_response: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  # : (Enumerator::Yielder?, Array[Riffer::Timing], Array[Riffer::Timing]) -> void
+  def record_timings!: (Enumerator::Yielder?, Array[Riffer::Timing], Array[Riffer::Timing]) -> void
+
+  # Emits a +GuardrailTripwire+ event when streaming and returns the
+  # short-circuit +Response+ for a tripped guardrail.
+  #
+  # --
+  # : (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) -> Riffer::Agent::Response
+  def tripwire_response: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) -> Riffer::Agent::Response
 
   # --
-  # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
-  def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
+  # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float, **untyped) -> Riffer::Agent::Response
+  def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float, **untyped) -> Riffer::Agent::Response
 
   # --
   # : (Riffer::Agent) -> Riffer::Messages::Assistant
@@ -48,24 +80,24 @@ module Riffer::Agent::Run
   def call_llm_stream: (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # --
-  # : (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-  def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Timing], ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Timing], ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
 
   # --
-  # : (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
-  def inject_discovered_tools: (Riffer::Agent, Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
+  # : (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response, Riffer::Tools::Timing?]]) -> void
+  def inject_discovered_tools: (Riffer::Agent, Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response, Riffer::Tools::Timing? ]]) -> void
 
   # --
-  # : (Riffer::Agent) -> void
-  def execute_pending_tool_calls: (Riffer::Agent) -> void
+  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Timing]) -> void
+  def execute_pending_tool_calls: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Timing]) -> void
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
-  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
+  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) { (Riffer::Agent::Response) -> void } -> void
+  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) { (Riffer::Agent::Response) -> void } -> void
 
   # --
-  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
-  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
+  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) { (Riffer::Agent::Response) -> void } -> untyped
+  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) { (Riffer::Agent::Response) -> void } -> untyped
 
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
@@ -79,9 +111,12 @@ module Riffer::Agent::Run
   # : (Riffer::Agent) -> Hash[Symbol, untyped]
   def merged_model_options: (Riffer::Agent) -> Hash[Symbol, untyped]
 
+  # Builds the +Response+. When +started+ is given (always, inside the
+  # generation loop), the total run +duration+ is stamped from it with a fresh
+  # monotonic reading — independent of +Riffer.config.report_timings+.
   # --
-  # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
-  def build_response: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  # : (Riffer::Agent, String, ?started: Float?, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?timings: Array[Riffer::Timing], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  def build_response: (Riffer::Agent, String, ?started: Float?, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?timings: Array[Riffer::Timing], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
 
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.

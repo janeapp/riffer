@@ -16,15 +16,29 @@ class Riffer::Tools::Runtime
     @runner = runner
   end
 
-  # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
+  # Executes a batch of tool calls, returning
+  # <tt>[tool_call, response, timing]</tt> triples. The +timing+ is a
+  # Riffer::Tools::Timing when +Riffer.config.report_timings+ is enabled, else
+  # +nil+. The duration spans the dispatch and any +around_tool_call+ wrapper,
+  # and is captured per call (correct under any concurrency model).
   #--
-  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response, Riffer::Tools::Timing?]]
   def execute(tool_calls, tools:, context:, assistant_message: nil)
+    measure = Riffer.config.report_timings
     @runner.map(tool_calls, context: context) do |tool_call|
+      started = measure ? Process.clock_gettime(Process::CLOCK_MONOTONIC) : nil
       result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
         dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
       end
-      [tool_call, result]
+      timing = if started
+        Riffer::Tools::Timing.new(
+          tool_name: tool_call.name,
+          call_id: tool_call.call_id,
+          duration: Process.clock_gettime(Process::CLOCK_MONOTONIC) - started,
+          error_type: result.error_type
+        )
+      end
+      [tool_call, result, timing]
     end
   end
 

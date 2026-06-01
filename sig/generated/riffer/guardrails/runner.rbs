@@ -1,7 +1,13 @@
 # Generated from lib/riffer/guardrails/runner.rb with RBS::Inline
 
-# Executes guardrails sequentially, passing each one's output to the next; if
-# any blocks, execution stops and a tripwire is returned.
+# Executes guardrails sequentially and manages the processing pipeline.
+#
+# The runner processes guardrails in order, passing the output of each
+# to the next. If any guardrail blocks, execution stops and a tripwire
+# is returned.
+#
+#   runner = Runner.new(guardrail_configs, phase: :before, context: context)
+#   data, tripwire, modifications, timings = runner.run(messages)
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
   attr_reader guardrail_configs: Array[Hash[Symbol, untyped]]
@@ -12,18 +18,45 @@ class Riffer::Guardrails::Runner
   # The context passed to guardrails.
   attr_reader context: untyped
 
-  # --
-  # : (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
-  def initialize: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
+  # Whether to record a timing for each guardrail's execution.
+  attr_reader measure_timings: bool
 
-  # Runs the guardrails sequentially. For the +:before+ phase +data+ is the
-  # messages array; for +:after+ it's the response (and +messages+ must be
-  # provided).
+  # Creates a new runner.
+  #
+  # [guardrail_configs] configs with :class and :options keys.
+  # [phase] :before or :after.
+  # [context] optional context to pass to guardrails.
+  # [measure_timings] when true, records a Timing per guardrail.
+  #
   # --
-  # : (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
-  def run: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification] ]
+  # : (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped, ?measure_timings: bool) -> void
+  def initialize: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped, ?measure_timings: bool) -> void
+
+  # Runs the guardrails sequentially.
+  #
+  # For before phase, data should be an array of messages.
+  # For after phase, data should be a response and messages must be provided.
+  #
+  # Returns a 4-tuple: the processed data, a tripwire (or +nil+), the
+  # modifications, and the per-guardrail timings. Timings are empty unless
+  # +measure_timings+ was set.
+  #
+  # [data] the data to process (messages for before, response for after).
+  # [messages] the conversation messages (required for after phase).
+  #
+  # --
+  # : (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Timing]]
+  def run: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [ untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Timing] ]
 
   private
+
+  # Executes a single guardrail, recording a Timing into +timings+ when
+  # +measure_timings+ is set. The duration is captured with a monotonic
+  # clock around the +process_*+ call (guardrail instantiation is excluded).
+  #
+  # --
+  # : (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?, timings: Array[Riffer::Guardrails::Timing]) -> Riffer::Guardrails::Result
+  def run_with_timing: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?, timings: Array[Riffer::Guardrails::Timing]) -> Riffer::Guardrails::Result
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Guardrail

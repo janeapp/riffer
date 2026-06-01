@@ -313,4 +313,62 @@ describe Riffer::Guardrails::Runner do
       expect(modifications.first.message_indices).must_equal [0]
     end
   end
+
+  describe "timings" do
+    it "returns empty timings when measure_timings is false" do
+      configs = [config_for(pass_guardrail_class), config_for(transform_guardrail_class)]
+      runner = Riffer::Guardrails::Runner.new(configs, phase: :before)
+      messages = [Riffer::Messages::User.new("Hello")]
+      _data, _tripwire, _modifications, timings = runner.run(messages)
+      expect(timings).must_be_empty
+    end
+
+    it "records one timing per guardrail when enabled" do
+      configs = [config_for(pass_guardrail_class), config_for(transform_guardrail_class)]
+      runner = Riffer::Guardrails::Runner.new(configs, phase: :before, measure_timings: true)
+      messages = [Riffer::Messages::User.new("Hello")]
+      _data, _tripwire, _modifications, timings = runner.run(messages)
+      expect(timings.length).must_equal 2
+    end
+
+    it "records timings in execution order" do
+      configs = [config_for(pass_guardrail_class), config_for(transform_guardrail_class)]
+      runner = Riffer::Guardrails::Runner.new(configs, phase: :before, measure_timings: true)
+      messages = [Riffer::Messages::User.new("Hello")]
+      _data, _tripwire, _modifications, timings = runner.run(messages)
+      expect(timings.map(&:guardrail)).must_equal [pass_guardrail_class, transform_guardrail_class]
+    end
+
+    it "captures the guardrail's result type" do
+      configs = [config_for(pass_guardrail_class), config_for(transform_guardrail_class)]
+      runner = Riffer::Guardrails::Runner.new(configs, phase: :before, measure_timings: true)
+      messages = [Riffer::Messages::User.new("Hello")]
+      _data, _tripwire, _modifications, timings = runner.run(messages)
+      expect(timings.map(&:result_type)).must_equal [:pass, :transform]
+    end
+
+    it "records a non-negative duration" do
+      runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :before, measure_timings: true)
+      messages = [Riffer::Messages::User.new("Hello")]
+      _data, _tripwire, _modifications, timings = runner.run(messages)
+      expect(timings.first.duration).must_be :>=, 0.0
+    end
+
+    it "sets the phase on each timing" do
+      runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :after, measure_timings: true)
+      response = Riffer::Messages::Assistant.new("Hi!")
+      _data, _tripwire, _modifications, timings = runner.run(response, messages: [])
+      expect(timings.first.phase).must_equal :after
+    end
+
+    it "records a timing for the blocking guardrail and stops" do
+      configs = [config_for(pass_guardrail_class), config_for(block_guardrail_class), config_for(pass_guardrail_class)]
+      runner = Riffer::Guardrails::Runner.new(configs, phase: :before, measure_timings: true)
+      messages = [Riffer::Messages::User.new("Hello")]
+      _data, tripwire, _modifications, timings = runner.run(messages)
+      expect(tripwire).wont_be_nil
+      expect(timings.length).must_equal 2
+      expect(timings.last.result_type).must_equal :block
+    end
+  end
 end

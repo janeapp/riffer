@@ -65,11 +65,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Value                          | Description                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Value                             | Description                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `Riffer::Tools::Runtime` subclass | Instantiated automatically (e.g., `Riffer::Tools::Runtime::Inline`, `Riffer::Tools::Runtime::Threaded`) |
-| `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                              |
-| `Proc`                         | Dynamic resolution                                                                                |
+| `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                                    |
+| `Proc`                            | Dynamic resolution                                                                                      |
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
@@ -143,6 +143,49 @@ When enabled, two repairs run automatically:
 Defaults to `false` — pre-healing behavior. Seeded sessions pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.
 
 There is no per-call override and no customizable placeholder. Callers needing finer control can call `agent.session.update(tool_call_id:, ...)` after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](04_AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
+
+### Timing Reporting
+
+Measure how long each unit of work takes — guardrails, tool calls, and LLM calls:
+
+```ruby
+Riffer.configure do |config|
+  config.report_timings = true
+end
+```
+
+When enabled, Riffer times each unit (using a monotonic clock) and exposes one timing per unit, in execution order, on `Riffer::Agent::Response#timings`. When streaming, a `Riffer::StreamEvents::Timing` event is emitted after each unit completes.
+
+Defaults to `false`, in which case `response.timings` is empty and no per-unit timing is collected. The setter coerces common boolean representations (`true`/`false`, `"true"`/`"false"`, `1`/`0`, `"1"`/`"0"`, `nil`) so values pulled from environment variables behave predictably.
+
+> **Note:** This flag gates only the per-unit `timings` breakdown. The **total run time**, `Riffer::Agent::Response#duration` (seconds, `Float`), is always measured for `generate` regardless of this flag — it's two clock reads.
+
+#### The timing model
+
+Every entry in `response.timings` is a `Riffer::Timing`. Discriminate with `#kind`; each subclass adds its own fields:
+
+| `kind`       | Class                        | Fields beyond `duration`/`duration_ms`           |
+| ------------ | ---------------------------- | ------------------------------------------------ |
+| `:guardrail` | `Riffer::Guardrails::Timing` | `guardrail`, `phase`, `result_type`              |
+| `:tool`      | `Riffer::Tools::Timing`      | `tool_name`, `call_id`, `error_type`, `success?` |
+| `:llm`       | `Riffer::Providers::Timing`  | `model`, `step`, `ttft`, `ttft_ms`               |
+
+```ruby
+Riffer.config.report_timings = true
+response = MyAgent.generate("Hello")
+
+puts "Total: #{response.duration.round(3)}s"
+response.timings.each do |t|
+  puts "#{t.kind}: #{t.duration_ms.round(2)}ms"
+end
+
+# Filter to one kind:
+tool_timings = response.timings.select { |t| t.kind == :tool }
+```
+
+Because `timings` is in execution order, it reads as a timeline of the whole run (before-guardrails → LLM step 1 → tools → after-guardrails → LLM step 2 → …). Tool calls can run concurrently, so their durations are per-call wall-clock and may overlap.
+
+See [Guardrails — Timing](12_GUARDRAILS.md#timing), [Tools — Timing](06_TOOLS.md#timing), and [The Agent Loop — Timing](05_AGENT_LOOP.md#timing) for the per-unit details.
 
 ## Agent-Level Configuration
 

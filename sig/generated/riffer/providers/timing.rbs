@@ -1,0 +1,55 @@
+# Generated from lib/riffer/providers/timing.rb with RBS::Inline
+
+# Records how long a single LLM call took.
+#
+# When +Riffer.config.report_timings+ is enabled, the generation loop measures
+# each provider call — a +generate+ round-trip, or a full streamed response —
+# and produces one Timing per call, tagged with the +step+ it produced.
+#
+# For streamed calls, +ttft+ holds the time to first token: the elapsed time
+# until the first generated-content event (a text, reasoning, or tool-call
+# delta). It is +nil+ for non-streaming calls and for streams that yield no
+# content.
+#
+#   timing = Timing.new(model: "openai/gpt-4", step: 1, duration: 1.8, ttft: 0.3)
+#   timing.kind   # => :llm
+#   timing.ttft_ms # => 300.0
+class Riffer::Providers::Timing < Riffer::Timing
+  # The model that produced the response (e.g. "openai/gpt-4").
+  attr_reader model: String
+
+  # The step (loop iteration) this call produced.
+  attr_reader step: Integer
+
+  # Time to first token, in seconds (streaming only); +nil+ otherwise.
+  attr_reader ttft: Float?
+
+  # Creates a new timing record.
+  #
+  # [model] the model that produced the response.
+  # [step] the loop iteration this call produced.
+  # [duration] total call time in seconds.
+  # [ttft] time to first token in seconds (streaming only).
+  #
+  # --
+  # : (model: String, step: Integer, duration: Float, ?ttft: Float?) -> void
+  def initialize: (model: String, step: Integer, duration: Float, ?ttft: Float?) -> void
+
+  # Identifies this as an LLM timing.
+  #
+  # --
+  # : () -> Symbol
+  def kind: () -> Symbol
+
+  # The time to first token in milliseconds, or +nil+ when not measured.
+  #
+  # --
+  # : () -> Float?
+  def ttft_ms: () -> Float?
+
+  # Converts the timing to a hash.
+  #
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end

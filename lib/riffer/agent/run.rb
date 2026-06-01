@@ -31,9 +31,11 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, stream_yielder: nil)
+    started = monotonic_now
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
+    all_timings = [] #: Array[Riffer::Timing]
 
-    run_before_guardrails(agent, stream_yielder, all_modifications) { |tripped| return tripped }
+    run_before_guardrails(agent, stream_yielder, all_modifications, all_timings, started) { |tripped| return tripped }
 
     skills = agent.context.skills
 
@@ -44,14 +46,14 @@ module Riffer::Agent::Run
     step = agent.session.steps
 
     reason = catch(:riffer_interrupt) do
-      execute_pending_tool_calls(agent)
+      execute_pending_tool_calls(agent, stream_yielder, all_timings)
 
       loop do
-        response = stream_yielder ? accumulate_streamed_response(agent, stream_yielder) : call_llm(agent)
         step += 1
+        response = perform_llm_call(agent, step, stream_yielder, all_timings)
         track_token_usage(agent, response.token_usage)
 
-        processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications) { |tripped| return tripped }
+        processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications, all_timings, started) { |tripped| return tripped }
 
         agent.session.add(processed_response)
 
@@ -60,27 +62,72 @@ module Riffer::Agent::Run
         max_steps = agent.config.max_steps
         throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if max_steps && step >= max_steps
 
-        execute_tool_calls(agent, processed_response)
+        execute_tool_calls(agent, processed_response, stream_yielder, all_timings)
       end
 
-      return final_response(agent, all_modifications)
+      return final_response(agent, all_modifications, all_timings, started)
     end
 
     new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
     agent.session.set(new_messages)
     stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason, healed_tool_call_ids: filled) if stream_yielder
-    final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled)
+    final_response(agent, all_modifications, all_timings, started, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled)
   end
 
+  # Returns the current monotonic clock reading, in seconds.
   #--
-  #: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
-  def accumulate_streamed_response(agent, stream_yielder)
+  #: () -> Float
+  def monotonic_now
+    Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  end
+
+  # Calls the LLM (streamed or not) and, when +Riffer.config.report_timings+ is
+  # enabled, records a Riffer::Providers::Timing for the call — total duration
+  # plus, for streamed calls, time-to-first-token.
+  #--
+  #: (Riffer::Agent, Integer, Enumerator::Yielder?, Array[Riffer::Timing]) -> Riffer::Messages::Assistant
+  def perform_llm_call(agent, step, stream_yielder, all_timings)
+    unless Riffer.config.report_timings
+      return stream_yielder ? accumulate_streamed_response(agent, stream_yielder) : call_llm(agent)
+    end
+
+    started = monotonic_now
+    first_content_at = nil #: Float?
+    response = if stream_yielder
+      accumulate_streamed_response(agent, stream_yielder, on_first_content: -> { first_content_at = monotonic_now })
+    else
+      call_llm(agent)
+    end
+
+    timing = Riffer::Providers::Timing.new(
+      model: agent.model_name,
+      step: step,
+      duration: monotonic_now - started,
+      ttft: first_content_at && (first_content_at - started)
+    )
+    record_timings!(stream_yielder, all_timings, [timing])
+    response
+  end
+
+  # Consumes the provider's stream, yielding each event downstream and
+  # accumulating the assistant message. When +on_first_content+ is given, it is
+  # invoked once, on the first generated-content event (text, reasoning, or
+  # tool-call delta) — used to capture time-to-first-token.
+  #--
+  #: (Riffer::Agent, Enumerator::Yielder, ?on_first_content: (^() -> void)?) -> Riffer::Messages::Assistant
+  def accumulate_streamed_response(agent, stream_yielder, on_first_content: nil)
     accumulated_content = ""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
+    signaled_first = false
 
     call_llm_stream(agent).each do |event|
       stream_yielder << event
+
+      if on_first_content && !signaled_first && first_content_event?(event)
+        on_first_content.call
+        signaled_first = true
+      end
 
       case event
       when Riffer::StreamEvents::TextDelta
@@ -105,6 +152,16 @@ module Riffer::Agent::Run
     )
   end
 
+  # Returns true for the first generated-content events — text, reasoning, or
+  # tool-call deltas — used to mark time-to-first-token.
+  #--
+  #: (Riffer::StreamEvents::Base) -> bool
+  def first_content_event?(event)
+    event.is_a?(Riffer::StreamEvents::TextDelta) ||
+      event.is_a?(Riffer::StreamEvents::ReasoningDelta) ||
+      event.is_a?(Riffer::StreamEvents::ToolCallDelta)
+  end
+
   #--
   #: (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
   def record_modifications!(stream_yielder, all_modifications, new_modifications)
@@ -112,18 +169,31 @@ module Riffer::Agent::Run
     new_modifications.each { |m| stream_yielder << Riffer::StreamEvents::GuardrailModification.new(m) } if stream_yielder
   end
 
+  # Appends +new_timings+ to +all_timings+ and emits a +Timing+ event for each
+  # one when streaming.
+  #
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def tripwire_response(agent, stream_yielder, tripwire, all_modifications)
+  #: (Enumerator::Yielder?, Array[Riffer::Timing], Array[Riffer::Timing]) -> void
+  def record_timings!(stream_yielder, all_timings, new_timings)
+    all_timings.concat(new_timings)
+    new_timings.each { |t| stream_yielder << Riffer::StreamEvents::Timing.new(t) } if stream_yielder
+  end
+
+  # Emits a +GuardrailTripwire+ event when streaming and returns the
+  # short-circuit +Response+ for a tripped guardrail.
+  #
+  #--
+  #: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) -> Riffer::Agent::Response
+  def tripwire_response(agent, stream_yielder, tripwire, all_modifications, all_timings, started)
     stream_yielder << Riffer::StreamEvents::GuardrailTripwire.new(tripwire) if stream_yielder
-    build_response(agent, "", tripwire: tripwire, modifications: all_modifications)
+    build_response(agent, "", started: started, tripwire: tripwire, modifications: all_modifications, timings: all_timings)
   end
 
   #--
-  #: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
-  def final_response(agent, all_modifications, **extra)
+  #: (Riffer::Agent, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float, **untyped) -> Riffer::Agent::Response
+  def final_response(agent, all_modifications, all_timings, started, **extra)
     response = agent.session.final_assistant_message
-    build_response(agent, response&.content || "", modifications: all_modifications, structured_output: validate_structured_output(agent, response), **extra)
+    build_response(agent, response&.content || "", started: started, modifications: all_modifications, timings: all_timings, structured_output: validate_structured_output(agent, response), **extra)
   end
 
   #--
@@ -149,15 +219,16 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-  def execute_tool_calls(agent, assistant_message, tool_calls: assistant_message.tool_calls)
+  #: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Timing], ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  def execute_tool_calls(agent, assistant_message, stream_yielder, all_timings, tool_calls: assistant_message.tool_calls)
     return if tool_calls.empty?
 
     results = agent.tool_runtime.execute(tool_calls, tools: effective_tools(agent), context: agent.context, assistant_message: assistant_message)
 
     inject_discovered_tools(agent, results)
 
-    results.each do |tool_call, result|
+    timings = [] #: Array[Riffer::Timing]
+    results.each do |tool_call, result, timing|
       agent.session.add(Riffer::Messages::Tool.new(
         result.content,
         tool_call_id: tool_call.call_id,
@@ -165,11 +236,13 @@ module Riffer::Agent::Run
         error: result.error_message,
         error_type: result.error_type
       ))
+      timings << timing if timing
     end
+    record_timings!(stream_yielder, all_timings, timings)
   end
 
   #--
-  #: (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
+  #: (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response, Riffer::Tools::Timing?]]) -> void
   def inject_discovered_tools(agent, results)
     to_inject = results.flat_map { |_, result|
       result.is_a?(Riffer::Mcp::SearchTool::Result) ? result.discovered_tools : [] #: Array[singleton(Riffer::Tool)]
@@ -180,39 +253,41 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent) -> void
-  def execute_pending_tool_calls(agent)
+  #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Timing]) -> void
+  def execute_pending_tool_calls(agent, stream_yielder, all_timings)
     assistant_message, pending = agent.session.pending_tool_calls
-    execute_tool_calls(agent, assistant_message, tool_calls: pending) if assistant_message
+    execute_tool_calls(agent, assistant_message, stream_yielder, all_timings, tool_calls: pending) if assistant_message
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
-  def run_before_guardrails(agent, stream_yielder, all_modifications)
+  #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) { (Riffer::Agent::Response) -> void } -> void
+  def run_before_guardrails(agent, stream_yielder, all_modifications, all_timings, started)
     guardrails = agent.config.guardrails_for(:before)
     return if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: agent.context)
-    processed_messages, tripwire, modifications = runner.run(agent.session.messages)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: agent.context, measure_timings: Riffer.config.report_timings)
+    processed_messages, tripwire, modifications, timings = runner.run(agent.session.messages)
     agent.session.set(processed_messages) unless tripwire
     record_modifications!(stream_yielder, all_modifications, modifications)
-    yield tripwire_response(agent, stream_yielder, tripwire, all_modifications) if tripwire
+    record_timings!(stream_yielder, all_timings, timings)
+    yield tripwire_response(agent, stream_yielder, tripwire, all_modifications, all_timings, started) if tripwire
   end
 
   #--
-  #: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
-  def run_after_guardrails(agent, response, stream_yielder, all_modifications)
+  #: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Timing], Float) { (Riffer::Agent::Response) -> void } -> untyped
+  def run_after_guardrails(agent, response, stream_yielder, all_modifications, all_timings, started)
     guardrails = agent.config.guardrails_for(:after)
     return response if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: agent.context)
-    processed_response, tripwire, modifications = runner.run(response, messages: agent.session.messages)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: agent.context, measure_timings: Riffer.config.report_timings)
+    processed_response, tripwire, modifications, timings = runner.run(response, messages: agent.session.messages)
 
     response_index = agent.session.messages.length
     modifications.each { |m| m.message_indices.map! { response_index } }
 
     record_modifications!(stream_yielder, all_modifications, modifications)
-    yield tripwire_response(agent, stream_yielder, tripwire, all_modifications) if tripwire
+    record_timings!(stream_yielder, all_timings, timings)
+    yield tripwire_response(agent, stream_yielder, tripwire, all_modifications, all_timings, started) if tripwire
 
     processed_response
   end
@@ -240,11 +315,15 @@ module Riffer::Agent::Run
     opts
   end
 
+  # Builds the +Response+. When +started+ is given (always, inside the
+  # generation loop), the total run +duration+ is stamped from it with a fresh
+  # monotonic reading — independent of +Riffer.config.report_timings+.
   #--
-  #: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
-  def build_response(agent, content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [])
+  #: (Riffer::Agent, String, ?started: Float?, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?timings: Array[Riffer::Timing], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  def build_response(agent, content, started: nil, tripwire: nil, modifications: [], timings: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [])
     messages = agent.session.messages
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: messages.frozen? ? messages : messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids)
+    duration = started && (monotonic_now - started)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, timings: timings, duration: duration, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: messages.frozen? ? messages : messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids)
   end
 
   # Raises when +files+ are supplied without a +prompt+ — the provider needs

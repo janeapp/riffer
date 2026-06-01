@@ -10,10 +10,14 @@ class Riffer::Tools::Runtime
   # : (runner: Riffer::Runner) -> void
   def initialize: (runner: Riffer::Runner) -> void
 
-  # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
+  # Executes a batch of tool calls, returning
+  # <tt>[tool_call, response, timing]</tt> triples. The +timing+ is a
+  # Riffer::Tools::Timing when +Riffer.config.report_timings+ is enabled, else
+  # +nil+. The duration spans the dispatch and any +around_tool_call+ wrapper,
+  # and is captured per call (correct under any concurrency model).
   # --
-  # : (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
-  def execute: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]
+  # : (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response, Riffer::Tools::Timing?]]
+  def execute: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response, Riffer::Tools::Timing? ]]
 
   # Hook wrapping each tool call; override in subclasses to instrument or
   # customize. Must +yield+ to continue.
