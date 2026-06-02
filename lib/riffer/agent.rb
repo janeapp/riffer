@@ -102,13 +102,19 @@ class Riffer::Agent
 
   # Gets or sets the maximum number of LLM call steps in the tool-use loop.
   #
-  # Defaults to Riffer::Agent::Config::DEFAULT_MAX_STEPS (16). Set to
-  # +Float::INFINITY+ for unlimited steps.
+  # Defaults to Riffer::Agent::Config::DEFAULT_MAX_STEPS (16). Set to +nil+
+  # for unlimited steps. The splat distinguishes a getter call (no argument)
+  # from setting the limit to +nil+.
+  #
+  #   max_steps        # reads the current limit
+  #   max_steps 8      # cap the loop at 8 steps
+  #   max_steps nil    # unlimited
   #
   #--
-  #: (?Numeric?) -> Numeric
-  def self.max_steps(value = nil)
-    value.nil? ? config.max_steps : (config.max_steps = value)
+  #: (*Numeric?) -> Numeric?
+  def self.max_steps(*value)
+    return config.max_steps if value.empty?
+    config.max_steps = value.first
   end
 
   # Gets or sets the tools used by this agent.
@@ -206,6 +212,30 @@ class Riffer::Agent
     new(context: context).stream(prompt, files: files)
   end
 
+  # Reconstructs a runnable agent from a wire dict produced by +#to_h+.
+  #
+  # Delegates to Riffer::Agent::Serializer.from_h. See it for the
+  # +tool_resolver+ / +tool_runtime+ injection points and what does not
+  # transfer.
+  #
+  #--
+  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_h(hash, context:, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    Riffer::Agent::Serializer.from_h(hash, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  end
+
+  # Reconstructs a runnable agent from a JSON string produced by +#to_json+.
+  #
+  # Delegates to Riffer::Agent::Serializer.from_json, which parses the JSON
+  # (with symbol keys) for you. See Riffer::Agent::Serializer.from_h for the
+  # +tool_resolver+ / +tool_runtime+ injection points.
+  #
+  #--
+  #: (String, context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_json(json, context:, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    Riffer::Agent::Serializer.from_json(json, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  end
+
   # Registers a guardrail for input, output, or both phases.
   #
   # [phase] :before, :after, or :around.
@@ -261,6 +291,11 @@ class Riffer::Agent
   #   reserved and cannot be passed by the caller.
   attr_reader :context #: Riffer::Agent::Context
 
+  # The resolved provider name (the part before "provider/"), e.g. +"openai"+.
+  # Resolved eagerly at +Agent.new+ alongside +model_name+; together they
+  # form the provider-neutral model identifier the agent serializes.
+  attr_reader :provider_name #: String
+
   # The resolved model name (the part after "provider/"), used as the model
   # argument on every LLM call. Resolved eagerly at +Agent.new+.
   attr_reader :model_name #: String
@@ -308,10 +343,10 @@ class Riffer::Agent
     @config = config || self.class.config
     @context = Riffer::Agent::Context.new(context || {})
 
-    provider_class, @model_name = resolve_provider_and_model
-    @provider = provider_class.new(**@config.provider_options)
+    @provider_name, @model_name = resolve_provider_and_model
+    @provider = build_provider
 
-    @context.skills = resolve_skills(provider_class)
+    @context.skills = resolve_skills
 
     @structured_output = resolve_structured_output
     @tools = resolve_tools
@@ -376,6 +411,25 @@ class Riffer::Agent
     throw :riffer_interrupt, reason
   end
 
+  # Snapshots this resolved agent into a self-contained, provider-neutral
+  # wire dict. Delegates to Riffer::Agent::Serializer.to_h.
+  #
+  #--
+  #: () -> Hash[Symbol, untyped]
+  def to_h
+    Riffer::Agent::Serializer.to_h(agent: self)
+  end
+
+  # Snapshots this resolved agent into a wire JSON string. Delegates to
+  # Riffer::Agent::Serializer.to_json. The +*+ absorbs the JSON generator
+  # state argument so <tt>JSON.generate(agent)</tt> works too.
+  #
+  #--
+  #: (*untyped) -> String
+  def to_json(*)
+    Riffer::Agent::Serializer.to_json(agent: self)
+  end
+
   private
 
   #--
@@ -395,13 +449,13 @@ class Riffer::Agent
   end
 
   # Resolves +Config#model+ to a "provider/model" string (calling the Proc
-  # form against +@context+), parses it, and looks up the provider class.
+  # form against +@context+) and parses it.
   #
-  # Returns +[provider_class, model_name]+. Raises Riffer::ArgumentError on
-  # an invalid model string or an unregistered provider.
+  # Returns +[provider_name, model_name]+. Raises Riffer::ArgumentError on an
+  # invalid model string.
   #
   #--
-  #: () -> [singleton(Riffer::Providers::Base), String]
+  #: () -> [String, String]
   def resolve_provider_and_model
     model_string = Riffer::Helpers::CallOrValue.resolve(@config.model, context: @context)
     raise Riffer::ArgumentError, "Invalid model string: #{model_string}" unless model_string.is_a?(String)
@@ -412,18 +466,28 @@ class Riffer::Agent
       raise Riffer::ArgumentError, "Invalid model string: #{model_string}"
     end
 
-    provider_class = Riffer::Providers::Repository.find(provider_name)
-    raise Riffer::ArgumentError, "Provider not found: #{provider_name}" unless provider_class
+    [provider_name, model_name]
+  end
 
-    [provider_class, model_name]
+  # Builds the provider client from the resolved +@provider_name+ and the
+  # configured +provider_options+.
+  #
+  # Raises Riffer::ArgumentError on an unregistered provider.
+  #
+  #--
+  #: () -> Riffer::Providers::Base
+  def build_provider
+    provider_class = Riffer::Providers::Repository.find(@provider_name)
+    raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
+    provider_class.new(**@config.provider_options)
   end
 
   # Resolves the skills backend, lists skills, and selects an adapter.
   # Returns nil if skills are unconfigured or the backend is empty.
   #
   #--
-  #: (singleton(Riffer::Providers::Base)) -> Riffer::Skills::Context?
-  def resolve_skills(provider_class)
+  #: () -> Riffer::Skills::Context?
+  def resolve_skills
     skills_config = @config.skills_config
     return nil unless skills_config
 
@@ -434,7 +498,7 @@ class Riffer::Agent
     return nil if backend.list_skills.empty?
 
     skills = backend.list_skills.to_h { |s| [s.name, s] }
-    adapter_class = skills_config.adapter || provider_class.skills_adapter(@model_name)
+    adapter_class = skills_config.adapter || @provider.class.skills_adapter(@model_name)
     skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
 
     skills_context = Riffer::Skills::Context.new(

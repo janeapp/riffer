@@ -152,7 +152,7 @@ end
 
 ### max_steps
 
-Sets the maximum number of LLM call steps in the tool-use loop. When the limit is reached, the loop interrupts with reason `:max_steps`. Defaults to `16`. Set to `Float::INFINITY` for unlimited steps:
+Sets the maximum number of LLM call steps in the tool-use loop. When the limit is reached, the loop interrupts with reason `:max_steps`. Defaults to `16`. Set to `nil` (`max_steps nil`) for unlimited steps:
 
 ```ruby
 class MyAgent < Riffer::Agent
