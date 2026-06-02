@@ -83,10 +83,10 @@ describe Riffer::Agent::Serializer do
       expect(descriptor[:timeout]).must_equal 10
     end
 
-    it "emits unlimited max_steps as nil" do
+    it "encodes unlimited max_steps as -1 on the wire" do
       klass = build_agent_class { max_steps nil }
 
-      expect(klass.new.to_h[:max_steps]).must_be_nil
+      expect(klass.new.to_h[:max_steps]).must_equal(-1)
     end
 
     it "carries no tool_runtime, Procs, or class references" do
@@ -142,7 +142,13 @@ describe Riffer::Agent::Serializer do
     end
 
     describe "max_steps" do
-      it "decodes nil as unlimited (stays nil)" do
+      it "decodes -1 as unlimited (nil)" do
+        dict = build_agent_class.new.to_h.merge(max_steps: -1)
+
+        expect(Riffer::Agent.from_h(dict, context: nil).config.max_steps).must_be_nil
+      end
+
+      it "also decodes a literal null as unlimited" do
         dict = build_agent_class.new.to_h.merge(max_steps: nil)
 
         expect(Riffer::Agent.from_h(dict, context: nil).config.max_steps).must_be_nil
@@ -159,6 +165,14 @@ describe Riffer::Agent::Serializer do
         dict.delete(:max_steps)
 
         expect(Riffer::Agent.from_h(dict, context: nil).config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
+      end
+
+      it "round-trips unlimited through nil -> -1 -> nil" do
+        klass = build_agent_class { max_steps nil }
+
+        rebuilt = Riffer::Agent.from_h(klass.new.to_h, context: nil)
+
+        expect(rebuilt.config.max_steps).must_be_nil
       end
     end
 

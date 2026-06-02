@@ -33,7 +33,7 @@ The hash forms (`to_h` / `from_h`) are public too, if you want to embed the dict
   instructions:      "You are…",              # resolved system prompt
   model_options:     { temperature: 0.2 },
   provider_options:  { … },                   # see the secrets warning below
-  max_steps:         8,                        # integer, or null = unlimited
+  max_steps:         8,                        # integer; -1 = unlimited (see below)
   structured_output: { type: "object", … },   # JSON Schema, or null
   tools: [ { name:, description:, parameters_schema:, timeout: }, … ]
 }
@@ -77,7 +77,12 @@ You own what a resolved tool does: a resolver may return real in-process classes
 
 ## `max_steps`
 
-Unlimited steps are represented as `nil` at the agent level — set it with `max_steps nil`. `nil` serializes as JSON `null` and round-trips unchanged; a finite integer round-trips as-is. A dict missing the key falls back to the default (16) rather than running unbounded.
+Unlimited steps are `nil` at the agent level — set it with `max_steps nil`. On the wire, the serializer encodes that as **`-1`** (and decodes `-1` back to `nil`), so the dict stays portable across transports where JSON `null` is awkward — proto3, for one, can't distinguish `null` from an absent field. The `-1` is purely a wire detail: the DSL and your code only ever see `nil`, and the encode/decode handles the translation at the boundary.
+
+- **DSL** — integer = bounded, `nil` = unlimited, omitted = `Config`'s default (16).
+- **Wire** — integer = bounded, `-1` = unlimited, omitted = default (16).
+
+A finite integer round-trips as-is; a dict missing the key falls back to the default rather than running unbounded.
 
 ## Versioning
 

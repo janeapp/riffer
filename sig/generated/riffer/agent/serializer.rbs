@@ -100,10 +100,18 @@ module Riffer::Agent::Serializer
   # : (Hash[Symbol, untyped]?) -> Riffer::Params?
   def decode_structured_output: (Hash[Symbol, untyped]?) -> Riffer::Params?
 
-  # +max_steps+ is an agent-level concept: +nil+ means unlimited and rides
-  # the wire as JSON +null+, so the value passes straight through. Only an
-  # absent key needs a fallback — a partial dict must not silently turn into
-  # an unbounded loop.
+  # The DSL represents unlimited steps as +nil+, but the wire encodes it as
+  # +-1+ so the dict stays portable across transports where JSON +null+ is
+  # awkward (e.g. proto3, which can't tell null from an absent field). The
+  # magic value lives only on the wire — +encode_max_steps+/+decode_max_steps+
+  # translate at the boundary so neither the DSL nor consumers see it.
+  # --
+  # : (Numeric?) -> Numeric
+  def encode_max_steps: (Numeric?) -> Numeric
+
+  # Reverses +encode_max_steps+: +-1+ (or a literal +null+) means unlimited.
+  # An absent key falls back to the default — a partial dict must not silently
+  # become an unbounded loop.
   # --
   # : (Hash[Symbol, untyped]) -> Numeric?
   def decode_max_steps: (Hash[Symbol, untyped]) -> Numeric?

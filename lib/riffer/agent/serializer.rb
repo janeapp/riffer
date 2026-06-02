@@ -65,7 +65,7 @@ module Riffer::Agent::Serializer
       instructions: agent.instruction_message&.content,
       model_options: config.model_options,
       provider_options: config.provider_options,
-      max_steps: config.max_steps,
+      max_steps: encode_max_steps(config.max_steps),
       structured_output: config.structured_output&.to_json_schema(strict: false),
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) }
     }
@@ -152,14 +152,25 @@ module Riffer::Agent::Serializer
     Riffer::Params.from_json_schema(schema)
   end
 
-  # +max_steps+ is an agent-level concept: +nil+ means unlimited and rides
-  # the wire as JSON +null+, so the value passes straight through. Only an
-  # absent key needs a fallback — a partial dict must not silently turn into
-  # an unbounded loop.
+  # The DSL represents unlimited steps as +nil+, but the wire encodes it as
+  # +-1+ so the dict stays portable across transports where JSON +null+ is
+  # awkward (e.g. proto3, which can't tell null from an absent field). The
+  # magic value lives only on the wire — +encode_max_steps+/+decode_max_steps+
+  # translate at the boundary so neither the DSL nor consumers see it.
+  #--
+  #: (Numeric?) -> Numeric
+  def encode_max_steps(value)
+    value.nil? ? -1 : value
+  end
+
+  # Reverses +encode_max_steps+: +-1+ (or a literal +null+) means unlimited.
+  # An absent key falls back to the default — a partial dict must not silently
+  # become an unbounded loop.
   #--
   #: (Hash[Symbol, untyped]) -> Numeric?
   def decode_max_steps(hash)
-    hash.key?(:max_steps) ? hash[:max_steps] : Riffer::Agent::Config::DEFAULT_MAX_STEPS
+    return Riffer::Agent::Config::DEFAULT_MAX_STEPS unless hash.key?(:max_steps)
+    (hash[:max_steps] == -1) ? nil : hash[:max_steps]
   end
 
   #--
