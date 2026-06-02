@@ -107,6 +107,12 @@ describe Riffer::Agent::Serializer do
       expect(agent.model_name).must_equal "riffer-1"
     end
 
+    it "defaults context to empty when omitted" do
+      dict = build_agent_class.new.to_h
+
+      expect(Riffer::Agent.from_h(dict)).must_be_instance_of Riffer::Agent
+    end
+
     it "round-trips through JSON with symbolized keys" do
       dict = build_agent_class { uses_tools [SerializerWeatherTool] }.new.to_h
       wire = JSON.parse(JSON.generate(dict), symbolize_names: true)

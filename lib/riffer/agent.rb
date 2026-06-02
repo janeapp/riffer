@@ -219,8 +219,8 @@ class Riffer::Agent
   # transfer.
   #
   #--
-  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_h(hash, context:, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_h(hash, context: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
     Riffer::Agent::Serializer.from_h(hash, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 
@@ -231,8 +231,8 @@ class Riffer::Agent
   # +tool_resolver+ / +tool_runtime+ injection points.
   #
   #--
-  #: (String, context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_json(json, context:, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+  #: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_json(json, context: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
     Riffer::Agent::Serializer.from_json(json, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 

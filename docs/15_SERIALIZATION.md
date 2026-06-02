@@ -5,18 +5,22 @@
 You normally reach it through the delegators on `Riffer::Agent`:
 
 ```ruby
-dict    = agent.to_h                              # snapshot
-rebuilt = Riffer::Agent.from_h(dict, context: {}) # reconstruct
+dict    = agent.to_h          # snapshot
+rebuilt = Riffer::Agent.from_h(dict) # reconstruct
 ```
 
 The dict is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:
 
 ```ruby
-json    = agent.to_json                       # or Riffer::Agent::Serializer.to_json(agent:)
-rebuilt = Riffer::Agent.from_json(json, context: {})
+json    = agent.to_json       # or Riffer::Agent::Serializer.to_json(agent:)
+rebuilt = Riffer::Agent.from_json(json)
 ```
 
 The hash forms (`to_h` / `from_h`) are public too, if you want to embed the dict in a larger payload. `from_h` expects symbol keys, so parse with `JSON.parse(str, symbolize_names: true)` — or just use `from_json`, which does that for you.
+
+### Runtime context
+
+`from_h` / `from_json` accept an optional `context:` — the rebuilt agent's **runtime** context, exactly the value you'd pass to `Agent.new(context:)`. It is **not** used to re-resolve the serialized definition (that's already resolved); it's threaded into tool dispatch and read by tools/runtimes at call time. Pass it when a tool or a remote runtime needs per-call data — e.g. `context: { tenant: "acme" }` for multi-tenant dispatch, or Maestro passing `context: { agent: self }` so its runtime can call back. Omit it (defaults to empty) when nothing downstream reads context.
 
 ## What the dict carries
 
@@ -52,7 +56,7 @@ Tools cross as `{name, description, parameters_schema, timeout}` descriptors —
 When the rebuilt agent runs in the **same** codebase that defined the tools (e.g. persisting an agent definition and rehydrating it later), resolve each descriptor back to its real class:
 
 ```ruby
-rebuilt = Riffer::Agent.from_h(dict, context: {},
+rebuilt = Riffer::Agent.from_h(dict,
   tool_resolver: ->(descriptor) { MyToolRegistry.fetch(descriptor[:name]) })
 ```
 
@@ -63,7 +67,7 @@ The real classes carry their `#call` bodies, so the agent runs on the default `I
 When the receiver holds **only the Riffer gem**, the default `tool_resolver` synthesizes body-less **tool shells**. A shell advertises the tool's schema to the LLM but has no `#call` — invoking it in-process raises. Pair the default resolver with a remote `Riffer::Tools::Runtime` that forwards each call back to the origin:
 
 ```ruby
-rebuilt = Riffer::Agent.from_h(dict, context: {},
+rebuilt = Riffer::Agent.from_h(dict,
   tool_runtime: MyRemoteToolRuntime.new(client: rpc_client))
 ```
 
@@ -77,11 +81,11 @@ Unlimited steps are represented as `nil` at the agent level — set it with `max
 
 ## Versioning
 
-`schema_version` is an integer (`Riffer::Agent::Serializer::SCHEMA_VERSION`). `from_h` refuses any version it doesn't recognize with `Riffer::Agent::Serializer::VersionError` (a `Riffer::ArgumentError`). A future incompatible change bumps the integer and adds a back-compat decoder, giving distributed consumers a window to upgrade before the old format is dropped.
+`schema_version` is an integer (`Riffer::Agent::Serializer::SCHEMA_VERSION`). `from_h` refuses any version it doesn't recognize with `Riffer::Agent::Serializer::VersionError` (a `Riffer::ArgumentError`). A future incompatible change bumps the integer and adds a backwards-compatible decoder, giving distributed consumers a window to upgrade before the old format is dropped.
 
 ## Secrets
 
-`provider_options` and `model_options` **ride on the wire as plain data** — they are part of the dict and _will_ transfer. Care needs to be taken when configuring API keys via `provider_options` and using serialization. Prefer environment/global provider configuration. **Never serialize an agent whose options carry sensitive values** — treat a serialized definition as non-sensitive.
+`provider_options` and `model_options` **ride on the wire as plain data** — they are part of the dict and _will_ transfer. Prefer configuring API keys via environment/global provider configuration rather than `provider_options`. **Never serialize an agent whose options carry sensitive values** — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).
 
 ## What does **not** transfer
 

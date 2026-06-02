@@ -74,8 +74,11 @@ module Riffer::Agent::Serializer
   # Reconstructs a runnable agent from a wire dict.
   #
   # [hash] a Symbol-keyed wire dict (parse JSON with +symbolize_names: true+).
-  # [context] the runtime context for the rebuilt agent; drives tool
-  #   dispatch and any per-call concerns. Not serialized — supplied here.
+  # [context] the rebuilt agent's runtime context — the same value you'd pass
+  #   to +Agent.new(context:)+. It is *not* used to re-resolve serialized
+  #   config (the dict is already resolved); it is threaded into tool dispatch
+  #   and read by tools/runtimes at call time (e.g. a remote runtime keying off
+  #   <tt>context[:tenant]</tt>). Defaults to an empty context.
   # [tool_resolver] maps a tool descriptor to a Riffer::Tool class. Defaults
   #   to DEFAULT_TOOL_RESOLVER (body-less shells). Pass a registry lookup to
   #   rebuild real, in-process tools.
@@ -87,9 +90,9 @@ module Riffer::Agent::Serializer
   # +schema_version+, and Riffer::ArgumentError on a malformed dict.
   #
   #--
-  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_h(hash, context:, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    # Version -> decoder dispatch. Adding a +when 2+ arm (a back-compat
+  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_h(hash, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    # Version -> decoder dispatch. Adding a +when 2+ arm (a backwards-compatible
     # decoder) is how a future breaking change keeps older dicts readable.
     case hash[:schema_version]
     when SCHEMA_VERSION
@@ -113,8 +116,8 @@ module Riffer::Agent::Serializer
   # +from_h+ for the arguments.
   #
   #--
-  #: (String, context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_json(json, context:, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+  #: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_json(json, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
     from_h(JSON.parse(json, symbolize_names: true), context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 

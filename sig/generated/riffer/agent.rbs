@@ -171,8 +171,8 @@ class Riffer::Agent
   # transfer.
   #
   # --
-  # : (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_h: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  # : (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_h: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
 
   # Reconstructs a runnable agent from a JSON string produced by +#to_json+.
   #
@@ -181,8 +181,8 @@ class Riffer::Agent
   # +tool_resolver+ / +tool_runtime+ injection points.
   #
   # --
-  # : (String, context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_json: (String, context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  # : (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_json: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
 
   # Registers a guardrail for input, output, or both phases.
   #
