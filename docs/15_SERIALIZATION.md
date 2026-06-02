@@ -67,7 +67,7 @@ rebuilt = Riffer::Agent.from_h(dict, context: {},
   tool_runtime: MyRemoteToolRuntime.new(client: rpc_client))
 ```
 
-See [`examples/serializer/remote_tool_runtime.rb`](../examples/serializer/remote_tool_runtime.rb) for a complete remote runtime (override `#dispatch_tool_call` to forward over your transport and map failures to `Tools::Response.error`).
+Implement the remote runtime by subclassing `Riffer::Tools::Runtime` and overriding `#dispatch_tool_call` to forward the call over your transport, mapping any failure to `Tools::Response.error`. See [Advanced Tools](07_TOOL_ADVANCED.md) for the runtime API.
 
 You own what a resolved tool does: a resolver may return real in-process classes, shells, or classes that themselves make network calls. Riffer does not require a runtime — it only ships shells by default.
 
