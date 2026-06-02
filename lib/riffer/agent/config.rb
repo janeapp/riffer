@@ -52,11 +52,11 @@ class Riffer::Agent::Config
   )
     @provider_options = provider_options
     @model_options = model_options
+    @max_steps = max_steps
     @tools_config = tools_config
     @mcp_configs = mcp_configs
     @skills_config = skills_config
     @guardrails = guardrails
-    @max_steps = max_steps
     self.identifier = identifier
     self.model = model
     self.instructions = instructions
