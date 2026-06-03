@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Tools::Toolable - Riffer Documentation</title>
+<title>module Riffer::Agent::Serializer - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,Riffer::Tools::Toolable"
+    content="ruby,module,Riffer::Agent::Serializer"
   >
 
     <meta
       name="description"
-      content="module Riffer::Tools::Toolable: workflows in the future. Extend this module to make a class discoverable as a tool by LLM providers."
+      content="module Riffer::Agent::Serializer: Serializer turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. Agent."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Tools::Toolable - Riffer Documentation">
+<meta property="og:title" content="module Riffer::Agent::Serializer - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="workflows in the future. Extend this module to make a class discoverable as a tool by LLM providers.">
+    <meta property="og:description" content="Serializer turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. Agent.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Tools::Toolable - Riffer Documentation">
+<meta name="twitter:title" content="module Riffer::Agent::Serializer - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="workflows in the future. Extend this module to make a class discoverable as a tool by LLM providers.">
+    <meta name="twitter:description" content="Serializer turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. Agent.">
 
 
 
@@ -643,51 +643,8 @@
   
 
   
-<div id="extends-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-extends"></use></svg>
-      </span>
-      <span class="nav-section-title">Extended With Modules</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-
-    <ul class="nav-list">
-
-
-      <li><a class="extend" href="../Helpers/ClassNameConverter.html">Riffer::Helpers::ClassNameConverter</a></li>
-
-
-    </ul>
-  </details>
-</div>
-
 
   
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-class-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Class Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-c-all">all</a></li>
-
-        <li ><a href="#method-c-extended">extended</a></li>
-
-      </ul>
-    </details>
-  </div>
-
 
 
   <div class="nav-section">
@@ -703,23 +660,13 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-description">description</a></li>
+        <li ><a href="#method-i-from_h">from_h</a></li>
 
-        <li ><a href="#method-i-identifier">identifier</a></li>
+        <li ><a href="#method-i-from_json">from_json</a></li>
 
-        <li ><a href="#method-i-kind">kind</a></li>
+        <li ><a href="#method-i-to_h">to_h</a></li>
 
-        <li ><a href="#method-i-name">name</a></li>
-
-        <li ><a href="#method-i-parameters_schema">parameters_schema</a></li>
-
-        <li ><a href="#method-i-params">params</a></li>
-
-        <li ><a href="#method-i-timeout">timeout</a></li>
-
-        <li ><a href="#method-i-to_tool_schema">to_tool_schema</a></li>
-
-        <li ><a href="#method-i-validate_as_tool-21">validate_as_tool!</a></li>
+        <li ><a href="#method-i-to_json">to_json</a></li>
 
       </ul>
     </details>
@@ -744,7 +691,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-riffer-tools-toolable">
+<main role="main" aria-labelledby="module-riffer-agent-serializer">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -757,42 +704,41 @@
       
       <li>
         
-        <a href="../../Riffer/Tools.html">Tools</a><span>::</span>
+        <a href="../../Riffer/Agent.html">Agent</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Toolable</span>
+        <span>Serializer</span>
         
       </li>
       
     </ol>
   
 
-  <span id="module-Riffer::Tools::Toolable" class="legacy-anchor"></span>
-  <h1 id="module-riffer-tools-toolable" class="anchor-link module">
-    module Riffer::Tools::Toolable
+  <span id="module-Riffer::Agent::Serializer" class="legacy-anchor"></span>
+  <h1 id="module-riffer-agent-serializer" class="anchor-link module">
+    module Riffer::Agent::Serializer
   </h1>
 
   <section class="description">
     
-<p><a href="Toolable.html"><code>Riffer::Tools::Toolable</code></a> provides the shared class-level DSL for anything that can present as a tool to an LLM — tools today, and subagents/workflows in the future.</p>
+<p><a href="Serializer.html"><code>Riffer::Agent::Serializer</code></a> turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. A pure module (sibling to <a href="Run.html"><code>Riffer::Agent::Run</code></a>), reached most often through the +Riffer::Agent#to_h+ / <a href="../Agent.html#method-c-from_h"><code>Riffer::Agent.from_h</code></a> delegators.</p>
 
-<p>Extend this module to make a class discoverable as a tool by LLM providers. Provides identifier, description, params, timeout, and JSON schema generation.</p>
+<p>The dict carries only data — no Procs, no class references, no tool runtime. The same dict serves two rehydration targets:</p>
+<ul><li>
+<p><strong>In-process</strong> (a monolith persisting agent definitions): pass a <code>tool_resolver</code> that looks tool descriptors up in a local registry and returns the real, body-bearing classes. They run on the default runtime.</p>
+</li><li>
+<p><strong>Distributed</strong> (a receiver holding only the <a href="../../Riffer.html"><code>Riffer</code></a> gem): the default resolver synthesizes body-less tool shells; inject a remote <a href="../Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> to forward each call back to the origin.</p>
 
-<p>Instance-level execution concerns (<code>call</code>, <code>call_with_validation</code>, etc.) are NOT part of <a href="Toolable.html"><code>Toolable</code></a> — those belong on <a href="../Tool.html"><code>Riffer::Tool</code></a>.</p>
+<p>dict  = <a href="Serializer.html#method-i-to_h"><code>Riffer::Agent::Serializer.to_h</code></a>(agent: agent) rebuilt = <a href="Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a>(dict, context: {tenant: “acme”})</p>
+</li></ul>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyTool</span>
-  <span class="ruby-identifier">extend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tools</span><span class="ruby-operator">::</span><span class="ruby-constant">Toolable</span>
+<span id="module-Riffer::Agent::Serializer-label-What+does+not+transfer" class="legacy-anchor"></span>
+<h2 id="module-riffer-agent-serializer-what-does-not-transfer"><a href="#module-riffer-agent-serializer-what-does-not-transfer">What does not transfer</a></h2>
 
-  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Does something useful&quot;</span>
-
-  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:input</span>, <span class="ruby-constant">String</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-</pre>
+<p>Guardrails and the skills subsystem (backend/adapter/catalog) are not serialized; a rebuilt agent enforces no guardrails and renders no skills catalog (the <code>skill_activate</code> tool, if present, crosses as an ordinary tool). Secrets must not be placed in <code>provider_options</code>/<code>model_options</code>: both ride on the wire as plain data.</p>
 
   </section>
 
@@ -810,11 +756,19 @@
       </header>
       <dl>
 
-        <dt id="DEFAULT_TIMEOUT">DEFAULT_TIMEOUT</dt>
+        <dt id="DEFAULT_TOOL_RESOLVER">DEFAULT_TOOL_RESOLVER</dt>
 
         <dd>
 
-          <p>@rbs self.@extenders: <a href="Module">Array</a>? @rbs @description: String? @rbs @identifier: String? @rbs @timeout: (Integer | Float)? @rbs @params_builder: Riffer::Params? @rbs @kind: Symbol?</p>
+          <p>The default <code>tool_resolver</code>: synthesizes a body-less tool shell from a descriptor. Its call raises — route shells through a remote runtime.</p>
+        </dd>
+
+
+        <dt id="SCHEMA_VERSION">SCHEMA_VERSION</dt>
+
+        <dd>
+
+          <p>The wire format version. Bumped only on an incompatible change to the dict shape; <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> refuses any other version. See <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> for the dispatch seam that carries back-compat decoders.</p>
         </dd>
 
 
@@ -828,100 +782,6 @@
 
 
 
-     <section id="public-class-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
-       </header>
-
-
-      <div id="method-c-all" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-all" title="Link to this method">
-                <span class="method-name">all</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="all-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 49</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
-  <span class="ruby-ivar">@extenders</span> <span class="ruby-operator">||</span> []
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns all classes that have extended <a href="Toolable.html"><code>Toolable</code></a>.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-c-extended" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-extended" title="Link to this method">
-                <span class="method-name">extended</span>
-                <span class="method-args">(base)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="extended-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 39</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">extended</span>(<span class="ruby-identifier">base</span>)
-  <span class="ruby-identifier">base</span>.<span class="ruby-identifier">extend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Helpers</span><span class="ruby-operator">::</span><span class="ruby-constant">ClassNameConverter</span>
-  <span class="ruby-identifier">extenders</span> = (<span class="ruby-ivar">@extenders</span> <span class="ruby-operator">||=</span> []) <span class="ruby-comment">#: Array[Module]</span>
-  <span class="ruby-identifier">extenders</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">base</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Tracks all classes that extend <a href="Toolable.html"><code>Toolable</code></a>.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
-
 
 
 
@@ -934,13 +794,13 @@
        </header>
 
 
-      <div id="method-i-description" class="method-detail anchor-link ">
+      <div id="method-i-from_h" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-description" title="Link to this method">
-                <span class="method-name">description</span>
-                <span class="method-args">(value = nil)</span>
+              <a href="#method-i-from_h" title="Link to this method">
+                <span class="method-name">from_h</span>
+                <span class="method-args">(hash, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
               </a>
             </div>
 
@@ -952,11 +812,17 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="description-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">description</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@description</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@description</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+          <div class="method-source-code" id="from_h-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 94</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-comment"># Version -&gt; decoder dispatch. Adding a +when 2+ arm (a backwards-compatible</span>
+  <span class="ruby-comment"># decoder) is how a future breaking change keeps older dicts readable.</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">hash</span>[<span class="ruby-value">:schema_version</span>]
+  <span class="ruby-keyword">when</span> <span class="ruby-constant">SCHEMA_VERSION</span>
+    <span class="ruby-identifier">decode_v1</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">VersionError</span>, <span class="ruby-node">&quot;Unsupported schema_version: #{hash[:schema_version].inspect} (this Riffer supports #{SCHEMA_VERSION})&quot;</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -965,7 +831,35 @@
         <div class="method-description">
 
 
-          <p>Gets or sets the tool description.</p>
+          <p>Reconstructs a runnable agent from a wire dict.</p>
+<dl class="rdoc-list label-list"><dt>hash</dt>
+<dd>
+<p>a Symbol-keyed wire dict (parse JSON with +symbolize_names: true+).</p>
+</dd><dt>context</dt>
+<dd>
+<p>the rebuilt agent’s runtime context — the same value you’d pass</p>
+</dd></dl>
+
+<pre>to +Agent.new(context:)+. It is *not* used to re-resolve serialized
+config (the dict is already resolved); it is threaded into tool dispatch
+and read by tools/runtimes at call time (e.g. a remote runtime keying off
+&lt;tt&gt;context[:tenant]&lt;/tt&gt;). Defaults to an empty context.</pre>
+<dl class="rdoc-list label-list"><dt>tool_resolver</dt>
+<dd>
+<p>maps a tool descriptor to a <a href="../Tool.html"><code>Riffer::Tool</code></a> class. Defaults</p>
+</dd></dl>
+
+<pre>to DEFAULT_TOOL_RESOLVER (body-less shells). Pass a registry lookup to
+rebuild real, in-process tools.</pre>
+<dl class="rdoc-list label-list"><dt>tool_runtime</dt>
+<dd>
+<p>an optional <a href="../Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> to inject (e.g. a</p>
+</dd></dl>
+
+<pre>remote runtime for shells). When omitted, the agent uses the configured
+default (+Riffer.config.tool_runtime+).</pre>
+
+<p>Raises <a href="Serializer/VersionError.html"><code>Riffer::Agent::Serializer::VersionError</code></a> on an unsupported <code>schema_version</code>, and <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> on a malformed dict.</p>
 
 
         </div>
@@ -977,13 +871,13 @@
       </div>
 
 
-      <div id="method-i-identifier" class="method-detail anchor-link ">
+      <div id="method-i-from_json" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-identifier" title="Link to this method">
-                <span class="method-name">identifier</span>
-                <span class="method-args">(value = nil)</span>
+              <a href="#method-i-from_json" title="Link to this method">
+                <span class="method-name">from_json</span>
+                <span class="method-args">(json, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
               </a>
             </div>
 
@@ -995,11 +889,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="identifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 66</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-constant">Module</span>.<span class="ruby-identifier">instance_method</span>(<span class="ruby-value">:name</span>).<span class="ruby-identifier">bind_call</span>(<span class="ruby-keyword">self</span>)) <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@identifier</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+          <div class="method-source-code" id="from_json-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 120</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">from_h</span>(<span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">symbolize_names:</span> <span class="ruby-keyword">true</span>), <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1008,7 +901,7 @@
         <div class="method-description">
 
 
-          <p>Gets or sets the tool identifier/name.</p>
+          <p>Reconstructs a runnable agent from a JSON string produced by <a href="Serializer.html#method-i-to_json"><code>to_json</code></a>. Handles the JSON parse (with symbol keys) so callers don’t have to. See <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> for the arguments.</p>
 
 
         </div>
@@ -1020,13 +913,13 @@
       </div>
 
 
-      <div id="method-i-kind" class="method-detail anchor-link ">
+      <div id="method-i-to_h" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-kind" title="Link to this method">
-                <span class="method-name">kind</span>
-                <span class="method-args">(value = nil)</span>
+              <a href="#method-i-to_h" title="Link to this method">
+                <span class="method-name">to_h</span>
+                <span class="method-args">(agent:)</span>
               </a>
             </div>
 
@@ -1038,231 +931,21 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="kind-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 114</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">kind</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@kind</span> <span class="ruby-operator">||</span> <span class="ruby-value">:tool</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@kind</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_sym</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the kind of toolable entity.</p>
-
-<p>Defaults to <code>:tool</code>. Extensible to <code>:agent</code>, <code>:workflow</code>, etc.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-name" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-name" title="Link to this method">
-                <span class="method-name">name</span>
-                <span class="method-args">(value = nil)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="name-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 75</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">identifier</span>(<span class="ruby-identifier">value</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">identifier</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Alias for identifier — used by providers.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-parameters_schema" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-parameters_schema" title="Link to this method">
-                <span class="method-name">parameters_schema</span>
-                <span class="method-args">(strict: false)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="parameters_schema-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 104</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parameters_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
-  <span class="ruby-ivar">@params_builder</span>&amp;.<span class="ruby-identifier">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-identifier">strict</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">empty_schema</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the JSON Schema for the tool’s parameters.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-params" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-params" title="Link to this method">
-                <span class="method-name">params</span>
-                <span class="method-args">(&amp;block)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="params-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">params</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@params_builder</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">builder</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
-  <span class="ruby-identifier">builder</span>.<span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-ivar">@params_builder</span> = <span class="ruby-identifier">builder</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Defines parameters using the <a href="../Params.html"><code>Params</code></a> DSL.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-timeout" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-timeout" title="Link to this method">
-                <span class="method-name">timeout</span>
-                <span class="method-args">(value = nil)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="timeout-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 84</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">timeout</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@timeout</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DEFAULT_TIMEOUT</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@timeout</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_f</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Gets or sets the tool timeout in seconds.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-to_tool_schema" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-to_tool_schema" title="Link to this method">
-                <span class="method-name">to_tool_schema</span>
-                <span class="method-args">(strict: false)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="to_tool_schema-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 123</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_tool_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
+          <div class="method-source-code" id="to_h-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>(<span class="ruby-value">agent:</span>)
+  <span class="ruby-identifier">config</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">config</span>
   {
-    <span class="ruby-value">name:</span> <span class="ruby-identifier">name</span>,
-    <span class="ruby-value">description:</span> <span class="ruby-identifier">description</span>,
-    <span class="ruby-value">parameters_schema:</span> <span class="ruby-identifier">parameters_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-identifier">strict</span>)
+    <span class="ruby-value">schema_version:</span> <span class="ruby-constant">SCHEMA_VERSION</span>,
+    <span class="ruby-value">riffer_version:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">VERSION</span>,
+    <span class="ruby-value">identifier:</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span>,
+    <span class="ruby-value">model:</span> <span class="ruby-node">&quot;#{agent.provider_name}/#{agent.model_name}&quot;</span>,
+    <span class="ruby-value">instructions:</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">instruction_message</span>&amp;.<span class="ruby-identifier">content</span>,
+    <span class="ruby-value">model_options:</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">model_options</span>,
+    <span class="ruby-value">provider_options:</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">provider_options</span>,
+    <span class="ruby-value">max_steps:</span> <span class="ruby-identifier">encode_max_steps</span>(<span class="ruby-identifier">config</span>.<span class="ruby-identifier">max_steps</span>),
+    <span class="ruby-value">structured_output:</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">structured_output</span>&amp;.<span class="ruby-identifier">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>),
+    <span class="ruby-value">tools:</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">tools</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">tool_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">tool_descriptor</span>(<span class="ruby-identifier">tool_class</span>) }
   }
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1272,7 +955,13 @@
         <div class="method-description">
 
 
-          <p>Returns a provider-agnostic tool schema hash.</p>
+          <p>Snapshots a resolved agent into a self-contained wire dict.</p>
+
+<p>Reads the agent’s resolved instance state — Proc-based settings have already been evaluated against the agent’s own context, so the dict carries plain strings/data, never Procs. Tools are emitted as +{name, description, parameters_schema, timeout}+ descriptors (the resolved <code>agent.tools</code>, including MCP tools and <code>skill_activate</code>).</p>
+<dl class="rdoc-list label-list"><dt>agent</dt>
+<dd>
+<p>a resolved <a href="../Agent.html"><code>Riffer::Agent</code></a> instance.</p>
+</dd></dl>
 
 
         </div>
@@ -1284,13 +973,13 @@
       </div>
 
 
-      <div id="method-i-validate_as_tool-21" class="method-detail anchor-link ">
+      <div id="method-i-to_json" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-validate_as_tool-21" title="Link to this method">
-                <span class="method-name">validate_as_tool!</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-to_json" title="Link to this method">
+                <span class="method-name">to_json</span>
+                <span class="method-args">(agent:)</span>
               </a>
             </div>
 
@@ -1302,12 +991,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="validate_as_tool-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/toolable.rb, line 137</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_as_tool!</span>
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{self} must define a description&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">description</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">description</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{self} must have an identifier&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
-  <span class="ruby-keyword">true</span>
+          <div class="method-source-code" id="to_json-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json</span>(<span class="ruby-value">agent:</span>)
+  <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">to_h</span>(<span class="ruby-value">agent:</span> <span class="ruby-identifier">agent</span>))
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1316,9 +1003,7 @@
         <div class="method-description">
 
 
-          <p>Validates that the minimum required metadata is present for LLM tool use.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if validation fails.</p>
+          <p>Snapshots a resolved agent to a JSON string. Convenience over <code>JSON.generate(to_h(agent:))</code>.</p>
 
 
         </div>

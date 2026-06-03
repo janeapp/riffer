@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>01_OVERVIEW - Riffer Documentation</title>
+<title>15_SERIALIZATION - Riffer Documentation</title>
 
 
-  <meta name="keywords" content="ruby,documentation,01_OVERVIEW">
+  <meta name="keywords" content="ruby,documentation,15_SERIALIZATION">
   <meta
     name="description"
-    content="01_OVERVIEW: Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo"
+    content="15_SERIALIZATION: Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict"
   >
 
 
@@ -19,11 +19,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="01_OVERVIEW - Riffer Documentation">
+<meta property="og:title" content="15_SERIALIZATION - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo">
+    <meta property="og:description" content="Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict">
 
 
 
@@ -31,11 +31,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="01_OVERVIEW - Riffer Documentation">
+<meta name="twitter:title" content="15_SERIALIZATION - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Overview Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Mo">
+    <meta name="twitter:description" content="Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict">
 
 
 
@@ -651,172 +651,124 @@
 
 </nav>
 
-<main role="main" aria-label="Page 01_OVERVIEW.md">
+<main role="main" aria-label="Page 15_SERIALIZATION.md">
 
-<span id="label-Overview" class="legacy-anchor"></span>
-<h1 id="overview"><a href="#overview">Overview</a></h1>
+<span id="label-Serialization" class="legacy-anchor"></span>
+<h1 id="serialization"><a href="#serialization">Serialization</a></h1>
 
-<p><a href="Riffer.html"><code>Riffer</code></a> is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Models (LLMs) into your Ruby projects.</p>
+<p><a href="Riffer/Agent/Serializer.html"><code>Riffer::Agent::Serializer</code></a> turns a <strong>resolved agent</strong> into a self-contained, provider-neutral data dict (<code>to_h</code>) and reconstructs a <strong>runnable agent</strong> from that dict (<code>from_h</code>). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.</p>
 
-<span id="label-Core+Concepts" class="legacy-anchor"></span>
-<h2 id="core-concepts"><a href="#core-concepts">Core Concepts</a></h2>
+<p>You normally reach it through the delegators on <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a>:</p>
 
-<span id="label-Agent" class="legacy-anchor"></span>
-<h3 id="agent"><a href="#agent">Agent</a></h3>
-
-<p>The Agent is the central orchestrator for AI interactions. It manages messages, calls the LLM provider, and handles tool execution.</p>
-
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-5-mini&#39;</span>
-  <span class="ruby-identifier">instructions</span> <span class="ruby-string">&#39;You are a helpful assistant.&#39;</span>
-<span class="ruby-keyword">end</span>
+<pre class="ruby"><span class="ruby-identifier">dict</span>    = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">to_h</span>          <span class="ruby-comment"># snapshot</span>
+<span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">dict</span>) <span class="ruby-comment"># reconstruct</span>
 </pre>
 
-<p>See <a href="03_AGENTS_md.html">Agents</a> for details.</p>
+<p>The dict is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:</p>
 
-<span id="label-Tool" class="legacy-anchor"></span>
-<h3 id="tool"><a href="#tool">Tool</a></h3>
-
-<p>Tools are callable functions that agents can invoke to interact with external systems. They have structured parameter definitions and automatic validation.</p>
-
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WeatherTool</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
-  <span class="ruby-identifier">description</span> <span class="ruby-string">&quot;Gets the weather for a city&quot;</span>
-
-  <span class="ruby-identifier">params</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:city</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;The city name&quot;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">city:</span>)
-    <span class="ruby-identifier">text</span>(<span class="ruby-constant">WeatherAPI</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">city</span>))
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
+<pre class="ruby"><span class="ruby-identifier">json</span>    = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">to_json</span>       <span class="ruby-comment"># or Riffer::Agent::Serializer.to_json(agent:)</span>
+<span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_json</span>(<span class="ruby-identifier">json</span>)
 </pre>
 
-<p>See <a href="06_TOOLS_md.html">Tools</a> for details.</p>
+<p>The hash forms (<code>to_h</code> / <code>from_h</code>) are public too, if you want to embed the dict in a larger payload. <code>from_h</code> expects symbol keys, so parse with <code>JSON.parse(str, symbolize_names: true)</code> — or just use <code>from_json</code>, which does that for you.</p>
 
-<span id="label-Structured+Output" class="legacy-anchor"></span>
-<h3 id="structured-output"><a href="#structured-output">Structured Output</a></h3>
+<span id="label-Runtime+context" class="legacy-anchor"></span>
+<h3 id="runtime-context"><a href="#runtime-context">Runtime context</a></h3>
 
-<p>Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (<code>Hash</code>), typed arrays (<code>Array, of:</code>), and arrays of objects (<code>Array</code> with block):</p>
+<p><code>from_h</code> / <code>from_json</code> accept an optional <code>context:</code> — the rebuilt agent’s <strong>runtime</strong> context, exactly the value you’d pass to <code>Agent.new(context:)</code>. It is <strong>not</strong> used to re-resolve the serialized definition (that’s already resolved); it’s threaded into tool dispatch and read by tools/runtimes at call time. Pass it when a tool or a remote runtime needs per-call data — e.g. <code>context: { tenant: &quot;acme&quot; }</code> for multi-tenant dispatch, or Maestro passing <code>context: { agent: self }</code> so its runtime can call back. Omit it (defaults to empty) when nothing downstream reads context.</p>
 
-<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SentimentAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
-  <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-5-mini&#39;</span>
-  <span class="ruby-identifier">structured_output</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:sentiment</span>, <span class="ruby-constant">String</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:score</span>, <span class="ruby-constant">Float</span>
-    <span class="ruby-identifier">required</span> <span class="ruby-value">:entities</span>, <span class="ruby-constant">Array</span>, <span class="ruby-value">description:</span> <span class="ruby-string">&quot;Named entities&quot;</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">required</span> <span class="ruby-value">:name</span>, <span class="ruby-constant">String</span>
-      <span class="ruby-identifier">required</span> <span class="ruby-value">:type</span>, <span class="ruby-constant">String</span>, <span class="ruby-value">enum:</span> [<span class="ruby-string">&quot;person&quot;</span>, <span class="ruby-string">&quot;place&quot;</span>, <span class="ruby-string">&quot;org&quot;</span>]
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
+<span id="label-What+the+dict+carries" class="legacy-anchor"></span>
+<h2 id="what-the-dict-carries"><a href="#what-the-dict-carries">What the dict carries</a></h2>
 
-<span class="ruby-identifier">response</span> = <span class="ruby-constant">SentimentAgent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&#39;Analyze: &quot;I love this!&quot;&#39;</span>)
-<span class="ruby-identifier">response</span>.<span class="ruby-identifier">structured_output</span>  <span class="ruby-comment"># =&gt; {sentiment: &quot;positive&quot;, score: 0.95, entities: [...]}</span>
+<pre class="ruby">{
+  <span class="ruby-value">schema_version:</span>    <span class="ruby-value">1</span>,                       <span class="ruby-comment"># wire format version</span>
+  <span class="ruby-value">riffer_version:</span>    <span class="ruby-string">&quot;0.29.1&quot;</span>,                <span class="ruby-comment"># diagnostic only</span>
+  <span class="ruby-value">identifier:</span>        <span class="ruby-string">&quot;support_agent&quot;</span>,
+  <span class="ruby-value">model:</span>             <span class="ruby-string">&quot;openai/gpt-4o&quot;</span>,         <span class="ruby-comment"># resolved &quot;provider/model&quot; string</span>
+  <span class="ruby-value">instructions:</span>      <span class="ruby-string">&quot;You are…&quot;</span>,              <span class="ruby-comment"># resolved system prompt</span>
+  <span class="ruby-value">model_options:</span>     { <span class="ruby-value">temperature:</span> <span class="ruby-value">0.2</span> },
+  <span class="ruby-value">provider_options:</span>  { <span class="ruby-identifier">…</span> },                   <span class="ruby-comment"># see the secrets warning below</span>
+  <span class="ruby-identifier">max_steps</span><span class="ruby-operator">:</span>         <span class="ruby-value">8</span>,                        <span class="ruby-comment"># integer; -1 = unlimited (see below)</span>
+  <span class="ruby-identifier">structured_output</span><span class="ruby-operator">:</span> { <span class="ruby-value">type:</span> <span class="ruby-string">&quot;object&quot;</span>, <span class="ruby-identifier">…</span> },   <span class="ruby-comment"># JSON Schema, or null</span>
+  <span class="ruby-identifier">tools</span><span class="ruby-operator">:</span> [ { <span class="ruby-value">name:</span>, <span class="ruby-value">description:</span>, <span class="ruby-value">parameters_schema:</span>, <span class="ruby-value">timeout:</span> }, <span class="ruby-identifier">…</span> ]
+}
 </pre>
 
-<p>See the <a href="03_AGENTS_md.html#structured_output">structured output section in Agents</a> for details.</p>
+<span id="label-Resolved+snapshot" class="legacy-anchor"></span>
+<h3 id="resolved-snapshot"><a href="#resolved-snapshot">Resolved snapshot</a></h3>
 
-<span id="label-Provider" class="legacy-anchor"></span>
-<h3 id="provider"><a href="#provider">Provider</a></h3>
+<p><code>to_h</code> reads the agent’s <strong>resolved</strong> state, not its raw configuration. By the time you call it, <code>Agent.new</code> has already evaluated any <code>Proc</code>-based <code>model</code>, <code>instructions</code>, or <code>uses_tools</code> against the agent’s own context — so the dict carries plain strings and data, never Procs. The receiver’s <code>context:</code> drives runtime behavior (tool dispatch); it does <strong>not</strong> re-evaluate baked-in fields.</p>
 
-<p>Providers are adapters that connect to LLM services. <a href="Riffer.html"><code>Riffer</code></a> supports:</p>
+<span id="label-Structured+output" class="legacy-anchor"></span>
+<h3 id="structured-output"><a href="#structured-output">Structured output</a></h3>
+
+<p>Structured output crosses as <strong>provider-neutral JSON Schema</strong> (<a href="Riffer/Params.html#method-i-to_json_schema"><code>Riffer::Params#to_json_schema</code></a>), never a provider-rendered schema. <code>from_h</code> rebuilds a validating <a href="Riffer/Params.html"><code>Riffer::Params</code></a> via <a href="Riffer/Params.html#method-c-from_json_schema"><code>Riffer::Params.from_json_schema</code></a>, so the rebuilt agent both constrains the model and can <code>parse_and_validate</code> responses — rendering provider-correct bytes at call time, the same way an in-code agent does.</p>
+
+<span id="label-Reconstructing+tools" class="legacy-anchor"></span>
+<h2 id="reconstructing-tools"><a href="#reconstructing-tools">Reconstructing tools</a></h2>
+
+<p>Tools cross as <code>{name, description, parameters_schema, timeout}</code> descriptors — never code. How a descriptor becomes a runnable tool is controlled by the <code>tool_resolver:</code> you pass to <code>from_h</code>. The two common shapes:</p>
+
+<span id="label-In-process+-28registry+lookup-29" class="legacy-anchor"></span>
+<h3 id="in-process-registry-lookup"><a href="#in-process-registry-lookup">In-process (registry lookup)</a></h3>
+
+<p>When the rebuilt agent runs in the <strong>same</strong> codebase that defined the tools (e.g. persisting an agent definition and rehydrating it later), resolve each descriptor back to its real class:</p>
+
+<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">dict</span>,
+  <span class="ruby-value">tool_resolver:</span> <span class="ruby-operator">-&gt;</span>(<span class="ruby-identifier">descriptor</span>) { <span class="ruby-constant">MyToolRegistry</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">descriptor</span>[<span class="ruby-value">:name</span>]) })
+</pre>
+
+<p>The real classes carry their call bodies, so the agent runs on the default <code>Inline</code> runtime — no further wiring.</p>
+
+<span id="label-Distributed+-28body-less+shells-29" class="legacy-anchor"></span>
+<h3 id="distributed-body-less-shells"><a href="#distributed-body-less-shells">Distributed (body-less shells)</a></h3>
+
+<p>When the receiver holds <strong>only the <a href="Riffer.html"><code>Riffer</code></a> gem</strong>, the default <code>tool_resolver</code> synthesizes body-less <strong>tool shells</strong>. A shell advertises the tool’s schema to the LLM but has no call — invoking it in-process raises. Pair the default resolver with a remote <a href="Riffer/Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> that forwards each call back to the origin:</p>
+
+<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">dict</span>,
+  <span class="ruby-value">tool_runtime:</span> <span class="ruby-constant">MyRemoteToolRuntime</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">client:</span> <span class="ruby-identifier">rpc_client</span>))
+</pre>
+
+<p>Implement the remote runtime by subclassing <a href="Riffer/Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> and overriding dispatch_tool_call to forward the call over your transport, mapping any failure to <code>Tools::Response.error</code>. See <a href="07_TOOL_ADVANCED_md.html">Advanced Tools</a> for the runtime API.</p>
+
+<p>You own what a resolved tool does: a resolver may return real in-process classes, shells, or classes that themselves make network calls. <a href="Riffer.html"><code>Riffer</code></a> does not require a runtime — it only ships shells by default.</p>
+
+<span id="label-max_steps" class="legacy-anchor"></span>
+<h2 id="maxsteps"><a href="#maxsteps"><code>max_steps</code></a></h2>
+
+<p>Unlimited steps are <code>nil</code> at the agent level — set it with <code>max_steps nil</code>. On the wire, the serializer encodes that as <strong><code>-1</code></strong> (and decodes <code>-1</code> back to <code>nil</code>), so the dict stays portable across transports where JSON <code>null</code> is awkward — proto3, for one, can’t distinguish <code>null</code> from an absent field. The <code>-1</code> is purely a wire detail: the DSL and your code only ever see <code>nil</code>, and the encode/decode handles the translation at the boundary.</p>
 <ul><li>
-<p><strong>OpenAI</strong> - GPT models via the OpenAI API</p>
+<p><strong>DSL</strong> — integer = bounded, <code>nil</code> = unlimited, omitted = <code>Config</code>‘s default (16).</p>
 </li><li>
-<p><strong>Azure OpenAI</strong> - GPT models via Azure</p>
-</li><li>
-<p><strong>Amazon Bedrock</strong> - Claude and other models via AWS Bedrock</p>
-</li><li>
-<p><strong>Anthropic</strong> - Claude models via the Anthropic API</p>
-</li><li>
-<p><strong>Mock</strong> - Mock provider for testing</p>
+<p><strong>Wire</strong> — integer = bounded, <code>-1</code> = unlimited, omitted = default (16).</p>
 </li></ul>
 
-<p>See <a href="providers/01_PROVIDERS_md.html">Providers</a> for details.</p>
+<p>A finite integer round-trips as-is; a dict missing the key falls back to the default rather than running unbounded.</p>
 
-<span id="label-Messages" class="legacy-anchor"></span>
-<h3 id="messages"><a href="#messages">Messages</a></h3>
+<span id="label-Versioning" class="legacy-anchor"></span>
+<h2 id="versioning"><a href="#versioning">Versioning</a></h2>
 
-<p>Messages represent the conversation between user and assistant. <a href="Riffer.html"><code>Riffer</code></a> uses strongly-typed message objects:</p>
+<p><code>schema_version</code> is an integer (<a href="Riffer/Agent/Serializer.html#SCHEMA_VERSION"><code>Riffer::Agent::Serializer::SCHEMA_VERSION</code></a>). <code>from_h</code> refuses any version it doesn’t recognize with <a href="Riffer/Agent/Serializer/VersionError.html"><code>Riffer::Agent::Serializer::VersionError</code></a> (a <a href="Riffer/ArgumentError.html"><code>Riffer::ArgumentError</code></a>). A future incompatible change bumps the integer and adds a backwards-compatible decoder, giving distributed consumers a window to upgrade before the old format is dropped.</p>
+
+<span id="label-Secrets" class="legacy-anchor"></span>
+<h2 id="secrets"><a href="#secrets">Secrets</a></h2>
+
+<p><code>provider_options</code> and <code>model_options</code> <strong>ride on the wire as plain data</strong> — they are part of the dict and <em>will</em> transfer. Prefer configuring API keys via environment/global provider configuration rather than <code>provider_options</code>. <strong>Never serialize an agent whose options carry sensitive values</strong> — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).</p>
+
+<span id="label-What+does+not+transfer" class="legacy-anchor"></span>
+<h2 id="what-does-not-transfer"><a href="#what-does-not-transfer">What does <strong>not</strong> transfer</a></h2>
 <ul><li>
-<p><a href="Riffer/Messages/System.html"><code>Riffer::Messages::System</code></a> - System instructions</p>
-</li><li>
-<p><a href="Riffer/Messages/User.html"><code>Riffer::Messages::User</code></a> - User input</p>
-</li><li>
-<p><a href="Riffer/Messages/Assistant.html"><code>Riffer::Messages::Assistant</code></a> - LLM responses</p>
-</li><li>
-<p><a href="Riffer/Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> - Tool execution results</p>
+<p><strong>Guardrails and skills</strong> are <strong>not supported yet</strong> — neither is serialized, so a rebuilt agent enforces no guardrails and has no skills catalog. (As a stopgap, a skills-enabled agent’s <code>skill_activate</code> tool still crosses as an ordinary tool descriptor.) Both are expected to be revisited.</p>
 </li></ul>
-
-<p>See <a href="08_MESSAGES_md.html">Messages</a> for details.</p>
-
-<span id="label-Stream+Events" class="legacy-anchor"></span>
-<h3 id="stream-events"><a href="#stream-events">Stream Events</a></h3>
-
-<p>When streaming responses, <a href="Riffer.html"><code>Riffer</code></a> emits typed events:</p>
-<ul><li>
-<p><code>TextDelta</code> - Incremental text chunks</p>
-</li><li>
-<p><code>TextDone</code> - Complete text</p>
-</li><li>
-<p><code>ToolCallDelta</code> - Incremental tool call arguments</p>
-</li><li>
-<p><code>ToolCallDone</code> - Complete tool call</p>
-</li><li>
-<p><code>WebSearchStatus</code> - Web search progress updates</p>
-</li><li>
-<p><code>WebSearchDone</code> - Web search completion with sources</p>
-</li></ul>
-
-<p>See <a href="09_STREAM_EVENTS_md.html">Stream Events</a> for details.</p>
-
-<span id="label-Architecture" class="legacy-anchor"></span>
-<h2 id="architecture"><a href="#architecture">Architecture</a></h2>
-
-<pre>User Request
-     |
-     v
-+------------+
-|   Agent    |  &lt;-- Manages conversation flow
-+------------+
-     |
-     v
-+------------+
-|  Provider  |  &lt;-- Calls LLM API
-+------------+
-     |
-     v
-+------------+
-|    LLM     |  &lt;-- Returns response
-+------------+
-     |
-     v
-+------------+
-|   Tool?    |  &lt;-- Execute if tool call present
-+------------+
-     |
-     v
-Response</pre>
 
 <span id="label-Next+Steps" class="legacy-anchor"></span>
 <h2 id="next-steps"><a href="#next-steps">Next Steps</a></h2>
 <ul><li>
-<p><a href="02_GETTING_STARTED_md.html">Getting Started</a> - Quick start guide</p>
-</li><li>
-<p><a href="03_AGENTS_md.html">Agents</a> - Agent configuration and usage</p>
-</li><li>
 <p><a href="06_TOOLS_md.html">Tools</a> - Creating tools</p>
 </li><li>
+<p><a href="07_TOOL_ADVANCED_md.html">Advanced Tools</a> - Tool runtime and dispatch</p>
+</li><li>
 <p><a href="10_CONFIGURATION_md.html">Configuration</a> - Global configuration</p>
-</li><li>
-<p><a href="11_EVALS_md.html">Evals</a> - Evaluating agent quality</p>
-</li><li>
-<p><a href="12_GUARDRAILS_md.html">Guardrails</a> - Input/output validation</p>
-</li><li>
-<p><a href="13_SKILLS_md.html">Skills</a> - Packaged agent capabilities</p>
-</li><li>
-<p><a href="15_SERIALIZATION_md.html">Serialization</a> - Persisting and transferring agent definitions</p>
 </li></ul>
 
 </main>
