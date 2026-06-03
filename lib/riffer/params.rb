@@ -20,9 +20,8 @@ class Riffer::Params
   end
 
   # Reconstructs a Params from a JSON Schema object — the inverse of
-  # +to_json_schema(strict: false)+. Round-trips losslessly over the
-  # Params-expressible subset of JSON Schema; raises Riffer::ArgumentError on
-  # schema features outside that subset.
+  # +to_json_schema(strict: false)+. Raises Riffer::ArgumentError on features
+  # outside the Params-expressible subset of JSON Schema.
   #
   #   schema = params.to_json_schema(strict: false)
   #   Riffer::Params.from_json_schema(schema) # => equivalent Riffer::Params

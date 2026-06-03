@@ -227,9 +227,8 @@ class Riffer::Agent
   # skills are unconfigured or the catalog is empty.
   attr_reader :skills_message #: Riffer::Messages::System?
 
-  # The mutable runtime context threaded into every Proc-based DSL setting,
-  # guardrail, tool runtime, and skills resolution, and shared with every
-  # +Riffer::Agent::Run+ this agent executes.
+  # The mutable runtime context shared with every +Riffer::Agent::Run+ this
+  # agent executes and threaded through all Proc-based settings.
   attr_reader :context #: Riffer::Agent::Context
 
   # The resolved provider name (the part before "/" in the model string),
@@ -256,11 +255,9 @@ class Riffer::Agent
 
   # Initializes a new agent.
   #
-  # When +session:+ is omitted, a fresh session is seeded with the system
-  # instruction and skills messages. When provided, it is used as-is — the
-  # caller owns its contents (e.g. cross-process resume from persisted
-  # history), healed at construction when
-  # +Riffer.config.experimental_history_healing+ is on.
+  # A provided +session:+ is used as-is — the caller owns its contents (e.g.
+  # cross-process resume from persisted history); an omitted one is seeded with
+  # the instruction and skills messages.
   #
   # Raises Riffer::ArgumentError unless the configured model string is
   # "provider/model" format.

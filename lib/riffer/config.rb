@@ -72,13 +72,9 @@ class Riffer::Config
   # Evals configuration.
   attr_reader :evals #: Riffer::Config::Evals
 
-  # MCP configuration.
-  #
-  # +credentials+ is an optional Proc for per-run +tools/call+ headers,
-  # +->(manifest:, matched_tags:, context:) { Hash or nil }+: +nil+ at
-  # tool-resolution omits that server's tools, +nil+ at tool-call time raises
-  # Riffer::Mcp::CredentialsDeniedError. +discovery_runner+ executes tool
-  # discovery (default +Runner::Sequential+).
+  # MCP configuration. +credentials+ is an optional Proc returning per-run
+  # +tools/call+ headers (or +nil+ to deny); +discovery_runner+ runs tool
+  # discovery.
   attr_reader :mcp #: Riffer::Config::Mcp
 
   # Global tool runtime configuration (experimental); defaults to
@@ -98,10 +94,9 @@ class Riffer::Config
   # Skills-related global configuration.
   attr_reader :skills #: Riffer::Config::Skills
 
-  # Strategy for auto-generating message ids: +:none+ (default), +:uuid+
-  # (UUIDv4), or +:uuidv7+ (time-ordered). When not +:none+, each message gets
-  # an +id+ at construction, and seeded messages passed to
-  # +Riffer::Agent#generate+ must carry their own +:id+.
+  # Strategy for auto-generating message ids: +:none+ (default), +:uuid+, or
+  # +:uuidv7+. When not +:none+, messages get an +id+ at construction, and
+  # seeded messages passed to +Riffer::Agent#generate+ must carry their own.
   attr_reader :message_id_strategy #: Symbol
 
   # Sets the message id strategy. Raises Riffer::ArgumentError unless the value
@@ -116,18 +111,14 @@ class Riffer::Config
     @message_id_strategy = value
   end
 
-  # Experimental: when +true+, riffer keeps the +tool_use+ ↔ +tool_result+
-  # invariant intact on its own — stripping orphaned exchanges from seeded
-  # history and filling orphaned +tool_use+ on interrupt with a placeholder
-  # +Riffer::Messages::Tool+ (+error_type: :interrupted+), whose call_ids
-  # surface on +Riffer::Agent::Response#healed_tool_call_ids+. Defaults to
-  # +false+; the surface may change without notice.
+  # Experimental: when +true+, riffer maintains the +tool_use+ ↔ +tool_result+
+  # invariant itself — stripping orphaned exchanges and filling interrupted
+  # ones. Defaults to +false+; the surface may change without notice.
   attr_reader :experimental_history_healing #: bool
 
-  # Sets the +experimental_history_healing+ flag, coercing common boolean
-  # representations so an env-var +"false"+ (truthy in Ruby) doesn't silently
-  # enable healing. Accepts +true+/+false+, +"true"+/+"false"+, +1+/+0+,
-  # +"1"+/+"0"+, and +nil+ (false). Raises Riffer::ArgumentError otherwise.
+  # Sets the +experimental_history_healing+ flag, coercing boolean-ish values so
+  # an env-var +"false"+ (truthy in Ruby) doesn't silently enable healing.
+  # Raises Riffer::ArgumentError on an unrecognized value.
   #--
   #: (untyped) -> void
   def experimental_history_healing=(value)
