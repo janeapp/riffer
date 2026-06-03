@@ -22,6 +22,17 @@ The hash forms (`to_h` / `from_h`) are public too, if you want to embed the dict
 
 `from_h` / `from_json` accept an optional `context:` — the rebuilt agent's **runtime** context, exactly the value you'd pass to `Agent.new(context:)`. It is **not** used to re-resolve the serialized definition (that's already resolved); it's threaded into tool dispatch and read by tools/runtimes at call time. Pass it when a tool or a remote runtime needs per-call data — e.g. `context: { tenant: "acme" }` for multi-tenant dispatch, or Maestro passing `context: { agent: self }` so its runtime can call back. Omit it (defaults to empty) when nothing downstream reads context.
 
+### Seeding conversation history
+
+The dict carries the agent **definition**, not its conversation history (see [What does not transfer](#what-does-not-transfer)). To resume a persisted conversation, pass a `session:` — exactly the value you'd pass to `Agent.new(session:)`:
+
+```ruby
+rebuilt = Riffer::Agent.from_h(dict, session: persisted_session)
+rebuilt.generate # continues from the seeded history
+```
+
+The session is used **as-is**: the rebuilt agent does not prepend anything to it, so the caller owns its full contents — **including the system instruction message**. When you omit `session:`, behavior is unchanged: a fresh session is built and seeded with the dict's `instructions` (and an empty history). Because a supplied session is authoritative, the dict's `instructions` are not re-injected into it — make sure your persisted session already contains the system message.
+
 ## What the dict carries
 
 ```ruby

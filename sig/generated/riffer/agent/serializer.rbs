@@ -61,6 +61,12 @@ module Riffer::Agent::Serializer
   #   config (the dict is already resolved); it is threaded into tool dispatch
   #   and read by tools/runtimes at call time (e.g. a remote runtime keying off
   #   <tt>context[:tenant]</tt>). Defaults to an empty context.
+  # [session] an optional Riffer::Agent::Session to seed conversation history,
+  #   forwarded verbatim to +Agent.new(session:)+. The dict carries the agent
+  #   *definition*, not its history (see "What does not transfer"); pass a
+  #   session here to resume a persisted conversation. Used as-is — the caller
+  #   owns its contents, including the system instruction message. When omitted,
+  #   a fresh session seeded with the dict's instructions is built, as before.
   # [tool_resolver] maps a tool descriptor to a Riffer::Tool class. Defaults
   #   to DEFAULT_TOOL_RESOLVER (body-less shells). Pass a registry lookup to
   #   rebuild real, in-process tools.
@@ -72,8 +78,8 @@ module Riffer::Agent::Serializer
   # +schema_version+, and Riffer::ArgumentError on a malformed dict.
   #
   # --
-  # : (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_h: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  # : (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_h: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
 
   # Snapshots a resolved agent to a JSON string. Convenience over
   # <tt>JSON.generate(to_h(agent:))</tt>.
@@ -87,14 +93,14 @@ module Riffer::Agent::Serializer
   # +from_h+ for the arguments.
   #
   # --
-  # : (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_json: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  # : (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_json: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
 
   private
 
   # --
-  # : (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def decode_v1: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  # : (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, session: Riffer::Agent::Session?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def decode_v1: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, session: Riffer::Agent::Session?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
 
   # --
   # : (Hash[Symbol, untyped]?) -> Riffer::Params?

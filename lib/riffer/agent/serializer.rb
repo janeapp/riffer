@@ -79,6 +79,12 @@ module Riffer::Agent::Serializer
   #   config (the dict is already resolved); it is threaded into tool dispatch
   #   and read by tools/runtimes at call time (e.g. a remote runtime keying off
   #   <tt>context[:tenant]</tt>). Defaults to an empty context.
+  # [session] an optional Riffer::Agent::Session to seed conversation history,
+  #   forwarded verbatim to +Agent.new(session:)+. The dict carries the agent
+  #   *definition*, not its history (see "What does not transfer"); pass a
+  #   session here to resume a persisted conversation. Used as-is — the caller
+  #   owns its contents, including the system instruction message. When omitted,
+  #   a fresh session seeded with the dict's instructions is built, as before.
   # [tool_resolver] maps a tool descriptor to a Riffer::Tool class. Defaults
   #   to DEFAULT_TOOL_RESOLVER (body-less shells). Pass a registry lookup to
   #   rebuild real, in-process tools.
@@ -90,13 +96,13 @@ module Riffer::Agent::Serializer
   # +schema_version+, and Riffer::ArgumentError on a malformed dict.
   #
   #--
-  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_h(hash, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_h(hash, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
     # Version -> decoder dispatch. Adding a +when 2+ arm (a backwards-compatible
     # decoder) is how a future breaking change keeps older dicts readable.
     case hash[:schema_version]
     when SCHEMA_VERSION
-      decode_v1(hash, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+      decode_v1(hash, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
     else
       raise VersionError, "Unsupported schema_version: #{hash[:schema_version].inspect} (this Riffer supports #{SCHEMA_VERSION})"
     end
@@ -116,16 +122,16 @@ module Riffer::Agent::Serializer
   # +from_h+ for the arguments.
   #
   #--
-  #: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_json(json, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    from_h(JSON.parse(json, symbolize_names: true), context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_json(json, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    from_h(JSON.parse(json, symbolize_names: true), context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 
   private
 
   #--
-  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def decode_v1(hash, context:, tool_resolver:, tool_runtime:)
+  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, session: Riffer::Agent::Session?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def decode_v1(hash, context:, session:, tool_resolver:, tool_runtime:)
     tools = Array(hash[:tools]).map { |descriptor| tool_resolver.call(descriptor) }
 
     config_args = {
@@ -142,7 +148,11 @@ module Riffer::Agent::Serializer
     # Config default (Riffer.config.tool_runtime) applies.
     config_args[:tool_runtime] = tool_runtime if tool_runtime
 
-    Riffer::Agent.new(config: Riffer::Agent::Config.new(**config_args), context: context)
+    # +session+ is forwarded verbatim: when nil, Agent.new seeds a fresh session
+    # from the decoded instructions; when supplied, Agent.new uses it as-is to
+    # resume persisted history. The dict never carries history (see "What does
+    # not transfer"), so this is the only seam for rehydrating a conversation.
+    Riffer::Agent.new(config: Riffer::Agent::Config.new(**config_args), context: context, session: session)
   end
 
   #--

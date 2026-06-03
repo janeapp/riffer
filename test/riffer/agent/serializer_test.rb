@@ -176,6 +176,50 @@ describe Riffer::Agent::Serializer do
       end
     end
 
+    describe "session" do
+      it "seeds a fresh session with the dict's instructions when omitted" do
+        dict = build_agent_class.new.to_h
+        agent = Riffer::Agent.from_h(dict, context: nil)
+
+        expect(agent.session.messages.map(&:role)).must_equal [:system]
+        expect(agent.session.messages.first.content).must_equal "You are helpful."
+      end
+
+      it "uses a provided session verbatim to seed conversation history" do
+        dict = build_agent_class.new.to_h
+        history = [
+          Riffer::Messages::System.new("You are helpful."),
+          Riffer::Messages::User.new("Hello"),
+          Riffer::Messages::Assistant.new("Hi there!")
+        ]
+        session = Riffer::Agent::Session.new(messages: history)
+
+        agent = Riffer::Agent.from_h(dict, context: nil, session: session)
+
+        expect(agent.session).must_be_same_as session
+        expect(agent.session.messages.map(&:content)).must_equal ["You are helpful.", "Hello", "Hi there!"]
+      end
+
+      it "forwards the session through from_json too" do
+        json = build_agent_class.new.to_json
+        history = [Riffer::Messages::System.new("You are helpful."), Riffer::Messages::User.new("Resume me")]
+        session = Riffer::Agent::Session.new(messages: history)
+
+        agent = Riffer::Agent.from_json(json, context: nil, session: session)
+
+        expect(agent.session.messages.last.content).must_equal "Resume me"
+      end
+
+      it "does not re-inject the dict's instructions into a provided session" do
+        dict = build_agent_class.new.to_h
+        session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("No system message here")])
+
+        agent = Riffer::Agent.from_h(dict, context: nil, session: session)
+
+        expect(agent.session.messages.map(&:role)).must_equal [:user]
+      end
+    end
+
     it "raises VersionError on an unsupported schema_version" do
       dict = build_agent_class.new.to_h.merge(schema_version: 999)
 
