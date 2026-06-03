@@ -37,6 +37,7 @@ Everything public — classes, modules, constants, attributes, public methods, a
 - **One verb-first sentence, one line.** `Creates a new agent.`, `Serializes the definition to JSON.`
 - An optional **second sentence is reserved strictly for a "why"** — a non-obvious constraint or rationale the code can't convey. Never a second sentence of "how".
 - If a description needs more than one sentence to say _what_ it does, that's a smell the method does too much.
+- **Exempt:** a constant whose name and value already carry the full meaning (`VERSION = "0.30.0"`, `PHASES = %i[before after]`) — describe a constant only when its name doesn't; and an empty namespace module (a Zeitwerk placeholder with no usable members of its own, e.g. `module Riffer::Messages; end`) — its children are documented individually.
 
 Do not document parameters or return values in prose — the `#:` line is the single source of truth for types. Attributes and constants still carry a brief description on the line above their inline `#:`.
 
@@ -66,7 +67,7 @@ A comment describes the present, never how the code got there. Change narration 
 
 **The `#--` stop directive.** Place `#--` on the line immediately before a **standalone** `#:` type annotation. Without it, RDoc treats `#:` as a label-list marker and corrupts the preceding description into a `<pre>` block. Inline `#:` on the same line as code (attributes, constants) does not need it.
 
-**Raises.** Document a raise **only when it's part of the caller's contract** — something a caller should reasonably anticipate and handle. Skip programmer-error guards and "should never happen" assertions. Reserved for public methods.
+**Raises.** Document a raise **only when it's part of the caller's contract** — something a caller should reasonably anticipate and handle. Skip programmer-error guards and "should never happen" assertions. Reserved for public methods. When the raise condition merely restates the declared `#:` type, phrase it by intent ("Raises Riffer::ArgumentError on an invalid value") rather than re-listing the type union — but keep the runtime constraints a type can't express (enum value sets, coercion rules, validation failure).
 
 ```ruby
 # Builds a param from a schema hash.

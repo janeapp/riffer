@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Params provides a DSL for defining parameters.
-#
-# Used within a Tool's +params+ block to define required and optional parameters,
-# and by StructuredOutput to define response schemas.
+# A DSL for defining tool parameters and structured-output schemas, used within
+# a Tool's +params+ block.
 #
 #   params do
 #     required :city, String, description: "The city name"
@@ -12,6 +10,7 @@
 #   end
 #
 class Riffer::Params
+  # The defined parameters.
   attr_reader :parameters #: Array[Riffer::Params::Param]
 
   #--
@@ -20,17 +19,10 @@ class Riffer::Params
     @parameters = []
   end
 
-  # Reconstructs a Params from a JSON Schema object (the inverse of
-  # +to_json_schema(strict: false)+).
-  #
-  # Accepts the Symbol-keyed object schema produced by +to_json_schema+
-  # (property-name keys may be String or Symbol — both are normalized).
-  # Reconstructs types, +required+, +description+, +enum+, +default+,
-  # typed-array +item_type+, and nested object/array Params recursively.
-  #
-  # Round-trips losslessly with +to_json_schema(strict: false)+ over the
-  # Params-expressible subset of JSON Schema. Raises Riffer::ArgumentError
-  # on a schema using features outside that subset.
+  # Reconstructs a Params from a JSON Schema object — the inverse of
+  # +to_json_schema(strict: false)+. Round-trips losslessly over the
+  # Params-expressible subset of JSON Schema; raises Riffer::ArgumentError on
+  # schema features outside that subset.
   #
   #   schema = params.to_json_schema(strict: false)
   #   Riffer::Params.from_json_schema(schema) # => equivalent Riffer::Params
@@ -129,12 +121,9 @@ class Riffer::Params
     validated
   end
 
-  # Converts all parameters to JSON Schema format.
-  #
-  # When +strict+ is true, every property appears in +required+ and
-  # optional properties are made nullable instead. This satisfies
-  # providers that enforce strict structured output schemas.
-  #
+  # Converts all parameters to JSON Schema format. When +strict+ is true, every
+  # property is listed in +required+ and optional ones are made nullable
+  # instead, satisfying providers that enforce strict structured output schemas.
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)

@@ -12,12 +12,6 @@
 #
 class Riffer::Runner
   # Maps over items using the provided block.
-  #
-  # [items] the items to process.
-  # [context] context hash forwarded from the agent.
-  #
-  # Raises NotImplementedError if not implemented by subclass.
-  #
   #--
   #: (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
   def map(items, context:, &block)

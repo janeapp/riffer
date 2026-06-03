@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Mcp provides integration with Model Context Protocol (MCP) servers.
-#
-# Register MCP servers globally; agents opt-in by tag via the +use_mcp+ DSL.
-# Tags are application-defined; see +docs/14_MCP.md+ (Tags section).
+# Integration with Model Context Protocol (MCP) servers. Register servers
+# globally; agents opt-in by tag via the +use_mcp+ DSL. Tags are
+# application-defined; see +docs/14_MCP.md+.
 #
 #   Riffer::Mcp.register(
 #     name: "github",
@@ -26,28 +25,22 @@ module Riffer::Mcp
   # after the server's tools were included for this run.
   class CredentialsDeniedError < Error; end
 
-  # Registers an MCP server, blocking until tool discovery completes.
-  #
-  # Raises on discovery failure. Pass a +Manifest+ instance or a hash with
-  # the same keys.
-  #
+  # Registers an MCP server, blocking until tool discovery completes. Raises
+  # on discovery failure.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
   def self.register(manifest_or_hash)
     Registry.register(manifest_or_hash)
   end
 
-  # Removes a registration by name.
-  #
-  # Subsequent agent runs will not see tools from this server.
-  #
+  # Removes a registration by name; subsequent agent runs won't see its tools.
   #--
   #: (String) -> void
   def self.unregister(name)
     Registry.unregister(name)
   end
 
-  # Returns all current registrations keyed by name (for introspection).
+  # Returns all current registrations keyed by name.
   #
   #--
   #: () -> Hash[String, Riffer::Mcp::Registration]

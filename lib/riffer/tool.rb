@@ -3,12 +3,8 @@
 
 require "timeout"
 
-# Riffer::Tool is the base class for all tools in the Riffer framework.
-#
-# Provides a DSL for defining tool description and parameters.
-# Subclasses must implement the +call+ method.
-#
-# See Riffer::Agent.
+# Base class for all tools in the Riffer framework. Subclasses must implement
+# the +call+ method.
 #
 #   class WeatherLookupTool < Riffer::Tool
 #     description "Provides current weather information for a specified city."
@@ -29,16 +25,13 @@ class Riffer::Tool
   kind :tool
 
   # Executes the tool with the given arguments.
-  #
-  # Raises NotImplementedError if not implemented by subclass.
-  #
   #--
   #: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
   def call(context:, **kwargs)
     raise NotImplementedError, "#{self.class} must implement #call"
   end
 
-  # Creates a text response. Shorthand for Riffer::Tools::Response.text.
+  # Creates a text response.
   #
   #--
   #: (untyped) -> Riffer::Tools::Response
@@ -46,7 +39,7 @@ class Riffer::Tool
     Riffer::Tools::Response.text(result)
   end
 
-  # Creates a JSON response. Shorthand for Riffer::Tools::Response.json.
+  # Creates a JSON response.
   #
   #--
   #: (untyped) -> Riffer::Tools::Response
@@ -54,7 +47,7 @@ class Riffer::Tool
     Riffer::Tools::Response.json(result)
   end
 
-  # Creates an error response. Shorthand for Riffer::Tools::Response.error.
+  # Creates an error response.
   #
   #--
   #: (String, ?type: Symbol) -> Riffer::Tools::Response
@@ -75,7 +68,7 @@ class Riffer::Tool
     validated_args = params_builder ? params_builder.validate(kwargs) : kwargs
 
     result = Timeout.timeout(self.class.timeout) do
-      call(context: context, **validated_args)
+      call(context: context, **validated_args) #: untyped
     end
 
     unless result.is_a?(Riffer::Tools::Response)
