@@ -4,12 +4,6 @@
 # Typed value object wrapping the runtime context Hash held by a Riffer::Agent.
 # Exposes typed +skills+ / +token_usage+ accessors while preserving +#[]+ /
 # +#dig+ for caller-provided keys.
-#
-#   context = Riffer::Agent::Context.new(user_id: 42)
-#   context[:user_id]    # => 42
-#   context.skills       # => nil
-#   context.token_usage  # => nil
-#
 class Riffer::Agent::Context
   # @rbs @data: Hash[Symbol, untyped]
 

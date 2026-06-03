@@ -37,7 +37,7 @@ Everything public — classes, modules, constants, attributes, public methods, a
 - **One verb-first sentence, one line.** `Creates a new agent.`, `Serializes the definition to JSON.`
 - An optional **second sentence is reserved strictly for a "why"** — a non-obvious constraint or rationale the code can't convey. Never a second sentence of "how".
 - If a description needs more than one sentence to say _what_ it does, that's a smell the method does too much.
-- **Exempt:** a constant whose name and value already carry the full meaning (`VERSION = "0.30.0"`, `PHASES = %i[before after]`) — describe a constant only when its name doesn't; and an empty namespace module (a Zeitwerk placeholder with no usable members of its own, e.g. `module Riffer::Messages; end`) — its children are documented individually.
+- **Exempt:** a constant whose name and value already carry the full meaning (`VERSION = "0.30.0"`, `PHASES = %i[before after]`) — describe a constant only when its name doesn't; an empty namespace module (a Zeitwerk placeholder with no usable members of its own, e.g. `module Riffer::Messages; end`) — its children are documented individually; and a constructor (`initialize`) — the class doc and RDoc's `::new` already cover plain construction, so describe it only when it carries a contract or non-obvious construction behavior (a raise, a dup guard).
 
 Do not document parameters or return values in prose — the `#:` line is the single source of truth for types. Attributes and constants still carry a brief description on the line above their inline `#:`.
 
@@ -74,7 +74,7 @@ A comment describes the present, never how the code got there. Change narration 
 # Raises Riffer::ArgumentError if the schema is missing a +type+.
 ```
 
-**Examples.** Permitted **sparingly** — only when they teach something the signature can't, such as a non-obvious composition or wiring idiom. Usage-level walkthroughs belong in `docs/`. Write them as indented code blocks (2 extra spaces of indent).
+**Examples.** Include an example only when a **consumer is likely to use the thing themselves** — a public entry point they construct, subclass, or call (an `Agent` subclass, `Riffer::Mcp.register`, the `params` DSL). Skip examples on framework-internal types even though they're technically public (value objects the framework constructs and hands back, internal engines). When included, keep them sparing — only when they teach something the signature can't — and write them as indented code blocks (2 extra spaces of indent). Usage walkthroughs belong in `docs/`.
 
 **Inline code formatting.** Use `+word+` for single-word inline code; for multi-word expressions (spaces, colons, brackets) use `<tt>multi word expression</tt>`, e.g. `Equivalent to <tt>throw :riffer_interrupt, reason</tt>`.
 

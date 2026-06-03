@@ -5,13 +5,6 @@ require "json"
 
 # Parses and validates structured JSON responses against a Riffer::Params
 # schema.
-#
-#   params = Riffer::Params.new
-#   params.required(:sentiment, String)
-#   so = Riffer::Agent::StructuredOutput.new(params)
-#   result = so.parse_and_validate('{"sentiment":"positive","score":0.9}')
-#   result.object  #=> {sentiment: "positive", score: 0.9}
-#
 class Riffer::Agent::StructuredOutput
   # The schema parameters.
   attr_reader :params #: Riffer::Params

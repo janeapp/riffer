@@ -2,18 +2,6 @@
 # rbs_inline: enabled
 
 # Represents the result of evaluating a single scenario.
-#
-# Contains the input, output, ground truth, and individual evaluator results.
-#
-#   scenario_result = Riffer::Evals::ScenarioResult.new(
-#     input: "What is Ruby?",
-#     output: "A programming language.",
-#     ground_truth: "A programming language",
-#     results: [result1, result2]
-#   )
-#
-#   scenario_result.scores  # => { MyEvaluator => 0.85 }
-#
 class Riffer::Evals::ScenarioResult
   # The input that was evaluated.
   attr_reader :input #: String
@@ -30,8 +18,6 @@ class Riffer::Evals::ScenarioResult
   # The full message history from the agent conversation.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 
-  # Initializes a new scenario result.
-  #
   #--
   #: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
   def initialize(input:, output:, ground_truth:, results:, messages: [])

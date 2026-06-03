@@ -3,10 +3,6 @@
 
 # The generation loop — a pure module of functions over an +agent+, which owns
 # every per-call value; Run just orchestrates.
-#
-#   Riffer::Agent::Run.generate(agent: my_agent, prompt: "Hello")
-#   Riffer::Agent::Run.stream(agent: my_agent, prompt: "Hello")
-#
 module Riffer::Agent::Run
   extend self
   include Riffer::Messages::Converter

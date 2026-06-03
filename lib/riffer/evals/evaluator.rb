@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Base class for all evaluators in the Riffer framework.
-#
-# Provides a DSL for defining evaluator metadata and the evaluate method.
-# Simple evaluators only need to set +instructions+ — the base class
-# handles calling the judge automatically.
-#
-# See examples/evaluators/ for reference implementations.
+# Base class for all evaluators. Set +instructions+ and the base class calls
+# the judge automatically; override +#evaluate+ for custom logic. See
+# examples/evaluators/ for reference implementations.
 #
 #   class MyEvaluator < Riffer::Evals::Evaluator
 #     instructions "Assess medical accuracy of the response..."
@@ -54,18 +50,9 @@ class Riffer::Evals::Evaluator
     end
   end
 
-  # Evaluates an input/output pair.
-  #
-  # The default implementation calls the judge with the class-level +instructions+.
-  # Override this method for custom evaluation logic (e.g. rule-based evaluators).
-  #
-  # [input] the input to evaluate; String or Array of message hashes/Message objects.
-  # [output] the agent's response to evaluate.
-  # [ground_truth] optional reference answer for comparison.
-  # [messages] the full message history from the agent conversation.
-  #
-  # Raises NotImplementedError if neither +instructions+ is set nor +evaluate+ is overridden.
-  #
+  # Evaluates an input/output pair. The default calls the judge with the
+  # class-level +instructions+; override for custom logic (e.g. rule-based
+  # evaluators).
   #--
   #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
   def evaluate(input:, output:, ground_truth: nil, messages: [])
@@ -84,12 +71,6 @@ class Riffer::Evals::Evaluator
 
   private
 
-  # Formats the input for the judge.
-  #
-  # String inputs are passed through as-is.
-  # Array inputs (message hashes or Message objects) are formatted
-  # as labeled role/content pairs separated by blank lines.
-  #
   #--
   #: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
   def format_input(input)
@@ -122,8 +103,7 @@ class Riffer::Evals::Evaluator
     end
   end
 
-  # Helper to build a Result object.
-  #
+  # Builds a Result for this evaluator.
   #--
   #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
   def result(score:, reason: nil, metadata: {})

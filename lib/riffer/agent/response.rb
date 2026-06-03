@@ -35,7 +35,6 @@ class Riffer::Agent::Response
   # turn (when an interrupt left them unanswered and history healing is on).
   attr_reader :healed_tool_call_ids #: Array[String]
 
-  # Creates a new response.
   #--
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String]) -> void
   def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [])
