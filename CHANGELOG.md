@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.31.0](https://github.com/janeapp/riffer/compare/riffer/v0.30.0...riffer/v0.31.0) (2026-06-03)
+
+
+### Features
+
+* forward session: through Agent.from_h/from_json for history seeding ([#295](https://github.com/janeapp/riffer/issues/295)) ([0b2eaa2](https://github.com/janeapp/riffer/commit/0b2eaa27f5154bfd61891d4e93b8938f7dce2ce6))
+
 ## [0.30.0](https://github.com/janeapp/riffer/compare/riffer/v0.29.1...riffer/v0.30.0) (2026-06-03)
 
 
