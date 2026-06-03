@@ -3,8 +3,8 @@
 
 require "json"
 
-# Riffer::Agent::StructuredOutput provides parse/validate for structured JSON
-# responses from LLM providers.
+# Parses and validates structured JSON responses against a Riffer::Params
+# schema.
 #
 #   params = Riffer::Params.new
 #   params.required(:sentiment, String)
@@ -13,6 +13,7 @@ require "json"
 #   result.object  #=> {sentiment: "positive", score: 0.9}
 #
 class Riffer::Agent::StructuredOutput
+  # The schema parameters.
   attr_reader :params #: Riffer::Params
 
   #--
@@ -29,10 +30,8 @@ class Riffer::Agent::StructuredOutput
     @params.to_json_schema(strict: strict)
   end
 
-  # Parses a JSON string and validates it against the schema.
-  #
-  # Returns a Result with the validated object on success, or an error message on failure.
-  #
+  # Parses a JSON string and validates it against the schema, returning a
+  # Result carrying either the validated object or an error message.
   #--
   #: (String) -> Riffer::Agent::StructuredOutput::Result
   def parse_and_validate(json_string)

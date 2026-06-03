@@ -1,17 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Typed value object wrapping the runtime context Hash held by a
-# Riffer::Agent. Exposes first-class accessors for the framework-managed
-# entries — +skills+ and +token_usage+ — and preserves +#[]+ / +#dig+
-# reads so tools (which receive +context:+ as a keyword) keep working
-# with both built-in and caller-provided keys.
-#
-# Reserved keys (+:skills+, +:token_usage+) cannot be set by the caller
-# at construction; they are owned by Riffer and written through the typed
-# setters. Type invariants are enforced on write — +skills+ must be a
-# +Riffer::Skills::Context+ (or nil); +token_usage+ must be a
-# +Riffer::Providers::TokenUsage+ (or nil).
+# Typed value object wrapping the runtime context Hash held by a Riffer::Agent.
+# Exposes typed +skills+ / +token_usage+ accessors while preserving +#[]+ /
+# +#dig+ for caller-provided keys.
 #
 #   context = Riffer::Agent::Context.new(user_id: 42)
 #   context[:user_id]    # => 42
@@ -21,18 +13,10 @@
 class Riffer::Agent::Context
   # @rbs @data: Hash[Symbol, untyped]
 
-  # Keys reserved for framework use. Passing any of these to the
-  # constructor raises +Riffer::ArgumentError+.
   RESERVED_KEYS = [:skills, :token_usage].freeze #: Array[Symbol]
 
-  # Builds a new context.
-  #
-  # [data] caller-provided Hash passed as <tt>Agent.new(context:)</tt>.
-  #        Duped before storage so caller mutations do not affect the
-  #        agent. Must not contain any +RESERVED_KEYS+.
-  #
-  # Raises Riffer::ArgumentError when +data+ contains a reserved key.
-  #
+  # Builds a new context. The caller Hash is duped so later caller mutations
+  # don't leak in. Raises Riffer::ArgumentError if it contains a reserved key.
   #--
   #: (?Hash[Symbol, untyped]) -> void
   def initialize(data = {})
@@ -56,12 +40,8 @@ class Riffer::Agent::Context
     @data[:skills]
   end
 
-  # Sets the resolved skills context. Called once by +Riffer::Agent+
-  # during construction.
-  #
-  # Raises Riffer::ArgumentError if +value+ is neither +nil+ nor a
-  # +Riffer::Skills::Context+.
-  #
+  # Sets the resolved skills context. Raises Riffer::ArgumentError on an
+  # invalid value.
   #--
   #: (Riffer::Skills::Context?) -> Riffer::Skills::Context?
   def skills=(value)
@@ -81,12 +61,8 @@ class Riffer::Agent::Context
     @data[:token_usage]
   end
 
-  # Sets the cumulative token usage. Called by +Riffer::Agent::Run+ after
-  # each LLM response.
-  #
-  # Raises Riffer::ArgumentError if +value+ is neither +nil+ nor a
-  # +Riffer::Providers::TokenUsage+.
-  #
+  # Sets the cumulative token usage. Raises Riffer::ArgumentError on an invalid
+  # value.
   #--
   #: (Riffer::Providers::TokenUsage?) -> Riffer::Providers::TokenUsage?
   def token_usage=(value)
@@ -97,28 +73,23 @@ class Riffer::Agent::Context
     @data[:token_usage] = value
   end
 
-  # Hash-style read. Preserved so downstream tool runtimes pulling
-  # caller-provided keys via <tt>context[:agent]</tt> or
-  # <tt>context[:tenant]</tt> keep working unchanged.
-  #
+  # Hash-style read, preserved so tools can pull caller-provided keys via
+  # <tt>context[:agent]</tt>.
   #--
   #: (Symbol) -> untyped
   def [](key)
     @data[key]
   end
 
-  # Hash-style dig. Preserved for tools using
-  # <tt>context&.dig(:user_id)</tt>.
-  #
+  # Hash-style dig, preserved for tools using <tt>context&.dig(:user_id)</tt>.
   #--
   #: (*Symbol) -> untyped
   def dig(*keys)
     @data.dig(*keys)
   end
 
-  # Returns a copy of the underlying Hash. Mutating the result does not
-  # affect this context.
-  #
+  # Returns a copy of the underlying Hash; mutating it does not affect this
+  # context.
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Agent::Session owns the conversation handle for an agent: the message
-# array, the +on_message+ callback list, and the +tool_use+ ↔ +tool_result+
-# invariant that keeps tool calls and their results consistent.
-#
-# Access via +agent.session+. Sessions are constructed by +Riffer::Agent+
-# and live for the lifetime of the agent.
+# Owns the conversation handle for an agent: the message array, the
+# +on_message+ callbacks, and the +tool_use+ ↔ +tool_result+ invariant that
+# keeps tool calls and their results consistent.
 #
 #   agent.session.add(msg)                  # append + fire callbacks
 #   agent.session.set([msg1, msg2])         # bulk replace (silent)
@@ -31,12 +28,6 @@ class Riffer::Agent::Session
   end
 
   # Registers a callback invoked once per message appended via +#add+.
-  #
-  # Callbacks do NOT fire for +#set+, +#unset+, +#remove+, or +#update+.
-  # Returns +self+ to allow chaining.
-  #
-  # Raises Riffer::ArgumentError if no block is given.
-  #
   #--
   #: () { (Riffer::Messages::Base) -> void } -> self
   def on_message(&block)
@@ -45,13 +36,9 @@ class Riffer::Agent::Session
     self
   end
 
-  # Appends +message+ and fires every registered callback once with it.
-  #
-  # Pass +silent: true+ to skip +on_message+ callbacks — used for
-  # non-inference inputs like user messages, which subscribers don't
-  # expect to observe through the callback channel. Inference-produced
-  # messages (Assistant, Tool) always go through +add+ without +silent+.
-  #
+  # Appends +message+ and fires every registered callback once with it. Pass
+  # +silent: true+ to skip callbacks — used for non-inference inputs like user
+  # messages that subscribers don't expect on the callback channel.
   #--
   #: (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
   def add(message, silent: false)
@@ -60,13 +47,7 @@ class Riffer::Agent::Session
     message
   end
 
-  # Replaces the message history wholesale. Does NOT fire +on_message+
-  # callbacks; registered callbacks persist across the swap.
-  #
-  # Used for seeding, guardrail rewrites, and history healing — cases
-  # where firing callbacks would double-emit messages that subscribers
-  # have already observed (or never produced).
-  #
+  # Replaces the message history wholesale
   #--
   #: (Array[Riffer::Messages::Base]) -> self
   def set(messages)
@@ -74,9 +55,7 @@ class Riffer::Agent::Session
     self
   end
 
-  # Clears the session. Does NOT fire +on_message+ callbacks; registered
-  # callbacks persist.
-  #
+  # Clears the session.
   #--
   #: () -> self
   def unset
@@ -84,18 +63,10 @@ class Riffer::Agent::Session
     self
   end
 
-  # Removes a message by id. When the target is an assistant message that
-  # carries +tool_calls+, every +Riffer::Messages::Tool+ result whose
-  # +tool_call_id+ matches one of those calls is removed atomically — keeping
-  # the +tool_use+ ↔ +tool_result+ invariant intact.
-  #
-  # Raises Riffer::ArgumentError when called on a +Riffer::Messages::Tool+
-  # message — that would orphan the parent's +tool_use+. Use
-  # +#update+ to rewrite a tool result instead.
-  #
-  # Returns the removed message, or +nil+ when no message has the given id
-  # (idempotent).
-  #
+  # Removes a message by id, cascading to drop the +Tool+ results of a removed
+  # assistant's +tool_calls+ so the +tool_use+ ↔ +tool_result+ invariant holds.
+  # Raises on a +Tool+ message — that would orphan its parent; use +#update+
+  # instead. Returns +nil+ if no message matches.
   #--
   #: (id: String) -> Riffer::Messages::Base?
   def remove(id:)
@@ -118,19 +89,10 @@ class Riffer::Agent::Session
     target
   end
 
-  # Partial in-place update. Looks up a message by either +id:+ or
-  # +tool_call_id:+ (exactly one required), constructs a replacement of the
-  # same concrete type with +attrs+ overlaid on the existing fields, and
-  # swaps it in place.
-  #
-  # When the target is an assistant message and the update drops one or more
-  # entries from +tool_calls+, every +Riffer::Messages::Tool+ result whose
-  # +tool_call_id+ matches a dropped call is removed atomically — keeping the
-  # +tool_use+ ↔ +tool_result+ invariant intact.
-  #
-  # Raises Riffer::ArgumentError when neither or both lookup keys are
-  # provided, or when no message matches.
-  #
+  # Partial in-place update: looks up a message by +id:+ or +tool_call_id:+
+  # (exactly one), overlays +attrs+ onto a same-type replacement, and swaps it
+  # in. Dropping +tool_calls+ from an assistant cascades to remove their +Tool+
+  # results, preserving the invariant. Raises on neither/both keys or no match.
   #--
   #: (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base
   def update(id: nil, tool_call_id: nil, **attrs)
@@ -155,12 +117,9 @@ class Riffer::Agent::Session
     replacement
   end
 
-  # Returns the call_ids of every +tool_call+ on any assistant message that
-  # has no matching +Riffer::Messages::Tool+ result anywhere in history.
-  #
-  # Zero-cost validation hook for callers that want to check the
-  # +tool_use+ ↔ +tool_result+ invariant before mutating or persisting.
-  #
+  # Returns the call_ids of every +tool_call+ with no matching
+  # +Riffer::Messages::Tool+ result anywhere in history — a hook for checking
+  # the +tool_use+ ↔ +tool_result+ invariant before mutating or persisting.
   #--
   #: () -> Array[String]
   def orphaned_tool_call_ids
@@ -171,10 +130,8 @@ class Riffer::Agent::Session
     }
   end
 
-  # Returns +[assistant, pending_tool_calls]+ for the last assistant message.
-  # When there is no assistant message or no pending calls, the second
-  # element is an empty array.
-  #
+  # Returns +[last_assistant, pending_tool_calls]+; the second element is empty
+  # when there's no assistant message or no pending calls.
   #--
   #: () -> [Riffer::Messages::Assistant?, Array[Riffer::Messages::Assistant::ToolCall]]
   def pending_tool_calls
@@ -191,6 +148,7 @@ class Riffer::Agent::Session
     [assistant, assistant.tool_calls.reject { |tc| executed_ids.include?(tc.call_id) }]
   end
 
+  # Yields each message in order, or returns an Enumerator without a block.
   #--
   #: () -> Enumerator[Riffer::Messages::Base, self]
   #: () { (Riffer::Messages::Base) -> void } -> untyped
@@ -199,10 +157,8 @@ class Riffer::Agent::Session
     @messages.each(&block)
   end
 
-  # The number of LLM steps completed in this session, derived from the
-  # count of assistant messages. Used by the agent loop to enforce
+  # The number of LLM steps completed, used by the agent loop to enforce
   # +max_steps+ on resume.
-  #
   #--
   #: () -> Integer
   def steps
@@ -223,6 +179,7 @@ class Riffer::Agent::Session
 
   private
 
+  #--
   #: (Riffer::Messages::Base, Riffer::Messages::Base) -> void
   def cascade_dropped_tool_calls(old, replacement)
     return unless old.is_a?(Riffer::Messages::Assistant)
@@ -234,6 +191,7 @@ class Riffer::Agent::Session
     @messages.reject! { |m| m.is_a?(Riffer::Messages::Tool) && removed_ids.include?(m.tool_call_id) }
   end
 
+  #--
   #: (Riffer::Messages::Base, Hash[Symbol, untyped]) -> Riffer::Messages::Base
   def rebuild_message(old, attrs)
     case old
