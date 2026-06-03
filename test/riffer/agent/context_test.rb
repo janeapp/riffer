@@ -41,6 +41,11 @@ describe Riffer::Agent::Context do
       expect { Riffer::Agent::Context.new(token_usage: :nope) }
         .must_raise Riffer::ArgumentError
     end
+
+    it "raises when :mcp_progressive_tools is passed by the caller" do
+      expect { Riffer::Agent::Context.new(mcp_progressive_tools: []) }
+        .must_raise Riffer::ArgumentError
+    end
   end
 
   describe "#skills=" do
@@ -101,10 +106,44 @@ describe Riffer::Agent::Context do
     end
   end
 
+  describe "#mcp_progressive_tools=" do
+    let(:context) { Riffer::Agent::Context.new }
+
+    it "accepts nil" do
+      context.mcp_progressive_tools = nil
+      expect(context.mcp_progressive_tools).must_be_nil
+    end
+
+    it "accepts an Array of Riffer::Tool subclasses" do
+      tool = Class.new(Riffer::Tool)
+      context.mcp_progressive_tools = [tool]
+      expect(context.mcp_progressive_tools).must_equal [tool]
+    end
+
+    it "accepts an empty Array" do
+      context.mcp_progressive_tools = []
+      expect(context.mcp_progressive_tools).must_equal []
+    end
+
+    it "raises on a non-Array, non-nil value" do
+      expect { context.mcp_progressive_tools = :nope }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises when Array contains non-Tool entries" do
+      expect { context.mcp_progressive_tools = [String] }.must_raise Riffer::ArgumentError
+    end
+
+    it "exposes the written value via #[] (hash-style read still works)" do
+      tool = Class.new(Riffer::Tool)
+      context.mcp_progressive_tools = [tool]
+      expect(context[:mcp_progressive_tools]).must_equal [tool]
+    end
+  end
+
   describe "#to_h" do
     it "returns the underlying hash" do
       expect(Riffer::Agent::Context.new(tenant: "alpha").to_h)
-        .must_equal({tenant: "alpha", skills: nil, token_usage: nil})
+        .must_equal({tenant: "alpha", skills: nil, token_usage: nil, mcp_progressive_tools: nil})
     end
 
     it "returns a copy (caller mutations do not leak back)" do

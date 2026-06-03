@@ -1,13 +1,31 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Typed value object wrapping the runtime context Hash held by a Riffer::Agent.
-# Exposes typed +skills+ / +token_usage+ accessors while preserving +#[]+ /
-# +#dig+ for caller-provided keys.
+# Typed value object wrapping the runtime context Hash held by a
+# Riffer::Agent. Exposes first-class accessors for the framework-managed
+# entries — +skills+, +token_usage+, and +mcp_progressive_tools+ — and
+# preserves +#[]+ / +#dig+ reads so tools (which receive +context:+ as a
+# keyword) keep working with both built-in and caller-provided keys.
+#
+# Reserved keys (+:skills+, +:token_usage+, +:mcp_progressive_tools+)
+# cannot be set by the caller at construction; they are owned by Riffer
+# and written through the typed setters. Type invariants are enforced on
+# write — +skills+ must be a +Riffer::Skills::Context+ (or nil);
+# +token_usage+ must be a +Riffer::Providers::TokenUsage+ (or nil);
+# +mcp_progressive_tools+ must be an Array of +Riffer::Tool+ subclasses
+# (or nil).
+#
+#   context = Riffer::Agent::Context.new(user_id: 42)
+#   context[:user_id]    # => 42
+#   context.skills       # => nil
+#   context.token_usage  # => nil
+#
 class Riffer::Agent::Context
   # @rbs @data: Hash[Symbol, untyped]
 
-  RESERVED_KEYS = [:skills, :token_usage].freeze #: Array[Symbol]
+  # Keys reserved for framework use. Passing any of these to the
+  # constructor raises +Riffer::ArgumentError+.
+  RESERVED_KEYS = [:skills, :token_usage, :mcp_progressive_tools].freeze #: Array[Symbol]
 
   # Builds a new context. The caller Hash is duped so later caller mutations
   # don't leak in. Raises Riffer::ArgumentError if it contains a reserved key.
@@ -23,6 +41,7 @@ class Riffer::Agent::Context
     @data = data.dup
     @data[:skills] = nil
     @data[:token_usage] = nil
+    @data[:mcp_progressive_tools] = nil
   end
 
   # The agent's resolved +Riffer::Skills::Context+, or +nil+ when skills
@@ -89,9 +108,20 @@ class Riffer::Agent::Context
   # Sets the progressive MCP tools. Called by +Riffer::Agent+ during
   # construction when a progressive +use_mcp+ resolves at least one tool.
   #
+  # Raises Riffer::ArgumentError if +value+ is neither +nil+ nor an Array
+  # of +Riffer::Tool+ subclasses.
+  #
   #--
   #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
   def mcp_progressive_tools=(value)
+    valid = value.nil? || (
+      value.is_a?(Array) &&
+      value.all? { |tool| tool.is_a?(Class) && tool < Riffer::Tool }
+    )
+    unless valid
+      raise Riffer::ArgumentError,
+        "mcp_progressive_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
+    end
     @data[:mcp_progressive_tools] = value
   end
 
