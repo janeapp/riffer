@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.30.0](https://github.com/janeapp/riffer/compare/riffer/v0.29.1...riffer/v0.30.0) (2026-06-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* unlimited max_steps is now represented as `nil` at the agent level (set via `max_steps nil`), not Float::INFINITY — Riffer::Agent::Config#max_steps may be nil and is no longer normalized. Riffer::Params parameter types are typed Module (widened from Class) to honestly include Riffer::Params::Boolean, which is a Module.
+
+### Features
+
+* Riffer::Agent::Serializer for transferable agent definitions ([#293](https://github.com/janeapp/riffer/issues/293)) ([99134b0](https://github.com/janeapp/riffer/commit/99134b0bf52bccfd727e52349aba8432389775be))
+
 ## [0.29.1](https://github.com/janeapp/riffer/compare/riffer/v0.29.0...riffer/v0.29.1) (2026-06-01)
 
 
