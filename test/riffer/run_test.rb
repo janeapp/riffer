@@ -1439,11 +1439,11 @@ describe Riffer::Agent::Run do
         end.tap { |t| t.identifier("max_steps_tool") }
       end
 
-      it "runs unlimited steps by default" do
+      it "runs unlimited steps when max_steps is nil" do
         tc = tool_class
         custom_agent_class = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          max_steps Float::INFINITY
+          max_steps nil
           uses_tools [tc]
         end
 

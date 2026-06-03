@@ -77,7 +77,8 @@ module Riffer::Agent::Run
 
         break unless processed_response.has_tool_calls?
 
-        throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if step >= agent.config.max_steps
+        max_steps = agent.config.max_steps
+        throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if max_steps && step >= max_steps
 
         execute_tool_calls(agent, processed_response)
       end

@@ -20,10 +20,41 @@ class Riffer::Params
     @parameters = []
   end
 
+  # Reconstructs a Params from a JSON Schema object (the inverse of
+  # +to_json_schema(strict: false)+).
+  #
+  # Accepts the Symbol-keyed object schema produced by +to_json_schema+
+  # (property-name keys may be String or Symbol — both are normalized).
+  # Reconstructs types, +required+, +description+, +enum+, +default+,
+  # typed-array +item_type+, and nested object/array Params recursively.
+  #
+  # Round-trips losslessly with +to_json_schema(strict: false)+ over the
+  # Params-expressible subset of JSON Schema. Raises Riffer::ArgumentError
+  # on a schema using features outside that subset.
+  #
+  #   schema = params.to_json_schema(strict: false)
+  #   Riffer::Params.from_json_schema(schema) # => equivalent Riffer::Params
+  #
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Params
+  def self.from_json_schema(schema)
+    params = new
+    properties = schema[:properties] || {}
+    required = (schema[:required] || []).map { |key| key.to_s }
+
+    properties.each do |name, property_schema|
+      params.parameters << Riffer::Params::Param.from_json_schema(
+        name.to_sym, property_schema, required: required.include?(name.to_s)
+      )
+    end
+
+    params
+  end
+
   # Defines a required parameter.
   #
   #--
-  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
     @parameters << Riffer::Params::Param.new(
@@ -40,7 +71,7 @@ class Riffer::Params
   # Defines an optional parameter.
   #
   #--
-  #: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
+  #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
     nested = build_nested(type, of, &block)
     @parameters << Riffer::Params::Param.new(
@@ -126,7 +157,7 @@ class Riffer::Params
   private
 
   #--
-  #: (Class, Class?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  #: (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested(type, of, &block)
     if of && block
       raise Riffer::ArgumentError, "cannot use both of: and a block"

@@ -21,7 +21,7 @@ class Riffer::Agent::Config
   attr_accessor :provider_options #: Hash[Symbol, untyped]
   attr_accessor :model_options #: Hash[Symbol, untyped]
   attr_reader :structured_output #: Riffer::Params?
-  attr_accessor :max_steps #: Numeric
+  attr_accessor :max_steps #: Numeric?
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)?
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]]
   attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
@@ -35,7 +35,7 @@ class Riffer::Agent::Config
   # as a non-String, non-Proc value (or as an empty String).
   #
   #--
-  #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
   def initialize(
     identifier: nil,
     model: nil,
