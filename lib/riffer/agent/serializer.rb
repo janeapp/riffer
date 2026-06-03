@@ -4,12 +4,12 @@
 require "json"
 
 # Riffer::Agent::Serializer turns a resolved agent into a self-contained,
-# provider-neutral data dict and back into a runnable agent. A pure module
+# provider-neutral data hash and back into a runnable agent. A pure module
 # (sibling to Riffer::Agent::Run), reached most often through the
 # +Riffer::Agent#to_h+ / +Riffer::Agent.from_h+ delegators.
 #
-# The dict carries only data — no Procs, no class references, no tool
-# runtime. The same dict serves two rehydration targets:
+# The hash carries only data — no Procs, no class references, no tool
+# runtime. The same hash serves two rehydration targets:
 #
 # - <b>In-process</b> (a monolith persisting agent definitions): pass a
 #   +tool_resolver+ that looks tool descriptors up in a local registry and
@@ -18,8 +18,8 @@ require "json"
 #   resolver synthesizes body-less tool shells; inject a remote
 #   +Riffer::Tools::Runtime+ to forward each call back to the origin.
 #
-#   dict  = Riffer::Agent::Serializer.to_h(agent: agent)
-#   rebuilt = Riffer::Agent::Serializer.from_h(dict, context: {tenant: "acme"})
+#   data  = Riffer::Agent::Serializer.to_h(agent: agent)
+#   rebuilt = Riffer::Agent::Serializer.from_h(data, context: {tenant: "acme"})
 #
 # == What does not transfer
 #
@@ -32,21 +32,21 @@ module Riffer::Agent::Serializer
   extend self
 
   # The wire format version. Bumped only on an incompatible change to the
-  # dict shape; +from_h+ refuses any other version. See +from_h+ for the
+  # hash shape; +from_h+ refuses any other version. See +from_h+ for the
   # dispatch seam that carries back-compat decoders.
   SCHEMA_VERSION = 1 #: Integer
 
-  # Raised by +from_h+ when the dict's +schema_version+ is unsupported.
+  # Raised by +from_h+ when the hash's +schema_version+ is unsupported.
   class VersionError < Riffer::ArgumentError; end
 
   # The default +tool_resolver+: synthesizes a body-less tool shell from a
   # descriptor. Its +#call+ raises — route shells through a remote runtime.
   DEFAULT_TOOL_RESOLVER = ->(descriptor) { build_tool_shell(descriptor) } #: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool)
 
-  # Snapshots a resolved agent into a self-contained wire dict.
+  # Snapshots a resolved agent into a self-contained wire hash.
   #
   # Reads the agent's resolved instance state — Proc-based settings have
-  # already been evaluated against the agent's own context, so the dict
+  # already been evaluated against the agent's own context, so the hash
   # carries plain strings/data, never Procs. Tools are emitted as
   # +{name, description, parameters_schema, timeout}+ descriptors (the
   # resolved +agent.tools+, including MCP tools and +skill_activate+).
@@ -71,14 +71,20 @@ module Riffer::Agent::Serializer
     }
   end
 
-  # Reconstructs a runnable agent from a wire dict.
+  # Reconstructs a runnable agent from a wire hash.
   #
-  # [hash] a Symbol-keyed wire dict (parse JSON with +symbolize_names: true+).
+  # [hash] a Symbol-keyed wire hash (parse JSON with +symbolize_names: true+).
   # [context] the rebuilt agent's runtime context — the same value you'd pass
   #   to +Agent.new(context:)+. It is *not* used to re-resolve serialized
-  #   config (the dict is already resolved); it is threaded into tool dispatch
+  #   config (the hash is already resolved); it is threaded into tool dispatch
   #   and read by tools/runtimes at call time (e.g. a remote runtime keying off
   #   <tt>context[:tenant]</tt>). Defaults to an empty context.
+  # [session] an optional Riffer::Agent::Session to seed conversation history,
+  #   forwarded verbatim to +Agent.new(session:)+. The hash carries the agent
+  #   *definition*, not its history (see "What does not transfer"); pass a
+  #   session here to resume a persisted conversation. Used as-is — the caller
+  #   owns its contents, including the system instruction message. When omitted,
+  #   a fresh session seeded with the hash's instructions is built.
   # [tool_resolver] maps a tool descriptor to a Riffer::Tool class. Defaults
   #   to DEFAULT_TOOL_RESOLVER (body-less shells). Pass a registry lookup to
   #   rebuild real, in-process tools.
@@ -87,16 +93,16 @@ module Riffer::Agent::Serializer
   #   default (+Riffer.config.tool_runtime+).
   #
   # Raises Riffer::Agent::Serializer::VersionError on an unsupported
-  # +schema_version+, and Riffer::ArgumentError on a malformed dict.
+  # +schema_version+, and Riffer::ArgumentError on a malformed hash.
   #
   #--
-  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_h(hash, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_h(hash, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
     # Version -> decoder dispatch. Adding a +when 2+ arm (a backwards-compatible
     # decoder) is how a future breaking change keeps older dicts readable.
     case hash[:schema_version]
     when SCHEMA_VERSION
-      decode_v1(hash, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+      decode_v1(hash, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
     else
       raise VersionError, "Unsupported schema_version: #{hash[:schema_version].inspect} (this Riffer supports #{SCHEMA_VERSION})"
     end
@@ -116,16 +122,16 @@ module Riffer::Agent::Serializer
   # +from_h+ for the arguments.
   #
   #--
-  #: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def from_json(json, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    from_h(JSON.parse(json, symbolize_names: true), context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def from_json(json, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    from_h(JSON.parse(json, symbolize_names: true), context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 
   private
 
   #--
-  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def decode_v1(hash, context:, tool_resolver:, tool_runtime:)
+  #: (Hash[Symbol, untyped], context: Hash[Symbol, untyped]?, session: Riffer::Agent::Session?, tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def decode_v1(hash, context:, session:, tool_resolver:, tool_runtime:)
     tools = Array(hash[:tools]).map { |descriptor| tool_resolver.call(descriptor) }
 
     config_args = {
@@ -142,7 +148,11 @@ module Riffer::Agent::Serializer
     # Config default (Riffer.config.tool_runtime) applies.
     config_args[:tool_runtime] = tool_runtime if tool_runtime
 
-    Riffer::Agent.new(config: Riffer::Agent::Config.new(**config_args), context: context)
+    # +session+ is forwarded verbatim: when nil, Agent.new seeds a fresh session
+    # from the decoded instructions; when supplied, Agent.new uses it as-is to
+    # resume persisted history. The hash never carries history (see "What does
+    # not transfer"), so this is the only seam for rehydrating a conversation.
+    Riffer::Agent.new(config: Riffer::Agent::Config.new(**config_args), context: context, session: session)
   end
 
   #--
@@ -153,7 +163,7 @@ module Riffer::Agent::Serializer
   end
 
   # The DSL represents unlimited steps as +nil+, but the wire encodes it as
-  # +-1+ so the dict stays portable across transports where JSON +null+ is
+  # +-1+ so the hash stays portable across transports where JSON +null+ is
   # awkward (e.g. proto3, which can't tell null from an absent field). The
   # magic value lives only on the wire — +encode_max_steps+/+decode_max_steps+
   # translate at the boundary so neither the DSL nor consumers see it.
@@ -164,7 +174,7 @@ module Riffer::Agent::Serializer
   end
 
   # Reverses +encode_max_steps+: +-1+ (or a literal +null+) means unlimited.
-  # An absent key falls back to the default — a partial dict must not silently
+  # An absent key falls back to the default — a partial hash must not silently
   # become an unbounded loop.
   #--
   #: (Hash[Symbol, untyped]) -> Numeric?

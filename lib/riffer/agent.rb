@@ -212,28 +212,28 @@ class Riffer::Agent
     new(context: context).stream(prompt, files: files)
   end
 
-  # Reconstructs a runnable agent from a wire dict produced by +#to_h+.
+  # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
   #
-  # Delegates to Riffer::Agent::Serializer.from_h. See it for the
-  # +tool_resolver+ / +tool_runtime+ injection points and what does not
-  # transfer.
+  # Delegates to Riffer::Agent::Serializer.from_h. See it for the +session+
+  # seed, the +tool_resolver+ / +tool_runtime+ injection points, and what does
+  # not transfer.
   #
   #--
-  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_h(hash, context: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    Riffer::Agent::Serializer.from_h(hash, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_h(hash, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    Riffer::Agent::Serializer.from_h(hash, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 
   # Reconstructs a runnable agent from a JSON string produced by +#to_json+.
   #
   # Delegates to Riffer::Agent::Serializer.from_json, which parses the JSON
   # (with symbol keys) for you. See Riffer::Agent::Serializer.from_h for the
-  # +tool_resolver+ / +tool_runtime+ injection points.
+  # +session+ seed and the +tool_resolver+ / +tool_runtime+ injection points.
   #
   #--
-  #: (String, ?context: Hash[Symbol, untyped]?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_json(json, context: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    Riffer::Agent::Serializer.from_json(json, context: context, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
+  def self.from_json(json, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
+    Riffer::Agent::Serializer.from_json(json, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
   end
 
   # Registers a guardrail for input, output, or both phases.
@@ -412,7 +412,7 @@ class Riffer::Agent
   end
 
   # Snapshots this resolved agent into a self-contained, provider-neutral
-  # wire dict. Delegates to Riffer::Agent::Serializer.to_h.
+  # wire hash. Delegates to Riffer::Agent::Serializer.to_h.
   #
   #--
   #: () -> Hash[Symbol, untyped]
