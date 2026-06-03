@@ -6,7 +6,7 @@ require "json"
 # Progressive-discovery search tool. Lists or filters MCP tools by name or description.
 #
 # Reads the per-agent set of auth-wrapped MCP tool classes from
-# +context[:mcp_progressive_tools]+ (populated by Riffer::Agent when a
+# +context.mcp_progressive_tools+ (populated by Riffer::Agent when a
 # progressive +use_mcp+ matches at least one registration).
 #
 # See Riffer::Agent.use_mcp and docs/14_MCP.md.
@@ -20,13 +20,13 @@ class Riffer::Mcp::SearchTool < Riffer::Tool
     required :query, String, description: "Filter tools by name or description substring. Pass an empty string to list all tools."
   end
 
-  # [context] tool context containing +:mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
+  # [context] tool context containing +mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
   # [query]   substring filter; an empty string returns all tools.
   #
   #--
-  #: (context: Hash[Symbol, untyped]?, query: String) -> Riffer::Tools::Response
+  #: (context: Riffer::Agent::Context?, query: String) -> Riffer::Tools::Response
   def call(context:, query:)
-    tools = context&.dig(:mcp_progressive_tools) || []
+    tools = context&.mcp_progressive_tools || []
     matches = filter(tools, query)
 
     if matches.empty?

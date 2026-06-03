@@ -843,6 +843,29 @@ describe Riffer::Agent do
         Riffer.config.mcp.credentials = prev
       end
 
+      it "keeps regular tools but omits meta-tools when only progressive credentials return nil" do
+        inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
+        inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
+        prev = Riffer.config.mcp.credentials
+        Riffer.config.mcp.credentials = ->(matched_tags:, **) {
+          matched_tags.include?(:srv) ? nil : {token: "tok"}
+        }
+
+        klass = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          use_mcp :other, progressive: false
+          use_mcp :srv, progressive: true
+        end
+
+        tools = resolved_tools_for(klass)
+        names = tools.map(&:name)
+        expect(names).wont_include "mcp_search"
+        expect(names).wont_include "mcp_call"
+        expect(tools).wont_be_empty
+      ensure
+        Riffer.config.mcp.credentials = prev
+      end
+
       it "mcp_configs stores the progressive flag" do
         klass = Class.new(Riffer::Agent) do
           use_mcp :foo                       # default: true

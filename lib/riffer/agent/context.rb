@@ -75,16 +75,24 @@ class Riffer::Agent::Context
     @data[key]
   end
 
-  # Hash-style write for non-reserved keys. Used by the framework to store
-  # per-agent internal state (e.g. progressive MCP tool lists).
+  # The per-agent set of auth-wrapped MCP tool classes available during a
+  # progressive run, or +nil+ when no progressive +use_mcp+ resolved any tools.
   #
-  # Raises Riffer::ArgumentError for reserved keys (+:skills+, +:token_usage+).
+  # Read by +Riffer::Mcp::SearchTool+ and +Riffer::Mcp::CallTool+.
   #
   #--
-  #: (Symbol, untyped) -> untyped
-  def []=(key, value)
-    raise Riffer::ArgumentError, "Cannot set reserved key :#{key}" if RESERVED_KEYS.include?(key)
-    @data[key] = value
+  #: () -> Array[singleton(Riffer::Tool)]?
+  def mcp_progressive_tools
+    @data[:mcp_progressive_tools]
+  end
+
+  # Sets the progressive MCP tools. Called by +Riffer::Agent+ during
+  # construction when a progressive +use_mcp+ resolves at least one tool.
+  #
+  #--
+  #: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def mcp_progressive_tools=(value)
+    @data[:mcp_progressive_tools] = value
   end
 
   # Hash-style dig. Preserved for tools using

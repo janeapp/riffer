@@ -493,7 +493,7 @@ class Riffer::Agent
     progressive_tools = progressive_reg_tags.flat_map { |reg, tag_accum| mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx) }
 
     if progressive_tools.any?
-      @context[:mcp_progressive_tools] = progressive_tools.freeze
+      @context.mcp_progressive_tools = progressive_tools.freeze
       regular_tools + [Riffer::Mcp::SearchTool, Riffer::Mcp::CallTool]
     else
       regular_tools

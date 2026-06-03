@@ -19,7 +19,7 @@ describe Riffer::Mcp::SearchTool do
 
   let(:tool_a) { make_tool(name: "github__search", description: "Search GitHub repos") }
   let(:tool_b) { make_tool(name: "github__create_pr", description: "Create a pull request") }
-  let(:context) { {mcp_progressive_tools: [tool_a, tool_b]} }
+  let(:context) { Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [tool_a, tool_b] } }
 
   describe "class metadata" do
     it "has identifier mcp_search" do
@@ -62,6 +62,13 @@ describe Riffer::Mcp::SearchTool do
       refute_includes resp.content, "github__search"
     end
 
+    it "treats whitespace-only query as empty string (returns all tools)" do
+      resp = Riffer::Mcp::SearchTool.new.call(context: context, query: "  ")
+      assert resp.success?
+      assert_includes resp.content, "github__search"
+      assert_includes resp.content, "github__create_pr"
+    end
+
     it "returns a not-found message with the query when no tools match" do
       resp = Riffer::Mcp::SearchTool.new.call(context: context, query: "zzznomatch")
       assert resp.success?
@@ -69,13 +76,16 @@ describe Riffer::Mcp::SearchTool do
     end
 
     it "returns a no-tools message when the context has an empty tools list" do
-      resp = Riffer::Mcp::SearchTool.new.call(context: {mcp_progressive_tools: []}, query: "")
+      resp = Riffer::Mcp::SearchTool.new.call(
+        context: Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [] },
+        query: ""
+      )
       assert resp.success?
       assert_includes resp.content, "No tools available"
     end
 
-    it "returns a no-tools message when context is missing the key" do
-      resp = Riffer::Mcp::SearchTool.new.call(context: {}, query: "")
+    it "returns a no-tools message when context has no progressive tools" do
+      resp = Riffer::Mcp::SearchTool.new.call(context: Riffer::Agent::Context.new, query: "")
       assert resp.success?
       assert_includes resp.content, "No tools available"
     end
@@ -92,7 +102,10 @@ describe Riffer::Mcp::SearchTool do
         description: "Fetch a URL",
         schema: {type: "object", properties: {"url" => {type: "string"}}, required: ["url"], additionalProperties: false}
       )
-      resp = Riffer::Mcp::SearchTool.new.call(context: {mcp_progressive_tools: [tool_with_schema]}, query: "")
+      resp = Riffer::Mcp::SearchTool.new.call(
+        context: Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [tool_with_schema] },
+        query: ""
+      )
       assert_includes resp.content, '"url"'
     end
   end

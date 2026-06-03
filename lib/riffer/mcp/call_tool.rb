@@ -24,16 +24,16 @@ class Riffer::Mcp::CallTool < Riffer::Tool
     optional :arguments, String, description: "JSON-encoded object of arguments to pass to the tool."
   end
 
-  # [context]   tool context containing +:mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
+  # [context]   tool context containing +mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
   # [tool_name] tool name to invoke (as returned by mcp_search).
   # [arguments] JSON-encoded object of arguments, or nil/"" for no arguments.
   #
   #--
-  #: (context: Hash[Symbol, untyped]?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
+  #: (context: Riffer::Agent::Context?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
   def call(context:, tool_name:, arguments: nil)
     return error("'tool_name' must be a non-empty string.") if tool_name.strip.empty?
 
-    tools = context&.dig(:mcp_progressive_tools) || []
+    tools = context&.mcp_progressive_tools || []
     target = tools.find { |t| t.name == tool_name }
     return error("Tool '#{tool_name}' not found. Use mcp_search to discover available tools.") unless target
 
@@ -41,6 +41,8 @@ class Riffer::Mcp::CallTool < Riffer::Tool
     return parsed if parsed.is_a?(Riffer::Tools::Response)
 
     target.new.call(context: context, **parsed)
+  rescue ArgumentError => e
+    error("Argument error calling '#{tool_name}': #{e.message}. Use mcp_search to confirm the expected schema.")
   end
 
   private

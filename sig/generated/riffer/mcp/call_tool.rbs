@@ -13,13 +13,13 @@
 class Riffer::Mcp::CallTool < Riffer::Tool
   IDENTIFIER: String
 
-  # [context]   tool context containing +:mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
+  # [context]   tool context containing +mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
   # [tool_name] tool name to invoke (as returned by mcp_search).
   # [arguments] JSON-encoded object of arguments, or nil/"" for no arguments.
   #
   # --
-  # : (context: Hash[Symbol, untyped]?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
-  def call: (context: Hash[Symbol, untyped]?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
+  # : (context: Riffer::Agent::Context?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
+  def call: (context: Riffer::Agent::Context?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
 
   private
 

@@ -135,7 +135,7 @@ use_mcp :connectors_b
 
 **Credential handling:** Progressive tools follow the same credential rules as regular tools — see [Session credentials callback](#session-credentials-callback).
 
-**Tool access in tools:** The resolved set of auth-wrapped MCP tool classes is available via `context[:mcp_progressive_tools]` (an `Array` of `Riffer::Tool` subclasses) during a progressive run. This is the same collection `mcp_search` and `mcp_call` operate on.
+**Tool access in tools:** The resolved set of auth-wrapped MCP tool classes is available via `context[:mcp_progressive_tools]` (an `Array` of `Riffer::Tool` subclasses) during a progressive run. This is the same collection `mcp_search` and `mcp_call` operate on. This key is framework-managed, so treat it as read-only from application code. Any caller-supplied value will be overwritten when the agent resolves its tool list.
 
 **Context cost:** Each `mcp_search` result includes the tool's name, description, and full input schema. A broad or empty query against a large tool union can return significant tokens. Prefer specific queries, or use `progressive: false` for small, stable servers where injecting all schemas up front is cheaper than discovery round-trips.
 

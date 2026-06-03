@@ -19,7 +19,7 @@ describe Riffer::Mcp::CallTool do
 
   let(:tool_a) { make_tool(name: "github__search") }
   let(:tool_b) { make_tool(name: "github__create_pr") }
-  let(:context) { {mcp_progressive_tools: [tool_a, tool_b]} }
+  let(:context) { Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [tool_a, tool_b] } }
 
   describe "class metadata" do
     it "has identifier mcp_call" do
@@ -55,7 +55,7 @@ describe Riffer::Mcp::CallTool do
         Riffer::Tools::Response.text("ok")
       end
       Riffer::Mcp::CallTool.new.call(
-        context: {mcp_progressive_tools: [capturing]},
+        context: Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [capturing] },
         tool_name: "capture",
         arguments: '{"x":1,"y":"hello"}'
       )
@@ -69,7 +69,7 @@ describe Riffer::Mcp::CallTool do
         Riffer::Tools::Response.text("ok")
       end
       Riffer::Mcp::CallTool.new.call(
-        context: {mcp_progressive_tools: [ctx_tool], tenant: "acme"},
+        context: Riffer::Agent::Context.new(tenant: "acme").tap { |c| c.mcp_progressive_tools = [ctx_tool] },
         tool_name: "ctx_tool"
       )
       assert_equal "acme", ctx_received[:tenant]
@@ -98,7 +98,7 @@ describe Riffer::Mcp::CallTool do
     end
 
     it "returns an error response when context has no progressive tools" do
-      resp = Riffer::Mcp::CallTool.new.call(context: {}, tool_name: "github__search")
+      resp = Riffer::Mcp::CallTool.new.call(context: Riffer::Agent::Context.new, tool_name: "github__search")
       assert resp.error?
       assert_includes resp.content, "not found"
     end
@@ -123,12 +123,25 @@ describe Riffer::Mcp::CallTool do
       assert_includes resp.content, "Invalid JSON"
     end
 
+    it "returns an error response when inner tool raises ArgumentError (missing keyword)" do
+      strict = make_tool(name: "strict_tool") do |context:, required_key:|
+        Riffer::Tools::Response.text("ok #{required_key}")
+      end
+      resp = Riffer::Mcp::CallTool.new.call(
+        context: Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [strict] },
+        tool_name: "strict_tool",
+        arguments: "{}"
+      )
+      assert resp.error?
+      assert_includes resp.content, "Argument error"
+    end
+
     it "forwards error responses from inner tools" do
       failing = make_tool(name: "failing") do |context:, **kwargs|
         Riffer::Tools::Response.error("inner error")
       end
       resp = Riffer::Mcp::CallTool.new.call(
-        context: {mcp_progressive_tools: [failing]},
+        context: Riffer::Agent::Context.new.tap { |c| c.mcp_progressive_tools = [failing] },
         tool_name: "failing"
       )
       assert resp.error?
