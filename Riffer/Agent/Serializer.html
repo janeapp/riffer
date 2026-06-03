@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="module Riffer::Agent::Serializer: Serializer turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. Agent."
+      content="module Riffer::Agent::Serializer: Serializer turns a resolved agent into a self-contained, provider-neutral data hash and back into a runnable agent. Agent."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Serializer turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. Agent.">
+    <meta property="og:description" content="Serializer turns a resolved agent into a self-contained, provider-neutral data hash and back into a runnable agent. Agent.">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Serializer turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. Agent.">
+    <meta name="twitter:description" content="Serializer turns a resolved agent into a self-contained, provider-neutral data hash and back into a runnable agent. Agent.">
 
 
 
@@ -724,15 +724,15 @@
 
   <section class="description">
     
-<p><a href="Serializer.html"><code>Riffer::Agent::Serializer</code></a> turns a resolved agent into a self-contained, provider-neutral data dict and back into a runnable agent. A pure module (sibling to <a href="Run.html"><code>Riffer::Agent::Run</code></a>), reached most often through the +Riffer::Agent#to_h+ / <a href="../Agent.html#method-c-from_h"><code>Riffer::Agent.from_h</code></a> delegators.</p>
+<p><a href="Serializer.html"><code>Riffer::Agent::Serializer</code></a> turns a resolved agent into a self-contained, provider-neutral data hash and back into a runnable agent. A pure module (sibling to <a href="Run.html"><code>Riffer::Agent::Run</code></a>), reached most often through the +Riffer::Agent#to_h+ / <a href="../Agent.html#method-c-from_h"><code>Riffer::Agent.from_h</code></a> delegators.</p>
 
-<p>The dict carries only data — no Procs, no class references, no tool runtime. The same dict serves two rehydration targets:</p>
+<p>The hash carries only data — no Procs, no class references, no tool runtime. The same hash serves two rehydration targets:</p>
 <ul><li>
 <p><strong>In-process</strong> (a monolith persisting agent definitions): pass a <code>tool_resolver</code> that looks tool descriptors up in a local registry and returns the real, body-bearing classes. They run on the default runtime.</p>
 </li><li>
 <p><strong>Distributed</strong> (a receiver holding only the <a href="../../Riffer.html"><code>Riffer</code></a> gem): the default resolver synthesizes body-less tool shells; inject a remote <a href="../Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> to forward each call back to the origin.</p>
 
-<p>dict  = <a href="Serializer.html#method-i-to_h"><code>Riffer::Agent::Serializer.to_h</code></a>(agent: agent) rebuilt = <a href="Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a>(dict, context: {tenant: “acme”})</p>
+<p>data  = <a href="Serializer.html#method-i-to_h"><code>Riffer::Agent::Serializer.to_h</code></a>(agent: agent) rebuilt = <a href="Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a>(data, context: {tenant: “acme”})</p>
 </li></ul>
 
 <span id="module-Riffer::Agent::Serializer-label-What+does+not+transfer" class="legacy-anchor"></span>
@@ -768,7 +768,7 @@
 
         <dd>
 
-          <p>The wire format version. Bumped only on an incompatible change to the dict shape; <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> refuses any other version. See <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> for the dispatch seam that carries back-compat decoders.</p>
+          <p>The wire format version. Bumped only on an incompatible change to the hash shape; <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> refuses any other version. See <a href="Serializer.html#method-i-from_h"><code>from_h</code></a> for the dispatch seam that carries back-compat decoders.</p>
         </dd>
 
 
@@ -800,7 +800,7 @@
             <div class="method-heading">
               <a href="#method-i-from_h" title="Link to this method">
                 <span class="method-name">from_h</span>
-                <span class="method-args">(hash, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
+                <span class="method-args">(hash, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
               </a>
             </div>
 
@@ -813,13 +813,13 @@
             </details>
           </div>
           <div class="method-source-code" id="from_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 94</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 100</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-comment"># Version -&gt; decoder dispatch. Adding a +when 2+ arm (a backwards-compatible</span>
   <span class="ruby-comment"># decoder) is how a future breaking change keeps older dicts readable.</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">hash</span>[<span class="ruby-value">:schema_version</span>]
   <span class="ruby-keyword">when</span> <span class="ruby-constant">SCHEMA_VERSION</span>
-    <span class="ruby-identifier">decode_v1</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
+    <span class="ruby-identifier">decode_v1</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">VersionError</span>, <span class="ruby-node">&quot;Unsupported schema_version: #{hash[:schema_version].inspect} (this Riffer supports #{SCHEMA_VERSION})&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -831,19 +831,29 @@
         <div class="method-description">
 
 
-          <p>Reconstructs a runnable agent from a wire dict.</p>
+          <p>Reconstructs a runnable agent from a wire hash.</p>
 <dl class="rdoc-list label-list"><dt>hash</dt>
 <dd>
-<p>a Symbol-keyed wire dict (parse JSON with +symbolize_names: true+).</p>
+<p>a Symbol-keyed wire hash (parse JSON with +symbolize_names: true+).</p>
 </dd><dt>context</dt>
 <dd>
 <p>the rebuilt agent’s runtime context — the same value you’d pass</p>
 </dd></dl>
 
 <pre>to +Agent.new(context:)+. It is *not* used to re-resolve serialized
-config (the dict is already resolved); it is threaded into tool dispatch
+config (the hash is already resolved); it is threaded into tool dispatch
 and read by tools/runtimes at call time (e.g. a remote runtime keying off
 &lt;tt&gt;context[:tenant]&lt;/tt&gt;). Defaults to an empty context.</pre>
+<dl class="rdoc-list label-list"><dt>session</dt>
+<dd>
+<p>an optional <a href="Session.html"><code>Riffer::Agent::Session</code></a> to seed conversation history,</p>
+</dd></dl>
+
+<pre>forwarded verbatim to +Agent.new(session:)+. The hash carries the agent
+*definition*, not its history (see &quot;What does not transfer&quot;); pass a
+session here to resume a persisted conversation. Used as-is — the caller
+owns its contents, including the system instruction message. When omitted,
+a fresh session seeded with the hash&#39;s instructions is built.</pre>
 <dl class="rdoc-list label-list"><dt>tool_resolver</dt>
 <dd>
 <p>maps a tool descriptor to a <a href="../Tool.html"><code>Riffer::Tool</code></a> class. Defaults</p>
@@ -859,7 +869,7 @@ rebuild real, in-process tools.</pre>
 <pre>remote runtime for shells). When omitted, the agent uses the configured
 default (+Riffer.config.tool_runtime+).</pre>
 
-<p>Raises <a href="Serializer/VersionError.html"><code>Riffer::Agent::Serializer::VersionError</code></a> on an unsupported <code>schema_version</code>, and <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> on a malformed dict.</p>
+<p>Raises <a href="Serializer/VersionError.html"><code>Riffer::Agent::Serializer::VersionError</code></a> on an unsupported <code>schema_version</code>, and <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> on a malformed hash.</p>
 
 
         </div>
@@ -877,7 +887,7 @@ default (+Riffer.config.tool_runtime+).</pre>
             <div class="method-heading">
               <a href="#method-i-from_json" title="Link to this method">
                 <span class="method-name">from_json</span>
-                <span class="method-args">(json, context: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
+                <span class="method-args">(json, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
               </a>
             </div>
 
@@ -890,9 +900,9 @@ default (+Riffer.config.tool_runtime+).</pre>
             </details>
           </div>
           <div class="method-source-code" id="from_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 120</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">from_h</span>(<span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">symbolize_names:</span> <span class="ruby-keyword">true</span>), <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">from_h</span>(<span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">symbolize_names:</span> <span class="ruby-keyword">true</span>), <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -955,9 +965,9 @@ default (+Riffer.config.tool_runtime+).</pre>
         <div class="method-description">
 
 
-          <p>Snapshots a resolved agent into a self-contained wire dict.</p>
+          <p>Snapshots a resolved agent into a self-contained wire hash.</p>
 
-<p>Reads the agent’s resolved instance state — Proc-based settings have already been evaluated against the agent’s own context, so the dict carries plain strings/data, never Procs. Tools are emitted as +{name, description, parameters_schema, timeout}+ descriptors (the resolved <code>agent.tools</code>, including MCP tools and <code>skill_activate</code>).</p>
+<p>Reads the agent’s resolved instance state — Proc-based settings have already been evaluated against the agent’s own context, so the hash carries plain strings/data, never Procs. Tools are emitted as +{name, description, parameters_schema, timeout}+ descriptors (the resolved <code>agent.tools</code>, including MCP tools and <code>skill_activate</code>).</p>
 <dl class="rdoc-list label-list"><dt>agent</dt>
 <dd>
 <p>a resolved <a href="../Agent.html"><code>Riffer::Agent</code></a> instance.</p>
@@ -992,7 +1002,7 @@ default (+Riffer.config.tool_runtime+).</pre>
             </details>
           </div>
           <div class="method-source-code" id="to_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 110</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/serializer.rb, line 116</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json</span>(<span class="ruby-value">agent:</span>)
   <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">to_h</span>(<span class="ruby-value">agent:</span> <span class="ruby-identifier">agent</span>))
 <span class="ruby-keyword">end</span></pre>

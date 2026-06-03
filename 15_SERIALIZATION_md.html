@@ -11,7 +11,7 @@
   <meta name="keywords" content="ruby,documentation,15_SERIALIZATION">
   <meta
     name="description"
-    content="15_SERIALIZATION: Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict"
+    content="15_SERIALIZATION: Serializer` turns a **resolved agent** into a self-contained, provider-neutral data hash (`to_h`) and reconstructs a **runnable agent** from that hash"
   >
 
 
@@ -23,7 +23,7 @@
 
 
 
-    <meta property="og:description" content="Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict">
+    <meta property="og:description" content="Serializer` turns a **resolved agent** into a self-contained, provider-neutral data hash (`to_h`) and reconstructs a **runnable agent** from that hash">
 
 
 
@@ -35,7 +35,7 @@
 
 
 
-    <meta name="twitter:description" content="Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict">
+    <meta name="twitter:description" content="Serializer` turns a **resolved agent** into a self-contained, provider-neutral data hash (`to_h`) and reconstructs a **runnable agent** from that hash">
 
 
 
@@ -656,29 +656,40 @@
 <span id="label-Serialization" class="legacy-anchor"></span>
 <h1 id="serialization"><a href="#serialization">Serialization</a></h1>
 
-<p><a href="Riffer/Agent/Serializer.html"><code>Riffer::Agent::Serializer</code></a> turns a <strong>resolved agent</strong> into a self-contained, provider-neutral data dict (<code>to_h</code>) and reconstructs a <strong>runnable agent</strong> from that dict (<code>from_h</code>). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.</p>
+<p><a href="Riffer/Agent/Serializer.html"><code>Riffer::Agent::Serializer</code></a> turns a <strong>resolved agent</strong> into a self-contained, provider-neutral data hash (<code>to_h</code>) and reconstructs a <strong>runnable agent</strong> from that hash (<code>from_h</code>). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.</p>
 
 <p>You normally reach it through the delegators on <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a>:</p>
 
-<pre class="ruby"><span class="ruby-identifier">dict</span>    = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">to_h</span>          <span class="ruby-comment"># snapshot</span>
-<span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">dict</span>) <span class="ruby-comment"># reconstruct</span>
+<pre class="ruby"><span class="ruby-identifier">data</span>    = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">to_h</span>          <span class="ruby-comment"># snapshot</span>
+<span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">data</span>) <span class="ruby-comment"># reconstruct</span>
 </pre>
 
-<p>The dict is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:</p>
+<p>The hash is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:</p>
 
 <pre class="ruby"><span class="ruby-identifier">json</span>    = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">to_json</span>       <span class="ruby-comment"># or Riffer::Agent::Serializer.to_json(agent:)</span>
 <span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_json</span>(<span class="ruby-identifier">json</span>)
 </pre>
 
-<p>The hash forms (<code>to_h</code> / <code>from_h</code>) are public too, if you want to embed the dict in a larger payload. <code>from_h</code> expects symbol keys, so parse with <code>JSON.parse(str, symbolize_names: true)</code> — or just use <code>from_json</code>, which does that for you.</p>
+<p>The hash forms (<code>to_h</code> / <code>from_h</code>) are public too, if you want to embed the hash in a larger payload. <code>from_h</code> expects symbol keys, so parse with <code>JSON.parse(str, symbolize_names: true)</code> — or just use <code>from_json</code>, which does that for you.</p>
 
 <span id="label-Runtime+context" class="legacy-anchor"></span>
 <h3 id="runtime-context"><a href="#runtime-context">Runtime context</a></h3>
 
 <p><code>from_h</code> / <code>from_json</code> accept an optional <code>context:</code> — the rebuilt agent’s <strong>runtime</strong> context, exactly the value you’d pass to <code>Agent.new(context:)</code>. It is <strong>not</strong> used to re-resolve the serialized definition (that’s already resolved); it’s threaded into tool dispatch and read by tools/runtimes at call time. Pass it when a tool or a remote runtime needs per-call data — e.g. <code>context: { tenant: &quot;acme&quot; }</code> for multi-tenant dispatch, or Maestro passing <code>context: { agent: self }</code> so its runtime can call back. Omit it (defaults to empty) when nothing downstream reads context.</p>
 
-<span id="label-What+the+dict+carries" class="legacy-anchor"></span>
-<h2 id="what-the-dict-carries"><a href="#what-the-dict-carries">What the dict carries</a></h2>
+<span id="label-Seeding+conversation+history" class="legacy-anchor"></span>
+<h3 id="seeding-conversation-history"><a href="#seeding-conversation-history">Seeding conversation history</a></h3>
+
+<p>The hash carries the agent <strong>definition</strong>, not its conversation history (see <a href="#what-does-not-transfer">What does not transfer</a>). To resume a persisted conversation, pass a <code>session:</code> — exactly the value you’d pass to <code>Agent.new(session:)</code>:</p>
+
+<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">data</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">persisted_session</span>)
+<span class="ruby-identifier">rebuilt</span>.<span class="ruby-identifier">generate</span> <span class="ruby-comment"># continues from the seeded history</span>
+</pre>
+
+<p>The session is used <strong>as-is</strong>: the rebuilt agent does not prepend anything to it, so the caller owns its full contents — <strong>including the system instruction message</strong>. Omit <code>session:</code> and the rebuilt agent builds a fresh session, seeded with the hash’s <code>instructions</code> and an empty history. Because a supplied session is authoritative, the hash’s <code>instructions</code> are not re-injected into it — make sure your persisted session already contains the system message.</p>
+
+<span id="label-What+the+hash+carries" class="legacy-anchor"></span>
+<h2 id="what-the-hash-carries"><a href="#what-the-hash-carries">What the hash carries</a></h2>
 
 <pre class="ruby">{
   <span class="ruby-value">schema_version:</span>    <span class="ruby-value">1</span>,                       <span class="ruby-comment"># wire format version</span>
@@ -697,7 +708,7 @@
 <span id="label-Resolved+snapshot" class="legacy-anchor"></span>
 <h3 id="resolved-snapshot"><a href="#resolved-snapshot">Resolved snapshot</a></h3>
 
-<p><code>to_h</code> reads the agent’s <strong>resolved</strong> state, not its raw configuration. By the time you call it, <code>Agent.new</code> has already evaluated any <code>Proc</code>-based <code>model</code>, <code>instructions</code>, or <code>uses_tools</code> against the agent’s own context — so the dict carries plain strings and data, never Procs. The receiver’s <code>context:</code> drives runtime behavior (tool dispatch); it does <strong>not</strong> re-evaluate baked-in fields.</p>
+<p><code>to_h</code> reads the agent’s <strong>resolved</strong> state, not its raw configuration. By the time you call it, <code>Agent.new</code> has already evaluated any <code>Proc</code>-based <code>model</code>, <code>instructions</code>, or <code>uses_tools</code> against the agent’s own context — so the hash carries plain strings and data, never Procs. The receiver’s <code>context:</code> drives runtime behavior (tool dispatch); it does <strong>not</strong> re-evaluate baked-in fields.</p>
 
 <span id="label-Structured+output" class="legacy-anchor"></span>
 <h3 id="structured-output"><a href="#structured-output">Structured output</a></h3>
@@ -714,7 +725,7 @@
 
 <p>When the rebuilt agent runs in the <strong>same</strong> codebase that defined the tools (e.g. persisting an agent definition and rehydrating it later), resolve each descriptor back to its real class:</p>
 
-<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">dict</span>,
+<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">data</span>,
   <span class="ruby-value">tool_resolver:</span> <span class="ruby-operator">-&gt;</span>(<span class="ruby-identifier">descriptor</span>) { <span class="ruby-constant">MyToolRegistry</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">descriptor</span>[<span class="ruby-value">:name</span>]) })
 </pre>
 
@@ -725,7 +736,7 @@
 
 <p>When the receiver holds <strong>only the <a href="Riffer.html"><code>Riffer</code></a> gem</strong>, the default <code>tool_resolver</code> synthesizes body-less <strong>tool shells</strong>. A shell advertises the tool’s schema to the LLM but has no call — invoking it in-process raises. Pair the default resolver with a remote <a href="Riffer/Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> that forwards each call back to the origin:</p>
 
-<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">dict</span>,
+<pre class="ruby"><span class="ruby-identifier">rebuilt</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">data</span>,
   <span class="ruby-value">tool_runtime:</span> <span class="ruby-constant">MyRemoteToolRuntime</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">client:</span> <span class="ruby-identifier">rpc_client</span>))
 </pre>
 
@@ -736,14 +747,14 @@
 <span id="label-max_steps" class="legacy-anchor"></span>
 <h2 id="maxsteps"><a href="#maxsteps"><code>max_steps</code></a></h2>
 
-<p>Unlimited steps are <code>nil</code> at the agent level — set it with <code>max_steps nil</code>. On the wire, the serializer encodes that as <strong><code>-1</code></strong> (and decodes <code>-1</code> back to <code>nil</code>), so the dict stays portable across transports where JSON <code>null</code> is awkward — proto3, for one, can’t distinguish <code>null</code> from an absent field. The <code>-1</code> is purely a wire detail: the DSL and your code only ever see <code>nil</code>, and the encode/decode handles the translation at the boundary.</p>
+<p>Unlimited steps are <code>nil</code> at the agent level — set it with <code>max_steps nil</code>. On the wire, the serializer encodes that as <strong><code>-1</code></strong> (and decodes <code>-1</code> back to <code>nil</code>), so the hash stays portable across transports where JSON <code>null</code> is awkward — proto3, for one, can’t distinguish <code>null</code> from an absent field. The <code>-1</code> is purely a wire detail: the DSL and your code only ever see <code>nil</code>, and the encode/decode handles the translation at the boundary.</p>
 <ul><li>
 <p><strong>DSL</strong> — integer = bounded, <code>nil</code> = unlimited, omitted = <code>Config</code>‘s default (16).</p>
 </li><li>
 <p><strong>Wire</strong> — integer = bounded, <code>-1</code> = unlimited, omitted = default (16).</p>
 </li></ul>
 
-<p>A finite integer round-trips as-is; a dict missing the key falls back to the default rather than running unbounded.</p>
+<p>A finite integer round-trips as-is; a hash missing the key falls back to the default rather than running unbounded.</p>
 
 <span id="label-Versioning" class="legacy-anchor"></span>
 <h2 id="versioning"><a href="#versioning">Versioning</a></h2>
@@ -753,7 +764,7 @@
 <span id="label-Secrets" class="legacy-anchor"></span>
 <h2 id="secrets"><a href="#secrets">Secrets</a></h2>
 
-<p><code>provider_options</code> and <code>model_options</code> <strong>ride on the wire as plain data</strong> — they are part of the dict and <em>will</em> transfer. Prefer configuring API keys via environment/global provider configuration rather than <code>provider_options</code>. <strong>Never serialize an agent whose options carry sensitive values</strong> — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).</p>
+<p><code>provider_options</code> and <code>model_options</code> <strong>ride on the wire as plain data</strong> — they are part of the hash and <em>will</em> transfer. Prefer configuring API keys via environment/global provider configuration rather than <code>provider_options</code>. <strong>Never serialize an agent whose options carry sensitive values</strong> — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).</p>
 
 <span id="label-What+does+not+transfer" class="legacy-anchor"></span>
 <h2 id="what-does-not-transfer"><a href="#what-does-not-transfer">What does <strong>not</strong> transfer</a></h2>

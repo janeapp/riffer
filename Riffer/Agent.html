@@ -1218,7 +1218,7 @@
             <div class="method-heading">
               <a href="#method-c-from_h" title="Link to this method">
                 <span class="method-name">from_h</span>
-                <span class="method-args">(hash, context: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
+                <span class="method-args">(hash, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
               </a>
             </div>
 
@@ -1232,8 +1232,8 @@
           </div>
           <div class="method-source-code" id="from_h-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 223</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1242,9 +1242,9 @@
         <div class="method-description">
 
 
-          <p>Reconstructs a runnable agent from a wire dict produced by <a href="Agent.html#method-i-to_h"><code>to_h</code></a>.</p>
+          <p>Reconstructs a runnable agent from a wire hash produced by <a href="Agent.html#method-i-to_h"><code>to_h</code></a>.</p>
 
-<p>Delegates to <a href="Agent/Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a>. See it for the <code>tool_resolver</code> / <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> injection points and what does not transfer.</p>
+<p>Delegates to <a href="Agent/Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a>. See it for the <code>session</code> seed, the <code>tool_resolver</code> / <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> injection points, and what does not transfer.</p>
 
 
         </div>
@@ -1262,7 +1262,7 @@
             <div class="method-heading">
               <a href="#method-c-from_json" title="Link to this method">
                 <span class="method-name">from_json</span>
-                <span class="method-args">(json, context: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
+                <span class="method-args">(json, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)</span>
               </a>
             </div>
 
@@ -1276,8 +1276,8 @@
           </div>
           <div class="method-source-code" id="from_json-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 235</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1288,7 +1288,7 @@
 
           <p>Reconstructs a runnable agent from a JSON string produced by <a href="Agent.html#method-i-to_json"><code>to_json</code></a>.</p>
 
-<p>Delegates to <a href="Agent/Serializer.html#method-i-from_json"><code>Riffer::Agent::Serializer.from_json</code></a>, which parses the JSON (with symbol keys) for you. See <a href="Agent/Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a> for the <code>tool_resolver</code> / <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> injection points.</p>
+<p>Delegates to <a href="Agent/Serializer.html#method-i-from_json"><code>Riffer::Agent::Serializer.from_json</code></a>, which parses the JSON (with symbol keys) for you. See <a href="Agent/Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a> for the <code>session</code> seed and the <code>tool_resolver</code> / <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> injection points.</p>
 
 
         </div>
@@ -2288,7 +2288,7 @@ the given tag(s).
         <div class="method-description">
 
 
-          <p>Snapshots this resolved agent into a self-contained, provider-neutral wire dict. Delegates to <a href="Agent/Serializer.html#method-i-to_h"><code>Riffer::Agent::Serializer.to_h</code></a>.</p>
+          <p>Snapshots this resolved agent into a self-contained, provider-neutral wire hash. Delegates to <a href="Agent/Serializer.html#method-i-to_h"><code>Riffer::Agent::Serializer.to_h</code></a>.</p>
 
 
         </div>
