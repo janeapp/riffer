@@ -4,12 +4,7 @@ Type annotations are added directly in Ruby source files using [rbs-inline](http
 
 ## Magic Comment
 
-Every `lib/**/*.rb` file must include the `rbs_inline: enabled` comment on line 2:
-
-```ruby
-# frozen_string_literal: true
-# rbs_inline: enabled
-```
+rbs-inline only processes a file when `rbs_inline: enabled` is present on line 2. It ships as part of the required header on every `lib/**/*.rb` file — see [Required Header](code-style.md#required-header).
 
 ## Annotation Syntax
 
