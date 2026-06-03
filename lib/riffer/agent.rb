@@ -212,7 +212,7 @@ class Riffer::Agent
     new(context: context).stream(prompt, files: files)
   end
 
-  # Reconstructs a runnable agent from a wire dict produced by +#to_h+.
+  # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
   #
   # Delegates to Riffer::Agent::Serializer.from_h. See it for the +session+
   # seed, the +tool_resolver+ / +tool_runtime+ injection points, and what does
@@ -412,7 +412,7 @@ class Riffer::Agent
   end
 
   # Snapshots this resolved agent into a self-contained, provider-neutral
-  # wire dict. Delegates to Riffer::Agent::Serializer.to_h.
+  # wire hash. Delegates to Riffer::Agent::Serializer.to_h.
   #
   #--
   #: () -> Hash[Symbol, untyped]

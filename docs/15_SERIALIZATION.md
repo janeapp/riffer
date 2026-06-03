@@ -1,22 +1,22 @@
 # Serialization
 
-`Riffer::Agent::Serializer` turns a **resolved agent** into a self-contained, provider-neutral data dict (`to_h`) and reconstructs a **runnable agent** from that dict (`from_h`). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.
+`Riffer::Agent::Serializer` turns a **resolved agent** into a self-contained, provider-neutral data hash (`to_h`) and reconstructs a **runnable agent** from that hash (`from_h`). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.
 
 You normally reach it through the delegators on `Riffer::Agent`:
 
 ```ruby
-dict    = agent.to_h          # snapshot
-rebuilt = Riffer::Agent.from_h(dict) # reconstruct
+data    = agent.to_h          # snapshot
+rebuilt = Riffer::Agent.from_h(data) # reconstruct
 ```
 
-The dict is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:
+The hash is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:
 
 ```ruby
 json    = agent.to_json       # or Riffer::Agent::Serializer.to_json(agent:)
 rebuilt = Riffer::Agent.from_json(json)
 ```
 
-The hash forms (`to_h` / `from_h`) are public too, if you want to embed the dict in a larger payload. `from_h` expects symbol keys, so parse with `JSON.parse(str, symbolize_names: true)` — or just use `from_json`, which does that for you.
+The hash forms (`to_h` / `from_h`) are public too, if you want to embed the hash in a larger payload. `from_h` expects symbol keys, so parse with `JSON.parse(str, symbolize_names: true)` — or just use `from_json`, which does that for you.
 
 ### Runtime context
 
@@ -24,16 +24,16 @@ The hash forms (`to_h` / `from_h`) are public too, if you want to embed the dict
 
 ### Seeding conversation history
 
-The dict carries the agent **definition**, not its conversation history (see [What does not transfer](#what-does-not-transfer)). To resume a persisted conversation, pass a `session:` — exactly the value you'd pass to `Agent.new(session:)`:
+The hash carries the agent **definition**, not its conversation history (see [What does not transfer](#what-does-not-transfer)). To resume a persisted conversation, pass a `session:` — exactly the value you'd pass to `Agent.new(session:)`:
 
 ```ruby
-rebuilt = Riffer::Agent.from_h(dict, session: persisted_session)
+rebuilt = Riffer::Agent.from_h(data, session: persisted_session)
 rebuilt.generate # continues from the seeded history
 ```
 
-The session is used **as-is**: the rebuilt agent does not prepend anything to it, so the caller owns its full contents — **including the system instruction message**. When you omit `session:`, behavior is unchanged: a fresh session is built and seeded with the dict's `instructions` (and an empty history). Because a supplied session is authoritative, the dict's `instructions` are not re-injected into it — make sure your persisted session already contains the system message.
+The session is used **as-is**: the rebuilt agent does not prepend anything to it, so the caller owns its full contents — **including the system instruction message**. Omit `session:` and the rebuilt agent builds a fresh session, seeded with the hash's `instructions` and an empty history. Because a supplied session is authoritative, the hash's `instructions` are not re-injected into it — make sure your persisted session already contains the system message.
 
-## What the dict carries
+## What the hash carries
 
 ```ruby
 {
@@ -52,7 +52,7 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
 
 ### Resolved snapshot
 
-`to_h` reads the agent's **resolved** state, not its raw configuration. By the time you call it, `Agent.new` has already evaluated any `Proc`-based `model`, `instructions`, or `uses_tools` against the agent's own context — so the dict carries plain strings and data, never Procs. The receiver's `context:` drives runtime behavior (tool dispatch); it does **not** re-evaluate baked-in fields.
+`to_h` reads the agent's **resolved** state, not its raw configuration. By the time you call it, `Agent.new` has already evaluated any `Proc`-based `model`, `instructions`, or `uses_tools` against the agent's own context — so the hash carries plain strings and data, never Procs. The receiver's `context:` drives runtime behavior (tool dispatch); it does **not** re-evaluate baked-in fields.
 
 ### Structured output
 
@@ -67,7 +67,7 @@ Tools cross as `{name, description, parameters_schema, timeout}` descriptors —
 When the rebuilt agent runs in the **same** codebase that defined the tools (e.g. persisting an agent definition and rehydrating it later), resolve each descriptor back to its real class:
 
 ```ruby
-rebuilt = Riffer::Agent.from_h(dict,
+rebuilt = Riffer::Agent.from_h(data,
   tool_resolver: ->(descriptor) { MyToolRegistry.fetch(descriptor[:name]) })
 ```
 
@@ -78,7 +78,7 @@ The real classes carry their `#call` bodies, so the agent runs on the default `I
 When the receiver holds **only the Riffer gem**, the default `tool_resolver` synthesizes body-less **tool shells**. A shell advertises the tool's schema to the LLM but has no `#call` — invoking it in-process raises. Pair the default resolver with a remote `Riffer::Tools::Runtime` that forwards each call back to the origin:
 
 ```ruby
-rebuilt = Riffer::Agent.from_h(dict,
+rebuilt = Riffer::Agent.from_h(data,
   tool_runtime: MyRemoteToolRuntime.new(client: rpc_client))
 ```
 
@@ -88,12 +88,12 @@ You own what a resolved tool does: a resolver may return real in-process classes
 
 ## `max_steps`
 
-Unlimited steps are `nil` at the agent level — set it with `max_steps nil`. On the wire, the serializer encodes that as **`-1`** (and decodes `-1` back to `nil`), so the dict stays portable across transports where JSON `null` is awkward — proto3, for one, can't distinguish `null` from an absent field. The `-1` is purely a wire detail: the DSL and your code only ever see `nil`, and the encode/decode handles the translation at the boundary.
+Unlimited steps are `nil` at the agent level — set it with `max_steps nil`. On the wire, the serializer encodes that as **`-1`** (and decodes `-1` back to `nil`), so the hash stays portable across transports where JSON `null` is awkward — proto3, for one, can't distinguish `null` from an absent field. The `-1` is purely a wire detail: the DSL and your code only ever see `nil`, and the encode/decode handles the translation at the boundary.
 
 - **DSL** — integer = bounded, `nil` = unlimited, omitted = `Config`'s default (16).
 - **Wire** — integer = bounded, `-1` = unlimited, omitted = default (16).
 
-A finite integer round-trips as-is; a dict missing the key falls back to the default rather than running unbounded.
+A finite integer round-trips as-is; a hash missing the key falls back to the default rather than running unbounded.
 
 ## Versioning
 
@@ -101,7 +101,7 @@ A finite integer round-trips as-is; a dict missing the key falls back to the def
 
 ## Secrets
 
-`provider_options` and `model_options` **ride on the wire as plain data** — they are part of the dict and _will_ transfer. Prefer configuring API keys via environment/global provider configuration rather than `provider_options`. **Never serialize an agent whose options carry sensitive values** — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).
+`provider_options` and `model_options` **ride on the wire as plain data** — they are part of the hash and _will_ transfer. Prefer configuring API keys via environment/global provider configuration rather than `provider_options`. **Never serialize an agent whose options carry sensitive values** — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).
 
 ## What does **not** transfer
 
