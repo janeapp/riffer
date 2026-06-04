@@ -36,7 +36,6 @@ describe Riffer do
         config.openai.api_key = "new-test-key"
       end
       expect(Riffer.config.openai.api_key).must_equal "new-test-key"
-      # Restore original
       Riffer.config.openai.api_key = original_api_key
     end
   end

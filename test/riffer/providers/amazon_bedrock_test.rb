@@ -425,10 +425,8 @@ describe Riffer::Providers::AmazonBedrock do
 
     it "concatenates multiple text blocks in order" do
       provider # force SDK load before constructing Aws types below
-      # Regression: previously assigned (=) instead of appending (+=), so with
-      # multiple text blocks only the last survived. Bedrock splits output
-      # across several text blocks when reasoning or tool_use blocks are
-      # interleaved, so all text blocks must be preserved.
+      # Bedrock splits output across several text blocks when reasoning or
+      # tool_use blocks are interleaved, so all text blocks must be preserved.
       response = build_response([
         Aws::BedrockRuntime::Types::ContentBlock.new(text: "Hello "),
         Aws::BedrockRuntime::Types::ContentBlock.new(text: "world")
