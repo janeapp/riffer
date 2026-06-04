@@ -3,23 +3,26 @@
 
 require "uri"
 
-# Riffer::Mcp::Manifest holds the configuration for a single MCP server.
-#
-# +name+                - String identifier used as the registration key and generated-agent identifier.
-# +tags+                - Array[Symbol]; normalized to symbols at construction time.
-# +endpoint+            - String HTTPS URL passed to the MCP transport.
-# +discovery_headers+   - Hash or Proc; resolved once when building the discovery client for +tools/list+.
-# +credentials_scope+  - Optional symbol hint: +:global+, +:tenant+, +:user+ — documents whether
-#   invocation credentials are expected to depend on tenant and/or user keys in +context+ (no ids stored).
-#   Apps may treat +:user+ as "user in tenant" and pass both keys in +context+.
-#
+# Holds the configuration for a single MCP server.
 class Riffer::Mcp::Manifest
+  # Identifier used as the registration key and generated-agent identifier.
   attr_reader :name #: String
+
+  # Tags for matching +use_mcp+.
   attr_reader :tags #: Array[Symbol]
+
+  # HTTPS URL passed to the MCP transport.
   attr_reader :endpoint #: String
+
+  # Headers (or a Proc) resolved once when building the discovery client.
   attr_reader :discovery_headers #: (Hash[String, untyped] | ::Proc)?
+
+  # Optional hint (+:global+/+:tenant+/+:user+) for whether invocation
+  # credentials depend on tenant/user keys in +context+.
   attr_reader :credentials_scope #: Symbol?
 
+  # Raises Riffer::ArgumentError unless +name+ is present and +endpoint+ is a
+  # valid HTTPS URL.
   #--
   #: (name: String, endpoint: String, ?tags: Array[untyped]?, ?discovery_headers: (Hash[String, untyped] | ::Proc)?, ?credentials_scope: (String | Symbol)?) -> void
   def initialize(name:, endpoint:, tags: nil, discovery_headers: nil, credentials_scope: nil)

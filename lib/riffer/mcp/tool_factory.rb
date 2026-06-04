@@ -2,26 +2,18 @@
 # rbs_inline: enabled
 
 # Generates anonymous Riffer::Tool subclasses from MCP tool definitions.
-#
-# Each generated class:
-# - Has +.name+, +.description+, and +.parameters_schema+ derived from the MCP tool definition.
-# - Delegates +#call+ to the MCP client's +tools_call+ method.
-# - Skips Riffer's param validation — the MCP server validates inputs.
-#
+# Generated tools delegate +#call+ to the MCP client and skip Riffer's param
+# validation — the MCP server validates inputs.
 module Riffer::Mcp::ToolFactory
-  # Builds one Riffer::Tool subclass per tool definition.
-  #
-  # Tool names are prefixed with the manifest name to avoid collisions
-  # across MCP servers (e.g. +"jira__search"+). The original server-side
-  # name is available via +.mcp_server_tool_name+.
-  #
+  # Builds one Riffer::Tool subclass per tool definition, prefixing names with
+  # the manifest name to avoid cross-server collisions (e.g. +jira__search+);
+  # the server-side name stays on +.mcp_server_tool_name+.
   #--
   #: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
   def self.build(manifest_name, client, tool_defs)
     tool_defs.map { |td| build_tool_class(manifest_name, client, td) }
   end
 
-  # Replaces characters that are unsafe in LLM tool names.
   #: (String) -> String
   def self.sanitize_name_component(str)
     str.gsub(/[^a-zA-Z0-9_-]/, "_")
