@@ -1,14 +1,7 @@
 # Generated from lib/riffer/messages/file_part.rb with RBS::Inline
 
-# Represents a file attachment (image or document) in a conversation.
-#
-# Supports two input sources:
-# - URLs (stored and passed to providers that support them via +from_url+)
-# - Raw base64 data (via +new+)
-#
-#   file = Riffer::Messages::FilePart.from_url("https://example.com/doc.pdf", media_type: "application/pdf")
-#   file.url?        # => true
-#   file.document?   # => true
+# Represents a file attachment (image or document) — from a URL (+from_url+) or
+# raw base64 data (+new+).
 class Riffer::Messages::FilePart
   @url_string: String?
 
@@ -22,24 +15,14 @@ class Riffer::Messages::FilePart
   # The filename, if available.
   attr_reader filename: String?
 
-  # Creates a FilePart from raw base64 data or a URL.
-  #
-  # At least one of +data+ or +url+ must be provided.
-  #
-  # Raises Riffer::ArgumentError if neither data nor url is provided,
-  # or if media_type is not supported.
-  #
+  # Raises Riffer::ArgumentError unless +data+ or +url+ is given and
+  # +media_type+ is supported.
   # --
   # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
   def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
 
-  # Creates a FilePart from a URL.
-  #
-  # The URL is stored and passed directly to providers that support URL sources.
-  # If +media_type+ is not provided, it is detected from the URL path extension.
-  #
-  # Raises Riffer::ArgumentError if media_type cannot be detected.
-  #
+  # Creates a FilePart from a URL, detecting +media_type+ from the path
+  # extension when omitted. Raises Riffer::ArgumentError if it can't be detected.
   # --
   # : (String, ?media_type: String?) -> Riffer::Messages::FilePart
   def self.from_url: (String, ?media_type: String?) -> Riffer::Messages::FilePart

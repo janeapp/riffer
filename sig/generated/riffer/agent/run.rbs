@@ -1,18 +1,7 @@
 # Generated from lib/riffer/agent/run.rb with RBS::Inline
 
-# Riffer::Agent::Run is the generation loop. A pure module of functions over an
-# +agent+ — Agent owns every per-call value (provider, model, tools, tool
-# runtime, structured output, session, context); Run just orchestrates.
-#
-# Tools and user code see the agent's +context+ (a +Riffer::Agent::Context+)
-# unchanged through the loop, so downstream tool runtimes can read
-# caller-provided keys via <tt>context[:agent]</tt> /
-# <tt>context.dig(:key)</tt>, or the framework built-ins via
-# +context.skills+. Cumulative token usage is updated into
-# +agent.context.token_usage+ as the loop progresses.
-#
-#   Riffer::Agent::Run.generate(agent: my_agent, prompt: "Hello")
-#   Riffer::Agent::Run.stream(agent: my_agent, prompt: "Hello")
+# The generation loop — a pure module of functions over an +agent+, which owns
+# every per-call value; Run just orchestrates.
 module Riffer::Agent::Run
   include Riffer::Messages::Converter
 
@@ -32,43 +21,22 @@ module Riffer::Agent::Run
 
   private
 
-  # The generation loop. When +stream_yielder+ is provided, per-step events are
-  # pushed to it (and +stream+ discards the return value). When +stream_yielder+
-  # is +nil+, no events are emitted and +generate+ returns the Response
-  # directly. The two modes share every step of the loop — the only
-  # divergences are the LLM call shape (atomic vs. accumulated stream)
-  # and whether per-step events are emitted.
-  #
   # --
   # : (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
 
-  # Consumes one provider stream, forwarding every event to +stream_yielder+
-  # and folding it into an +Assistant+ message.
-  #
   # --
   # : (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
   def accumulate_streamed_response: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
 
-  # Appends +new_modifications+ to +all_modifications+ and emits a
-  # +GuardrailModification+ event for each one when streaming.
-  #
   # --
   # : (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
   def record_modifications!: (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
 
-  # Emits a +GuardrailTripwire+ event when streaming and returns the
-  # short-circuit +Response+ for a tripped guardrail.
-  #
   # --
   # : (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def tripwire_response: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
 
-  # Builds the final +Response+ from the session's last assistant
-  # message, validating structured output when configured. +extra+
-  # carries the interrupt-only fields (+interrupted:+, +interrupt_reason:+,
-  # +healed_tool_call_ids:+) on the interrupt exit path.
-  #
   # --
   # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
   def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
@@ -85,31 +53,14 @@ module Riffer::Agent::Run
   # : (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
   def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
 
-  # Executes tool calls left unfinished by a prior interrupt.
-  #
-  # Detects gaps between the last assistant message's requested tool calls
-  # and the tool result messages that follow it, executing any that are
-  # missing. Safe to call unconditionally.
-  #
   # --
   # : (Riffer::Agent) -> void
   def execute_pending_tool_calls: (Riffer::Agent) -> void
 
-  # Runs the +:before+ guardrail phase. Records any modifications into
-  # +all_modifications+ (and emits them when streaming). When a tripwire
-  # fires, yields the short-circuit +Response+ — the caller's block is
-  # expected to +return+ it from +run_loop+.
-  #
   # --
   # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
   def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
 
-  # Runs the +:after+ guardrail phase against the assistant +response+.
-  # Records any modifications into +all_modifications+ (and emits them
-  # when streaming). When a tripwire fires, yields the short-circuit
-  # +Response+ — the caller's block is expected to +return+ it from
-  # +run_loop+. Otherwise returns the post-guardrails assistant message.
-  #
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
   def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
@@ -126,18 +77,12 @@ module Riffer::Agent::Run
   # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
   def build_response: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
 
-  # Appends a +User+ message to the session. No-ops when +prompt+ is nil
-  # and +files+ is empty (the caller had nothing to add). Raises when
-  # +files+ are supplied without a +prompt+ — the provider needs text to
-  # anchor the attachments.
-  #
+  # Raises when +files+ are supplied without a +prompt+ — the provider needs
+  # text to anchor the attachments.
   # --
   # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
   def append_user_message: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
 
-  # Accumulates token usage into +agent.context.token_usage+. Updates the
-  # context so cumulative usage persists across every run on the agent.
-  #
   # --
   # : (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
   def track_token_usage: (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void

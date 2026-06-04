@@ -16,8 +16,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   DEFAULT_READ_TIMEOUT: Integer
 
-  # Initializes the Gemini provider.
-  #
   # --
   # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
   def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void

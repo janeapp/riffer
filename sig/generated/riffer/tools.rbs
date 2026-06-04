@@ -1,8 +1,4 @@
 # Generated from lib/riffer/tools.rb with RBS::Inline
 
-# Namespace for tool-related classes in the Riffer framework.
-#
-# Contains:
-# - Riffer::Tools::Response - Required return type for tool execution
 module Riffer::Tools
 end

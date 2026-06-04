@@ -2,7 +2,6 @@
 
 # Registry for finding provider classes by identifier.
 class Riffer::Providers::Repository
-  # Mapping of provider identifiers to provider class lambdas.
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Finds a provider class by identifier.

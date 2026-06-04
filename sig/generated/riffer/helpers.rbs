@@ -1,9 +1,4 @@
 # Generated from lib/riffer/helpers.rb with RBS::Inline
 
-# Namespace for shared helper modules in the Riffer framework.
-#
-# Helpers provide reusable functionality across the library:
-# - Riffer::Helpers::ClassNameConverter - Class name to path conversion
-# - Riffer::Helpers::Dependencies - Lazy gem dependency loading
 module Riffer::Helpers
 end

@@ -1,13 +1,7 @@
 # Generated from lib/riffer/messages/assistant.rb with RBS::Inline
 
-# Represents an assistant (LLM) message in a conversation.
-#
-# May include tool calls when the LLM requests tool execution.
-#
-#   msg = Riffer::Messages::Assistant.new("Hello!")
-#   msg.role        # => :assistant
-#   msg.content     # => "Hello!"
-#   msg.tool_calls  # => []
+# Represents an assistant (LLM) message in a conversation; may include tool
+# calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
   class ToolCall < Struct[untyped]
     attr_accessor call_id(): untyped
