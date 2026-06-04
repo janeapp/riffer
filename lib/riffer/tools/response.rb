@@ -3,10 +3,7 @@
 
 require "json"
 
-# Riffer::Tools::Response represents the result of a tool execution.
-#
-# All tools must return a Response object from their +call+ method.
-# Use +Response.success+ for successful results and +Response.error+ for failures.
+# Represents the result of a tool execution; every tool's +call+ must return one.
 #
 #   class MyTool < Riffer::Tool
 #     def call(context:, **kwargs)
@@ -22,8 +19,13 @@ class Riffer::Tools::Response
 
   VALID_FORMATS = %i[text json].freeze #: Array[Symbol]
 
+  # The response content.
   attr_reader :content #: String
+
+  # The error message, or +nil+ on success.
   attr_reader :error_message #: String?
+
+  # The error type, or +nil+ on success.
   attr_reader :error_type #: Symbol?
 
   # Creates a success response.
@@ -65,10 +67,12 @@ class Riffer::Tools::Response
     new(content: message, success: false, error_message: message, error_type: type)
   end
 
+  # Returns true if the tool execution succeeded.
   #--
   #: () -> bool
   def success? = @success
 
+  # Returns true if the tool execution failed.
   #--
   #: () -> bool
   def error? = !@success

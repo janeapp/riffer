@@ -1,16 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Tools::Toolable provides the shared class-level DSL for anything that can
-# present as a tool to an LLM — tools today, and subagents/workflows in the
-# future.
-#
-# Extend this module to make a class discoverable as a tool by LLM providers.
-# Provides identifier, description, params, timeout, and JSON schema
-# generation.
-#
-# Instance-level execution concerns (+call+, +call_with_validation+, etc.)
-# are NOT part of Toolable — those belong on Riffer::Tool.
+# Shared class-level DSL for anything that presents as a tool to an LLM. Extend
+# it to make a class discoverable as a tool; instance-level execution (+call+,
+# +call_with_validation+) lives on Riffer::Tool instead.
 #
 #   class MyTool
 #     extend Riffer::Tools::Toolable
@@ -105,10 +98,7 @@ module Riffer::Tools::Toolable
     @params_builder&.to_json_schema(strict: strict) || empty_schema
   end
 
-  # Returns the kind of toolable entity.
-  #
-  # Defaults to +:tool+. Extensible to +:agent+, +:workflow+, etc.
-  #
+  # Returns the kind of toolable entity; defaults to +:tool+.
   #--
   #: (?Symbol?) -> Symbol
   def kind(value = nil)
