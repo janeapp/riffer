@@ -12,22 +12,24 @@
 #   )
 #
 #   result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
-class Riffer::Evals::EvaluatorRunner
+module Riffer::Evals::EvaluatorRunner
   # Runs evaluators against an agent for the given scenarios. Raises
   # Riffer::ArgumentError on an invalid agent or evaluator.
   # --
   # : (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-  def self.run: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+  def run: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
+
+  private
 
   # --
   # : (singleton(Riffer::Agent)) -> void
-  def self.validate_agent!: (singleton(Riffer::Agent)) -> void
+  def validate_agent!: (singleton(Riffer::Agent)) -> void
 
   # --
   # : (Array[singleton(Riffer::Evals::Evaluator)]) -> void
-  def self.validate_evaluators!: (Array[singleton(Riffer::Evals::Evaluator)]) -> void
+  def validate_evaluators!: (Array[singleton(Riffer::Evals::Evaluator)]) -> void
 
   # --
   # : (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
-  def self.run_scenario: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
+  def run_scenario: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
 end

@@ -5,6 +5,8 @@
 # invariant on a message array. Each entry point no-ops when
 # +Riffer.config.experimental_history_healing+ is off.
 module Riffer::Agent::Session::Repair
+  extend self
+
   # Placeholder response filled in for an orphaned +tool_use+ on interrupt.
   ORPHAN_PLACEHOLDER = ->(_tool_call) {
     Riffer::Tools::Response.error("Tool call interrupted before completion.", type: :interrupted)
@@ -14,7 +16,7 @@ module Riffer::Agent::Session::Repair
   # result inserted after its parent. Returns +[new_messages, filled_call_ids]+.
   #--
   #: (Array[Riffer::Messages::Base]) -> [Array[Riffer::Messages::Base], Array[String]]
-  def self.fill_orphans(messages)
+  def fill_orphans(messages)
     return [messages, []] unless Riffer.config.experimental_history_healing
 
     result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
@@ -49,7 +51,7 @@ module Riffer::Agent::Session::Repair
   # +execute_pending_tool_calls+. Returns a new array.
   #--
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
-  def self.prune_orphans(messages)
+  def prune_orphans(messages)
     return messages unless Riffer.config.experimental_history_healing
 
     resume_boundary = (messages.length - 1).downto(0).find { |idx|

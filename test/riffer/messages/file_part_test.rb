@@ -56,6 +56,40 @@ describe Riffer::Messages::FilePart do
     end
   end
 
+  describe ".from_hash" do
+    it "passes through FilePart objects" do
+      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      result = Riffer::Messages::FilePart.from_hash(file)
+      expect(result).must_equal file
+    end
+
+    it "converts url hash" do
+      result = Riffer::Messages::FilePart.from_hash({url: "https://example.com/photo.jpg", media_type: "image/jpeg"})
+      expect(result).must_be_instance_of Riffer::Messages::FilePart
+      expect(result.url).must_equal "https://example.com/photo.jpg"
+    end
+
+    it "converts data hash" do
+      result = Riffer::Messages::FilePart.from_hash({data: "aGVsbG8=", media_type: "image/png"})
+      expect(result).must_be_instance_of Riffer::Messages::FilePart
+      expect(result.data).must_equal "aGVsbG8="
+    end
+
+    it "raises for invalid hash" do
+      error = expect {
+        Riffer::Messages::FilePart.from_hash({media_type: "image/png"})
+      }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/must include :url or :data/)
+    end
+
+    it "raises for non-hash non-FilePart" do
+      error = expect {
+        Riffer::Messages::FilePart.from_hash("invalid")
+      }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_match(/must be a Hash or FilePart/)
+    end
+  end
+
   describe "#url?" do
     it "returns true when created from url" do
       file = Riffer::Messages::FilePart.new(url: "https://example.com/image.png", media_type: "image/png")

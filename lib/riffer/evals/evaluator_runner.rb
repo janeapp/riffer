@@ -14,12 +14,14 @@
 #
 #   result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
 #
-class Riffer::Evals::EvaluatorRunner
+module Riffer::Evals::EvaluatorRunner
+  extend self
+
   # Runs evaluators against an agent for the given scenarios. Raises
   # Riffer::ArgumentError on an invalid agent or evaluator.
   #--
   #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
-  def self.run(agent:, scenarios:, evaluators:, context: nil)
+  def run(agent:, scenarios:, evaluators:, context: nil)
     validate_agent!(agent)
     validate_evaluators!(evaluators)
 
@@ -30,9 +32,11 @@ class Riffer::Evals::EvaluatorRunner
     Riffer::Evals::RunResult.new(scenario_results: scenario_results)
   end
 
+  private
+
   #--
   #: (singleton(Riffer::Agent)) -> void
-  private_class_method def self.validate_agent!(agent)
+  def validate_agent!(agent)
     return if agent.is_a?(Class) && agent < Riffer::Agent
 
     raise Riffer::ArgumentError, "agent must be a subclass of Riffer::Agent, got #{agent.inspect}"
@@ -40,7 +44,7 @@ class Riffer::Evals::EvaluatorRunner
 
   #--
   #: (Array[singleton(Riffer::Evals::Evaluator)]) -> void
-  private_class_method def self.validate_evaluators!(evaluators)
+  def validate_evaluators!(evaluators)
     evaluators.each do |evaluator_class|
       next if evaluator_class.is_a?(Class) && evaluator_class < Riffer::Evals::Evaluator
 
@@ -50,7 +54,7 @@ class Riffer::Evals::EvaluatorRunner
 
   #--
   #: (agent: singleton(Riffer::Agent), scenario: Hash[Symbol, untyped], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::ScenarioResult
-  private_class_method def self.run_scenario(agent:, scenario:, evaluators:, context: nil)
+  def run_scenario(agent:, scenario:, evaluators:, context: nil)
     input = scenario[:input]
     ground_truth = scenario[:ground_truth]
     resolved_context = scenario[:context] || context

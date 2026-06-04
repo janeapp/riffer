@@ -13,10 +13,6 @@
 class Riffer::Agent
   self.@config: Riffer::Agent::Config?
 
-  include Riffer::Messages::Converter
-
-  extend Riffer::Helpers::ClassNameConverter
-
   INTERRUPT_MAX_STEPS: Symbol
 
   # Returns the per-class Riffer::Agent::Config holding every DSL setting.

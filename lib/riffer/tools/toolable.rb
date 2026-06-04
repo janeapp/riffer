@@ -30,7 +30,6 @@ module Riffer::Tools::Toolable
   #--
   #: (Module) -> void
   def self.extended(base)
-    base.extend Riffer::Helpers::ClassNameConverter
     extenders = (@extenders ||= []) #: Array[Module]
     extenders << base
   end
@@ -57,7 +56,7 @@ module Riffer::Tools::Toolable
   #--
   #: (?String?) -> String
   def identifier(value = nil)
-    return @identifier || class_name_to_path(Module.instance_method(:name).bind_call(self)) if value.nil?
+    return @identifier || Riffer::Helpers::ClassNameConverter.convert(Module.instance_method(:name).bind_call(self)) if value.nil?
     @identifier = value.to_s
   end
 

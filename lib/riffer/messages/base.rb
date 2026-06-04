@@ -5,6 +5,47 @@ require "securerandom"
 
 # Base class for all message types. Subclasses must implement +role+.
 class Riffer::Messages::Base
+  # Builds the matching message subclass from a hash, or returns +msg+ unchanged
+  # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
+  #--
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
+  def self.from_hash(msg)
+    return msg if msg.is_a?(Riffer::Messages::Base)
+
+    unless msg.is_a?(Hash)
+      raise Riffer::ArgumentError, "Message must be a Hash or Message object, got #{msg.class}"
+    end
+
+    role = msg[:role]
+    content = msg[:content]
+
+    if role.nil? || role.empty?
+      raise Riffer::ArgumentError, "Message hash must include a 'role' key"
+    end
+
+    id = msg[:id]
+
+    case role.to_sym
+    when :user
+      files = (msg[:files] || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
+      Riffer::Messages::User.new(content, id: id, files: files)
+    when :assistant
+      tool_calls = (msg[:tool_calls] || []).map { |tc|
+        tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
+      }
+      structured_output = msg[:structured_output]
+      Riffer::Messages::Assistant.new(content, id: id, tool_calls: tool_calls, structured_output: structured_output)
+    when :system
+      Riffer::Messages::System.new(content, id: id)
+    when :tool
+      tool_call_id = msg[:tool_call_id]
+      name = msg[:name]
+      Riffer::Messages::Tool.new(content, id: id, tool_call_id: tool_call_id, name: name)
+    else
+      raise Riffer::ArgumentError, "Unknown message role: #{role}"
+    end
+  end
+
   # The message content.
   attr_reader :content #: String
 

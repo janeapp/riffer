@@ -10,9 +10,6 @@ require "json"
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
 
-  include Riffer::Helpers::Dependencies
-  include Riffer::Messages::Converter
-
   WIRE_SEPARATOR = "__" #: String
 
   # Returns the preferred skill adapter for this provider; override in
@@ -66,6 +63,11 @@ class Riffer::Providers::Base
   end
 
   private
+
+  #: (String) -> true
+  def depends_on(gem_name)
+    Riffer::Helpers::Dependencies.depends_on(gem_name)
+  end
 
   #--
   #: (String) -> String
@@ -160,12 +162,12 @@ class Riffer::Providers::Base
     end
 
     if messages
-      return messages.map { |msg| convert_to_message_object(msg) }
+      return messages.map { |msg| Riffer::Messages::Base.from_hash(msg) }
     end
 
     result = [] #: Array[Riffer::Messages::Base]
     result << Riffer::Messages::System.new(system) if system
-    file_parts = (files || []).map { |f| convert_to_file_part(f) }
+    file_parts = (files || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
     prompt_text = prompt #: String
     result << Riffer::Messages::User.new(prompt_text, files: file_parts)
     result

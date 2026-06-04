@@ -4,8 +4,6 @@
 # (if a Proc) once at init, then provides +tools_list+ / +tools_call+ — used for
 # discovery and for +tools/call+ when no +credentials+ proc is configured.
 class Riffer::Mcp::Client
-  include Riffer::Helpers::Dependencies
-
   @client: untyped
 
   # --
@@ -23,4 +21,9 @@ class Riffer::Mcp::Client
   # --
   # : (String, ?Hash[untyped, untyped]) -> String
   def tools_call: (String, ?Hash[untyped, untyped]) -> String
+
+  private
+
+  # : (String) -> true
+  def depends_on: (String) -> true
 end

@@ -9,10 +9,12 @@ module Riffer::Mcp::ToolFactory
   # the server-side name stays on +.mcp_server_tool_name+.
   # --
   # : (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
-  def self.build: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+  def build: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+
+  private
 
   # : (String) -> String
-  def self.sanitize_name_component: (String) -> String
+  def sanitize_name_component: (String) -> String
 
-  def self.build_tool_class: (untyped manifest_name, untyped client, untyped td) -> untyped
+  def build_tool_class: (untyped manifest_name, untyped client, untyped td) -> untyped
 end

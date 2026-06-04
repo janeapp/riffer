@@ -7,10 +7,6 @@
 class Riffer::Providers::Base
   @current_tools: Array[singleton(Riffer::Tool)]
 
-  include Riffer::Helpers::Dependencies
-
-  include Riffer::Messages::Converter
-
   WIRE_SEPARATOR: String
 
   # Returns the preferred skill adapter for this provider; override in
@@ -32,6 +28,9 @@ class Riffer::Providers::Base
   def stream_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   private
+
+  # : (String) -> true
+  def depends_on: (String) -> true
 
   # --
   # : (String) -> String
