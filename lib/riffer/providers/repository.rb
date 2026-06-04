@@ -3,7 +3,6 @@
 
 # Registry for finding provider classes by identifier.
 class Riffer::Providers::Repository
-  # Mapping of provider identifiers to provider class lambdas.
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     anthropic: -> { Riffer::Providers::Anthropic },

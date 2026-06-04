@@ -3,19 +3,13 @@
 
 require "json"
 
-# OpenRouter provider for the OpenRouter unified gateway (https://openrouter.ai).
-#
-# Requires the +openai+ gem to be installed. OpenRouter exposes an
-# OpenAI-compatible Chat Completions endpoint, so this provider reuses
-# the OpenAI Ruby SDK with a +base_url+ override.
-#
-# The +api_key+ falls back to <tt>Riffer.config.openrouter.api_key</tt>
-# and then to +OPENROUTER_API_KEY+.
+# OpenRouter provider (https://openrouter.ai). Requires the +openai+ gem —
+# OpenRouter exposes an OpenAI-compatible endpoint, so this reuses the OpenAI
+# SDK with a +base_url+ override. +api_key+ falls back to config, then
+# +OPENROUTER_API_KEY+.
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL = "https://openrouter.ai/api/v1" #: String
 
-  # Initializes the OpenRouter provider.
-  #
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **options)

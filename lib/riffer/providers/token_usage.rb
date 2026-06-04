@@ -2,14 +2,6 @@
 # rbs_inline: enabled
 
 # Represents token usage data from an LLM API call.
-#
-# Tracks input tokens, output tokens, and optional cache statistics.
-#
-#   token_usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
-#   token_usage.total_tokens  # => 150
-#
-#   combined = token_usage1 + token_usage2  # Combine multiple token usage objects
-#
 class Riffer::Providers::TokenUsage
   # Number of tokens in the input/prompt.
   attr_reader :input_tokens #: Integer
@@ -53,10 +45,7 @@ class Riffer::Providers::TokenUsage
     )
   end
 
-  # Converts the token usage to a hash representation.
-  #
-  # Cache tokens are omitted if nil.
-  #
+  # Converts the token usage to a hash; cache tokens are omitted when nil.
   #--
   #: () -> Hash[Symbol, Integer]
   def to_h

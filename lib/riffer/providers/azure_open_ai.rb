@@ -1,26 +1,10 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Azure OpenAI provider for GPT models hosted on Azure.
-#
-# Requires the +openai+ gem to be installed.
-#
-# Credentials are resolved in order:
-# 1. Keyword arguments (+api_key+, +base_url+)
-# 2. Config (<tt>Riffer.config.azure_openai.api_key</tt> / <tt>.endpoint</tt>)
-# 3. Environment variables (+AZURE_OPENAI_API_KEY+ / +AZURE_OPENAI_ENDPOINT+)
-#
-#   Riffer::Providers::AzureOpenAI.new(
-#     api_key: "key",
-#     base_url: "https://my-resource.openai.azure.com"
-#   )
-#
+# Azure OpenAI provider for GPT models hosted on Azure. Requires the +openai+
+# gem. Credentials resolve from kwargs, then config, then
+# +AZURE_OPENAI_API_KEY+ / +AZURE_OPENAI_ENDPOINT+.
 class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
-  # Initializes the Azure OpenAI provider.
-  #
-  # [api_key] Azure OpenAI API key. Falls back to config, then +AZURE_OPENAI_API_KEY+.
-  # [base_url] Azure OpenAI endpoint URL. Falls back to config, then +AZURE_OPENAI_ENDPOINT+.
-  #
   #--
   #: (**untyped) -> void
   def initialize(**options)

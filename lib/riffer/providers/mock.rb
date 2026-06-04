@@ -1,22 +1,14 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Mock provider for mocking LLM responses in tests.
-#
-# No external gems required.
+# Mock provider for mocking LLM responses in tests; no external gems required.
 class Riffer::Providers::Mock < Riffer::Providers::Base
   # @rbs @responses: Array[Hash[Symbol, untyped]]
   # @rbs @current_index: Integer
   # @rbs @stubbed_responses: Array[Hash[Symbol, untyped]]
 
-  # Returns the preferred skill adapter for the given mock model.
-  #
-  # Mock is used to stand in for any real provider in tests, so the model
-  # string itself is the only signal we have. When the model name contains
-  # +claude+ (e.g. +mock/claude-sonnet-4-6+), pick the XML adapter to
-  # mirror what a real Claude-backed provider would do; otherwise fall
-  # back to Markdown.
-  #
+  # Returns the skill adapter for the mock model — XML when the model name
+  # contains +claude+ (mirroring a real Claude provider), else Markdown.
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(model = nil)
@@ -27,13 +19,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   # Array of recorded method calls for assertions.
   attr_reader :calls #: Array[Hash[Symbol, untyped]]
 
-  # Initializes the mock provider.
-  #
-  # +responses:+ accepts an array of response hashes in the same shape
-  # +#stub_response+ takes — raw +tool_calls:+ hashes are normalised to
-  # +Riffer::Messages::Assistant::ToolCall+ instances. This is the canonical
-  # way to pre-configure canned LLM responses on an agent via
-  # +provider_options responses: [...]+.
+  # +responses:+ pre-configures canned responses (same shape as
+  # +#stub_response+), typically set via +provider_options responses: [...]+.
   #
   #   Riffer::Providers::Mock.new(responses: [
   #     {content: "", tool_calls: [{name: "tool_a", arguments: "{}"}]},
@@ -49,9 +36,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     @stubbed_responses = []
   end
 
-  # Stubs the next response from the provider.
-  #
-  # Can be called multiple times to queue responses.
+  # Stubs the next response; call repeatedly to queue several.
   #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
@@ -73,11 +58,6 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
   private
 
-  # Normalises a response hash into Mock's internal format. Accepts the
-  # +#stub_response+ kwargs shape (+content:+, +tool_calls:+, +token_usage:+)
-  # or a pre-built hash with already-converted ToolCall instances. Raw
-  # +tool_calls:+ hashes are wrapped in +Riffer::Messages::Assistant::ToolCall+.
-  #
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def normalize_response(response)
