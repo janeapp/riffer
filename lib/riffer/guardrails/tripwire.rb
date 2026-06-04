@@ -2,16 +2,6 @@
 # rbs_inline: enabled
 
 # Captures information about a blocked guardrail execution.
-#
-# When a guardrail blocks execution, a Tripwire is created to record
-# the reason, which guardrail triggered it, and which phase it occurred in.
-#
-#   tripwire = Tripwire.new(
-#     reason: "PII detected in input",
-#     guardrail: PiiRedactor,
-#     phase: :before,
-#     metadata: { detected_types: [:email, :phone] }
-#   )
 class Riffer::Guardrails::Tripwire
   PHASES = Riffer::Guardrails::PHASES #: Array[Symbol]
 
@@ -27,15 +17,7 @@ class Riffer::Guardrails::Tripwire
   # Optional metadata about the block.
   attr_reader :metadata #: Hash[Symbol, untyped]?
 
-  # Creates a new tripwire.
-  #
-  # [reason] the reason for blocking.
-  # [guardrail] the guardrail class that blocked.
-  # [phase] :before or :after.
-  # [metadata] optional additional information.
-  #
-  # Raises Riffer::ArgumentError if the phase is invalid.
-  #
+  # Raises Riffer::ArgumentError if +phase+ is invalid.
   #--
   #: (reason: String, guardrail: singleton(Riffer::Guardrail), phase: Symbol, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(reason:, guardrail:, phase:, metadata: nil)

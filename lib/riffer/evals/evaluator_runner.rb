@@ -3,10 +3,6 @@
 
 # Orchestrates running evaluators against an agent across multiple scenarios.
 #
-# Accepts an agent class, a list of scenarios, and evaluator classes.
-# Generates agent output for each scenario and runs all evaluators,
-# returning a RunResult with per-scenario details and aggregate scores.
-#
 #   result = Riffer::Evals::EvaluatorRunner.run(
 #     agent: MyAgent,
 #     scenarios: [
@@ -19,16 +15,8 @@
 #   result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
 #
 class Riffer::Evals::EvaluatorRunner
-  # Runs evaluators against an agent for the given scenarios.
-  #
-  # [agent] an Agent subclass (not an instance).
-  # [scenarios] array of hashes with +:input+, optional +:ground_truth+, and optional +:context+.
-  # [evaluators] array of Evaluator subclasses to run against each scenario.
-  # [context] optional hash passed to +agent.generate+. Per-scenario +:context+ takes precedence.
-  #
-  # Raises Riffer::ArgumentError if agent is not a Riffer::Agent subclass
-  # or any eval is not a Riffer::Evals::Evaluator subclass.
-  #
+  # Runs evaluators against an agent for the given scenarios. Raises
+  # Riffer::ArgumentError on an invalid agent or evaluator.
   #--
   #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   def self.run(agent:, scenarios:, evaluators:, context: nil)

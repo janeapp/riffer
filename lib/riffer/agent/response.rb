@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Wraps agent generation responses with optional tripwire information.
-#
-# When guardrails block execution, the response will contain a tripwire
-# with details about the block. The content will be empty for blocked responses.
+# Wraps an agent generation response. When a guardrail blocks execution,
+# +content+ is empty and +tripwire+ carries the block details.
 #
 #   response = agent.generate("Hello")
 #   if response.blocked?
@@ -33,24 +31,10 @@ class Riffer::Agent::Response
   # The full message history from the agent conversation.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 
-  # Call ids of tool_use blocks that riffer filled with placeholder
-  # results during this turn — populated when an interrupt left them
-  # unanswered and +Riffer.config.experimental_history_healing+ is on.
-  # Empty otherwise.
+  # Call ids of tool_use blocks riffer filled with placeholder results this
+  # turn (when an interrupt left them unanswered and history healing is on).
   attr_reader :healed_tool_call_ids #: Array[String]
 
-  # Creates a new response.
-  #
-  # [content] the response content.
-  # [tripwire] optional tripwire for blocked responses.
-  # [modifications] guardrail modifications applied during processing.
-  # [interrupted] whether the agent loop was interrupted by a callback.
-  # [interrupt_reason] optional reason passed via <tt>throw :riffer_interrupt, reason</tt>.
-  # [structured_output] parsed structured output when structured output is configured.
-  # [messages] the full message history from the agent conversation.
-  # [healed_tool_call_ids] call ids filled with placeholder tool results
-  #   when history healing is enabled.
-  #
   #--
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String]) -> void
   def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [])

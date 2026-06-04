@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Wraps MCP-generated tool classes so +tools/call+ uses +Riffer.config.mcp.credentials+
-# per invocation while delegating metadata to the inner class.
-#
+# Wraps MCP-generated tool classes so +tools/call+ resolves
+# +Riffer.config.mcp.credentials+ per invocation, delegating metadata to the
+# inner class.
 module Riffer::Mcp::AuthenticatedTool
   # Returns one wrapper class per inner tool, sharing +manifest+ and +matched_tags+.
   #
@@ -33,10 +33,8 @@ module Riffer::Mcp::AuthenticatedTool
       define_singleton_method(:description) { inner.description }
       define_singleton_method(:parameters_schema) { |strict: false| inner.parameters_schema(strict: strict) }
 
-      # Builds a client for a single +tools/call+ invocation.
-      #
-      # Creates a fresh client per call so headers from the credentials proc stay
-      # current.
+      # Creates a fresh client per +tools/call+ so headers from the credentials
+      # proc stay current.
       # TODO: A per-headers cache would reduce connection churn under load, and
       # requires a follow-up investigation to determine how to invalidate failing
       # clients.

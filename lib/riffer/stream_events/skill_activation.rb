@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Emitted when a skill is activated during streaming.
-#
-# Fired by the +on_activate+ callback on Riffer::Skills::Context
-# when the LLM calls the skill activation tool.
+# Emitted when a skill is activated during streaming, via the +on_activate+
+# callback when the LLM calls the activation tool.
 class Riffer::StreamEvents::SkillActivation < Riffer::StreamEvents::Base
   # The activated skill name.
   attr_reader :name #: String

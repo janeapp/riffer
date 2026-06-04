@@ -2,38 +2,49 @@
 # rbs_inline: enabled
 
 # Typed configuration object holding every class-level DSL setting on a
-# Riffer::Agent subclass.
-#
-# Each subclass of Riffer::Agent owns one Config, accessible via the class
-# method <tt>config</tt>. The class-level DSL (+model+, +instructions+, +uses_tools+,
-# etc.) reads and mutates this Config in place. Append-style DSL methods
-# (+use_mcp+, +guardrail+) are handled by the +add_mcp+ and +add_guardrail+
-# helpers below.
-#
-# Config stores Procs unresolved. Per-instance resolution happens elsewhere
-# (instructions, model, tools, tool runtime, skills).
+# Riffer::Agent subclass. Procs are stored unresolved and resolved per-instance
+# later.
 class Riffer::Agent::Config
   DEFAULT_MAX_STEPS = 16 #: Integer
 
+  # The configured agent identifier.
   attr_reader :identifier #: String?
+
+  # The configured model.
   attr_reader :model #: (String | Proc)?
+
+  # The configured instructions.
   attr_reader :instructions #: (String | Proc)?
+
+  # Options passed to the provider client.
   attr_accessor :provider_options #: Hash[Symbol, untyped]
+
+  # Options passed to generate_text/stream_text.
   attr_accessor :model_options #: Hash[Symbol, untyped]
+
+  # The configured structured-output schema.
   attr_reader :structured_output #: Riffer::Params?
+
+  # The maximum number of LLM call steps in the tool-use loop.
   attr_accessor :max_steps #: Numeric?
+
+  # The configured tools.
   attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)?
+
+  # The accumulated +use_mcp+ tag configurations.
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]]
+
+  # The configured tool runtime.
   attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
+
+  # The configured skills.
   attr_accessor :skills_config #: Riffer::Skills::Config?
+
+  # Registered guardrail entries keyed by phase.
   attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]]
 
-  # Builds a new Config. All fields are optional; unset fields take the
-  # documented defaults.
-  #
-  # Raises Riffer::ArgumentError if +model+ or +instructions+ is provided
-  # as a non-String, non-Proc value (or as an empty String).
-  #
+  # Builds a new Config. Raises Riffer::ArgumentError if +model+ or
+  # +instructions+ is invalid (e.g. an empty string).
   #--
   #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
   def initialize(
@@ -64,18 +75,14 @@ class Riffer::Agent::Config
     self.tool_runtime = tool_runtime
   end
 
-  # Sets +identifier+. Accepts +nil+ or any value, coerced to String.
-  #
+  # Sets +identifier+, coercing the value to String.
   #--
   #: (untyped) -> String?
   def identifier=(value)
     @identifier = value&.to_s
   end
 
-  # Sets +structured_output+. Accepts a Riffer::Params instance or +nil+.
-  #
-  # Raises Riffer::ArgumentError on any other type.
-  #
+  # Sets +structured_output+. Raises Riffer::ArgumentError on an invalid value.
   #--
   #: (Riffer::Params?) -> Riffer::Params?
   def structured_output=(value)
@@ -83,11 +90,7 @@ class Riffer::Agent::Config
     @structured_output = value
   end
 
-  # Sets +tool_runtime+. Accepts a Riffer::Tools::Runtime subclass, a
-  # Riffer::Tools::Runtime instance, or a Proc.
-  #
-  # Raises Riffer::ArgumentError on any other type.
-  #
+  # Sets +tool_runtime+. Raises Riffer::ArgumentError on an invalid value.
   #--
   #: ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def tool_runtime=(value)
@@ -96,10 +99,8 @@ class Riffer::Agent::Config
     @tool_runtime = value
   end
 
-  # Sets +model+. Accepts a String ("provider/model"), a Proc, or +nil+.
-  #
-  # Raises Riffer::ArgumentError on non-String, non-Proc, or empty-String values.
-  #
+  # Sets +model+. Raises Riffer::ArgumentError on an invalid value (e.g. an
+  # empty string).
   #--
   #: ((String | Proc)?) -> (String | Proc)?
   def model=(value)
@@ -107,10 +108,8 @@ class Riffer::Agent::Config
     @model = value
   end
 
-  # Sets +instructions+. Accepts a String, a Proc, or +nil+.
-  #
-  # Raises Riffer::ArgumentError on non-String, non-Proc, or empty-String values.
-  #
+  # Sets +instructions+. Raises Riffer::ArgumentError on an invalid value (e.g.
+  # an empty string).
   #--
   #: ((String | Proc)?) -> (String | Proc)?
   def instructions=(value)
@@ -126,15 +125,9 @@ class Riffer::Agent::Config
     @mcp_configs << {tags: [tag.to_sym]}
   end
 
-  # Appends a guardrail entry to +guardrails+ for the given phase.
-  #
-  # [phase] +:before+, +:after+, or +:around+. +:around+ appends to both
-  #   +:before+ and +:after+.
-  # [klass] the Riffer::Guardrail subclass to register.
-  # [options] options forwarded to the guardrail at runtime.
-  #
-  # Raises Riffer::ArgumentError on an invalid phase or non-Guardrail class.
-  #
+  # Appends a guardrail entry to +guardrails+ for the given phase; +:around+
+  # appends to both +:before+ and +:after+. Raises Riffer::ArgumentError unless
+  # +phase+ is :before, :after, or :around.
   #--
   #: (Symbol, klass: singleton(Riffer::Guardrail), ?options: Hash[Symbol, untyped]) -> void
   def add_guardrail(phase, klass:, options: {})
@@ -164,6 +157,7 @@ class Riffer::Agent::Config
 
   private
 
+  #--
   #: (untyped, String) -> void
   def validate_string_or_proc!(value, name)
     return if value.nil? || value.is_a?(Proc)

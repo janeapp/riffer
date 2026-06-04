@@ -1,20 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Agent::Run is the generation loop. A pure module of functions over an
-# +agent+ — Agent owns every per-call value (provider, model, tools, tool
-# runtime, structured output, session, context); Run just orchestrates.
-#
-# Tools and user code see the agent's +context+ (a +Riffer::Agent::Context+)
-# unchanged through the loop, so downstream tool runtimes can read
-# caller-provided keys via <tt>context[:agent]</tt> /
-# <tt>context.dig(:key)</tt>, or the framework built-ins via
-# +context.skills+. Cumulative token usage is updated into
-# +agent.context.token_usage+ as the loop progresses.
-#
-#   Riffer::Agent::Run.generate(agent: my_agent, prompt: "Hello")
-#   Riffer::Agent::Run.stream(agent: my_agent, prompt: "Hello")
-#
+# The generation loop — a pure module of functions over an +agent+, which owns
+# every per-call value; Run just orchestrates.
 module Riffer::Agent::Run
   extend self
   include Riffer::Messages::Converter
@@ -41,13 +29,6 @@ module Riffer::Agent::Run
 
   private
 
-  # The generation loop. When +stream_yielder+ is provided, per-step events are
-  # pushed to it (and +stream+ discards the return value). When +stream_yielder+
-  # is +nil+, no events are emitted and +generate+ returns the Response
-  # directly. The two modes share every step of the loop — the only
-  # divergences are the LLM call shape (atomic vs. accumulated stream)
-  # and whether per-step events are emitted.
-  #
   #--
   #: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, stream_yielder: nil)
@@ -86,17 +67,12 @@ module Riffer::Agent::Run
       return final_response(agent, all_modifications)
     end
 
-    # catch returns the thrown value when throw :riffer_interrupt fires;
-    # the return above exits on the successful (non-interrupted) path.
     new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
     agent.session.set(new_messages)
     stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason, healed_tool_call_ids: filled) if stream_yielder
     final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled)
   end
 
-  # Consumes one provider stream, forwarding every event to +stream_yielder+
-  # and folding it into an +Assistant+ message.
-  #
   #--
   #: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
   def accumulate_streamed_response(agent, stream_yielder)
@@ -130,9 +106,6 @@ module Riffer::Agent::Run
     )
   end
 
-  # Appends +new_modifications+ to +all_modifications+ and emits a
-  # +GuardrailModification+ event for each one when streaming.
-  #
   #--
   #: (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
   def record_modifications!(stream_yielder, all_modifications, new_modifications)
@@ -140,9 +113,6 @@ module Riffer::Agent::Run
     new_modifications.each { |m| stream_yielder << Riffer::StreamEvents::GuardrailModification.new(m) } if stream_yielder
   end
 
-  # Emits a +GuardrailTripwire+ event when streaming and returns the
-  # short-circuit +Response+ for a tripped guardrail.
-  #
   #--
   #: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
   def tripwire_response(agent, stream_yielder, tripwire, all_modifications)
@@ -150,11 +120,6 @@ module Riffer::Agent::Run
     build_response(agent, "", tripwire: tripwire, modifications: all_modifications)
   end
 
-  # Builds the final +Response+ from the session's last assistant
-  # message, validating structured output when configured. +extra+
-  # carries the interrupt-only fields (+interrupted:+, +interrupt_reason:+,
-  # +healed_tool_call_ids:+) on the interrupt exit path.
-  #
   #--
   #: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
   def final_response(agent, all_modifications, **extra)
@@ -202,12 +167,6 @@ module Riffer::Agent::Run
     end
   end
 
-  # Executes tool calls left unfinished by a prior interrupt.
-  #
-  # Detects gaps between the last assistant message's requested tool calls
-  # and the tool result messages that follow it, executing any that are
-  # missing. Safe to call unconditionally.
-  #
   #--
   #: (Riffer::Agent) -> void
   def execute_pending_tool_calls(agent)
@@ -215,11 +174,6 @@ module Riffer::Agent::Run
     execute_tool_calls(agent, assistant_message, tool_calls: pending) if assistant_message
   end
 
-  # Runs the +:before+ guardrail phase. Records any modifications into
-  # +all_modifications+ (and emits them when streaming). When a tripwire
-  # fires, yields the short-circuit +Response+ — the caller's block is
-  # expected to +return+ it from +run_loop+.
-  #
   #--
   #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
   def run_before_guardrails(agent, stream_yielder, all_modifications)
@@ -233,12 +187,6 @@ module Riffer::Agent::Run
     yield tripwire_response(agent, stream_yielder, tripwire, all_modifications) if tripwire
   end
 
-  # Runs the +:after+ guardrail phase against the assistant +response+.
-  # Records any modifications into +all_modifications+ (and emits them
-  # when streaming). When a tripwire fires, yields the short-circuit
-  # +Response+ — the caller's block is expected to +return+ it from
-  # +run_loop+. Otherwise returns the post-guardrails assistant message.
-  #
   #--
   #: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
   def run_after_guardrails(agent, response, stream_yielder, all_modifications)
@@ -280,11 +228,8 @@ module Riffer::Agent::Run
     Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: messages.frozen? ? messages : messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids)
   end
 
-  # Appends a +User+ message to the session. No-ops when +prompt+ is nil
-  # and +files+ is empty (the caller had nothing to add). Raises when
-  # +files+ are supplied without a +prompt+ — the provider needs text to
-  # anchor the attachments.
-  #
+  # Raises when +files+ are supplied without a +prompt+ — the provider needs
+  # text to anchor the attachments.
   #--
   #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
   def append_user_message(agent, prompt, files: nil)
@@ -295,9 +240,6 @@ module Riffer::Agent::Run
     agent.session.add(Riffer::Messages::User.new(prompt, files: file_parts), silent: true)
   end
 
-  # Accumulates token usage into +agent.context.token_usage+. Updates the
-  # context so cumulative usage persists across every run on the agent.
-  #
   #--
   #: (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
   def track_token_usage(agent, usage)

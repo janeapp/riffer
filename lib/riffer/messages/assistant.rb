@@ -1,15 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents an assistant (LLM) message in a conversation.
-#
-# May include tool calls when the LLM requests tool execution.
-#
-#   msg = Riffer::Messages::Assistant.new("Hello!")
-#   msg.role        # => :assistant
-#   msg.content     # => "Hello!"
-#   msg.tool_calls  # => []
-#
+# Represents an assistant (LLM) message in a conversation; may include tool
+# calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
   ToolCall = Struct.new(:call_id, :name, :arguments, keyword_init: true)
 

@@ -2,20 +2,6 @@
 # rbs_inline: enabled
 
 # Represents the result of a single evaluation.
-#
-# Contains the score, reason, and metadata from running an evaluator.
-#
-#   result = Riffer::Evals::Result.new(
-#     evaluator: AnswerRelevancyEvaluator,
-#     score: 0.85,
-#     reason: "The response addresses the question directly.",
-#     higher_is_better: true
-#   )
-#
-#   result.score           # => 0.85
-#   result.evaluator       # => AnswerRelevancyEvaluator
-#   result.higher_is_better # => true
-#
 class Riffer::Evals::Result
   # The evaluator class that produced this result.
   attr_reader :evaluator #: singleton(Riffer::Evals::Evaluator)
@@ -32,10 +18,7 @@ class Riffer::Evals::Result
   # Whether higher scores are better for this evaluator.
   attr_reader :higher_is_better #: bool
 
-  # Initializes a new evaluation result.
-  #
-  # Raises Riffer::ArgumentError if score is not between 0.0 and 1.0.
-  #
+  # Raises Riffer::ArgumentError if +score+ is not between 0.0 and 1.0.
   #--
   #: (evaluator: singleton(Riffer::Evals::Evaluator), score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?higher_is_better: bool) -> void
   def initialize(evaluator:, score:, reason: nil, metadata: {}, higher_is_better: true)

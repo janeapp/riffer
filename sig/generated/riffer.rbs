@@ -39,6 +39,7 @@ module Riffer
   # : () ?{ (Riffer::Config) -> void } -> void
   def self.configure: () ?{ (Riffer::Config) -> void } -> void
 
+  # Returns the gem version.
   # --
   # : () -> String
   def self.version: () -> String

@@ -1,18 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Thin wrapper around the MCP Ruby SDK client (mcp gem v0.8+).
-#
-# Resolves headers (if a Proc) once at initialization, then provides
-# +tools_list+ and +tools_call+. Used for discovery (+Manifest#discovery_headers+)
-# and for +tools/call+ when no +credentials+ proc is configured.
-#
-# MCP gem API used:
-#   MCP::Client::HTTP.new(url:, headers:)  — HTTP transport (requires faraday)
-#   MCP::Client.new(transport:)            — client
-#   client.tools                           — Array<MCP::Client::Tool>
-#   client.call_tool(tool:, arguments:)    — raw JSON-RPC response Hash
-#
+# Thin wrapper around the MCP Ruby SDK client (mcp gem v0.8+). Resolves headers
+# (if a Proc) once at init, then provides +tools_list+ / +tools_call+ — used for
+# discovery and for +tools/call+ when no +credentials+ proc is configured.
 class Riffer::Mcp::Client
   include Riffer::Helpers::Dependencies
 
@@ -31,9 +22,8 @@ class Riffer::Mcp::Client
     end
   end
 
-  # Returns an array of tool definition hashes, each with +:name+, +:description+,
-  # and +:input_schema+ keys.
-  #
+  # Returns tool definition hashes with +:name+, +:description+, and
+  # +:input_schema+ keys.
   #--
   #: () -> Array[Hash[Symbol, untyped]]
   def tools_list

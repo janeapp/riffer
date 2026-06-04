@@ -3,9 +3,7 @@
 
 require "securerandom"
 
-# Base class for all message types in the Riffer framework.
-#
-# Subclasses must implement the +role+ method.
+# Base class for all message types. Subclasses must implement +role+.
 class Riffer::Messages::Base
   # The message content.
   attr_reader :content #: String
@@ -31,31 +29,22 @@ class Riffer::Messages::Base
   end
 
   # Returns the message role.
-  #
-  # Raises NotImplementedError if not implemented by subclass.
-  #
   #--
   #: () -> Symbol
   def role
     raise NotImplementedError, "Subclasses must implement #role"
   end
 
-  # Whether this message carries pending tool calls. Defaults to +false+;
-  # +Riffer::Messages::Assistant+ overrides this when its +tool_calls+
-  # array is non-empty.
-  #
+  # Whether this message carries pending tool calls (overridden by
+  # +Riffer::Messages::Assistant+).
   #--
   #: () -> bool
   def has_tool_calls?
     false
   end
 
-  # Merges another same-role message into this one.
-  #
-  # Raises NotImplementedError unless implemented by subclass. Mergeable
-  # message types (+User+, +Assistant+, +System+) override this; +Tool+
-  # messages are never merged.
-  #
+  # Merges another same-role message into this one. +Tool+ messages are never
+  # merged.
   #--
   #: (untyped) -> Riffer::Messages::Base
   def +(other)

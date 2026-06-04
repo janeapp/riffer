@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Executes guardrails sequentially and manages the processing pipeline.
-#
-# The runner processes guardrails in order, passing the output of each
-# to the next. If any guardrail blocks, execution stops and a tripwire
-# is returned.
-#
-#   runner = Runner.new(guardrail_configs, phase: :before, context: context)
-#   data, tripwire, modifications = runner.run(messages)
+# Executes guardrails sequentially, passing each one's output to the next; if
+# any blocks, execution stops and a tripwire is returned.
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
   attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]]
@@ -19,12 +13,6 @@ class Riffer::Guardrails::Runner
   # The context passed to guardrails.
   attr_reader :context #: untyped
 
-  # Creates a new runner.
-  #
-  # [guardrail_configs] configs with :class and :options keys.
-  # [phase] :before or :after.
-  # [context] optional context to pass to guardrails.
-  #
   #--
   #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
   def initialize(guardrail_configs, phase:, context: nil)
@@ -33,14 +21,9 @@ class Riffer::Guardrails::Runner
     @context = context
   end
 
-  # Runs the guardrails sequentially.
-  #
-  # For before phase, data should be an array of messages.
-  # For after phase, data should be a response and messages must be provided.
-  #
-  # [data] the data to process (messages for before, response for after).
-  # [messages] the conversation messages (required for after phase).
-  #
+  # Runs the guardrails sequentially. For the +:before+ phase +data+ is the
+  # messages array; for +:after+ it's the response (and +messages+ must be
+  # provided).
   #--
   #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run(data, messages: nil)

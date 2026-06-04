@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Params::Boolean is a sentinel type for declaring boolean parameters.
-#
-# Ruby has no +Boolean+ class (+true+ is +TrueClass+, +false+ is +FalseClass+).
-# Use this module wherever you need a single type that means "boolean":
+# Sentinel type for declaring boolean parameters — Ruby has no +Boolean+ class
+# (+true+/+false+ are +TrueClass+/+FalseClass+).
 #
 #   required :verbose, Riffer::Params::Boolean
 #

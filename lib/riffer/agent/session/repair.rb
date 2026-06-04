@@ -1,36 +1,17 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Agent::Session::Repair holds the pure transformations that keep the
-# +tool_use+ ↔ +tool_result+ invariant on a message array. No state, no
-# instance — module-level functions only. Each entry point is gated by
-# +Riffer.config.experimental_history_healing+: when the flag is off the
-# function returns its input unchanged.
-#
-# Two seams:
-#
-# - +fill_orphans+ — fills orphan +tool_use+ blocks with placeholder
-#   results. Used on interrupt (caller-issued or +max_steps+).
-# - +prune_orphans+ — drops orphan +tool_use+ blocks and parentless Tool
-#   messages from a caller-provided seed so it is well-formed before the
-#   next inference call. Used at construction time when
-#   +Riffer::Agent.new(session:)+ receives a session.
+# Pure, stateless transformations keeping the +tool_use+ ↔ +tool_result+
+# invariant on a message array. Each entry point no-ops when
+# +Riffer.config.experimental_history_healing+ is off.
 module Riffer::Agent::Session::Repair
-  # Placeholder used to fill orphan +tool_use+ blocks. Emitted as the
-  # +Riffer::Tools::Response+ body for each filled call_id.
+  # Placeholder response filled in for an orphaned +tool_use+ on interrupt.
   ORPHAN_PLACEHOLDER = ->(_tool_call) {
     Riffer::Tools::Response.error("Tool call interrupted before completion.", type: :interrupted)
   } #: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
-  # Fills any orphaned +tool_use+ in +messages+ with the
-  # +ORPHAN_PLACEHOLDER+ response. Each placeholder Tool message is
-  # inserted immediately after its parent assistant message. Returns
-  # +[new_messages, filled_call_ids]+; +filled_call_ids+ is empty when
-  # there are no orphans.
-  #
-  # No-op when +Riffer.config.experimental_history_healing+ is off:
-  # returns +[messages, []]+ with the same array reference.
-  #
+  # Fills each orphaned +tool_use+ in +messages+ with an +ORPHAN_PLACEHOLDER+
+  # result inserted after its parent. Returns +[new_messages, filled_call_ids]+.
   #--
   #: (Array[Riffer::Messages::Base]) -> [Array[Riffer::Messages::Base], Array[String]]
   def self.fill_orphans(messages)
@@ -62,19 +43,10 @@ module Riffer::Agent::Session::Repair
     [new_messages, filled]
   end
 
-  # Prunes a seeded message array so the +tool_use+ ↔ +tool_result+
-  # invariant holds. Drops orphaned tool exchanges (assistant +tool_call+
-  # with no matching Tool result) and parentless Tool messages. Returns a
-  # new array; the input is not mutated.
-  #
-  # Pending tool_calls on the resume boundary — the last assistant whose
-  # tail is purely Tool results (or empty) — are preserved. They get
-  # swept up by +execute_pending_tool_calls+ at the start of the next
-  # generate/stream call.
-  #
-  # No-op when +Riffer.config.experimental_history_healing+ is off:
-  # returns +messages+ unchanged.
-  #
+  # Prunes a seeded message array to the invariant — dropping orphaned tool
+  # exchanges and parentless Tool messages, but preserving the pending
+  # tool_calls on the resume boundary (the last assistant) for
+  # +execute_pending_tool_calls+. Returns a new array.
   #--
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def self.prune_orphans(messages)

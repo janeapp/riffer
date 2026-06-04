@@ -4,10 +4,6 @@
 require "zeitwerk"
 
 # Riffer is the main module for the Riffer AI framework.
-#
-# Provides configuration, error classes, and versioning for the gem.
-#
-# See Riffer::Config, Riffer::Agent, Riffer::Providers, and Riffer::Messages.
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect(
   "open_ai" => "OpenAI",
@@ -54,6 +50,7 @@ module Riffer
     yield config if block_given?
   end
 
+  # Returns the gem version.
   #--
   #: () -> String
   def self.version

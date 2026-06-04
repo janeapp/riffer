@@ -1,28 +1,18 @@
 # Generated from lib/riffer/providers/amazon_bedrock.rb with RBS::Inline
 
-# Amazon Bedrock provider for Claude and other foundation models.
-#
-# Requires the +aws-sdk-bedrockruntime+ gem to be installed.
-#
-# See https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html
+# Amazon Bedrock provider for Claude and other foundation models. Requires the
+# +aws-sdk-bedrockruntime+ gem.
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
-  # Matches Anthropic models on Bedrock: bare ids like
-  # +anthropic.claude-3-5-sonnet-20241022-v2:0+ and cross-region prefixed
-  # ids like +us.anthropic.claude-sonnet-4-6+.
+  # Matches Anthropic models on Bedrock — bare (+anthropic.claude-...+) and
+  # cross-region (+us.anthropic.claude-...+) ids.
   ANTHROPIC_MODEL_PATTERN: Regexp
 
-  # Returns the preferred skill adapter for the given Bedrock model.
-  #
-  # Bedrock hosts models from multiple vendors. Anthropic models prefer
-  # XML-rendered catalogs; everything else falls back to the default
-  # Markdown adapter.
-  #
+  # Returns the skill adapter for the Bedrock model — XML for Anthropic models
+  # (which Bedrock hosts alongside other vendors'), else Markdown.
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
 
-  # Initializes the Amazon Bedrock provider.
-  #
   # --
   # : (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize: (?api_token: String?, ?region: String?, **untyped) -> void
@@ -53,15 +43,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
 
-  # Re-raises a Bedrock stream exception event as the matching
-  # +Aws::BedrockRuntime::Errors+ service error. ConverseStream delivers API
-  # errors on the same channel as content, so without this a mid-stream
-  # failure would silently end the enumerator with no tokens or content.
-  #
-  # Detection is by class-name suffix: every Bedrock stream-exception struct
-  # is named +*Exception+ and has a matching +Aws::BedrockRuntime::Errors+
-  # class of the same name (generated via +DynamicErrors+ if not explicit).
-  # Non-exception events (e.g. +MessageStartEvent+) pass through silently.
+  # Re-raises a Bedrock stream-exception event as the matching
+  # +Aws::BedrockRuntime::Errors+ class. ConverseStream delivers API errors on
+  # the same channel as content, so without this a mid-stream failure would
+  # silently end the stream with no content.
   # --
   # : (untyped) -> void
   def raise_if_stream_exception!: (untyped) -> void

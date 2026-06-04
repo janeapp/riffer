@@ -1,24 +1,14 @@
 # Generated from lib/riffer/runner/fibers.rb with RBS::Inline
 
 # Processes items concurrently using fibers via the +async+ gem.
-#
-# All items run as fibers simultaneously by default. When
-# +max_concurrency+ is set, an <tt>Async::Semaphore</tt> limits how many
-# fibers execute at once.
-#
-# If multiple fibers raise, only the first exception is re-raised
-# after all fibers finish; subsequent errors are discarded.
-#
-#   runner = Riffer::Runner::Fibers.new
-#   runner.map(items) { |item| expensive_operation(item) }
+# +max_concurrency+ caps simultaneous fibers via an <tt>Async::Semaphore</tt>.
+# If multiple fibers raise, only the first exception is re-raised after all
+# finish.
 class Riffer::Runner::Fibers < Riffer::Runner
   @max_concurrency: Integer?
 
   include Riffer::Helpers::Dependencies
 
-  # [max_concurrency] maximum number of fibers to run simultaneously.
-  #   When +nil+, all fibers run without limit.
-  #
   # --
   # : (?max_concurrency: Integer?) -> void
   def initialize: (?max_concurrency: Integer?) -> void

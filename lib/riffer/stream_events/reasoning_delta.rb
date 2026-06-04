@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents an incremental reasoning chunk during streaming.
-#
-# Emitted when the LLM produces reasoning/thinking content incrementally.
-# Only available with providers that support reasoning (e.g., OpenAI with reasoning option).
+# Represents an incremental reasoning chunk during streaming; only emitted by
+# providers that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDelta < Riffer::StreamEvents::Base
   # The incremental reasoning content.
   attr_reader :content #: String

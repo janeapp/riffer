@@ -1,17 +1,7 @@
 # Generated from lib/riffer/guardrails/result.rb with RBS::Inline
 
-# Represents the result of a guardrail execution.
-#
-# Results can be one of three types:
-# - pass: Continue with the original data unchanged
-# - transform: Continue with transformed data
-# - block: Halt execution with a reason
-#
-# Use the factory methods to create results:
-#
-#   Result.pass(data)
-#   Result.transform(data)
-#   Result.block(reason, metadata: nil)
+# Represents the result of a guardrail execution: +pass+ (continue unchanged),
+# +transform+ (continue with changed data), or +block+ (halt with a reason).
 class Riffer::Guardrails::Result
   TYPES: Array[Symbol]
 
@@ -25,38 +15,21 @@ class Riffer::Guardrails::Result
   attr_reader metadata: Hash[Symbol, untyped]?
 
   # Creates a pass result that continues with unchanged data.
-  #
-  # [data] the original data to pass through.
-  #
   # --
   # : (untyped) -> Riffer::Guardrails::Result
   def self.pass: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a transform result that continues with transformed data.
-  #
-  # [data] the transformed data.
-  #
   # --
   # : (untyped) -> Riffer::Guardrails::Result
   def self.transform: (untyped) -> Riffer::Guardrails::Result
 
   # Creates a block result that halts execution.
-  #
-  # [reason] the reason for blocking.
-  # [metadata] optional additional information.
-  #
   # --
   # : (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
   def self.block: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
 
-  # Creates a new result.
-  #
-  # [type] the result type (:pass, :transform, or :block).
-  # [data] the data or reason.
-  # [metadata] optional metadata for block results.
-  #
-  # Raises Riffer::ArgumentError if the result type is invalid.
-  #
+  # Raises Riffer::ArgumentError if +type+ is not :pass, :transform, or :block.
   # --
   # : (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void

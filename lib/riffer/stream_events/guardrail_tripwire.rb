@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents a guardrail tripwire event during streaming.
-#
-# Emitted when a guardrail blocks execution during the streaming pipeline.
+# Emitted when a guardrail blocks execution during streaming.
 class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
   # The tripwire containing block details.
   attr_reader :tripwire #: Riffer::Guardrails::Tripwire
 
-  # Creates a new tripwire stream event.
-  #
-  # [tripwire] the tripwire details.
-  # [role] the message role (defaults to :assistant).
-  #
   #--
   #: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void
   def initialize(tripwire, role: :assistant)

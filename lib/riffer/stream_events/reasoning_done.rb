@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents completion of reasoning during streaming.
-#
-# Emitted when the LLM has finished producing reasoning/thinking content.
-# Only available with providers that support reasoning (e.g., OpenAI with reasoning option).
+# Represents completed reasoning during streaming; only emitted by providers
+# that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDone < Riffer::StreamEvents::Base
   # The complete reasoning content.
   attr_reader :content #: String

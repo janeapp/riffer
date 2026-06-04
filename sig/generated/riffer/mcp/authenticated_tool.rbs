@@ -1,7 +1,8 @@
 # Generated from lib/riffer/mcp/authenticated_tool.rb with RBS::Inline
 
-# Wraps MCP-generated tool classes so +tools/call+ uses +Riffer.config.mcp.credentials+
-# per invocation while delegating metadata to the inner class.
+# Wraps MCP-generated tool classes so +tools/call+ resolves
+# +Riffer.config.mcp.credentials+ per invocation, delegating metadata to the
+# inner class.
 module Riffer::Mcp::AuthenticatedTool
   # Returns one wrapper class per inner tool, sharing +manifest+ and +matched_tags+.
   #

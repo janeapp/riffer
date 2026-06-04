@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::StreamEvents::ToolCallDone represents a completed tool call during streaming.
-#
-# Emitted when the LLM has finished building a tool call with complete arguments.
+# Represents a completed tool call during streaming.
 class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
   # The tool call item identifier.
   attr_reader :item_id #: String

@@ -3,25 +3,12 @@
 
 require "json"
 
-# Riffer::Tools::Runtime handles tool call execution for an agent.
-#
-# Composes with a Riffer::Runner for concurrency control and provides
-# +execute+ as the sole public entry point.
-#
-# Subclass and override +dispatch_tool_call+ to customize how individual
-# tool calls are dispatched (e.g., HTTP, gRPC).
-#
-#   runtime = Riffer::Tools::Runtime::Inline.new
-#   results = runtime.execute(tool_calls, tools: tools, context: context)
-#
+# Handles tool call execution for an agent, composing with a Riffer::Runner for
+# concurrency. Subclass and override +dispatch_tool_call+ to customize dispatch
+# (e.g. HTTP, gRPC).
 class Riffer::Tools::Runtime
   # @rbs @runner: Riffer::Runner
 
-  # [runner] the concurrency runner to use for batch execution.
-  #
-  # Subclasses must provide a runner; instantiating Riffer::Tools::Runtime directly
-  # raises +NotImplementedError+.
-  #
   #--
   #: (runner: Riffer::Runner) -> void
   def initialize(runner:)
@@ -30,15 +17,6 @@ class Riffer::Tools::Runtime
   end
 
   # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
-  #
-  # [tool_calls] the tool calls to execute.
-  # [tools] the resolved tool classes.
-  # [context] the context hash.
-  # [assistant_message] the assistant message that produced these tool
-  #   calls, when known. Forwarded to +around_tool_call+ and
-  #   +dispatch_tool_call+ so subclasses can access it (e.g. for
-  #   instrumentation that needs the accompanying assistant text).
-  #
   #--
   #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:, assistant_message: nil)
@@ -50,10 +28,8 @@ class Riffer::Tools::Runtime
     end
   end
 
-  # Hook that wraps each tool call execution. Override in subclasses
-  # to customize. Must +yield+ to continue execution.
-  #
-  # The default implementation simply yields.
+  # Hook wrapping each tool call; override in subclasses to instrument or
+  # customize. Must +yield+ to continue.
   #
   #   class InstrumentedRuntime < Riffer::Tools::Runtime::Inline
   #     private
@@ -74,15 +50,6 @@ class Riffer::Tools::Runtime
 
   private
 
-  # Dispatches a single tool call. Override in subclasses to change
-  # how individual tools are invoked (e.g., HTTP, gRPC).
-  #
-  # [tool_call] the tool call to execute.
-  # [tools] the resolved tool classes.
-  # [context] the context hash.
-  # [assistant_message] the assistant message that produced this tool
-  #   call, when known.
-  #
   #--
   #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
   def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
