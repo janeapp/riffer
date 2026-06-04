@@ -3,8 +3,6 @@
 
 # Configuration object for the skills block DSL.
 #
-# Used inside the +skills+ block on Riffer::Agent:
-#
 #   skills do
 #     backend Riffer::Skills::FilesystemBackend.new(".skills")
 #     adapter Riffer::Skills::XmlAdapter
@@ -16,8 +14,6 @@ class Riffer::Skills::Config
   # @rbs @activate: (Array[String] | Proc)?
   # @rbs @activate_tool: singleton(Riffer::Tool)?
 
-  # Creates a new Config with all options unset.
-  #
   #--
   #: () -> void
   def initialize
@@ -27,11 +23,7 @@ class Riffer::Skills::Config
     @activate_tool = nil
   end
 
-  # Gets or sets the skills backend.
-  #
-  # Accepts a Riffer::Skills::Backend instance, or a Proc that receives
-  # +context+ and returns a Backend.
-  #
+  # Gets or sets the skills backend (a Backend or a +context+-resolved Proc).
   #--
   #: (?(Riffer::Skills::Backend | Proc)?) -> (Riffer::Skills::Backend | Proc)?
   def backend(value = nil)
@@ -39,11 +31,8 @@ class Riffer::Skills::Config
     @backend = value
   end
 
-  # Gets or sets a custom skill adapter class.
-  #
-  # Must be a subclass of Riffer::Skills::Adapter.
-  # Defaults to the provider's preferred adapter.
-  #
+  # Gets or sets a custom skill adapter class; defaults to the provider's
+  # preferred adapter.
   #--
   #: (?singleton(Riffer::Skills::Adapter)?) -> singleton(Riffer::Skills::Adapter)?
   def adapter(value = nil)
@@ -51,14 +40,9 @@ class Riffer::Skills::Config
     @adapter = value
   end
 
-  # Gets or sets skill names to activate at startup.
-  #
-  # Activated skills have their full body included in the system prompt
-  # without requiring a tool call.
-  #
-  # Accepts an array of skill name strings or a Proc that receives
-  # +context+ and returns an array of names.
-  #
+  # Gets or sets skill names to activate at startup (an array or a
+  # +context+-resolved Proc); activated skills' bodies are included in the
+  # system prompt without a tool call.
   #--
   #: (?(Array[String] | Proc)?) -> (Array[String] | Proc)?
   def activate(value = nil)
@@ -66,15 +50,10 @@ class Riffer::Skills::Config
     @activate = value
   end
 
-  # Gets or sets the per-agent override for the skill activation tool class.
-  #
-  # Returns the configured override when set, or +nil+ when unset. The
-  # global fallback to <tt>Riffer.config.skills.default_activate_tool</tt>
-  # is applied by the agent at resolution time (see
-  # Riffer::Agent#resolve_tools), not by this getter.
-  #
-  # The override must be a subclass of Riffer::Tool.
-  #
+  # Gets or sets the per-agent skill activation tool override, or +nil+ when
+  # unset — the global fallback to <tt>Riffer.config.skills.default_activate_tool</tt>
+  # is applied by the agent at resolution, not here. Raises Riffer::ArgumentError
+  # on an invalid value.
   #--
   #: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
   def activate_tool(value = nil)

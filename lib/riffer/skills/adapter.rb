@@ -1,27 +1,14 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Base class defining the interface for skill adapters.
-#
-# A skill adapter encapsulates the provider-specific catalog rendering for
-# skills — how the available-skills section appears in the system prompt.
-#
-# Subclass and override +render_catalog+. The activation tool is set at
-# construction time and is exposed via +#skill_activate_tool+ for use in
-# rendered output.
-#
-# See Riffer::Skills::MarkdownAdapter for the default implementation.
-# See Riffer::Skills::XmlAdapter for the Anthropic/Claude variant.
+# Interface for skill adapters — provider-specific rendering of the
+# available-skills section in the system prompt. Subclass and override
+# +render_catalog+; the activation tool is exposed via +#skill_activate_tool+
+# for the rendered output.
 class Riffer::Skills::Adapter
   # The activation tool class for this adapter.
   attr_reader :skill_activate_tool #: singleton(Riffer::Tool)
 
-  # Creates a new adapter.
-  #
-  # [skill_activate_tool] the activation tool class — referenced by name
-  #                       in the rendered catalog so the LLM knows which
-  #                       tool to call.
-  #
   #--
   #: (skill_activate_tool: singleton(Riffer::Tool)) -> void
   def initialize(skill_activate_tool:)
@@ -29,11 +16,6 @@ class Riffer::Skills::Adapter
   end
 
   # Renders a skill catalog section for the system prompt.
-  #
-  # [skills] array of Frontmatter objects to render.
-  #
-  # Raises NotImplementedError if not implemented by subclass.
-  #
   #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)

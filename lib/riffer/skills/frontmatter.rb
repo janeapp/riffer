@@ -3,13 +3,9 @@
 
 require "yaml"
 
-# Immutable value object holding parsed SKILL.md YAML frontmatter.
-#
-# Required fields per the Agent Skills spec: +name+ and +description+.
-# All unrecognized top-level frontmatter keys are merged into +metadata+.
-#
-#   frontmatter, body = Riffer::Skills::Frontmatter.parse(raw_content)
-#
+# Immutable value object holding parsed SKILL.md YAML frontmatter. Required
+# fields: +name+ and +description+; unrecognized top-level keys are merged into
+# +metadata+.
 class Riffer::Skills::Frontmatter
   NAME_PATTERN = /\A[a-z0-9]+(-[a-z0-9]+)*\z/ #: Regexp
   MAX_NAME_LENGTH = 64 #: Integer
@@ -21,18 +17,13 @@ class Riffer::Skills::Frontmatter
   # The skill description (1-1024 chars).
   attr_reader :description #: String
 
-  # Arbitrary key-value metadata from the spec's +metadata+ field
-  # and any unrecognized top-level frontmatter keys.
+  # Metadata from the spec's +metadata+ field plus any unrecognized top-level
+  # keys.
   attr_reader :metadata #: Hash[Symbol, untyped]
 
-  # Parses a raw SKILL.md string into a Frontmatter and body.
-  #
-  # Splits on YAML front matter delimiters (+---+). Unrecognized
-  # top-level keys become +metadata+. Available to custom backends
-  # so they don't need to reimplement parsing.
-  #
-  # Raises Riffer::ArgumentError if frontmatter is invalid.
-  #
+  # Parses a raw SKILL.md string into a +[Frontmatter, body]+ pair — public so
+  # custom backends needn't reimplement parsing. Raises Riffer::ArgumentError
+  # if the frontmatter is invalid.
   #--
   #: (String) -> [Riffer::Skills::Frontmatter, String]
   def self.parse(raw)
@@ -42,9 +33,7 @@ class Riffer::Skills::Frontmatter
   end
 
   # Parses only the frontmatter from a raw SKILL.md string, ignoring the body.
-  #
-  # Raises Riffer::ArgumentError if frontmatter is invalid.
-  #
+  # Raises Riffer::ArgumentError if the frontmatter is invalid.
   #--
   #: (String) -> Riffer::Skills::Frontmatter
   def self.parse_frontmatter(raw)
@@ -68,14 +57,7 @@ class Riffer::Skills::Frontmatter
   end
   private_class_method :split_frontmatter
 
-  # Creates a new Frontmatter.
-  #
-  # [name] the skill name (must match +[a-z0-9]([a-z0-9-]*[a-z0-9])?+, 1-64 chars).
-  # [description] the skill description (1-1024 chars).
-  # [metadata] optional metadata hash.
-  #
-  # Raises Riffer::ArgumentError if name or description is invalid.
-  #
+  # Raises Riffer::ArgumentError if +name+ or +description+ is invalid.
   #--
   #: (name: String, description: String, ?metadata: Hash[Symbol, untyped]) -> void
   def initialize(name:, description:, metadata: {})

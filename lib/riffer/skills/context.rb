@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Skills context for an agent generation cycle.
-#
-# Coordinates skill discovery, activation, and prompt rendering.
-# Tracks activations with caching to avoid redundant backend reads.
-#
-# Built by the agent during +Agent.new+ and exposed to tools via
-# <tt>context.skills</tt> on the agent's +Riffer::Agent::Context+.
-#
-# See Riffer::Skills::Backend, Riffer::Skills::Frontmatter.
+# Skills context for an agent generation cycle — coordinates discovery,
+# activation, and prompt rendering, caching activations to avoid redundant
+# backend reads. Exposed to tools via <tt>context.skills</tt>.
 class Riffer::Skills::Context
   # @rbs @backend: Riffer::Skills::Backend
   # @rbs @activated: Hash[String, String]
@@ -23,13 +17,6 @@ class Riffer::Skills::Context
   # Optional callback invoked when a skill is first activated.
   attr_writer :on_activate #: (^(String) -> void)?
 
-  # Creates a new skills context for a generation cycle.
-  #
-  # [backend] the skills backend for reading skill bodies.
-  # [skills] skill catalog indexed by name.
-  # [adapter] the adapter used to render skill content. The adapter
-  #           carries the activation tool class via its initializer.
-  #
   #--
   #: (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void
   def initialize(backend:, skills:, adapter:)
@@ -61,10 +48,8 @@ class Riffer::Skills::Context
     @activated.key?(name)
   end
 
-  # Returns the complete skills section for the system prompt.
-  #
-  # Includes the catalog and any pre-activated skill bodies.
-  #
+  # Returns the complete skills section for the system prompt — the catalog plus
+  # any pre-activated skill bodies.
   #--
   #: () -> String
   def system_prompt
