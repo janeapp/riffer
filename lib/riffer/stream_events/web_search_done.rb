@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents the result of a web search during streaming.
-#
-# Emitted when the LLM has finished a server-side web search.
+# The result of a completed server-side web search during streaming.
 class Riffer::StreamEvents::WebSearchDone < Riffer::StreamEvents::Base
   # The search query used.
   attr_reader :query #: String

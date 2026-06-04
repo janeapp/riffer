@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::StreamEvents::ToolCallDelta represents an incremental tool call chunk during streaming.
-#
-# Emitted when the LLM is building a tool call, containing partial argument data.
+# Represents an incremental tool call chunk (partial argument data) during
+# streaming.
 class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
   # The tool call item identifier.
   attr_reader :item_id #: String

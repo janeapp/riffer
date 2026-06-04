@@ -1,18 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents the result of a guardrail execution.
-#
-# Results can be one of three types:
-# - pass: Continue with the original data unchanged
-# - transform: Continue with transformed data
-# - block: Halt execution with a reason
-#
-# Use the factory methods to create results:
-#
-#   Result.pass(data)
-#   Result.transform(data)
-#   Result.block(reason, metadata: nil)
+# Represents the result of a guardrail execution: +pass+ (continue unchanged),
+# +transform+ (continue with changed data), or +block+ (halt with a reason).
 class Riffer::Guardrails::Result
   TYPES = %i[pass transform block].freeze #: Array[Symbol]
 
@@ -27,9 +17,6 @@ class Riffer::Guardrails::Result
 
   class << self
     # Creates a pass result that continues with unchanged data.
-    #
-    # [data] the original data to pass through.
-    #
     #--
     #: (untyped) -> Riffer::Guardrails::Result
     def pass(data)
@@ -37,9 +24,6 @@ class Riffer::Guardrails::Result
     end
 
     # Creates a transform result that continues with transformed data.
-    #
-    # [data] the transformed data.
-    #
     #--
     #: (untyped) -> Riffer::Guardrails::Result
     def transform(data)
@@ -47,10 +31,6 @@ class Riffer::Guardrails::Result
     end
 
     # Creates a block result that halts execution.
-    #
-    # [reason] the reason for blocking.
-    # [metadata] optional additional information.
-    #
     #--
     #: (String, ?metadata: Hash[Symbol, untyped]?) -> Riffer::Guardrails::Result
     def block(reason, metadata: nil)
@@ -58,14 +38,7 @@ class Riffer::Guardrails::Result
     end
   end
 
-  # Creates a new result.
-  #
-  # [type] the result type (:pass, :transform, or :block).
-  # [data] the data or reason.
-  # [metadata] optional metadata for block results.
-  #
-  # Raises Riffer::ArgumentError if the result type is invalid.
-  #
+  # Raises Riffer::ArgumentError if +type+ is not :pass, :transform, or :block.
   #--
   #: (Symbol, untyped, ?metadata: Hash[Symbol, untyped]?) -> void
   def initialize(type, data, metadata: nil)

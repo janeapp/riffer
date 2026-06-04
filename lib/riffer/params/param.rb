@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Riffer::Params::Param represents a single parameter definition.
-#
-# Handles type validation and JSON Schema generation for individual parameters.
+# A single parameter definition, handling type validation and JSON Schema
+# generation.
 class Riffer::Params::Param
   # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS = {
@@ -20,9 +19,8 @@ class Riffer::Params::Param
   # Primitive types allowed for the <tt>of:</tt> keyword on Array params
   PRIMITIVE_TYPES = (TYPE_MAPPINGS.keys - [Array, Hash]).freeze #: Array[Module]
 
-  # Maps JSON Schema type strings back to Ruby types. The inverse of
-  # TYPE_MAPPINGS, collapsing the three boolean spellings onto
-  # Riffer::Params::Boolean. Used by +from_json_schema+.
+  # Maps JSON Schema type strings back to Ruby types (inverse of TYPE_MAPPINGS),
+  # collapsing the three boolean spellings onto Riffer::Params::Boolean.
   JSON_TYPE_MAPPINGS = {
     "string" => String,
     "integer" => Integer,
@@ -32,24 +30,32 @@ class Riffer::Params::Param
     "object" => Hash
   }.freeze #: Hash[String, Module]
 
+  # The parameter name.
   attr_reader :name #: Symbol
+
+  # The Ruby type.
   attr_reader :type #: Module
+
+  # Whether the parameter is required.
   attr_reader :required #: bool
+
+  # The parameter description, if any.
   attr_reader :description #: String?
+
+  # Allowed values, if constrained.
   attr_reader :enum #: Array[untyped]?
+
+  # The default value, if any.
   attr_reader :default #: untyped
+
+  # Element type for a typed array (+of:+).
   attr_reader :item_type #: Module?
+
+  # Nested Params for object / array-of-object types.
   attr_reader :nested_params #: Riffer::Params?
 
-  #--
-  # Reconstructs a Param from a single JSON Schema property.
-  #
-  # [name] the parameter name (Symbol).
-  # [schema] the property's JSON Schema (Symbol-keyed).
-  # [required] whether the property appeared in the parent's +required+ list.
-  #
-  # Raises Riffer::ArgumentError on a type outside the Params-expressible subset.
-  #
+  # Reconstructs a Param from a single JSON Schema property. Raises
+  # Riffer::ArgumentError on a type outside the Params-expressible subset.
   #--
   #: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema(name, schema, required:)
@@ -68,10 +74,6 @@ class Riffer::Params::Param
     )
   end
 
-  # Resolves the +[item_type, nested_params]+ pair for a reconstructed Param:
-  # a nested Params for object / array-of-object schemas, an +item_type+ for
-  # typed primitive arrays, and +nil+ for everything else.
-  #
   #--
   #: (Module, Hash[Symbol, untyped]) -> [Module?, Riffer::Params?]
   def self.resolve_nesting(ruby_type, schema)
@@ -86,12 +88,9 @@ class Riffer::Params::Param
   end
   private_class_method :resolve_nesting
 
-  # Resolves a JSON Schema +type+ (a String, or a <tt>[type, "null"]</tt>
-  # union) back to its Ruby type. Returns a Module because
-  # Riffer::Params::Boolean is a Module, not a Class — the same widening the
-  # +type+ attribute uses. Raises Riffer::ArgumentError on a type outside the
-  # Params-expressible subset (the block runs only for an unmapped type).
-  #
+  # Resolves a JSON Schema +type+ (or a <tt>[type, "null"]</tt> union) to its
+  # Ruby type. Returns a Module — Riffer::Params::Boolean is a Module, not a
+  # Class. Raises Riffer::ArgumentError on an unsupported type.
   #--
   #: (untyped) -> Module
   def self.json_type_to_ruby(type)
@@ -135,21 +134,11 @@ class Riffer::Params::Param
     TYPE_MAPPINGS[type] || type.to_s.downcase
   end
 
-  # Converts this parameter to JSON Schema format.
-  #
-  # When +strict+ is true, optional parameters are made nullable
-  # (<tt>["type", "null"]</tt>) so that strict mode providers can distinguish
-  # "absent" from "present" without rejecting the schema.
-  #
-  # Optional parameters with an +enum+ use +anyOf+ to separate the enum
-  # constraint from the null type, since providers like Anthropic reject
+  # Converts this parameter to JSON Schema format. When +strict+, optional
+  # params are made nullable (<tt>["type", "null"]</tt>) so strict providers
+  # distinguish absent from present; optional params with an +enum+ use +anyOf+
+  # instead, since providers like Anthropic reject
   # <tt>{"type": ["string", "null"], "enum": [...]}</tt>.
-  #
-  # In non-strict mode a +default+ is emitted when set (a standard JSON
-  # Schema keyword), making the schema a lossless source for
-  # +Riffer::Params.from_json_schema+. Strict mode omits it, since strict
-  # providers reject the keyword.
-  #
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)

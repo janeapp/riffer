@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents a guardrail modification event during streaming.
-#
-# Emitted when a guardrail transforms data during the streaming pipeline.
+# Emitted when a guardrail transforms data during streaming.
 class Riffer::StreamEvents::GuardrailModification < Riffer::StreamEvents::Base
   # The modification record.
   attr_reader :modification #: Riffer::Guardrails::Modification
 
-  # Creates a new guardrail modification stream event.
-  #
-  # [modification] the modification details.
-  # [role] the message role (defaults to :assistant).
-  #
   #--
   #: (Riffer::Guardrails::Modification, ?role: Symbol) -> void
   def initialize(modification, role: :assistant)
