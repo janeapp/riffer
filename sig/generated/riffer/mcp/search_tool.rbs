@@ -1,18 +1,10 @@
 # Generated from lib/riffer/mcp/search_tool.rb with RBS::Inline
 
-# Progressive-discovery search tool. Lists or filters MCP tools by name or description.
-#
-# Reads the per-agent set of auth-wrapped MCP tool classes from
-# +context.mcp_progressive_tools+ (populated by Riffer::Agent when a
-# progressive +use_mcp+ matches at least one registration).
-#
-# See Riffer::Agent.use_mcp and docs/14_MCP.md.
+# Lists or filters MCP tools by name or description during progressive discovery.
 class Riffer::Mcp::SearchTool < Riffer::Tool
-  IDENTIFIER: String
+  IDENTIFIER: ::String
 
-  # [context] tool context containing +mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
-  # [query]   substring filter; an empty string returns all tools.
-  #
+  # Searches progressive MCP tools by query.
   # --
   # : (context: Riffer::Agent::Context?, query: String) -> Riffer::Tools::Response
   def call: (context: Riffer::Agent::Context?, query: String) -> Riffer::Tools::Response

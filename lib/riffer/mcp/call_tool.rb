@@ -3,18 +3,10 @@
 
 require "json"
 
-# Progressive-discovery call tool. Invokes an MCP tool by its name as returned by mcp_search (e.g. 'github__create_pr').
-#
-# Reads the per-agent set of auth-wrapped MCP tool classes from
-# +context[:mcp_progressive_tools]+ (populated by Riffer::Agent when a
-# progressive +use_mcp+ matches at least one registration).
-#
-# Arguments are passed as a JSON-encoded string because strict-mode
-# providers prohibit open-ended object schemas.
-#
-# See Riffer::Agent.use_mcp and docs/14_MCP.md.
+# Invokes an MCP tool by name during progressive discovery.
+# Arguments are JSON-encoded because strict-mode providers prohibit open-ended object schemas.
 class Riffer::Mcp::CallTool < Riffer::Tool
-  IDENTIFIER = "mcp_call" #: String
+  IDENTIFIER = "mcp_call"
 
   identifier IDENTIFIER
   description "Invoke an MCP tool by its name as returned by mcp_search (e.g. 'github__create_pr')."
@@ -24,10 +16,7 @@ class Riffer::Mcp::CallTool < Riffer::Tool
     optional :arguments, String, description: "JSON-encoded object of arguments to pass to the tool."
   end
 
-  # [context]   tool context containing +mcp_progressive_tools+ (Array of Riffer::Tool subclasses).
-  # [tool_name] tool name to invoke (as returned by mcp_search).
-  # [arguments] JSON-encoded object of arguments, or nil/"" for no arguments.
-  #
+  # Invokes the named MCP tool.
   #--
   #: (context: Riffer::Agent::Context?, tool_name: String, ?arguments: String?) -> Riffer::Tools::Response
   def call(context:, tool_name:, arguments: nil)

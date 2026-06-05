@@ -108,48 +108,8 @@ class Riffer::Agent
     value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
-  # Returns the tool classes the LLM should see for this agent.
-  #
-  # Class-level companion to the instance +#tools+. Resolves the Proc form
-  # of +uses_tools+ and appends the skill activation tool when a +skills+
-  # block is configured. Does not include MCP tools — those require a live
-  # registry and per-instance context.
-  #
-  # When +uses_tools+ is a Proc, +context+ is forwarded to it.
-  #
-  # Each returned tool class is validated via +validate_as_tool!+.
-  #
-  # Raises Riffer::ArgumentError on tool name conflicts with the skill
-  # activation tool, or when a tool class fails +validate_as_tool!+.
-  #
-  #--
-  #: (?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config) -> Array[singleton(Riffer::Tool)]
-  def self.resolved_tool_classes(context: nil, config: self.config)
-    base = Riffer::Helpers::CallOrValue.resolve(config.tools_config, context: context, default: [])
-    skills_cfg = config.skills_config
-
-    tools = if skills_cfg
-      skill_activate_tool_class = skills_cfg.activate_tool || Riffer.config.skills.default_activate_tool
-      if base.any? { |t| t.name == skill_activate_tool_class.name }
-        raise Riffer::ArgumentError, "Tool name conflict with skill tools: #{skill_activate_tool_class.name}"
-      end
-      base + [skill_activate_tool_class]
-    else
-      base
-    end
-
-    tools.each(&:validate_as_tool!)
-    tools
-  end
-
-  # Opts this agent into tools from all MCP registrations that share any of
-  # the given tag(s).
-  #
-  # +tag+ - a String or Symbol; matched against registration manifest tags.
-  # +progressive+ - when +false+, all tools from matching registrations are
-  #   injected directly (opt-out of context-saving). Defaults to +true+: tools
-  #   are exposed via +mcp_search+ and +mcp_call+ meta-tools
-  #   and the LLM discovers and invokes them on demand.
+  # Opts this agent into MCP tools from registrations matching the given tag.
+  # Progressive registrations expose +mcp_search+ and +mcp_call+ instead of every schema.
   #
   #: (String | Symbol, ?progressive: bool) -> void
   def self.use_mcp(tag, progressive: true)
@@ -500,12 +460,7 @@ class Riffer::Agent
     end
   end
 
-  # Each matching MCP registration once, split by the +:progressive+ flag,
-  # with tag symbols unioned across +use_mcp+ rows.
-  #
-  # Returns +[regular, progressive]+ — two Hashes mapping a registration to
-  # its accumulated matched tags.
-  #
+  #--
   #: (Array[Hash[Symbol, untyped]]) -> [Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]]]
   def gather_mcp_registrations_with_tags(configs)
     regular = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]

@@ -919,46 +919,6 @@ describe Riffer::Agent do
     end
   end
 
-  describe ".resolved_tool_classes validation" do
-    it "raises when a tool is missing a description" do
-      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        uses_tools [bad_tool]
-      end
-
-      err = expect { klass.resolved_tool_classes }.must_raise Riffer::ArgumentError
-      expect(err.message).must_match(/must define a description/)
-    end
-
-    it "raises when uses_tools is a Proc returning an invalid tool" do
-      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        uses_tools ->(_ctx) { [bad_tool] }
-      end
-
-      err = expect { klass.resolved_tool_classes(context: {}) }.must_raise Riffer::ArgumentError
-      expect(err.message).must_match(/must define a description/)
-    end
-
-    it "returns valid tool classes unchanged" do
-      good_tool = Class.new(Riffer::Tool) {
-        identifier "good_tool"
-        description "Good tool"
-      }
-
-      klass = Class.new(Riffer::Agent) do
-        model "mock/riffer-1"
-        uses_tools [good_tool]
-      end
-
-      expect(klass.resolved_tool_classes).must_equal [good_tool]
-    end
-  end
-
   describe "interrupt! with experimental_history_healing" do
     let(:tool_class) do
       Class.new(Riffer::Tool) do
