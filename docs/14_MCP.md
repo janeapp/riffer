@@ -72,7 +72,7 @@ class ResearchAgent < Riffer::Agent
 end
 ```
 
-By default, `use_mcp` uses **progressive discovery**. The agent receives `mcp_search` and `mcp_call` rather than every schema up front. See [Progressive Tool Discovery](#progressive-tool-discovery).
+By default, `use_mcp` uses **progressive discovery**. The agent receives `mcp_search` rather than every schema up front. See [Progressive Tool Discovery](#progressive-tool-discovery).
 
 `use_mcp` accepts any tag registered via `Riffer::Mcp.register`. Multiple calls accumulate — the agent receives tools from all matching servers:
 
@@ -95,7 +95,7 @@ Like [`uses_tools`](03_AGENTS.md#uses_tools), **`use_mcp` is not inherited** fro
 
 ## Progressive Tool Discovery
 
-Progressive discovery is the default. The `use_mcp` instruction exposes **`mcp_search`** and **`mcp_call`** instead of flooding the context with every tool schema up front.
+Progressive discovery is the default. The `use_mcp` instruction exposes **`mcp_search`** instead of flooding the context with every tool schema up front.
 
 ```ruby
 class ResearchAgent < Riffer::Agent
@@ -108,36 +108,32 @@ end
 
 Only use `progressive: false` when the server has a small, stable set of tools you always want available.
 
-Two tools are added to the agent's tool list:
-
 **`mcp_search`** — Search for available tools by name or description.
-- `query` (required) — filter by name or description substring; pass `""` to list all tools.
+- `query` (required, non-empty) — filter by name or description substring.
 
-**`mcp_call`** — Invoke a tool by name.
-- `tool_name` (required) — name as returned by `mcp_search` (e.g. `github__create_pr`, not `create_pr`).
-- `arguments` (optional) — JSON-encoded string, not an object. Required because [strict-mode providers](https://platform.openai.com/docs/guides/function-calling?strict-mode=enabled) prohibit open-ended object types.
+On a successful search, matching tools are injected into the agent's active tool list. The model calls them natively on the next turn — no proxy or JSON-encoded arguments.
 
 **Example flow:**
 
-1. Agent starts — only `mcp_search` and `mcp_call` appear in the tool list.
+1. Agent starts — only `mcp_search` appears in the tool list.
 2. LLM calls `mcp_search` with `query: "create pull request"`.
-3. Riffer returns the name, description, and schema for `github__create_pr`.
-4. LLM calls `mcp_call` with `tool_name: "github__create_pr", arguments: '{"repo":"acme/app","title":"Fix bug"}'`.
-5. The tool executes (with all credential handling intact) and returns its result.
+3. Riffer injects `github__create_pr` into the active tool list and returns an acknowledgment.
+4. LLM calls `github__create_pr` directly with its real schema (e.g. `title:`, `body:`, `base:`).
+5. The provider validates the arguments; the tool executes with all credential handling intact.
 
-**Multiple progressive `use_mcp` calls:** All matching registrations are combined into one `mcp_search` / `mcp_call` pair:
+Injected tools accumulate across turns — tools discovered in one search remain available for subsequent calls without re-searching.
+
+**Multiple progressive `use_mcp` calls:** All matching registrations are combined into one `mcp_search`:
 
 ```ruby
 use_mcp :connectors_a   # both default to progressive
 use_mcp :connectors_b
-# → one mcp_search and one mcp_call exposing tools from both registrations
+# → one mcp_search exposing tools from both registrations
 ```
 
 **Credential handling:** Progressive tools follow the same credential rules as regular tools — see [Session credentials callback](#session-credentials-callback).
 
-**Tool access in tools:** The resolved set of auth-wrapped MCP tool classes is available via `context[:mcp_progressive_tools]` (an `Array` of `Riffer::Tool` subclasses) during a progressive run. This is the same collection `mcp_search` and `mcp_call` operate on. This key is framework-managed, so treat it as read-only from application code. Any caller-supplied value will be overwritten when the agent resolves its tool list.
-
-**Context cost:** Each `mcp_search` result includes the tool's name, description, and full input schema. A broad or empty query against a large tool union can return significant tokens. Prefer specific queries, or use `progressive: false` for small, stable servers where injecting all schemas up front is cheaper than discovery round-trips.
+**Tool access in tools:** The full discovery pool is available via `context[:mcp_progressive_tools]` and injected tools via `context[:injected_tools]` (both `Array[Riffer::Tool subclass]`). These keys are framework-managed — treat them as read-only from application code.
 
 ## Unregistering a Server
 
@@ -179,7 +175,7 @@ All inherit from `Riffer::Mcp::Error < Riffer::Error`.
 
 - **Tool results:** `tools/call` responses are reduced to joined **text** content from MCP `content` items. Non-text parts (e.g. images, embedded resources) are not surfaced in this release.
 - **Session credentials:** When `Riffer.config.mcp.credentials` is set, authenticated tool wrappers may build a **new HTTP client per tool invocation** so headers stay fresh; there is no connection pooling in this release.
-- **Context window / progressive disclosure:** `use_mcp` defaults to progressive mode — tools are exposed via `mcp_search` and `mcp_call`. Use `progressive: false` to inject all schemas directly. See [Progressive Tool Discovery](#progressive-tool-discovery).
+- **Context window / progressive disclosure:** `use_mcp` defaults to progressive mode — tools are discovered via `mcp_search` and injected natively for subsequent calls. Use `progressive: false` to inject all schemas directly. See [Progressive Tool Discovery](#progressive-tool-discovery).
 
 ## Requirements
 

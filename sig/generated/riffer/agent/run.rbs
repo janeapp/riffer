@@ -52,6 +52,10 @@ module Riffer::Agent::Run
   def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
 
   # --
+  # : (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
+  def inject_discovered_tools: (Riffer::Agent, Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
+
+  # --
   # : (Riffer::Agent) -> void
   def execute_pending_tool_calls: (Riffer::Agent) -> void
 
@@ -66,6 +70,10 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
   def validate_structured_output: (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
+  def effective_tools: (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
 
   # --
   # : (Riffer::Agent) -> Hash[Symbol, untyped]

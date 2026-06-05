@@ -757,7 +757,7 @@ describe Riffer::Agent do
         klass
       end
 
-      it "returns mcp_search and mcp_call instead of individual tool classes" do
+      it "returns mcp_search instead of individual tool classes" do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a, fake_tool_b])
 
         klass = Class.new(Riffer::Agent) do
@@ -767,12 +767,11 @@ describe Riffer::Agent do
 
         tools = resolved_tools_for(klass)
         names = tools.map(&:name)
-        expect(tools.size).must_equal 2
+        expect(tools.size).must_equal 1
         expect(names).must_include "mcp_search"
-        expect(names).must_include "mcp_call"
       end
 
-      it "search tool can find inner tools" do
+      it "search tool returns matching tools as inject_tools" do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
 
         klass = Class.new(Riffer::Agent) do
@@ -782,9 +781,11 @@ describe Riffer::Agent do
 
         tools, ctx = resolved_tools_and_context_for(klass)
         st = tools.find { |t| t.name == "mcp_search" }
-        resp = st.new.call(context: ctx, query: "")
+        resp = st.new.call(context: ctx, query: "tool_a")
         expect(resp.success?).must_equal true
         expect(resp.content).must_include "srv__tool_a"
+        expect(resp.discovered_tools).wont_be_empty
+        expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
       end
 
       it "mixes regular and progressive use_mcp in the same agent" do
@@ -801,15 +802,15 @@ describe Riffer::Agent do
         names = tools.map(&:name)
         expect(names).must_include "srv__tool_b"
         expect(names).must_include "mcp_search"
-        expect(names).must_include "mcp_call"
+        expect(names).wont_include "mcp_call"
 
         st = tools.find { |t| t.name == "mcp_search" }
-        resp = st.new.call(context: ctx, query: "")
+        resp = st.new.call(context: ctx, query: "tool_a")
         expect(resp.content).must_include "srv__tool_a"
         expect(resp.content).wont_include "srv__tool_b"
       end
 
-      it "accumulates tools from multiple progressive registrations into one pair" do
+      it "accumulates tools from multiple progressive registrations into one mcp_search" do
         inject_ready_registration(name: "srv1", tags: [:g1], tools: [fake_tool_a])
         inject_ready_registration(name: "srv2", tags: [:g2], tools: [fake_tool_b])
 
@@ -821,11 +822,11 @@ describe Riffer::Agent do
 
         tools, ctx = resolved_tools_and_context_for(klass)
         expect(tools.count { |t| t.name == "mcp_search" }).must_equal 1
-        expect(tools.count { |t| t.name == "mcp_call" }).must_equal 1
+        expect(tools.map(&:name)).wont_include "mcp_call"
 
-        resp = tools.find { |t| t.name == "mcp_search" }.new.call(context: ctx, query: "")
-        expect(resp.content).must_include "srv__tool_a"
-        expect(resp.content).must_include "srv__tool_b"
+        resp = tools.find { |t| t.name == "mcp_search" }.new.call(context: ctx, query: "tool")
+        expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
+        expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_b"
       end
 
       it "omits progressive tools when credentials proc returns nil" do
@@ -860,7 +861,6 @@ describe Riffer::Agent do
         tools = resolved_tools_for(klass)
         names = tools.map(&:name)
         expect(names).wont_include "mcp_search"
-        expect(names).wont_include "mcp_call"
         expect(tools).wont_be_empty
       ensure
         Riffer.config.mcp.credentials = prev

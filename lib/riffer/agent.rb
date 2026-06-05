@@ -109,7 +109,7 @@ class Riffer::Agent
   end
 
   # Opts this agent into MCP tools from registrations matching the given tag.
-  # Progressive registrations expose +mcp_search+ and +mcp_call+ instead of every schema.
+  # Progressive registrations expose +mcp_search+ instead of every schema up front.
   #
   #: (String | Symbol, ?progressive: bool) -> void
   def self.use_mcp(tag, progressive: true)
@@ -454,7 +454,7 @@ class Riffer::Agent
 
     if progressive_tools.any?
       @context.mcp_progressive_tools = progressive_tools.freeze
-      regular_tools + [Riffer::Mcp::SearchTool, Riffer::Mcp::CallTool]
+      regular_tools + [Riffer::Mcp::SearchTool]
     else
       regular_tools
     end

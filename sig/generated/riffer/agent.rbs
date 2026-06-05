@@ -81,7 +81,7 @@ class Riffer::Agent
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
   # Opts this agent into MCP tools from registrations matching the given tag.
-  # Progressive registrations expose +mcp_search+ and +mcp_call+ instead of every schema.
+  # Progressive registrations expose +mcp_search+ instead of every schema up front.
   #
   # : (String | Symbol, ?progressive: bool) -> void
   def self.use_mcp: (String | Symbol, ?progressive: bool) -> void
