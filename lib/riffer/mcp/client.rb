@@ -5,8 +5,6 @@
 # (if a Proc) once at init, then provides +tools_list+ / +tools_call+ — used for
 # discovery and for +tools/call+ when no +credentials+ proc is configured.
 class Riffer::Mcp::Client
-  include Riffer::Helpers::Dependencies
-
   # @rbs @client: untyped
 
   #--
@@ -55,5 +53,12 @@ class Riffer::Mcp::Client
 
     content = response.dig("result", "content") || []
     content.filter_map { |item| item["text"] }.join
+  end
+
+  private
+
+  #: (String) -> true
+  def depends_on(gem_name)
+    Riffer::Helpers::Dependencies.depends_on(gem_name)
   end
 end

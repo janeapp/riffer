@@ -17,9 +17,6 @@ require "json"
 class Riffer::Agent
   # @rbs self.@config: Riffer::Agent::Config?
 
-  include Riffer::Messages::Converter
-  extend Riffer::Helpers::ClassNameConverter
-
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
   # Returns the per-class Riffer::Agent::Config holding every DSL setting.
@@ -34,7 +31,7 @@ class Riffer::Agent
   #--
   #: (?String?) -> String
   def self.identifier(value = nil)
-    value.nil? ? (config.identifier || class_name_to_path(name)) : (config.identifier = value)
+    value.nil? ? (config.identifier || Riffer::Helpers::ClassNameConverter.convert(name)) : (config.identifier = value)
   end
 
   # Gets or sets the model string (e.g., "openai/gpt-4o").

@@ -13,7 +13,9 @@ loader.inflector.inflect(
 loader.setup
 
 module Riffer
-  # @rbs self.@config: Riffer::Config?
+  extend self
+
+  # @rbs @config: Riffer::Config?
 
   # Base error class for Riffer.
   class Error < StandardError; end
@@ -34,7 +36,7 @@ module Riffer
   #
   #--
   #: () -> Riffer::Config
-  def self.config
+  def config
     @config ||= Config.new
   end
 
@@ -46,14 +48,14 @@ module Riffer
   #
   #--
   #: () ?{ (Riffer::Config) -> void } -> void
-  def self.configure(&block)
+  def configure(&block)
     yield config if block_given?
   end
 
   # Returns the gem version.
   #--
   #: () -> String
-  def self.version
+  def version
     VERSION
   end
 end

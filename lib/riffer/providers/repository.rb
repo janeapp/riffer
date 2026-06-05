@@ -2,7 +2,9 @@
 # rbs_inline: enabled
 
 # Registry for finding provider classes by identifier.
-class Riffer::Providers::Repository
+module Riffer::Providers::Repository
+  extend self
+
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     anthropic: -> { Riffer::Providers::Anthropic },
@@ -17,7 +19,7 @@ class Riffer::Providers::Repository
   #
   #--
   #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
-  def self.find(identifier)
+  def find(identifier)
     REPO.fetch(identifier.to_sym, nil)&.call
   end
 end

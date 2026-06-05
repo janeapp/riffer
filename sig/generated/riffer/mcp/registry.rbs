@@ -2,31 +2,31 @@
 
 # Thread-safe global store for MCP server registrations, keyed by manifest name.
 module Riffer::Mcp::Registry
-  self.@mutex: Thread::Mutex
+  @mutex: Thread::Mutex
 
-  self.@store: Hash[String, Riffer::Mcp::Registration]
+  @store: Hash[String, Riffer::Mcp::Registration]
 
   # Registers an MCP server and starts async tool discovery, replacing any
   # existing registration with the same name.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
-  def self.register: (Hash[Symbol, untyped] | Riffer::Mcp::Manifest) -> Riffer::Mcp::Registration
+  def register: (Hash[Symbol, untyped] | Riffer::Mcp::Manifest) -> Riffer::Mcp::Registration
 
   # Removes a registration by name.
   #
   # --
   # : ((String | Symbol)) -> void
-  def self.unregister: (String | Symbol) -> void
+  def unregister: (String | Symbol) -> void
 
   # Returns a frozen snapshot of all current registrations.
   #
   # --
   # : () -> Hash[String, Riffer::Mcp::Registration]
-  def self.registrations: () -> Hash[String, Riffer::Mcp::Registration]
+  def registrations: () -> Hash[String, Riffer::Mcp::Registration]
 
   # Returns all registrations whose manifest tags intersect the given tags
   # (normalized to symbols).
   # --
   # : (Array[Symbol]) -> Array[Riffer::Mcp::Registration]
-  def self.find_by_tags: (Array[Symbol]) -> Array[Riffer::Mcp::Registration]
+  def find_by_tags: (Array[Symbol]) -> Array[Riffer::Mcp::Registration]
 end

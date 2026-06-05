@@ -5,7 +5,6 @@
 # every per-call value; Run just orchestrates.
 module Riffer::Agent::Run
   extend self
-  include Riffer::Messages::Converter
 
   # Runs the generate loop for the given agent. See Riffer::Agent#generate
   # for prompt/files semantics.
@@ -236,7 +235,7 @@ module Riffer::Agent::Run
     raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
     return unless prompt
 
-    file_parts = (files || []).map { |f| convert_to_file_part(f) }
+    file_parts = (files || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
     agent.session.add(Riffer::Messages::User.new(prompt, files: file_parts), silent: true)
   end
 

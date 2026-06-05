@@ -5,11 +5,13 @@
 # +Riffer.config.mcp.credentials+ per invocation, delegating metadata to the
 # inner class.
 module Riffer::Mcp::AuthenticatedTool
+  extend self
+
   # Returns one wrapper class per inner tool, sharing +manifest+ and +matched_tags+.
   #
   #--
   #: (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
-  def self.wrap_all(tool_classes, manifest, matched_tags)
+  def wrap_all(tool_classes, manifest, matched_tags)
     tool_classes.map { |tc| wrap_one(tc, manifest, matched_tags) }
   end
 
@@ -17,7 +19,7 @@ module Riffer::Mcp::AuthenticatedTool
   #: (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
   # Class.new(Riffer::Tool) is typed as ::Class by steep — it cannot verify the subtype
   # relationship for dynamically created anonymous classes, so the ignore is required.
-  def self.wrap_one(inner_class, manifest, matched_tags) # steep:ignore MethodBodyTypeMismatch
+  def wrap_one(inner_class, manifest, matched_tags) # steep:ignore MethodBodyTypeMismatch
     inner = inner_class
     man = manifest
     tags = matched_tags

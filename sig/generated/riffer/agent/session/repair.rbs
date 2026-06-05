@@ -11,7 +11,7 @@ module Riffer::Agent::Session::Repair
   # result inserted after its parent. Returns +[new_messages, filled_call_ids]+.
   # --
   # : (Array[Riffer::Messages::Base]) -> [Array[Riffer::Messages::Base], Array[String]]
-  def self.fill_orphans: (Array[Riffer::Messages::Base]) -> [ Array[Riffer::Messages::Base], Array[String] ]
+  def fill_orphans: (Array[Riffer::Messages::Base]) -> [ Array[Riffer::Messages::Base], Array[String] ]
 
   # Prunes a seeded message array to the invariant — dropping orphaned tool
   # exchanges and parentless Tool messages, but preserving the pending
@@ -19,5 +19,5 @@ module Riffer::Agent::Session::Repair
   # +execute_pending_tool_calls+. Returns a new array.
   # --
   # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
-  def self.prune_orphans: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
+  def prune_orphans: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
 end

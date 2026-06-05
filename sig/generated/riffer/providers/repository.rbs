@@ -1,12 +1,12 @@
 # Generated from lib/riffer/providers/repository.rb with RBS::Inline
 
 # Registry for finding provider classes by identifier.
-class Riffer::Providers::Repository
+module Riffer::Providers::Repository
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Finds a provider class by identifier.
   #
   # --
   # : ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
-  def self.find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
+  def find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
 end

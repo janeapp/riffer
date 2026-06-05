@@ -1,0 +1,5 @@
+# `Riffer::Mcp` uses `extend self`; rbs-inline doesn't emit that, so re-extend
+# here to expose its instance methods as singleton methods.
+module Riffer::Mcp
+  extend ::Riffer::Mcp
+end

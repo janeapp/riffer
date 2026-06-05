@@ -58,6 +58,32 @@ class Riffer::Messages::FilePart
     new(url: url, media_type: media_type)
   end
 
+  # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
+  # or returns +file+ unchanged when it is already a FilePart. Raises
+  # Riffer::ArgumentError on an invalid hash.
+  #--
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
+  def self.from_hash(file)
+    return file if file.is_a?(Riffer::Messages::FilePart)
+
+    unless file.is_a?(Hash)
+      raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}"
+    end
+
+    url = file[:url]
+    data = file[:data]
+    media_type = file[:media_type]
+    filename = file[:filename]
+
+    if url
+      from_url(url, media_type: media_type)
+    elsif data && media_type
+      new(data: data, media_type: media_type, filename: filename)
+    else
+      raise Riffer::ArgumentError, "File hash must include :url or :data with :media_type"
+    end
+  end
+
   # Returns the base64-encoded data, or nil for URL-only sources.
   attr_reader :data #: String?
 

@@ -29,16 +29,16 @@ module Riffer::Mcp
   # on discovery failure.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
-  def self.register: (Hash[Symbol, untyped] | Riffer::Mcp::Manifest) -> Riffer::Mcp::Registration
+  def register: (Hash[Symbol, untyped] | Riffer::Mcp::Manifest) -> Riffer::Mcp::Registration
 
   # Removes a registration by name; subsequent agent runs won't see its tools.
   # --
   # : (String) -> void
-  def self.unregister: (String) -> void
+  def unregister: (String) -> void
 
   # Returns all current registrations keyed by name.
   #
   # --
   # : () -> Hash[String, Riffer::Mcp::Registration]
-  def self.registrations: () -> Hash[String, Riffer::Mcp::Registration]
+  def registrations: () -> Hash[String, Riffer::Mcp::Registration]
 end

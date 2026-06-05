@@ -4,6 +4,8 @@
 # Lazy-loads gem dependencies — used by providers to load required gems only
 # when needed.
 module Riffer::Helpers::Dependencies
+  extend self
+
   # Raised when a required gem cannot be loaded.
   class LoadError < ::LoadError; end
 

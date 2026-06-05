@@ -18,6 +18,8 @@
 #   end
 #
 module Riffer::Mcp
+  extend self
+
   # Base error for all MCP-related failures.
   class Error < Riffer::Error; end
 
@@ -29,14 +31,14 @@ module Riffer::Mcp
   # on discovery failure.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
-  def self.register(manifest_or_hash)
+  def register(manifest_or_hash)
     Registry.register(manifest_or_hash)
   end
 
   # Removes a registration by name; subsequent agent runs won't see its tools.
   #--
   #: (String) -> void
-  def self.unregister(name)
+  def unregister(name)
     Registry.unregister(name)
   end
 
@@ -44,7 +46,7 @@ module Riffer::Mcp
   #
   #--
   #: () -> Hash[String, Riffer::Mcp::Registration]
-  def self.registrations
+  def registrations
     Registry.registrations
   end
 end

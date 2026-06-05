@@ -27,6 +27,13 @@ class Riffer::Messages::FilePart
   # : (String, ?media_type: String?) -> Riffer::Messages::FilePart
   def self.from_url: (String, ?media_type: String?) -> Riffer::Messages::FilePart
 
+  # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
+  # or returns +file+ unchanged when it is already a FilePart. Raises
+  # Riffer::ArgumentError on an invalid hash.
+  # --
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::FilePart) -> Riffer::Messages::FilePart
+
   # Returns the base64-encoded data, or nil for URL-only sources.
   attr_reader data: String?
 

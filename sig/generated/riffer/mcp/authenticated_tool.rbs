@@ -8,11 +8,11 @@ module Riffer::Mcp::AuthenticatedTool
   #
   # --
   # : (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
-  def self.wrap_all: (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
+  def wrap_all: (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
 
   # --
   # : (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
   #  Class.new(Riffer::Tool) is typed as ::Class by steep — it cannot verify the subtype
   #  relationship for dynamically created anonymous classes, so the ignore is required.
-  def self.wrap_one: (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
+  def wrap_one: (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
 end

@@ -7,8 +7,6 @@
 class Riffer::Runner::Fibers < Riffer::Runner
   @max_concurrency: Integer?
 
-  include Riffer::Helpers::Dependencies
-
   # --
   # : (?max_concurrency: Integer?) -> void
   def initialize: (?max_concurrency: Integer?) -> void
@@ -16,4 +14,9 @@ class Riffer::Runner::Fibers < Riffer::Runner
   # --
   # : (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
   def map: (Array[untyped], context: Riffer::Agent::Context?) { (untyped) -> untyped } -> Array[untyped]
+
+  private
+
+  # : (String) -> true
+  def depends_on: (String) -> true
 end

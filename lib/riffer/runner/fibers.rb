@@ -8,8 +8,6 @@
 class Riffer::Runner::Fibers < Riffer::Runner
   # @rbs @max_concurrency: Integer?
 
-  include Riffer::Helpers::Dependencies
-
   #--
   #: (?max_concurrency: Integer?) -> void
   def initialize(max_concurrency: nil)
@@ -50,5 +48,12 @@ class Riffer::Runner::Fibers < Riffer::Runner
     raise first_error if first_error
 
     results
+  end
+
+  private
+
+  #: (String) -> true
+  def depends_on(gem_name)
+    Riffer::Helpers::Dependencies.depends_on(gem_name)
   end
 end

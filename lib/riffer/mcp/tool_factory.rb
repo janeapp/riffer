@@ -5,22 +5,25 @@
 # Generated tools delegate +#call+ to the MCP client and skip Riffer's param
 # validation — the MCP server validates inputs.
 module Riffer::Mcp::ToolFactory
+  extend self
+
   # Builds one Riffer::Tool subclass per tool definition, prefixing names with
   # the manifest name to avoid cross-server collisions (e.g. +jira__search+);
   # the server-side name stays on +.mcp_server_tool_name+.
   #--
   #: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
-  def self.build(manifest_name, client, tool_defs)
+  def build(manifest_name, client, tool_defs)
     tool_defs.map { |td| build_tool_class(manifest_name, client, td) }
   end
 
+  private
+
   #: (String) -> String
-  def self.sanitize_name_component(str)
+  def sanitize_name_component(str)
     str.gsub(/[^a-zA-Z0-9_-]/, "_")
   end
-  private_class_method :sanitize_name_component
 
-  private_class_method def self.build_tool_class(manifest_name, client, td)
+  def build_tool_class(manifest_name, client, td)
     prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(td[:name])}"
 
     # steep cannot type the body of a dynamically created anonymous class:
@@ -31,7 +34,7 @@ module Riffer::Mcp::ToolFactory
       @mcp_client = client
       @mcp_server_tool_name = td[:name]
       # Set @identifier directly so .identifier does not fall back to
-      # class_name_to_path(nil) on this anonymous class.
+      # Riffer::Helpers::ClassNameConverter.convert(nil) on this anonymous class.
       @identifier = prefixed
 
       define_singleton_method(:name) { prefixed }
