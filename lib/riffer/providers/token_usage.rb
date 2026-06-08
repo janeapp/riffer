@@ -9,18 +9,18 @@ class Riffer::Providers::TokenUsage
   # Number of tokens in the output/response.
   attr_reader :output_tokens #: Integer
 
-  # Number of tokens written to cache (Anthropic-specific).
-  attr_reader :cache_creation_tokens #: Integer?
+  # Number of tokens written to cache, when the provider reports it.
+  attr_reader :cache_write_tokens #: Integer?
 
-  # Number of tokens read from cache (Anthropic-specific).
+  # Number of tokens read from cache, when the provider reports it.
   attr_reader :cache_read_tokens #: Integer?
 
   #--
-  #: (input_tokens: Integer, output_tokens: Integer, ?cache_creation_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
-  def initialize(input_tokens:, output_tokens:, cache_creation_tokens: nil, cache_read_tokens: nil)
+  #: (input_tokens: Integer, output_tokens: Integer, ?cache_write_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
+  def initialize(input_tokens:, output_tokens:, cache_write_tokens: nil, cache_read_tokens: nil)
     @input_tokens = input_tokens
     @output_tokens = output_tokens
-    @cache_creation_tokens = cache_creation_tokens
+    @cache_write_tokens = cache_write_tokens
     @cache_read_tokens = cache_read_tokens
   end
 
@@ -40,7 +40,7 @@ class Riffer::Providers::TokenUsage
     Riffer::Providers::TokenUsage.new(
       input_tokens: input_tokens + other.input_tokens,
       output_tokens: output_tokens + other.output_tokens,
-      cache_creation_tokens: add_nullable(cache_creation_tokens, other.cache_creation_tokens),
+      cache_write_tokens: add_nullable(cache_write_tokens, other.cache_write_tokens),
       cache_read_tokens: add_nullable(cache_read_tokens, other.cache_read_tokens)
     )
   end
@@ -50,7 +50,7 @@ class Riffer::Providers::TokenUsage
   #: () -> Hash[Symbol, Integer]
   def to_h
     hash = {input_tokens: input_tokens, output_tokens: output_tokens}
-    hash[:cache_creation_tokens] = cache_creation_tokens if cache_creation_tokens
+    hash[:cache_write_tokens] = cache_write_tokens if cache_write_tokens
     hash[:cache_read_tokens] = cache_read_tokens if cache_read_tokens
     hash
   end

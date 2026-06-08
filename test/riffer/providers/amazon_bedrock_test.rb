@@ -711,6 +711,64 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "prompt caching" do
+    let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+    let(:cache_tool) do
+      Class.new(Riffer::Tool) do
+        identifier "get_weather"
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+    end
+
+    it "appends a cachePoint after the system array when a system prompt is present" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, model, {cache_control: {type: "ephemeral"}})
+
+      expect(params[:system].last).must_equal({cache_point: {type: "default"}})
+    end
+
+    it "appends a cachePoint after the tools when there is no system prompt" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      messages = [Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, model, {cache_control: {type: "ephemeral"}, tools: [cache_tool]})
+
+      expect(params[:tool_config][:tools].last).must_equal({cache_point: {type: "default"}})
+    end
+
+    it "translates the ttl onto the cachePoint" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, model, {cache_control: {type: "ephemeral", ttl: "1h"}})
+
+      expect(params[:system].last[:cache_point][:ttl]).must_equal "1h"
+    end
+
+    it "does not pass cache_control through as a top-level param" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, model, {cache_control: {type: "ephemeral"}})
+
+      expect(params.key?(:cache_control)).must_equal false
+    end
+
+    it "adds no cachePoint when caching is not requested" do
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+      messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(:build_request_params, messages, model, {})
+
+      expect(params[:system].none? { |block| block.key?(:cache_point) }).must_equal true
+    end
+  end
+
   describe "file handling" do
     let(:image_base64) { "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg==" }
 

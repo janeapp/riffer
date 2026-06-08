@@ -83,6 +83,20 @@ model_options additional_model_request_fields: {
 }
 ```
 
+### cache_control
+
+Enable prompt caching for models that support it (Claude, Nova). Riffer appends a single Converse `cachePoint` to the stable prefix — after the system array, or after the tools when there is no system prompt — so system instructions and tool definitions are reused across the calls in an agent loop and across conversation turns. The volatile message tail is never cached.
+
+```ruby
+# 5-minute TTL (default)
+model_options cache_control: {type: "ephemeral"}
+
+# 1-hour TTL (model-dependent; Bedrock validates support)
+model_options cache_control: {type: "ephemeral", ttl: "1h"}
+```
+
+Caching is opt-in: omit `cache_control` and no cachePoint is sent. The breakpoint is only honored once the prefix clears the model's minimum token count; on models that don't support `cachePoint`, the Converse request errors. Verify hits via `response.token_usage.cache_read_tokens`.
+
 ## Example
 
 ```ruby

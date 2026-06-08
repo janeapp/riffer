@@ -47,12 +47,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     partitioned_messages = partition_messages(messages)
     tools = options[:tools]
     structured_output = options[:structured_output]
+    cache_control = options[:cache_control]
 
     params = {
       model_id: model,
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
-      **options.except(:tools, :structured_output)
+      **options.except(:tools, :structured_output, :cache_control)
     } #: Hash[Symbol, untyped]
 
     if tools && !tools.empty?
@@ -78,7 +79,35 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       }
     end
 
+    apply_cache_point(params, cache_control) if cache_control
+
     params
+  end
+
+  # Converse chains +tools -> system -> messages+, so a single +cachePoint+ at
+  # the end of the system array (or the tools array, when there is no system
+  # prompt) also caches the preceding sections.
+  #--
+  #: (Hash[Symbol, untyped], untyped) -> void
+  def apply_cache_point(params, cache_control)
+    cache_point = {cache_point: build_cache_point(cache_control)}
+    system = params[:system]
+    tools = params.dig(:tool_config, :tools)
+
+    if system && !system.empty?
+      system << cache_point
+    elsif tools && !tools.empty?
+      tools << cache_point
+    end
+  end
+
+  #--
+  #: (untyped) -> Hash[Symbol, untyped]
+  def build_cache_point(cache_control)
+    point = {type: "default"} #: Hash[Symbol, untyped]
+    ttl = cache_control.is_a?(Hash) ? cache_control[:ttl] : nil
+    point[:ttl] = ttl if ttl
+    point
   end
 
   #--
@@ -96,7 +125,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
-      cache_creation_tokens: usage.cache_write_input_tokens,
+      cache_write_tokens: usage.cache_write_input_tokens,
       cache_read_tokens: usage.cache_read_input_tokens
     )
   end
@@ -246,7 +275,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       token_usage: Riffer::Providers::TokenUsage.new(
         input_tokens: typed_event.usage.input_tokens,
         output_tokens: typed_event.usage.output_tokens,
-        cache_creation_tokens: typed_event.usage.cache_write_input_tokens,
+        cache_write_tokens: typed_event.usage.cache_write_input_tokens,
         cache_read_tokens: typed_event.usage.cache_read_input_tokens
       )
     )

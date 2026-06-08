@@ -105,7 +105,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage[:promptTokenCount] || 0,
-      output_tokens: usage[:candidatesTokenCount] || 0
+      output_tokens: usage[:candidatesTokenCount] || 0,
+      cache_read_tokens: usage[:cachedContentTokenCount]
     )
   end
 
@@ -161,7 +162,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           yielder << Riffer::StreamEvents::TokenUsageDone.new(
             token_usage: Riffer::Providers::TokenUsage.new(
               input_tokens: usage[:promptTokenCount] || 0,
-              output_tokens: usage[:candidatesTokenCount] || 0
+              output_tokens: usage[:candidatesTokenCount] || 0,
+              cache_read_tokens: usage[:cachedContentTokenCount]
             )
           )
         end
