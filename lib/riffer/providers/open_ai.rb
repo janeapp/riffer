@@ -249,7 +249,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: action.url)
     when ::OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search
       sources = (action.sources || []).map { |s| {title: nil, url: s.url} }
-      yielder << Riffer::StreamEvents::WebSearchDone.new(action.query, sources: sources)
+      yielder << Riffer::StreamEvents::WebSearchDone.new(action.query || "", sources: sources)
     end
   end
 
