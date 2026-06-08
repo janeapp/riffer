@@ -23,6 +23,17 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # Converse chains +tools -> system -> messages+, so a single +cachePoint+ at
+  # the end of the system array (or the tools array, when there is no system
+  # prompt) also caches the preceding sections.
+  # --
+  # : (Hash[Symbol, untyped], untyped) -> void
+  def apply_cache_point: (Hash[Symbol, untyped], untyped) -> void
+
+  # --
+  # : (untyped) -> Hash[Symbol, untyped]
+  def build_cache_point: (untyped) -> Hash[Symbol, untyped]
+
   # --
   # : (Hash[Symbol, untyped]) -> untyped
   def execute_generate: (Hash[Symbol, untyped]) -> untyped

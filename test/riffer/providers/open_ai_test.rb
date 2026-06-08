@@ -467,6 +467,7 @@ describe Riffer::Providers::OpenAI do
           expect(result.token_usage.input_tokens).must_equal 8
           expect(result.token_usage.output_tokens).must_equal 73
           expect(result.token_usage.total_tokens).must_equal 81
+          expect(result.token_usage.cache_read_tokens).must_equal 0
         end
       end
     end

@@ -587,6 +587,20 @@ describe Riffer::Providers::Gemini do
         end
       end
     end
+
+    describe "cache read tokens" do
+      it "surfaces cachedContentTokenCount when present" do
+        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        usage = provider.send(:extract_token_usage, {usageMetadata: {promptTokenCount: 100, candidatesTokenCount: 20, cachedContentTokenCount: 80}})
+        expect(usage.cache_read_tokens).must_equal 80
+      end
+
+      it "leaves cache_read_tokens nil when absent" do
+        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        usage = provider.send(:extract_token_usage, {usageMetadata: {promptTokenCount: 100, candidatesTokenCount: 20}})
+        expect(usage.cache_read_tokens).must_be_nil
+      end
+    end
   end
 
   describe "file handling" do

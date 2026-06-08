@@ -76,7 +76,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
-      output_tokens: usage.output_tokens
+      output_tokens: usage.output_tokens,
+      cache_read_tokens: usage.input_tokens_details&.cached_tokens
     )
   end
 
@@ -225,7 +226,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::TokenUsageDone.new(
       token_usage: Riffer::Providers::TokenUsage.new(
         input_tokens: usage.input_tokens,
-        output_tokens: usage.output_tokens
+        output_tokens: usage.output_tokens,
+        cache_read_tokens: usage.input_tokens_details&.cached_tokens
       )
     )
   end
