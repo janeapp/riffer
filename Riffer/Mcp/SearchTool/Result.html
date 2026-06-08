@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Tools::Runtime::Inline - Riffer Documentation</title>
+<title>class Riffer::Mcp::SearchTool::Result - Riffer Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Tools::Runtime::Inline"
+    content="ruby,class,Riffer::Mcp::SearchTool::Result"
   >
 
     <meta
       name="description"
-      content="class Riffer::Tools::Runtime::Inline: Executes tool calls sequentially in the current thread — the default runtime."
+      content="class Riffer::Mcp::SearchTool::Result: Successful search response carrying the matched tool classes."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Tools::Runtime::Inline - Riffer Documentation">
+<meta property="og:title" content="class Riffer::Mcp::SearchTool::Result - Riffer Documentation">
 
 
 
-    <meta property="og:description" content="Executes tool calls sequentially in the current thread — the default runtime.">
+    <meta property="og:description" content="Successful search response carrying the matched tool classes.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Tools::Runtime::Inline - Riffer Documentation">
+<meta name="twitter:title" content="class Riffer::Mcp::SearchTool::Result - Riffer Documentation">
 
 
 
-    <meta name="twitter:description" content="Executes tool calls sequentially in the current thread — the default runtime.">
+    <meta name="twitter:description" content="Successful search response carrying the matched tool classes.">
 
 
 
@@ -650,7 +650,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="../Runtime.html">Riffer::Tools::Runtime</a><ul><li>Object</li></ul></li></ul>
+    <ul><li><a href="../../Tools/Response.html">Riffer::Tools::Response</a><ul><li>Object</li></ul></li></ul>
   </details>
 </div>
 
@@ -700,7 +700,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-tools-runtime-inline">
+<main role="main" aria-labelledby="class-riffer-mcp-searchtool-result">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -713,33 +713,33 @@
       
       <li>
         
-        <a href="../../../Riffer/Tools.html">Tools</a><span>::</span>
+        <a href="../../../Riffer/Mcp.html">Mcp</a><span>::</span>
         
       </li>
       
       <li>
         
-        <a href="../../../Riffer/Tools/Runtime.html">Runtime</a><span>::</span>
+        <a href="../../../Riffer/Mcp/SearchTool.html">SearchTool</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Inline</span>
+        <span>Result</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Tools::Runtime::Inline" class="legacy-anchor"></span>
-  <h1 id="class-riffer-tools-runtime-inline" class="anchor-link class">
-    class Riffer::Tools::Runtime::Inline
+  <span id="class-Riffer::Mcp::SearchTool::Result" class="legacy-anchor"></span>
+  <h1 id="class-riffer-mcp-searchtool-result" class="anchor-link class">
+    class Riffer::Mcp::SearchTool::Result
   </h1>
 
   <section class="description">
     
-<p>Executes tool calls sequentially in the current thread — the default runtime.</p>
+<p>Successful search response carrying the matched tool classes.</p>
 
   </section>
 
@@ -752,6 +752,30 @@
 
 
 
+
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
+      </header>
+
+
+      <div id="attribute-i-discovered_tools" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-discovered_tools" title="Link to this attribute">
+            <span class="method-name">discovered_tools</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Tool classes that matched the search query.</p>
+
+        </div>
+      </div>
+
+    </section>
 
 
 
@@ -770,7 +794,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">()</span>
+                <span class="method-args">(content, discovered_tools)</span>
               </a>
             </div>
 
@@ -783,9 +807,10 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/runtime/inline.rb, line 8</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
-  <span class="ruby-keyword">super</span>(<span class="ruby-value">runner:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Runner</span><span class="ruby-operator">::</span><span class="ruby-constant">Sequential</span>.<span class="ruby-identifier">new</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp/search_tool.rb, line 15</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">content</span>, <span class="ruby-identifier">discovered_tools</span>)
+  <span class="ruby-keyword">super</span>(<span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">success:</span> <span class="ruby-keyword">true</span>)
+  <span class="ruby-ivar">@discovered_tools</span> = <span class="ruby-identifier">discovered_tools</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -799,7 +824,7 @@
 
             <div class="method-calls-super">
               Calls superclass method
-              <a href="../Runtime.html#method-c-new"><code>Riffer::Tools::Runtime::new</code></a>
+              <a href="../../Tools/Response.html#method-c-new"><code>Riffer::Tools::Response::new</code></a>
             </div>
 
         </div>

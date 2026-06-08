@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class Riffer::Messages::FilePart: Represents a file attachment (image or document) in a conversation. FilePart."
+      content="class Riffer::Messages::FilePart: Represents a file attachment (image or document) — from a URL (+from_url+) or raw base64 data (+new+)."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Represents a file attachment (image or document) in a conversation. FilePart.">
+    <meta property="og:description" content="Represents a file attachment (image or document) — from a URL (+from_url+) or raw base64 data (+new+).">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Represents a file attachment (image or document) in a conversation. FilePart.">
+    <meta name="twitter:description" content="Represents a file attachment (image or document) — from a URL (+from_url+) or raw base64 data (+new+).">
 
 
 
@@ -673,6 +673,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-c-from_hash">from_hash</a></li>
+
         <li ><a href="#method-c-from_url">from_url</a></li>
 
         <li ><a href="#method-c-new">new</a></li>
@@ -723,7 +725,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../../Riffer/Mcp/Registry.html">Registry</a></code></li><li><code><a href="../../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../../Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="../../Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -762,16 +764,7 @@
 
   <section class="description">
     
-<p>Represents a file attachment (image or document) in a conversation.</p>
-
-<p>Supports two input sources:</p>
-<ul><li>
-<p>URLs (stored and passed to providers that support them via <a href="FilePart.html#method-c-from_url"><code>from_url</code></a>)</p>
-</li><li>
-<p>Raw base64 data (via <code>new</code>)</p>
-
-<p>file = <a href="FilePart.html#method-c-from_url"><code>Riffer::Messages::FilePart.from_url</code></a>(“<a href="https://example.com/doc.pdf">example.com/doc.pdf</a>”, <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a>: “application/pdf”) file.url?        # =&gt; true file.document?   # =&gt; true</p>
-</li></ul>
+<p>Represents a file attachment (image or document) — from a URL (<a href="FilePart.html#method-c-from_url"><code>from_url</code></a>) or raw base64 data (<code>new</code>).</p>
 
   </section>
 
@@ -877,6 +870,65 @@
        </header>
 
 
+      <div id="method-c-from_hash" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-from_hash" title="Link to this method">
+                <span class="method-name">from_hash</span>
+                <span class="method-args">(file)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="from_hash-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_hash</span>(<span class="ruby-identifier">file</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">file</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">FilePart</span>)
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;File must be a Hash or FilePart object, got #{file.class}&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">url</span> = <span class="ruby-identifier">file</span>[<span class="ruby-value">:url</span>]
+  <span class="ruby-identifier">data</span> = <span class="ruby-identifier">file</span>[<span class="ruby-value">:data</span>]
+  <span class="ruby-identifier">media_type</span> = <span class="ruby-identifier">file</span>[<span class="ruby-value">:media_type</span>]
+  <span class="ruby-identifier">filename</span> = <span class="ruby-identifier">file</span>[<span class="ruby-value">:filename</span>]
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">url</span>
+    <span class="ruby-identifier">from_url</span>(<span class="ruby-identifier">url</span>, <span class="ruby-value">media_type:</span> <span class="ruby-identifier">media_type</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">data</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">media_type</span>
+    <span class="ruby-identifier">new</span>(<span class="ruby-value">data:</span> <span class="ruby-identifier">data</span>, <span class="ruby-value">media_type:</span> <span class="ruby-identifier">media_type</span>, <span class="ruby-value">filename:</span> <span class="ruby-identifier">filename</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;File hash must include :url or :data with :media_type&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Builds a <a href="FilePart.html"><code>FilePart</code></a> from a +{url:, <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a>:}+ or +{data:, <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a>:}+ hash, or returns <code>file</code> unchanged when it is already a <a href="FilePart.html"><code>FilePart</code></a>. Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> on an invalid hash.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-c-from_url" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -896,7 +948,7 @@
             </details>
           </div>
           <div class="method-source-code" id="from_url-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_url</span>(<span class="ruby-identifier">url</span>, <span class="ruby-value">media_type:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">media_type</span>
     <span class="ruby-identifier">ext</span> = <span class="ruby-operator">::</span><span class="ruby-constant">File</span>.<span class="ruby-identifier">extname</span>(<span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">url</span>).<span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">downcase</span>
@@ -913,11 +965,7 @@
         <div class="method-description">
 
 
-          <p>Creates a <a href="FilePart.html"><code>FilePart</code></a> from a URL.</p>
-
-<p>The URL is stored and passed directly to providers that support URL sources. If <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> is not provided, it is detected from the URL path extension.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> cannot be detected.</p>
+          <p>Creates a <a href="FilePart.html"><code>FilePart</code></a> from a URL, detecting <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> from the path extension when omitted. Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if it can’t be detected.</p>
 
 
         </div>
@@ -948,7 +996,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 50</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">media_type:</span>, <span class="ruby-value">data:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">filename:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">url:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Either data or url must be provided&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">url</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unsupported media type: #{media_type}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">SUPPORTED_MEDIA_TYPES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">media_type</span>)
@@ -965,11 +1013,7 @@
         <div class="method-description">
 
 
-          <p>Creates a <a href="FilePart.html"><code>FilePart</code></a> from raw base64 data or a URL.</p>
-
-<p>At least one of <code>data</code> or <code>url</code> must be provided.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if neither data nor url is provided, or if <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> is not supported.</p>
+          <p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> unless <code>data</code> or <code>url</code> is given and <a href="FilePart.html#attribute-i-media_type"><code>media_type</code></a> is supported.</p>
 
 
         </div>
@@ -1014,7 +1058,7 @@
             </details>
           </div>
           <div class="method-source-code" id="document-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 110</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 118</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">document?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">image?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1056,7 +1100,7 @@
             </details>
           </div>
           <div class="method-source-code" id="image-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 102</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 110</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">image?</span>
   <span class="ruby-identifier">media_type</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-string">&quot;image/&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1098,7 +1142,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 118</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 126</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = {<span class="ruby-value">media_type:</span> <span class="ruby-identifier">media_type</span>} <span class="ruby-comment">#: Hash[Symbol, untyped]</span>
   <span class="ruby-identifier">hash</span>[<span class="ruby-value">:data</span>] = <span class="ruby-ivar">@data</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@data</span>
@@ -1144,7 +1188,7 @@
             </details>
           </div>
           <div class="method-source-code" id="url-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 86</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 94</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">url</span>
   <span class="ruby-ivar">@url_string</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1186,7 +1230,7 @@
             </details>
           </div>
           <div class="method-source-code" id="url-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 94</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/messages/file_part.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">url?</span>
   <span class="ruby-operator">!</span><span class="ruby-ivar">@url_string</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>

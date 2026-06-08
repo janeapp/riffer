@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class Riffer::Agent: Agent is the base class for all agents in the Riffer framework. Provides orchestration for LLM calls, tool use, and message management."
+      content="class Riffer::Agent: Base class for all agents in the Riffer framework. Subclass it to define an agent&#39;s model, instructions, tools, and guardrails."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Agent is the base class for all agents in the Riffer framework. Provides orchestration for LLM calls, tool use, and message management.">
+    <meta property="og:description" content="Base class for all agents in the Riffer framework. Subclass it to define an agent&#39;s model, instructions, tools, and guardrails.">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Agent is the base class for all agents in the Riffer framework. Provides orchestration for LLM calls, tool use, and message management.">
+    <meta name="twitter:description" content="Base class for all agents in the Riffer framework. Subclass it to define an agent&#39;s model, instructions, tools, and guardrails.">
 
 
 
@@ -656,52 +656,8 @@
 
 
   
-<div id="includes-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-includes"></use></svg>
-      </span>
-      <span class="nav-section-title">Included Modules</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-
-    <ul class="nav-list">
-
-
-      <li><a class="include" href="Messages/Converter.html">Riffer::Messages::Converter</a></li>
-
-
-    </ul>
-  </details>
-</div>
-
 
   
-<div id="extends-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-extends"></use></svg>
-      </span>
-      <span class="nav-section-title">Extended With Modules</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-
-    <ul class="nav-list">
-
-
-      <li><a class="extend" href="Helpers/ClassNameConverter.html">Riffer::Helpers::ClassNameConverter</a></li>
-
-
-    </ul>
-  </details>
-</div>
-
 
   
   <div class="nav-section">
@@ -807,7 +763,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="../Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -840,11 +796,7 @@
 
   <section class="description">
     
-<p><a href="Agent.html"><code>Riffer::Agent</code></a> is the base class for all agents in the <a href="../Riffer.html"><code>Riffer</code></a> framework.</p>
-
-<p>Provides orchestration for LLM calls, tool use, and message management. Subclass this to create your own agents.</p>
-
-<p>See <a href="Messages.html"><code>Riffer::Messages</code></a> and <a href="Providers.html"><code>Riffer::Providers</code></a>.</p>
+<p>Base class for all agents in the <a href="../Riffer.html"><code>Riffer</code></a> framework. Subclass it to define an agent’s model, instructions, tools, and guardrails.</p>
 
 <pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MyAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>
   <span class="ruby-identifier">model</span> <span class="ruby-string">&#39;openai/gpt-4o&#39;</span>
@@ -875,7 +827,7 @@
 
         <dd>
 
-          
+          <p>@rbs self.@config: Riffer::Agent::Config?</p>
         </dd>
 
 
@@ -901,7 +853,7 @@
         <div class="method-description">
 
 
-        <p>The per-instance <a href="Agent/Config.html"><code>Riffer::Agent::Config</code></a>. Either the class-level default or an explicit <a href="Agent/Config.html"><code>Config</code></a> passed to +Agent.new(config:)+.</p>
+        <p>The per-instance <a href="Agent/Config.html"><code>Riffer::Agent::Config</code></a>.</p>
 
         </div>
       </div>
@@ -917,14 +869,7 @@
         <div class="method-description">
 
 
-        <p>The mutable runtime context, a <a href="Agent/Context.html"><code>Riffer::Agent::Context</code></a> value object threaded into every Proc-based DSL setting, guardrail, tool runtime, and skills resolution, and shared with every <a href="Agent/Run.html"><code>Riffer::Agent::Run</code></a> this agent executes. Exposes:</p>
-<ul><li>
-<p><code>context.skills</code> — the resolved <a href="Skills/Context.html"><code>Riffer::Skills::Context</code></a> (when skills are configured), set at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> time.</p>
-</li><li>
-<p><code>context.token_usage</code> — the cumulative <a href="Providers/TokenUsage.html"><code>Riffer::Providers::TokenUsage</code></a>, updated by each <a href="Agent/Run.html"><code>Run</code></a> as the loop progresses.</p>
-</li><li>
-<p><code>context[:key]</code> / <code>context.dig(:key)</code> — Hash-style reads for caller-provided keys (e.g. <code>context[:agent]</code>, <code>context[:tenant]</code>). <code>:skills</code> and <code>:token_usage</code> are reserved and cannot be passed by the caller.</p>
-</li></ul>
+        <p>The mutable runtime context shared with every <a href="Agent/Run.html"><code>Riffer::Agent::Run</code></a> this agent executes and threaded through all Proc-based settings.</p>
 
         </div>
       </div>
@@ -940,7 +885,7 @@
         <div class="method-description">
 
 
-        <p>The system message built from the configured <code>instructions</code>, or <code>nil</code> when no instructions are configured. Built once at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> using the constructor <code>context:</code> and cached. Useful for persistence flows.</p>
+        <p>The system message built from the configured <code>instructions</code>, or <code>nil</code> when none are configured.</p>
 
         </div>
       </div>
@@ -956,7 +901,7 @@
         <div class="method-description">
 
 
-        <p>The resolved model name (the part after “provider/”), used as the model argument on every LLM call. Resolved eagerly at <a href="Agent.html#method-c-new"><code>Agent.new</code></a>.</p>
+        <p>The resolved model name (the part after “/” in the model string), used as the model argument on every LLM call.</p>
 
         </div>
       </div>
@@ -972,7 +917,7 @@
         <div class="method-description">
 
 
-        <p>The provider client. Built eagerly at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> from the configured provider class and +Config#provider_options+, then handed to every <a href="Agent/Run.html"><code>Riffer::Agent::Run</code></a> this agent executes. Public so tests can pre-queue responses on <a href="Providers/Mock.html"><code>Riffer::Providers::Mock</code></a> before calling <a href="Agent.html#method-i-generate"><code>generate</code></a>.</p>
+        <p>The provider client. Public so tests can pre-queue responses on <a href="Providers/Mock.html"><code>Riffer::Providers::Mock</code></a> before calling <a href="Agent.html#method-i-generate"><code>generate</code></a>.</p>
 
         </div>
       </div>
@@ -988,7 +933,7 @@
         <div class="method-description">
 
 
-        <p>The resolved provider name (the part before “provider/”), e.g. +“openai”+. Resolved eagerly at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> alongside <a href="Agent.html#attribute-i-model_name"><code>model_name</code></a>; together they form the provider-neutral model identifier the agent serializes.</p>
+        <p>The resolved provider name (the part before “/” in the model string), e.g. +“openai”+.</p>
 
         </div>
       </div>
@@ -1004,7 +949,7 @@
         <div class="method-description">
 
 
-        <p>The conversation handle. See <a href="Agent/Session.html"><code>Riffer::Agent::Session</code></a>.</p>
+        <p>The conversation handle.</p>
 
         </div>
       </div>
@@ -1020,7 +965,7 @@
         <div class="method-description">
 
 
-        <p>The system message describing the configured skills catalog, or <code>nil</code> when skills are unconfigured or the catalog is empty. Built once at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> and cached.</p>
+        <p>The system message describing the configured skills catalog, or <code>nil</code> when skills are unconfigured or the catalog is empty.</p>
 
         </div>
       </div>
@@ -1036,7 +981,7 @@
         <div class="method-description">
 
 
-        <p>The <a href="Agent/StructuredOutput.html"><code>Riffer::Agent::StructuredOutput</code></a> wrapping the configured schema, or <code>nil</code> when structured output is not configured. Resolved eagerly at <a href="Agent.html#method-c-new"><code>Agent.new</code></a>.</p>
+        <p>The <a href="Agent/StructuredOutput.html"><code>Riffer::Agent::StructuredOutput</code></a> wrapping the configured schema, or <code>nil</code> when not configured.</p>
 
         </div>
       </div>
@@ -1052,7 +997,7 @@
         <div class="method-description">
 
 
-        <p>The tool runtime instance used to execute tool calls. Resolved eagerly at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> (Proc-form <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> is called against <code>context</code> once).</p>
+        <p>The tool runtime instance used to execute tool calls.</p>
 
         </div>
       </div>
@@ -1068,7 +1013,7 @@
         <div class="method-description">
 
 
-        <p>The tool classes the LLM sees on every call this agent makes. Resolved eagerly at <a href="Agent.html#method-c-new"><code>Agent.new</code></a> (Proc-form <a href="Agent.html#method-c-uses_tools"><code>uses_tools</code></a> is called against <code>context</code> once; MCP tools and the skill_activate tool are merged in).</p>
+        <p>The tool classes the LLM sees on every call this agent makes.</p>
 
         </div>
       </div>
@@ -1105,7 +1050,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 189</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>
   <span class="ruby-identifier">subclasses</span> <span class="ruby-comment">#: Array[singleton(Riffer::Agent)]</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1147,7 +1092,7 @@
             </details>
           </div>
           <div class="method-source-code" id="config-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 34</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 25</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">config</span>
   <span class="ruby-ivar">@config</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1158,7 +1103,7 @@
         <div class="method-description">
 
 
-          <p>Returns the per-class <a href="Agent/Config.html"><code>Riffer::Agent::Config</code></a> value object holding every DSL setting. Lazily initialized on first read; each subclass has its own.</p>
+          <p>Returns the per-class <a href="Agent/Config.html"><code>Riffer::Agent::Config</code></a> holding every DSL setting.</p>
 
 
         </div>
@@ -1189,7 +1134,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 181</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 158</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
   <span class="ruby-identifier">all</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">agent_class</span><span class="ruby-operator">|</span> <span class="ruby-identifier">agent_class</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -1231,7 +1176,7 @@
             </details>
           </div>
           <div class="method-source-code" id="from_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 223</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">from_h</span>(<span class="ruby-identifier">hash</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1243,8 +1188,6 @@
 
 
           <p>Reconstructs a runnable agent from a wire hash produced by <a href="Agent.html#method-i-to_h"><code>to_h</code></a>.</p>
-
-<p>Delegates to <a href="Agent/Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a>. See it for the <code>session</code> seed, the <code>tool_resolver</code> / <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> injection points, and what does not transfer.</p>
 
 
         </div>
@@ -1275,7 +1218,7 @@
             </details>
           </div>
           <div class="method-source-code" id="from_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 235</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 194</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TOOL_RESOLVER</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">from_json</span>(<span class="ruby-identifier">json</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">session:</span> <span class="ruby-identifier">session</span>, <span class="ruby-value">tool_resolver:</span> <span class="ruby-identifier">tool_resolver</span>, <span class="ruby-value">tool_runtime:</span> <span class="ruby-identifier">tool_runtime</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1287,8 +1230,6 @@
 
 
           <p>Reconstructs a runnable agent from a JSON string produced by <a href="Agent.html#method-i-to_json"><code>to_json</code></a>.</p>
-
-<p>Delegates to <a href="Agent/Serializer.html#method-i-from_json"><code>Riffer::Agent::Serializer.from_json</code></a>, which parses the JSON (with symbol keys) for you. See <a href="Agent/Serializer.html#method-i-from_h"><code>Riffer::Agent::Serializer.from_h</code></a> for the <code>session</code> seed and the <code>tool_resolver</code> / <a href="Agent.html#method-c-tool_runtime"><code>tool_runtime</code></a> injection points.</p>
 
 
         </div>
@@ -1319,7 +1260,7 @@
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 200</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 173</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1331,8 +1272,6 @@
 
 
           <p>Generates a response using a new agent instance.</p>
-
-<p><code>context:</code> is threaded into <code>new</code>; <code>prompt</code> and <code>files:</code> are forwarded to <a href="Agent.html#method-i-generate"><code>generate</code></a>.</p>
 
 
         </div>
@@ -1363,7 +1302,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrail-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 248</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 202</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">with:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">add_guardrail</span>(<span class="ruby-identifier">phase</span>, <span class="ruby-value">klass:</span> <span class="ruby-identifier">with</span>, <span class="ruby-value">options:</span> <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1374,19 +1313,7 @@
         <div class="method-description">
 
 
-          <p>Registers a guardrail for input, output, or both phases.</p>
-<dl class="rdoc-list label-list"><dt>phase</dt>
-<dd>
-<p>:before, :after, or :around.</p>
-</dd><dt>with</dt>
-<dd>
-<p>the guardrail class (must be subclass of <a href="Guardrail.html"><code>Riffer::Guardrail</code></a>).</p>
-</dd><dt>options</dt>
-<dd>
-<p>additional options passed to the guardrail.</p>
-</dd></dl>
-
-<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if phase is invalid or guardrail is not a Guardrail class.</p>
+          <p>Registers a guardrail for input, output, or both phases. Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> unless <code>phase</code> is :before, :after, or :around.</p>
 
 
         </div>
@@ -1417,7 +1344,7 @@
             </details>
           </div>
           <div class="method-source-code" id="guardrails_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 258</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">guardrails_for</span>(<span class="ruby-identifier">phase</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1429,10 +1356,6 @@
 
 
           <p>Returns the registered guardrail configs for a given phase.</p>
-<dl class="rdoc-list label-list"><dt>phase</dt>
-<dd>
-<p>:before or :after.</p>
-</dd></dl>
 
 
         </div>
@@ -1463,9 +1386,9 @@
             </details>
           </div>
           <div class="method-source-code" id="identifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 42</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">identifier</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_name_to_path</span>(<span class="ruby-identifier">name</span>)) <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span> = <span class="ruby-identifier">value</span>)
+  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Helpers</span><span class="ruby-operator">::</span><span class="ruby-constant">ClassNameConverter</span>.<span class="ruby-identifier">convert</span>(<span class="ruby-identifier">name</span>)) <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">identifier</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1505,7 +1428,7 @@
             </details>
           </div>
           <div class="method-source-code" id="instructions-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instructions</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">instructions</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">instructions</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1516,9 +1439,7 @@
         <div class="method-description">
 
 
-          <p>Gets or sets the agent instructions.</p>
-
-<p>Accepts a static string or a Proc for dynamic instructions. When a Proc is given, it is called at generate time and receives the <code>context</code> hash (which may be <code>nil</code>).</p>
+          <p>Gets or sets the agent instructions. A Proc is called at generate time with the <code>context</code> hash (which may be <code>nil</code>).</p>
 
 <pre class="ruby"><span class="ruby-identifier">instructions</span> <span class="ruby-string">&quot;You are a helpful assistant.&quot;</span>
 
@@ -1556,7 +1477,7 @@
             </details>
           </div>
           <div class="method-source-code" id="max_steps-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 115</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">max_steps</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">max_steps</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">max_steps</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">first</span>
@@ -1568,9 +1489,7 @@
         <div class="method-description">
 
 
-          <p>Gets or sets the maximum number of LLM call steps in the tool-use loop.</p>
-
-<p>Defaults to <a href="Agent/Config.html#DEFAULT_MAX_STEPS"><code>Riffer::Agent::Config::DEFAULT_MAX_STEPS</code></a> (16). Set to <code>nil</code> for unlimited steps. The splat distinguishes a getter call (no argument) from setting the limit to <code>nil</code>.</p>
+          <p>Gets or sets the maximum number of LLM call steps in the tool-use loop. The splat distinguishes a getter (no argument) from setting the limit to <code>nil</code> (unlimited); it defaults to <a href="Agent/Config.html#DEFAULT_MAX_STEPS"><code>Riffer::Agent::Config::DEFAULT_MAX_STEPS</code></a>.</p>
 
 <pre class="ruby"><span class="ruby-identifier">max_steps</span>        <span class="ruby-comment"># reads the current limit</span>
 <span class="ruby-identifier">max_steps</span> <span class="ruby-value">8</span>      <span class="ruby-comment"># cap the loop at 8 steps</span>
@@ -1606,7 +1525,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mcp_configs-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 141</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 122</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">mcp_configs</span>
   <span class="ruby-identifier">config</span>.<span class="ruby-identifier">mcp_configs</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1650,7 +1569,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 50</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">model</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">model</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1661,7 +1580,7 @@
         <div class="method-description">
 
 
-          <p>Gets or sets the model string (e.g., “openai/gpt-4o”) or Proc.</p>
+          <p>Gets or sets the model string (e.g., “openai/gpt-4o”).</p>
 
 
         </div>
@@ -1692,7 +1611,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model_options-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 84</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">model_options</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">model_options</span> = <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1734,7 +1653,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 342</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">config:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">config</span>
   <span class="ruby-ivar">@context</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">context</span> <span class="ruby-operator">||</span> {})
@@ -1763,11 +1682,9 @@
 
           <p>Initializes a new agent.</p>
 
-<p>When <code>session:</code> is omitted, a fresh <a href="Agent/Session.html"><code>Riffer::Agent::Session</code></a> is built and seeded with the system instruction message and skills catalog (when configured), using <code>context:</code>. When <code>session:</code> is provided, the agent uses it as-is —the caller is responsible for the session’s contents (typical use case: cross-process resume from persisted history). With <code>Riffer.config.experimental_history_healing</code> on, a provided session is healed at construction time so the <code>tool_use</code> ↔ <code>tool_result</code> invariant holds before the next inference call.</p>
+<p>A provided <code>session:</code> is used as-is — the caller owns its contents (e.g. cross-process resume from persisted history); an omitted one is seeded with the instruction and skills messages.</p>
 
-<p><code>context:</code> flows through Proc-based instructions, model, skills resolution, tool resolution, guardrails, and tool runtime. It is fixed for the lifetime of the agent.</p>
-
-<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if the configured model string is invalid (must be “provider/model” format).</p>
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> unless the configured model string is “provider/model” format.</p>
 
 
         </div>
@@ -1798,7 +1715,7 @@
             </details>
           </div>
           <div class="method-source-code" id="provider_options-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 76</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">provider_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">provider_options</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">provider_options</span> = <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1840,7 +1757,7 @@
             </details>
           </div>
           <div class="method-source-code" id="skills-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 168</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 145</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>
     <span class="ruby-identifier">skills_config</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span>.<span class="ruby-identifier">new</span>
@@ -1856,9 +1773,7 @@
         <div class="method-description">
 
 
-          <p>Configures skills for this agent via a block DSL.</p>
-
-<p>Returns the current <a href="Skills/Config.html"><code>Riffer::Skills::Config</code></a> when called without a block.</p>
+          <p>Configures skills for this agent via a block DSL, or returns the current <a href="Skills/Config.html"><code>Riffer::Skills::Config</code></a> when called without a block.</p>
 
 <pre class="ruby"><span class="ruby-identifier">skills</span> <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">backend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">FilesystemBackend</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;.skills&quot;</span>)
@@ -1896,7 +1811,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 211</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 180</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">stream</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1908,8 +1823,6 @@
 
 
           <p>Streams a response using a new agent instance.</p>
-
-<p><code>context:</code> is threaded into <code>new</code>; <code>prompt</code> and <code>files:</code> are forwarded to <a href="Agent.html#method-i-stream"><code>stream</code></a>.</p>
 
 
         </div>
@@ -1940,7 +1853,7 @@
             </details>
           </div>
           <div class="method-source-code" id="structured_output-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 94</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 79</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">structured_output</span>(<span class="ruby-identifier">params</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>
     <span class="ruby-identifier">params</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span>.<span class="ruby-identifier">new</span>
@@ -1957,8 +1870,6 @@
 
 
           <p>Gets or sets the structured output schema for this agent.</p>
-
-<p>Accepts a <a href="Params.html"><code>Riffer::Params</code></a> instance or a block evaluated against a new Params.</p>
 
 
         </div>
@@ -1989,7 +1900,7 @@
             </details>
           </div>
           <div class="method-source-code" id="tool_runtime-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 152</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 130</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">tool_runtime</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">tool_runtime</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">tool_runtime</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2000,9 +1911,7 @@
         <div class="method-description">
 
 
-          <p>Gets or sets the tool runtime for this agent.</p>
-
-<p>Accepts a <a href="Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> subclass, a <a href="Tools/Runtime.html"><code>Riffer::Tools::Runtime</code></a> instance, or a Proc. Defaults to <code>Riffer.config.tool_runtime</code> when unset.</p>
+          <p>Gets or sets the tool runtime for this agent; defaults to <code>Riffer.config.tool_runtime</code> when unset.</p>
 
 
         </div>
@@ -2020,7 +1929,7 @@
             <div class="method-heading">
               <a href="#method-c-use_mcp" title="Link to this method">
                 <span class="method-name">use_mcp</span>
-                <span class="method-args">(tag)</span>
+                <span class="method-args">(tag, progressive: true)</span>
               </a>
             </div>
 
@@ -2033,9 +1942,9 @@
             </details>
           </div>
           <div class="method-source-code" id="use_mcp-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 134</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">use_mcp</span>(<span class="ruby-identifier">tag</span>)
-  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">add_mcp</span>(<span class="ruby-identifier">tag</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">use_mcp</span>(<span class="ruby-identifier">tag</span>, <span class="ruby-value">progressive:</span> <span class="ruby-keyword">true</span>)
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">add_mcp</span>(<span class="ruby-identifier">tag</span>, <span class="ruby-value">progressive:</span> <span class="ruby-identifier">progressive</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2044,12 +1953,10 @@
         <div class="method-description">
 
 
-          <pre>Opts this agent into tools from all MCP registrations that share any of
-the given tag(s).
+          <pre>Opts this agent into MCP tools from registrations matching the given tag.
+Progressive registrations expose +mcp_search+ instead of every schema up front.</pre>
 
-+tag+ - a String or Symbol; matched against registration manifest tags.</pre>
-
-<p>: (String | Symbol) -&gt; void</p>
+<p>: (String | Symbol, ?progressive: bool) -&gt; void</p>
 
 
         </div>
@@ -2080,7 +1987,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="uses_tools-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 124</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 107</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">uses_tools</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">tools_config</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">config</span>.<span class="ruby-identifier">tools_config</span> = <span class="ruby-identifier">value</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2136,7 +2043,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 376</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 293</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2149,9 +2056,7 @@ the given tag(s).
 
           <p>Generates a response from the agent.</p>
 
-<p>Runs the inference loop via <a href="Agent/Run.html#method-i-generate"><code>Riffer::Agent::Run.generate</code></a>. When <code>prompt</code> is given, a new <a href="Messages/User.html"><code>Riffer::Messages::User</code></a> is appended to the session (silently — <code>on_message</code> does not fire for user inputs) and then the loop runs. When <code>prompt</code> is omitted, the loop runs against the current session — useful for resuming a persisted conversation whose last turn is already a user message, or for picking up pending tool calls after an interrupt.</p>
-
-<p><code>files:</code> requires <code>prompt</code>. Pass files to attach to the new user message.</p>
+<p>With <code>prompt</code>, a new user message is appended (silently — <code>on_message</code> does not fire for user inputs) before the loop runs. Without it, the loop runs against the current session, resuming a persisted conversation or pending tool calls. <code>files:</code> requires <code>prompt</code>.</p>
 
 
         </div>
@@ -2182,7 +2087,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="interrupt-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 410</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 313</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupt!</span>(<span class="ruby-identifier">reason</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">throw</span> <span class="ruby-value">:riffer_interrupt</span>, <span class="ruby-identifier">reason</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2193,11 +2098,7 @@ the given tag(s).
         <div class="method-description">
 
 
-          <p>Interrupts the agent loop.</p>
-
-<p>Call from an <code>on_message</code> callback to cleanly interrupt the loop. Equivalent to <code>throw :riffer_interrupt, reason</code>.</p>
-
-<p>When <code>Riffer.config.experimental_history_healing</code> is enabled, riffer fills any orphaned <code>tool_use</code> on the way out with a placeholder <a href="Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> carrying +error_type: :interrupted+. The filled call_ids are exposed on +Riffer::Agent::Response#healed_tool_call_ids+ (and the streaming <a href="StreamEvents/Interrupt.html"><code>Riffer::StreamEvents::Interrupt</code></a> event).</p>
+          <p>Interrupts the agent loop from an <code>on_message</code> callback. Equivalent to <code>throw :riffer_interrupt, reason</code>.</p>
 
 
         </div>
@@ -2228,7 +2129,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 391</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 304</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Structured output is not supported with streaming. Use #generate instead.&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@structured_output</span>
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
@@ -2240,13 +2141,9 @@ the given tag(s).
         <div class="method-description">
 
 
-          <p>Streams a response from the agent.</p>
-
-<p>Runs the inference loop via <a href="Agent/Run.html#method-i-stream"><code>Riffer::Agent::Run.stream</code></a>, returning an <code>Enumerator</code> of <a href="StreamEvents.html"><code>Riffer::StreamEvents</code></a>.</p>
+          <p>Streams a response from the agent, returning an <code>Enumerator</code> of <a href="StreamEvents.html"><code>Riffer::StreamEvents</code></a>. See <a href="Agent.html#method-i-generate"><code>generate</code></a> for prompt/files semantics.</p>
 
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if structured output is configured.</p>
-
-<p>See <a href="Agent.html#method-i-generate"><code>generate</code></a> for prompt/files semantics.</p>
 
 
         </div>
@@ -2277,7 +2174,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 419</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 321</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">to_h</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2288,7 +2185,7 @@ the given tag(s).
         <div class="method-description">
 
 
-          <p>Snapshots this resolved agent into a self-contained, provider-neutral wire hash. Delegates to <a href="Agent/Serializer.html#method-i-to_h"><code>Riffer::Agent::Serializer.to_h</code></a>.</p>
+          <p>Snapshots this resolved agent into a self-contained, provider-neutral wire hash.</p>
 
 
         </div>
@@ -2319,7 +2216,7 @@ the given tag(s).
             </details>
           </div>
           <div class="method-source-code" id="to_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 429</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 329</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json</span>(<span class="ruby-operator">*</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">to_json</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2330,7 +2227,7 @@ the given tag(s).
         <div class="method-description">
 
 
-          <p>Snapshots this resolved agent into a wire JSON string. Delegates to <a href="Agent/Serializer.html#method-i-to_json"><code>Riffer::Agent::Serializer.to_json</code></a>. The +*+ absorbs the JSON generator state argument so <code>JSON.generate(agent)</code> works too.</p>
+          <p>Snapshots this resolved agent into a wire JSON string. The +*+ absorbs the JSON generator state argument so <code>JSON.generate(agent)</code> works too.</p>
 
 
         </div>

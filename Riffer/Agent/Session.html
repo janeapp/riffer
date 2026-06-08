@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class Riffer::Agent::Session: the message array, the +on_message+ callback list, and the +tool_use+ ↔ +tool_result+ invariant that keeps tool calls and their results consistent. Ac"
+      content="class Riffer::Agent::Session: the message array, the +on_message+ callbacks, and the +tool_use+ ↔ +tool_result+ invariant that keeps tool calls and their results consistent. agent."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="the message array, the +on_message+ callback list, and the +tool_use+ ↔ +tool_result+ invariant that keeps tool calls and their results consistent. Ac">
+    <meta property="og:description" content="the message array, the +on_message+ callbacks, and the +tool_use+ ↔ +tool_result+ invariant that keeps tool calls and their results consistent. agent.">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="the message array, the +on_message+ callback list, and the +tool_use+ ↔ +tool_result+ invariant that keeps tool calls and their results consistent. Ac">
+    <meta name="twitter:description" content="the message array, the +on_message+ callbacks, and the +tool_use+ ↔ +tool_result+ invariant that keeps tool calls and their results consistent. agent.">
 
 
 
@@ -733,7 +733,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../../Riffer/Mcp/Registry.html">Registry</a></code></li><li><code><a href="../../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../../Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="../../Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -772,9 +772,7 @@
 
   <section class="description">
     
-<p><a href="Session.html"><code>Riffer::Agent::Session</code></a> owns the conversation handle for an agent: the message array, the <a href="Session.html#method-i-on_message"><code>on_message</code></a> callback list, and the <code>tool_use</code> ↔ <code>tool_result</code> invariant that keeps tool calls and their results consistent.</p>
-
-<p>Access via <code>agent.session</code>. Sessions are constructed by <a href="../Agent.html"><code>Riffer::Agent</code></a> and live for the lifetime of the agent.</p>
+<p>Owns the conversation handle for an agent: the message array, the <a href="Session.html#method-i-on_message"><code>on_message</code></a> callbacks, and the <code>tool_use</code> ↔ <code>tool_result</code> invariant that keeps tool calls and their results consistent.</p>
 
 <pre class="ruby"><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">msg</span>)                  <span class="ruby-comment"># append + fire callbacks</span>
 <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">set</span>([<span class="ruby-identifier">msg1</span>, <span class="ruby-identifier">msg2</span>])         <span class="ruby-comment"># bulk replace (silent)</span>
@@ -850,7 +848,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 28</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 25</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">messages:</span> [])
   <span class="ruby-ivar">@messages</span> = <span class="ruby-identifier">messages</span>
   <span class="ruby-ivar">@callbacks</span> = [] <span class="ruby-comment">#: Array[^(Riffer::Messages::Base) -&gt; void]</span>
@@ -907,7 +905,7 @@
             </details>
           </div>
           <div class="method-source-code" id="add-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 57</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">silent:</span> <span class="ruby-keyword">false</span>)
   <span class="ruby-ivar">@messages</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">message</span>
   <span class="ruby-ivar">@callbacks</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">callback</span><span class="ruby-operator">|</span> <span class="ruby-identifier">callback</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">message</span>) } <span class="ruby-keyword">unless</span> <span class="ruby-identifier">silent</span>
@@ -920,9 +918,7 @@
         <div class="method-description">
 
 
-          <p>Appends <code>message</code> and fires every registered callback once with it.</p>
-
-<p>Pass +silent: true+ to skip <a href="Session.html#method-i-on_message"><code>on_message</code></a> callbacks — used for non-inference inputs like user messages, which subscribers don’t expect to observe through the callback channel. Inference-produced messages (Assistant, Tool) always go through <code>add</code> without <code>silent</code>.</p>
+          <p>Appends <code>message</code> and fires every registered callback once with it. Pass +silent: true+ to skip callbacks — used for non-inference inputs like user messages that subscribers don’t expect on the callback channel.</p>
 
 
         </div>
@@ -953,7 +949,7 @@
             </details>
           </div>
           <div class="method-source-code" id="each-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 197</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 155</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block</span>
   <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
@@ -965,7 +961,7 @@
         <div class="method-description">
 
 
-          
+          <p>Yields each message in order, or returns an Enumerator without a block.</p>
 
 
         </div>
@@ -996,7 +992,7 @@
             </details>
           </div>
           <div class="method-source-code" id="final_assistant_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 217</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 173</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">final_assistant_message</span>
   <span class="ruby-comment"># TODO: Replace with rfind when minimum Ruby is 4.0+</span>
   <span class="ruby-comment"># rubocop:disable Style/ReverseFind</span>
@@ -1041,7 +1037,7 @@
             </details>
           </div>
           <div class="method-source-code" id="on_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 42</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_message</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;on_message requires a block&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
   <span class="ruby-ivar">@callbacks</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">block</span>
@@ -1055,10 +1051,6 @@
 
 
           <p>Registers a callback invoked once per message appended via <a href="Session.html#method-i-add"><code>add</code></a>.</p>
-
-<p>Callbacks do NOT fire for <a href="Session.html#method-i-set"><code>set</code></a>, <a href="Session.html#method-i-unset"><code>unset</code></a>, <a href="Session.html#method-i-remove"><code>remove</code></a>, or <a href="Session.html#method-i-update"><code>update</code></a>. Returns <code>self</code> to allow chaining.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if no block is given.</p>
 
 
         </div>
@@ -1089,7 +1081,7 @@
             </details>
           </div>
           <div class="method-source-code" id="orphaned_tool_call_ids-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 166</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">orphaned_tool_call_ids</span>
   <span class="ruby-identifier">result_ids</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">filter_map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">tool_call_id</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>) }
   <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">flat_map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
@@ -1104,9 +1096,7 @@
         <div class="method-description">
 
 
-          <p>Returns the call_ids of every <code>tool_call</code> on any assistant message that has no matching <a href="../Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> result anywhere in history.</p>
-
-<p>Zero-cost validation hook for callers that want to check the <code>tool_use</code> ↔ <code>tool_result</code> invariant before mutating or persisting.</p>
+          <p>Returns the call_ids of every <code>tool_call</code> with no matching <a href="../Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> result anywhere in history — a hook for checking the <code>tool_use</code> ↔ <code>tool_result</code> invariant before mutating or persisting.</p>
 
 
         </div>
@@ -1137,7 +1127,7 @@
             </details>
           </div>
           <div class="method-source-code" id="pending_tool_calls-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 180</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 137</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">pending_tool_calls</span>
   <span class="ruby-identifier">last_assistant_idx</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">rindex</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>) }
   <span class="ruby-keyword">return</span> [<span class="ruby-keyword">nil</span>, []] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">last_assistant_idx</span>
@@ -1158,7 +1148,7 @@
         <div class="method-description">
 
 
-          <p>Returns +[assistant, <a href="Session.html#method-i-pending_tool_calls"><code>pending_tool_calls</code></a>]+ for the last assistant message. When there is no assistant message or no pending calls, the second element is an empty array.</p>
+          <p>Returns +[last_assistant, <a href="Session.html#method-i-pending_tool_calls"><code>pending_tool_calls</code></a>]+; the second element is empty when there’s no assistant message or no pending calls.</p>
 
 
         </div>
@@ -1189,7 +1179,7 @@
             </details>
           </div>
           <div class="method-source-code" id="remove-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 101</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove</span>(<span class="ruby-value">id:</span>)
   <span class="ruby-identifier">idx</span> = <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">index</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">id</span> }
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">idx</span>
@@ -1216,11 +1206,7 @@
         <div class="method-description">
 
 
-          <p>Removes a message by id. When the target is an assistant message that carries <code>tool_calls</code>, every <a href="../Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> result whose <code>tool_call_id</code> matches one of those calls is removed atomically — keeping the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> when called on a <a href="../Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> message — that would orphan the parent’s <code>tool_use</code>. Use <a href="Session.html#method-i-update"><code>update</code></a> to rewrite a tool result instead.</p>
-
-<p>Returns the removed message, or <code>nil</code> when no message has the given id (idempotent).</p>
+          <p>Removes a message by id, cascading to drop the <code>Tool</code> results of a removed assistant’s <code>tool_calls</code> so the <code>tool_use</code> ↔ <code>tool_result</code> invariant holds. Raises on a <code>Tool</code> message — that would orphan its parent; use <a href="Session.html#method-i-update"><code>update</code></a> instead. Returns <code>nil</code> if no message matches.</p>
 
 
         </div>
@@ -1251,7 +1237,7 @@
             </details>
           </div>
           <div class="method-source-code" id="set-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 72</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set</span>(<span class="ruby-identifier">messages</span>)
   <span class="ruby-ivar">@messages</span> = <span class="ruby-identifier">messages</span>
   <span class="ruby-keyword">self</span>
@@ -1263,9 +1249,7 @@
         <div class="method-description">
 
 
-          <p>Replaces the message history wholesale. Does NOT fire <a href="Session.html#method-i-on_message"><code>on_message</code></a> callbacks; registered callbacks persist across the swap.</p>
-
-<p>Used for seeding, guardrail rewrites, and history healing — cases where firing callbacks would double-emit messages that subscribers have already observed (or never produced).</p>
+          <p>Replaces the message history wholesale</p>
 
 
         </div>
@@ -1296,7 +1280,7 @@
             </details>
           </div>
           <div class="method-source-code" id="steps-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 208</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">steps</span>
   <span class="ruby-ivar">@messages</span>.<span class="ruby-identifier">count</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>) }
 <span class="ruby-keyword">end</span></pre>
@@ -1307,7 +1291,7 @@
         <div class="method-description">
 
 
-          <p>The number of LLM steps completed in this session, derived from the count of assistant messages. Used by the agent loop to enforce <code>max_steps</code> on resume.</p>
+          <p>The number of LLM steps completed, used by the agent loop to enforce <code>max_steps</code> on resume.</p>
 
 
         </div>
@@ -1338,7 +1322,7 @@
             </details>
           </div>
           <div class="method-source-code" id="unset-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 82</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unset</span>
   <span class="ruby-ivar">@messages</span> = []
   <span class="ruby-keyword">self</span>
@@ -1350,7 +1334,7 @@
         <div class="method-description">
 
 
-          <p>Clears the session. Does NOT fire <a href="Session.html#method-i-on_message"><code>on_message</code></a> callbacks; registered callbacks persist.</p>
+          <p>Clears the session.</p>
 
 
         </div>
@@ -1381,7 +1365,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 136</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent/session.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>(<span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tool_call_id:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">attrs</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;update requires either id: or tool_call_id:&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tool_call_id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;update accepts id: or tool_call_id:, not both&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tool_call_id</span>
@@ -1410,11 +1394,7 @@
         <div class="method-description">
 
 
-          <p>Partial in-place update. Looks up a message by either <code>id:</code> or <code>tool_call_id:</code> (exactly one required), constructs a replacement of the same concrete type with <code>attrs</code> overlaid on the existing fields, and swaps it in place.</p>
-
-<p>When the target is an assistant message and the update drops one or more entries from <code>tool_calls</code>, every <a href="../Messages/Tool.html"><code>Riffer::Messages::Tool</code></a> result whose <code>tool_call_id</code> matches a dropped call is removed atomically — keeping the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact.</p>
-
-<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> when neither or both lookup keys are provided, or when no message matches.</p>
+          <p>Partial in-place update: looks up a message by <code>id:</code> or <code>tool_call_id:</code> (exactly one), overlays <code>attrs</code> onto a same-type replacement, and swaps it in. Dropping <code>tool_calls</code> from an assistant cascades to remove their <code>Tool</code> results, preserving the invariant. Raises on neither/both keys or no match.</p>
 
 
         </div>

@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="module Riffer::Mcp: Mcp provides integration with Model Context Protocol (MCP) servers. Register MCP servers globally; agents opt-in by tag via the +use_mcp+ DSL."
+      content="module Riffer::Mcp: Integration with Model Context Protocol (MCP) servers. Register servers globally; agents opt-in by tag via the +use_mcp+ DSL."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Mcp provides integration with Model Context Protocol (MCP) servers. Register MCP servers globally; agents opt-in by tag via the +use_mcp+ DSL.">
+    <meta property="og:description" content="Integration with Model Context Protocol (MCP) servers. Register servers globally; agents opt-in by tag via the +use_mcp+ DSL.">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Mcp provides integration with Model Context Protocol (MCP) servers. Register MCP servers globally; agents opt-in by tag via the +use_mcp+ DSL.">
+    <meta name="twitter:description" content="Integration with Model Context Protocol (MCP) servers. Register servers globally; agents opt-in by tag via the +use_mcp+ DSL.">
 
 
 
@@ -645,30 +645,30 @@
   
 
   
+
+
   <div class="nav-section">
     <details class="nav-section-collapsible" open>
       <summary class="nav-section-header">
         <span class="nav-section-icon">
-          <svg><use href="#icon-class-methods"></use></svg>
+          <svg><use href="#icon-instance-methods"></use></svg>
         </span>
-        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-title">Instance Methods</span>
         <span class="nav-section-chevron">
           <svg><use href="#icon-chevron"></use></svg>
         </span>
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-c-register">register</a></li>
+        <li ><a href="#method-i-register">register</a></li>
 
-        <li ><a href="#method-c-registrations">registrations</a></li>
+        <li ><a href="#method-i-registrations">registrations</a></li>
 
-        <li ><a href="#method-c-unregister">unregister</a></li>
+        <li ><a href="#method-i-unregister">unregister</a></li>
 
       </ul>
     </details>
   </div>
-
-
 
 
   <div id="classindex-section" class="nav-section">
@@ -683,7 +683,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/Converter.html">Converter</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li></ul></details></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="../Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="../Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -716,9 +716,7 @@
 
   <section class="description">
     
-<p><a href="Mcp.html"><code>Riffer::Mcp</code></a> provides integration with Model Context Protocol (MCP) servers.</p>
-
-<p>Register MCP servers globally; agents opt-in by tag via the <code>use_mcp</code> DSL. Tags are application-defined; see <code>docs/14_MCP.md</code> (Tags section).</p>
+<p>Integration with Model Context Protocol (MCP) servers. Register servers globally; agents opt-in by tag via the <code>use_mcp</code> DSL. Tags are application-defined; see <code>docs/14_MCP.md</code>.</p>
 
 <pre class="ruby"><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Mcp</span>.<span class="ruby-identifier">register</span>(
   <span class="ruby-value">name:</span> <span class="ruby-string">&quot;github&quot;</span>,
@@ -750,17 +748,23 @@
 
 
 
-     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
        </header>
 
 
-      <div id="method-c-register" class="method-detail anchor-link ">
+      <div id="method-i-register" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-register" title="Link to this method">
+              <a href="#method-i-register" title="Link to this method">
                 <span class="method-name">register</span>
                 <span class="method-args">(manifest_or_hash)</span>
               </a>
@@ -775,8 +779,8 @@
             </details>
           </div>
           <div class="method-source-code" id="register-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp.rb, line 36</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">register</span>(<span class="ruby-identifier">manifest_or_hash</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp.rb, line 34</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">register</span>(<span class="ruby-identifier">manifest_or_hash</span>)
   <span class="ruby-constant">Registry</span>.<span class="ruby-identifier">register</span>(<span class="ruby-identifier">manifest_or_hash</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -786,9 +790,7 @@
         <div class="method-description">
 
 
-          <p>Registers an MCP server, blocking until tool discovery completes.</p>
-
-<p>Raises on discovery failure. Pass a <a href="Mcp/Manifest.html"><code>Manifest</code></a> instance or a hash with the same keys.</p>
+          <p>Registers an MCP server, blocking until tool discovery completes. Raises on discovery failure.</p>
 
 
         </div>
@@ -800,11 +802,11 @@
       </div>
 
 
-      <div id="method-c-registrations" class="method-detail anchor-link ">
+      <div id="method-i-registrations" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-registrations" title="Link to this method">
+              <a href="#method-i-registrations" title="Link to this method">
                 <span class="method-name">registrations</span>
                 <span class="method-args">()</span>
               </a>
@@ -819,8 +821,8 @@
             </details>
           </div>
           <div class="method-source-code" id="registrations-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp.rb, line 54</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">registrations</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">registrations</span>
   <span class="ruby-constant">Registry</span>.<span class="ruby-identifier">registrations</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -830,7 +832,7 @@
         <div class="method-description">
 
 
-          <p>Returns all current registrations keyed by name (for introspection).</p>
+          <p>Returns all current registrations keyed by name.</p>
 
 
         </div>
@@ -842,11 +844,11 @@
       </div>
 
 
-      <div id="method-c-unregister" class="method-detail anchor-link ">
+      <div id="method-i-unregister" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-unregister" title="Link to this method">
+              <a href="#method-i-unregister" title="Link to this method">
                 <span class="method-name">unregister</span>
                 <span class="method-args">(name)</span>
               </a>
@@ -861,8 +863,8 @@
             </details>
           </div>
           <div class="method-source-code" id="unregister-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp.rb, line 46</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">unregister</span>(<span class="ruby-identifier">name</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/mcp.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unregister</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-constant">Registry</span>.<span class="ruby-identifier">unregister</span>(<span class="ruby-identifier">name</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -872,9 +874,7 @@
         <div class="method-description">
 
 
-          <p>Removes a registration by name.</p>
-
-<p>Subsequent agent runs will not see tools from this server.</p>
+          <p>Removes a registration by name; subsequent agent runs won’t see its tools.</p>
 
 
         </div>
@@ -887,12 +887,6 @@
 
 
     </section>
-
-
-
-
-
-
 
 
 
