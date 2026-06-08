@@ -80,11 +80,11 @@ class Riffer::Agent
   # : (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
 
-  # Opts this agent into tools from all MCP registrations sharing any of the
-  # given tag(s).
+  # Opts this agent into MCP tools from registrations matching the given tag.
+  # Progressive registrations expose +mcp_search+ instead of every schema up front.
   #
-  # : (String | Symbol) -> void
-  def self.use_mcp: (String | Symbol) -> void
+  # : (String | Symbol, ?progressive: bool) -> void
+  def self.use_mcp: (String | Symbol, ?progressive: bool) -> void
 
   # Returns the accumulated +use_mcp+ configurations for this agent class.
   #
@@ -283,8 +283,8 @@ class Riffer::Agent
   def resolve_mcp_tool_classes: () -> Array[singleton(Riffer::Tool)]
 
   # --
-  # : (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
-  def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
+  # : (Array[Hash[Symbol, untyped]]) -> [Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]]]
+  def gather_mcp_registrations_with_tags: (Array[Hash[Symbol, untyped]]) -> [ Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]] ]
 
   # --
   # : (Riffer::Mcp::Registration, Array[Symbol], (^(manifest: Riffer::Mcp::Manifest, matched_tags: Array[Symbol], context: Riffer::Agent::Context) -> Hash[Symbol, untyped]?)?, Riffer::Agent::Context) -> Array[singleton(Riffer::Tool)]

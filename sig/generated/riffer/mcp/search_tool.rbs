@@ -1,0 +1,26 @@
+# Generated from lib/riffer/mcp/search_tool.rb with RBS::Inline
+
+# Searches available MCP tools by name or description.
+class Riffer::Mcp::SearchTool < Riffer::Tool
+  IDENTIFIER: ::String
+
+  # Successful search response carrying the matched tool classes.
+  class Result < Riffer::Tools::Response
+    # Tool classes that matched the search query.
+    attr_reader discovered_tools: Array[singleton(Riffer::Tool)]
+
+    # --
+    # : (String, Array[singleton(Riffer::Tool)]) -> void
+    def initialize: (String, Array[singleton(Riffer::Tool)]) -> void
+  end
+
+  # Searches progressive MCP tools and returns a +Result+ with +discovered_tools+.
+  # --
+  # : (context: Riffer::Agent::Context?, query: String) -> Riffer::Tools::Response
+  def call: (context: Riffer::Agent::Context?, query: String) -> Riffer::Tools::Response
+
+  private
+
+  # : (Array[singleton(Riffer::Tool)], String) -> Array[singleton(Riffer::Tool)]
+  def filter: (Array[singleton(Riffer::Tool)], String) -> Array[singleton(Riffer::Tool)]
+end

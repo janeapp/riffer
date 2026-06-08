@@ -78,8 +78,8 @@ class Riffer::Agent::Config
   # Appends an MCP tag entry to +mcp_configs+.
   #
   # --
-  # : (String | Symbol) -> Array[Hash[Symbol, untyped]]
-  def add_mcp: (String | Symbol) -> Array[Hash[Symbol, untyped]]
+  # : (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
+  def add_mcp: (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
 
   # Appends a guardrail entry to +guardrails+ for the given phase; +:around+
   # appends to both +:before+ and +:after+. Raises Riffer::ArgumentError unless

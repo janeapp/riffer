@@ -1,8 +1,8 @@
 # Generated from lib/riffer/agent/context.rb with RBS::Inline
 
 # Typed value object wrapping the runtime context Hash held by a Riffer::Agent.
-# Exposes typed +skills+ / +token_usage+ accessors while preserving +#[]+ /
-# +#dig+ for caller-provided keys.
+# Exposes typed +skills+, +token_usage+, +mcp_progressive_tools+, and
+# +discovered_tools+ accessors while preserving +#[]+ / +#dig+ for caller-provided keys.
 class Riffer::Agent::Context
   @data: Hash[Symbol, untyped]
 
@@ -46,7 +46,33 @@ class Riffer::Agent::Context
   # : (Symbol) -> untyped
   def []: (Symbol) -> untyped
 
-  # Hash-style dig, preserved for tools using <tt>context&.dig(:user_id)</tt>.
+  # Auth-wrapped MCP tool classes for progressive discovery, or +nil+.
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]?
+  def mcp_progressive_tools: () -> Array[singleton(Riffer::Tool)]?
+
+  # Sets progressive MCP tools. Raises Riffer::ArgumentError on an invalid value.
+  # --
+  # : (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def mcp_progressive_tools=: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+
+  # MCP tool classes discovered during progressive search. Accumulates across
+  # +generate+ calls and is merged into the active tool list on every LLM call.
+  # --
+  # : () -> Array[singleton(Riffer::Tool)]?
+  def discovered_tools: () -> Array[singleton(Riffer::Tool)]?
+
+  # Sets the discovered tools array. Raises Riffer::ArgumentError on an invalid value.
+  # --
+  # : (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+  def discovered_tools=: (Array[singleton(Riffer::Tool)]?) -> Array[singleton(Riffer::Tool)]?
+
+  # Accumulates newly discovered MCP tool classes, deduplicating by name.
+  # Each call extends the existing set; calling multiple times is safe.
+  # --
+  # : (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+  def discover_tools: (Array[singleton(Riffer::Tool)]) -> Array[singleton(Riffer::Tool)]
+
   # --
   # : (*Symbol) -> untyped
   def dig: (*Symbol) -> untyped

@@ -108,12 +108,12 @@ class Riffer::Agent
     value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
-  # Opts this agent into tools from all MCP registrations sharing any of the
-  # given tag(s).
+  # Opts this agent into MCP tools from registrations matching the given tag.
+  # Progressive registrations expose +mcp_search+ instead of every schema up front.
   #
-  #: (String | Symbol) -> void
-  def self.use_mcp(tag)
-    config.add_mcp(tag)
+  #: (String | Symbol, ?progressive: bool) -> void
+  def self.use_mcp(tag, progressive: true)
+    config.add_mcp(tag, progressive: progressive)
   end
 
   # Returns the accumulated +use_mcp+ configurations for this agent class.
@@ -446,22 +446,32 @@ class Riffer::Agent
 
     cred = Riffer.config.mcp.credentials
     ctx = @context
-    gather_mcp_registrations_with_tags(configs).flat_map do |reg, tag_accum|
-      matched_tags = tag_accum.uniq
-      mcp_tools_for_registration(reg, matched_tags, cred, ctx)
+
+    regular_reg_tags, progressive_reg_tags = gather_mcp_registrations_with_tags(configs)
+
+    regular_tools = regular_reg_tags.flat_map { |reg, tag_accum| mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx) }
+    progressive_tools = progressive_reg_tags.flat_map { |reg, tag_accum| mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx) }
+
+    if progressive_tools.any?
+      @context.mcp_progressive_tools = progressive_tools.freeze
+      regular_tools + [Riffer::Mcp::SearchTool]
+    else
+      regular_tools
     end
   end
 
   #--
-  #: (Array[Hash[Symbol, untyped]]) -> Hash[Riffer::Mcp::Registration, Array[Symbol]]
+  #: (Array[Hash[Symbol, untyped]]) -> [Hash[Riffer::Mcp::Registration, Array[Symbol]], Hash[Riffer::Mcp::Registration, Array[Symbol]]]
   def gather_mcp_registrations_with_tags(configs)
-    by_reg = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]
+    regular = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]
+    progressive = {} #: Hash[Riffer::Mcp::Registration, Array[Symbol]]
     configs.each do |cfg|
+      target = cfg[:progressive] ? progressive : regular
       Riffer::Mcp::Registry.find_by_tags(cfg[:tags]).each do |reg|
-        (by_reg[reg] ||= []).concat(cfg[:tags] & reg.manifest.tags)
+        (target[reg] ||= []).concat(cfg[:tags] & reg.manifest.tags)
       end
     end
-    by_reg
+    [regular, progressive]
   end
 
   #--
