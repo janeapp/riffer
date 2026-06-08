@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.32.0](https://github.com/janeapp/riffer/compare/riffer/v0.31.0...riffer/v0.32.0) (2026-06-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* `TokenUsage#cache_creation_tokens` is renamed to `cache_write_tokens` (also reflected in `TokenUsage#to_h`). Update any code reading that attribute or hash key.
+* apply module/class conventions consistently ([#298](https://github.com/janeapp/riffer/issues/298))
+
+### Features
+
+* add Bedrock prompt caching and surface cached tokens ([#300](https://github.com/janeapp/riffer/issues/300)) ([407390b](https://github.com/janeapp/riffer/commit/407390b505a3af6b881c5204d856a8e9ceddbed9))
+* add progressive discovery for MCP tools by default ([0a37485](https://github.com/janeapp/riffer/commit/0a37485dd59e08a0ba0ca8d1046e3313914f72a5))
+
+
+### Code Refactoring
+
+* apply module/class conventions consistently ([#298](https://github.com/janeapp/riffer/issues/298)) ([76a3131](https://github.com/janeapp/riffer/commit/76a3131f800ba026c07cc194ab2879279134e865))
+
 ## [0.31.0](https://github.com/janeapp/riffer/compare/riffer/v0.30.0...riffer/v0.31.0) (2026-06-03)
 
 
