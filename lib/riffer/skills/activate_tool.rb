@@ -19,6 +19,7 @@ class Riffer::Skills::ActivateTool < Riffer::Tool
   def call(context:, name:)
     skills_context = context&.skills
     return error("Skills not configured") unless skills_context
+    return error("Unknown skill: '#{name}'") unless skills_context.model_invocable?(name)
 
     text(skills_context.activate(name))
   rescue Riffer::ArgumentError => e

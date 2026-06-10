@@ -48,6 +48,21 @@ class Riffer::Skills::Context
     @activated.key?(name)
   end
 
+  # Returns whether a skill exists and may be activated by the model.
+  #--
+  #: (String) -> bool
+  def model_invocable?(name)
+    skill = skills[name]
+    !skill.nil? && !skill.disable_model_invocation
+  end
+
+  # Returns whether any skill is available for the model to activate.
+  #--
+  #: () -> bool
+  def activatable?
+    available_skills.any?
+  end
+
   # Returns the complete skills section for the system prompt — the catalog plus
   # any pre-activated skill bodies.
   #--
@@ -65,6 +80,6 @@ class Riffer::Skills::Context
   #--
   #: () -> Array[Riffer::Skills::Frontmatter]
   def available_skills
-    skills.values.reject { |skill| @activated.key?(skill.name) }
+    skills.values.reject { |skill| @activated.key?(skill.name) || skill.disable_model_invocation }
   end
 end

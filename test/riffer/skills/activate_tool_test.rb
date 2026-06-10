@@ -36,6 +36,18 @@ describe Riffer::Skills::ActivateTool do
       assert_includes result.content, "Unknown skill"
     end
 
+    it "returns error for a skill that disables model invocation" do
+      disabled = Riffer::Skills::Frontmatter.new(name: "deploy-prod", description: "Deploys.", disable_model_invocation: true)
+      disabled_context = Riffer::Skills::Context.new(backend: backend, skills: {"deploy-prod" => disabled}, adapter: Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool))
+      ctx = Riffer::Agent::Context.new
+      ctx.skills = disabled_context
+
+      tool = Riffer::Skills::ActivateTool.new
+      result = tool.call(context: ctx, name: "deploy-prod")
+      assert result.error?
+      assert_includes result.content, "Unknown skill"
+    end
+
     it "returns error when skills not configured" do
       tool = Riffer::Skills::ActivateTool.new
       result = tool.call(context: Riffer::Agent::Context.new, name: "code-review")

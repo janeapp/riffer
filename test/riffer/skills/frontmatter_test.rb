@@ -19,6 +19,36 @@ describe Riffer::Skills::Frontmatter do
       assert_equal({author: "test"}, fm.metadata)
     end
 
+    it "parses disable-model-invocation: true into the attribute" do
+      raw = "---\nname: s\ndescription: d\ndisable-model-invocation: true\n---\nBody"
+      fm, _ = Riffer::Skills::Frontmatter.parse(raw)
+      assert fm.disable_model_invocation
+    end
+
+    it "does not leak disable-model-invocation into metadata" do
+      raw = "---\nname: s\ndescription: d\ndisable-model-invocation: true\n---\nBody"
+      fm, _ = Riffer::Skills::Frontmatter.parse(raw)
+      assert_equal({}, fm.metadata)
+    end
+
+    it "defaults disable_model_invocation to false when absent" do
+      raw = "---\nname: s\ndescription: d\n---\nBody"
+      fm, _ = Riffer::Skills::Frontmatter.parse(raw)
+      refute fm.disable_model_invocation
+    end
+
+    it "treats disable-model-invocation: false as false" do
+      raw = "---\nname: s\ndescription: d\ndisable-model-invocation: false\n---\nBody"
+      fm, _ = Riffer::Skills::Frontmatter.parse(raw)
+      refute fm.disable_model_invocation
+    end
+
+    it "treats a non-boolean disable-model-invocation as false" do
+      raw = "---\nname: s\ndescription: d\ndisable-model-invocation: \"true\"\n---\nBody"
+      fm, _ = Riffer::Skills::Frontmatter.parse(raw)
+      refute fm.disable_model_invocation
+    end
+
     it "raises ArgumentError when no frontmatter delimiters are present" do
       raw = "Just plain text"
       error = assert_raises(Riffer::ArgumentError) { Riffer::Skills::Frontmatter.parse(raw) }
@@ -55,6 +85,21 @@ describe Riffer::Skills::Frontmatter do
     it "accepts metadata" do
       fm = Riffer::Skills::Frontmatter.new(name: "s", description: "desc", metadata: {author: "test"})
       assert_equal({author: "test"}, fm.metadata)
+    end
+
+    it "defaults disable_model_invocation to false" do
+      fm = Riffer::Skills::Frontmatter.new(name: "s", description: "desc")
+      refute fm.disable_model_invocation
+    end
+
+    it "accepts disable_model_invocation: true" do
+      fm = Riffer::Skills::Frontmatter.new(name: "s", description: "desc", disable_model_invocation: true)
+      assert fm.disable_model_invocation
+    end
+
+    it "coerces a non-true disable_model_invocation to false" do
+      fm = Riffer::Skills::Frontmatter.new(name: "s", description: "desc", disable_model_invocation: "true")
+      refute fm.disable_model_invocation
     end
 
     it "raises on empty name" do

@@ -35,6 +35,16 @@ class Riffer::Skills::Context
   # : (String) -> bool
   def activated?: (String) -> bool
 
+  # Returns whether a skill exists and may be activated by the model.
+  # --
+  # : (String) -> bool
+  def model_invocable?: (String) -> bool
+
+  # Returns whether any skill is available for the model to activate.
+  # --
+  # : () -> bool
+  def activatable?: () -> bool
+
   # Returns the complete skills section for the system prompt — the catalog plus
   # any pre-activated skill bodies.
   # --
