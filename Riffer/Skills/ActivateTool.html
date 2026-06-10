@@ -787,6 +787,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">context:</span>, <span class="ruby-value">name:</span>)
   <span class="ruby-identifier">skills_context</span> = <span class="ruby-identifier">context</span>&amp;.<span class="ruby-identifier">skills</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">error</span>(<span class="ruby-string">&quot;Skills not configured&quot;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">skills_context</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">error</span>(<span class="ruby-node">&quot;Unknown skill: &#39;#{name}&#39;&quot;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">skills_context</span>.<span class="ruby-identifier">model_invocable?</span>(<span class="ruby-identifier">name</span>)
 
   <span class="ruby-identifier">text</span>(<span class="ruby-identifier">skills_context</span>.<span class="ruby-identifier">activate</span>(<span class="ruby-identifier">name</span>))
 <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>

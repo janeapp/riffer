@@ -691,7 +691,12 @@ Review the code for:
 <p><code>description</code> — 1-1024 chars, helps the LLM decide when to activate</p>
 </li></ul>
 
-<p>Additional frontmatter keys are passed through as metadata.</p>
+<p><strong>Optional frontmatter fields:</strong></p>
+<ul><li>
+<p><code>disable-model-invocation</code> — when <code>true</code>, the skill is hidden from the catalog and the LLM cannot activate it via the <code>skill_activate</code> tool. It stays reachable through the programmatic <code>activate</code> config (see <a href="#activated-skills">Activated Skills</a>), so you can inject it under your own logic instead of the model’s. Only the literal value <code>true</code> disables invocation; any other value (or its absence) leaves the skill model-invocable.</p>
+</li></ul>
+
+<p>Any other frontmatter keys are passed through as metadata.</p>
 
 <span id="label-Configuring+an+Agent" class="legacy-anchor"></span>
 <h2 id="configuring-an-agent"><a href="#configuring-an-agent">Configuring an Agent</a></h2>
@@ -736,7 +741,7 @@ Review the code for:
 <span id="label-Activated+Skills" class="legacy-anchor"></span>
 <h3 id="activated-skills"><a href="#activated-skills">Activated Skills</a></h3>
 
-<p>Load skill instructions into the system prompt at startup (no tool call needed):</p>
+<p>Load skill instructions into the system prompt at startup (no tool call needed). This is also the only way to surface a skill marked <code>disable-model-invocation: true</code>, which the model can never activate on its own:</p>
 
 <pre class="ruby"><span class="ruby-identifier">skills</span> <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">backend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">FilesystemBackend</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;.skills&quot;</span>)

@@ -737,7 +737,7 @@
 
   <section class="description">
     
-<p>Immutable value object holding parsed SKILL.md YAML frontmatter. Required fields: <code>name</code> and <code>description</code>; unrecognized top-level keys are merged into <code>metadata</code>.</p>
+<p>Immutable value object holding parsed SKILL.md YAML frontmatter. Required fields: <code>name</code> and <code>description</code>; the optional <code>disable-model-invocation</code> flag is recognized, and any other unrecognized top-level keys are merged into <code>metadata</code>.</p>
 
   </section>
 
@@ -806,6 +806,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-disable_model_invocation" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-disable_model_invocation" title="Link to this attribute">
+            <span class="method-name">disable_model_invocation</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Whether the skill opts out of model-driven activation. Hidden from the catalog and rejected at model activation; still reachable via programmatic activation.</p>
+
+        </div>
+      </div>
+
       <div id="attribute-i-metadata" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-metadata" title="Link to this attribute">
@@ -857,7 +873,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(name:, description:, metadata: {})</span>
+                <span class="method-args">(name:, description:, disable_model_invocation: false, metadata: {})</span>
               </a>
             </div>
 
@@ -870,12 +886,13 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/frontmatter.rb, line 63</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">description:</span>, <span class="ruby-value">metadata:</span> {})
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/frontmatter.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">description:</span>, <span class="ruby-value">disable_model_invocation:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">metadata:</span> {})
   <span class="ruby-identifier">validate_name!</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-identifier">validate_description!</span>(<span class="ruby-identifier">description</span>)
   <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">freeze</span>
   <span class="ruby-ivar">@description</span> = <span class="ruby-identifier">description</span>.<span class="ruby-identifier">freeze</span>
+  <span class="ruby-ivar">@disable_model_invocation</span> = (<span class="ruby-identifier">disable_model_invocation</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>)
   <span class="ruby-ivar">@metadata</span> = <span class="ruby-identifier">metadata</span>.<span class="ruby-identifier">freeze</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -885,7 +902,7 @@
         <div class="method-description">
 
 
-          <p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if <code>name</code> or <code>description</code> is invalid.</p>
+          <p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> if <code>name</code> or <code>description</code> is invalid. <a href="Frontmatter.html#attribute-i-disable_model_invocation"><code>disable_model_invocation</code></a> is treated as set only when literally <code>true</code>.</p>
 
 
         </div>
@@ -916,11 +933,11 @@
             </details>
           </div>
           <div class="method-source-code" id="parse-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/frontmatter.rb, line 29</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/frontmatter.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">parse</span>(<span class="ruby-identifier">raw</span>)
   <span class="ruby-identifier">yaml</span>, <span class="ruby-identifier">body</span> = <span class="ruby-identifier">split_frontmatter</span>(<span class="ruby-identifier">raw</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;missing YAML frontmatter (expected --- delimiters)&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">empty?</span>
-  [<span class="ruby-identifier">new</span>(<span class="ruby-value">name:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:name</span>), <span class="ruby-value">description:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:description</span>), <span class="ruby-value">metadata:</span> <span class="ruby-identifier">yaml</span>), <span class="ruby-identifier">body</span>]
+  [<span class="ruby-identifier">new</span>(<span class="ruby-value">name:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:name</span>), <span class="ruby-value">description:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:description</span>), <span class="ruby-value">disable_model_invocation:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:&quot;disable-model-invocation&quot;</span>), <span class="ruby-value">metadata:</span> <span class="ruby-identifier">yaml</span>), <span class="ruby-identifier">body</span>]
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -960,11 +977,11 @@
             </details>
           </div>
           <div class="method-source-code" id="parse_frontmatter-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/frontmatter.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/skills/frontmatter.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">parse_frontmatter</span>(<span class="ruby-identifier">raw</span>)
   <span class="ruby-identifier">yaml</span>, <span class="ruby-identifier">_</span> = <span class="ruby-identifier">split_frontmatter</span>(<span class="ruby-identifier">raw</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;missing YAML frontmatter (expected --- delimiters)&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">empty?</span>
-  <span class="ruby-identifier">new</span>(<span class="ruby-value">name:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:name</span>), <span class="ruby-value">description:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:description</span>), <span class="ruby-value">metadata:</span> <span class="ruby-identifier">yaml</span>)
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">name:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:name</span>), <span class="ruby-value">description:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:description</span>), <span class="ruby-value">disable_model_invocation:</span> <span class="ruby-identifier">yaml</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:&quot;disable-model-invocation&quot;</span>), <span class="ruby-value">metadata:</span> <span class="ruby-identifier">yaml</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
