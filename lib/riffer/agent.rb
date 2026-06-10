@@ -343,9 +343,9 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Messages::System?
   def build_skills_message
-    skills = @context.skills
-    return nil unless skills&.system_prompt
-    Riffer::Messages::System.new(skills.system_prompt)
+    content = @context.skills&.system_prompt
+    return nil if content.nil? || content.empty?
+    Riffer::Messages::System.new(content)
   end
 
   #--
@@ -415,7 +415,7 @@ class Riffer::Agent
 
     skills_config = @config.skills_config
 
-    if skills_config
+    if skills_config && @context.skills&.activatable?
       skill_activate_tool_class = skills_config.activate_tool || Riffer.config.skills.default_activate_tool
 
       if tools.any? { |t| t.name == skill_activate_tool_class.name }

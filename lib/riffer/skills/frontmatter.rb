@@ -4,7 +4,8 @@
 require "yaml"
 
 # Immutable value object holding parsed SKILL.md YAML frontmatter. Required
-# fields: +name+ and +description+; unrecognized top-level keys are merged into
+# fields: +name+ and +description+; the optional +disable-model-invocation+
+# flag is recognized, and any other unrecognized top-level keys are merged into
 # +metadata+.
 class Riffer::Skills::Frontmatter
   NAME_PATTERN = /\A[a-z0-9]+(-[a-z0-9]+)*\z/ #: Regexp
@@ -16,6 +17,11 @@ class Riffer::Skills::Frontmatter
 
   # The skill description (1-1024 chars).
   attr_reader :description #: String
+
+  # Whether the skill opts out of model-driven activation. Hidden from the
+  # catalog and rejected at model activation; still reachable via programmatic
+  # activation.
+  attr_reader :disable_model_invocation #: bool
 
   # Metadata from the spec's +metadata+ field plus any unrecognized top-level
   # keys.
@@ -29,7 +35,7 @@ class Riffer::Skills::Frontmatter
   def self.parse(raw)
     yaml, body = split_frontmatter(raw)
     raise Riffer::ArgumentError, "missing YAML frontmatter (expected --- delimiters)" if yaml.empty?
-    [new(name: yaml.delete(:name), description: yaml.delete(:description), metadata: yaml), body]
+    [new(name: yaml.delete(:name), description: yaml.delete(:description), disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml), body]
   end
 
   # Parses only the frontmatter from a raw SKILL.md string, ignoring the body.
@@ -39,7 +45,7 @@ class Riffer::Skills::Frontmatter
   def self.parse_frontmatter(raw)
     yaml, _ = split_frontmatter(raw)
     raise Riffer::ArgumentError, "missing YAML frontmatter (expected --- delimiters)" if yaml.empty?
-    new(name: yaml.delete(:name), description: yaml.delete(:description), metadata: yaml)
+    new(name: yaml.delete(:name), description: yaml.delete(:description), disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml)
   end
 
   #--
@@ -58,13 +64,15 @@ class Riffer::Skills::Frontmatter
   private_class_method :split_frontmatter
 
   # Raises Riffer::ArgumentError if +name+ or +description+ is invalid.
+  # +disable_model_invocation+ is treated as set only when literally +true+.
   #--
-  #: (name: String, description: String, ?metadata: Hash[Symbol, untyped]) -> void
-  def initialize(name:, description:, metadata: {})
+  #: (name: String, description: String, ?disable_model_invocation: bool, ?metadata: Hash[Symbol, untyped]) -> void
+  def initialize(name:, description:, disable_model_invocation: false, metadata: {})
     validate_name!(name)
     validate_description!(description)
     @name = name.freeze
     @description = description.freeze
+    @disable_model_invocation = (disable_model_invocation == true)
     @metadata = metadata.freeze
   end
 

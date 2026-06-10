@@ -532,4 +532,78 @@ describe "Agent skills integration" do
       assert_includes tool_msg.content, "Unknown skill"
     end
   end
+
+  describe "disable-model-invocation" do
+    def write_skill(dir, name, description, disable_model_invocation: false)
+      Dir.mkdir(File.join(dir, name))
+      lines = ["---", "name: #{name}", "description: #{description}"]
+      lines << "disable-model-invocation: true" if disable_model_invocation
+      lines << "---"
+      File.write(File.join(dir, name, "SKILL.md"), "#{lines.join("\n")}\n\nBody for #{name}.")
+    end
+
+    it "hides a disabled skill from the catalog" do
+      Dir.mktmpdir do |dir|
+        write_skill(dir, "code-review", "Reviews code.")
+        write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          skills do
+            backend Riffer::Skills::FilesystemBackend.new(dir)
+          end
+        end
+
+        refute_includes agent_class.new.context.skills.system_prompt, "deploy-prod"
+      end
+    end
+
+    it "registers skill_activate when an enabled skill exists alongside a disabled one" do
+      Dir.mktmpdir do |dir|
+        write_skill(dir, "code-review", "Reviews code.")
+        write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          skills do
+            backend Riffer::Skills::FilesystemBackend.new(dir)
+          end
+        end
+
+        assert_includes agent_class.new.tools.map(&:name), "skill_activate"
+      end
+    end
+
+    it "omits skill_activate when every skill disables model invocation" do
+      Dir.mktmpdir do |dir|
+        write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          skills do
+            backend Riffer::Skills::FilesystemBackend.new(dir)
+          end
+        end
+
+        refute_includes agent_class.new.tools.map(&:name), "skill_activate"
+      end
+    end
+
+    it "activates a disabled skill through the programmatic activate config" do
+      Dir.mktmpdir do |dir|
+        write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
+
+        agent_class = Class.new(Riffer::Agent) do
+          model "mock/riffer-1"
+          skills do
+            backend Riffer::Skills::FilesystemBackend.new(dir)
+            activate ["deploy-prod"]
+          end
+        end
+
+        skills_message = agent_class.new.session.messages.find { |m| m.is_a?(Riffer::Messages::System) && m.content.include?("Body for deploy-prod.") }
+        refute_nil skills_message
+      end
+    end
+  end
 end

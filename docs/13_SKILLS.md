@@ -36,7 +36,11 @@ Review the code for:
 - `name` — lowercase alphanumeric with hyphens, 1-64 chars (must match directory name)
 - `description` — 1-1024 chars, helps the LLM decide when to activate
 
-Additional frontmatter keys are passed through as metadata.
+**Optional frontmatter fields:**
+
+- `disable-model-invocation` — when `true`, the skill is hidden from the catalog and the LLM cannot activate it via the `skill_activate` tool. It stays reachable through the programmatic `activate` config (see [Activated Skills](#activated-skills)), so you can inject it under your own logic instead of the model's. Only the literal value `true` disables invocation; any other value (or its absence) leaves the skill model-invocable.
+
+Any other frontmatter keys are passed through as metadata.
 
 ## Configuring an Agent
 
@@ -81,7 +85,7 @@ end
 
 ### Activated Skills
 
-Load skill instructions into the system prompt at startup (no tool call needed):
+Load skill instructions into the system prompt at startup (no tool call needed). This is also the only way to surface a skill marked `disable-model-invocation: true`, which the model can never activate on its own:
 
 ```ruby
 skills do
