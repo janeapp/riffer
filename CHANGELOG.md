@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.32.1](https://github.com/janeapp/riffer/compare/riffer/v0.32.0...riffer/v0.32.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* respect disable-model-invocation in skills ([#303](https://github.com/janeapp/riffer/issues/303)) ([2cf8719](https://github.com/janeapp/riffer/commit/2cf8719ecc36d748fabf7f03c8427e2b3043d30c))
+
 ## [0.32.0](https://github.com/janeapp/riffer/compare/riffer/v0.31.0...riffer/v0.32.0) (2026-06-08)
 
 
