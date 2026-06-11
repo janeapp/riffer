@@ -1,6 +1,6 @@
 # Skills
 
-Skills are packaged AI agent capabilities per the [Agent Skills spec](https://agentskills.io/). Each skill is a directory containing a `SKILL.md` file with YAML frontmatter and Markdown instructions. The framework discovers skills through a pluggable backend, injects a compact catalog into the system prompt (~50 tokens/skill), and provides a tool for the LLM to activate skills on demand.
+Skills are packaged AI agent capabilities per the [Agent Skills spec](https://agentskills.io/). Each skill is a directory containing a `SKILL.md` file with YAML frontmatter and Markdown instructions. The framework discovers skills through a pluggable backend, injects a compact catalog into the system prompt (~50 tokens/skill), and supports both activation channels the spec describes: the LLM activates skills on demand through a tool, and your application injects skills the user asked for as conversation content (see [User-Triggered Activation](#user-triggered-activation)).
 
 ## Creating a Skill
 
@@ -38,7 +38,7 @@ Review the code for:
 
 **Optional frontmatter fields:**
 
-- `disable-model-invocation` — when `true`, the skill is hidden from the catalog and the LLM cannot activate it via the `skill_activate` tool. It stays reachable through the programmatic `activate` config (see [Activated Skills](#activated-skills)), so you can inject it under your own logic instead of the model's. Only the literal value `true` disables invocation; any other value (or its absence) leaves the skill model-invocable.
+- `disable-model-invocation` — when `true`, the skill is hidden from the catalog and the LLM cannot activate it via the `skill_activate` tool. It stays reachable through the programmatic `activate` config (see [Activated Skills](#activated-skills)) and through `activation_prompt` (see [User-Triggered Activation](#user-triggered-activation)), so you can inject it under your own logic instead of the model's. Only the literal value `true` disables invocation; any other value (or its absence) leaves the skill model-invocable.
 
 Any other frontmatter keys are passed through as metadata.
 
@@ -85,7 +85,7 @@ end
 
 ### Activated Skills
 
-Load skill instructions into the system prompt at startup (no tool call needed). This is also the only way to surface a skill marked `disable-model-invocation: true`, which the model can never activate on its own:
+Load skill instructions into the system prompt at startup (no tool call needed). Use this for skills that should govern the whole session — for skills the user requests mid-conversation, prefer [User-Triggered Activation](#user-triggered-activation), which keeps the system prompt (and its provider-side cache) stable:
 
 ```ruby
 skills do
@@ -107,8 +107,46 @@ end
 
 1. **Discovery** — At the start of `generate`/`stream`, the backend's `list_skills` returns frontmatter for all available skills.
 2. **Catalog injection** — The adapter formats the catalog and appends it to the system prompt.
-3. **Activation** — When the LLM matches a task to a skill, it calls the `skill_activate` tool with the skill name. The tool returns the full SKILL.md body.
+3. **Activation** — When the LLM matches a task to a skill, it calls the `skill_activate` tool with the skill name. The tool returns the full SKILL.md body wrapped in `<skill_content name="...">` tags.
 4. **Execution** — The LLM follows the skill's instructions to complete the task.
+5. **Deduplication** — Re-activating an already-active skill returns a short pointer ("already active") instead of the body again, so repeated activations don't fill the context with duplicate instructions. This applies whichever channel activated the skill first — tool call, `activation_prompt`, or the `activate` config.
+
+Activation state lives in memory on the `Riffer::Skills::Context`, not in the session. When you rebuild an agent from a persisted session, the first re-activation of each skill returns the full body again (the conversation history still carries the earlier copy); deduplication resumes from there. If you prune skill content out of a session yourself, call `deactivate(name)` so the next activation returns the body instead of a pointer to content that no longer exists.
+
+## User-Triggered Activation
+
+When a user explicitly invokes a skill (a slash command, a button, a mention), don't wait for the model to discover it — inject the skill body into the conversation as a user message. `activation_prompt` returns the body wrapped for injection and records the activation, so a later model-side `skill_activate` call for the same skill gets the pointer instead of a duplicate body:
+
+```ruby
+agent = MyAgent.new
+skills = agent.context.skills
+
+# User typed: /code-review focus on security
+if skills.activated?("code-review")
+  agent.generate("The code-review skill was invoked again — its instructions are above. focus on security")
+else
+  agent.generate(skills.activation_prompt("code-review", args: "focus on security"))
+end
+```
+
+`activation_prompt("code-review", args: "focus on security")` returns:
+
+```
+<skill_content name="code-review">
+You are a code review assistant.
+...
+</skill_content>
+
+focus on security
+```
+
+How a repeat invocation behaves is your choice — re-inject the full body (`activation_prompt` always returns it), or send a short reference as above. The check via `activated?` covers both channels, so a skill the model already activated through the tool counts too.
+
+For reading a skill body **without** recording an activation — a UI preview, or delegating the skill to a subagent whose context is separate — use `read`:
+
+```ruby
+body = skills.read("code-review") # no activation recorded
+```
 
 ## Custom Backends
 
@@ -155,6 +193,28 @@ The recommended approach is to subclass `Riffer::Skills::ActivateTool` so the id
 class InstrumentedActivateTool < Riffer::Skills::ActivateTool
   def call(context:, name:)
     Telemetry.measure("skill_activate", skill: name) { super }
+  end
+end
+
+# Change what a re-activation returns (default: a short "already active" pointer)
+class CustomPointerActivateTool < Riffer::Skills::ActivateTool
+  private
+
+  def already_active_message(name)
+    "'#{name}' is loaded — scroll up for its instructions."
+  end
+end
+
+# Return the full body on every activation (no deduplication)
+class AlwaysFullBodyActivateTool < Riffer::Skills::ActivateTool
+  def call(context:, name:)
+    skills_context = context&.skills
+    return error("Skills not configured") unless skills_context
+    return error("Unknown skill: '#{name}'") unless skills_context.model_invocable?(name)
+
+    text(skills_context.activation_prompt(name))
+  rescue Riffer::ArgumentError => e
+    error(e.message)
   end
 end
 

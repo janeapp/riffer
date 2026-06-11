@@ -1,12 +1,16 @@
 # Generated from lib/riffer/skills/context.rb with RBS::Inline
 
 # Skills context for an agent generation cycle — coordinates discovery,
-# activation, and prompt rendering, caching activations to avoid redundant
+# activation, and prompt rendering, caching skill bodies to avoid redundant
 # backend reads. Exposed to tools via <tt>context.skills</tt>.
 class Riffer::Skills::Context
-  @backend: Riffer::Skills::Backend
+  @preactivated: Array[String]
 
-  @activated: Hash[String, String]
+  @activated: Array[String]
+
+  @bodies: Hash[String, String]
+
+  @backend: Riffer::Skills::Backend
 
   # Skill catalog indexed by name.
   attr_reader skills: Hash[String, Riffer::Skills::Frontmatter]
@@ -15,11 +19,19 @@ class Riffer::Skills::Context
   attr_reader adapter: Riffer::Skills::Adapter
 
   # Optional callback invoked when a skill is first activated.
-  attr_writer on_activate: (^(String) -> void)?
+  attr_accessor on_activate: (^(String) -> void)?
 
   # --
   # : (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void
   def initialize: (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void
+
+  # Returns a skill's body without recording an activation.
+  #
+  # Raises Riffer::ArgumentError if the skill is not in the catalog.
+  #
+  # --
+  # : (String) -> String
+  def read: (String) -> String
 
   # Activates a skill by name. Returns the cached body on re-activation.
   #
@@ -28,6 +40,32 @@ class Riffer::Skills::Context
   # --
   # : (String) -> String
   def activate: (String) -> String
+
+  # Activates a skill and returns its body wrapped for injection as a user
+  # message.
+  #
+  # Raises Riffer::ArgumentError if the skill is not in the catalog.
+  #
+  # --
+  # : (String, ?args: String?) -> String
+  def activation_prompt: (String, ?args: String?) -> String
+
+  # Activates a skill whose body renders in the system prompt rather than the
+  # conversation.
+  #
+  # Raises Riffer::ArgumentError if the skill is not in the catalog.
+  #
+  # --
+  # : (String) -> void
+  def preactivate: (String) -> void
+
+  # Clears a skill's activation so the next activation is treated as the first.
+  #
+  # Raises Riffer::ArgumentError if the skill is not in the catalog.
+  #
+  # --
+  # : (String) -> void
+  def deactivate: (String) -> void
 
   # Returns whether a skill has been activated.
   #

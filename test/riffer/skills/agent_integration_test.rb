@@ -490,6 +490,26 @@ describe "Agent skills integration" do
 
       assert_equal 1, events.size
     end
+
+    it "composes with and restores the consumer's on_activate across a stream" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      agent = agent_class.new
+      fired = []
+      agent.context.skills.on_activate = ->(name) { fired << name }
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("Done.")
+
+      agent.stream("Review").each { |_| }
+      agent.context.skills.activate("data-analysis")
+
+      assert_equal ["code-review", "data-analysis"], fired
+    end
   end
 
   describe "skill activation end-to-end" do
@@ -530,6 +550,47 @@ describe "Agent skills integration" do
       tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
       refute_nil tool_msg
       assert_includes tool_msg.content, "Unknown skill"
+    end
+
+    it "answers a re-activation with a pointer instead of the body" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      agent = agent_class.new
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("Done.")
+      agent.generate("Review this code")
+
+      tool_msgs = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
+      assert_includes tool_msgs.last.content, "already active"
+      refute_includes tool_msgs.last.content, "code review assistant"
+    end
+  end
+
+  describe "user-explicit activation" do
+    it "injects the wrapped body as a user message and pointers later model activations" do
+      agent_class = Class.new(Riffer::Agent) do
+        model "mock/riffer-1"
+        skills do
+          backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
+        end
+      end
+
+      agent = agent_class.new
+      skills = agent.context.skills
+      agent.session.add(Riffer::Messages::User.new(skills.activation_prompt("code-review", args: "focus on security")), silent: true)
+
+      agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
+      agent.provider.stub_response("Done.")
+      agent.generate
+
+      tool_msg = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) && m.name == "skill_activate" }
+      assert_includes tool_msg.content, "already active"
     end
   end
 

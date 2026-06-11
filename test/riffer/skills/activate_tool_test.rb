@@ -21,12 +21,34 @@ describe Riffer::Skills::ActivateTool do
       assert_includes result.content, "code review assistant"
     end
 
-    it "returns cached body on re-activation" do
+    it "wraps the body in skill_content tags" do
       tool = Riffer::Skills::ActivateTool.new
-      result1 = tool.call(context: context, name: "code-review")
-      result2 = tool.call(context: context, name: "code-review")
-      assert_equal result1.content, result2.content
-      assert skills_context.activated?("code-review")
+      result = tool.call(context: context, name: "code-review")
+      assert_includes result.content, %(<skill_content name="code-review">)
+    end
+
+    it "returns a pointer instead of the body on re-activation" do
+      tool = Riffer::Skills::ActivateTool.new
+      tool.call(context: context, name: "code-review")
+      result = tool.call(context: context, name: "code-review")
+      assert result.success?
+      assert_includes result.content, "already active"
+      refute_includes result.content, "code review assistant"
+    end
+
+    it "returns the full body again after deactivation" do
+      tool = Riffer::Skills::ActivateTool.new
+      tool.call(context: context, name: "code-review")
+      skills_context.deactivate("code-review")
+      result = tool.call(context: context, name: "code-review")
+      assert_includes result.content, "code review assistant"
+    end
+
+    it "returns a pointer when the skill was activated through the user channel" do
+      tool = Riffer::Skills::ActivateTool.new
+      skills_context.activation_prompt("code-review")
+      result = tool.call(context: context, name: "code-review")
+      assert_includes result.content, "already active"
     end
 
     it "returns error for unknown skill" do

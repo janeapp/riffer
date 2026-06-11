@@ -21,4 +21,19 @@ class Riffer::Skills::Adapter
   def render_catalog(skills)
     raise NotImplementedError, "#{self.class} must implement #render_catalog"
   end
+
+  # Renders an activated skill body wrapped in identifying tags.
+  #--
+  #: (Riffer::Skills::Frontmatter, String) -> String
+  def render_activation(skill, body)
+    %(<skill_content name="#{skill.name}">\n#{body}\n</skill_content>)
+  end
+
+  # The behavioral instructions rendered alongside the catalog.
+  #--
+  #: () -> String
+  def catalog_instructions
+    "When a user's request matches a skill description below, call the `#{skill_activate_tool.name}` tool with the skill name. After activation, follow the skill's instructions. " \
+      "If a skill's instructions already appear in your context (inside <skill_content> tags), follow them instead of activating the skill again."
+  end
 end

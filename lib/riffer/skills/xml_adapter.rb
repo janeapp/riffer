@@ -11,7 +11,7 @@ class Riffer::Skills::XmlAdapter < Riffer::Skills::Adapter
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
     lines = [] #: Array[String]
-    lines << "When a user's request matches a skill description below, call the `#{skill_activate_tool.name}` tool with the skill name. After activation, follow the skill's instructions."
+    lines << catalog_instructions
     lines << ""
     lines << "<available_skills>"
     skills.each do |skill|

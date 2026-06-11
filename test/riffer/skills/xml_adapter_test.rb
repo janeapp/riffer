@@ -40,5 +40,16 @@ describe Riffer::Skills::XmlAdapter do
       output = custom_adapter.render_catalog(skills)
       assert_includes output, "`custom_activate`"
     end
+
+    it "instructs the model not to re-activate skills already in context" do
+      assert_includes adapter.render_catalog(skills), "instead of activating the skill again"
+    end
+  end
+
+  describe "#render_activation" do
+    it "wraps the body in skill_content tags" do
+      output = adapter.render_activation(skills.first, "The body.")
+      assert_equal %(<skill_content name="code-review">\nThe body.\n</skill_content>), output
+    end
   end
 end
