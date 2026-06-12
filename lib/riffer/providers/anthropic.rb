@@ -81,13 +81,22 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     message = response #: Anthropic::Models::Message
-    usage = message.usage
+    build_token_usage(message.usage)
+  end
+
+  # Anthropic's +input_tokens+ excludes the cache buckets; TokenUsage's
+  # input includes them.
+  #--
+  #: (untyped) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage)
+    cache_write = usage.cache_creation_input_tokens
+    cache_read = usage.cache_read_input_tokens
 
     Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens,
+      input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
       output_tokens: usage.output_tokens,
-      cache_write_tokens: usage.cache_creation_input_tokens,
-      cache_read_tokens: usage.cache_read_input_tokens
+      cache_write_tokens: cache_write,
+      cache_read_tokens: cache_read
     )
   end
 
@@ -289,14 +298,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     usage = message&.usage
     return unless usage
 
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::Providers::TokenUsage.new(
-        input_tokens: usage.input_tokens,
-        output_tokens: usage.output_tokens,
-        cache_write_tokens: usage.cache_creation_input_tokens,
-        cache_read_tokens: usage.cache_read_input_tokens
-      )
-    )
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
   end
 
   #--

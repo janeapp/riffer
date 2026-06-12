@@ -601,6 +601,20 @@ describe Riffer::Providers::Gemini do
         expect(usage.cache_read_tokens).must_be_nil
       end
     end
+
+    describe "thinking tokens" do
+      it "folds thoughtsTokenCount into output_tokens" do
+        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        usage = provider.send(:extract_token_usage, {usageMetadata: {promptTokenCount: 100, candidatesTokenCount: 20, thoughtsTokenCount: 30}})
+        expect(usage.output_tokens).must_equal 50
+      end
+
+      it "keeps output_tokens as candidatesTokenCount when absent" do
+        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        usage = provider.send(:extract_token_usage, {usageMetadata: {promptTokenCount: 100, candidatesTokenCount: 20}})
+        expect(usage.output_tokens).must_equal 20
+      end
+    end
   end
 
   describe "file handling" do

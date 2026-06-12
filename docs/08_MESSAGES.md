@@ -65,6 +65,17 @@ if msg.token_usage
 end
 ```
 
+#### Token Usage Semantics
+
+`TokenUsage` buckets carry the same meaning for every provider, regardless of how the provider reports its raw usage:
+
+- `input_tokens` — every token entering the context window, including cache reads and writes.
+- `output_tokens` — every token the model generated, including reasoning/thinking tokens.
+- `cache_read_tokens` — the subset of `input_tokens` read from the provider's prompt cache; `nil` when the provider doesn't report it.
+- `cache_write_tokens` — the subset of `input_tokens` written to the provider's prompt cache; `nil` when the provider doesn't report it.
+
+The cache buckets are subsets of `input_tokens`, never additions to it — summing `input_tokens + cache_read_tokens` double-counts. `total_tokens` (input + output) matches the totals providers report on their dashboards.
+
 #### Structured Output on Messages
 
 When an agent has `structured_output` configured, the final assistant message stores the parsed hash directly. The `structured_output?` predicate checks for a non-nil value:

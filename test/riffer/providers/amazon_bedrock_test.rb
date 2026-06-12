@@ -646,6 +646,31 @@ describe Riffer::Providers::AmazonBedrock do
         end
       end
     end
+
+    describe "normalization" do
+      it "folds cache buckets into input_tokens" do
+        provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+        response = Aws::BedrockRuntime::Types::ConverseResponse.new(
+          usage: Aws::BedrockRuntime::Types::TokenUsage.new(
+            input_tokens: 9,
+            output_tokens: 16,
+            cache_write_input_tokens: 3,
+            cache_read_input_tokens: 100
+          )
+        )
+        token_usage = provider.send(:extract_token_usage, response)
+        expect(token_usage.input_tokens).must_equal 112
+      end
+
+      it "treats unreported cache buckets as zero" do
+        provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+        response = Aws::BedrockRuntime::Types::ConverseResponse.new(
+          usage: Aws::BedrockRuntime::Types::TokenUsage.new(input_tokens: 9, output_tokens: 16)
+        )
+        token_usage = provider.send(:extract_token_usage, response)
+        expect(token_usage.input_tokens).must_equal 9
+      end
+    end
   end
 
   describe "structured output" do

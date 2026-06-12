@@ -42,6 +42,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
   def extract_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
 
+  # Gemini reports thinking tokens outside +candidatesTokenCount+;
+  # TokenUsage's output includes them.
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
+  def build_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
+
   # --
   # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
   def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
