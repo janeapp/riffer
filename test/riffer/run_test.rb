@@ -532,6 +532,60 @@ describe Riffer::Agent::Run do
       assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
       expect(assistant.token_usage).must_equal token_usage
     end
+
+    it "exposes per-run usage on the response" do
+      agent = agent_class.new
+      agent.provider.stub_response("Hello!", token_usage: token_usage)
+      response = agent.generate("Hi")
+      expect(response.token_usage.to_h).must_equal({input_tokens: 100, output_tokens: 50})
+    end
+
+    it "returns nil response usage when the provider reports none" do
+      agent = agent_class.new
+      agent.provider.stub_response("Hello!")
+      response = agent.generate("Hi")
+      expect(response.token_usage).must_be_nil
+    end
+
+    it "scopes response usage to the run while context usage accumulates" do
+      agent = agent_class.new
+      agent.provider.stub_response("First", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
+      agent.provider.stub_response("Second", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+      agent.generate("Hi")
+      response = agent.generate("Again")
+      expect([response.token_usage.to_h, agent.context.token_usage.to_h]).must_equal [
+        {input_tokens: 10, output_tokens: 5},
+        {input_tokens: 110, output_tokens: 55}
+      ]
+    end
+
+    it "carries usage on a response blocked by an after guardrail" do
+      gr = Class.new(Riffer::Guardrail) do
+        def process_output(response, messages:, context:)
+          block("Output blocked")
+        end
+      end
+      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass.guardrail(:after, with: gr)
+
+      agent = klass.new
+      agent.provider.stub_response("Hello!", token_usage: token_usage)
+      response = agent.generate("Hi")
+      expect(response.token_usage.to_h).must_equal({input_tokens: 100, output_tokens: 50})
+    end
+
+    it "returns nil response usage when a before guardrail blocks" do
+      gr = Class.new(Riffer::Guardrail) do
+        def process_input(messages, context:)
+          block("Input blocked")
+        end
+      end
+      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass.guardrail(:before, with: gr)
+
+      response = klass.new.generate("Hi")
+      expect(response.token_usage).must_be_nil
+    end
   end
 
   describe "token usage tracking with #stream" do

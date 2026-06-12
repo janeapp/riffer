@@ -35,28 +35,28 @@ describe Riffer::Tracing do
 
     it "exports a span with the given name" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("invoke_agent test") {}
       expect(exporter.finished_spans.map(&:name)).must_equal ["invoke_agent test"]
     end
 
     it "exports the given attributes" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("test", attributes: {"gen_ai.operation.name" => "chat"}) {}
       expect(exporter.finished_spans.first.attributes).must_equal({"gen_ai.operation.name" => "chat"})
     end
 
     it "exports the given span kind" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("test", kind: :client) {}
       expect(exporter.finished_spans.first.kind).must_equal :client
     end
 
     it "stamps the riffer instrumentation scope" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("test") {}
       scope = exporter.finished_spans.first.instrumentation_scope
       expect([scope.name, scope.version]).must_equal ["riffer", Riffer::VERSION]
@@ -64,7 +64,7 @@ describe Riffer::Tracing do
 
     it "nests spans opened inside an open span" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("parent") { Riffer::Tracing.in_span("child") {} }
       child, parent = exporter.finished_spans
       expect(child.parent_span_id).must_equal parent.span_id
@@ -72,7 +72,7 @@ describe Riffer::Tracing do
 
     it "yields a recording span when an SDK provider is wired" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      install_in_memory_provider
+      install_in_memory_tracer_provider
       recording = nil
       Riffer::Tracing.in_span("test") { |span| recording = span.recording? }
       expect(recording).must_equal true
@@ -80,13 +80,13 @@ describe Riffer::Tracing do
 
     it "re-raises errors raised in the block" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      install_in_memory_provider
+      install_in_memory_tracer_provider
       expect { Riffer::Tracing.in_span("test") { raise Riffer::Error, "boom" } }.must_raise Riffer::Error
     end
 
     it "records an error status when the block raises" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       begin
         Riffer::Tracing.in_span("test") { raise Riffer::Error, "boom" }
       rescue Riffer::Error
@@ -96,14 +96,14 @@ describe Riffer::Tracing do
 
     it "records an error status from the span's error! method" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("test") { |span| span.error!("tripwire") }
       expect(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
 
     it "skips spans opened while disabled mid-process" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("before") {}
       Riffer.config.tracing.enabled = false
       Riffer::Tracing.in_span("dark") {}
@@ -133,14 +133,14 @@ describe Riffer::Tracing do
 
     it "passes a nil context through" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      install_in_memory_provider
+      install_in_memory_tracer_provider
       result = Riffer::Tracing.with_context(nil) { :value }
       expect(result).must_equal :value
     end
 
     it "parents spans across an enumerator fiber via a captured context" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       enumerator = nil
       Riffer::Tracing.in_span("parent") do
         context = Riffer::Tracing.current_context
@@ -158,7 +158,7 @@ describe Riffer::Tracing do
 
     it "parents spans across threads via a captured context" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      exporter = install_in_memory_provider
+      exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("parent") do
         context = Riffer::Tracing.current_context
         Thread.new do
@@ -180,21 +180,11 @@ describe Riffer::Tracing do
 
     it "re-resolves the backend when the provider changes" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
-      first_exporter = install_in_memory_provider
+      first_exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("first") {}
-      second_exporter = install_in_memory_provider
+      second_exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("second") {}
       expect([first_exporter, second_exporter].map { |e| e.finished_spans.map(&:name) }).must_equal [["first"], ["second"]]
     end
-  end
-
-  private
-
-  def install_in_memory_provider
-    exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
-    provider = OpenTelemetry::SDK::Trace::TracerProvider.new
-    provider.add_span_processor(OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter))
-    Riffer.config.tracing.tracer_provider = provider
-    exporter
   end
 end

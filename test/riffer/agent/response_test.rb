@@ -101,6 +101,19 @@ describe Riffer::Agent::Response do
     end
   end
 
+  describe "#token_usage" do
+    it "defaults to nil" do
+      response = Riffer::Agent::Response.new("Hello!")
+      expect(response.token_usage).must_be_nil
+    end
+
+    it "stores the token usage" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      response = Riffer::Agent::Response.new("Hello!", token_usage: usage)
+      expect(response.token_usage).must_equal usage
+    end
+  end
+
   describe "#interrupted?" do
     it "returns false by default" do
       response = Riffer::Agent::Response.new("Hello!")

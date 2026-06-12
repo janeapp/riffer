@@ -265,7 +265,7 @@ If you need finer control over placeholder content (per-call shape, structured m
 The session exposes a small set of in-place mutators that enforce the `tool_use` ↔ `tool_result` invariant on every operation. Use these to align history with external state (persisted transcript, partial output that wasn't actually delivered, etc.) without rebuilding the agent.
 
 - **`agent.session.update(id:, **attrs)`** — In-place partial update. Looks up by message `id:`; builds a replacement of the same type with `attrs` overlaid on the existing fields. Use this to edit assistant content (`update(id:, content:)`), restate a system message, etc. When the target is an assistant and the update drops entries from `tool_calls`, matching `Tool` children are removed atomically.
-- **`agent.session.update(tool_call_id:, **attrs)`** — Same as above but looks up the tool result by `tool_call_id:`. Preserves `name` and `id`. Use this to upgrade an interrupt-time placeholder once the real result is available (`update(tool_call_id:, content:, error: nil, error_type: nil)`).
+- **`agent.session.update(tool_call_id:, **attrs)`** — Same as above but looks up the tool result by `tool_call_id:`. Preserves `name`and`id`. Use this to upgrade an interrupt-time placeholder once the real result is available (`update(tool_call_id:, content:, error: nil, error_type: nil)`).
 - **`agent.session.remove(id:)`** — Removes a message; cascades to its `Tool` children when the target carries `tool_calls`. Raises if called on a `Tool` message (use `update(tool_call_id:, ...)` to rewrite a tool result instead).
 
 Bulk filling of orphan `tool_use` blocks is handled by `Riffer.config.experimental_history_healing` (see "Healing pending tool results on interrupt" above) — there is no public synthesizer hook.
@@ -288,7 +288,7 @@ Mutators do **not** fire `on_message` — that callback is reserved for messages
 The mutable runtime context. A `Hash` threaded into every Proc-based DSL setting, guardrail, tool runtime, and skills resolution, and shared with every `Riffer::Agent::Run` this agent executes. Carries:
 
 - `context[:skills]` — the resolved `Riffer::Skills::Context` when skills are configured.
-- `context[:token_usage]` — the cumulative `Riffer::Providers::TokenUsage`, mutated by each Run as the loop progresses.
+- `context[:token_usage]` — the cumulative `Riffer::Providers::TokenUsage`, mutated by each Run as the loop progresses. Per-run totals are on `response.token_usage`.
 - any caller-provided keys passed via `Agent.new(context: ...)`.
 
 ```ruby
@@ -303,18 +303,19 @@ agent.context[:skills]        # the Skills::Context, if skills configured
 
 `Riffer::Agent::Response` is returned by `generate`:
 
-| Attribute              | Type                        | Description                                                                          |
-| ---------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| `content`              | `String`                    | The response text                                                                    |
-| `structured_output`    | `Hash` / `nil`              | Parsed and validated structured output (see below)                                   |
-| `blocked?`             | `Boolean`                   | `true` if a guardrail tripwire fired                                                 |
-| `tripwire`             | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request                                      |
-| `modified?`            | `Boolean`                   | `true` if a guardrail modified the content                                           |
-| `modifications`        | `Array`                     | List of guardrail modifications applied                                              |
-| `interrupted?`         | `Boolean`                   | `true` if the loop was interrupted                                                   |
-| `interrupt_reason`     | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`                                       |
-| `messages`             | `Array`                     | Full message history from the conversation                                           |
-| `healed_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with placeholder results during interrupt healing (else `[]`) |
+| Attribute              | Type                        | Description                                                                                      |
+| ---------------------- | --------------------------- | ------------------------------------------------------------------------------------------------ |
+| `content`              | `String`                    | The response text                                                                                |
+| `structured_output`    | `Hash` / `nil`              | Parsed and validated structured output (see below)                                               |
+| `blocked?`             | `Boolean`                   | `true` if a guardrail tripwire fired                                                             |
+| `tripwire`             | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request                                                  |
+| `modified?`            | `Boolean`                   | `true` if a guardrail modified the content                                                       |
+| `modifications`        | `Array`                     | List of guardrail modifications applied                                                          |
+| `interrupted?`         | `Boolean`                   | `true` if the loop was interrupted                                                               |
+| `interrupt_reason`     | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`                                                   |
+| `messages`             | `Array`                     | Full message history from the conversation                                                       |
+| `healed_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with placeholder results during interrupt healing (else `[]`)             |
+| `token_usage`          | `TokenUsage` / `nil`        | Aggregate `Riffer::Providers::TokenUsage` across this run's LLM calls (`nil` when none reported) |
 
 ### response.structured_output
 

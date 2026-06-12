@@ -28,6 +28,9 @@ class Riffer::Agent::Response
   # The parsed structured output, if structured output was configured.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
 
+  # The aggregate token usage across this run's LLM calls, if any was reported.
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage?
+
   # The full message history from the agent conversation.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 
@@ -36,8 +39,8 @@ class Riffer::Agent::Response
   attr_reader :healed_tool_call_ids #: Array[String]
 
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String]) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [])
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [], token_usage: nil)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
@@ -46,6 +49,7 @@ class Riffer::Agent::Response
     @structured_output = structured_output
     @messages = messages
     @healed_tool_call_ids = healed_tool_call_ids
+    @token_usage = token_usage
   end
 
   # Returns true if the response was blocked by a guardrail.
