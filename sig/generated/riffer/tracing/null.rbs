@@ -1,0 +1,46 @@
+# Generated from lib/riffer/tracing/null.rb with RBS::Inline
+
+# No-op tracing backend, used when OTEL is unavailable or tracing is
+# disabled.
+module Riffer::Tracing::Null
+  # No-op stand-in for a span; answers <tt>recording?</tt> with +false+ so
+  # callers can skip expensive attribute serialization.
+  class Span
+    # --
+    # : (String, untyped) -> void
+    def set_attribute: (String, untyped) -> void
+
+    # --
+    # : (String, ?attributes: Hash[String, untyped]?) -> void
+    def add_event: (String, ?attributes: Hash[String, untyped]?) -> void
+
+    # --
+    # : (Exception) -> void
+    def record_exception: (Exception) -> void
+
+    # --
+    # : (?String) -> void
+    def error!: (?String) -> void
+
+    # --
+    # : () -> bool
+    def recording?: () -> bool
+  end
+
+  SPAN: Riffer::Tracing::Null::Span
+
+  # Yields the no-op span, ignoring all span options.
+  # --
+  # : [R] (String, **untyped) { (Riffer::Tracing::Null::Span) -> R } -> R
+  def in_span: [R] (String, **untyped) { (Riffer::Tracing::Null::Span) -> R } -> R
+
+  # Returns +nil+; there is no trace context without OTEL.
+  # --
+  # : () -> nil
+  def current_context: () -> nil
+
+  # Yields immediately; there is no context to attach.
+  # --
+  # : [R] (untyped) { () -> R } -> R
+  def with_context: [R] (untyped) { () -> R } -> R
+end

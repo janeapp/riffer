@@ -95,6 +95,35 @@ class Riffer::Config
     def default_backend=: ((Riffer::Skills::Backend | Proc)?) -> void
   end
 
+  # Tracing-related global configuration.
+  class Tracing
+    # Whether riffer emits OTEL spans; defaults to +true+, a no-op until a
+    # host wires an OTEL SDK.
+    attr_reader enabled: bool
+
+    # Explicit OTEL tracer provider; defaults to +nil+, which resolves the
+    # global <tt>OpenTelemetry.tracer_provider</tt> at first span.
+    attr_reader tracer_provider: untyped
+
+    # --
+    # : () -> void
+    def initialize: () -> void
+
+    # Sets the enabled flag, coercing boolean-ish values so an env-var
+    # +"false"+ (truthy in Ruby) doesn't silently keep tracing on. Raises
+    # Riffer::ArgumentError on an unrecognized value.
+    # --
+    # : (untyped) -> void
+    def enabled=: (untyped) -> void
+
+    # Sets an explicit tracer provider, forcing the OTEL backend. Raises
+    # Riffer::ArgumentError when the OpenTelemetry API gem isn't available
+    # at a supported version.
+    # --
+    # : (untyped) -> void
+    def tracer_provider=: (untyped) -> void
+  end
+
   VALID_MESSAGE_ID_STRATEGIES: untyped
 
   # Amazon Bedrock configuration.
@@ -135,6 +164,9 @@ class Riffer::Config
 
   # Skills-related global configuration.
   attr_reader skills: Riffer::Config::Skills
+
+  # Tracing-related global configuration.
+  attr_reader tracing: Riffer::Config::Tracing
 
   # Strategy for auto-generating message ids: +:none+ (default), +:uuid+, or
   # +:uuidv7+. When not +:none+, messages get an +id+ at construction, and

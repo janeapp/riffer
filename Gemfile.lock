@@ -129,6 +129,20 @@ GEM
       base64
       cgi
       connection_pool
+    opentelemetry-api (1.10.0)
+      logger
+    opentelemetry-common (0.25.0)
+      opentelemetry-api (~> 1.0)
+    opentelemetry-registry (0.6.0)
+      opentelemetry-api (~> 1.1)
+    opentelemetry-sdk (1.12.0)
+      logger
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.20)
+      opentelemetry-registry (~> 0.2)
+      opentelemetry-semantic_conventions
+    opentelemetry-semantic_conventions (1.41.0)
+      opentelemetry-api (~> 1.0)
     parallel (1.27.0)
     parser (3.3.11.1)
       ast (~> 2.4.1)
@@ -260,6 +274,7 @@ DEPENDENCIES
   mcp (~> 0.8)
   minitest (~> 6.0)
   openai (~> 0.66.1)
+  opentelemetry-sdk (~> 1.8)
   rake (~> 13.0)
   rbs-inline (~> 0.12)
   riffer!

@@ -10,6 +10,15 @@ require "riffer"
 require "vcr"
 require "webmock/minitest"
 
+# Tracing tests assert real spans via the SDK's in-memory exporter; the
+# no-OTEL CI lane excludes the gem to prove riffer's null fallback.
+OTEL_SDK_AVAILABLE = begin
+  require "opentelemetry-sdk"
+  true
+rescue LoadError
+  false
+end
+
 begin
   require "dotenv"
   Dotenv.load
