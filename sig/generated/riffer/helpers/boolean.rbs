@@ -1,0 +1,11 @@
+# Generated from lib/riffer/helpers/boolean.rb with RBS::Inline
+
+# Coercion for boolean-ish configuration values.
+module Riffer::Helpers::Boolean
+  # Coerces +value+ to a boolean so an env-var +"false"+ (truthy in Ruby)
+  # doesn't silently read as +true+. Raises Riffer::ArgumentError on an
+  # unrecognized value, naming +attribute+ in the message.
+  # --
+  # : (untyped, attribute: String) -> bool
+  def coerce: (untyped, attribute: String) -> bool
+end

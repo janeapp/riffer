@@ -212,16 +212,16 @@ describe Riffer::Config do
       expect(config.tracing.tracer_provider).must_be_nil
     end
 
-    it "allows setting a tracer_provider when opentelemetry is bundled" do
-      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+    it "allows setting a tracer_provider when opentelemetry is available" do
+      skip "opentelemetry is not available" unless Riffer::Tracing::Otel.available?
       config = Riffer::Config.new
       provider = OpenTelemetry::SDK::Trace::TracerProvider.new
       config.tracing.tracer_provider = provider
       expect(config.tracing.tracer_provider).must_equal provider
     end
 
-    it "raises for a tracer_provider when opentelemetry is not bundled" do
-      skip "opentelemetry is bundled" if OTEL_SDK_AVAILABLE
+    it "raises for a tracer_provider when opentelemetry is not available" do
+      skip "opentelemetry is available" if Riffer::Tracing::Otel.available?
       config = Riffer::Config.new
       expect { config.tracing.tracer_provider = Object.new }.must_raise Riffer::ArgumentError
     end

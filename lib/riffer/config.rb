@@ -72,13 +72,7 @@ class Riffer::Config
     #--
     #: (untyped) -> void
     def enabled=(value)
-      @enabled = case value
-      when true, "true", 1, "1" then true
-      when false, "false", 0, "0", nil then false
-      else
-        raise Riffer::ArgumentError,
-          "enabled must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
-      end
+      @enabled = Riffer::Helpers::Boolean.coerce(value, attribute: "enabled")
     end
 
     # Sets an explicit tracer provider, forcing the OTEL backend. Raises
@@ -172,13 +166,7 @@ class Riffer::Config
   #--
   #: (untyped) -> void
   def experimental_history_healing=(value)
-    @experimental_history_healing = case value
-    when true, "true", 1, "1" then true
-    when false, "false", 0, "0", nil then false
-    else
-      raise Riffer::ArgumentError,
-        "experimental_history_healing must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
-    end
+    @experimental_history_healing = Riffer::Helpers::Boolean.coerce(value, attribute: "experimental_history_healing")
   end
 
   #--
