@@ -109,6 +109,7 @@ end
 Only use `progressive: false` when the server has a small, stable set of tools you always want available.
 
 **`mcp_search`** — Search for available tools by name or description.
+
 - `query` (required, non-empty) — filter by name or description substring.
 
 On a successful search, matching tools are injected into the agent's active tool list. The model calls them natively on the next turn — no proxy or JSON-encoded arguments.
@@ -150,7 +151,7 @@ Riffer::Mcp.registrations
 # => {"github" => #<Riffer::Mcp::Registration ...>, ...}
 
 reg = Riffer::Mcp.registrations["github"]
-reg.tools    # => [<Class:...>, ...]  (Riffer::Tool subclasses)
+reg.tools    # => [<Class:...>, ...]  (Riffer::Mcp::Tool subclasses; .mcp_server_tool_name returns the server-side name)
 ```
 
 Discovery failures raise from `register` directly, typically `Faraday::Error` for network issues or `Riffer::DependencyError` if the `mcp`/`faraday` gems are missing. Rescue `StandardError` for graceful degradation:

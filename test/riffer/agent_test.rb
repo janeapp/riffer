@@ -636,10 +636,11 @@ describe Riffer::Agent do
     after { clear_mcp_registry! }
 
     let(:fake_tool_class) do
-      klass = Class.new(Riffer::Tool) { description "Fake MCP tool" }
-      klass.instance_variable_set(:@identifier, "srv__mcp_tool")
-      klass.define_singleton_method(:mcp_server_tool_name) { "mcp_tool" }
-      klass
+      Class.new(Riffer::Mcp::Tool) do
+        identifier "srv__mcp_tool"
+        description "Fake MCP tool"
+        @mcp_server_tool_name = "mcp_tool"
+      end
     end
 
     def inject_ready_registration(name:, tags:, tools:)
@@ -744,17 +745,19 @@ describe Riffer::Agent do
 
     describe "progressive mode" do
       let(:fake_tool_a) do
-        klass = Class.new(Riffer::Tool) { description "Tool A" }
-        klass.instance_variable_set(:@identifier, "srv__tool_a")
-        klass.define_singleton_method(:mcp_server_tool_name) { "tool_a" }
-        klass
+        Class.new(Riffer::Mcp::Tool) do
+          identifier "srv__tool_a"
+          description "Tool A"
+          @mcp_server_tool_name = "tool_a"
+        end
       end
 
       let(:fake_tool_b) do
-        klass = Class.new(Riffer::Tool) { description "Tool B" }
-        klass.instance_variable_set(:@identifier, "srv__tool_b")
-        klass.define_singleton_method(:mcp_server_tool_name) { "tool_b" }
-        klass
+        Class.new(Riffer::Mcp::Tool) do
+          identifier "srv__tool_b"
+          description "Tool B"
+          @mcp_server_tool_name = "tool_b"
+        end
       end
 
       it "returns mcp_search instead of individual tool classes" do

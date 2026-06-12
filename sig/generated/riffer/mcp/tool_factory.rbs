@@ -1,20 +1,21 @@
 # Generated from lib/riffer/mcp/tool_factory.rb with RBS::Inline
 
-# Generates anonymous Riffer::Tool subclasses from MCP tool definitions.
+# Generates anonymous Riffer::Mcp::Tool subclasses from MCP tool definitions.
 # Generated tools delegate +#call+ to the MCP client and skip Riffer's param
 # validation — the MCP server validates inputs.
 module Riffer::Mcp::ToolFactory
-  # Builds one Riffer::Tool subclass per tool definition, prefixing names with
-  # the manifest name to avoid cross-server collisions (e.g. +jira__search+);
-  # the server-side name stays on +.mcp_server_tool_name+.
+  # Builds one Riffer::Mcp::Tool subclass per tool definition, prefixing names
+  # with the manifest name to avoid cross-server collisions (e.g.
+  # +jira__search+); the server-side name stays on +.mcp_server_tool_name+.
   # --
-  # : (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
-  def build: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Tool)]
+  # : (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Mcp::Tool)]
+  def build: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Mcp::Tool)]
 
   private
 
   # : (String) -> String
   def sanitize_name_component: (String) -> String
 
-  def build_tool_class: (untyped manifest_name, untyped client, untyped td) -> untyped
+  # : (String, Riffer::Mcp::Client, Hash[Symbol, untyped]) -> singleton(Riffer::Mcp::Tool)
+  def build_tool_class: (String, Riffer::Mcp::Client, Hash[Symbol, untyped]) -> singleton(Riffer::Mcp::Tool)
 end

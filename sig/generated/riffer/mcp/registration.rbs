@@ -5,18 +5,18 @@
 class Riffer::Mcp::Registration
   @cancelled: bool
 
-  @tools: Array[singleton(Riffer::Tool)]
+  @tools: Array[singleton(Riffer::Mcp::Tool)]
 
   @mutex: Thread::Mutex
 
   # The manifest that describes this server.
   attr_reader manifest: Riffer::Mcp::Manifest
 
-  # Generated Riffer::Tool subclasses.
+  # Generated Riffer::Mcp::Tool subclasses.
   #
   # --
-  # : () -> Array[singleton(Riffer::Tool)]
-  def tools: () -> Array[singleton(Riffer::Tool)]
+  # : () -> Array[singleton(Riffer::Mcp::Tool)]
+  def tools: () -> Array[singleton(Riffer::Mcp::Tool)]
 
   # --
   # : (Riffer::Mcp::Manifest) -> void

@@ -1,0 +1,19 @@
+# Generated from lib/riffer/mcp/tool.rb with RBS::Inline
+
+# Base class for MCP-generated tools.
+class Riffer::Mcp::Tool < Riffer::Tool
+  self.@mcp_server_tool_name: String?
+
+  self.@input_schema: Hash[Symbol, untyped]?
+
+  # Returns the unprefixed tool name used for +tools/call+ on the MCP server.
+  # --
+  # : () -> String
+  def self.mcp_server_tool_name: () -> String
+
+  # Returns the server-published input schema, falling back to the params DSL.
+  # MCP schemas are server-defined, so +strict+ is not applied to them.
+  # --
+  # : (?strict: bool) -> Hash[Symbol, untyped]
+  def self.parameters_schema: (?strict: bool) -> Hash[Symbol, untyped]
+end

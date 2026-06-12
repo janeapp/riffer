@@ -25,8 +25,8 @@ describe Riffer::Mcp::ToolFactory do
       assert_equal 2, tool_classes.size
     end
 
-    it "returns Riffer::Tool subclasses" do
-      tool_classes.each { |klass| assert klass < Riffer::Tool }
+    it "returns Riffer::Mcp::Tool subclasses" do
+      tool_classes.each { |klass| assert klass < Riffer::Mcp::Tool }
     end
   end
 
