@@ -16,6 +16,13 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     Riffer::Skills::MarkdownAdapter
   end
 
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "mock"
+  end
+
   # Array of recorded method calls for assertions.
   attr_reader :calls #: Array[Hash[Symbol, untyped]]
 

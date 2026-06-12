@@ -5,6 +5,12 @@ require "test_helper"
 describe Riffer::Providers::OpenAI do
   let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::OpenAI.semconv_provider_name).must_equal "openai"
+    end
+  end
+
   describe "#initialize" do
     it "creates OpenAI client with api_key" do
       provider = Riffer::Providers::OpenAI.new(api_key: api_key)

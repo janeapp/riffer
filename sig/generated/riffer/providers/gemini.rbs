@@ -16,6 +16,11 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   DEFAULT_READ_TIMEOUT: Integer
 
+  # The GenAI semconv well-known provider name.
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
   # --
   # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
   def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void

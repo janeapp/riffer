@@ -319,7 +319,7 @@ module Riffer::Agent::Run
     {
       "gen_ai.operation.name" => "invoke_agent",
       "gen_ai.agent.name" => agent.class.identifier,
-      "gen_ai.provider.name" => agent.provider_name,
+      "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name
     }
   end

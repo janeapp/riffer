@@ -5,6 +5,12 @@ require "test_helper"
 describe Riffer::Providers::AmazonBedrock do
   let(:api_token) { ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token") }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::AmazonBedrock.semconv_provider_name).must_equal "aws.bedrock"
+    end
+  end
+
   describe ".skills_adapter" do
     it "returns XmlAdapter for a bare anthropic.* model id" do
       adapter = Riffer::Providers::AmazonBedrock.skills_adapter("anthropic.claude-3-5-sonnet-20241022-v2:0")
