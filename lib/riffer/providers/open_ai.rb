@@ -74,6 +74,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     usage = typed_response.usage
     return nil unless usage
 
+    build_token_usage(usage)
+  end
+
+  #--
+  #: (untyped) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage)
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
@@ -223,13 +229,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     usage = event.response&.usage
     return unless usage
 
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::Providers::TokenUsage.new(
-        input_tokens: usage.input_tokens,
-        output_tokens: usage.output_tokens,
-        cache_read_tokens: usage.input_tokens_details&.cached_tokens
-      )
-    )
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
   end
 
   #--

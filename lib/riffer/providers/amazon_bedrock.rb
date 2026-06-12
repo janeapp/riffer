@@ -120,13 +120,22 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
-    usage = typed_response.usage
+    build_token_usage(typed_response.usage)
+  end
+
+  # Converse's +input_tokens+ excludes the cache buckets; TokenUsage's
+  # input includes them.
+  #--
+  #: (untyped) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage)
+    cache_write = usage.cache_write_input_tokens
+    cache_read = usage.cache_read_input_tokens
 
     Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens,
+      input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
       output_tokens: usage.output_tokens,
-      cache_write_tokens: usage.cache_write_input_tokens,
-      cache_read_tokens: usage.cache_read_input_tokens
+      cache_write_tokens: cache_write,
+      cache_read_tokens: cache_read
     )
   end
 
@@ -271,14 +280,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
   def handle_metadata_usage(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::Providers::TokenUsage.new(
-        input_tokens: typed_event.usage.input_tokens,
-        output_tokens: typed_event.usage.output_tokens,
-        cache_write_tokens: typed_event.usage.cache_write_input_tokens,
-        cache_read_tokens: typed_event.usage.cache_read_input_tokens
-      )
-    )
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(typed_event.usage))
   end
 
   #--

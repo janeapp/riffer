@@ -42,6 +42,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
+  # Converse's +input_tokens+ excludes the cache buckets; TokenUsage's
+  # input includes them.
+  # --
+  # : (untyped) -> Riffer::Providers::TokenUsage
+  def build_token_usage: (untyped) -> Riffer::Providers::TokenUsage
+
   # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String

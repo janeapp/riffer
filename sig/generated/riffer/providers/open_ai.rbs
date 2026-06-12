@@ -23,6 +23,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
   # --
+  # : (untyped) -> Riffer::Providers::TokenUsage
+  def build_token_usage: (untyped) -> Riffer::Providers::TokenUsage
+
+  # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String
 

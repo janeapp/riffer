@@ -103,9 +103,17 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     usage = response[:usageMetadata]
     return nil unless usage
 
+    build_token_usage(usage)
+  end
+
+  # Gemini reports thinking tokens outside +candidatesTokenCount+;
+  # TokenUsage's output includes them.
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage)
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage[:promptTokenCount] || 0,
-      output_tokens: usage[:candidatesTokenCount] || 0,
+      output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
       cache_read_tokens: usage[:cachedContentTokenCount]
     )
   end
@@ -159,13 +167,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
         usage = parsed[:usageMetadata]
         if usage && usage[:candidatesTokenCount]
-          yielder << Riffer::StreamEvents::TokenUsageDone.new(
-            token_usage: Riffer::Providers::TokenUsage.new(
-              input_tokens: usage[:promptTokenCount] || 0,
-              output_tokens: usage[:candidatesTokenCount] || 0,
-              cache_read_tokens: usage[:cachedContentTokenCount]
-            )
-          )
+          yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
         end
       end
     end

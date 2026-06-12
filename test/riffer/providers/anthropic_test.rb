@@ -849,6 +849,36 @@ describe Riffer::Providers::Anthropic do
         end
       end
     end
+
+    describe "normalization" do
+      it "folds cache buckets into input_tokens" do
+        provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3, cache_read_input_tokens: 100)
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        expect(token_usage.input_tokens).must_equal 112
+      end
+
+      it "passes cache_write_tokens through" do
+        provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3, cache_read_input_tokens: 100)
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        expect(token_usage.cache_write_tokens).must_equal 3
+      end
+
+      it "passes cache_read_tokens through" do
+        provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3, cache_read_input_tokens: 100)
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        expect(token_usage.cache_read_tokens).must_equal 100
+      end
+
+      it "treats unreported cache buckets as zero" do
+        provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16)
+        token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
+        expect(token_usage.input_tokens).must_equal 9
+      end
+    end
   end
 
   describe "extended thinking" do

@@ -203,8 +203,8 @@ describe Riffer::Providers::OpenRouter do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
 
     it "maps Chat Completions prompt_tokens/completion_tokens to Riffer's input/output naming" do
-      usage = Struct.new(:prompt_tokens, :completion_tokens).new(42, 17)
-      response = Struct.new(:usage).new(usage)
+      usage = OpenAI::Models::CompletionUsage.new(prompt_tokens: 42, completion_tokens: 17, total_tokens: 59)
+      response = OpenAI::Models::Chat::ChatCompletion.new(usage: usage)
 
       result = provider.send(:extract_token_usage, response)
       expect(result.input_tokens).must_equal 42
@@ -212,7 +212,7 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "returns nil when usage is missing" do
-      response = Struct.new(:usage).new(nil)
+      response = OpenAI::Models::Chat::ChatCompletion.new
       expect(provider.send(:extract_token_usage, response)).must_be_nil
     end
   end
@@ -490,6 +490,31 @@ describe Riffer::Providers::OpenRouter do
           expect(usage_done.token_usage.input_tokens).must_be :>, 0
           expect(usage_done.token_usage.output_tokens).must_be :>, 0
         end
+      end
+    end
+
+    describe "cache read tokens" do
+      it "surfaces cached_tokens from prompt_tokens_details" do
+        provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+        response = OpenAI::Models::Chat::ChatCompletion.new(
+          usage: OpenAI::Models::CompletionUsage.new(
+            prompt_tokens: 580,
+            completion_tokens: 54,
+            total_tokens: 634,
+            prompt_tokens_details: OpenAI::Models::CompletionUsage::PromptTokensDetails.new(cached_tokens: 100)
+          )
+        )
+        token_usage = provider.send(:extract_token_usage, response)
+        expect(token_usage.cache_read_tokens).must_equal 100
+      end
+
+      it "leaves cache_read_tokens nil when details are absent" do
+        provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+        response = OpenAI::Models::Chat::ChatCompletion.new(
+          usage: OpenAI::Models::CompletionUsage.new(prompt_tokens: 580, completion_tokens: 54, total_tokens: 634)
+        )
+        token_usage = provider.send(:extract_token_usage, response)
+        expect(token_usage.cache_read_tokens).must_be_nil
       end
     end
   end

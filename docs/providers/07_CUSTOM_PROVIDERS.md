@@ -241,6 +241,10 @@ Riffer::StreamEvents::TokenUsageDone.new(
 )
 ```
 
+## Token Usage Semantics
+
+`Riffer::Providers::TokenUsage` is a normalized contract — map your provider's raw usage into the bucket meanings defined in [Messages — Token Usage Semantics](../08_MESSAGES.md#token-usage-semantics) rather than passing fields through untouched.
+
 ## Error Handling
 
 Raise appropriate Riffer errors:

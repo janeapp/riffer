@@ -70,9 +70,16 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     usage = typed_response.usage
     return nil unless usage
 
+    build_token_usage(usage)
+  end
+
+  #--
+  #: (untyped) -> Riffer::Providers::TokenUsage
+  def build_token_usage(usage)
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.prompt_tokens,
-      output_tokens: usage.completion_tokens
+      output_tokens: usage.completion_tokens,
+      cache_read_tokens: usage.prompt_tokens_details&.cached_tokens
     )
   end
 
@@ -160,12 +167,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     return unless typed_chunk.usage
 
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(
-      token_usage: Riffer::Providers::TokenUsage.new(
-        input_tokens: typed_chunk.usage.prompt_tokens,
-        output_tokens: typed_chunk.usage.completion_tokens
-      )
-    )
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(typed_chunk.usage))
   end
 
   #--
