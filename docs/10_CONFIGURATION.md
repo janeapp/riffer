@@ -65,11 +65,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Value                          | Description                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Value                             | Description                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `Riffer::Tools::Runtime` subclass | Instantiated automatically (e.g., `Riffer::Tools::Runtime::Inline`, `Riffer::Tools::Runtime::Threaded`) |
-| `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                              |
-| `Proc`                         | Dynamic resolution                                                                                |
+| `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                                    |
+| `Proc`                            | Dynamic resolution                                                                                      |
 
 Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
@@ -100,6 +100,23 @@ end
 ```
 
 Accepts a `Riffer::Skills::Backend` instance or a `Proc` that receives `context` and returns a backend. Defaults to `nil` — agents that don't set their own backend get no skills, matching pre-existing behavior. Per-agent backends override this default.
+
+### Tracing
+
+Tracing-related global configuration lives under `config.tracing`. Riffer detects the OpenTelemetry API at runtime — without it (or without a host-configured OTEL SDK) every span is a silent no-op, and riffer carries no OTEL gem dependency either way.
+
+```ruby
+Riffer.configure do |config|
+  config.tracing.enabled = ENV.fetch("RIFFER_TRACING_ENABLED", "true")
+end
+```
+
+| Option            | Description                                                                                                                                                                                                                                                                                        |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enabled`         | The kill switch, consulted on every span — flipping it at runtime takes effect immediately. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                |
+| `tracer_provider` | Explicit OTEL tracer provider (e.g. the SDK's in-memory provider in tests). Defaults to `nil`, which resolves the global `OpenTelemetry.tracer_provider` lazily at first span. Raises `Riffer::ArgumentError` if the `opentelemetry-api` gem isn't available at a supported version (>= 1.1, < 2). |
+
+Hosts own SDK and exporter wiring — riffer only emits spans through whatever provider the host configures.
 
 ### Message ID Strategy
 

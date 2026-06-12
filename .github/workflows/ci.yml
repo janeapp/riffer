@@ -34,6 +34,19 @@ jobs:
           bundler-cache: true
       - run: bin/test
 
+  test-no-otel:
+    runs-on: ubuntu-latest
+
+    env:
+      BUNDLE_WITHOUT: opentelemetry
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bin/test
+
   rbs:
     runs-on: ubuntu-latest
 

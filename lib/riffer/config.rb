@@ -49,6 +49,53 @@ class Riffer::Config
     end
   end
 
+  # Tracing-related global configuration.
+  class Tracing
+    # Whether riffer emits OTEL spans; defaults to +true+, a no-op until a
+    # host wires an OTEL SDK.
+    attr_reader :enabled #: bool
+
+    # Explicit OTEL tracer provider; defaults to +nil+, which resolves the
+    # global <tt>OpenTelemetry.tracer_provider</tt> at first span.
+    attr_reader :tracer_provider #: untyped
+
+    #--
+    #: () -> void
+    def initialize
+      @enabled = true
+      @tracer_provider = nil
+    end
+
+    # Sets the enabled flag, coercing boolean-ish values so an env-var
+    # +"false"+ (truthy in Ruby) doesn't silently keep tracing on. Raises
+    # Riffer::ArgumentError on an unrecognized value.
+    #--
+    #: (untyped) -> void
+    def enabled=(value)
+      @enabled = case value
+      when true, "true", 1, "1" then true
+      when false, "false", 0, "0", nil then false
+      else
+        raise Riffer::ArgumentError,
+          "enabled must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
+      end
+    end
+
+    # Sets an explicit tracer provider, forcing the OTEL backend. Raises
+    # Riffer::ArgumentError when the OpenTelemetry API gem isn't available
+    # at a supported version.
+    #--
+    #: (untyped) -> void
+    def tracer_provider=(value)
+      if !value.nil? && !Riffer::Tracing::Otel.available?
+        raise Riffer::ArgumentError,
+          "tracer_provider requires the opentelemetry-api gem (#{Riffer::Tracing::Otel::SUPPORTED_API_VERSIONS})"
+      end
+      @tracer_provider = value
+      Riffer::Tracing.reset!
+    end
+  end
+
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
 
   # Amazon Bedrock configuration.
@@ -93,6 +140,9 @@ class Riffer::Config
 
   # Skills-related global configuration.
   attr_reader :skills #: Riffer::Config::Skills
+
+  # Tracing-related global configuration.
+  attr_reader :tracing #: Riffer::Config::Tracing
 
   # Strategy for auto-generating message ids: +:none+ (default), +:uuid+, or
   # +:uuidv7+. When not +:none+, messages get an +id+ at construction, and
@@ -144,6 +194,7 @@ class Riffer::Config
     @mcp = Mcp.new(credentials: nil, discovery_runner: Riffer::Runner::Sequential.new)
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
+    @tracing = Tracing.new
     @message_id_strategy = :none
     @experimental_history_healing = false
   end

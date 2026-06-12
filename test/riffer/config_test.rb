@@ -177,4 +177,53 @@ describe Riffer::Config do
       expect(config.mcp.credentials).must_equal cred
     end
   end
+
+  describe "tracing namespace" do
+    it "initializes enabled to true" do
+      config = Riffer::Config.new
+      expect(config.tracing.enabled).must_equal true
+    end
+
+    it "initializes tracer_provider to nil" do
+      config = Riffer::Config.new
+      expect(config.tracing.tracer_provider).must_be_nil
+    end
+
+    it "coerces a 'false' string for enabled" do
+      config = Riffer::Config.new
+      config.tracing.enabled = "false"
+      expect(config.tracing.enabled).must_equal false
+    end
+
+    it "coerces a 'true' string for enabled" do
+      config = Riffer::Config.new
+      config.tracing.enabled = "true"
+      expect(config.tracing.enabled).must_equal true
+    end
+
+    it "raises for an unrecognized enabled value" do
+      config = Riffer::Config.new
+      expect { config.tracing.enabled = "yes" }.must_raise Riffer::ArgumentError
+    end
+
+    it "allows setting tracer_provider to nil" do
+      config = Riffer::Config.new
+      config.tracing.tracer_provider = nil
+      expect(config.tracing.tracer_provider).must_be_nil
+    end
+
+    it "allows setting a tracer_provider when opentelemetry is bundled" do
+      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+      config = Riffer::Config.new
+      provider = OpenTelemetry::SDK::Trace::TracerProvider.new
+      config.tracing.tracer_provider = provider
+      expect(config.tracing.tracer_provider).must_equal provider
+    end
+
+    it "raises for a tracer_provider when opentelemetry is not bundled" do
+      skip "opentelemetry is bundled" if OTEL_SDK_AVAILABLE
+      config = Riffer::Config.new
+      expect { config.tracing.tracer_provider = Object.new }.must_raise Riffer::ArgumentError
+    end
+  end
 end
