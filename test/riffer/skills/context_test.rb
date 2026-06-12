@@ -176,16 +176,6 @@ describe Riffer::Skills::Context do
       assert context.activated?("code-review")
     end
 
-    it "appends args after the wrapped block" do
-      prompt = build_context({"code-review" => enabled}).activation_prompt("code-review", args: "focus on security")
-      assert prompt.end_with?("</skill_content>\n\nfocus on security")
-    end
-
-    it "omits blank args" do
-      prompt = build_context({"code-review" => enabled}).activation_prompt("code-review", args: "  ")
-      assert prompt.end_with?("</skill_content>")
-    end
-
     it "wraps a disabled skill for user-channel injection" do
       prompt = build_context({"deploy-prod" => disabled}).activation_prompt("deploy-prod")
       assert_includes prompt, %(<skill_content name="deploy-prod">)

@@ -62,12 +62,10 @@ class Riffer::Skills::Context
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
   #
   #--
-  #: (String, ?args: String?) -> String
-  def activation_prompt(name, args: nil)
+  #: (String) -> String
+  def activation_prompt(name)
     body = activate(name)
-    content = @adapter.render_activation(skills.fetch(name), body)
-    return content if args.nil? || args.strip.empty?
-    "#{content}\n\n#{args}"
+    @adapter.render_activation(skills.fetch(name), body)
   end
 
   # Activates a skill whose body renders in the system prompt rather than the

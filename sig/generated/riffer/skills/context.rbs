@@ -47,8 +47,8 @@ class Riffer::Skills::Context
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
   #
   # --
-  # : (String, ?args: String?) -> String
-  def activation_prompt: (String, ?args: String?) -> String
+  # : (String) -> String
+  def activation_prompt: (String) -> String
 
   # Activates a skill whose body renders in the system prompt rather than the
   # conversation.

@@ -125,19 +125,17 @@ skills = agent.context.skills
 if skills.activated?("code-review")
   agent.generate("The code-review skill was invoked again — its instructions are above. focus on security")
 else
-  agent.generate(skills.activation_prompt("code-review", args: "focus on security"))
+  agent.generate("#{skills.activation_prompt("code-review")}\n\nfocus on security")
 end
 ```
 
-`activation_prompt("code-review", args: "focus on security")` returns:
+`activation_prompt("code-review")` returns:
 
 ```
 <skill_content name="code-review">
 You are a code review assistant.
 ...
 </skill_content>
-
-focus on security
 ```
 
 How a repeat invocation behaves is your choice — re-inject the full body (`activation_prompt` always returns it), or send a short reference as above. The check via `activated?` covers both channels, so a skill the model already activated through the tool counts too.

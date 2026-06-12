@@ -583,7 +583,7 @@ describe "Agent skills integration" do
 
       agent = agent_class.new
       skills = agent.context.skills
-      agent.session.add(Riffer::Messages::User.new(skills.activation_prompt("code-review", args: "focus on security")), silent: true)
+      agent.session.add(Riffer::Messages::User.new("#{skills.activation_prompt("code-review")}\n\nfocus on security"), silent: true)
 
       agent.provider.stub_response("", tool_calls: [{name: "skill_activate", arguments: '{"name":"code-review"}'}])
       agent.provider.stub_response("Done.")
