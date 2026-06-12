@@ -395,7 +395,7 @@ class Riffer::Agent
 
     if skills_config.activate
       names = Array(Riffer::Helpers::CallOrValue.resolve(skills_config.activate, context: @context))
-      names.each { |name| skills_context.activate(name) }
+      names.each { |name| skills_context.preactivate(name) }
     end
 
     skills_context

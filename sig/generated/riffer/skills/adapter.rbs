@@ -16,4 +16,14 @@ class Riffer::Skills::Adapter
   # --
   # : (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog: (Array[Riffer::Skills::Frontmatter]) -> String
+
+  # Renders an activated skill body wrapped in identifying tags.
+  # --
+  # : (Riffer::Skills::Frontmatter, String) -> String
+  def render_activation: (Riffer::Skills::Frontmatter, String) -> String
+
+  # The behavioral instructions rendered alongside the catalog.
+  # --
+  # : () -> String
+  def catalog_instructions: () -> String
 end

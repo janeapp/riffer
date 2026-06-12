@@ -3,8 +3,14 @@
 # Tool the LLM calls to activate a skill and receive its instructions;
 # registered automatically when an agent has skills configured.
 class Riffer::Skills::ActivateTool < Riffer::Tool
-  # Activates a skill by name and returns its body.
+  # Activates a skill by name and returns its wrapped body, or a short pointer when the skill is already active.
   # --
   # : (context: Riffer::Agent::Context?, name: String) -> Riffer::Tools::Response
   def call: (context: Riffer::Agent::Context?, name: String) -> Riffer::Tools::Response
+
+  private
+
+  # --
+  # : (String) -> String
+  def already_active_message: (String) -> String
 end

@@ -36,40 +36,50 @@ module Riffer::Agent::Run
     run_before_guardrails(agent, stream_yielder, all_modifications) { |tripped| return tripped }
 
     skills = agent.context.skills
+    consumer_on_activate = skills&.on_activate
 
     if stream_yielder && skills
-      skills.on_activate = ->(name) { stream_yielder << Riffer::StreamEvents::SkillActivation.new(name) }
+      skills.on_activate = ->(name) {
+        consumer_on_activate&.call(name)
+        stream_yielder << Riffer::StreamEvents::SkillActivation.new(name)
+      }
     end
 
-    step = agent.session.steps
+    begin
+      step = agent.session.steps
 
-    reason = catch(:riffer_interrupt) do
-      execute_pending_tool_calls(agent)
+      reason = catch(:riffer_interrupt) do
+        execute_pending_tool_calls(agent)
 
-      loop do
-        response = stream_yielder ? accumulate_streamed_response(agent, stream_yielder) : call_llm(agent)
-        step += 1
-        track_token_usage(agent, response.token_usage)
+        loop do
+          response = stream_yielder ? accumulate_streamed_response(agent, stream_yielder) : call_llm(agent)
+          step += 1
+          track_token_usage(agent, response.token_usage)
 
-        processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications) { |tripped| return tripped }
+          processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications) { |tripped| return tripped }
 
-        agent.session.add(processed_response)
+          agent.session.add(processed_response)
 
-        break unless processed_response.has_tool_calls?
+          break unless processed_response.has_tool_calls?
 
-        max_steps = agent.config.max_steps
-        throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if max_steps && step >= max_steps
+          max_steps = agent.config.max_steps
+          throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if max_steps && step >= max_steps
 
-        execute_tool_calls(agent, processed_response)
+          execute_tool_calls(agent, processed_response)
+        end
+
+        return final_response(agent, all_modifications)
       end
 
-      return final_response(agent, all_modifications)
+      new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
+      agent.session.set(new_messages)
+      stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason, healed_tool_call_ids: filled) if stream_yielder
+      final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled)
+    ensure
+      # The stream wiring must not outlive the run — a leaked lambda would push
+      # later harness-side activations into a dead Enumerator::Yielder.
+      skills.on_activate = consumer_on_activate if stream_yielder && skills
     end
-
-    new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
-    agent.session.set(new_messages)
-    stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason, healed_tool_call_ids: filled) if stream_yielder
-    final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled)
   end
 
   #--

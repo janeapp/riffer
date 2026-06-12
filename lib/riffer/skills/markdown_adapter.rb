@@ -11,7 +11,7 @@ class Riffer::Skills::MarkdownAdapter < Riffer::Skills::Adapter
     lines = [] #: Array[String]
     lines << "## Available Skills"
     lines << ""
-    lines << "When a user's request matches a skill description below, call the `#{skill_activate_tool.name}` tool with the skill name. After activation, follow the skill's instructions."
+    lines << catalog_instructions
     lines << ""
     skills.each do |skill|
       lines << "- **#{skill.name}**: #{skill.description}"
