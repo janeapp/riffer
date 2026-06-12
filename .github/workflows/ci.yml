@@ -46,5 +46,7 @@ jobs:
         run: bin/rbs
       - name: Check for RBS drift
         run: git diff --exit-code sig/generated/
+      - name: Install RBS collection
+        run: bundle exec rbs collection install --frozen
       - name: Run Steep type check
         run: bin/typecheck

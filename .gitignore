@@ -1,5 +1,6 @@
 _yardoc
 .bundle/*
+/.gem_rbs_collection/
 !.bundle/config
 .env
 .vscode
