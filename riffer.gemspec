@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "zeitwerk", "~> 2.6", ">= 2.6.0"
 
   # Development dependencies
-  spec.add_development_dependency "anthropic", "~> 1.46.0"
+  spec.add_development_dependency "anthropic", "~> 1.48.1"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
   spec.add_development_dependency "faraday", ">= 1.0"
   spec.add_development_dependency "mcp", "~> 0.8"
