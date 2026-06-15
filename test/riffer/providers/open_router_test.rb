@@ -256,6 +256,11 @@ describe Riffer::Providers::OpenRouter do
   describe "extract_token_usage" do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
 
+    # These cases build OpenAI::Models::* objects directly, but the openai gem
+    # is only required when the provider is constructed (depends_on "openai").
+    # Force construction first so the constants resolve regardless of test order.
+    before { provider }
+
     it "maps Chat Completions prompt_tokens/completion_tokens to Riffer's input/output naming" do
       usage = OpenAI::Models::CompletionUsage.new(prompt_tokens: 42, completion_tokens: 17, total_tokens: 59)
       response = OpenAI::Models::Chat::ChatCompletion.new(usage: usage)

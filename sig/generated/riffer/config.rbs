@@ -7,15 +7,15 @@ class Riffer::Config
 
     attr_accessor region(): untyped
 
-    def self.new: (?api_token: untyped, ?region: untyped) -> instance
-                | ({ ?api_token: untyped, ?region: untyped }) -> instance
+    def self.new: (?untyped api_token, ?untyped region) -> instance
+                | (?api_token: untyped, ?region: untyped) -> instance
   end
 
   class Anthropic < Struct[untyped]
     attr_accessor api_key(): untyped
 
-    def self.new: (?api_key: untyped) -> instance
-                | ({ ?api_key: untyped }) -> instance
+    def self.new: (?untyped api_key) -> instance
+                | (?api_key: untyped) -> instance
   end
 
   class AzureOpenAI < Struct[untyped]
@@ -23,8 +23,8 @@ class Riffer::Config
 
     attr_accessor endpoint(): untyped
 
-    def self.new: (?api_key: untyped, ?endpoint: untyped) -> instance
-                | ({ ?api_key: untyped, ?endpoint: untyped }) -> instance
+    def self.new: (?untyped api_key, ?untyped endpoint) -> instance
+                | (?api_key: untyped, ?endpoint: untyped) -> instance
   end
 
   class Gemini < Struct[untyped]
@@ -34,29 +34,29 @@ class Riffer::Config
 
     attr_accessor read_timeout(): untyped
 
-    def self.new: (?api_key: untyped, ?open_timeout: untyped, ?read_timeout: untyped) -> instance
-                | ({ ?api_key: untyped, ?open_timeout: untyped, ?read_timeout: untyped }) -> instance
+    def self.new: (?untyped api_key, ?untyped open_timeout, ?untyped read_timeout) -> instance
+                | (?api_key: untyped, ?open_timeout: untyped, ?read_timeout: untyped) -> instance
   end
 
   class OpenAI < Struct[untyped]
     attr_accessor api_key(): untyped
 
-    def self.new: (?api_key: untyped) -> instance
-                | ({ ?api_key: untyped }) -> instance
+    def self.new: (?untyped api_key) -> instance
+                | (?api_key: untyped) -> instance
   end
 
   class OpenRouter < Struct[untyped]
     attr_accessor api_key(): untyped
 
-    def self.new: (?api_key: untyped) -> instance
-                | ({ ?api_key: untyped }) -> instance
+    def self.new: (?untyped api_key) -> instance
+                | (?api_key: untyped) -> instance
   end
 
   class Evals < Struct[untyped]
     attr_accessor judge_model(): untyped
 
-    def self.new: (?judge_model: untyped) -> instance
-                | ({ ?judge_model: untyped }) -> instance
+    def self.new: (?untyped judge_model) -> instance
+                | (?judge_model: untyped) -> instance
   end
 
   class Mcp < Struct[untyped]
@@ -64,8 +64,8 @@ class Riffer::Config
 
     attr_accessor discovery_runner(): untyped
 
-    def self.new: (?credentials: untyped, ?discovery_runner: untyped) -> instance
-                | ({ ?credentials: untyped, ?discovery_runner: untyped }) -> instance
+    def self.new: (?untyped credentials, ?untyped discovery_runner) -> instance
+                | (?credentials: untyped, ?discovery_runner: untyped) -> instance
   end
 
   # Skills-related global configuration.
