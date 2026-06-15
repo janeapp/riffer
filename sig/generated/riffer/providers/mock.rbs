@@ -14,6 +14,11 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
 
+  # The GenAI semconv well-known provider name.
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
   # Array of recorded method calls for assertions.
   attr_reader calls: Array[Hash[Symbol, untyped]]
 
@@ -29,15 +34,17 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   # : (**untyped) -> void
   def initialize: (**untyped) -> void
 
-  # Stubs the next response; call repeatedly to queue several.
+  # Stubs the next response; call repeatedly to queue several. +finish_reason+
+  # defaults to +:tool_calls+ when tool calls are present, else +:stop+.
   #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
   #   provider.stub_response("Final response", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+  #   provider.stub_response("Truncated...", finish_reason: :length)
   #
   # --
-  # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?) -> void
-  def stub_response: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?) -> void
+  # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?) -> void
+  def stub_response: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?) -> void
 
   # Clears all stubbed responses.
   #
@@ -64,6 +71,10 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
   # --
+  # : (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
+
+  # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String
 
@@ -72,8 +83,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # --
   # : () -> Hash[Symbol, untyped]

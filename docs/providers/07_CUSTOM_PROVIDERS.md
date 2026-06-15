@@ -239,11 +239,51 @@ Riffer::StreamEvents::TokenUsageDone.new(
     output_tokens: 50
   )
 )
+
+# Finish reason (emit at end of stream)
+Riffer::StreamEvents::FinishReasonDone.new(
+  finish_reason: :stop,
+  raw_finish_reason: "done"
+)
 ```
 
 ## Token Usage Semantics
 
 `Riffer::Providers::TokenUsage` is a normalized contract — map your provider's raw usage into the bucket meanings defined in [Messages — Token Usage Semantics](../08_MESSAGES.md#token-usage-semantics) rather than passing fields through untouched.
+
+## Finish Reasons
+
+`Riffer::Providers::FinishReason` is the same kind of normalized contract — map your provider's raw finish/stop value into the vocabulary defined in [Messages — Finish Reasons](../08_MESSAGES.md#finish-reasons) (`:stop`, `:length`, `:tool_calls`, `:content_filter`, `:error`, `:other`), keeping the raw wire value alongside:
+
+```ruby
+def extract_finish_reason(response)
+  raw = response.stop_reason
+  return nil unless raw
+
+  Riffer::Providers::FinishReason.new(
+    reason: {"done" => :stop, "max_len" => :length}.fetch(raw, :other),
+    raw: raw
+  )
+end
+```
+
+The hook is optional — the base class defaults to `nil` (no finish reason reported). Map unmapped values to `:other`, never raise on a novel wire value.
+
+For streaming, emit a `FinishReasonDone` event near the end of `execute_stream`:
+
+```ruby
+yielder << Riffer::StreamEvents::FinishReasonDone.new(finish_reason: :stop, raw_finish_reason: "done")
+```
+
+## Trace Provider Name
+
+LLM-call and agent-run spans stamp `gen_ai.provider.name` from the `semconv_provider_name` class method. The default is your snake_cased class name; override it when a [GenAI semconv well-known value](https://opentelemetry.io/docs/specs/semconv/gen-ai/) exists for your provider:
+
+```ruby
+def self.semconv_provider_name
+  "my_provider"
+end
+```
 
 ## Error Handling
 

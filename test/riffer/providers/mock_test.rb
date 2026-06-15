@@ -5,6 +5,12 @@ require "test_helper"
 describe Riffer::Providers::Mock do
   let(:provider) { Riffer::Providers::Mock.new }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::Mock.semconv_provider_name).must_equal "mock"
+    end
+  end
+
   describe ".skills_adapter" do
     it "returns XmlAdapter for a claude-* model name" do
       expect(Riffer::Providers::Mock.skills_adapter("claude-sonnet-4-6")).must_equal Riffer::Skills::XmlAdapter
@@ -100,6 +106,12 @@ describe Riffer::Providers::Mock do
       result = provider.generate_text(prompt: "Hi")
       expect(result.content).must_equal "Hello from the machine!"
     end
+
+    it "overrides the inferred finish_reason" do
+      provider.stub_response("Truncated...", finish_reason: :length)
+      result = provider.generate_text(prompt: "Hi")
+      expect(result.finish_reason).must_equal :length
+    end
   end
 
   describe "#generate_text" do
@@ -135,6 +147,17 @@ describe Riffer::Providers::Mock do
       provider.generate_text(prompt: "Hello", reasoning: "high")
       expect(provider.calls.last[:reasoning]).must_equal "high"
     end
+
+    it "defaults the finish_reason to stop" do
+      result = provider.generate_text(prompt: "Hello")
+      expect(result.finish_reason).must_equal :stop
+    end
+
+    it "defaults the finish_reason to tool_calls when tool calls are present" do
+      provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+      result = provider.generate_text(prompt: "Hello")
+      expect(result.finish_reason).must_equal :tool_calls
+    end
   end
 
   describe "#stream_text" do
@@ -158,6 +181,12 @@ describe Riffer::Providers::Mock do
     it "stores options in calls" do
       provider.stream_text(prompt: "Hello", reasoning: "high").to_a
       expect(provider.calls.last[:reasoning]).must_equal "high"
+    end
+
+    it "emits a FinishReasonDone event" do
+      events = provider.stream_text(prompt: "Question").to_a
+      done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+      expect(done.finish_reason).must_equal :stop
     end
   end
 

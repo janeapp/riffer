@@ -15,13 +15,24 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # Parsed structured output hash, or nil when not applicable.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
 
+  # Normalized reason the provider finished this response, when reported (see
+  # <tt>Riffer::Providers::FinishReason::VALUES</tt>).
+  attr_reader :finish_reason #: Symbol?
+
+  # Raises Riffer::ArgumentError when +finish_reason+ is outside the
+  # normalized vocabulary.
   #--
-  #: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
-  def initialize(content, id: nil, tool_calls: [], token_usage: nil, structured_output: nil)
+  #: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?) -> void
+  def initialize(content, id: nil, tool_calls: [], token_usage: nil, structured_output: nil, finish_reason: nil)
+    if finish_reason && !Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
+      raise Riffer::ArgumentError, "finish_reason must be one of #{Riffer::Providers::FinishReason::VALUES.inspect}, got #{finish_reason.inspect}"
+    end
+
     super(content, id: id)
     @tool_calls = tool_calls
     @token_usage = token_usage
     @structured_output = structured_output
+    @finish_reason = finish_reason
   end
 
   #--
@@ -58,6 +69,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
+    hash[:finish_reason] = finish_reason if finish_reason
     hash
   end
 end

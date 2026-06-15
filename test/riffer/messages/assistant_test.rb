@@ -139,5 +139,32 @@ describe Riffer::Messages::Assistant do
       message = Riffer::Messages::Assistant.new("No structured output")
       expect(message.to_h.key?(:structured_output)).must_equal false
     end
+
+    it "includes finish_reason when present" do
+      message = Riffer::Messages::Assistant.new("Done", finish_reason: :stop)
+      expect(message.to_h[:finish_reason]).must_equal :stop
+    end
+
+    it "excludes finish_reason when nil" do
+      message = Riffer::Messages::Assistant.new("No finish reason")
+      expect(message.to_h.key?(:finish_reason)).must_equal false
+    end
+  end
+
+  describe "#finish_reason" do
+    it "exposes the normalized finish reason" do
+      message = Riffer::Messages::Assistant.new("Truncated", finish_reason: :length)
+      expect(message.finish_reason).must_equal :length
+    end
+
+    it "defaults to nil" do
+      message = Riffer::Messages::Assistant.new("No finish reason")
+      expect(message.finish_reason).must_be_nil
+    end
+
+    it "raises on a value outside the normalized vocabulary" do
+      error = expect { Riffer::Messages::Assistant.new("Bad", finish_reason: :bogus) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_include ":bogus"
+    end
   end
 end
