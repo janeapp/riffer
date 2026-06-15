@@ -258,6 +258,20 @@ event.to_h                          # => {role: :assistant, token_usage: {input_
 
 Use this to track token consumption in real-time during streaming.
 
+### FinishReasonDone
+
+Emitted once near the end of the stream with the normalized reason the model finished (no ordering guarantee relative to `TokenUsageDone`):
+
+```ruby
+event = Riffer::StreamEvents::FinishReasonDone.new(finish_reason: :length, raw_finish_reason: "max_tokens")
+event.role               # => :assistant
+event.finish_reason      # => :length (see Messages — Finish Reasons for the vocabulary)
+event.raw_finish_reason  # => "max_tokens" (the provider's raw wire value, or nil)
+event.to_h               # => {role: :assistant, finish_reason: :length, raw_finish_reason: "max_tokens"}
+```
+
+The agent loop stamps this value onto the accumulated assistant message's `finish_reason`.
+
 ## Streaming with Tools
 
 When an agent uses tools during streaming, the flow is:

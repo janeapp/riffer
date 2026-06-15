@@ -23,9 +23,15 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # Parsed structured output hash, or nil when not applicable.
   attr_reader structured_output: Hash[Symbol, untyped]?
 
+  # Normalized reason the provider finished this response, when reported (see
+  # <tt>Riffer::Providers::FinishReason::VALUES</tt>).
+  attr_reader finish_reason: Symbol?
+
+  # Raises Riffer::ArgumentError when +finish_reason+ is outside the
+  # normalized vocabulary.
   # --
-  # : (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
-  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?) -> void
+  # : (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?) -> void
+  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?) -> void
 
   # --
   # : () -> Symbol

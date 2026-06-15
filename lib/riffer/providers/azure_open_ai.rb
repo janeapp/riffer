@@ -5,6 +5,13 @@
 # gem. Credentials resolve from kwargs, then config, then
 # +AZURE_OPENAI_API_KEY+ / +AZURE_OPENAI_ENDPOINT+.
 class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "azure.ai.openai"
+  end
+
   #--
   #: (**untyped) -> void
   def initialize(**options)

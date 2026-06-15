@@ -10,6 +10,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # cross-region (+us.anthropic.claude-...+) ids.
   ANTHROPIC_MODEL_PATTERN = /(?:^|\.)anthropic\./ #: Regexp
 
+  FINISH_REASONS = {
+    "end_turn" => :stop,
+    "stop_sequence" => :stop,
+    "max_tokens" => :length,
+    "tool_use" => :tool_calls,
+    "guardrail_intervened" => :content_filter,
+    "content_filtered" => :content_filter
+  }.freeze #: Hash[String, Symbol]
+
   # Returns the skill adapter for the Bedrock model — XML for Anthropic models
   # (which Bedrock hosts alongside other vendors'), else Markdown.
   #--
@@ -17,6 +26,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def self.skills_adapter(model = nil)
     return Riffer::Skills::XmlAdapter if model && ANTHROPIC_MODEL_PATTERN.match?(model)
     Riffer::Skills::MarkdownAdapter
+  end
+
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "aws.bedrock"
   end
 
   #--
@@ -140,6 +156,22 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason(response)
+    typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+    build_finish_reason(typed_response.stop_reason)
+  end
+
+  #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason(stop_reason)
+    return nil unless stop_reason
+
+    raw = stop_reason.to_s
+    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
+  end
+
+  #--
   #: (untyped) -> String
   def extract_content(response)
     typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
@@ -178,7 +210,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
@@ -196,6 +228,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         when Aws::BedrockRuntime::Types::ContentBlockStopEvent
           handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
+        when Aws::BedrockRuntime::Types::MessageStopEvent
+          yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
         else
@@ -221,7 +255,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_start_tool_use(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockStartEvent
     state[:tool_call] = {
@@ -232,7 +266,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     delta_text = typed_event.delta.text
@@ -242,7 +276,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_delta_tool_use(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     input_delta = typed_event.delta.tool_use.input
@@ -257,14 +291,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_tool_use(_event, state:, yielder:)
     tool_call = state[:tool_call]
     yielder << Riffer::StreamEvents::ToolCallDone.new(
@@ -277,7 +311,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_metadata_usage(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
     yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(typed_event.usage))

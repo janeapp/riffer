@@ -1,0 +1,21 @@
+# Generated from lib/riffer/stream_events/finish_reason_done.rb with RBS::Inline
+
+# Normalized reason the LLM finished, emitted once near the end of the
+# stream; no ordering guarantee relative to TokenUsageDone.
+class Riffer::StreamEvents::FinishReasonDone < Riffer::StreamEvents::Base
+  # The normalized finish reason (see <tt>Riffer::Providers::FinishReason::VALUES</tt>).
+  attr_reader finish_reason: Symbol
+
+  # The provider's raw finish-reason value, when one exists on the wire.
+  attr_reader raw_finish_reason: String?
+
+  # Raises Riffer::ArgumentError when +finish_reason+ is outside the
+  # normalized vocabulary.
+  # --
+  # : (finish_reason: Symbol, ?raw_finish_reason: String?, ?role: Symbol) -> void
+  def initialize: (finish_reason: Symbol, ?raw_finish_reason: String?, ?role: Symbol) -> void
+
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end
