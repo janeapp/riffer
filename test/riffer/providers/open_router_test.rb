@@ -256,6 +256,11 @@ describe Riffer::Providers::OpenRouter do
   describe "extract_token_usage" do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
 
+    # These cases build OpenAI::Models::* objects directly, but the openai gem
+    # is only required when the provider is constructed (depends_on "openai").
+    # Force construction first so the constants resolve regardless of test order.
+    before { provider }
+
     it "maps Chat Completions prompt_tokens/completion_tokens to Riffer's input/output naming" do
       usage = OpenAI::Models::CompletionUsage.new(prompt_tokens: 42, completion_tokens: 17, total_tokens: 59)
       response = OpenAI::Models::Chat::ChatCompletion.new(usage: usage)
@@ -617,11 +622,11 @@ describe Riffer::Providers::OpenRouter do
   # non-reasoning chunks. Defined once in the describe blocks below.
   describe "#stream_text tool-call edge cases" do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: "test") }
-    let(:fn_struct) { Struct.new(:name, :arguments, keyword_init: true) }
-    let(:tc_struct) { Struct.new(:index, :id, :function, keyword_init: true) }
-    let(:delta_struct) { Struct.new(:content, :reasoning, :tool_calls, keyword_init: true) }
-    let(:choice_struct) { Struct.new(:delta, :finish_reason, keyword_init: true) }
-    let(:chunk_struct) { Struct.new(:choices, :usage, keyword_init: true) }
+    let(:fn_struct) { Struct.new(:name, :arguments) }
+    let(:tc_struct) { Struct.new(:index, :id, :function) }
+    let(:delta_struct) { Struct.new(:content, :reasoning, :tool_calls) }
+    let(:choice_struct) { Struct.new(:delta, :finish_reason) }
+    let(:chunk_struct) { Struct.new(:choices, :usage) }
 
     def install_chunks(provider, chunks)
       stream_double = Object.new

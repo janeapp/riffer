@@ -10,8 +10,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
     attr_accessor arguments(): untyped
 
-    def self.new: (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
-                | ({ ?call_id: untyped, ?name: untyped, ?arguments: untyped }) -> instance
+    def self.new: (?untyped call_id, ?untyped name, ?untyped arguments) -> instance
+                | (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
   end
 
   # Array of tool calls requested by the assistant.
