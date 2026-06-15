@@ -31,6 +31,10 @@ class Riffer::Agent::Response
   # The aggregate token usage across this run's LLM calls, if any was reported.
   attr_reader :token_usage #: Riffer::Providers::TokenUsage?
 
+  # The number of LLM calls made during this run (0 when a before-guardrail
+  # blocks before any call). Distinct from the session's cumulative step count.
+  attr_reader :steps #: Integer
+
   # The full message history from the agent conversation.
   attr_reader :messages #: Array[Riffer::Messages::Base]
 
@@ -39,8 +43,8 @@ class Riffer::Agent::Response
   attr_reader :healed_tool_call_ids #: Array[String]
 
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [], token_usage: nil)
+  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> void
+  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, messages: [], healed_tool_call_ids: [], token_usage: nil, steps: 0)
     @content = content
     @tripwire = tripwire
     @modifications = modifications
@@ -50,6 +54,7 @@ class Riffer::Agent::Response
     @messages = messages
     @healed_tool_call_ids = healed_tool_call_ids
     @token_usage = token_usage
+    @steps = steps
   end
 
   # Returns true if the response was blocked by a guardrail.

@@ -316,6 +316,7 @@ agent.context[:skills]        # the Skills::Context, if skills configured
 | `messages`             | `Array`                     | Full message history from the conversation                                                       |
 | `healed_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with placeholder results during interrupt healing (else `[]`)             |
 | `token_usage`          | `TokenUsage` / `nil`        | Aggregate `Riffer::Providers::TokenUsage` across this run's LLM calls (`nil` when none reported) |
+| `steps`                | `Integer`                   | LLM calls made during this run (`0` when a before-guardrail blocks first); not the session's cumulative count |
 
 ### response.structured_output
 

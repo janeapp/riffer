@@ -37,8 +37,8 @@ module Riffer::Agent::Run
   #: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, stream_yielder: nil)
     Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent), kind: :internal) do |span|
-      response, steps = execute_run(agent, stream_yielder)
-      record_run_outcome(span, response, steps)
+      response = execute_run(agent, stream_yielder)
+      record_run_outcome(span, response)
       response
     rescue => error
       # The backend records the exception and error status on the re-raise;
@@ -49,14 +49,14 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?) -> [Riffer::Agent::Response, Integer]
+  #: (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
   def execute_run(agent, stream_yielder)
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
     run_usage = nil #: Riffer::Providers::TokenUsage?
     run_steps = 0
 
     run_before_guardrails(agent, stream_yielder, all_modifications) do |tripwire|
-      return [tripwire_response(agent, stream_yielder, tripwire, all_modifications), run_steps]
+      return tripwire_response(agent, stream_yielder, tripwire, all_modifications, steps: run_steps)
     end
 
     skills = agent.context.skills
@@ -83,7 +83,7 @@ module Riffer::Agent::Run
           run_usage = sum_usage(run_usage, response.token_usage)
 
           processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications) do |tripwire|
-            return [tripwire_response(agent, stream_yielder, tripwire, all_modifications, token_usage: run_usage), run_steps]
+            return tripwire_response(agent, stream_yielder, tripwire, all_modifications, token_usage: run_usage, steps: run_steps)
           end
 
           agent.session.add(processed_response)
@@ -96,13 +96,13 @@ module Riffer::Agent::Run
           execute_tool_calls(agent, processed_response)
         end
 
-        return [final_response(agent, all_modifications, token_usage: run_usage), run_steps]
+        return final_response(agent, all_modifications, token_usage: run_usage, steps: run_steps)
       end
 
       new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
       agent.session.set(new_messages)
       stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason, healed_tool_call_ids: filled) if stream_yielder
-      [final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled, token_usage: run_usage), run_steps] #: [Riffer::Agent::Response, Integer]
+      final_response(agent, all_modifications, interrupted: true, interrupt_reason: reason, healed_tool_call_ids: filled, token_usage: run_usage, steps: run_steps)
     ensure
       # The stream wiring must not outlive the run — a leaked lambda would push
       # later harness-side activations into a dead Enumerator::Yielder.
@@ -151,10 +151,10 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], ?token_usage: Riffer::Providers::TokenUsage?) -> Riffer::Agent::Response
-  def tripwire_response(agent, stream_yielder, tripwire, all_modifications, token_usage: nil)
+  #: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def tripwire_response(agent, stream_yielder, tripwire, all_modifications, token_usage: nil, steps: 0)
     stream_yielder << Riffer::StreamEvents::GuardrailTripwire.new(tripwire) if stream_yielder
-    build_response(agent, "", tripwire: tripwire, modifications: all_modifications, token_usage: token_usage)
+    build_response(agent, "", tripwire: tripwire, modifications: all_modifications, token_usage: token_usage, steps: steps)
   end
 
   #--
@@ -279,10 +279,10 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?) -> Riffer::Agent::Response
-  def build_response(agent, content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [], token_usage: nil)
+  #: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def build_response(agent, content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil, structured_output: nil, healed_tool_call_ids: [], token_usage: nil, steps: 0)
     messages = agent.session.messages
-    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: messages.frozen? ? messages : messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids, token_usage: token_usage)
+    Riffer::Agent::Response.new(content, tripwire: tripwire, modifications: modifications, interrupted: interrupted, interrupt_reason: interrupt_reason, structured_output: structured_output, messages: messages.frozen? ? messages : messages.dup.freeze, healed_tool_call_ids: healed_tool_call_ids, token_usage: token_usage, steps: steps)
   end
 
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
@@ -325,9 +325,9 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response, Integer) -> void
-  def record_run_outcome(span, response, steps)
-    span.set_attribute("riffer.steps", steps)
+  #: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
+  def record_run_outcome(span, response)
+    span.set_attribute("riffer.steps", response.steps)
     record_usage(span, response.token_usage)
 
     span.set_attribute("riffer.interrupt.reason", response.interrupt_reason.to_s) if response.interrupt_reason
