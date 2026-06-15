@@ -117,7 +117,7 @@ end
 | `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits. |
 | `tracer_provider`  | Explicit OTEL tracer provider (e.g. the SDK's in-memory provider in tests). Defaults to `nil`, which resolves the global `OpenTelemetry.tracer_provider` lazily at first span. Raises `Riffer::ArgumentError` if the `opentelemetry-api` gem isn't available at a supported version (>= 1.1, < 2).                                                                                                                                                |
 
-Hosts own SDK and exporter wiring — riffer only emits spans through whatever provider the host configures.
+Hosts own SDK and exporter wiring — riffer only emits spans through whatever provider the host configures. See [Tracing](16_TRACING.md) for the emitted span contract — names, attributes, hierarchy, and host wiring.
 
 ### Message ID Strategy
 
