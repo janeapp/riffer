@@ -42,4 +42,31 @@ class Riffer::Tools::Runtime
   # --
   # : (String?) -> Hash[Symbol, untyped]
   def parse_arguments: (String?) -> Hash[Symbol, untyped]
+
+  # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
+  # --
+  # : [R] (Riffer::Messages::Assistant::ToolCall) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> R } -> R
+  def in_tool_span: [R] (Riffer::Messages::Assistant::ToolCall) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+
+  # --
+  # : (Riffer::Messages::Assistant::ToolCall) -> Hash[String, untyped]
+  def tool_span_attributes: (Riffer::Messages::Assistant::ToolCall) -> Hash[String, untyped]
+
+  # A returned error Response is a handled outcome, so its status stays unset —
+  # an error span status is reserved for a raised exception.
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tools::Response) -> void
+  def record_tool_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Tools::Response) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Messages::Assistant::ToolCall) -> void
+  def capture_tool_arguments: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Messages::Assistant::ToolCall) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tools::Response) -> void
+  def capture_tool_result: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Tools::Response) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> bool
+  def capture_tool_content?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> bool
 end
