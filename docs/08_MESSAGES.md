@@ -40,15 +40,16 @@ msg.to_h     # => {role: :user, content: "Describe this image", files: [{...}]}
 
 ### Assistant
 
-Assistant messages represent LLM responses, potentially including tool calls and token usage data:
+Assistant messages represent LLM responses, potentially including tool calls, token usage data, and the reason the model finished:
 
 ```ruby
 # Text-only response
 msg = Riffer::Messages::Assistant.new("I'm doing well, thank you!")
-msg.role         # => :assistant
-msg.content      # => "I'm doing well, thank you!"
-msg.tool_calls   # => []
-msg.token_usage  # => nil or Riffer::Providers::TokenUsage
+msg.role           # => :assistant
+msg.content        # => "I'm doing well, thank you!"
+msg.tool_calls     # => []
+msg.token_usage    # => nil or Riffer::Providers::TokenUsage
+msg.finish_reason  # => nil or a normalized Symbol (see below)
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -75,6 +76,26 @@ end
 - `cache_write_tokens` — the subset of `input_tokens` written to the provider's prompt cache; `nil` when the provider doesn't report it.
 
 The cache buckets are subsets of `input_tokens`, never additions to it — summing `input_tokens + cache_read_tokens` double-counts. `total_tokens` (input + output) matches the totals providers report on their dashboards.
+
+#### Finish Reasons
+
+`finish_reason` carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic's `end_turn`, OpenAI's response status, Gemini's `STOP`, …) into a normalized vocabulary:
+
+| Value             | Meaning                                                         |
+| ----------------- | --------------------------------------------------------------- |
+| `:stop`           | The model finished its turn naturally (or hit a stop sequence). |
+| `:length`         | Output was truncated at the max-token limit.                    |
+| `:tool_calls`     | The model stopped to call tools.                                |
+| `:content_filter` | A provider safety system blocked or cut the response.           |
+| `:error`          | The provider reported an error finish.                          |
+| `:other`          | A provider-specific value with no normalized equivalent.        |
+
+`finish_reason` is `nil` when the provider doesn't report one. Use it to detect truncation without parsing provider responses:
+
+```ruby
+response = agent.generate("Summarize this document")
+retry_with_higher_limit if agent.session.messages.last.finish_reason == :length
+```
 
 #### Structured Output on Messages
 

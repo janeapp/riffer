@@ -34,7 +34,8 @@ class Riffer::Messages::Base
         tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
       }
       structured_output = msg[:structured_output]
-      Riffer::Messages::Assistant.new(content, id: id, tool_calls: tool_calls, structured_output: structured_output)
+      finish_reason = msg[:finish_reason]&.to_sym
+      Riffer::Messages::Assistant.new(content, id: id, tool_calls: tool_calls, structured_output: structured_output, finish_reason: finish_reason)
     when :system
       Riffer::Messages::System.new(content, id: id)
     when :tool

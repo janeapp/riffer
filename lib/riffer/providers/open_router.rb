@@ -10,6 +10,22 @@ require "json"
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL = "https://openrouter.ai/api/v1" #: String
 
+  FINISH_REASONS = {
+    "stop" => :stop,
+    "length" => :length,
+    "tool_calls" => :tool_calls,
+    "function_call" => :tool_calls,
+    "content_filter" => :content_filter,
+    "error" => :error
+  }.freeze #: Hash[String, Symbol]
+
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "openrouter"
+  end
+
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **options)
@@ -84,6 +100,24 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason(response)
+    typed_response = response #: OpenAI::Models::Chat::ChatCompletion
+    build_finish_reason(typed_response.choices.first&.finish_reason)
+  end
+
+  #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason(finish_reason)
+    return nil unless finish_reason
+
+    raw = finish_reason.to_s
+    return nil if raw.empty?
+
+    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
+  end
+
+  #--
   #: (untyped) -> String
   def extract_content(response)
     typed_response = response #: OpenAI::Models::Chat::ChatCompletion
@@ -112,7 +146,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     # OpenRouter omits usage from streams unless explicitly opted in.
     stream_options = (params[:stream_options] || {}).merge(include_usage: true)
@@ -121,7 +155,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     state = {
       text: +"",
       reasoning: +"",
-      tool_calls: {}
+      tool_calls: {},
+      finish_reason: nil
     } #: Hash[Symbol, untyped]
 
     # Use stream_raw (not stream) — the latter yields a higher-level
@@ -146,10 +181,11 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     yielder << Riffer::StreamEvents::TextDone.new(state[:text]) unless state[:text].empty?
     yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning]) unless state[:reasoning].empty?
+    yield_finish_reason(yielder, build_finish_reason(state[:finish_reason]))
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_stream_chunk(chunk, state:, yielder:)
     typed_chunk = chunk #: OpenAI::Models::Chat::ChatCompletionChunk
     choice = typed_chunk.choices&.first
@@ -161,6 +197,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       handle_tool_call_deltas(delta, state: state, yielder: yielder)
     end
 
+    state[:finish_reason] = choice.finish_reason if choice&.finish_reason
+
     if choice && finish_reason_is_tool_calls?(choice)
       emit_tool_call_done_events(state: state, yielder: yielder)
     end
@@ -171,7 +209,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_text_delta(delta, state:, yielder:)
     typed_delta = delta #: OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta
     content = typed_delta.content
@@ -182,7 +220,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_delta(delta, state:, yielder:)
     # The openai gem's typed Delta model strips fields not in OpenAI's spec
     # (so +delta.reasoning+ raises NoMethodError), but the underlying data
@@ -195,7 +233,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_tool_call_deltas(delta, state:, yielder:)
     typed_delta = delta #: OpenAI::Models::Chat::ChatCompletionChunk::Choice::Delta
     tool_calls = typed_delta.tool_calls
@@ -223,7 +261,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def emit_tool_call_done_events(state:, yielder:)
     state[:tool_calls].each do |index, entry|
       fallback = "tool_#{index}"

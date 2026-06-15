@@ -1,0 +1,46 @@
+# Generated from lib/riffer/tracing/capture.rb with RBS::Inline
+
+# Serializes riffer messages into the GenAI semconv JSON message structure
+# for opt-in span content capture. File parts become metadata-only stubs —
+# bytes and URLs never reach a span attribute.
+module Riffer::Tracing::Capture
+  # --
+  # : (Array[Riffer::Messages::Base]) -> String
+  def input_messages: (Array[Riffer::Messages::Base]) -> String
+
+  # --
+  # : (Array[Riffer::Messages::Base]) -> String?
+  def system_instructions: (Array[Riffer::Messages::Base]) -> String?
+
+  # --
+  # : (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> String
+  def output_messages: (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> String
+
+  private
+
+  # --
+  # : (Riffer::Messages::Base) -> Hash[Symbol, untyped]?
+  def convert_message: (Riffer::Messages::Base) -> Hash[Symbol, untyped]?
+
+  # --
+  # : (String?, Array[Riffer::Messages::Assistant::ToolCall]) -> Array[Hash[Symbol, untyped]]
+  def assistant_parts: (String?, Array[Riffer::Messages::Assistant::ToolCall]) -> Array[Hash[Symbol, untyped]]
+
+  # --
+  # : (String?) -> Hash[Symbol, untyped]
+  def text_part: (String?) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::ToolCall) -> Hash[Symbol, untyped]
+  def tool_call_part: (Riffer::Messages::Assistant::ToolCall) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  def file_part: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+
+  # Semconv's tool_call part carries arguments as a JSON object; riffer holds
+  # them as a string — parse so the captured payload isn't double-encoded.
+  # --
+  # : (untyped) -> untyped
+  def parse_arguments: (untyped) -> untyped
+end

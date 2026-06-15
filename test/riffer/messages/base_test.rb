@@ -170,6 +170,18 @@ describe Riffer::Messages::Base do
       end
     end
 
+    describe "with assistant finish_reason" do
+      it "restores a string finish_reason as a symbol" do
+        result = Riffer::Messages::Base.from_hash({role: "assistant", content: "Hello", finish_reason: "stop"})
+        expect(result.finish_reason).must_equal :stop
+      end
+
+      it "defaults to nil when not provided" do
+        result = Riffer::Messages::Base.from_hash({role: "assistant", content: "Hello"})
+        expect(result.finish_reason).must_be_nil
+      end
+    end
+
     describe "with assistant tool_calls" do
       let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(name: "search") }
 
