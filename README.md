@@ -62,6 +62,7 @@ For comprehensive documentation, see the [docs](docs/) directory:
 - [Skills](docs/13_SKILLS.md) - Packaged agent capabilities
 - [MCP](docs/14_MCP.md) - Integrating third-party MCP servers
 - [Serialization](docs/15_SERIALIZATION.md) - Persisting and transferring agent definitions
+- [Tracing](docs/16_TRACING.md) - OpenTelemetry span contract and host wiring
 - [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
 
 ### API Reference
