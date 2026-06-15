@@ -31,6 +31,12 @@ describe Riffer::Agent::Run do
       expect(Riffer::Agent::Run.stream(agent: agent, prompt: "hi")).must_be_instance_of Enumerator
     end
 
+    it "stamps the streamed finish reason on the accumulated assistant message" do
+      agent = agent_class.new
+      Riffer::Agent::Run.stream(agent: agent, prompt: "hi").each { |_| }
+      expect(agent.session.messages.last.finish_reason).must_equal :stop
+    end
+
     it "raises when structured_output is configured" do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"

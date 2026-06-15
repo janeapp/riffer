@@ -21,6 +21,54 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "finish reasons" do
+    let(:provider) { Riffer::Providers::Anthropic.new(api_key: api_key) }
+
+    it "normalizes end_turn to stop" do
+      expect(provider.send(:build_finish_reason, :end_turn).reason).must_equal :stop
+    end
+
+    it "normalizes stop_sequence to stop" do
+      expect(provider.send(:build_finish_reason, :stop_sequence).reason).must_equal :stop
+    end
+
+    it "normalizes max_tokens to length" do
+      expect(provider.send(:build_finish_reason, :max_tokens).reason).must_equal :length
+    end
+
+    it "normalizes tool_use to tool_calls" do
+      expect(provider.send(:build_finish_reason, :tool_use).reason).must_equal :tool_calls
+    end
+
+    it "normalizes refusal to content_filter" do
+      expect(provider.send(:build_finish_reason, :refusal).reason).must_equal :content_filter
+    end
+
+    it "normalizes unknown values to other and keeps the raw value" do
+      finish_reason = provider.send(:build_finish_reason, :pause_turn)
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "pause_turn"]
+    end
+
+    it "returns nil without a stop reason" do
+      expect(provider.send(:build_finish_reason, nil)).must_be_nil
+    end
+
+    it "extracts the finish reason when generating" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001")
+        expect(result.finish_reason).must_equal :stop
+      end
+    end
+
+    it "emits a FinishReasonDone event when streaming" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/_stream_text/when_prompt_is_provided/yields_stream_events") do
+        events = provider.stream_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001").to_a
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+        expect(done.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe "#initialize" do
     it "creates Anthropic client with an api_key" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)

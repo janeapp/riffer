@@ -6,6 +6,14 @@
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_20250305" #: String
 
+  FINISH_REASONS = {
+    "end_turn" => :stop,
+    "stop_sequence" => :stop,
+    "max_tokens" => :length,
+    "tool_use" => :tool_calls,
+    "refusal" => :content_filter
+  }.freeze #: Hash[String, Symbol]
+
   # Returns the XML skill adapter for Anthropic/Claude.
   #
   #--
@@ -91,6 +99,22 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     build_token_usage(message.usage)
   end
 
+  #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason(response)
+    message = response #: Anthropic::Models::Message
+    build_finish_reason(message.stop_reason)
+  end
+
+  #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason(stop_reason)
+    return nil unless stop_reason
+
+    raw = stop_reason.to_s
+    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
+  end
+
   # Anthropic's +input_tokens+ excludes the cache buckets; TokenUsage's
   # input includes them.
   #--
@@ -146,7 +170,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
@@ -216,7 +240,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_text_event(event, state:, yielder:)
     state[:text] ||= ""
     state[:text] += event.text
@@ -224,7 +248,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_thinking_event(event, state:, yielder:)
     state[:reasoning] ||= ""
     state[:reasoning] += event.thinking
@@ -232,7 +256,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_input_json_event(event, state:, yielder:)
     if state[:tool_call].nil?
       state[:tool_call] = {id: nil, name: nil, arguments: ""}
@@ -246,7 +270,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_tool_use(event, state:, yielder:)
     content_block = event.content_block
     arguments = content_block.input.is_a?(String) ? content_block.input : content_block.input.to_json
@@ -260,21 +284,21 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_thinking(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
     state[:reasoning] = nil
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_text(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_server_tool_use(_event, state:, yielder:)
     return unless state[:web_search_json]
 
@@ -286,7 +310,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_web_search_result(event, state:, yielder:)
     content_block = event.content_block
     sources = (content_block.content || []).filter_map do |item|
@@ -299,9 +323,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, accumulated_message: untyped, yielder: Enumerator::Yielder) -> void
+  #: (untyped, accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
   def handle_message_stop(_event, accumulated_message:, yielder:)
     message = accumulated_message #: Anthropic::Models::Message?
+    yield_finish_reason(yielder, build_finish_reason(message&.stop_reason))
+
     usage = message&.usage
     return unless usage
 

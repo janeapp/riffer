@@ -1,0 +1,9 @@
+# The stream-event sink contract for `execute_stream` — satisfied by
+# Enumerator::Yielder and the tracing recorder that wraps it.
+module Riffer
+  module Providers
+    interface _EventSink
+      def <<: (Riffer::StreamEvents::Base) -> untyped
+    end
+  end
+end

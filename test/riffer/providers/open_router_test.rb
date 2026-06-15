@@ -11,6 +11,54 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe "finish reasons" do
+    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+
+    it "normalizes stop" do
+      expect(provider.send(:build_finish_reason, :stop).reason).must_equal :stop
+    end
+
+    it "normalizes length" do
+      expect(provider.send(:build_finish_reason, :length).reason).must_equal :length
+    end
+
+    it "normalizes tool_calls" do
+      expect(provider.send(:build_finish_reason, :tool_calls).reason).must_equal :tool_calls
+    end
+
+    it "normalizes content_filter" do
+      expect(provider.send(:build_finish_reason, :content_filter).reason).must_equal :content_filter
+    end
+
+    it "normalizes error" do
+      expect(provider.send(:build_finish_reason, "error").reason).must_equal :error
+    end
+
+    it "normalizes unknown values to other and keeps the raw value" do
+      finish_reason = provider.send(:build_finish_reason, "model_length")
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "model_length"]
+    end
+
+    it "returns nil without a finish reason" do
+      expect(provider.send(:build_finish_reason, nil)).must_be_nil
+    end
+
+    it "extracts the finish reason when generating" do
+      VCR.use_cassette("Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
+        expect(result.finish_reason).must_equal :stop
+      end
+    end
+
+    it "emits a FinishReasonDone event when streaming" do
+      VCR.use_cassette("Riffer_Providers_OpenRouter/_stream_text/when_prompt_is_provided/yields_stream_events") do
+        events = provider.stream_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5").to_a
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+        expect(done.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe "#initialize" do
     it "creates a provider with an api_key kwarg" do
       provider = Riffer::Providers::OpenRouter.new(api_key: api_key)

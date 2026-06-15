@@ -55,6 +55,12 @@ class Riffer::Config
     # host wires an OTEL SDK.
     attr_reader :enabled #: bool
 
+    # Whether LLM-call spans capture full message content
+    # (<tt>gen_ai.input.messages</tt>, <tt>gen_ai.output.messages</tt>,
+    # <tt>gen_ai.system_instructions</tt>); defaults to +false+ — message
+    # content routinely carries sensitive data.
+    attr_reader :capture_messages #: bool
+
     # Explicit OTEL tracer provider; defaults to +nil+, which resolves the
     # global <tt>OpenTelemetry.tracer_provider</tt> at first span.
     attr_reader :tracer_provider #: untyped
@@ -63,6 +69,7 @@ class Riffer::Config
     #: () -> void
     def initialize
       @enabled = true
+      @capture_messages = false
       @tracer_provider = nil
     end
 
@@ -73,6 +80,15 @@ class Riffer::Config
     #: (untyped) -> void
     def enabled=(value)
       @enabled = Riffer::Helpers::Boolean.coerce(value, attribute: "enabled")
+    end
+
+    # Sets the capture_messages flag, coercing boolean-ish values so an
+    # env-var +"false"+ (truthy in Ruby) doesn't silently enable content
+    # capture. Raises Riffer::ArgumentError on an unrecognized value.
+    #--
+    #: (untyped) -> void
+    def capture_messages=(value)
+      @capture_messages = Riffer::Helpers::Boolean.coerce(value, attribute: "capture_messages")
     end
 
     # Sets an explicit tracer provider, forcing the OTEL backend. Raises

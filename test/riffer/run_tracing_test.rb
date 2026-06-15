@@ -68,7 +68,7 @@ describe Riffer::Agent::Run do
   describe "#generate" do
     it "names the span after the agent identifier" do
       agent_class.new.generate("Hello")
-      expect(@exporter.finished_spans.map(&:name)).must_equal ["invoke_agent traced-agent"]
+      expect(run_span.name).must_equal "invoke_agent traced-agent"
     end
 
     it "marks the span as internal" do
@@ -237,7 +237,7 @@ describe Riffer::Agent::Run do
 
     it "emits the run span when the stream drains" do
       agent_class.new.stream("Hello").each { |_| }
-      expect(@exporter.finished_spans.map(&:name)).must_equal ["invoke_agent traced-agent"]
+      expect(run_span.name).must_equal "invoke_agent traced-agent"
     end
 
     it "parents the run span to the trace active at the stream call" do

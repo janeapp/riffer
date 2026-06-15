@@ -5,6 +5,8 @@
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
+  FINISH_REASONS: Hash[String, Symbol]
+
   # Returns the XML skill adapter for Anthropic/Claude.
   #
   # --
@@ -34,6 +36,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
 
+  # --
+  # : (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
+
+  # --
+  # : (untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
+
   # Anthropic's +input_tokens+ excludes the cache buckets; TokenUsage's
   # input includes them.
   # --
@@ -49,8 +59,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped]) -> void
@@ -61,40 +71,40 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def handle_raw_content_block_delta: (untyped, state: Hash[Symbol, untyped]) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_text_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_text_event: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_thinking_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_thinking_event: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_input_json_event: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_input_json_event: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_thinking: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_thinking: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_text: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_text: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_server_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_server_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_web_search_result: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_web_search_result: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, accumulated_message: untyped, yielder: Enumerator::Yielder) -> void
-  def handle_message_stop: (untyped, accumulated_message: untyped, yielder: Enumerator::Yielder) -> void
+  # : (untyped, accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_message_stop: (untyped, accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

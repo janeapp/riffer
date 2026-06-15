@@ -1,0 +1,19 @@
+# Generated from lib/riffer/providers/finish_reason.rb with RBS::Inline
+
+# Normalized reason an LLM call finished, paired with the provider's raw
+# wire value. +reason+ carries the same meaning for every provider.
+class Riffer::Providers::FinishReason
+  # The normalized vocabulary every provider maps into.
+  VALUES: Array[Symbol]
+
+  # The normalized reason.
+  attr_reader reason: Symbol
+
+  # The provider's raw finish-reason value, when one exists on the wire.
+  attr_reader raw: String?
+
+  # Raises Riffer::ArgumentError when +reason+ is outside VALUES.
+  # --
+  # : (reason: Symbol, ?raw: String?) -> void
+  def initialize: (reason: Symbol, ?raw: String?) -> void
+end

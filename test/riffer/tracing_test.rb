@@ -113,6 +113,28 @@ describe Riffer::Tracing do
     end
   end
 
+  describe "#record_usage" do
+    it "stamps the gen_ai.usage attributes onto the span" do
+      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+      exporter = install_in_memory_tracer_provider
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cache_read_tokens: 30, cache_write_tokens: 10)
+      Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, usage) }
+      expect(exporter.finished_spans.first.attributes).must_equal({
+        "gen_ai.usage.input_tokens" => 100,
+        "gen_ai.usage.output_tokens" => 50,
+        "gen_ai.usage.cache_read.input_tokens" => 30,
+        "gen_ai.usage.cache_creation.input_tokens" => 10
+      })
+    end
+
+    it "stamps nothing when usage is nil" do
+      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+      exporter = install_in_memory_tracer_provider
+      Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, nil) }
+      expect(exporter.finished_spans.first.attributes).must_equal({})
+    end
+  end
+
   describe "#current_context" do
     it "returns nil when tracing is disabled" do
       Riffer.config.tracing.enabled = false
