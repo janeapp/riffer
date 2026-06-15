@@ -1,18 +1,16 @@
 # Generated from lib/riffer/mcp/authenticated_tool.rb with RBS::Inline
 
 # Wraps MCP-generated tool classes so +tools/call+ resolves
-# +Riffer.config.mcp.credentials+ per invocation, delegating metadata to the
-# inner class.
+# +Riffer.config.mcp.credentials+ per invocation, copying metadata from the
+# inner class at wrap time.
 module Riffer::Mcp::AuthenticatedTool
   # Returns one wrapper class per inner tool, sharing +manifest+ and +matched_tags+.
   #
   # --
-  # : (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
-  def wrap_all: (Array[singleton(Riffer::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Tool)]
+  # : (Array[singleton(Riffer::Mcp::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Mcp::Tool)]
+  def wrap_all: (Array[singleton(Riffer::Mcp::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Mcp::Tool)]
 
   # --
-  # : (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
-  #  Class.new(Riffer::Tool) is typed as ::Class by steep — it cannot verify the subtype
-  #  relationship for dynamically created anonymous classes, so the ignore is required.
-  def wrap_one: (singleton(Riffer::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Tool)
+  # : (singleton(Riffer::Mcp::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Mcp::Tool)
+  def wrap_one: (singleton(Riffer::Mcp::Tool), Riffer::Mcp::Manifest, Array[Symbol]) -> singleton(Riffer::Mcp::Tool)
 end

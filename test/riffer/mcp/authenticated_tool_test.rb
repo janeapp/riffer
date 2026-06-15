@@ -4,13 +4,12 @@ require "test_helper"
 
 describe Riffer::Mcp::AuthenticatedTool do
   let(:inner) do
-    Class.new(Riffer::Tool) do
-      define_singleton_method(:name) { "srv__echo" }
-      define_singleton_method(:mcp_server_tool_name) { "echo" }
-      define_singleton_method(:description) { "E" }
-      define_singleton_method(:parameters_schema) { |strict: false| Riffer::Tool.send(:empty_schema) }
+    Class.new(Riffer::Mcp::Tool) do
+      @identifier = "srv__echo"
+      @mcp_server_tool_name = "echo"
+      @description = "E"
 
-      define_method(:call) do |context:, **kwargs|
+      def call(context:, **kwargs)
         text("inner-#{kwargs[:x]}")
       end
     end
@@ -18,6 +17,16 @@ describe Riffer::Mcp::AuthenticatedTool do
 
   let(:manifest) do
     Riffer::Mcp::Manifest.new(name: "srv", tags: [:t], endpoint: "https://mcp.example.com", discovery_headers: {})
+  end
+
+  it "returns a Riffer::Mcp::Tool subclass" do
+    wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
+    assert wrapped < Riffer::Mcp::Tool
+  end
+
+  it "copies the inner class's mcp_server_tool_name" do
+    wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
+    assert_equal "echo", wrapped.mcp_server_tool_name
   end
 
   it "delegates to inner when credentials proc is nil" do

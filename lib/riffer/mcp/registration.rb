@@ -5,16 +5,16 @@
 # +tools/list+ and generates tool classes when a server is registered.
 class Riffer::Mcp::Registration
   # @rbs @cancelled: bool
-  # @rbs @tools: Array[singleton(Riffer::Tool)]
+  # @rbs @tools: Array[singleton(Riffer::Mcp::Tool)]
   # @rbs @mutex: Thread::Mutex
 
   # The manifest that describes this server.
   attr_reader :manifest #: Riffer::Mcp::Manifest
 
-  # Generated Riffer::Tool subclasses.
+  # Generated Riffer::Mcp::Tool subclasses.
   #
   #--
-  #: () -> Array[singleton(Riffer::Tool)]
+  #: () -> Array[singleton(Riffer::Mcp::Tool)]
   def tools
     @mutex.synchronize { @tools }
   end
@@ -24,7 +24,7 @@ class Riffer::Mcp::Registration
   def initialize(manifest)
     @manifest = manifest
     @cancelled = false
-    @tools = [] #: Array[singleton(Riffer::Tool)]
+    @tools = [] #: Array[singleton(Riffer::Mcp::Tool)]
     @mutex = Mutex.new
     run_discovery
   end
