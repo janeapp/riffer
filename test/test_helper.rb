@@ -56,3 +56,11 @@ SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
+
+def install_in_memory_tracer_provider
+  exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+  provider = OpenTelemetry::SDK::Trace::TracerProvider.new
+  provider.add_span_processor(OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter))
+  Riffer.config.tracing.tracer_provider = provider
+  exporter
+end

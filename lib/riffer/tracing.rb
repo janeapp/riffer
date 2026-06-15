@@ -41,6 +41,19 @@ module Riffer::Tracing # :nodoc: all
     backend.with_context(context, &block)
   end
 
+  # Stamps the <tt>gen_ai.usage.*</tt> attributes from a TokenUsage onto the
+  # span.
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Providers::TokenUsage?) -> void
+  def record_usage(span, usage)
+    return unless usage
+
+    span.set_attribute("gen_ai.usage.input_tokens", usage.input_tokens)
+    span.set_attribute("gen_ai.usage.output_tokens", usage.output_tokens)
+    span.set_attribute("gen_ai.usage.cache_read.input_tokens", usage.cache_read_tokens) if usage.cache_read_tokens
+    span.set_attribute("gen_ai.usage.cache_creation.input_tokens", usage.cache_write_tokens) if usage.cache_write_tokens
+  end
+
   # Discards the resolved backend so the next span re-resolves it.
   #--
   #: () -> void

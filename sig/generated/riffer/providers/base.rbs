@@ -15,6 +15,14 @@ class Riffer::Providers::Base
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
 
+  # Returns the provider name stamped as <tt>gen_ai.provider.name</tt> on trace
+  # spans, ideally a GenAI semconv well-known value. Defaults to the snake_cased
+  # class name rather than raising like the abstract provider methods, so
+  # enabling tracing never breaks an otherwise-working custom provider.
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
   # Generates text using the provider.
   #
   # --
@@ -49,12 +57,18 @@ class Riffer::Providers::Base
   def execute_generate: (Hash[Symbol, untyped]) -> untyped
 
   # --
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
+
+  # Defaults to nil rather than raising — finish reasons are optional, so
+  # providers that don't report one stay valid.
+  # --
+  # : (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
   # --
   # : (untyped) -> String
@@ -63,6 +77,41 @@ class Riffer::Providers::Base
   # --
   # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # A deliberate whitelist — caller options outside it stay off spans.
+  REQUEST_PARAM_ATTRIBUTES: Hash[Symbol, String]
+
+  # --
+  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+
+  # --
+  # : (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
+  def chat_span_attributes: (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Symbol?, String?) -> void
+  def record_finish_reason: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Symbol?, String?) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tracing::StreamRecorder) -> void
+  def record_stream_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Tracing::StreamRecorder) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Array[Riffer::Messages::Base]) -> void
+  def capture_input: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Array[Riffer::Messages::Base]) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
+  def capture_output: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
+
+  # --
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> bool
+  def capture_messages?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> bool
+
+  # --
+  # : (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
+  def yield_finish_reason: (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
 
   # --
   # : (String) -> Hash[Symbol, untyped]?

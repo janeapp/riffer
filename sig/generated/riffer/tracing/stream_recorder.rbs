@@ -1,0 +1,31 @@
+# Generated from lib/riffer/tracing/stream_recorder.rb with RBS::Inline
+
+# Wraps a stream yielder to observe terminal events for span stamping while
+# forwarding every event downstream untouched.
+class Riffer::Tracing::StreamRecorder
+  @yielder: Enumerator::Yielder
+
+  attr_reader token_usage: Riffer::Providers::TokenUsage?
+
+  attr_reader finish_reason: Symbol?
+
+  attr_reader raw_finish_reason: String?
+
+  attr_reader content: String?
+
+  attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
+
+  # --
+  # : (Enumerator::Yielder) -> void
+  def initialize: (Enumerator::Yielder) -> void
+
+  # --
+  # : (Riffer::StreamEvents::Base) -> self
+  def <<: (Riffer::StreamEvents::Base) -> self
+
+  private
+
+  # --
+  # : (Riffer::StreamEvents::Base) -> void
+  def record: (Riffer::StreamEvents::Base) -> void
+end

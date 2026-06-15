@@ -5,6 +5,13 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "openai"
+  end
+
   #--
   #: (**untyped) -> void
   def initialize(**options)
@@ -88,6 +95,48 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason(response)
+    build_finish_reason(response)
+  end
+
+  # The Responses API reports no finish_reason field, so one is derived.
+  #--
+  #: (untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason(response)
+    typed_response = response #: OpenAI::Models::Responses::Response
+    status = typed_response.status
+    return nil unless status
+
+    case status.to_sym
+    when :completed
+      reason = extract_tool_calls(typed_response).empty? ? :stop : :tool_calls
+      Riffer::Providers::FinishReason.new(reason: reason, raw: "completed")
+    when :incomplete
+      incomplete_finish_reason(typed_response)
+    when :failed
+      Riffer::Providers::FinishReason.new(reason: :error, raw: "failed")
+    else
+      Riffer::Providers::FinishReason.new(reason: :other, raw: status.to_s)
+    end
+  end
+
+  #--
+  #: (untyped) -> Riffer::Providers::FinishReason
+  def incomplete_finish_reason(response)
+    typed_response = response #: OpenAI::Models::Responses::Response
+    raw = typed_response.incomplete_details&.reason&.to_s
+
+    reason = case raw
+    when "max_output_tokens" then :length
+    when "content_filter" then :content_filter
+    else :other
+    end
+
+    Riffer::Providers::FinishReason.new(reason: reason, raw: raw || "incomplete")
+  end
+
+  #--
   #: (untyped) -> String
   def extract_content(response)
     typed_response = response #: OpenAI::Models::Responses::Response
@@ -123,7 +172,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
       tool_info: {}
@@ -155,8 +204,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           handle_web_search_status(event, status: "completed", yielder: yielder)
         when :"response.output_item.done"
           handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
-        when :"response.completed"
-          handle_response_completed(event, state: current_state, yielder: yielder)
+        when :"response.completed", :"response.incomplete", :"response.failed"
+          handle_response_finished(event, state: current_state, yielder: yielder)
         end
       end
     ensure
@@ -168,7 +217,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_item_added_function_call(event, state:, yielder:)
     state[:tool_info][event.item.id] = {
       name: decode_tool_name(event.item.name, tools: @current_tools),
@@ -177,31 +226,31 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDelta.new(event.delta)
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_text_done(event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(event.text)
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_summary_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.delta)
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_summary_text_done(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(event.text)
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_function_call_arguments_delta(event, state:, yielder:)
     tracked = state[:tool_info][event.item_id] || {}
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
@@ -212,7 +261,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_function_call_arguments_done(event, state:, yielder:)
     tracked = state[:tool_info][event.item_id] || {}
     yielder << Riffer::StreamEvents::ToolCallDone.new(
@@ -224,22 +273,27 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_response_completed(event, state:, yielder:)
-    usage = event.response&.usage
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_response_finished(event, state:, yielder:)
+    response = event.response
+    return unless response
+
+    yield_finish_reason(yielder, build_finish_reason(response))
+
+    usage = response.usage
     return unless usage
 
     yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: build_token_usage(usage))
   end
 
   #--
-  #: (untyped, status: String, yielder: Enumerator::Yielder) -> void
+  #: (untyped, status: String, yielder: Riffer::Providers::_EventSink) -> void
   def handle_web_search_status(_event, status:, yielder:)
     yielder << Riffer::StreamEvents::WebSearchStatus.new(status)
   end
 
   #--
-  #: (untyped, yielder: Enumerator::Yielder) -> void
+  #: (untyped, yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_item_done_web_search(event, yielder:)
     action = event.item.action
     case action

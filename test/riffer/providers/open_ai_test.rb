@@ -5,6 +5,81 @@ require "test_helper"
 describe Riffer::Providers::OpenAI do
   let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::OpenAI.semconv_provider_name).must_equal "openai"
+    end
+  end
+
+  describe "finish reasons" do
+    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+
+    it "derives stop from a completed response without tool calls" do
+      response = Struct.new(:status, :output).new(:completed, [])
+      finish_reason = provider.send(:build_finish_reason, response)
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:stop, "completed"]
+    end
+
+    it "derives length from an incomplete response over max tokens" do
+      details = Struct.new(:reason).new(:max_output_tokens)
+      response = Struct.new(:status, :incomplete_details).new(:incomplete, details)
+      finish_reason = provider.send(:build_finish_reason, response)
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:length, "max_output_tokens"]
+    end
+
+    it "derives content_filter from a filtered incomplete response" do
+      details = Struct.new(:reason).new(:content_filter)
+      response = Struct.new(:status, :incomplete_details).new(:incomplete, details)
+      expect(provider.send(:build_finish_reason, response).reason).must_equal :content_filter
+    end
+
+    it "derives other from an incomplete response without details" do
+      response = Struct.new(:status, :incomplete_details).new(:incomplete, nil)
+      finish_reason = provider.send(:build_finish_reason, response)
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "incomplete"]
+    end
+
+    it "derives error from a failed response" do
+      response = Struct.new(:status).new(:failed)
+      expect(provider.send(:build_finish_reason, response).reason).must_equal :error
+    end
+
+    it "returns nil without a status" do
+      response = Struct.new(:status).new(nil)
+      expect(provider.send(:build_finish_reason, response)).must_be_nil
+    end
+
+    it "extracts the finish reason when generating" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
+        expect(result.finish_reason).must_equal :stop
+      end
+    end
+
+    it "derives tool_calls when the response carries tool calls" do
+      tool = Class.new(Riffer::Tool) do
+        identifier "get_weather"
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+
+      VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
+        result = provider.generate_text(prompt: "What is the weather in Toronto?", model: "gpt-5-mini", tools: [tool])
+        expect(result.finish_reason).must_equal :tool_calls
+      end
+    end
+
+    it "emits a FinishReasonDone event when streaming" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
+        events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+        expect(done.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe "#initialize" do
     it "creates OpenAI client with api_key" do
       provider = Riffer::Providers::OpenAI.new(api_key: api_key)
