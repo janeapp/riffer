@@ -20,11 +20,19 @@ class Riffer::Tools::Runtime
   #--
   #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:, assistant_message: nil)
+    # Each Runner worker runs in its own thread/fiber, where the OTEL context
+    # starts empty — capture here so the execute_tool span parents correctly.
+    trace_context = Riffer::Tracing.current_context
     @runner.map(tool_calls, context: context) do |tool_call|
-      result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
-        dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
+      Riffer::Tracing.with_context(trace_context) do
+        in_tool_span(tool_call) do |span|
+          result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
+            dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
+          end
+          record_tool_outcome(span, result)
+          [tool_call, result]
+        end
       end
-      [tool_call, result]
     end
   end
 
@@ -82,5 +90,63 @@ class Riffer::Tools::Runtime
     return {} if arguments.nil? || arguments.empty?
 
     JSON.parse(arguments, symbolize_names: true)
+  end
+
+  # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
+  #--
+  #: [R] (Riffer::Messages::Assistant::ToolCall) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> R } -> R
+  def in_tool_span(tool_call)
+    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call), kind: :internal) do |span|
+      capture_tool_arguments(span, tool_call)
+      yield span
+    rescue => error
+      # The backend records the exception and error status on the re-raise;
+      # error.type is the one semconv attribute it doesn't set.
+      span.set_attribute("error.type", error.class.name)
+      raise
+    end
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::ToolCall) -> Hash[String, untyped]
+  def tool_span_attributes(tool_call)
+    {
+      "gen_ai.operation.name" => "execute_tool",
+      "gen_ai.tool.name" => tool_call.name,
+      "gen_ai.tool.call.id" => tool_call.call_id
+    }
+  end
+
+  # A returned error Response is a handled outcome, so its status stays unset —
+  # an error span status is reserved for a raised exception.
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tools::Response) -> void
+  def record_tool_outcome(span, result)
+    error_type = result.error_type
+    span.set_attribute("error.type", error_type.to_s) if error_type
+    capture_tool_result(span, result)
+  end
+
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Messages::Assistant::ToolCall) -> void
+  def capture_tool_arguments(span, tool_call)
+    return unless capture_tool_content?(span)
+
+    arguments = tool_call.arguments
+    span.set_attribute("gen_ai.tool.call.arguments", arguments) if arguments
+  end
+
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tools::Response) -> void
+  def capture_tool_result(span, result)
+    return unless capture_tool_content?(span)
+
+    span.set_attribute("gen_ai.tool.call.result", result.content)
+  end
+
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> bool
+  def capture_tool_content?(span)
+    Riffer.config.tracing.capture_messages && span.recording?
   end
 end
