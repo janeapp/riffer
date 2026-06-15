@@ -16,6 +16,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   DEFAULT_READ_TIMEOUT: Integer
 
+  FINISH_REASONS: Hash[String, Symbol]
+
   # The GenAI semconv well-known provider name.
   # --
   # : () -> String
@@ -47,6 +49,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
   def extract_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
 
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
+
+  # Gemini reports STOP even when the candidate carries functionCall parts,
+  # so tool-call presence overrides the raw value.
+  # --
+  # : (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
+  def build_finish_reason: (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
+
   # Gemini reports thinking tokens outside +candidatesTokenCount+;
   # TokenUsage's output includes them.
   # --
@@ -54,8 +66,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def build_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
 
   # --
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

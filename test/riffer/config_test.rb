@@ -206,6 +206,22 @@ describe Riffer::Config do
       expect { config.tracing.enabled = "yes" }.must_raise Riffer::ArgumentError
     end
 
+    it "initializes capture_messages to false" do
+      config = Riffer::Config.new
+      expect(config.tracing.capture_messages).must_equal false
+    end
+
+    it "coerces a 'true' string for capture_messages" do
+      config = Riffer::Config.new
+      config.tracing.capture_messages = "true"
+      expect(config.tracing.capture_messages).must_equal true
+    end
+
+    it "raises for an unrecognized capture_messages value" do
+      config = Riffer::Config.new
+      expect { config.tracing.capture_messages = "yes" }.must_raise Riffer::ArgumentError
+    end
+
     it "allows setting tracer_provider to nil" do
       config = Riffer::Config.new
       config.tracing.tracer_provider = nil

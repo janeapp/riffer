@@ -11,6 +11,54 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "finish reasons" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1") }
+
+    it "normalizes end_turn to stop" do
+      expect(provider.send(:build_finish_reason, "end_turn").reason).must_equal :stop
+    end
+
+    it "normalizes max_tokens to length" do
+      expect(provider.send(:build_finish_reason, "max_tokens").reason).must_equal :length
+    end
+
+    it "normalizes tool_use to tool_calls" do
+      expect(provider.send(:build_finish_reason, "tool_use").reason).must_equal :tool_calls
+    end
+
+    it "normalizes guardrail_intervened to content_filter" do
+      expect(provider.send(:build_finish_reason, "guardrail_intervened").reason).must_equal :content_filter
+    end
+
+    it "normalizes content_filtered to content_filter" do
+      expect(provider.send(:build_finish_reason, "content_filtered").reason).must_equal :content_filter
+    end
+
+    it "normalizes unknown values to other and keeps the raw value" do
+      finish_reason = provider.send(:build_finish_reason, "mystery")
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "mystery"]
+    end
+
+    it "returns nil without a stop reason" do
+      expect(provider.send(:build_finish_reason, nil)).must_be_nil
+    end
+
+    it "extracts the finish reason when generating" do
+      VCR.use_cassette("Riffer_Providers_AmazonBedrock/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        result = provider.generate_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+        expect(result.finish_reason).must_equal :stop
+      end
+    end
+
+    it "emits a FinishReasonDone event when streaming" do
+      VCR.use_cassette("Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_stream_events") do
+        events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+        expect(done.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe ".skills_adapter" do
     it "returns XmlAdapter for a bare anthropic.* model id" do
       adapter = Riffer::Providers::AmazonBedrock.skills_adapter("anthropic.claude-3-5-sonnet-20241022-v2:0")

@@ -108,8 +108,4 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
   def record_run_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
-
-  # --
-  # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
-  def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
 end

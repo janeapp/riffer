@@ -17,6 +17,18 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   DEFAULT_OPEN_TIMEOUT = 10 #: Integer
   DEFAULT_READ_TIMEOUT = 60 #: Integer
 
+  FINISH_REASONS = {
+    "STOP" => :stop,
+    "MAX_TOKENS" => :length,
+    "SAFETY" => :content_filter,
+    "RECITATION" => :content_filter,
+    "BLOCKLIST" => :content_filter,
+    "PROHIBITED_CONTENT" => :content_filter,
+    "SPII" => :content_filter,
+    "IMAGE_SAFETY" => :content_filter,
+    "MALFORMED_FUNCTION_CALL" => :error
+  }.freeze #: Hash[String, Symbol]
+
   # The GenAI semconv well-known provider name.
   #--
   #: () -> String
@@ -113,6 +125,27 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     build_token_usage(usage)
   end
 
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason(response)
+    parts = response.dig(:candidates, 0, :content, :parts)
+    has_function_call = !!parts&.any? { |part| part[:functionCall] }
+    build_finish_reason(response.dig(:candidates, 0, :finishReason), tool_calls: has_function_call)
+  end
+
+  # Gemini reports STOP even when the candidate carries functionCall parts,
+  # so tool-call presence overrides the raw value.
+  #--
+  #: (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
+  def build_finish_reason(raw_reason, tool_calls:)
+    return nil unless raw_reason
+
+    raw = raw_reason.to_s
+    reason = FINISH_REASONS.fetch(raw, :other)
+    reason = :tool_calls if reason == :stop && tool_calls
+    Riffer::Providers::FinishReason.new(reason: reason, raw: raw)
+  end
+
   # Gemini reports thinking tokens outside +candidatesTokenCount+;
   # TokenUsage's output includes them.
   #--
@@ -126,7 +159,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     model = params[:model]
     body = params.except(:model)
@@ -140,6 +173,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     full_text = +""
     buffer = +""
+    raw_finish_reason = nil #: String?
+    saw_function_call = false
 
     process_chunk = lambda do |chunk|
       buffer << chunk
@@ -161,6 +196,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
             yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
           elsif part[:functionCall]
             fc = part[:functionCall]
+            saw_function_call = true
             call_id = "gemini_call_#{SecureRandom.hex(12)}"
             arguments = encode_tool_arguments(fc[:args])
             yielder << Riffer::StreamEvents::ToolCallDone.new(
@@ -171,6 +207,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
             )
           end
         end
+
+        raw_finish_reason = parsed.dig(:candidates, 0, :finishReason) || raw_finish_reason
 
         usage = parsed[:usageMetadata]
         if usage && usage[:candidatesTokenCount]
@@ -192,6 +230,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     end
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
+    yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
   end
 
   #--

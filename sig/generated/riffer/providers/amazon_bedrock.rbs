@@ -7,6 +7,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # cross-region (+us.anthropic.claude-...+) ids.
   ANTHROPIC_MODEL_PATTERN: Regexp
 
+  FINISH_REASONS: Hash[String, Symbol]
+
   # Returns the skill adapter for the Bedrock model — XML for Anthropic models
   # (which Bedrock hosts alongside other vendors'), else Markdown.
   # --
@@ -54,6 +56,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def build_token_usage: (untyped) -> Riffer::Providers::TokenUsage
 
   # --
+  # : (untyped) -> Riffer::Providers::FinishReason?
+  def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
+
+  # --
+  # : (untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
+
+  # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String
 
@@ -62,8 +72,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
-  # : (Hash[Symbol, untyped], Enumerator::Yielder) -> void
-  def execute_stream: (Hash[Symbol, untyped], Enumerator::Yielder) -> void
+  # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
+  def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
   # Re-raises a Bedrock stream-exception event as the matching
   # +Aws::BedrockRuntime::Errors+ class. ConverseStream delivers API errors on
@@ -74,28 +84,28 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def raise_if_stream_exception!: (untyped) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_start_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_delta_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_delta_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_delta_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_delta_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
-  def handle_metadata_usage: (untyped, state: Hash[Symbol, untyped], yielder: Enumerator::Yielder) -> void
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_metadata_usage: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

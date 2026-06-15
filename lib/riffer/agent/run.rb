@@ -116,6 +116,7 @@ module Riffer::Agent::Run
     accumulated_content = ""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
+    accumulated_finish_reason = nil #: Symbol?
 
     call_llm_stream(agent).each do |event|
       stream_yielder << event
@@ -133,13 +134,16 @@ module Riffer::Agent::Run
         )
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage
+      when Riffer::StreamEvents::FinishReasonDone
+        accumulated_finish_reason = event.finish_reason
       end
     end
 
     Riffer::Messages::Assistant.new(
       accumulated_content,
       tool_calls: accumulated_tool_calls,
-      token_usage: accumulated_token_usage
+      token_usage: accumulated_token_usage,
+      finish_reason: accumulated_finish_reason
     )
   end
 
@@ -328,7 +332,7 @@ module Riffer::Agent::Run
   #: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
   def record_run_outcome(span, response)
     span.set_attribute("riffer.steps", response.steps)
-    record_usage(span, response.token_usage)
+    Riffer::Tracing.record_usage(span, response.token_usage)
 
     span.set_attribute("riffer.interrupt.reason", response.interrupt_reason.to_s) if response.interrupt_reason
 
@@ -339,16 +343,5 @@ module Riffer::Agent::Run
     span.set_attribute("riffer.tripwire.guardrail", guardrail_name) if guardrail_name
     span.set_attribute("riffer.tripwire.reason", tripwire.reason)
     span.set_attribute("riffer.tripwire.phase", tripwire.phase.to_s)
-  end
-
-  #--
-  #: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
-  def record_usage(span, usage)
-    return unless usage
-
-    span.set_attribute("gen_ai.usage.input_tokens", usage.input_tokens)
-    span.set_attribute("gen_ai.usage.output_tokens", usage.output_tokens)
-    span.set_attribute("gen_ai.usage.cache_read.input_tokens", usage.cache_read_tokens) if usage.cache_read_tokens
-    span.set_attribute("gen_ai.usage.cache_creation.input_tokens", usage.cache_write_tokens) if usage.cache_write_tokens
   end
 end

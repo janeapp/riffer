@@ -11,6 +11,54 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "finish reasons" do
+    let(:provider) { Riffer::Providers::Gemini.new(api_key: api_key) }
+
+    it "normalizes STOP to stop" do
+      expect(provider.send(:build_finish_reason, "STOP", tool_calls: false).reason).must_equal :stop
+    end
+
+    it "normalizes STOP to tool_calls when the candidate carries function calls" do
+      expect(provider.send(:build_finish_reason, "STOP", tool_calls: true).reason).must_equal :tool_calls
+    end
+
+    it "normalizes MAX_TOKENS to length" do
+      expect(provider.send(:build_finish_reason, "MAX_TOKENS", tool_calls: false).reason).must_equal :length
+    end
+
+    it "normalizes SAFETY to content_filter" do
+      expect(provider.send(:build_finish_reason, "SAFETY", tool_calls: false).reason).must_equal :content_filter
+    end
+
+    it "normalizes MALFORMED_FUNCTION_CALL to error" do
+      expect(provider.send(:build_finish_reason, "MALFORMED_FUNCTION_CALL", tool_calls: false).reason).must_equal :error
+    end
+
+    it "normalizes unknown values to other and keeps the raw value" do
+      finish_reason = provider.send(:build_finish_reason, "LANGUAGE", tool_calls: false)
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "LANGUAGE"]
+    end
+
+    it "returns nil without a finish reason" do
+      expect(provider.send(:build_finish_reason, nil, tool_calls: false)).must_be_nil
+    end
+
+    it "extracts the finish reason when generating" do
+      VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
+        expect(result.finish_reason).must_equal :stop
+      end
+    end
+
+    it "emits a FinishReasonDone event when streaming" do
+      VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
+        events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+        expect(done.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe "#initialize" do
     it "creates Gemini client with an api_key" do
       provider = Riffer::Providers::Gemini.new(api_key: api_key)
