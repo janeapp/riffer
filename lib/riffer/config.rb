@@ -3,14 +3,14 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
-  AmazonBedrock = Struct.new(:api_token, :region, keyword_init: true)
-  Anthropic = Struct.new(:api_key, keyword_init: true)
-  AzureOpenAI = Struct.new(:api_key, :endpoint, keyword_init: true)
-  Gemini = Struct.new(:api_key, :open_timeout, :read_timeout, keyword_init: true)
-  OpenAI = Struct.new(:api_key, keyword_init: true)
-  OpenRouter = Struct.new(:api_key, keyword_init: true)
-  Evals = Struct.new(:judge_model, keyword_init: true)
-  Mcp = Struct.new(:credentials, :discovery_runner, keyword_init: true)
+  AmazonBedrock = Struct.new(:api_token, :region)
+  Anthropic = Struct.new(:api_key)
+  AzureOpenAI = Struct.new(:api_key, :endpoint)
+  Gemini = Struct.new(:api_key, :open_timeout, :read_timeout)
+  OpenAI = Struct.new(:api_key)
+  OpenRouter = Struct.new(:api_key)
+  Evals = Struct.new(:judge_model)
+  Mcp = Struct.new(:credentials, :discovery_runner)
 
   # Skills-related global configuration.
   class Skills
