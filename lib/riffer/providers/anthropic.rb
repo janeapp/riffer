@@ -14,6 +14,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     Riffer::Skills::XmlAdapter
   end
 
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "anthropic"
+  end
+
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **options)

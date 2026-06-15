@@ -4,6 +4,11 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
+  # The GenAI semconv well-known provider name.
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
   # --
   # : (**untyped) -> void
   def initialize: (**untyped) -> void

@@ -20,6 +20,19 @@ class Riffer::Providers::Base
     Riffer::Skills::MarkdownAdapter
   end
 
+  # Returns the provider name stamped as <tt>gen_ai.provider.name</tt> on trace
+  # spans, ideally a GenAI semconv well-known value. Defaults to the snake_cased
+  # class name rather than raising like the abstract provider methods, so
+  # enabling tracing never breaks an otherwise-working custom provider.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    class_name = name
+    return "unknown" unless class_name
+
+    Riffer::Helpers::ClassNameConverter.convert(class_name.split("::").last.to_s)
+  end
+
   # Generates text using the provider.
   #
   #--

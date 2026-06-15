@@ -2,6 +2,9 @@
 
 require "test_helper"
 
+class BaseTestNamedProvider < Riffer::Providers::Base
+end
+
 describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
@@ -12,6 +15,16 @@ describe Riffer::Providers::Base do
 
     it "ignores the model argument" do
       expect(Riffer::Providers::Base.skills_adapter("anything/at-all")).must_equal Riffer::Skills::MarkdownAdapter
+    end
+  end
+
+  describe ".semconv_provider_name" do
+    it "derives the snake_cased class name by default" do
+      expect(BaseTestNamedProvider.semconv_provider_name).must_equal "base_test_named_provider"
+    end
+
+    it "falls back to unknown for anonymous classes" do
+      expect(Class.new(Riffer::Providers::Base).semconv_provider_name).must_equal "unknown"
     end
   end
 

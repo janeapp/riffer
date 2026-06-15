@@ -5,6 +5,12 @@ require "test_helper"
 describe Riffer::Providers::Gemini do
   let(:api_key) { ENV.fetch("GEMINI_API_KEY", "test_api_key") }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::Gemini.semconv_provider_name).must_equal "gcp.gemini"
+    end
+  end
+
   describe "#initialize" do
     it "creates Gemini client with an api_key" do
       provider = Riffer::Providers::Gemini.new(api_key: api_key)

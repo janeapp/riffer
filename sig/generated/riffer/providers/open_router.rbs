@@ -7,6 +7,11 @@
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL: String
 
+  # The GenAI semconv well-known provider name.
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
   # --
   # : (?api_key: String?, **untyped) -> void
   def initialize: (?api_key: String?, **untyped) -> void

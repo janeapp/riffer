@@ -19,6 +19,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer::Skills::MarkdownAdapter
   end
 
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "aws.bedrock"
+  end
+
   #--
   #: (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize(api_token: nil, region: nil, **options)

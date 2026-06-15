@@ -5,6 +5,12 @@ require "test_helper"
 describe Riffer::Providers::Mock do
   let(:provider) { Riffer::Providers::Mock.new }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::Mock.semconv_provider_name).must_equal "mock"
+    end
+  end
+
   describe ".skills_adapter" do
     it "returns XmlAdapter for a claude-* model name" do
       expect(Riffer::Providers::Mock.skills_adapter("claude-sonnet-4-6")).must_equal Riffer::Skills::XmlAdapter

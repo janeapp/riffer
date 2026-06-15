@@ -14,6 +14,11 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
 
+  # The GenAI semconv well-known provider name.
+  # --
+  # : () -> String
+  def self.semconv_provider_name: () -> String
+
   # Array of recorded method calls for assertions.
   attr_reader calls: Array[Hash[Symbol, untyped]]
 

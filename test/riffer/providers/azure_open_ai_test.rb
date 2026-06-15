@@ -6,6 +6,12 @@ describe Riffer::Providers::AzureOpenAI do
   let(:api_key) { ENV.fetch("AZURE_OPENAI_API_KEY", "test_api_key") }
   let(:endpoint) { ENV.fetch("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com/") }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::AzureOpenAI.semconv_provider_name).must_equal "azure.ai.openai"
+    end
+  end
+
   describe "#initialize" do
     it "creates Azure OpenAI client with api_key and endpoint" do
       provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)

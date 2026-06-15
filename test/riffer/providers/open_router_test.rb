@@ -5,6 +5,12 @@ require "test_helper"
 describe Riffer::Providers::OpenRouter do
   let(:api_key) { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::OpenRouter.semconv_provider_name).must_equal "openrouter"
+    end
+  end
+
   describe "#initialize" do
     it "creates a provider with an api_key kwarg" do
       provider = Riffer::Providers::OpenRouter.new(api_key: api_key)

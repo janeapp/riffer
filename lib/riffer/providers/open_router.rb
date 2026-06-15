@@ -10,6 +10,13 @@ require "json"
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL = "https://openrouter.ai/api/v1" #: String
 
+  # The GenAI semconv well-known provider name.
+  #--
+  #: () -> String
+  def self.semconv_provider_name
+    "openrouter"
+  end
+
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **options)

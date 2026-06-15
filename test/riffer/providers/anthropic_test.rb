@@ -15,6 +15,12 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe ".semconv_provider_name" do
+    it "returns the semconv well-known value" do
+      expect(Riffer::Providers::Anthropic.semconv_provider_name).must_equal "anthropic"
+    end
+  end
+
   describe "#initialize" do
     it "creates Anthropic client with an api_key" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)

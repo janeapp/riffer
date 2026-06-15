@@ -24,6 +24,10 @@ module Riffer::Agent::Run
   def run_loop: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
 
   # --
+  # : (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
+  def execute_run: (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
+
+  # --
   # : (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
   def accumulate_streamed_response: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
 
@@ -32,8 +36,8 @@ module Riffer::Agent::Run
   def record_modifications!: (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
-  def tripwire_response: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification]) -> Riffer::Agent::Response
+  # : (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def tripwire_response: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
   # --
   # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
@@ -60,12 +64,12 @@ module Riffer::Agent::Run
   def execute_pending_tool_calls: (Riffer::Agent) -> void
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
-  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> void
+  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> void
 
   # --
-  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
-  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Agent::Response) -> void } -> untyped
+  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
+  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
 
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
@@ -80,8 +84,8 @@ module Riffer::Agent::Run
   def merged_model_options: (Riffer::Agent) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
-  def build_response: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String]) -> Riffer::Agent::Response
+  # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def build_response: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.
@@ -92,4 +96,20 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
   def track_token_usage: (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void
+
+  # --
+  # : (Riffer::Providers::TokenUsage?, Riffer::Providers::TokenUsage?) -> Riffer::Providers::TokenUsage?
+  def sum_usage: (Riffer::Providers::TokenUsage?, Riffer::Providers::TokenUsage?) -> Riffer::Providers::TokenUsage?
+
+  # --
+  # : (Riffer::Agent) -> Hash[String, untyped]
+  def run_span_attributes: (Riffer::Agent) -> Hash[String, untyped]
+
+  # --
+  # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
+  def record_run_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
+
+  # --
+  # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
+  def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
 end
