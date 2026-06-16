@@ -82,6 +82,7 @@ The contract promise is: **when present**, a key carries the documented meaning 
 | `gen_ai.usage.output_tokens`               | int    | When the run made an LLM call that reported usage    |
 | `gen_ai.usage.cache_read.input_tokens`     | int    | When the provider reported cache reads               |
 | `gen_ai.usage.cache_creation.input_tokens` | int    | When the provider reported cache writes              |
+| `riffer.cost`                              | float  | When every call in the run was priced                |
 | `riffer.interrupt.reason`                  | string | On interrupt (e.g. approval needed, max steps)       |
 | `riffer.tripwire.guardrail`                | string | On a guardrail tripwire, when the guardrail is named |
 | `riffer.tripwire.reason`                   | string | On a guardrail tripwire                              |
@@ -111,6 +112,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | `gen_ai.usage.output_tokens`               | int      | When the provider reported usage                                              |
 | `gen_ai.usage.cache_read.input_tokens`     | int      | When the provider reported cache reads                                        |
 | `gen_ai.usage.cache_creation.input_tokens` | int      | When the provider reported cache writes                                       |
+| `riffer.cost`                              | float    | When the call's model was priced                                              |
 | `gen_ai.response.finish_reasons`           | string[] | When the provider reported a finish reason                                    |
 | `riffer.finish_reason.raw`                 | string   | When the raw value differs from the normalized one                            |
 | `gen_ai.input.messages`                    | string   | When `capture_messages` is on (JSON; see [capture](#message-content-capture)) |
@@ -152,11 +154,13 @@ invoke_agent weather-agent          INTERNAL
   riffer.steps           = 2
   gen_ai.usage.input_tokens  = 1240
   gen_ai.usage.output_tokens = 86
+  riffer.cost                = 0.0423
 ├─ chat gpt-4                       CLIENT
 │    gen_ai.request.model            = gpt-4
 │    gen_ai.response.finish_reasons  = ["tool_calls"]
 │    gen_ai.usage.input_tokens       = 612
 │    gen_ai.usage.output_tokens      = 48
+│    riffer.cost                     = 0.0212
 ├─ execute_tool get_weather         INTERNAL
 │    gen_ai.tool.name     = get_weather
 │    gen_ai.tool.call.id  = tc_42
@@ -165,9 +169,10 @@ invoke_agent weather-agent          INTERNAL
      gen_ai.response.finish_reasons  = ["stop"]
      gen_ai.usage.input_tokens       = 628
      gen_ai.usage.output_tokens      = 38
+     riffer.cost                     = 0.0211
 ```
 
-## Token usage
+## Token usage and cost
 
 `gen_ai.usage.input_tokens` is the **total** prompt tokens for the call, **cache-inclusive**, per the GenAI semantic conventions. `gen_ai.usage.cache_read.input_tokens` and `gen_ai.usage.cache_creation.input_tokens` are **subsets of that total** — the portion served from, or written to, the provider's prompt cache. They are _not_ additional tokens; do not add them on top of `input_tokens`.
 
@@ -180,6 +185,14 @@ cache_read.input_tokens      =  800   → 800 of the 1000 were cache hits
 Riffer normalizes this across providers, so the number may differ from a provider's native API field. Anthropic's raw `input_tokens` _excludes_ the cache buckets — Riffer folds them in. OpenAI's already includes them. Either way the span value means the same thing.
 
 **Don't double-count across spans.** Usage on a `chat` span is per-call; usage on the enclosing `invoke_agent` span is the run total already summed across every `chat`. Aggregate one level or the other, never both.
+
+### Cost
+
+`riffer.cost` is the modeled cost of one call (on a `chat` span) or a whole run (on the `invoke_agent` span). It lives in Riffer's own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats `gen_ai.*` for it. The attribute appears only when you have configured pricing for the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no `riffer.cost`. See [Configuration — Pricing](10_CONFIGURATION.md#pricing) for the rates.
+
+The value is **unitless on the wire** — Riffer attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a `riffer.cost` of `0.0123` means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.
+
+**Run cost is all-or-nothing.** The `riffer.cost` on an `invoke_agent` span is the sum of its per-call costs, present only when **every** call in the run was priced. A single unpriced call makes the run-level `riffer.cost` absent — costs sum with nil as absorbing, so Riffer reports no run total rather than a partial one that silently under-reports spend. The priced `chat` spans still each carry their own `riffer.cost`; sum those yourself if a partial is what you want.
 
 ## Message content capture
 
@@ -196,7 +209,7 @@ When enabled, content is serialized as GenAI-semconv JSON strings. File attachme
 The span and attribute shape is a public, versioned contract, in two tiers:
 
 - **`gen_ai.*`** tracks the OpenTelemetry GenAI semantic conventions, pinned to schema version `1.37.0`. That convention is still "Development" status upstream and its attribute names may change; Riffer absorbs such renames deliberately in a release, never silently, with a CHANGELOG entry.
-- **`riffer.*`** is Riffer-owned (`riffer.steps`, `riffer.interrupt.reason`, `riffer.tripwire.*`, `riffer.finish_reason.raw`) and changes only through a normal version bump and CHANGELOG entry.
+- **`riffer.*`** is Riffer-owned (`riffer.steps`, `riffer.cost`, `riffer.interrupt.reason`, `riffer.tripwire.*`, `riffer.finish_reason.raw`) and changes only through a normal version bump and CHANGELOG entry.
 
 The semantic-convention schema version is a documented pin rather than a span attribute — the OpenTelemetry Ruby API can't attach a schema URL to a tracer. The runtime version signal is the instrumentation scope: every span carries scope name `riffer` at the gem version that emitted it. Pin the Riffer version your dashboards depend on, and watch the CHANGELOG for tracing entries before upgrading.
 

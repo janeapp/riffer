@@ -300,6 +300,12 @@ describe Riffer::Providers::Base do
       expect(chat_span.attributes).wont_include "gen_ai.usage.input_tokens"
     end
 
+    it "stamps the cost when the call carries one" do
+      provider.stub_response("Hi!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.0021))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(chat_span.attributes["riffer.cost"]).must_equal 0.0021
+    end
+
     it "records the normalized finish reason" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
       expect(chat_span.attributes["gen_ai.response.finish_reasons"]).must_equal ["stop"]
@@ -387,6 +393,12 @@ describe Riffer::Providers::Base do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
       usage = chat_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens")
       expect(usage).must_equal({"gen_ai.usage.input_tokens" => 100, "gen_ai.usage.output_tokens" => 50})
+    end
+
+    it "stamps the cost from the stream" do
+      provider.stub_response("Hi!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.0021))
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      expect(chat_span.attributes["riffer.cost"]).must_equal 0.0021
     end
 
     it "records the finish reason from the stream" do

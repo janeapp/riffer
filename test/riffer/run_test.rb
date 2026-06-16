@@ -3012,6 +3012,22 @@ describe Riffer::Agent::Run do
       expect(run_span.attributes).wont_include "gen_ai.usage.input_tokens"
     end
 
+    it "sums per-call cost onto the run span" do
+      agent = agent_class_with_tools.new
+      agent.provider.stub_response("", tool_calls: [{name: "run_tracing_tool", arguments: "{}"}], token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.5))
+      agent.provider.stub_response("Done!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75, cost: 0.25))
+      agent.generate("Call the tool")
+      expect(run_span.attributes["riffer.cost"]).must_equal 0.75
+    end
+
+    it "omits run cost when any call carries no cost" do
+      agent = agent_class_with_tools.new
+      agent.provider.stub_response("", tool_calls: [{name: "run_tracing_tool", arguments: "{}"}], token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.5))
+      agent.provider.stub_response("Done!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75))
+      agent.generate("Call the tool")
+      expect(run_span.attributes).wont_include "riffer.cost"
+    end
+
     it "records cache token attributes when reported" do
       agent = agent_class.new
       agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cache_read_tokens: 30, cache_write_tokens: 10))
