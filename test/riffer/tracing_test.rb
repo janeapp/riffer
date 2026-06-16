@@ -133,6 +133,30 @@ describe Riffer::Tracing do
       Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, nil) }
       expect(exporter.finished_spans.first.attributes).must_equal({})
     end
+
+    it "stamps riffer.cost when the usage carries a cost" do
+      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+      exporter = install_in_memory_tracer_provider
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.0123)
+      Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, usage) }
+      expect(exporter.finished_spans.first.attributes["riffer.cost"]).must_equal 0.0123
+    end
+
+    it "stamps a zero cost rather than treating it as absent" do
+      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+      exporter = install_in_memory_tracer_provider
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.0)
+      Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, usage) }
+      expect(exporter.finished_spans.first.attributes["riffer.cost"]).must_equal 0.0
+    end
+
+    it "omits riffer.cost when the usage carries no cost" do
+      skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+      exporter = install_in_memory_tracer_provider
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, usage) }
+      expect(exporter.finished_spans.first.attributes).wont_include "riffer.cost"
+    end
   end
 
   describe "#current_context" do
