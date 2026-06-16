@@ -171,11 +171,12 @@ class Riffer::Config
     # : () -> void
     def initialize: () -> void
 
-    # Registers per-million-token rates for a +provider/model+ id. Raises
+    # Registers per-million-token rates for a +provider/model+ id, or an array
+    # of ids that share one set of rates (a model family). Raises
     # Riffer::ArgumentError on a malformed id or a negative/non-numeric rate.
     # --
-    # : (String, input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
-    def set: (String, input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+    # : ((String | Array[String]), input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+    def set: (String | Array[String], input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
 
     # Returns the rates registered for a +provider/model+ id.
     # --

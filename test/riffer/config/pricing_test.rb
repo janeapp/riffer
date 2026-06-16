@@ -41,6 +41,23 @@ describe Riffer::Config::Pricing do
       expect(pricing.rates_for("openai/gpt-4").input).must_equal 10.0
     end
 
+    it "registers the same rates for every id when given an array" do
+      pricing = Riffer::Config::Pricing.new
+      pricing.set(["openai/gpt-4", "openai/gpt-4-0613"], input: 30.0, output: 60.0)
+      expect(pricing.rates_for("openai/gpt-4-0613").input).must_equal 30.0
+    end
+
+    it "raises when given an empty array of ids" do
+      pricing = Riffer::Config::Pricing.new
+      expect { pricing.set([], input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
+    end
+
+    it "registers nothing when any id in the array is malformed" do
+      pricing = Riffer::Config::Pricing.new
+      expect { pricing.set(["openai/gpt-4", "bad"], input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError
+      expect(pricing.rates_for("openai/gpt-4")).must_be_nil
+    end
+
     it "raises when the model id has no provider segment" do
       pricing = Riffer::Config::Pricing.new
       expect { pricing.set("gpt-4", input: 30.0, output: 60.0) }.must_raise Riffer::ArgumentError

@@ -128,12 +128,15 @@ Riffer.configure do |config|
   # Rates are per million tokens, keyed by the same "provider/model" id you give the agent.
   config.pricing.set("anthropic/claude-sonnet-4-6", input: 3.0, output: 15.0, cache_read: 0.30, cache_write: 3.75)
   config.pricing.set("openai/gpt-4", input: 30.0, output: 60.0)
+
+  # Pass an array to share one set of rates across a model family:
+  config.pricing.set(["openai/gpt-4", "openai/gpt-4-0613"], input: 30.0, output: 60.0)
 end
 ```
 
-| Argument       | Description                                                                                                                               |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `model`        | The exact `provider/model` id (e.g. `"openai/gpt-4"`) — the same string you pass to `model`. No alias matching; raises on a malformed id. |
+| Argument       | Description                                                                                                                                                              |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `models`       | A `provider/model` id (e.g. `"openai/gpt-4"`) — the same string you pass to `model` — or an array of ids that share one set of rates. No alias matching; raises on a malformed id. |
 | `input:`       | Price per **million** input tokens. Required. Applies to the uncached portion of `input_tokens`.                                          |
 | `output:`      | Price per **million** output tokens. Required.                                                                                            |
 | `cache_read:`  | Price per million cache-read tokens. Optional — when omitted, cache reads bill at the `input:` rate.                                      |

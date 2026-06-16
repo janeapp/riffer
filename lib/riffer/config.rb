@@ -158,18 +158,23 @@ class Riffer::Config
       @rates = {}
     end
 
-    # Registers per-million-token rates for a +provider/model+ id. Raises
+    # Registers per-million-token rates for a +provider/model+ id, or an array
+    # of ids that share one set of rates (a model family). Raises
     # Riffer::ArgumentError on a malformed id or a negative/non-numeric rate.
     #--
-    #: (String, input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
-    def set(model, input:, output:, cache_read: nil, cache_write: nil)
-      validate_model!(model)
-      @rates[model] = Rates.new(
+    #: ((String | Array[String]), input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+    def set(models, input:, output:, cache_read: nil, cache_write: nil)
+      ids = models.is_a?(Array) ? models : [models]
+      raise Riffer::ArgumentError, "at least one model id is required" if ids.empty?
+      ids.each { |id| validate_model!(id) }
+
+      rates = Rates.new(
         input: coerce_rate(input, "input"),
         output: coerce_rate(output, "output"),
         cache_read: coerce_optional_rate(cache_read, "cache_read"),
         cache_write: coerce_optional_rate(cache_write, "cache_write")
       )
+      ids.each { |id| @rates[id] = rates }
     end
 
     # Returns the rates registered for a +provider/model+ id.
