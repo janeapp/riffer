@@ -141,7 +141,7 @@ end
 
 Because the cache buckets are subsets of `input_tokens`, the cost formula subtracts them before applying the input rate:
 
-```
+```text
 cost = (input − cache_read − cache_write) × input_rate
      + cache_read  × cache_read_rate
      + cache_write × cache_write_rate
