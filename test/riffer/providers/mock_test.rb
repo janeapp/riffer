@@ -415,4 +415,33 @@ describe Riffer::Providers::Mock do
       end
     end
   end
+
+  describe "pricing" do
+    before { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
+    after { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
+
+    it "attaches cost to token usage when the model is priced" do
+      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
+      provider = Riffer::Providers::Mock.new
+      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      message = provider.generate_text(prompt: "x", model: "riffer-1")
+      expect(message.token_usage.cost).must_equal 18.0
+    end
+
+    it "leaves cost nil when the model is unpriced" do
+      provider = Riffer::Providers::Mock.new
+      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      message = provider.generate_text(prompt: "x", model: "riffer-1")
+      expect(message.token_usage.cost).must_be_nil
+    end
+
+    it "carries cost on the streamed TokenUsageDone event" do
+      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
+      provider = Riffer::Providers::Mock.new
+      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      events = provider.stream_text(prompt: "x", model: "riffer-1").to_a
+      usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+      expect(usage_done.token_usage.cost).must_equal 18.0
+    end
+  end
 end

@@ -2,6 +2,8 @@
 
 # Registry for finding provider classes by identifier.
 module Riffer::Providers::Repository
+  @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
+
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Finds a provider class by identifier.
@@ -9,4 +11,9 @@ module Riffer::Providers::Repository
   # --
   # : ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
   def find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
+
+  # Returns the registry identifier for a provider class, or nil when unregistered.
+  # --
+  # : (singleton(Riffer::Providers::Base)) -> Symbol?
+  def key_for: (singleton(Riffer::Providers::Base)) -> Symbol?
 end

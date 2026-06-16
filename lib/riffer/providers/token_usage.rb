@@ -16,13 +16,17 @@ class Riffer::Providers::TokenUsage
   # Subset of +input_tokens+ read from the provider's prompt cache, when the provider reports it.
   attr_reader :cache_read_tokens #: Integer?
 
+  # Cost of the call, set when the model is priced. For observability, not billing.
+  attr_reader :cost #: Float?
+
   #--
-  #: (input_tokens: Integer, output_tokens: Integer, ?cache_write_tokens: Integer?, ?cache_read_tokens: Integer?) -> void
-  def initialize(input_tokens:, output_tokens:, cache_write_tokens: nil, cache_read_tokens: nil)
+  #: (input_tokens: Integer, output_tokens: Integer, ?cache_write_tokens: Integer?, ?cache_read_tokens: Integer?, ?cost: Float?) -> void
+  def initialize(input_tokens:, output_tokens:, cache_write_tokens: nil, cache_read_tokens: nil, cost: nil)
     @input_tokens = input_tokens
     @output_tokens = output_tokens
     @cache_write_tokens = cache_write_tokens
     @cache_read_tokens = cache_read_tokens
+    @cost = cost
   end
 
   # Returns the total number of tokens (input + output).
@@ -42,17 +46,19 @@ class Riffer::Providers::TokenUsage
       input_tokens: input_tokens + other.input_tokens,
       output_tokens: output_tokens + other.output_tokens,
       cache_write_tokens: add_nullable(cache_write_tokens, other.cache_write_tokens),
-      cache_read_tokens: add_nullable(cache_read_tokens, other.cache_read_tokens)
+      cache_read_tokens: add_nullable(cache_read_tokens, other.cache_read_tokens),
+      cost: add_cost(cost, other.cost)
     )
   end
 
-  # Converts the token usage to a hash; cache tokens are omitted when nil.
+  # Converts the token usage to a hash; cache tokens and cost are omitted when nil.
   #--
-  #: () -> Hash[Symbol, Integer]
+  #: () -> Hash[Symbol, (Integer | Float)]
   def to_h
-    hash = {input_tokens: input_tokens, output_tokens: output_tokens}
+    hash = {input_tokens: input_tokens, output_tokens: output_tokens} #: Hash[Symbol, (Integer | Float)]
     hash[:cache_write_tokens] = cache_write_tokens if cache_write_tokens
     hash[:cache_read_tokens] = cache_read_tokens if cache_read_tokens
+    hash[:cost] = cost if cost
     hash
   end
 
@@ -63,5 +69,14 @@ class Riffer::Providers::TokenUsage
   def add_nullable(a, b)
     return nil if a.nil? && b.nil?
     (a || 0) + (b || 0)
+  end
+
+  # nil is absorbing, not zero: one unpriced call makes the run total nil
+  # rather than silently under-reporting.
+  #--
+  #: (Float?, Float?) -> Float?
+  def add_cost(a, b)
+    return nil if a.nil? || b.nil?
+    a + b
   end
 end

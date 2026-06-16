@@ -92,11 +92,11 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    Riffer::Providers::TokenUsage.new(
+    apply_pricing(Riffer::Providers::TokenUsage.new(
       input_tokens: usage.prompt_tokens,
       output_tokens: usage.completion_tokens,
       cache_read_tokens: usage.prompt_tokens_details&.cached_tokens
-    )
+    ))
   end
 
   #--
