@@ -29,8 +29,8 @@ module Riffer::Tracing
   # : [R] (untyped) { () -> R } -> R
   def with_context: [R] (untyped) { () -> R } -> R
 
-  # Stamps the <tt>gen_ai.usage.*</tt> attributes from a TokenUsage onto the
-  # span.
+  # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
+  # when the model was priced, <tt>riffer.cost</tt>.
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Providers::TokenUsage?) -> void
   def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
