@@ -5,6 +5,8 @@
 # +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
 # class orchestrates them.
 class Riffer::Providers::Base
+  @current_model: String?
+
   @current_tools: Array[singleton(Riffer::Tool)]
 
   WIRE_SEPARATOR: String
@@ -63,6 +65,13 @@ class Riffer::Providers::Base
   # --
   # : (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage: (untyped) -> Riffer::Providers::TokenUsage?
+
+  # : (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
+  def apply_pricing: (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
+
+  # --
+  # : () -> Riffer::Config::Pricing::Rates?
+  def pricing_rates: () -> Riffer::Config::Pricing::Rates?
 
   # Defaults to nil rather than raising — finish reasons are optional, so
   # providers that don't report one stay valid.

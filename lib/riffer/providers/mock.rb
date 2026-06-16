@@ -106,7 +106,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
-    response[:token_usage]
+    usage = response[:token_usage]
+    usage && apply_pricing(usage)
   end
 
   #--
@@ -170,7 +171,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
 
     yielder << Riffer::StreamEvents::TextDone.new(full_content)
     yield_finish_reason(yielder, extract_finish_reason(response))
-    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: token_usage) if token_usage
+    yielder << Riffer::StreamEvents::TokenUsageDone.new(token_usage: apply_pricing(token_usage)) if token_usage
   end
 
   #--

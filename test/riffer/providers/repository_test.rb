@@ -48,4 +48,18 @@ describe Riffer::Providers::Repository do
       expect { Riffer::Providers::Repository.find(nil) }.must_raise(NoMethodError)
     end
   end
+
+  describe ".key_for" do
+    it "returns the registry symbol for a registered provider class" do
+      expect(Riffer::Providers::Repository.key_for(Riffer::Providers::OpenAI)).must_equal :openai
+    end
+
+    it "distinguishes providers that share a wire format" do
+      expect(Riffer::Providers::Repository.key_for(Riffer::Providers::AzureOpenAI)).must_equal :azure_openai
+    end
+
+    it "returns nil for an unregistered class" do
+      expect(Riffer::Providers::Repository.key_for(String)).must_be_nil
+    end
+  end
 end

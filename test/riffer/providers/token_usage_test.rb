@@ -33,6 +33,16 @@ describe Riffer::Providers::TokenUsage do
       usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
       expect(usage.cache_read_tokens).must_be_nil
     end
+
+    it "sets cost when provided" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.42)
+      expect(usage.cost).must_equal 0.42
+    end
+
+    it "defaults cost to nil" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      expect(usage.cost).must_be_nil
+    end
   end
 
   describe "#total_tokens" do
@@ -112,6 +122,27 @@ describe Riffer::Providers::TokenUsage do
       expect(combined).wont_equal usage1
       expect(combined).wont_equal usage2
     end
+
+    it "sums cost when both are priced" do
+      usage1 = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.10)
+      usage2 = Riffer::Providers::TokenUsage.new(input_tokens: 200, output_tokens: 75, cost: 0.25)
+      combined = usage1 + usage2
+      expect(combined.cost).must_equal 0.35
+    end
+
+    it "keeps cost nil when both are unpriced" do
+      usage1 = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      usage2 = Riffer::Providers::TokenUsage.new(input_tokens: 200, output_tokens: 75)
+      combined = usage1 + usage2
+      expect(combined.cost).must_be_nil
+    end
+
+    it "poisons cost to nil when either side is unpriced" do
+      priced = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.10)
+      unpriced = Riffer::Providers::TokenUsage.new(input_tokens: 200, output_tokens: 75)
+      combined = priced + unpriced
+      expect(combined.cost).must_be_nil
+    end
   end
 
   describe "#to_h" do
@@ -143,6 +174,16 @@ describe Riffer::Providers::TokenUsage do
     it "includes cache_read_tokens when present" do
       usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cache_read_tokens: 10)
       expect(usage.to_h[:cache_read_tokens]).must_equal 10
+    end
+
+    it "excludes cost when nil" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+      expect(usage.to_h.key?(:cost)).must_equal false
+    end
+
+    it "includes cost when present" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.42)
+      expect(usage.to_h[:cost]).must_equal 0.42
     end
 
     it "returns correct hash with all values" do

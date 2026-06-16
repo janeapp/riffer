@@ -147,12 +147,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     cache_write = usage.cache_write_input_tokens
     cache_read = usage.cache_read_input_tokens
 
-    Riffer::Providers::TokenUsage.new(
+    apply_pricing(Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
       output_tokens: usage.output_tokens,
       cache_write_tokens: cache_write,
       cache_read_tokens: cache_read
-    )
+    ))
   end
 
   #--

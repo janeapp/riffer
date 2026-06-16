@@ -151,11 +151,11 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    Riffer::Providers::TokenUsage.new(
+    apply_pricing(Riffer::Providers::TokenUsage.new(
       input_tokens: usage[:promptTokenCount] || 0,
       output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
       cache_read_tokens: usage[:cachedContentTokenCount]
-    )
+    ))
   end
 
   #--

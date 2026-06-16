@@ -87,11 +87,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    Riffer::Providers::TokenUsage.new(
+    apply_pricing(Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_read_tokens: usage.input_tokens_details&.cached_tokens
-    )
+    ))
   end
 
   #--

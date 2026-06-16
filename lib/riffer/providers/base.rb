@@ -9,6 +9,7 @@ require "json"
 # class orchestrates them.
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
+  # @rbs @current_model: String?
 
   WIRE_SEPARATOR = "__" #: String
 
@@ -40,6 +41,7 @@ class Riffer::Providers::Base
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
+    @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
@@ -75,6 +77,7 @@ class Riffer::Providers::Base
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
+    @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
@@ -137,6 +140,41 @@ class Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::TokenUsage?
   def extract_token_usage(response)
     raise NotImplementedError, "Subclasses must implement #extract_token_usage"
+  end
+
+  #: (Riffer::Providers::TokenUsage) -> Riffer::Providers::TokenUsage
+  def apply_pricing(usage)
+    rates = pricing_rates
+    return usage unless rates
+
+    cost = rates.cost_for(
+      input_tokens: usage.input_tokens,
+      output_tokens: usage.output_tokens,
+      cache_read_tokens: usage.cache_read_tokens,
+      cache_write_tokens: usage.cache_write_tokens
+    )
+    Riffer::Providers::TokenUsage.new(
+      input_tokens: usage.input_tokens,
+      output_tokens: usage.output_tokens,
+      cache_write_tokens: usage.cache_write_tokens,
+      cache_read_tokens: usage.cache_read_tokens,
+      cost: cost
+    )
+  end
+
+  #--
+  #: () -> Riffer::Config::Pricing::Rates?
+  def pricing_rates
+    model = @current_model
+    return nil unless model
+
+    pricing = Riffer.config.pricing
+    return nil if pricing.empty?
+
+    key = Riffer::Providers::Repository.key_for(self.class)
+    return nil unless key
+
+    pricing.rates_for("#{key}/#{model}")
   end
 
   # Defaults to nil rather than raising — finish reasons are optional, so

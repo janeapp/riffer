@@ -137,6 +137,71 @@ class Riffer::Config
     def tracer_provider=: (untyped) -> void
   end
 
+  # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer
+  # ships no price table, so an unconfigured model carries no cost.
+  class Pricing
+    @rates: Hash[String, Riffer::Config::Pricing::Rates]
+
+    # Per-million-token rates for one model's four token buckets. +cache_read+
+    # and +cache_write+ fall back to the +input+ rate when unset.
+    class Rates
+      # Input rate per million tokens.
+      attr_reader input: Float
+
+      # Output rate per million tokens.
+      attr_reader output: Float
+
+      # Cache-read rate per million tokens.
+      attr_reader cache_read: Float?
+
+      # Cache-write rate per million tokens.
+      attr_reader cache_write: Float?
+
+      # --
+      # : (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
+      def initialize: (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
+
+      # Returns the cost for the given token counts.
+      # --
+      # : (input_tokens: Integer, output_tokens: Integer, ?cache_read_tokens: Integer?, ?cache_write_tokens: Integer?) -> Float
+      def cost_for: (input_tokens: Integer, output_tokens: Integer, ?cache_read_tokens: Integer?, ?cache_write_tokens: Integer?) -> Float
+    end
+
+    # --
+    # : () -> void
+    def initialize: () -> void
+
+    # Registers per-million-token rates for a +provider/model+ id. Raises
+    # Riffer::ArgumentError on a malformed id or a negative/non-numeric rate.
+    # --
+    # : (String, input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+    def set: (String, input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+
+    # Returns the rates registered for a +provider/model+ id.
+    # --
+    # : (String) -> Riffer::Config::Pricing::Rates?
+    def rates_for: (String) -> Riffer::Config::Pricing::Rates?
+
+    # Returns true when no rates are registered.
+    # --
+    # : () -> bool
+    def empty?: () -> bool
+
+    private
+
+    # --
+    # : (String) -> void
+    def validate_model!: (String) -> void
+
+    # --
+    # : (untyped, String) -> Float
+    def coerce_rate: (untyped, String) -> Float
+
+    # --
+    # : (untyped, String) -> Float?
+    def coerce_optional_rate: (untyped, String) -> Float?
+  end
+
   VALID_MESSAGE_ID_STRATEGIES: untyped
 
   # Amazon Bedrock configuration.
@@ -180,6 +245,9 @@ class Riffer::Config
 
   # Tracing-related global configuration.
   attr_reader tracing: Riffer::Config::Tracing
+
+  # Consumer-configured per-model token pricing.
+  attr_reader pricing: Riffer::Config::Pricing
 
   # Strategy for auto-generating message ids: +:none+ (default), +:uuid+, or
   # +:uuidv7+. When not +:none+, messages get an +id+ at construction, and

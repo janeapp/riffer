@@ -5,6 +5,8 @@
 module Riffer::Providers::Repository
   extend self
 
+  # @rbs @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
+
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
     anthropic: -> { Riffer::Providers::Anthropic },
@@ -21,5 +23,12 @@ module Riffer::Providers::Repository
   #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
   def find(identifier)
     REPO.fetch(identifier.to_sym, nil)&.call
+  end
+
+  # Returns the registry identifier for a provider class, or nil when unregistered.
+  #--
+  #: (singleton(Riffer::Providers::Base)) -> Symbol?
+  def key_for(provider_class)
+    (@key_for ||= REPO.to_h { |key, factory| [factory.call, key] })[provider_class]
   end
 end
