@@ -119,6 +119,23 @@ end
 
 Hosts own SDK and exporter wiring — riffer only emits spans through whatever provider the host configures. See [Tracing](16_TRACING.md) for the emitted span contract — names, attributes, hierarchy, and host wiring.
 
+### Metrics
+
+Metrics-related global configuration lives under `config.metrics`, **independent** of `config.tracing` — each has its own kill switch, so you can run one signal without the other. Riffer detects the OpenTelemetry metrics API at runtime — without it (or without a host-configured OTEL metrics SDK) every measurement is a silent no-op, and riffer carries no OTEL gem dependency either way. The metrics API and SDK are separate, still-experimental (pre-1.0) gems from the traces API.
+
+```ruby
+Riffer.configure do |config|
+  config.metrics.enabled = ENV.fetch("RIFFER_METRICS_ENABLED", "true")
+end
+```
+
+| Option           | Description                                                                                                                                                                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `enabled`        | The kill switch, consulted on every measurement — flipping it at runtime takes effect immediately. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                   |
+| `meter_provider` | Explicit OTEL meter provider (e.g. the SDK's in-memory provider in tests). Defaults to `nil`, which resolves the global `OpenTelemetry.meter_provider` lazily at first record. Raises `Riffer::ArgumentError` if the `opentelemetry-metrics-api` gem isn't available at a supported version (>= 0.2, < 1.0). |
+
+Hosts own SDK, reader, exporter, and aggregation wiring — riffer only records instruments through whatever provider the host configures, and histogram bucket boundaries are set host-side via Views. See [Metrics](17_METRICS.md) for the instrument contract — names, units, attributes, and host wiring.
+
 ### Pricing
 
 Configure per-model token prices and riffer computes the cost of each LLM call onto its [`TokenUsage`](08_MESSAGES.md#token-usage-semantics). Riffer ships **no** price table — so an unconfigured model simply carries no cost (`token_usage.cost` is `nil`).
@@ -134,13 +151,13 @@ Riffer.configure do |config|
 end
 ```
 
-| Argument       | Description                                                                                                                                                              |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Argument       | Description                                                                                                                                                                        |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `models`       | A `provider/model` id (e.g. `"openai/gpt-4"`) — the same string you pass to `model` — or an array of ids that share one set of rates. No alias matching; raises on a malformed id. |
-| `input:`       | Price per **million** input tokens. Required. Applies to the uncached portion of `input_tokens`.                                          |
-| `output:`      | Price per **million** output tokens. Required.                                                                                            |
-| `cache_read:`  | Price per million cache-read tokens. Optional — when omitted, cache reads bill at the `input:` rate.                                      |
-| `cache_write:` | Price per million cache-write tokens. Optional — when omitted, cache writes bill at the `input:` rate.                                    |
+| `input:`       | Price per **million** input tokens. Required. Applies to the uncached portion of `input_tokens`.                                                                                   |
+| `output:`      | Price per **million** output tokens. Required.                                                                                                                                     |
+| `cache_read:`  | Price per million cache-read tokens. Optional — when omitted, cache reads bill at the `input:` rate.                                                                               |
+| `cache_write:` | Price per million cache-write tokens. Optional — when omitted, cache writes bill at the `input:` rate.                                                                             |
 
 Because the cache buckets are subsets of `input_tokens`, the cost formula subtracts them before applying the input rate:
 

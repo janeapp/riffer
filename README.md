@@ -63,6 +63,7 @@ For comprehensive documentation, see the [docs](docs/) directory:
 - [MCP](docs/14_MCP.md) - Integrating third-party MCP servers
 - [Serialization](docs/15_SERIALIZATION.md) - Persisting and transferring agent definitions
 - [Tracing](docs/16_TRACING.md) - OpenTelemetry span contract and host wiring
+- [Metrics](docs/17_METRICS.md) - OpenTelemetry metric contract and host wiring
 - [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
 
 ### API Reference
@@ -86,17 +87,17 @@ bin/setup
 Common workflows are wrapped in `bin/`. Each is a thin `exec bundle exec …` script — use them
 instead of typing `bundle exec` yourself:
 
-| Command         | Description                                  |
-| --------------- | -------------------------------------------- |
-| `bin/rake`      | Default task: test + standard + steep:check  |
-| `bin/test`      | Run tests                                    |
-| `bin/lint`      | Check code style (pass `--fix` to auto-fix)  |
-| `bin/typecheck` | Run Steep type checker                       |
-| `bin/rbs`       | Generate RBS type signatures                 |
-| `bin/rbs-watch` | Watch and regenerate RBS files               |
-| `bin/docs`      | Build RDoc HTML                              |
-| `bin/build`     | Build the gem package                        |
-| `bin/console`   | Interactive console                          |
+| Command         | Description                                 |
+| --------------- | ------------------------------------------- |
+| `bin/rake`      | Default task: test + standard + steep:check |
+| `bin/test`      | Run tests                                   |
+| `bin/lint`      | Check code style (pass `--fix` to auto-fix) |
+| `bin/typecheck` | Run Steep type checker                      |
+| `bin/rbs`       | Generate RBS type signatures                |
+| `bin/rbs-watch` | Watch and regenerate RBS files              |
+| `bin/docs`      | Build RDoc HTML                             |
+| `bin/build`     | Build the gem package                       |
+| `bin/console`   | Interactive console                         |
 
 `bin/rake <task>` is the escape hatch for any rake task without a named wrapper (e.g.
 `bin/rake test:slow`, `bin/rake release`).
