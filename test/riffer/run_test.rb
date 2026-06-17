@@ -14,6 +14,21 @@ class RunTracingBlockingOutputGuardrail < Riffer::Guardrail
   end
 end
 
+class RunTracingPassingGuardrail < Riffer::Guardrail
+end
+
+class RunTracingTransformInputGuardrail < Riffer::Guardrail
+  def process_input(messages, context:)
+    transform(messages)
+  end
+end
+
+class RunTracingRaisingGuardrail < Riffer::Guardrail
+  def process_input(messages, context:)
+    raise "guardrail boom"
+  end
+end
+
 describe Riffer::Agent::Run do
   let(:agent_class) do
     Class.new(Riffer::Agent) do
@@ -2956,8 +2971,39 @@ describe Riffer::Agent::Run do
       klass
     end
 
+    let(:agent_class_with_passing_guardrail) do
+      klass = Class.new(Riffer::Agent) do
+        identifier "traced-agent"
+        model "mock/riffer-1"
+      end
+      klass.guardrail(:before, with: RunTracingPassingGuardrail)
+      klass
+    end
+
+    let(:agent_class_with_transform_guardrail) do
+      klass = Class.new(Riffer::Agent) do
+        identifier "traced-agent"
+        model "mock/riffer-1"
+      end
+      klass.guardrail(:before, with: RunTracingTransformInputGuardrail)
+      klass
+    end
+
+    let(:agent_class_with_raising_guardrail) do
+      klass = Class.new(Riffer::Agent) do
+        identifier "traced-agent"
+        model "mock/riffer-1"
+      end
+      klass.guardrail(:before, with: RunTracingRaisingGuardrail)
+      klass
+    end
+
     def run_span
       @exporter.finished_spans.find { |span| span.name.start_with?("invoke_agent") }
+    end
+
+    def guardrail_span
+      @exporter.finished_spans.find { |span| span.name.start_with?("execute_guardrail") }
     end
 
     def generate_with_tool_loop(agent)
@@ -3069,7 +3115,7 @@ describe Riffer::Agent::Run do
 
     it "records the tripwire guardrail" do
       agent_class_with_blocking_input.new.generate("Hello")
-      expect(run_span.attributes["riffer.tripwire.guardrail"]).must_equal "RunTracingBlockingInputGuardrail"
+      expect(run_span.attributes["riffer.tripwire.guardrail"]).must_equal "run_tracing_blocking_input_guardrail"
     end
 
     it "records the tripwire reason" do
@@ -3148,6 +3194,82 @@ describe Riffer::Agent::Run do
       agent.stream("Hello").each { |_| }
       usage = run_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens")
       expect(usage).must_equal({"gen_ai.usage.input_tokens" => 100, "gen_ai.usage.output_tokens" => 50})
+    end
+
+    it "names the guardrail span after the guardrail" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.name).must_equal "execute_guardrail run_tracing_passing_guardrail"
+    end
+
+    it "marks the guardrail span as internal" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.kind).must_equal :internal
+    end
+
+    it "records the guardrail name attribute" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.guardrail.name"]).must_equal "run_tracing_passing_guardrail"
+    end
+
+    it "records the guardrail phase" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.guardrail.phase"]).must_equal "before"
+    end
+
+    it "records a pass action" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.guardrail.action"]).must_equal "pass"
+    end
+
+    it "records a transform action" do
+      agent_class_with_transform_guardrail.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.guardrail.action"]).must_equal "transform"
+    end
+
+    it "records a block action" do
+      agent_class_with_blocking_input.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.guardrail.action"]).must_equal "block"
+    end
+
+    it "records the tripwire reason on a block" do
+      agent_class_with_blocking_input.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.tripwire.reason"]).must_equal "Input blocked"
+    end
+
+    it "omits the tripwire reason when not blocked" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.attributes).wont_include "riffer.tripwire.reason"
+    end
+
+    it "leaves the guardrail span status unset on a block" do
+      agent_class_with_blocking_input.new.generate("Hello")
+      expect(guardrail_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+    end
+
+    it "records the after phase on an after guardrail span" do
+      agent_class_with_blocking_output.new.generate("Hello")
+      expect(guardrail_span.attributes["riffer.guardrail.phase"]).must_equal "after"
+    end
+
+    it "nests the guardrail span under the run span" do
+      agent_class_with_passing_guardrail.new.generate("Hello")
+      expect(guardrail_span.parent_span_id).must_equal run_span.span_id
+    end
+
+    it "records the error type when a guardrail raises" do
+      begin
+        agent_class_with_raising_guardrail.new.generate("Hello")
+      rescue RuntimeError
+      end
+      expect(guardrail_span.attributes["error.type"]).must_equal "RuntimeError"
+    end
+
+    it "marks the guardrail span status as error when a guardrail raises" do
+      begin
+        agent_class_with_raising_guardrail.new.generate("Hello")
+      rescue RuntimeError
+      end
+      expect(guardrail_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
 end

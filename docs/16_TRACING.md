@@ -44,13 +44,15 @@ Spans are emitted under the instrumentation scope named `riffer`, versioned with
 
 ## Spans
 
-Riffer emits three span types. A single agent run produces one `invoke_agent` span wrapping one `chat` span per model call and one `execute_tool` span per tool call, interleaved in execution order:
+Riffer emits four span types. A single agent run produces one `invoke_agent` span wrapping one `chat` span per model call, one `execute_tool` span per tool call, and one `execute_guardrail` span per guardrail execution, interleaved in execution order:
 
 ```
 invoke_agent {agent}             INTERNAL
+├─ execute_guardrail {name}      INTERNAL   (one per before-phase guardrail)
 ├─ chat {model}                  CLIENT     (one per LLM call)
 ├─ execute_tool {tool}           INTERNAL   (one per tool call)
 │   └─ (host spans nest here via around_tool_call / tool internals)
+├─ execute_guardrail {name}      INTERNAL   (one per after-phase guardrail, after each response)
 ├─ chat {model}
 └─ …
 ```
@@ -88,6 +90,8 @@ The contract promise is: **when present**, a key carries the documented meaning 
 | `riffer.tripwire.reason`                   | string | On a guardrail tripwire                              |
 | `riffer.tripwire.phase`                    | string | On a guardrail tripwire (`"before"` / `"after"`)     |
 | `error.type`                               | string | On an unhandled exception                            |
+
+The `riffer.tripwire.*` attributes are the run-level summary of the guardrail that halted the run; `riffer.tripwire.guardrail` carries the same name value as the blocking [`execute_guardrail`](#execute_guardrail-name--the-guardrail-span) span's `riffer.guardrail.name`, so the two join on a single key.
 
 Usage on this span is the run total, aggregated across every step. See [Token usage](#token-usage) for the trap this creates.
 
@@ -142,9 +146,25 @@ A tool failure comes in two shapes, distinguished by span status:
 
 This status convention is the same on `chat` and `invoke_agent`: an unhandled exception sets `error.type` to the class name and marks the span `ERROR`; everything else leaves the status unset.
 
+## `execute_guardrail {name}` — the guardrail span
+
+`INTERNAL`. One per guardrail execution; a guardrail registered for both phases runs — and emits a span — once in each. The span name suffix is the guardrail's name (e.g. `execute_guardrail profanity_filter`), from `Riffer::Guardrail#name` — the converted class name by default, overridable to relabel the span. This is the one Riffer span with **no `gen_ai.operation.name`**. A guardrail is not a GenAI semantic-convention operation, so the span stays entirely in Riffer's own namespace rather than squat an invented value on the standardized key.
+
+| Attribute                 | Type   | Present                                                     |
+| ------------------------- | ------ | ----------------------------------------------------------- |
+| `riffer.guardrail.name`   | string | Always — the guardrail's name                               |
+| `riffer.guardrail.phase`  | string | Always (`"before"` / `"after"`)                             |
+| `riffer.guardrail.action` | string | On a returned result (`"pass"` / `"transform"` / `"block"`) |
+| `riffer.tripwire.reason`  | string | On a block — the block reason                               |
+| `error.type`              | string | On an unhandled exception                                   |
+
+`riffer.guardrail.*` holds the facts true of any execution — name, phase, action. A reason exists only on a block, so it reuses the run-level `riffer.tripwire.reason` key: one query finds the reason on both the per-guardrail span and the enclosing `invoke_agent` summary.
+
+A block is a **handled outcome**: `riffer.guardrail.action` is `block` and the **span status stays unset** — the same convention `execute_tool` uses for a returned error response. Only a guardrail that **raises** sets `error.type` to the exception class name and marks the **span status `ERROR`** (with the exception recorded); on a raise no result is produced, so `riffer.guardrail.action` is absent.
+
 ## Example trace
 
-A `generate` run where the model calls one tool, then answers — using the OpenAI provider with `gpt-4`:
+A `generate` run where the model calls one tool, then answers — with one `before` guardrail and one `after` guardrail, using the OpenAI provider with `gpt-4`. The `after` guardrail runs once per model response, so it appears after each `chat`:
 
 ```
 invoke_agent weather-agent          INTERNAL
@@ -155,21 +175,33 @@ invoke_agent weather-agent          INTERNAL
   gen_ai.usage.input_tokens  = 1240
   gen_ai.usage.output_tokens = 86
   riffer.cost                = 0.0423
+├─ execute_guardrail input_filter   INTERNAL
+│    riffer.guardrail.name   = input_filter
+│    riffer.guardrail.phase  = before
+│    riffer.guardrail.action = pass
 ├─ chat gpt-4                       CLIENT
 │    gen_ai.request.model            = gpt-4
 │    gen_ai.response.finish_reasons  = ["tool_calls"]
 │    gen_ai.usage.input_tokens       = 612
 │    gen_ai.usage.output_tokens      = 48
 │    riffer.cost                     = 0.0212
+├─ execute_guardrail output_filter  INTERNAL
+│    riffer.guardrail.name   = output_filter
+│    riffer.guardrail.phase  = after
+│    riffer.guardrail.action = pass
 ├─ execute_tool get_weather         INTERNAL
 │    gen_ai.tool.name     = get_weather
 │    gen_ai.tool.call.id  = tc_42
-└─ chat gpt-4                       CLIENT
-     gen_ai.request.model            = gpt-4
-     gen_ai.response.finish_reasons  = ["stop"]
-     gen_ai.usage.input_tokens       = 628
-     gen_ai.usage.output_tokens      = 38
-     riffer.cost                     = 0.0211
+├─ chat gpt-4                       CLIENT
+│    gen_ai.request.model            = gpt-4
+│    gen_ai.response.finish_reasons  = ["stop"]
+│    gen_ai.usage.input_tokens       = 628
+│    gen_ai.usage.output_tokens      = 38
+│    riffer.cost                     = 0.0211
+└─ execute_guardrail output_filter  INTERNAL
+     riffer.guardrail.name   = output_filter
+     riffer.guardrail.phase  = after
+     riffer.guardrail.action = pass
 ```
 
 ## Token usage and cost
@@ -209,7 +241,7 @@ When enabled, content is serialized as GenAI-semconv JSON strings. File attachme
 The span and attribute shape is a public, versioned contract, in two tiers:
 
 - **`gen_ai.*`** tracks the OpenTelemetry GenAI semantic conventions, pinned to schema version `1.37.0`. That convention is still "Development" status upstream and its attribute names may change; Riffer absorbs such renames deliberately in a release, never silently, with a CHANGELOG entry.
-- **`riffer.*`** is Riffer-owned (`riffer.steps`, `riffer.cost`, `riffer.interrupt.reason`, `riffer.tripwire.*`, `riffer.finish_reason.raw`) and changes only through a normal version bump and CHANGELOG entry.
+- **`riffer.*`** is Riffer-owned (`riffer.steps`, `riffer.cost`, `riffer.interrupt.reason`, `riffer.tripwire.*`, `riffer.guardrail.*`, `riffer.finish_reason.raw`) and changes only through a normal version bump and CHANGELOG entry.
 
 The semantic-convention schema version is a documented pin rather than a span attribute — the OpenTelemetry Ruby API can't attach a schema URL to a tracer. The runtime version signal is the instrumentation scope: every span carries scope name `riffer` at the gem version that emitted it. Pin the Riffer version your dashboards depend on, and watch the CHANGELOG for tracing entries before upgrading.
 

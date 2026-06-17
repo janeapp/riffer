@@ -81,6 +81,21 @@ class Riffer::Guardrails::Runner
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
+    Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail), kind: :internal) do |span|
+      result = run_guardrail_phase(guardrail, data, messages: messages)
+      record_guardrail_outcome(span, result)
+      result
+    rescue => error
+      # The backend records the exception and error status on the re-raise;
+      # error.type is the one semconv attribute it doesn't set.
+      span.set_attribute("error.type", error.class.name)
+      raise
+    end
+  end
+
+  #--
+  #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
+  def run_guardrail_phase(guardrail, data, messages:)
     case phase
     when :before
       guardrail.process_input(data, context: context)
@@ -89,5 +104,23 @@ class Riffer::Guardrails::Runner
     else
       raise Riffer::Error, "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(", ")}"
     end
+  end
+
+  #--
+  #: (Riffer::Guardrail) -> Hash[String, untyped]
+  def guardrail_span_attributes(guardrail)
+    {
+      "riffer.guardrail.name" => guardrail.name,
+      "riffer.guardrail.phase" => phase.to_s
+    }
+  end
+
+  # A block is a handled outcome, so its span status stays unset — an error
+  # span status is reserved for a raised exception.
+  #--
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Guardrails::Result) -> void
+  def record_guardrail_outcome(span, result)
+    span.set_attribute("riffer.guardrail.action", result.type.to_s)
+    span.set_attribute("riffer.tripwire.reason", result.data) if result.block?
   end
 end

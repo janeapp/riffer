@@ -26,6 +26,12 @@ class Riffer::Guardrail
   # : (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
   def process_output: (Riffer::Messages::Assistant, messages: Array[Riffer::Messages::Base], context: untyped) -> Riffer::Guardrails::Result
 
+  # Returns the guardrail's identifier, used as the tracing span suffix and the
+  # <tt>riffer.guardrail.name</tt> attribute; override to label the span.
+  # --
+  # : () -> String
+  def name: () -> String
+
   # Creates a pass result that continues with unchanged data.
   # --
   # : (untyped) -> Riffer::Guardrails::Result
