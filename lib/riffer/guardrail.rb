@@ -31,6 +31,14 @@ class Riffer::Guardrail
     pass(response)
   end
 
+  # Returns the guardrail's identifier, used as the tracing span suffix and the
+  # <tt>riffer.guardrail.name</tt> attribute; override to label the span.
+  #--
+  #: () -> String
+  def name
+    Riffer::Helpers::ClassNameConverter.convert(self.class.name)
+  end
+
   protected
 
   # Creates a pass result that continues with unchanged data.
