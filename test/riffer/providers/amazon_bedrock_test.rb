@@ -602,6 +602,7 @@ describe Riffer::Providers::AmazonBedrock do
       end
 
       it "raises for a model_stream_error_exception mid-stream after content deltas" do
+        provider # force SDK load before constructing the Aws types below
         delta_event = Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
           delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(text: "Hel"),
           content_block_index: 0,
@@ -641,6 +642,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "ignores unknown non-exception events (e.g. message_start) without raising" do
         # Forward-compatible: unknown event types that aren't exceptions should be skipped,
         # not raise. Verified with MessageStartEvent which Bedrock emits but we don't consume.
+        provider # force SDK load before constructing the Aws types below
         message_start = Aws::BedrockRuntime::Types::MessageStartEvent.new(
           role: "assistant",
           event_type: :message_start
