@@ -22,25 +22,25 @@ describe Riffer::Metrics::Otel do
   end
 
   describe ".available?" do
-    it "is true when opentelemetry metrics is bundled" do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
+    it "is true when the opentelemetry metrics API is bundled" do
+      skip "opentelemetry metrics API is not bundled" unless METRICS_API_AVAILABLE
       expect(Riffer::Metrics::Otel.available?).must_equal true
     end
 
-    it "is false when opentelemetry metrics is not bundled" do
-      skip "opentelemetry metrics is bundled" if METRICS_SDK_AVAILABLE
+    it "is false when the opentelemetry metrics API is not bundled" do
+      skip "opentelemetry metrics API is bundled" if METRICS_API_AVAILABLE
       expect(Riffer::Metrics::Otel.available?).must_equal false
     end
   end
 
   describe ".build" do
-    it "returns a backend when opentelemetry metrics is bundled" do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
+    it "returns a backend when the opentelemetry metrics API is bundled" do
+      skip "opentelemetry metrics API is not bundled" unless METRICS_API_AVAILABLE
       expect(Riffer::Metrics::Otel.build(provider: nil)).must_be_instance_of Riffer::Metrics::Otel
     end
 
-    it "returns nil when opentelemetry metrics is not bundled" do
-      skip "opentelemetry metrics is bundled" if METRICS_SDK_AVAILABLE
+    it "returns nil when the opentelemetry metrics API is not bundled" do
+      skip "opentelemetry metrics API is bundled" if METRICS_API_AVAILABLE
       expect(Riffer::Metrics::Otel.build(provider: nil)).must_be_nil
     end
   end

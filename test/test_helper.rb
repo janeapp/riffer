@@ -28,6 +28,16 @@ rescue LoadError
   false
 end
 
+# Backend detection (`Riffer::Metrics::Otel.available?`) keys on the metrics
+# *API* gem — which the SDK depends on — so the Otel backend tests gate on the
+# API's presence, not the SDK's.
+METRICS_API_AVAILABLE = begin
+  require "opentelemetry-metrics-api"
+  true
+rescue LoadError
+  false
+end
+
 begin
   require "dotenv"
   Dotenv.load
