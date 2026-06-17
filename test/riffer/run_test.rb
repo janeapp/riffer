@@ -3272,4 +3272,54 @@ describe Riffer::Agent::Run do
       expect(guardrail_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
+
+  describe "metrics" do
+    before do
+      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
+      Riffer.config.metrics.enabled = true
+      @exporter = install_in_memory_meter_provider
+    end
+
+    after do
+      Riffer.config.metrics.enabled = true
+      Riffer.config.metrics.meter_provider = nil
+    end
+
+    let(:agent_class) do
+      Class.new(Riffer::Agent) do
+        identifier "metered-agent"
+        model "mock/riffer-1"
+      end
+    end
+
+    # The agent records both a chat and an invoke_agent data point on the shared
+    # histogram, so select the invoke_agent point by operation name.
+    def invoke_agent_attributes
+      @exporter.pull
+      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
+      snapshot.data_points.find { |dp| dp.attributes["gen_ai.operation.name"] == "invoke_agent" }.attributes
+    end
+
+    it "records the invoke_agent operation attributes" do
+      agent_class.new.generate("Hello")
+      expect(invoke_agent_attributes).must_equal({
+        "gen_ai.operation.name" => "invoke_agent",
+        "gen_ai.provider.name" => "mock",
+        "gen_ai.request.model" => "riffer-1",
+        "gen_ai.agent.name" => "metered-agent"
+      })
+    end
+
+    it "records error.type when the run raises" do
+      agent = agent_class.new
+      agent.session.on_message { raise "boom" }
+      expect { agent.generate("Hello") }.must_raise(RuntimeError)
+      expect(invoke_agent_attributes["error.type"]).must_equal "RuntimeError"
+    end
+
+    it "records the duration when the stream drains" do
+      agent_class.new.stream("Hello").each { |_| }
+      expect(invoke_agent_attributes["gen_ai.operation.name"]).must_equal "invoke_agent"
+    end
+  end
 end

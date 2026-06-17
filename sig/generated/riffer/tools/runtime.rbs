@@ -36,6 +36,10 @@ class Riffer::Tools::Runtime
   private
 
   # --
+  # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, assistant_message: Riffer::Messages::Assistant?) -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
+  def run_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, assistant_message: Riffer::Messages::Assistant?) -> [ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]
+
+  # --
   # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
   def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
 
@@ -51,6 +55,10 @@ class Riffer::Tools::Runtime
   # --
   # : (Riffer::Messages::Assistant::ToolCall) -> Hash[String, untyped]
   def tool_span_attributes: (Riffer::Messages::Assistant::ToolCall) -> Hash[String, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::ToolCall, String?) -> Hash[String, untyped]
+  def tool_metric_attributes: (Riffer::Messages::Assistant::ToolCall, String?) -> Hash[String, untyped]
 
   # A returned error Response is a handled outcome, so its status stays unset —
   # an error span status is reserved for a raised exception.

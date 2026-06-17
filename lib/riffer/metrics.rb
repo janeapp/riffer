@@ -53,6 +53,14 @@ module Riffer::Metrics # :nodoc: all
     backend.record_histogram(name, value, unit: unit, description: description, attributes: attributes)
   end
 
+  # Reads the monotonic clock in seconds — the time source for duration metrics,
+  # immune to wall-clock adjustments.
+  #--
+  #: () -> Float
+  def monotonic_now
+    Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  end
+
   # Discards the resolved backend so the next record re-resolves it; cached
   # instruments live on that backend, so this clears them too.
   #--

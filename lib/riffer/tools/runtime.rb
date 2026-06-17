@@ -25,13 +25,7 @@ class Riffer::Tools::Runtime
     trace_context = Riffer::Tracing.current_context
     @runner.map(tool_calls, context: context) do |tool_call|
       Riffer::Tracing.with_context(trace_context) do
-        in_tool_span(tool_call) do |span|
-          result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
-            dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
-          end
-          record_tool_outcome(span, result)
-          [tool_call, result]
-        end
+        run_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
       end
     end
   end
@@ -57,6 +51,29 @@ class Riffer::Tools::Runtime
   end
 
   private
+
+  #--
+  #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, assistant_message: Riffer::Messages::Assistant?) -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
+  def run_tool_call(tool_call, tools:, context:, assistant_message:)
+    start = Riffer::Metrics.monotonic_now
+    error_type = nil #: String?
+    begin
+      pair = in_tool_span(tool_call) do |span|
+        result = around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
+          dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
+        end
+        record_tool_outcome(span, result)
+        [tool_call, result] #: [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
+      end
+      error_type = pair[1].error_type&.to_s
+      pair
+    rescue => error
+      error_type = error.class.name #: String?
+      raise
+    ensure
+      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: tool_metric_attributes(tool_call, error_type))
+    end
+  end
 
   #--
   #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
@@ -115,6 +132,17 @@ class Riffer::Tools::Runtime
       "gen_ai.tool.name" => tool_call.name,
       "gen_ai.tool.call.id" => tool_call.call_id
     }
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::ToolCall, String?) -> Hash[String, untyped]
+  def tool_metric_attributes(tool_call, error_type)
+    attributes = {
+      "gen_ai.operation.name" => "execute_tool",
+      "gen_ai.tool.name" => tool_call.name
+    } #: Hash[String, untyped]
+    attributes["error.type"] = error_type if error_type
+    attributes
   end
 
   # A returned error Response is a handled outcome, so its status stays unset —
