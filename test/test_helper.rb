@@ -19,6 +19,15 @@ rescue LoadError
   false
 end
 
+# Metrics tests assert real instruments via the SDK's in-memory pull exporter.
+# The metrics SDK is a separate gem from the traces SDK, so it gets its own flag.
+METRICS_SDK_AVAILABLE = begin
+  require "opentelemetry-metrics-sdk"
+  true
+rescue LoadError
+  false
+end
+
 begin
   require "dotenv"
   Dotenv.load
@@ -62,5 +71,13 @@ def install_in_memory_tracer_provider
   provider = OpenTelemetry::SDK::Trace::TracerProvider.new
   provider.add_span_processor(OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter))
   Riffer.config.tracing.tracer_provider = provider
+  exporter
+end
+
+def install_in_memory_meter_provider
+  exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+  provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+  provider.add_metric_reader(exporter)
+  Riffer.config.metrics.meter_provider = provider
   exporter
 end

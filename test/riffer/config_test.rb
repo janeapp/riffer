@@ -242,4 +242,53 @@ describe Riffer::Config do
       expect { config.tracing.tracer_provider = Object.new }.must_raise Riffer::ArgumentError
     end
   end
+
+  describe "metrics namespace" do
+    it "initializes enabled to true" do
+      config = Riffer::Config.new
+      expect(config.metrics.enabled).must_equal true
+    end
+
+    it "initializes meter_provider to nil" do
+      config = Riffer::Config.new
+      expect(config.metrics.meter_provider).must_be_nil
+    end
+
+    it "coerces a 'false' string for enabled" do
+      config = Riffer::Config.new
+      config.metrics.enabled = "false"
+      expect(config.metrics.enabled).must_equal false
+    end
+
+    it "coerces a 'true' string for enabled" do
+      config = Riffer::Config.new
+      config.metrics.enabled = "true"
+      expect(config.metrics.enabled).must_equal true
+    end
+
+    it "raises for an unrecognized enabled value" do
+      config = Riffer::Config.new
+      expect { config.metrics.enabled = "yes" }.must_raise Riffer::ArgumentError
+    end
+
+    it "allows setting meter_provider to nil" do
+      config = Riffer::Config.new
+      config.metrics.meter_provider = nil
+      expect(config.metrics.meter_provider).must_be_nil
+    end
+
+    it "allows setting a meter_provider when opentelemetry metrics is available" do
+      skip "opentelemetry metrics is not available" unless Riffer::Metrics::Otel.available?
+      config = Riffer::Config.new
+      provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      config.metrics.meter_provider = provider
+      expect(config.metrics.meter_provider).must_equal provider
+    end
+
+    it "raises for a meter_provider when opentelemetry metrics is not available" do
+      skip "opentelemetry metrics is available" if Riffer::Metrics::Otel.available?
+      config = Riffer::Config.new
+      expect { config.metrics.meter_provider = Object.new }.must_raise Riffer::ArgumentError
+    end
+  end
 end

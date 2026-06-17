@@ -106,6 +106,48 @@ class Riffer::Config
     end
   end
 
+  # Metrics-related global configuration, independent of +config.tracing+ so a
+  # host can run one signal without the other.
+  class Metrics
+    # Whether riffer records OTEL metric instruments; defaults to +true+, a
+    # no-op until a host wires an OTEL metrics SDK.
+    attr_reader :enabled #: bool
+
+    # Explicit OTEL meter provider; defaults to +nil+, which resolves the
+    # global <tt>OpenTelemetry.meter_provider</tt> at first record.
+    attr_reader :meter_provider #: untyped
+
+    #--
+    #: () -> void
+    def initialize
+      @enabled = true
+      @meter_provider = nil
+    end
+
+    # Sets the enabled flag, coercing boolean-ish values so an env-var
+    # +"false"+ (truthy in Ruby) doesn't silently keep metrics on. Raises
+    # Riffer::ArgumentError on an unrecognized value.
+    #--
+    #: (untyped) -> void
+    def enabled=(value)
+      @enabled = Riffer::Helpers::Boolean.coerce(value, attribute: "enabled")
+    end
+
+    # Sets an explicit meter provider, forcing the OTEL backend. Raises
+    # Riffer::ArgumentError when the OpenTelemetry metrics API gem isn't
+    # available at a supported version.
+    #--
+    #: (untyped) -> void
+    def meter_provider=(value)
+      if !value.nil? && !Riffer::Metrics::Otel.available?
+        raise Riffer::ArgumentError,
+          "meter_provider requires the opentelemetry-metrics-api gem (#{Riffer::Metrics::Otel::SUPPORTED_API_VERSIONS})"
+      end
+      @meter_provider = value
+      Riffer::Metrics.reset!
+    end
+  end
+
   # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer
   # ships no price table, so an unconfigured model carries no cost.
   class Pricing
@@ -265,6 +307,9 @@ class Riffer::Config
   # Tracing-related global configuration.
   attr_reader :tracing #: Riffer::Config::Tracing
 
+  # Metrics-related global configuration.
+  attr_reader :metrics #: Riffer::Config::Metrics
+
   # Consumer-configured per-model token pricing.
   attr_reader :pricing #: Riffer::Config::Pricing
 
@@ -313,6 +358,7 @@ class Riffer::Config
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
     @tracing = Tracing.new
+    @metrics = Metrics.new
     @pricing = Pricing.new
     @message_id_strategy = :none
     @experimental_history_healing = false
