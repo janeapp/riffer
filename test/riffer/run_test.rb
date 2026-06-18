@@ -3321,5 +3321,15 @@ describe Riffer::Agent::Run do
       agent_class.new.stream("Hello").each { |_| }
       expect(invoke_agent_attributes["gen_ai.operation.name"]).must_equal "invoke_agent"
     end
+
+    it "never records token usage at the run level" do
+      agent = agent_class.new
+      agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
+      agent.generate("Hello")
+      @exporter.pull
+      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.token.usage" }
+      operations = snapshot.data_points.map { |dp| dp.attributes["gen_ai.operation.name"] }.uniq
+      expect(operations).must_equal ["chat"]
+    end
   end
 end

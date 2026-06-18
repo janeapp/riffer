@@ -6,4 +6,6 @@
 module Riffer::Metrics::Instruments
   # :nodoc: all
   OPERATION_DURATION: Riffer::Metrics::Histogram
+
+  TOKEN_USAGE: Riffer::Metrics::Histogram
 end

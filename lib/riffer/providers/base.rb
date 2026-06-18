@@ -57,6 +57,7 @@ class Riffer::Providers::Base
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
 
       Riffer::Tracing.record_usage(span, token_usage)
+      record_token_usage_metric(model, token_usage)
       record_finish_reason(span, finish_reason&.reason, finish_reason&.raw)
       capture_output(span, content: content, tool_calls: tool_calls, finish_reason: finish_reason&.reason)
 
@@ -90,9 +91,15 @@ class Riffer::Providers::Base
     Enumerator.new do |yielder|
       Riffer::Tracing.with_context(trace_context) do
         in_chat_span(model, messages, options) do |span|
-          sink = span.recording? ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
+          # The recorder feeds both the span and the token-usage metric, so build
+          # it whenever either is live — metrics fire even with tracing off.
+          observe = span.recording? || Riffer::Metrics.recording?
+          sink = observe ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
           execute_stream(params, sink)
-          record_stream_outcome(span, sink) if sink.is_a?(Riffer::Tracing::StreamRecorder)
+          if sink.is_a?(Riffer::Tracing::StreamRecorder)
+            record_stream_outcome(span, sink)
+            record_token_usage_metric(model, sink.token_usage)
+          end
         end
       end
     end
@@ -253,15 +260,33 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (String?, String?) -> Hash[String, untyped]
-  def chat_metric_attributes(model, error_type)
+  #: (String?) -> Hash[String, untyped]
+  def chat_metric_base_attributes(model)
     attributes = {
       "gen_ai.operation.name" => "chat",
       "gen_ai.provider.name" => self.class.semconv_provider_name
     } #: Hash[String, untyped]
     attributes["gen_ai.request.model"] = model if model
+    attributes
+  end
+
+  #--
+  #: (String?, String?) -> Hash[String, untyped]
+  def chat_metric_attributes(model, error_type)
+    attributes = chat_metric_base_attributes(model)
     attributes["error.type"] = error_type if error_type
     attributes
+  end
+
+  # Per-call only — the run level would double-count an aggregate.
+  #--
+  #: (String?, Riffer::Providers::TokenUsage?) -> void
+  def record_token_usage_metric(model, usage)
+    return unless usage
+
+    base = chat_metric_base_attributes(model)
+    Riffer::Metrics::Instruments::TOKEN_USAGE.record(usage.input_tokens, attributes: base.merge("gen_ai.token.type" => "input"))
+    Riffer::Metrics::Instruments::TOKEN_USAGE.record(usage.output_tokens, attributes: base.merge("gen_ai.token.type" => "output"))
   end
 
   #--

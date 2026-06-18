@@ -99,8 +99,17 @@ class Riffer::Providers::Base
   def chat_span_attributes: (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
 
   # --
+  # : (String?) -> Hash[String, untyped]
+  def chat_metric_base_attributes: (String?) -> Hash[String, untyped]
+
+  # --
   # : (String?, String?) -> Hash[String, untyped]
   def chat_metric_attributes: (String?, String?) -> Hash[String, untyped]
+
+  # Per-call only — the run level would double-count an aggregate.
+  # --
+  # : (String?, Riffer::Providers::TokenUsage?) -> void
+  def record_token_usage_metric: (String?, Riffer::Providers::TokenUsage?) -> void
 
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Symbol?, String?) -> void
