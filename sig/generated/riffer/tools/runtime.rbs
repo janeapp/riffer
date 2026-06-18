@@ -36,8 +36,8 @@ class Riffer::Tools::Runtime
   private
 
   # --
-  # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, assistant_message: Riffer::Messages::Assistant?) -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
-  def run_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, assistant_message: Riffer::Messages::Assistant?) -> [ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]
+  # : (Riffer::Messages::Assistant::ToolCall) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
+  def instrument_tool_call: (Riffer::Messages::Assistant::ToolCall) { () -> Riffer::Tools::Response } -> [ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]
 
   # --
   # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
