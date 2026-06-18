@@ -16,4 +16,10 @@ module Riffer::Metrics::Instruments # :nodoc: all
     unit: "{token}",
     description: "Number of input and output tokens used in GenAI operations"
   ) #: Riffer::Metrics::Histogram
+
+  COST = Riffer::Metrics.create_histogram(
+    "riffer.gen_ai.cost",
+    unit: "USD",
+    description: "Cost of GenAI client operations in USD"
+  ) #: Riffer::Metrics::Histogram
 end

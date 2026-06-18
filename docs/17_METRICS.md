@@ -33,7 +33,7 @@ Instruments are recorded under the instrumentation scope named `riffer`, version
 
 Histogram bucket boundaries are a **host-side** concern. The OpenTelemetry metrics API does not let an instrumenting library attach bucket boundaries at instrument creation, so Riffer does not set them — the SDK's default buckets apply unless you override them. To match the GenAI semantic conventions' recommended boundaries (or your own), register a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) on the meter provider that targets the instrument by name and sets explicit bucket boundaries.
 
-The convention recommends boundaries scaled to each instrument, so register one View per histogram — the token-count buckets below are for `gen_ai.client.token.usage`; `gen_ai.client.operation.duration` wants its own latency-scaled set.
+The convention recommends boundaries scaled to each instrument, so register one View per histogram — the token-count buckets below are for `gen_ai.client.token.usage`; `gen_ai.client.operation.duration` wants its own latency-scaled set, and `riffer.gen_ai.cost` a USD-scaled one.
 
 ```ruby
 require "opentelemetry-metrics-sdk"
@@ -60,11 +60,11 @@ Each instrument is documented here as a row carrying its name, instrument type, 
 
 Histogram, unit `s`. The latency of a single GenAI operation, recorded around the same wrap as the matching [span](16_TRACING.md) on both the success and error paths and timed with a monotonic clock. Recording is independent of tracing — the metric fires even with `config.tracing.enabled = false`. Tell the three operations apart by `gen_ai.operation.name`.
 
-| `gen_ai.operation.name` | Recorded around                                  | Attributes                                                                                                                |
-| ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `chat`                  | each provider call (`generate_text`/`stream_text`) | `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` (when set), `error.type` (on error)               |
-| `invoke_agent`          | each agent run (`generate`/`stream`)             | `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model`, `gen_ai.agent.name`, `error.type` (on error)     |
-| `execute_tool`          | each tool call                                   | `gen_ai.operation.name`, `gen_ai.tool.name`, `error.type` (on error)                                                      |
+| `gen_ai.operation.name` | Recorded around                                    | Attributes                                                                                                            |
+| ----------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `chat`                  | each provider call (`generate_text`/`stream_text`) | `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` (when set), `error.type` (on error)           |
+| `invoke_agent`          | each agent run (`generate`/`stream`)               | `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model`, `gen_ai.agent.name`, `error.type` (on error) |
+| `execute_tool`          | each tool call                                     | `gen_ai.operation.name`, `gen_ai.tool.name`, `error.type` (on error)                                                  |
 
 `error.type` carries the exception class for a raised error; for `execute_tool` it carries the handled error category (e.g. `validation_error`, `timeout_error`) when a tool returns an error result instead of raising — matching the span. `gen_ai.response.model` is not recorded yet; it will land once it is also captured on the chat span.
 
@@ -76,16 +76,28 @@ Histogram, unit `s`. The latency of a single GenAI operation, recorded around th
 
 Histogram, unit `{token}`. Token volume for a single `chat` call, recorded from the normalized token usage after the provider responds. Each call emits **two data points** — one `input`, one `output` — distinguished by `gen_ai.token.type`. Recording is independent of tracing (it fires with `config.tracing.enabled = false`); for a streamed call it fires when the stream drains. `gen_ai.response.model` is not recorded yet, for the same reason as `operation.duration`.
 
-| `gen_ai.token.type` | Value                                                   | Attributes                                                                                       |
-| ------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `input`             | total prompt tokens for the call, **cache-inclusive**   | `gen_ai.operation.name` (always `chat`), `gen_ai.provider.name`, `gen_ai.token.type`, `gen_ai.request.model` (when set) |
-| `output`            | tokens generated, including reasoning/thinking tokens   | same                                                                                             |
+| `gen_ai.token.type` | Value                                                 | Attributes                                                                                                              |
+| ------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `input`             | total prompt tokens for the call, **cache-inclusive** | `gen_ai.operation.name` (always `chat`), `gen_ai.provider.name`, `gen_ai.token.type`, `gen_ai.request.model` (when set) |
+| `output`            | tokens generated, including reasoning/thinking tokens | same                                                                                                                    |
 
 > **Per-call only.** Token usage is never recorded at the run (`invoke_agent`) level. Metrics pre-aggregate, so emitting both the per-call points and a run total would double-count — sum the per-call points in your backend if you want a run total. This is the metric-side counterpart of the span-level [double-count trap](16_TRACING.md#token-usage-and-cost).
 
 > **Cache buckets stay on spans.** The semconv `gen_ai.token.type` defines only `input` and `output`, so the prompt-cache subsets (`cache_read` / `cache_creation`) live on [spans](16_TRACING.md#token-usage-and-cost), not this metric. The `input` value is the cache-inclusive total, matching the span's `gen_ai.usage.input_tokens`.
 
 A call that reports no usage records no data points, and a failed call has nothing to count — so this metric carries no `error.type` (the semconv marks it not applicable here, unlike `operation.duration`).
+
+### `riffer.gen_ai.cost`
+
+Histogram, unit `USD`. The cost of a single `chat` call, recorded from the [cost](16_TRACING.md#token-usage-and-cost) on the normalized token usage after the provider responds — the same source as the cost span attribute, a different sink. This instrument is Riffer-owned (`riffer.*`, not `gen_ai.*`) so it won't collide if the semantic conventions later define a cost instrument; see [Stability](#stability). Recording is independent of tracing (it fires with `config.tracing.enabled = false`); for a streamed call it fires when the stream drains.
+
+| Value            | Attributes                                                                                         |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| cost of the call | `gen_ai.operation.name` (always `chat`), `gen_ai.provider.name`, `gen_ai.request.model` (when set) |
+
+Pricing is **consumer-configured** — no price table ships with the gem (see [Configuration — Pricing](10_CONFIGURATION.md#pricing)). A call whose model has no configured price records **no** data point, so this metric covers only priced calls; `operation.duration` and `token.usage` still record. A priced call that computes to `0.0` does record a zero data point — only an absent price means there is nothing to measure.
+
+> **Per-call only.** Cost is never recorded at the run (`invoke_agent`) level, for the same reason as token usage: metrics pre-aggregate, so emitting both per-call points and a run total would double-count. Sum the per-call points in your backend for a run total.
 
 ## Stability
 
