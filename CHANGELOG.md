@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.33.0](https://github.com/janeapp/riffer/compare/riffer/v0.32.1...riffer/v0.33.0) (2026-06-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* reported input_tokens grows by the cache token counts on Anthropic and Bedrock, and output_tokens grows by the thinking token count on Gemini, whenever those features are active.
+
+### Features
+
+* add the Riffer::Metrics OpenTelemetry port foundation ([#325](https://github.com/janeapp/riffer/issues/325)) ([92d060c](https://github.com/janeapp/riffer/commit/92d060c9f006f9f6e904aa57e749909f360b8cd3))
+* add tracing foundation with optional OTEL backend ([#307](https://github.com/janeapp/riffer/issues/307)) ([938194c](https://github.com/janeapp/riffer/commit/938194caa7c9bfcdada9039047adf2e9fd599c27))
+* compute per-model cost on token usage ([#322](https://github.com/janeapp/riffer/issues/322)) ([f637f73](https://github.com/janeapp/riffer/commit/f637f73875cb5aa4563b5bae992269b5d7185ae2))
+* emit a chat span per LLM call with normalized finish reasons ([#312](https://github.com/janeapp/riffer/issues/312)) ([42f39dd](https://github.com/janeapp/riffer/commit/42f39dd244295cf8d398fd7daf14c33d2a169c32))
+* emit an execute_guardrail span per guardrail ([#324](https://github.com/janeapp/riffer/issues/324)) ([b280c71](https://github.com/janeapp/riffer/commit/b280c71bb8089ed7e948d8966f841535178f167f))
+* emit an execute_tool span per tool call ([#318](https://github.com/janeapp/riffer/issues/318)) ([e548450](https://github.com/janeapp/riffer/commit/e548450a980e6a03d06bda488ab94704ad33a37a))
+* emit gen_ai.client.operation.duration metric ([#326](https://github.com/janeapp/riffer/issues/326)) ([a9399b8](https://github.com/janeapp/riffer/commit/a9399b8f1b10bc947b1e0716a483e2921ab2a852))
+* emit gen_ai.client.token.usage metric ([#327](https://github.com/janeapp/riffer/issues/327)) ([f77f0f7](https://github.com/janeapp/riffer/commit/f77f0f7cd8db7cbd3a3a36f10e4ab08e70e909a0))
+* emit invoke_agent span per agent run ([#310](https://github.com/janeapp/riffer/issues/310)) ([49c8c79](https://github.com/janeapp/riffer/commit/49c8c79f3ba9c13c83ed6cd0e427e842a0459176))
+* emit riffer.gen_ai.cost metric from TokenUsage cost ([#328](https://github.com/janeapp/riffer/issues/328)) ([1ee4772](https://github.com/janeapp/riffer/commit/1ee47726def4ca2e812e88157efce1bf2a8d2e69))
+* support user-explicit skill activation and dedupe re-activations ([#305](https://github.com/janeapp/riffer/issues/305)) ([f95b908](https://github.com/janeapp/riffer/commit/f95b90897f60fc4b8f930297e0b22ce61a1a330f))
+* surface cost on LLM-call and run spans ([#323](https://github.com/janeapp/riffer/issues/323)) ([a9074b4](https://github.com/janeapp/riffer/commit/a9074b47defb4a0426c8a51dd90b60260098a14b))
+
+
+### Code Refactoring
+
+* normalize token usage semantics across providers ([#309](https://github.com/janeapp/riffer/issues/309)) ([990f86d](https://github.com/janeapp/riffer/commit/990f86d9ec74cfe85329a7ab583d51b72628c85f))
+
 ## [0.32.1](https://github.com/janeapp/riffer/compare/riffer/v0.32.0...riffer/v0.32.1) (2026-06-10)
 
 
