@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>16_TRACING - Riffer Documentation</title>
+
+
+  <meta name="keywords" content="ruby,documentation,16_TRACING">
+  <meta
+    name="description"
+    content="16_TRACING: opentelemetry. opentelemetry."
+  >
+
+
+
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="16_TRACING - Riffer Documentation">
+
+
+
+    <meta property="og:description" content="opentelemetry. opentelemetry.">
+
+
+
+
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="16_TRACING - Riffer Documentation">
+
+
+
+    <meta name="twitter:description" content="opentelemetry. opentelemetry.">
+
+
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script
+  src="./js/theme-toggle.js?v=7.2.0"
+></script>
+
+<script
+  src="./js/search_navigation.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="./js/search_data.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="./js/search_ranker.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="./js/search_controller.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="./js/c_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="./js/bash_highlighter.js?v=7.2.0"
+  defer
+></script>
+
+<script
+  src="./js/aliki.js?v=7.2.0"
+  defer
+></script>
+
+<link
+  href="./css/rdoc.css?v=7.2.0"
+  rel="stylesheet"
+>
+
+
+
+
+<body role="document" class="file has-toc">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- Chevron (right arrow) - used for expand/collapse -->
+  <symbol
+    id="icon-chevron"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </symbol>
+
+  <!-- File/Document - Pages section -->
+  <symbol
+    id="icon-file"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+    ></path>
+
+    <polyline points="14 2 14 8 20 8"></polyline>
+  </symbol>
+
+  <!-- Layers/Stack - Classes and Modules section -->
+  <symbol
+    id="icon-layers"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+    <polyline points="2 17 12 22 22 17"></polyline>
+    <polyline points="2 12 12 17 22 12"></polyline>
+  </symbol>
+
+  <!-- Curly braces with C - Class Methods section -->
+  <symbol
+    id="icon-class-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      C
+    </text>
+  </symbol>
+
+  <!-- Curly braces with I - Instance Methods section -->
+  <symbol
+    id="icon-instance-methods"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M6 3C3.5 3 2 4.5 2 7v3c0 1.5-1 2-1 2s1 .5 1 2v5c0 2.5 1.5 4 4 4"></path>
+    <path d="M18 3c2.5 0 4 1.5 4 4v3c0 1.5 1 2 1 2s-1 .5-1 2v5c0 2.5-1.5 4-4 4"></path>
+
+    <text
+      x="12"
+      y="17"
+      text-anchor="middle"
+      font-size="13"
+      font-weight="bold"
+      fill="currentColor"
+      stroke="none"
+    >
+      I
+    </text>
+  </symbol>
+
+  <!-- Double chevrons up - Ancestors section -->
+  <symbol
+    id="icon-ancestors"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </symbol>
+
+  <!-- User with plus - Included Modules section -->
+  <symbol
+    id="icon-includes"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+
+    <line
+      x1="20"
+      y1="8"
+      x2="20"
+      y2="14"
+    ></line>
+
+    <line
+      x1="23"
+      y1="11"
+      x2="17"
+      y2="11"
+    ></line>
+  </symbol>
+
+  <!-- User with check - Extended Modules section -->
+  <symbol
+    id="icon-extends"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+    <polyline points="17 11 19 13 23 9"></polyline>
+  </symbol>
+
+  <!-- List - Sections section -->
+  <symbol
+    id="icon-list"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <line
+      x1="8"
+      y1="6"
+      x2="21"
+      y2="6"
+    ></line>
+
+    <line
+      x1="8"
+      y1="12"
+      x2="21"
+      y2="12"
+    ></line>
+
+    <line
+      x1="8"
+      y1="18"
+      x2="21"
+      y2="18"
+    ></line>
+
+    <line
+      x1="3"
+      y1="6"
+      x2="3.01"
+      y2="6"
+    ></line>
+
+    <line
+      x1="3"
+      y1="12"
+      x2="3.01"
+      y2="12"
+    ></line>
+
+    <line
+      x1="3"
+      y1="18"
+      x2="3.01"
+      y2="18"
+    ></line>
+  </symbol>
+</svg>
+
+<header class="top-navbar">
+  <a href="./index.html" class="navbar-brand">
+    Riffer Documentation
+  </a>
+
+  <!-- Desktop search bar -->
+  <div class="navbar-search navbar-search-desktop" role="search">
+    <form action="#" method="get" accept-charset="utf-8">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results-desktop"
+             type="text" name="search" placeholder="Search (/) for a class, method..."
+             spellcheck="false" autocomplete="off"
+             title="Type to search, Up and Down to navigate, Enter to load">
+      <ul id="search-results-desktop" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="initially-hidden search-results"></ul>
+    </form>
+  </div>
+
+  <!-- Mobile search icon button -->
+  <button id="search-toggle" class="navbar-search-mobile" aria-label="Open search" type="button">
+    <span aria-hidden="true">🔍</span>
+  </button>
+
+  <!-- Theme toggle button -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+    <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+  </button>
+</header>
+
+<!-- Search Modal (Mobile) -->
+<div id="search-modal" class="search-modal" hidden aria-modal="true" role="dialog" aria-label="Search">
+  <div class="search-modal-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <form class="search-modal-form" action="#" method="get" accept-charset="utf-8">
+        <span class="search-modal-icon" aria-hidden="true">🔍</span>
+        <input id="search-field-mobile" role="combobox" aria-label="Search"
+               aria-autocomplete="list" aria-controls="search-results-mobile"
+               type="text" name="search" placeholder="Search documentation"
+               spellcheck="false" autocomplete="off">
+        <button type="button" class="search-modal-close" aria-label="Close search" id="search-modal-close">
+          <span aria-hidden="true">esc</span>
+        </button>
+      </form>
+    </div>
+    <div class="search-modal-body">
+      <ul id="search-results-mobile" aria-label="Search Results"
+          aria-busy="false" aria-expanded="false"
+          aria-atomic="false" class="search-results search-modal-results initially-hidden"></ul>
+      <div class="search-modal-empty">
+        <p>No recent searches</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="navigation-toggle" role="button" tabindex="0" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="navigation">
+  <span aria-hidden="true">&#9776;</span>
+</div>
+
+
+<nav id="navigation" role="navigation" hidden>
+  
+
+
+
+
+
+
+  <div id="fileindex-section" class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg>
+            <use href="#icon-file"></use>
+          </svg>
+        </span>
+
+        <span class="nav-section-title">Pages</span>
+
+        <span class="nav-section-chevron">
+          <svg>
+            <use href="#icon-chevron"></use>
+          </svg>
+        </span>
+      </summary>
+
+      <ul class="nav-list">
+
+
+
+
+
+
+            <li>
+              <a href="./01_OVERVIEW_md.html">
+                01_OVERVIEW
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./02_GETTING_STARTED_md.html">
+                02_GETTING_STARTED
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./03_AGENTS_md.html">
+                03_AGENTS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./04_AGENT_LIFECYCLE_md.html">
+                04_AGENT_LIFECYCLE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./05_AGENT_LOOP_md.html">
+                05_AGENT_LOOP
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./06_TOOLS_md.html">
+                06_TOOLS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./07_TOOL_ADVANCED_md.html">
+                07_TOOL_ADVANCED
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./08_MESSAGES_md.html">
+                08_MESSAGES
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./09_STREAM_EVENTS_md.html">
+                09_STREAM_EVENTS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./10_CONFIGURATION_md.html">
+                10_CONFIGURATION
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./11_EVALS_md.html">
+                11_EVALS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./12_GUARDRAILS_md.html">
+                12_GUARDRAILS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./13_SKILLS_md.html">
+                13_SKILLS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./14_MCP_md.html">
+                14_MCP
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./15_SERIALIZATION_md.html">
+                15_SERIALIZATION
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./16_TRACING_md.html">
+                16_TRACING
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./17_METRICS_md.html">
+                17_METRICS
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./CHANGELOG_md.html">
+                CHANGELOG
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./LICENSE_txt.html">
+                LICENSE
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <a href="./README_md.html">
+                README
+              </a>
+            </li>
+
+
+
+
+
+          <li>
+            <details >
+              <summary>
+                
+                  providers
+                  
+                
+              </summary>
+
+              <ul class="link-list">
+
+                  <li>
+                    <a href="./providers/01_PROVIDERS_md.html">
+                      01_PROVIDERS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/02_AMAZON_BEDROCK_md.html">
+                      02_AMAZON_BEDROCK
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/03_ANTHROPIC_md.html">
+                      03_ANTHROPIC
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/04_OPENAI_md.html">
+                      04_OPENAI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/05_AZURE_OPENAI_md.html">
+                      05_AZURE_OPENAI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/06_MOCK_PROVIDER_md.html">
+                      06_MOCK_PROVIDER
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/07_CUSTOM_PROVIDERS_md.html">
+                      07_CUSTOM_PROVIDERS
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/08_GEMINI_md.html">
+                      08_GEMINI
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./providers/09_OPENROUTER_md.html">
+                      09_OPENROUTER
+                    </a>
+                  </li>
+
+              </ul>
+            </details>
+          </li>
+
+      </ul>
+    </details>
+  </div>
+
+
+  <div id="classindex-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-layers"></use></svg>
+      </span>
+      <span class="nav-section-title">Classes and Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="link-list nav-list"><li><details open><summary><code><a href="./Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="./Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="./Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="./Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="./Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="./Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="./Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="./Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Config/Metrics.html">Metrics</a></code></li><li><details><summary><code><a href="./Riffer/Config/Pricing.html">Pricing</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Config/Pricing/Rates.html">Rates</a></code></li></ul></details></li><li><code><a href="./Riffer/Config/Skills.html">Skills</a></code></li><li><code><a href="./Riffer/Config/Tracing.html">Tracing</a></code></li></ul></details></li><li><code><a href="./Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="./Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="./Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="./Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="./Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="./Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="./Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="./Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="./Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="./Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="./Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="./Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Helpers/Boolean.html">Boolean</a></code></li><li><code><a href="./Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><code><a href="./Riffer/Helpers/ClassNameConverter.html">ClassNameConverter</a></code></li><li><details><summary><code><a href="./Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li></ul></details></li><li><details><summary><code><a href="./Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="./Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="./Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="./Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="./Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="./Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="./Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="./Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="./Riffer/Mcp/Tool.html">Tool</a></code></li><li><code><a href="./Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="./Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="./Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="./Riffer/Messages/System.html">System</a></code></li><li><code><a href="./Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="./Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><code><a href="./Riffer/Metrics.html">Metrics</a></code></li><li><details><summary><code><a href="./Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="./Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="./Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="./Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="./Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="./Riffer/Providers/FinishReason.html">FinishReason</a></code></li><li><code><a href="./Riffer/Providers/Gemini.html">Gemini</a></code></li><li><code><a href="./Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="./Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="./Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="./Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="./Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="./Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="./Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="./Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="./Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="./Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="./Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="./Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="./Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="./Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="./Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="./Riffer/StreamEvents/FinishReasonDone.html">FinishReasonDone</a></code></li><li><code><a href="./Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="./Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="./Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="./Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="./Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="./Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="./Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="./Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="./Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="./Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="./Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="./Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="./Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="./Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="./Riffer/Tool.html">Tool</a></code></li><li><code><a href="./Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="./Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="./Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="./Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="./Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="./Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><details><summary><code><a href="./Riffer/Tracing.html">Tracing</a></code></summary><ul class="link-list nav-list"><li><code><a href="./Riffer/Tracing/Null.html">Null</a></code></li><li><code><a href="./Riffer/Tracing/Otel.html">Otel</a></code></li></ul></details></li><li><code><a href="./Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+  </details>
+</div>
+
+</nav>
+
+<main role="main" aria-label="Page 16_TRACING.md">
+
+<span id="label-Tracing" class="legacy-anchor"></span>
+<h1 id="tracing"><a href="#tracing">Tracing</a></h1>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> instruments its agent loop with <a href="https://opentelemetry.io/">OpenTelemetry</a> spans, following the <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">GenAI semantic conventions</a>. The emitted span shape — names, attributes, and hierarchy — is a public, versioned contract you can build dashboards, alerts, and cost reporting against. This page is the reference for that contract.</p>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> only <em>emits</em> spans. The host application owns the OpenTelemetry SDK, the exporter, sampling, and service naming — the standard OTEL split. Without a host SDK, every span is a silent no-op and <a href="Riffer.html"><code>Riffer</code></a> carries no OpenTelemetry gem dependency.</p>
+
+<span id="label-Enabling+tracing" class="legacy-anchor"></span>
+<h2 id="enabling-tracing"><a href="#enabling-tracing">Enabling tracing</a></h2>
+
+<p>Add the OpenTelemetry SDK to your host application and configure an exporter. <a href="Riffer.html"><code>Riffer</code></a> detects the API at runtime and starts emitting through whatever provider the SDK configures — there is nothing to switch on in <a href="Riffer.html"><code>Riffer</code></a> beyond the SDK being present.</p>
+
+<pre class="ruby"><span class="ruby-comment"># Gemfile</span>
+<span class="ruby-identifier">gem</span> <span class="ruby-string">&quot;opentelemetry-sdk&quot;</span>
+</pre>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;opentelemetry/sdk&quot;</span>
+
+<span class="ruby-constant">OpenTelemetry</span><span class="ruby-operator">::</span><span class="ruby-constant">SDK</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">c</span>.<span class="ruby-identifier">service_name</span> = <span class="ruby-string">&quot;my-agent-host&quot;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>To see Riffer’s spans on stdout while developing locally, wire in the console exporter:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;opentelemetry/sdk&quot;</span>
+
+<span class="ruby-constant">OpenTelemetry</span><span class="ruby-operator">::</span><span class="ruby-constant">SDK</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">c</span>.<span class="ruby-identifier">service_name</span> = <span class="ruby-string">&quot;my-agent-host&quot;</span>
+  <span class="ruby-identifier">c</span>.<span class="ruby-identifier">add_span_processor</span>(
+    <span class="ruby-constant">OpenTelemetry</span><span class="ruby-operator">::</span><span class="ruby-constant">SDK</span><span class="ruby-operator">::</span><span class="ruby-constant">Trace</span><span class="ruby-operator">::</span><span class="ruby-constant">Export</span><span class="ruby-operator">::</span><span class="ruby-constant">SimpleSpanProcessor</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-constant">OpenTelemetry</span><span class="ruby-operator">::</span><span class="ruby-constant">SDK</span><span class="ruby-operator">::</span><span class="ruby-constant">Trace</span><span class="ruby-operator">::</span><span class="ruby-constant">Export</span><span class="ruby-operator">::</span><span class="ruby-constant">ConsoleSpanExporter</span>.<span class="ruby-identifier">new</span>
+    )
+  )
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Any backend that implements the OpenTelemetry Traces API ingests Riffer’s spans with no second pipeline — including the <code>datadog</code> gem (<code>require &quot;datadog/opentelemetry&quot;</code>), which routes them through an existing tracer so they nest inside the host’s live trace. For real exporter and collector setup (OTLP, sampling, resource attributes), see the <a href="https://opentelemetry.io/docs/languages/ruby/">OpenTelemetry Ruby docs</a>.</p>
+
+<p>The three tracing knobs — the <code>enabled</code> kill switch, opt-in message-content capture, and an explicit tracer provider for tests — live in <a href="10_CONFIGURATION_md.html#tracing">Configuration — Tracing</a>.</p>
+
+<p>Spans are emitted under the instrumentation scope named <code>riffer</code>, versioned with the <a href="Riffer.html"><code>Riffer</code></a> gem version. That scope version is the runtime signal for which release produced a span; see <a href="#stability">Stability</a>.</p>
+
+<span id="label-Spans" class="legacy-anchor"></span>
+<h2 id="spans"><a href="#spans">Spans</a></h2>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> emits four span types. A single agent run produces one <code>invoke_agent</code> span wrapping one <code>chat</code> span per model call, one <code>execute_tool</code> span per tool call, and one <code>execute_guardrail</code> span per guardrail execution, interleaved in execution order:</p>
+
+<pre>invoke_agent {agent}             INTERNAL
+├─ execute_guardrail {name}      INTERNAL   (one per before-phase guardrail)
+├─ chat {model}                  CLIENT     (one per LLM call)
+├─ execute_tool {tool}           INTERNAL   (one per tool call)
+│   └─ (host spans nest here via around_tool_call / tool internals)
+├─ execute_guardrail {name}      INTERNAL   (one per after-phase guardrail, after each response)
+├─ chat {model}
+└─ …</pre>
+
+<p>The <code>execute_tool</code> span opens <em>outside</em> Riffer’s <code>around_tool_call</code> hook, so any spans a host emits from that hook — or from inside the tool itself — nest beneath it. See <a href="07_TOOL_ADVANCED_md.html">Advanced Tools</a> for the hook.</p>
+
+<span id="label-Reading+the+attribute+tables" class="legacy-anchor"></span>
+<h3 id="reading-the-attribute-tables"><a href="#reading-the-attribute-tables">Reading the attribute tables</a></h3>
+
+<p>Every attribute a span can carry is listed below, including the conditional ones — you can’t query a key you don’t know exists. The <strong>Present</strong> column tells you when to expect each:</p>
+<ul><li>
+<p><strong><code>Always</code></strong> — emitted on every span of that type.</p>
+</li><li>
+<p><strong><code>On &lt;something happened&gt;</code></strong> (e.g. <code>On a tripwire</code>, <code>On failure</code>) — <em>path-conditional</em>: presence is itself a signal. If <code>riffer.tripwire.phase</code> is set, a guardrail tripped. Filter on these with confidence.</p>
+</li><li>
+<p><strong><code>When the provider reports it</code></strong> / <strong><code>When the caller set it</code></strong> — <em>best-effort</em>: may be absent even on a perfectly healthy span, because it depends on what the upstream provider returned or what options the caller passed. Guard or coalesce these in queries.</p>
+</li></ul>
+
+<p>The contract promise is: <strong>when present</strong>, a key carries the documented meaning and type. It is <em>not</em> a promise that every key appears on every span.</p>
+
+<span id="label-invoke_agent+-7Bagent-7D+-E2-80-94+the+run+span" class="legacy-anchor"></span>
+<h2 id="invokeagent-agent--the-run-span"><a href="#invokeagent-agent--the-run-span"><code>invoke_agent {agent}</code> — the run span</a></h2>
+
+<p><code>INTERNAL</code>. One per call to <code>Agent#generate</code> or <code>Agent#stream</code>. The span name suffix is the agent’s identifier (e.g. <code>invoke_agent weather-agent</code>).</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Present</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gen_ai.operation.name</code></td>
+<td>string</td>
+<td>Always (<code>&quot;invoke_agent&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>gen_ai.agent.name</code></td>
+<td>string</td>
+<td>Always — the agent’s identifier</td>
+</tr>
+<tr>
+<td><code>gen_ai.provider.name</code></td>
+<td>string</td>
+<td>Always — see <a href="#provider-names">provider names</a></td>
+</tr>
+<tr>
+<td><code>gen_ai.request.model</code></td>
+<td>string</td>
+<td>Always — the agent’s configured model</td>
+</tr>
+<tr>
+<td><code>riffer.steps</code></td>
+<td>int</td>
+<td>Always — number of LLM calls in the run</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.input_tokens</code></td>
+<td>int</td>
+<td>When the run made an LLM call that reported usage</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.output_tokens</code></td>
+<td>int</td>
+<td>When the run made an LLM call that reported usage</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.cache_read.input_tokens</code></td>
+<td>int</td>
+<td>When the provider reported cache reads</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.cache_creation.input_tokens</code></td>
+<td>int</td>
+<td>When the provider reported cache writes</td>
+</tr>
+<tr>
+<td><code>riffer.cost</code></td>
+<td>float</td>
+<td>When every call in the run was priced</td>
+</tr>
+<tr>
+<td><code>riffer.interrupt.reason</code></td>
+<td>string</td>
+<td>On interrupt (e.g. approval needed, max steps)</td>
+</tr>
+<tr>
+<td><code>riffer.tripwire.guardrail</code></td>
+<td>string</td>
+<td>On a guardrail tripwire, when the guardrail is named</td>
+</tr>
+<tr>
+<td><code>riffer.tripwire.reason</code></td>
+<td>string</td>
+<td>On a guardrail tripwire</td>
+</tr>
+<tr>
+<td><code>riffer.tripwire.phase</code></td>
+<td>string</td>
+<td>On a guardrail tripwire (<code>&quot;before&quot;</code> / <code>&quot;after&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>error.type</code></td>
+<td>string</td>
+<td>On an unhandled exception</td>
+</tr>
+</tbody>
+</table>
+
+<p>The <code>riffer.tripwire.*</code> attributes are the run-level summary of the guardrail that halted the run; <code>riffer.tripwire.guardrail</code> carries the same name value as the blocking <a href="#execute_guardrail-name--the-guardrail-span"><code>execute_guardrail</code></a> span’s <code>riffer.guardrail.name</code>, so the two join on a single key.</p>
+
+<p>Usage on this span is the run total, aggregated across every step. See <a href="#token-usage">Token usage</a> for the trap this creates.</p>
+
+<span id="label-chat+-7Bmodel-7D+-E2-80-94+the+LLM+call+span" class="legacy-anchor"></span>
+<h2 id="chat-model--the-llm-call-span"><a href="#chat-model--the-llm-call-span"><code>chat {model}</code> — the LLM call span</a></h2>
+
+<p><code>CLIENT</code>. One per model call, in both <code>generate</code> and <code>stream</code>. The span name suffix is the model (e.g. <code>chat gpt-4</code>), or just <code>chat</code> when no model is set.</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Present</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gen_ai.operation.name</code></td>
+<td>string</td>
+<td>Always (<code>&quot;chat&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>gen_ai.provider.name</code></td>
+<td>string</td>
+<td>Always — see <a href="#provider-names">provider names</a></td>
+</tr>
+<tr>
+<td><code>gen_ai.request.model</code></td>
+<td>string</td>
+<td>When a model is set</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.temperature</code></td>
+<td>float</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.max_tokens</code></td>
+<td>int</td>
+<td>When the caller set <code>max_tokens</code> or <code>max_output_tokens</code></td>
+</tr>
+<tr>
+<td><code>gen_ai.request.top_p</code></td>
+<td>float</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.top_k</code></td>
+<td>int</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.frequency_penalty</code></td>
+<td>float</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.presence_penalty</code></td>
+<td>float</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.seed</code></td>
+<td>int</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.request.stop_sequences</code></td>
+<td>string[]</td>
+<td>When the caller set it</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.input_tokens</code></td>
+<td>int</td>
+<td>When the provider reported usage</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.output_tokens</code></td>
+<td>int</td>
+<td>When the provider reported usage</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.cache_read.input_tokens</code></td>
+<td>int</td>
+<td>When the provider reported cache reads</td>
+</tr>
+<tr>
+<td><code>gen_ai.usage.cache_creation.input_tokens</code></td>
+<td>int</td>
+<td>When the provider reported cache writes</td>
+</tr>
+<tr>
+<td><code>riffer.cost</code></td>
+<td>float</td>
+<td>When the call’s model was priced</td>
+</tr>
+<tr>
+<td><code>gen_ai.response.finish_reasons</code></td>
+<td>string[]</td>
+<td>When the provider reported a finish reason</td>
+</tr>
+<tr>
+<td><code>riffer.finish_reason.raw</code></td>
+<td>string</td>
+<td>When the raw value differs from the normalized one</td>
+</tr>
+<tr>
+<td><code>gen_ai.input.messages</code></td>
+<td>string</td>
+<td>When <code>capture_messages</code> is on (JSON; see <a href="#message-content-capture">capture</a>)</td>
+</tr>
+<tr>
+<td><code>gen_ai.system_instructions</code></td>
+<td>string</td>
+<td>When <code>capture_messages</code> is on and a system prompt exists</td>
+</tr>
+<tr>
+<td><code>gen_ai.output.messages</code></td>
+<td>string</td>
+<td>When <code>capture_messages</code> is on (JSON)</td>
+</tr>
+<tr>
+<td><code>error.type</code></td>
+<td>string</td>
+<td>On an unhandled exception</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>gen_ai.response.finish_reasons</code> is an array of exactly one normalized value, from the fixed vocabulary <code>stop</code>, <code>length</code>, <code>tool_calls</code>, <code>content_filter</code>, <code>error</code>, <code>other</code>. When the provider’s raw wire value carries more nuance than the normalized one, the raw string is preserved on <code>riffer.finish_reason.raw</code>.</p>
+
+<span id="label-execute_tool+-7Btool-7D+-E2-80-94+the+tool+call+span" class="legacy-anchor"></span>
+<h2 id="executetool-tool--the-tool-call-span"><a href="#executetool-tool--the-tool-call-span"><code>execute_tool {tool}</code> — the tool call span</a></h2>
+
+<p><code>INTERNAL</code>. One per tool call dispatched by the runtime. The span name suffix is the tool’s name (e.g. <code>execute_tool get_weather</code>).</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Present</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gen_ai.operation.name</code></td>
+<td>string</td>
+<td>Always (<code>&quot;execute_tool&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>gen_ai.tool.name</code></td>
+<td>string</td>
+<td>Always</td>
+</tr>
+<tr>
+<td><code>gen_ai.tool.call.id</code></td>
+<td>string</td>
+<td>Always — the originating tool-call id</td>
+</tr>
+<tr>
+<td><code>error.type</code></td>
+<td>string</td>
+<td>On a tool error (see below)</td>
+</tr>
+<tr>
+<td><code>gen_ai.tool.call.arguments</code></td>
+<td>string</td>
+<td>When <code>capture_messages</code> is on (see <a href="#message-content-capture">capture</a>)</td>
+</tr>
+<tr>
+<td><code>gen_ai.tool.call.result</code></td>
+<td>string</td>
+<td>When <code>capture_messages</code> is on</td>
+</tr>
+</tbody>
+</table>
+
+<p>A tool failure comes in two shapes, distinguished by span status:</p>
+<ul><li>
+<p><strong>Handled error</strong> — the tool returned an error response. <code>error.type</code> carries the category and the <strong>span status stays unset</strong> (the run continues). The framework’s categories are <code>unknown_tool</code>, <code>validation_error</code>, <code>timeout_error</code>, and <code>execution_error</code>; a custom tool may set its own via <code>Riffer::Tools::Response.error(type:)</code>.</p>
+</li><li>
+<p><strong>Unhandled exception</strong> — the dispatch raised. <code>error.type</code> is the exception class name and the <strong>span status is <code>ERROR</code></strong>, with the exception recorded.</p>
+</li></ul>
+
+<p>This status convention is the same on <code>chat</code> and <code>invoke_agent</code>: an unhandled exception sets <code>error.type</code> to the class name and marks the span <code>ERROR</code>; everything else leaves the status unset.</p>
+
+<span id="label-execute_guardrail+-7Bname-7D+-E2-80-94+the+guardrail+span" class="legacy-anchor"></span>
+<h2 id="executeguardrail-name--the-guardrail-span"><a href="#executeguardrail-name--the-guardrail-span"><code>execute_guardrail {name}</code> — the guardrail span</a></h2>
+
+<p><code>INTERNAL</code>. One per guardrail execution; a guardrail registered for both phases runs — and emits a span — once in each. The span name suffix is the guardrail’s name (e.g. <code>execute_guardrail profanity_filter</code>), from <a href="Riffer/Guardrail.html#method-i-name"><code>Riffer::Guardrail#name</code></a> — the converted class name by default, overridable to relabel the span. This is the one <a href="Riffer.html"><code>Riffer</code></a> span with <strong>no <code>gen_ai.operation.name</code></strong>. A guardrail is not a GenAI semantic-convention operation, so the span stays entirely in Riffer’s own namespace rather than squat an invented value on the standardized key.</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Present</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>riffer.guardrail.name</code></td>
+<td>string</td>
+<td>Always — the guardrail’s name</td>
+</tr>
+<tr>
+<td><code>riffer.guardrail.phase</code></td>
+<td>string</td>
+<td>Always (<code>&quot;before&quot;</code> / <code>&quot;after&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>riffer.guardrail.action</code></td>
+<td>string</td>
+<td>On a returned result (<code>&quot;pass&quot;</code> / <code>&quot;transform&quot;</code> / <code>&quot;block&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>riffer.tripwire.reason</code></td>
+<td>string</td>
+<td>On a block — the block reason</td>
+</tr>
+<tr>
+<td><code>error.type</code></td>
+<td>string</td>
+<td>On an unhandled exception</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>riffer.guardrail.*</code> holds the facts true of any execution — name, phase, action. A reason exists only on a block, so it reuses the run-level <code>riffer.tripwire.reason</code> key: one query finds the reason on both the per-guardrail span and the enclosing <code>invoke_agent</code> summary.</p>
+
+<p>A block is a <strong>handled outcome</strong>: <code>riffer.guardrail.action</code> is <code>block</code> and the <strong>span status stays unset</strong> — the same convention <code>execute_tool</code> uses for a returned error response. Only a guardrail that <strong>raises</strong> sets <code>error.type</code> to the exception class name and marks the <strong>span status <code>ERROR</code></strong> (with the exception recorded); on a raise no result is produced, so <code>riffer.guardrail.action</code> is absent.</p>
+
+<span id="label-Example+trace" class="legacy-anchor"></span>
+<h2 id="example-trace"><a href="#example-trace">Example trace</a></h2>
+
+<p>A <code>generate</code> run where the model calls one tool, then answers — with one <code>before</code> guardrail and one <code>after</code> guardrail, using the OpenAI provider with <code>gpt-4</code>. The <code>after</code> guardrail runs once per model response, so it appears after each <code>chat</code>:</p>
+
+<pre>invoke_agent weather-agent          INTERNAL
+  gen_ai.agent.name      = weather-agent
+  gen_ai.provider.name   = openai
+  gen_ai.request.model   = gpt-4
+  riffer.steps           = 2
+  gen_ai.usage.input_tokens  = 1240
+  gen_ai.usage.output_tokens = 86
+  riffer.cost                = 0.0423
+├─ execute_guardrail input_filter   INTERNAL
+│    riffer.guardrail.name   = input_filter
+│    riffer.guardrail.phase  = before
+│    riffer.guardrail.action = pass
+├─ chat gpt-4                       CLIENT
+│    gen_ai.request.model            = gpt-4
+│    gen_ai.response.finish_reasons  = [&quot;tool_calls&quot;]
+│    gen_ai.usage.input_tokens       = 612
+│    gen_ai.usage.output_tokens      = 48
+│    riffer.cost                     = 0.0212
+├─ execute_guardrail output_filter  INTERNAL
+│    riffer.guardrail.name   = output_filter
+│    riffer.guardrail.phase  = after
+│    riffer.guardrail.action = pass
+├─ execute_tool get_weather         INTERNAL
+│    gen_ai.tool.name     = get_weather
+│    gen_ai.tool.call.id  = tc_42
+├─ chat gpt-4                       CLIENT
+│    gen_ai.request.model            = gpt-4
+│    gen_ai.response.finish_reasons  = [&quot;stop&quot;]
+│    gen_ai.usage.input_tokens       = 628
+│    gen_ai.usage.output_tokens      = 38
+│    riffer.cost                     = 0.0211
+└─ execute_guardrail output_filter  INTERNAL
+     riffer.guardrail.name   = output_filter
+     riffer.guardrail.phase  = after
+     riffer.guardrail.action = pass</pre>
+
+<span id="label-Token+usage+and+cost" class="legacy-anchor"></span>
+<h2 id="token-usage-and-cost"><a href="#token-usage-and-cost">Token usage and cost</a></h2>
+
+<p><code>gen_ai.usage.input_tokens</code> is the <strong>total</strong> prompt tokens for the call, <strong>cache-inclusive</strong>, per the GenAI semantic conventions. <code>gen_ai.usage.cache_read.input_tokens</code> and <code>gen_ai.usage.cache_creation.input_tokens</code> are <strong>subsets of that total</strong> — the portion served from, or written to, the provider’s prompt cache. They are <em>not</em> additional tokens; do not add them on top of <code>input_tokens</code>.</p>
+
+<pre>input_tokens                 = 1000
+cache_read.input_tokens      =  800   → 800 of the 1000 were cache hits
+                                        (≈ 200 billed as new input)</pre>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> normalizes this across providers, so the number may differ from a provider’s native API field. Anthropic’s raw <code>input_tokens</code> <em>excludes</em> the cache buckets — <a href="Riffer.html"><code>Riffer</code></a> folds them in. OpenAI’s already includes them. Either way the span value means the same thing.</p>
+
+<p><strong>Don’t double-count across spans.</strong> Usage on a <code>chat</code> span is per-call; usage on the enclosing <code>invoke_agent</code> span is the run total already summed across every <code>chat</code>. Aggregate one level or the other, never both.</p>
+
+<span id="label-Cost" class="legacy-anchor"></span>
+<h3 id="cost"><a href="#cost">Cost</a></h3>
+
+<p><code>riffer.cost</code> is the modeled cost of one call (on a <code>chat</code> span) or a whole run (on the <code>invoke_agent</code> span). It lives in Riffer’s own namespace because the GenAI semantic conventions define no cost attribute by design — <a href="Riffer.html"><code>Riffer</code></a> never squats <code>gen_ai.*</code> for it. The attribute appears only when you have configured pricing for the model in use: <a href="Riffer.html"><code>Riffer</code></a> ships no price table and never guesses, so an unpriced model simply carries no <code>riffer.cost</code>. See <a href="10_CONFIGURATION_md.html#pricing">Configuration — Pricing</a> for the rates.</p>
+
+<p>The value is <strong>unitless on the wire</strong> — <a href="Riffer.html"><code>Riffer</code></a> attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a <code>riffer.cost</code> of <code>0.0123</code> means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.</p>
+
+<p><strong>Run cost is all-or-nothing.</strong> The <code>riffer.cost</code> on an <code>invoke_agent</code> span is the sum of its per-call costs, present only when <strong>every</strong> call in the run was priced. A single unpriced call makes the run-level <code>riffer.cost</code> absent — costs sum with nil as absorbing, so <a href="Riffer.html"><code>Riffer</code></a> reports no run total rather than a partial one that silently under-reports spend. The priced <code>chat</code> spans still each carry their own <code>riffer.cost</code>; sum those yourself if a partial is what you want.</p>
+
+<span id="label-Message+content+capture" class="legacy-anchor"></span>
+<h2 id="message-content-capture"><a href="#message-content-capture">Message content capture</a></h2>
+
+<p>The prompt and completion content attributes — <code>gen_ai.input.messages</code>, <code>gen_ai.output.messages</code>, <code>gen_ai.system_instructions</code> on <code>chat</code>, and <code>gen_ai.tool.call.arguments</code> / <code>gen_ai.tool.call.result</code> on <code>execute_tool</code> — are <strong>off by default</strong> and gated behind <code>config.tracing.capture_messages</code>. Message content routinely carries sensitive data (including PHI); leave capture off unless your trace backend is an appropriate destination for it.</p>
+
+<p>When enabled, content is serialized as GenAI-semconv JSON strings. File attachments serialize as metadata-only stubs (media type and name, never bytes). <a href="Riffer.html"><code>Riffer</code></a> applies no size limit of its own — cap oversized attributes with the OTEL SDK’s attribute length limits. See <a href="10_CONFIGURATION_md.html#tracing">Configuration — Tracing</a> for the knob.</p>
+
+<span id="label-Provider+names" class="legacy-anchor"></span>
+<h2 id="provider-names"><a href="#provider-names">Provider names</a></h2>
+
+<p><code>gen_ai.provider.name</code> carries a GenAI-semconv well-known value where one exists: <code>openai</code>, <code>anthropic</code>, <code>aws.bedrock</code>, <code>azure.ai.openai</code>, <code>gcp.gemini</code>, <code>openrouter</code>. A custom provider that doesn’t override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.</p>
+
+<span id="label-Stability" class="legacy-anchor"></span>
+<h2 id="stability"><a href="#stability">Stability</a></h2>
+
+<p>The span and attribute shape is a public, versioned contract, in two tiers:</p>
+<ul><li>
+<p><strong><code>gen_ai.*</code></strong> tracks the OpenTelemetry GenAI semantic conventions, pinned to schema version <code>1.37.0</code>. That convention is still “Development” status upstream and its attribute names may change; <a href="Riffer.html"><code>Riffer</code></a> absorbs such renames deliberately in a release, never silently, with a <a href="CHANGELOG_md.html">CHANGELOG</a> entry.</p>
+</li><li>
+<p><strong><code>riffer.*</code></strong> is Riffer-owned (<code>riffer.steps</code>, <code>riffer.cost</code>, <code>riffer.interrupt.reason</code>, <code>riffer.tripwire.*</code>, <code>riffer.guardrail.*</code>, <code>riffer.finish_reason.raw</code>) and changes only through a normal version bump and <a href="CHANGELOG_md.html">CHANGELOG</a> entry.</p>
+</li></ul>
+
+<p>The semantic-convention schema version is a documented pin rather than a span attribute — the OpenTelemetry Ruby API can’t attach a schema URL to a tracer. The runtime version signal is the instrumentation scope: every span carries scope name <code>riffer</code> at the gem version that emitted it. Pin the <a href="Riffer.html"><code>Riffer</code></a> version your dashboards depend on, and watch the <a href="CHANGELOG_md.html">CHANGELOG</a> for tracing entries before upgrading.</p>
+
+<span id="label-Avoid+double+instrumentation" class="legacy-anchor"></span>
+<h2 id="avoid-double-instrumentation"><a href="#avoid-double-instrumentation">Avoid double instrumentation</a></h2>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> instruments the agent loop natively. Running a provider-level GenAI instrumentation gem (for example an OpenTelemetry contrib instrumentation for the underlying Anthropic or OpenAI client) <em>alongside</em> <a href="Riffer.html"><code>Riffer</code></a> duplicates the <code>chat</code> spans and double-counts token usage. Run one or the other, not both — disable the provider-level instrumentation when Riffer’s loop spans are active.</p>
+
+</main>
+
+<aside class="table-of-contents" role="complementary" aria-label="Table of Contents">
+  <div class="toc-sticky">
+    <h3 class="toc-heading">On This Page</h3>
+    <nav class="toc-nav" id="toc-nav" aria-label="Page sections">
+      <!-- Generated by JavaScript based on page headings -->
+    </nav>
+  </div>
+</aside>
+
+
+<footer class="site-footer">
+  
+
+  <div class="footer-bottom">
+    <p>
+      Generated by <a href="https://ruby.github.io/rdoc/">RDoc 7.2.0</a>
+      using the Aliki theme by <a href="http://st0012.dev">Stan Lo</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+
