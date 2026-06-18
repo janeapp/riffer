@@ -36,15 +36,26 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, stream_yielder: nil)
-    Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent), kind: :internal) do |span|
-      response = execute_run(agent, stream_yielder)
-      record_run_outcome(span, response)
-      response
+    start = Riffer::Metrics.monotonic_now
+    error_type = nil #: String?
+    begin
+      Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent), kind: :internal) do |span|
+        response = execute_run(agent, stream_yielder)
+        record_run_outcome(span, response)
+        response
+      rescue => error
+        # The backend records the exception and error status on the re-raise;
+        # error.type is the one semconv attribute it doesn't set.
+        span.set_attribute("error.type", error.class.name)
+        raise
+      end
     rescue => error
-      # The backend records the exception and error status on the re-raise;
-      # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
+      # The inner rescue tags the span; capture error.type here too, at method
+      # scope, where the ensure can read it onto the metric.
+      error_type = error.class.name #: String?
       raise
+    ensure
+      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: run_metric_attributes(agent, error_type))
     end
   end
 
@@ -326,6 +337,19 @@ module Riffer::Agent::Run
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name
     }
+  end
+
+  #--
+  #: (Riffer::Agent, String?) -> Hash[String, untyped]
+  def run_metric_attributes(agent, error_type)
+    attributes = {
+      "gen_ai.operation.name" => "invoke_agent",
+      "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
+      "gen_ai.request.model" => agent.model_name,
+      "gen_ai.agent.name" => agent.class.identifier
+    } #: Hash[String, untyped]
+    attributes["error.type"] = error_type if error_type
+    attributes
   end
 
   #--

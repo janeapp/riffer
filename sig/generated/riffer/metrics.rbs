@@ -41,6 +41,12 @@ module Riffer::Metrics
   # : (String, Numeric, ?unit: String?, ?description: String?, ?attributes: Hash[String, untyped]?) -> void
   def record_histogram: (String, Numeric, ?unit: String?, ?description: String?, ?attributes: Hash[String, untyped]?) -> void
 
+  # Reads the monotonic clock in seconds — the time source for duration metrics,
+  # immune to wall-clock adjustments.
+  # --
+  # : () -> Float
+  def monotonic_now: () -> Float
+
   # Discards the resolved backend so the next record re-resolves it; cached
   # instruments live on that backend, so this clears them too.
   # --

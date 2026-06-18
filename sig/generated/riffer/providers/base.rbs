@@ -99,6 +99,10 @@ class Riffer::Providers::Base
   def chat_span_attributes: (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
 
   # --
+  # : (String?, String?) -> Hash[String, untyped]
+  def chat_metric_attributes: (String?, String?) -> Hash[String, untyped]
+
+  # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Symbol?, String?) -> void
   def record_finish_reason: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Symbol?, String?) -> void
 

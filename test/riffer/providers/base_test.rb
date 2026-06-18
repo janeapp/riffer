@@ -446,4 +446,64 @@ describe Riffer::Providers::Base do
       expect(@exporter.finished_spans).must_be_empty
     end
   end
+
+  describe "metrics" do
+    before do
+      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
+      Riffer.config.metrics.enabled = true
+      @exporter = install_in_memory_meter_provider
+    end
+
+    after do
+      Riffer.config.metrics.enabled = true
+      Riffer.config.metrics.meter_provider = nil
+      Riffer.config.tracing.enabled = true
+    end
+
+    let(:provider) { Riffer::Providers::Mock.new }
+
+    def duration_attributes
+      @exporter.pull
+      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
+      snapshot.data_points.first.attributes
+    end
+
+    it "records the operation duration histogram in seconds" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      @exporter.pull
+      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
+      expect([snapshot.name, snapshot.unit]).must_equal ["gen_ai.client.operation.duration", "s"]
+    end
+
+    it "records the chat operation attributes" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(duration_attributes).must_equal({
+        "gen_ai.operation.name" => "chat",
+        "gen_ai.provider.name" => "mock",
+        "gen_ai.request.model" => "riffer-1"
+      })
+    end
+
+    it "omits the request model when none is given" do
+      provider.generate_text(prompt: "Hello")
+      expect(duration_attributes).wont_include "gen_ai.request.model"
+    end
+
+    it "records error.type when the provider raises" do
+      exploding = ChatTracingExplodingProvider.new
+      expect { exploding.generate_text(prompt: "Hello", model: "riffer-1") }.must_raise(Riffer::Error)
+      expect(duration_attributes["error.type"]).must_equal "Riffer::Error"
+    end
+
+    it "records the duration when the stream drains" do
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      expect(duration_attributes["gen_ai.operation.name"]).must_equal "chat"
+    end
+
+    it "records even when tracing is disabled" do
+      Riffer.config.tracing.enabled = false
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(duration_attributes["gen_ai.operation.name"]).must_equal "chat"
+    end
+  end
 end

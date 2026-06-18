@@ -213,14 +213,25 @@ class Riffer::Providers::Base
   #--
   #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
   def in_chat_span(model, messages, options)
-    Riffer::Tracing.in_span(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client) do |span|
-      capture_input(span, messages)
-      yield span
+    start = Riffer::Metrics.monotonic_now
+    error_type = nil #: String?
+    begin
+      Riffer::Tracing.in_span(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client) do |span|
+        capture_input(span, messages)
+        yield span
+      rescue => error
+        # The backend records the exception and error status on the re-raise;
+        # error.type is the one semconv attribute it doesn't set.
+        span.set_attribute("error.type", error.class.name)
+        raise
+      end
     rescue => error
-      # The backend records the exception and error status on the re-raise;
-      # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
+      # The inner rescue tags the span; capture error.type here too, at method
+      # scope, where the ensure can read it onto the metric.
+      error_type = error.class.name #: String?
       raise
+    ensure
+      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: chat_metric_attributes(model, error_type))
     end
   end
 
@@ -238,6 +249,18 @@ class Riffer::Providers::Base
       attributes[attribute] = value unless value.nil?
     end
 
+    attributes
+  end
+
+  #--
+  #: (String?, String?) -> Hash[String, untyped]
+  def chat_metric_attributes(model, error_type)
+    attributes = {
+      "gen_ai.operation.name" => "chat",
+      "gen_ai.provider.name" => self.class.semconv_provider_name
+    } #: Hash[String, untyped]
+    attributes["gen_ai.request.model"] = model if model
+    attributes["error.type"] = error_type if error_type
     attributes
   end
 

@@ -35,7 +35,23 @@ Histogram bucket boundaries are a **host-side** concern. The OpenTelemetry metri
 
 ## Instruments
 
-This release lands the metrics **port and configuration only** — Riffer records **no instruments yet**. Each instrument is documented here as it ships, as a row carrying its name, instrument type, unit, and attribute set. Until then there is nothing on the wire to query.
+Each instrument is documented here as a row carrying its name, instrument type, unit, and attribute set.
+
+### `gen_ai.client.operation.duration`
+
+Histogram, unit `s`. The latency of a single GenAI operation, recorded around the same wrap as the matching [span](16_TRACING.md) on both the success and error paths and timed with a monotonic clock. Recording is independent of tracing — the metric fires even with `config.tracing.enabled = false`. Tell the three operations apart by `gen_ai.operation.name`.
+
+| `gen_ai.operation.name` | Recorded around                                  | Attributes                                                                                                                |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `chat`                  | each provider call (`generate_text`/`stream_text`) | `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` (when set), `error.type` (on error)               |
+| `invoke_agent`          | each agent run (`generate`/`stream`)             | `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model`, `gen_ai.agent.name`, `error.type` (on error)     |
+| `execute_tool`          | each tool call                                   | `gen_ai.operation.name`, `gen_ai.tool.name`, `error.type` (on error)                                                      |
+
+`error.type` carries the exception class for a raised error; for `execute_tool` it carries the handled error category (e.g. `validation_error`, `timeout_error`) when a tool returns an error result instead of raising — matching the span. `gen_ai.response.model` is not recorded yet; it will land once it is also captured on the chat span.
+
+> **Streamed operations are consumption-paced.** A streamed `chat` or `invoke_agent` records its duration when the stream drains, so the value includes the time your consumer takes to iterate the events, not just provider latency. The matching span behaves the same way.
+
+> **`gen_ai.tool.name` cardinality.** One time series exists per distinct tool name. With a large or dynamic tool set (for example MCP-discovered tools) that can grow unbounded — drop the attribute with a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) if your backend strains.
 
 ## Stability
 
