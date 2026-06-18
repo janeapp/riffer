@@ -10,4 +10,10 @@ module Riffer::Metrics::Instruments # :nodoc: all
     unit: "s",
     description: "Duration of GenAI client operations"
   ) #: Riffer::Metrics::Histogram
+
+  TOKEN_USAGE = Riffer::Metrics.create_histogram(
+    "gen_ai.client.token.usage",
+    unit: "{token}",
+    description: "Number of input and output tokens used in GenAI operations"
+  ) #: Riffer::Metrics::Histogram
 end

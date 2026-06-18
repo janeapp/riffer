@@ -41,6 +41,12 @@ module Riffer::Metrics
   # : (String, Numeric, ?unit: String?, ?description: String?, ?attributes: Hash[String, untyped]?) -> void
   def record_histogram: (String, Numeric, ?unit: String?, ?description: String?, ?attributes: Hash[String, untyped]?) -> void
 
+  # Mirrors a span's +recording?+ so a caller can skip work that exists only to
+  # feed a metric.
+  # --
+  # : () -> bool
+  def recording?: () -> bool
+
   # Reads the monotonic clock in seconds — the time source for duration metrics,
   # immune to wall-clock adjustments.
   # --

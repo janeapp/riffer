@@ -53,6 +53,14 @@ module Riffer::Metrics # :nodoc: all
     backend.record_histogram(name, value, unit: unit, description: description, attributes: attributes)
   end
 
+  # Mirrors a span's +recording?+ so a caller can skip work that exists only to
+  # feed a metric.
+  #--
+  #: () -> bool
+  def recording?
+    Riffer.config.metrics.enabled && backend.is_a?(Otel)
+  end
+
   # Reads the monotonic clock in seconds — the time source for duration metrics,
   # immune to wall-clock adjustments.
   #--

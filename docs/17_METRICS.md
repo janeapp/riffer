@@ -33,6 +33,25 @@ Instruments are recorded under the instrumentation scope named `riffer`, version
 
 Histogram bucket boundaries are a **host-side** concern. The OpenTelemetry metrics API does not let an instrumenting library attach bucket boundaries at instrument creation, so Riffer does not set them — the SDK's default buckets apply unless you override them. To match the GenAI semantic conventions' recommended boundaries (or your own), register a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) on the meter provider that targets the instrument by name and sets explicit bucket boundaries.
 
+The convention recommends boundaries scaled to each instrument, so register one View per histogram — the token-count buckets below are for `gen_ai.client.token.usage`; `gen_ai.client.operation.duration` wants its own latency-scaled set.
+
+```ruby
+require "opentelemetry-metrics-sdk"
+
+OpenTelemetry::SDK.configure do |c|
+  c.service_name = "my-agent-host"
+end
+
+# The GenAI semconv's recommended token-count boundaries. Register the View
+# before Riffer records its first measurement.
+OpenTelemetry.meter_provider.add_view(
+  "gen_ai.client.token.usage",
+  aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
+    boundaries: [1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864]
+  )
+)
+```
+
 ## Instruments
 
 Each instrument is documented here as a row carrying its name, instrument type, unit, and attribute set.
@@ -52,6 +71,21 @@ Histogram, unit `s`. The latency of a single GenAI operation, recorded around th
 > **Streamed operations are consumption-paced.** A streamed `chat` or `invoke_agent` records its duration when the stream drains, so the value includes the time your consumer takes to iterate the events, not just provider latency. The matching span behaves the same way.
 
 > **`gen_ai.tool.name` cardinality.** One time series exists per distinct tool name. With a large or dynamic tool set (for example MCP-discovered tools) that can grow unbounded — drop the attribute with a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) if your backend strains.
+
+### `gen_ai.client.token.usage`
+
+Histogram, unit `{token}`. Token volume for a single `chat` call, recorded from the normalized token usage after the provider responds. Each call emits **two data points** — one `input`, one `output` — distinguished by `gen_ai.token.type`. Recording is independent of tracing (it fires with `config.tracing.enabled = false`); for a streamed call it fires when the stream drains. `gen_ai.response.model` is not recorded yet, for the same reason as `operation.duration`.
+
+| `gen_ai.token.type` | Value                                                   | Attributes                                                                                       |
+| ------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `input`             | total prompt tokens for the call, **cache-inclusive**   | `gen_ai.operation.name` (always `chat`), `gen_ai.provider.name`, `gen_ai.token.type`, `gen_ai.request.model` (when set) |
+| `output`            | tokens generated, including reasoning/thinking tokens   | same                                                                                             |
+
+> **Per-call only.** Token usage is never recorded at the run (`invoke_agent`) level. Metrics pre-aggregate, so emitting both the per-call points and a run total would double-count — sum the per-call points in your backend if you want a run total. This is the metric-side counterpart of the span-level [double-count trap](16_TRACING.md#token-usage-and-cost).
+
+> **Cache buckets stay on spans.** The semconv `gen_ai.token.type` defines only `input` and `output`, so the prompt-cache subsets (`cache_read` / `cache_creation`) live on [spans](16_TRACING.md#token-usage-and-cost), not this metric. The `input` value is the cache-inclusive total, matching the span's `gen_ai.usage.input_tokens`.
+
+A call that reports no usage records no data points, and a failed call has nothing to count — so this metric carries no `error.type` (the semconv marks it not applicable here, unlike `operation.duration`).
 
 ## Stability
 

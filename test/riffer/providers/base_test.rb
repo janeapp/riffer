@@ -505,5 +505,62 @@ describe Riffer::Providers::Base do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
       expect(duration_attributes["gen_ai.operation.name"]).must_equal "chat"
     end
+
+    def token_usage_snapshot
+      @exporter.pull
+      @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.token.usage" }
+    end
+
+    it "records the token usage histogram in tokens" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      snapshot = token_usage_snapshot
+      expect([snapshot.name, snapshot.unit]).must_equal ["gen_ai.client.token.usage", "{token}"]
+    end
+
+    it "records one input and one output data point carrying the token counts" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      counts = token_usage_snapshot.data_points.to_h { |dp| [dp.attributes["gen_ai.token.type"], dp.sum] }
+      expect(counts).must_equal({"input" => 12, "output" => 7})
+    end
+
+    it "records the chat attributes on each data point" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      input_point = token_usage_snapshot.data_points.find { |dp| dp.attributes["gen_ai.token.type"] == "input" }
+      expect(input_point.attributes).must_equal({
+        "gen_ai.operation.name" => "chat",
+        "gen_ai.provider.name" => "mock",
+        "gen_ai.request.model" => "riffer-1",
+        "gen_ai.token.type" => "input"
+      })
+    end
+
+    it "omits the request model when none is given" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.generate_text(prompt: "Hello")
+      expect(token_usage_snapshot.data_points.first.attributes).wont_include "gen_ai.request.model"
+    end
+
+    it "records nothing when the provider reports no usage" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(token_usage_snapshot).must_be_nil
+    end
+
+    it "records two data points when the stream drains" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      counts = token_usage_snapshot.data_points.to_h { |dp| [dp.attributes["gen_ai.token.type"], dp.sum] }
+      expect(counts).must_equal({"input" => 12, "output" => 7})
+    end
+
+    it "records token usage from a stream even when tracing is disabled" do
+      Riffer.config.tracing.enabled = false
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      types = token_usage_snapshot.data_points.map { |dp| dp.attributes["gen_ai.token.type"] }.sort
+      expect(types).must_equal ["input", "output"]
+    end
   end
 end
