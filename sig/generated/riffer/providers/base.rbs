@@ -111,6 +111,11 @@ class Riffer::Providers::Base
   # : (String?, Riffer::Providers::TokenUsage?) -> void
   def record_token_usage_metric: (String?, Riffer::Providers::TokenUsage?) -> void
 
+  # Per-call only — the run level would double-count an aggregate.
+  # --
+  # : (String?, Riffer::Providers::TokenUsage?) -> void
+  def record_cost_metric: (String?, Riffer::Providers::TokenUsage?) -> void
+
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Symbol?, String?) -> void
   def record_finish_reason: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Symbol?, String?) -> void

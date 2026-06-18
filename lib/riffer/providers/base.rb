@@ -58,6 +58,7 @@ class Riffer::Providers::Base
 
       Riffer::Tracing.record_usage(span, token_usage)
       record_token_usage_metric(model, token_usage)
+      record_cost_metric(model, token_usage)
       record_finish_reason(span, finish_reason&.reason, finish_reason&.raw)
       capture_output(span, content: content, tool_calls: tool_calls, finish_reason: finish_reason&.reason)
 
@@ -99,6 +100,7 @@ class Riffer::Providers::Base
           if sink.is_a?(Riffer::Tracing::StreamRecorder)
             record_stream_outcome(span, sink)
             record_token_usage_metric(model, sink.token_usage)
+            record_cost_metric(model, sink.token_usage)
           end
         end
       end
@@ -287,6 +289,16 @@ class Riffer::Providers::Base
     base = chat_metric_base_attributes(model)
     Riffer::Metrics::Instruments::TOKEN_USAGE.record(usage.input_tokens, attributes: base.merge("gen_ai.token.type" => "input"))
     Riffer::Metrics::Instruments::TOKEN_USAGE.record(usage.output_tokens, attributes: base.merge("gen_ai.token.type" => "output"))
+  end
+
+  # Per-call only — the run level would double-count an aggregate.
+  #--
+  #: (String?, Riffer::Providers::TokenUsage?) -> void
+  def record_cost_metric(model, usage)
+    cost = usage&.cost
+    return unless cost
+
+    Riffer::Metrics::Instruments::COST.record(cost, attributes: chat_metric_base_attributes(model))
   end
 
   #--

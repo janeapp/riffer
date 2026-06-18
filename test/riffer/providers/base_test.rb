@@ -562,5 +562,52 @@ describe Riffer::Providers::Base do
       types = token_usage_snapshot.data_points.map { |dp| dp.attributes["gen_ai.token.type"] }.sort
       expect(types).must_equal ["input", "output"]
     end
+
+    def cost_snapshot
+      @exporter.pull
+      @exporter.metric_snapshots.find { |s| s.name == "riffer.gen_ai.cost" }
+    end
+
+    it "records the cost histogram in USD" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      snapshot = cost_snapshot
+      expect([snapshot.name, snapshot.unit]).must_equal ["riffer.gen_ai.cost", "USD"]
+    end
+
+    it "records one data point carrying the call cost" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(cost_snapshot.data_points.map(&:sum)).must_equal [0.0021]
+    end
+
+    it "records the chat attributes on the data point" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(cost_snapshot.data_points.first.attributes).must_equal({
+        "gen_ai.operation.name" => "chat",
+        "gen_ai.provider.name" => "mock",
+        "gen_ai.request.model" => "riffer-1"
+      })
+    end
+
+    it "records nothing when the call carries no cost" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(cost_snapshot).must_be_nil
+    end
+
+    it "records the cost when the stream drains" do
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      expect(cost_snapshot.data_points.map(&:sum)).must_equal [0.0021]
+    end
+
+    it "records cost even when tracing is disabled" do
+      Riffer.config.tracing.enabled = false
+      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(cost_snapshot.data_points.map(&:sum)).must_equal [0.0021]
+    end
   end
 end

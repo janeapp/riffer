@@ -8,4 +8,6 @@ module Riffer::Metrics::Instruments
   OPERATION_DURATION: Riffer::Metrics::Histogram
 
   TOKEN_USAGE: Riffer::Metrics::Histogram
+
+  COST: Riffer::Metrics::Histogram
 end
