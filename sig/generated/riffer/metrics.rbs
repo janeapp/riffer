@@ -4,7 +4,7 @@
 # the OpenTelemetry metrics API and no-ops otherwise, so riffer never declares
 # an OTEL dependency.
 module Riffer::Metrics
-  @backend: (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))?
+  @backend: untyped
 
   MUTEX: Mutex
 
@@ -42,7 +42,8 @@ module Riffer::Metrics
   def record_histogram: (String, Numeric, ?unit: String?, ?description: String?, ?attributes: Hash[String, untyped]?) -> void
 
   # Mirrors a span's +recording?+ so a caller can skip work that exists only to
-  # feed a metric.
+  # feed a metric. True for any live backend — the OTEL backend or a
+  # consumer-supplied one — so a custom metrics sink still gets fed.
   # --
   # : () -> bool
   def recording?: () -> bool
@@ -62,10 +63,10 @@ module Riffer::Metrics
   private
 
   # --
-  # : () -> (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))
-  def backend: () -> (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))
+  # : () -> untyped
+  def backend: () -> untyped
 
   # --
-  # : () -> (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))
-  def resolve_backend: () -> (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))
+  # : () -> untyped
+  def resolve_backend: () -> untyped
 end

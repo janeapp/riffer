@@ -2,11 +2,11 @@
 
 Riffer instruments its agent loop with [OpenTelemetry](https://opentelemetry.io/) spans, following the [GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/). The emitted span shape — names, attributes, and hierarchy — is a public, versioned contract you can build dashboards, alerts, and cost reporting against. This page is the reference for that contract.
 
-Riffer only _emits_ spans. The host application owns the OpenTelemetry SDK, the exporter, sampling, and service naming — the standard OTEL split. Without a host SDK, every span is a silent no-op and Riffer carries no OpenTelemetry gem dependency.
+Riffer only _emits_ spans, and only through a backend you assign to `config.tracing.backend` — OpenTelemetry is the built-in option you opt into (the host application owns the SDK, exporter, sampling, and service naming — the standard OTEL split), but never a default. With no backend assigned, every span is a silent no-op and Riffer carries no OpenTelemetry gem dependency.
 
 ## Enabling tracing
 
-Add the OpenTelemetry SDK to your host application and configure an exporter. Riffer detects the API at runtime and starts emitting through whatever provider the SDK configures — there is nothing to switch on in Riffer beyond the SDK being present.
+Riffer emits spans only through a backend you assign to `config.tracing.backend` — it does **not** auto-detect OpenTelemetry. To use OTEL, add the SDK, configure an exporter, and assign Riffer's built-in OTEL backend with `Riffer::Tracing::Otel.build`.
 
 ```ruby
 # Gemfile
@@ -19,7 +19,13 @@ require "opentelemetry/sdk"
 OpenTelemetry::SDK.configure do |c|
   c.service_name = "my-agent-host"
 end
+
+Riffer.configure do |config|
+  config.tracing.backend = Riffer::Tracing::Otel.build
+end
 ```
+
+`Riffer::Tracing::Otel.build` wraps the global `OpenTelemetry.tracer_provider` by default; pass `provider:` to wrap a specific one (an in-memory provider in tests, say). It returns `nil` — leaving tracing a no-op rather than raising — when the `opentelemetry-api` gem is absent or outside the supported range (>= 1.1, < 2), so the same configuration is safe on a host that doesn't bundle OTEL.
 
 To see Riffer's spans on stdout while developing locally, wire in the console exporter:
 
@@ -36,11 +42,29 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-Any backend that implements the OpenTelemetry Traces API ingests Riffer's spans with no second pipeline — including the `datadog` gem (`require "datadog/opentelemetry"`), which routes them through an existing tracer so they nest inside the host's live trace. For real exporter and collector setup (OTLP, sampling, resource attributes), see the [OpenTelemetry Ruby docs](https://opentelemetry.io/docs/languages/ruby/).
+Any backend that implements the OpenTelemetry Traces API then ingests Riffer's spans with no second pipeline. For real exporter and collector setup (OTLP, sampling, resource attributes), see the [OpenTelemetry Ruby docs](https://opentelemetry.io/docs/languages/ruby/). A host on a non-OTEL stack (e.g. Datadog APM) assigns its own backend instead — see [Routing to a non-OpenTelemetry backend](#routing-to-a-non-opentelemetry-backend).
 
-The three tracing knobs — the `enabled` kill switch, opt-in message-content capture, and an explicit tracer provider for tests — live in [Configuration — Tracing](10_CONFIGURATION.md#tracing).
+The tracing knobs — the `enabled` kill switch, opt-in message-content capture, and the `backend` itself — live in [Configuration — Tracing](10_CONFIGURATION.md#tracing).
 
 Spans are emitted under the instrumentation scope named `riffer`, versioned with the Riffer gem version. That scope version is the runtime signal for which release produced a span; see [Stability](#stability).
+
+## Routing to a non-OpenTelemetry backend
+
+OpenTelemetry is one backend, not the only one. A host already invested in another stack — Datadog APM, say — can route Riffer's spans into it with **no `opentelemetry-*` gem installed** by assigning its own backend to `config.tracing.backend` in place of `Riffer::Tracing::Otel.build`. Whatever you assign is the backend; there is no fallback and no auto-detection — an unset backend is a no-op.
+
+```ruby
+Riffer.configure do |config|
+  config.tracing.backend = MyDatadogTracingBackend.new
+end
+```
+
+The backend is duck-typed — any object satisfying the contract works, and the setter validates only that it responds to `in_span` (otherwise it raises `Riffer::ArgumentError`). It must respond to:
+
+- `in_span(name, attributes:, kind:) { |span| … }` — open a span around the block, yield a span object, and return the block's value.
+- `current_context` — return the active trace context (for re-attaching across fiber/thread boundaries), or `nil` when there is none.
+- `with_context(context) { … }` — run the block with the given context active; a `nil` context passes straight through, so a span re-attached while tracing was dark stays harmless.
+
+The yielded span must respond to `set_attribute(key, value)`, `add_event(name, attributes:)`, `record_exception(exception)`, `error!(description)`, and `recording?` — the same surface the OTEL span exposes. `Riffer::Tracing::Null` is the reference shape for both the backend and the span contract. The `enabled` kill switch is still honoured ahead of the backend: with `config.tracing.enabled = false`, spans short-circuit to the no-op without ever reaching a custom backend.
 
 ## Spans
 

@@ -7,7 +7,7 @@
 module Riffer::Tracing # :nodoc: all
   extend self
 
-  # @rbs @backend: (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))?
+  # @rbs @backend: untyped
 
   MUTEX = Mutex.new #: Mutex
 
@@ -65,14 +65,14 @@ module Riffer::Tracing # :nodoc: all
   private
 
   #--
-  #: () -> (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))
+  #: () -> untyped
   def backend
     @backend || MUTEX.synchronize { @backend ||= resolve_backend }
   end
 
   #--
-  #: () -> (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))
+  #: () -> untyped
   def resolve_backend
-    Otel.build(provider: Riffer.config.tracing.tracer_provider) || Null
+    Riffer.config.tracing.backend || Null
   end
 end

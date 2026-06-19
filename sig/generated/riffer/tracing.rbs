@@ -4,7 +4,7 @@
 # OpenTelemetry API and no-ops otherwise, so riffer never declares an OTEL
 # dependency.
 module Riffer::Tracing
-  @backend: (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))?
+  @backend: untyped
 
   MUTEX: Mutex
 
@@ -43,10 +43,10 @@ module Riffer::Tracing
   private
 
   # --
-  # : () -> (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))
-  def backend: () -> (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))
+  # : () -> untyped
+  def backend: () -> untyped
 
   # --
-  # : () -> (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))
-  def resolve_backend: () -> (Riffer::Tracing::Otel | singleton(Riffer::Tracing::Null))
+  # : () -> untyped
+  def resolve_backend: () -> untyped
 end

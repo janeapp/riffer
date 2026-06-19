@@ -2,13 +2,13 @@
 
 Riffer can record [OpenTelemetry](https://opentelemetry.io/) metric instruments alongside its [spans](16_TRACING.md), following the [GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/). Metric names, instrument types, units, and attributes are a public, versioned contract you can build dashboards and alerts against. This page is the reference for that contract.
 
-As with tracing, Riffer only _records_ instruments. The host application owns the OpenTelemetry SDK, the metric reader, the exporter, and the aggregation — the standard OTEL split. Without a host SDK, every measurement is a silent no-op and Riffer carries no OpenTelemetry gem dependency.
+As with tracing, Riffer only _records_ instruments, and only through a backend you assign to `config.metrics.backend` — OpenTelemetry is the built-in option you opt into (the host application owns the SDK, metric reader, exporter, and aggregation — the standard OTEL split), but never a default. With no backend assigned, every measurement is a silent no-op and Riffer carries no OpenTelemetry gem dependency.
 
 > **OpenTelemetry metrics for Ruby is still pre-1.0.** The metrics API and SDK ship as separate, experimental gems (`opentelemetry-metrics-api`, `opentelemetry-metrics-sdk`) from the stable 1.x traces API. Riffer guards against an incompatible API and falls back to a no-op outside the supported range, but expect the host-side wiring below to evolve with those gems.
 
 ## Enabling metrics
 
-Add the OpenTelemetry metrics SDK to your host application and register a metric reader with an exporter. Riffer detects the metrics API at runtime and starts recording through whatever meter provider the SDK configures.
+Riffer records measurements only through a backend you assign to `config.metrics.backend` — it does **not** auto-detect OpenTelemetry. To use OTEL, add the metrics SDK, register a metric reader with an exporter, and assign Riffer's built-in OTEL backend with `Riffer::Metrics::Otel.build`.
 
 ```ruby
 # Gemfile
@@ -21,13 +21,31 @@ require "opentelemetry-metrics-sdk"
 OpenTelemetry::SDK.configure do |c|
   c.service_name = "my-agent-host"
 end
+
+Riffer.configure do |config|
+  config.metrics.backend = Riffer::Metrics::Otel.build
+end
 ```
 
-The metrics SDK is **separate** from the traces SDK (`opentelemetry-sdk`); add it explicitly even if you already trace. Any backend implementing the OpenTelemetry Metrics API ingests Riffer's instruments. For real reader and exporter setup (OTLP, periodic export, Views), see the [OpenTelemetry Ruby docs](https://opentelemetry.io/docs/languages/ruby/).
+The metrics SDK is **separate** from the traces SDK (`opentelemetry-sdk`); add it explicitly even if you already trace. `Riffer::Metrics::Otel.build` wraps the global `OpenTelemetry.meter_provider` by default; pass `provider:` to wrap a specific one. It returns `nil` — leaving metrics a no-op rather than raising — when the `opentelemetry-metrics-api` gem is absent or outside the supported range (>= 0.2, < 1.0). Any backend implementing the OpenTelemetry Metrics API then ingests Riffer's instruments. For real reader and exporter setup (OTLP, periodic export, Views), see the [OpenTelemetry Ruby docs](https://opentelemetry.io/docs/languages/ruby/).
 
-The two metrics knobs — the `enabled` kill switch and an explicit meter provider for tests — live in [Configuration — Metrics](10_CONFIGURATION.md#metrics). They are **independent** of the tracing knobs: you can run tracing while metrics are off, or the reverse.
+The metrics knobs — the `enabled` kill switch and the `backend` itself — live in [Configuration — Metrics](10_CONFIGURATION.md#metrics). They are **independent** of the tracing knobs (each signal has its own backend): you can run tracing while metrics are off, or the reverse.
 
 Instruments are recorded under the instrumentation scope named `riffer`, versioned with the Riffer gem version — the runtime signal for which release produced a measurement; see [Stability](#stability).
+
+## Routing to a non-OpenTelemetry backend
+
+OpenTelemetry is one backend, not the only one. A host that already runs another metrics stack — DogStatsD, say — can route Riffer's measurements into it with **no `opentelemetry-*` gem installed** by assigning its own backend to `config.metrics.backend` in place of `Riffer::Metrics::Otel.build`. Whatever you assign is the backend; there is no fallback and no auto-detection — an unset backend is a no-op.
+
+```ruby
+Riffer.configure do |config|
+  config.metrics.backend = MyDogStatsdMetricsBackend.new
+end
+```
+
+The backend is duck-typed: any object that responds to `record_histogram(name, value, unit:, description:, attributes:)` works, and the setter validates only that (otherwise it raises `Riffer::ArgumentError`). `Riffer::Metrics::Null` is the reference shape. All three instruments are histograms, so the single `record_histogram` method covers the full contract; tell them apart by `name` (or by `unit`: `s` for `gen_ai.client.operation.duration`, `{token}` for `gen_ai.client.token.usage`, `USD` for `riffer.gen_ai.cost`).
+
+A custom backend counts as a **live** sink, so the providers still compute the token counts and cost that feed it — the same data that, under OTEL, populates `gen_ai.client.token.usage` and `riffer.gen_ai.cost`. The `enabled` kill switch is honoured ahead of the backend: with `config.metrics.enabled = false`, measurements short-circuit to the no-op without ever reaching a custom backend.
 
 ### Bucket boundaries
 
