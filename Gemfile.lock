@@ -9,7 +9,7 @@ GEM
   specs:
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.48.1)
+    anthropic (1.49.0)
       cgi
       connection_pool
       standardwebhooks
@@ -272,7 +272,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.48.1)
+  anthropic (~> 1.49.0)
   async (~> 2.25, < 2.40)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
