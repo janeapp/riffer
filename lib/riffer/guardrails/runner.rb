@@ -81,9 +81,7 @@ class Riffer::Guardrails::Runner
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
-    start = Riffer::Metrics.monotonic_now
-    error_type = nil #: String?
-    begin
+    instrument_guardrail(guardrail) do
       Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail), kind: :internal) do |span|
         result = run_guardrail_phase(guardrail, data, messages: messages)
         record_guardrail_outcome(span, result)
@@ -94,9 +92,17 @@ class Riffer::Guardrails::Runner
         span.set_attribute("error.type", error.class.name)
         raise
       end
+    end
+  end
+
+  #--
+  #: (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+  def instrument_guardrail(guardrail)
+    start = Riffer::Metrics.monotonic_now
+    error_type = nil #: String?
+    begin
+      yield
     rescue => error
-      # The inner rescue tags the span; capture error.type here too, at method
-      # scope, where the ensure can read it onto the metric.
       error_type = error.class.name #: String?
       raise
     ensure

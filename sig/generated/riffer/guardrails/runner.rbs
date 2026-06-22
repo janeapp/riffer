@@ -38,6 +38,10 @@ class Riffer::Guardrails::Runner
   def execute_guardrail: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
 
   # --
+  # : (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+  def instrument_guardrail: (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+
+  # --
   # : (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def run_guardrail_phase: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
 
