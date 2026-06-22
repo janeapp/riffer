@@ -41,11 +41,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "zeitwerk", "~> 2.6", ">= 2.6.0"
 
   # Development dependencies
-  spec.add_development_dependency "anthropic", "~> 1.48.1"
+  spec.add_development_dependency "anthropic", "~> 1.49.0"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
   spec.add_development_dependency "faraday", ">= 1.0"
   spec.add_development_dependency "mcp", "~> 0.8"
-  spec.add_development_dependency "openai", "~> 0.66.1"
+  spec.add_development_dependency "openai", "~> 0.68.0"
   spec.add_development_dependency "async", "~> 2.25", "< 2.40"
   spec.add_development_dependency "io-event", "< 1.17"
 
