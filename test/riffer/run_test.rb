@@ -2925,7 +2925,7 @@ describe Riffer::Agent::Run do
 
     after do
       Riffer.config.tracing.enabled = true
-      Riffer.config.tracing.tracer_provider = nil
+      Riffer.config.tracing.backend = nil
     end
 
     let(:agent_class) do
@@ -3282,7 +3282,7 @@ describe Riffer::Agent::Run do
 
     after do
       Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.meter_provider = nil
+      Riffer.config.metrics.backend = nil
     end
 
     let(:agent_class) do
