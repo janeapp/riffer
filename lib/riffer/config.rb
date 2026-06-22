@@ -92,12 +92,15 @@ class Riffer::Config
     end
 
     # Sets the tracing backend riffer routes spans through. Raises
-    # Riffer::ArgumentError unless the value is +nil+ or responds to +in_span+.
+    # Riffer::ArgumentError unless the value is +nil+ or satisfies the full
+    # delegated contract — +in_span+, +current_context+, and +with_context+ are
+    # all called per run, so a partial backend would fail mid-trace.
     #--
     #: (untyped) -> void
     def backend=(value)
-      unless value.nil? || value.respond_to?(:in_span)
-        raise Riffer::ArgumentError, "tracing backend must respond to #in_span"
+      contract = %i[in_span current_context with_context]
+      unless value.nil? || contract.all? { |method| value.respond_to?(method) }
+        raise Riffer::ArgumentError, "tracing backend must respond to #in_span, #current_context, and #with_context"
       end
       @backend = value
       Riffer::Tracing.reset!

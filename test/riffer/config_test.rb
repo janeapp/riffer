@@ -222,9 +222,12 @@ describe Riffer::Config do
       expect(config.tracing.backend).must_be_nil
     end
 
-    it "accepts a backend that responds to in_span" do
+    it "accepts a backend satisfying the tracing contract" do
       config = Riffer::Config.new
-      backend = Object.new.tap { |o| def o.in_span(*) = yield }
+      backend = Object.new
+      def backend.in_span(*) = yield
+      def backend.current_context = nil
+      def backend.with_context(_) = yield
       config.tracing.backend = backend
       expect(config.tracing.backend).must_be_same_as backend
     end
@@ -235,9 +238,16 @@ describe Riffer::Config do
       expect(config.tracing.backend).must_be_nil
     end
 
-    it "raises for a backend that does not respond to in_span" do
+    it "raises for a backend missing every contract method" do
       config = Riffer::Config.new
       expect { config.tracing.backend = Object.new }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a backend that responds to in_span but not the context methods" do
+      config = Riffer::Config.new
+      backend = Object.new
+      def backend.in_span(*) = yield
+      expect { config.tracing.backend = backend }.must_raise Riffer::ArgumentError
     end
   end
 
