@@ -43,7 +43,7 @@ Riffer.configure do |config|
 end
 ```
 
-The backend is duck-typed: any object that responds to `record_histogram(name, value, unit:, description:, attributes:)` works, and the setter validates only that (otherwise it raises `Riffer::ArgumentError`). `Riffer::Metrics::NoOp` is the reference shape. All three instruments are histograms, so the single `record_histogram` method covers the full contract; tell them apart by `name` (or by `unit`: `s` for `gen_ai.client.operation.duration`, `{token}` for `gen_ai.client.token.usage`, `USD` for `riffer.gen_ai.cost`).
+The backend is duck-typed: any object that responds to `record_histogram(name, value, unit:, description:, attributes:)` works, and the setter validates only that (otherwise it raises `Riffer::ArgumentError`). `Riffer::Metrics::NoOp` is the reference shape. All four instruments are histograms, so the single `record_histogram` method covers the full contract; tell them apart by `name`. Two carry unit `s` — `gen_ai.client.operation.duration` and `riffer.guardrail.duration` — so `name` is the reliable discriminator; `{token}` is `gen_ai.client.token.usage` and `USD` is `riffer.gen_ai.cost`.
 
 A custom backend counts as a **live** sink, so the providers still compute the token counts and cost that feed it — the same data that, under OTEL, populates `gen_ai.client.token.usage` and `riffer.gen_ai.cost`. The `enabled` kill switch is honoured ahead of the backend: with `config.metrics.enabled = false`, measurements short-circuit to the no-op without ever reaching a custom backend.
 
@@ -116,6 +116,18 @@ Histogram, unit `USD`. The cost of a single `chat` call, recorded from the [cost
 Pricing is **consumer-configured** — no price table ships with the gem (see [Configuration — Pricing](10_CONFIGURATION.md#pricing)). A call whose model has no configured price records **no** data point, so this metric covers only priced calls; `operation.duration` and `token.usage` still record. A priced call that computes to `0.0` does record a zero data point — only an absent price means there is nothing to measure.
 
 > **Per-call only.** Cost is never recorded at the run (`invoke_agent`) level, for the same reason as token usage: metrics pre-aggregate, so emitting both per-call points and a run total would double-count. Sum the per-call points in your backend for a run total.
+
+### `riffer.guardrail.duration`
+
+Histogram, unit `s`. The latency of a single guardrail execution, recorded around the same wrap as the [`execute_guardrail` span](16_TRACING.md) on both the success and raise paths and timed with a monotonic clock. Guardrails run on the request hot path — before every model turn and after every response — so this is the guardrail counterpart to `gen_ai.client.operation.duration`. Recording is independent of tracing — the metric fires even with `config.tracing.enabled = false`.
+
+This instrument is Riffer-owned (`riffer.*`, not `gen_ai.*`) by the same reasoning as its span: a guardrail is not a GenAI semantic-convention operation, so the `execute_guardrail` span deliberately carries no `gen_ai.operation.name` and lives in riffer's own `riffer.guardrail.*` namespace (see [Tracing](16_TRACING.md)). Folding the metric into `gen_ai.client.operation.duration` would contradict that, so the duration is its own riffer-owned histogram instead; see [Stability](#stability).
+
+| Value                                | Attributes                                                            |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| duration of the guardrail execution  | `riffer.guardrail.name`, `riffer.guardrail.phase`, `error.type` (on raise) |
+
+`riffer.guardrail.phase` is `before` or `after`. A pass, transform, or block is a **handled** outcome and records no `error.type` — that attribute carries the exception class only when a guardrail raises, mirroring the span. One time series exists per `riffer.guardrail.name` × `riffer.guardrail.phase`; guardrail names are bounded by the guardrails you configure, so cardinality is safe — unlike the dynamic tool names on `gen_ai.client.operation.duration`.
 
 ## Stability
 

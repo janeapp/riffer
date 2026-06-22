@@ -45,6 +45,10 @@ class Riffer::Guardrails::Runner
   # : (Riffer::Guardrail) -> Hash[String, untyped]
   def guardrail_span_attributes: (Riffer::Guardrail) -> Hash[String, untyped]
 
+  # --
+  # : (Riffer::Guardrail, String?) -> Hash[String, untyped]
+  def guardrail_metric_attributes: (Riffer::Guardrail, String?) -> Hash[String, untyped]
+
   # A block is a handled outcome, so its span status stays unset — an error
   # span status is reserved for a raised exception.
   # --
