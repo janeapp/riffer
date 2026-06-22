@@ -118,7 +118,7 @@ class Riffer::Guardrails::Runner
   # A block is a handled outcome, so its span status stays unset — an error
   # span status is reserved for a raised exception.
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Guardrails::Result) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Guardrails::Result) -> void
   def record_guardrail_outcome(span, result)
     span.set_attribute("riffer.guardrail.action", result.type.to_s)
     span.set_attribute("riffer.tripwire.reason", result.data) if result.block?

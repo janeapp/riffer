@@ -17,9 +17,9 @@ module Riffer::Tracing # :nodoc: all
 
   # Opens a span around the block, yielding the span.
   #--
-  #: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+  #: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_span(name, attributes: nil, kind: :internal, &block)
-    return Null.in_span(name, &block) unless Riffer.config.tracing.enabled
+    return NoOp.in_span(name, &block) unless Riffer.config.tracing.enabled
     backend.in_span(name, attributes: attributes, kind: kind, &block)
   end
 
@@ -28,7 +28,7 @@ module Riffer::Tracing # :nodoc: all
   #--
   #: () -> untyped
   def current_context
-    return Null.current_context unless Riffer.config.tracing.enabled
+    return NoOp.current_context unless Riffer.config.tracing.enabled
     backend.current_context
   end
 
@@ -37,14 +37,14 @@ module Riffer::Tracing # :nodoc: all
   #--
   #: [R] (untyped) { () -> R } -> R
   def with_context(context, &block)
-    return Null.with_context(context, &block) unless Riffer.config.tracing.enabled
+    return NoOp.with_context(context, &block) unless Riffer.config.tracing.enabled
     backend.with_context(context, &block)
   end
 
   # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
   # when the model was priced, <tt>riffer.cost</tt>.
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Providers::TokenUsage?) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Providers::TokenUsage?) -> void
   def record_usage(span, usage)
     return unless usage
 
@@ -73,6 +73,6 @@ module Riffer::Tracing # :nodoc: all
   #--
   #: () -> untyped
   def resolve_backend
-    Riffer.config.tracing.backend || Null
+    Riffer.config.tracing.backend || NoOp
   end
 end

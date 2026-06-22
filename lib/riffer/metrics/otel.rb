@@ -9,7 +9,7 @@ class Riffer::Metrics::Otel # :nodoc: all
 
   class << self
     # Builds a backend when the OpenTelemetry metrics API is loadable at a
-    # supported version; returns +nil+ so resolution falls back to Null.
+    # supported version; returns +nil+ so resolution falls back to NoOp.
     # +provider+ defaults to the global <tt>OpenTelemetry.meter_provider</tt>.
     #--
     #: (?provider: untyped) -> Riffer::Metrics::Otel?

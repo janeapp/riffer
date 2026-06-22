@@ -3,7 +3,7 @@
 
 # No-op metrics backend, used when the OpenTelemetry metrics API is unavailable
 # or metrics are disabled.
-module Riffer::Metrics::Null # :nodoc: all
+module Riffer::Metrics::NoOp # :nodoc: all
   extend self
 
   # Ignores the measurement; there is no meter without the OTEL metrics API.

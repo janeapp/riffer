@@ -353,7 +353,7 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
+  #: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Agent::Response) -> void
   def record_run_outcome(span, response)
     span.set_attribute("riffer.steps", response.steps)
     Riffer::Tracing.record_usage(span, response.token_usage)

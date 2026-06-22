@@ -91,8 +91,8 @@ class Riffer::Providers::Base
   REQUEST_PARAM_ATTRIBUTES: Hash[Symbol, String]
 
   # --
-  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
-  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
+  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
 
   # --
   # : (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
@@ -117,24 +117,24 @@ class Riffer::Providers::Base
   def record_cost_metric: (String?, Riffer::Providers::TokenUsage?) -> void
 
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Symbol?, String?) -> void
-  def record_finish_reason: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Symbol?, String?) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Symbol?, String?) -> void
+  def record_finish_reason: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Symbol?, String?) -> void
 
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tracing::StreamRecorder) -> void
-  def record_stream_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Tracing::StreamRecorder) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tracing::StreamRecorder) -> void
+  def record_stream_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Tracing::StreamRecorder) -> void
 
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Array[Riffer::Messages::Base]) -> void
-  def capture_input: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Array[Riffer::Messages::Base]) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Array[Riffer::Messages::Base]) -> void
+  def capture_input: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Array[Riffer::Messages::Base]) -> void
 
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
-  def capture_output: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
+  def capture_output: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
 
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> bool
-  def capture_messages?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> bool
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
+  def capture_messages?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> bool
 
   # --
   # : (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
