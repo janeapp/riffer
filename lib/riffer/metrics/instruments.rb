@@ -22,4 +22,10 @@ module Riffer::Metrics::Instruments # :nodoc: all
     unit: "USD",
     description: "Cost of GenAI client operations in USD"
   ) #: Riffer::Metrics::Histogram
+
+  GUARDRAIL_DURATION = Riffer::Metrics.create_histogram(
+    "riffer.guardrail.duration",
+    unit: "s",
+    description: "Duration of guardrail execution"
+  ) #: Riffer::Metrics::Histogram
 end

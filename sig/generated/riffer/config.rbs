@@ -107,9 +107,9 @@ class Riffer::Config
     # content routinely carries sensitive data.
     attr_reader capture_messages: bool
 
-    # Explicit OTEL tracer provider; defaults to +nil+, which resolves the
-    # global <tt>OpenTelemetry.tracer_provider</tt> at first span.
-    attr_reader tracer_provider: untyped
+    # The backend riffer routes spans through; defaults to +nil+, a no-op.
+    # Riffer auto-detects no backend; assigning one is opt-in.
+    attr_reader backend: untyped
 
     # --
     # : () -> void
@@ -129,12 +129,12 @@ class Riffer::Config
     # : (untyped) -> void
     def capture_messages=: (untyped) -> void
 
-    # Sets an explicit tracer provider, forcing the OTEL backend. Raises
-    # Riffer::ArgumentError when the OpenTelemetry API gem isn't available
-    # at a supported version.
+    # Sets the tracing backend riffer routes spans through. Raises
+    # Riffer::ArgumentError unless the value is +nil+ or responds to the full
+    # delegated contract: +in_span+, +current_context+, and +with_context+.
     # --
     # : (untyped) -> void
-    def tracer_provider=: (untyped) -> void
+    def backend=: (untyped) -> void
   end
 
   # Metrics-related global configuration, independent of +config.tracing+ so a
@@ -144,9 +144,9 @@ class Riffer::Config
     # no-op until a host wires an OTEL metrics SDK.
     attr_reader enabled: bool
 
-    # Explicit OTEL meter provider; defaults to +nil+, which resolves the
-    # global <tt>OpenTelemetry.meter_provider</tt> at first record.
-    attr_reader meter_provider: untyped
+    # The backend riffer routes measurements through; defaults to +nil+, a no-op.
+    # Riffer auto-detects no backend; assigning one is opt-in.
+    attr_reader backend: untyped
 
     # --
     # : () -> void
@@ -159,12 +159,12 @@ class Riffer::Config
     # : (untyped) -> void
     def enabled=: (untyped) -> void
 
-    # Sets an explicit meter provider, forcing the OTEL backend. Raises
-    # Riffer::ArgumentError when the OpenTelemetry metrics API gem isn't
-    # available at a supported version.
+    # Sets the metrics backend riffer routes measurements through. Raises
+    # Riffer::ArgumentError unless the value is +nil+ or responds to
+    # +record_histogram+.
     # --
     # : (untyped) -> void
-    def meter_provider=: (untyped) -> void
+    def backend=: (untyped) -> void
   end
 
   # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer

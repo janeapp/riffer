@@ -81,15 +81,32 @@ class Riffer::Guardrails::Runner
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
-    Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail), kind: :internal) do |span|
-      result = run_guardrail_phase(guardrail, data, messages: messages)
-      record_guardrail_outcome(span, result)
-      result
+    instrument_guardrail(guardrail) do
+      Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail), kind: :internal) do |span|
+        result = run_guardrail_phase(guardrail, data, messages: messages)
+        record_guardrail_outcome(span, result)
+        result
+      rescue => error
+        # The backend records the exception and error status on the re-raise;
+        # error.type is the one semconv attribute it doesn't set.
+        span.set_attribute("error.type", error.class.name)
+        raise
+      end
+    end
+  end
+
+  #--
+  #: (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+  def instrument_guardrail(guardrail)
+    start = Riffer::Metrics.monotonic_now
+    error_type = nil #: String?
+    begin
+      yield
     rescue => error
-      # The backend records the exception and error status on the re-raise;
-      # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
+      error_type = error.class.name #: String?
       raise
+    ensure
+      Riffer::Metrics::Instruments::GUARDRAIL_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: guardrail_metric_attributes(guardrail, error_type))
     end
   end
 
@@ -115,10 +132,18 @@ class Riffer::Guardrails::Runner
     }
   end
 
+  #--
+  #: (Riffer::Guardrail, String?) -> Hash[String, untyped]
+  def guardrail_metric_attributes(guardrail, error_type)
+    attributes = guardrail_span_attributes(guardrail)
+    attributes["error.type"] = error_type if error_type
+    attributes
+  end
+
   # A block is a handled outcome, so its span status stays unset — an error
   # span status is reserved for a raised exception.
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Guardrails::Result) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Guardrails::Result) -> void
   def record_guardrail_outcome(span, result)
     span.set_attribute("riffer.guardrail.action", result.type.to_s)
     span.set_attribute("riffer.tripwire.reason", result.data) if result.block?

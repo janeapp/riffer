@@ -296,7 +296,7 @@ describe Riffer::Tools::Runtime do
     after do
       Riffer.config.tracing.enabled = true
       Riffer.config.tracing.capture_messages = false
-      Riffer.config.tracing.tracer_provider = nil
+      Riffer.config.tracing.backend = nil
     end
 
     let(:buggy_tool_class) do
@@ -498,7 +498,7 @@ describe Riffer::Tools::Runtime do
 
     after do
       Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.meter_provider = nil
+      Riffer.config.metrics.backend = nil
     end
 
     let(:buggy_tool_class) do

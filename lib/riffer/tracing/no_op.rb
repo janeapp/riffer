@@ -3,7 +3,7 @@
 
 # No-op tracing backend, used when OTEL is unavailable or tracing is
 # disabled.
-module Riffer::Tracing::Null # :nodoc: all
+module Riffer::Tracing::NoOp # :nodoc: all
   extend self
 
   # No-op stand-in for a span; answers <tt>recording?</tt> with +false+ so
@@ -36,11 +36,11 @@ module Riffer::Tracing::Null # :nodoc: all
     end
   end
 
-  SPAN = Span.new.freeze #: Riffer::Tracing::Null::Span
+  SPAN = Span.new.freeze #: Riffer::Tracing::NoOp::Span
 
   # Yields the no-op span, ignoring all span options.
   #--
-  #: [R] (String, **untyped) { (Riffer::Tracing::Null::Span) -> R } -> R
+  #: [R] (String, **untyped) { (Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_span(_name, **)
     yield SPAN
   end

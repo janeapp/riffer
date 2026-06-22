@@ -38,6 +38,10 @@ class Riffer::Guardrails::Runner
   def execute_guardrail: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
 
   # --
+  # : (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+  def instrument_guardrail: (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+
+  # --
   # : (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def run_guardrail_phase: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
 
@@ -45,9 +49,13 @@ class Riffer::Guardrails::Runner
   # : (Riffer::Guardrail) -> Hash[String, untyped]
   def guardrail_span_attributes: (Riffer::Guardrail) -> Hash[String, untyped]
 
+  # --
+  # : (Riffer::Guardrail, String?) -> Hash[String, untyped]
+  def guardrail_metric_attributes: (Riffer::Guardrail, String?) -> Hash[String, untyped]
+
   # A block is a handled outcome, so its span status stays unset — an error
   # span status is reserved for a raised exception.
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Guardrails::Result) -> void
-  def record_guardrail_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Guardrails::Result) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Guardrails::Result) -> void
+  def record_guardrail_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Guardrails::Result) -> void
 end

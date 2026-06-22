@@ -2,15 +2,27 @@
 
 require "test_helper"
 
+class FakeMetricsBackend
+  attr_reader :records
+
+  def initialize
+    @records = []
+  end
+
+  def record_histogram(name, value, unit:, description:, attributes:)
+    @records << {name: name, value: value, unit: unit, description: description, attributes: attributes}
+  end
+end
+
 describe Riffer::Metrics do
   before do
     Riffer.config.metrics.enabled = true
-    Riffer.config.metrics.meter_provider = nil
+    Riffer.config.metrics.backend = nil
   end
 
   after do
     Riffer.config.metrics.enabled = true
-    Riffer.config.metrics.meter_provider = nil
+    Riffer.config.metrics.backend = nil
   end
 
   describe "#create_histogram" do
@@ -80,8 +92,7 @@ describe Riffer::Metrics do
       expect(exporter.metric_snapshots).must_be_empty
     end
 
-    it "does not raise when the metrics SDK is not bundled" do
-      skip "opentelemetry metrics is bundled" if METRICS_SDK_AVAILABLE
+    it "does not raise when no backend is configured" do
       Riffer::Metrics.record_histogram("riffer.test", 0.5)
     end
   end
@@ -107,6 +118,53 @@ describe Riffer::Metrics do
       second_exporter.pull
       sums = [first_exporter, second_exporter].map { |e| e.metric_snapshots.first.data_points.first.sum }
       expect(sums).must_equal [0.5, 1.5]
+    end
+  end
+
+  describe "consumer-supplied backend" do
+    it "routes records to the configured backend" do
+      backend = FakeMetricsBackend.new
+      Riffer.config.metrics.backend = backend
+      Riffer::Metrics.record_histogram("riffer.test", 0.5)
+      expect(backend.records.map { |record| record[:name] }).must_equal ["riffer.test"]
+    end
+
+    it "forwards the value, unit, description, and attributes" do
+      backend = FakeMetricsBackend.new
+      Riffer.config.metrics.backend = backend
+      Riffer::Metrics.record_histogram("riffer.test", 0.5, unit: "s", description: "Test latency", attributes: {"k" => "v"})
+      expect(backend.records.first).must_equal({name: "riffer.test", value: 0.5, unit: "s", description: "Test latency", attributes: {"k" => "v"}})
+    end
+
+    it "records nothing through the backend when metrics are disabled" do
+      backend = FakeMetricsBackend.new
+      Riffer.config.metrics.backend = backend
+      Riffer.config.metrics.enabled = false
+      Riffer::Metrics.record_histogram("riffer.test", 0.5)
+      expect(backend.records).must_be_empty
+    end
+  end
+
+  describe "#recording?" do
+    it "is true when a consumer backend is configured" do
+      Riffer.config.metrics.backend = FakeMetricsBackend.new
+      expect(Riffer::Metrics.recording?).must_equal true
+    end
+
+    it "is false when metrics are disabled even with a backend configured" do
+      Riffer.config.metrics.backend = FakeMetricsBackend.new
+      Riffer.config.metrics.enabled = false
+      expect(Riffer::Metrics.recording?).must_equal false
+    end
+
+    it "is false when no backend is configured" do
+      expect(Riffer::Metrics.recording?).must_equal false
+    end
+
+    it "is true when the OTEL backend is configured" do
+      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
+      install_in_memory_meter_provider
+      expect(Riffer::Metrics.recording?).must_equal true
     end
   end
 
