@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.34.0](https://github.com/janeapp/riffer/compare/riffer/v0.33.0...riffer/v0.34.0) (2026-06-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **telemetry:** `config.tracing.tracer_provider` and `config.metrics.meter_provider` are removed. Assign the OTEL backend instead: `config.tracing.backend = Riffer::Tracing::Otel.build` (pass `provider:` to override the global provider).
+
+### Features
+
+* emit a riffer.guardrail.duration metric for guardrail execution ([#338](https://github.com/janeapp/riffer/issues/338)) ([7b0dfb0](https://github.com/janeapp/riffer/commit/7b0dfb014f710d839e53d25ee345df5b404c8c60))
+* **telemetry:** pluggable tracing/metrics backend (OTEL opt-in) ([#329](https://github.com/janeapp/riffer/issues/329)) ([d647f54](https://github.com/janeapp/riffer/commit/d647f54b814bb8e331b89811c2ed661d6534b20c))
+
 ## [0.33.0](https://github.com/janeapp/riffer/compare/riffer/v0.32.1...riffer/v0.33.0) (2026-06-18)
 
 
