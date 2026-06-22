@@ -110,6 +110,6 @@ module Riffer::Agent::Run
   def run_metric_attributes: (Riffer::Agent, String?) -> Hash[String, untyped]
 
   # --
-  # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
-  def record_run_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Agent::Response) -> void
+  # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Agent::Response) -> void
+  def record_run_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Agent::Response) -> void
 end

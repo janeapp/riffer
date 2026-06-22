@@ -7,7 +7,7 @@
 module Riffer::Metrics # :nodoc: all
   extend self
 
-  # @rbs @backend: (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))?
+  # @rbs @backend: untyped
 
   MUTEX = Mutex.new #: Mutex
 
@@ -54,11 +54,12 @@ module Riffer::Metrics # :nodoc: all
   end
 
   # Mirrors a span's +recording?+ so a caller can skip work that exists only to
-  # feed a metric.
+  # feed a metric. True for any live backend — the OTEL backend or a
+  # consumer-supplied one — so a custom metrics sink still gets fed.
   #--
   #: () -> bool
   def recording?
-    Riffer.config.metrics.enabled && backend.is_a?(Otel)
+    Riffer.config.metrics.enabled && !backend.equal?(NoOp)
   end
 
   # Reads the monotonic clock in seconds — the time source for duration metrics,
@@ -80,14 +81,14 @@ module Riffer::Metrics # :nodoc: all
   private
 
   #--
-  #: () -> (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))
+  #: () -> untyped
   def backend
     @backend || MUTEX.synchronize { @backend ||= resolve_backend }
   end
 
   #--
-  #: () -> (Riffer::Metrics::Otel | singleton(Riffer::Metrics::Null))
+  #: () -> untyped
   def resolve_backend
-    Otel.build(provider: Riffer.config.metrics.meter_provider) || Null
+    Riffer.config.metrics.backend || NoOp
   end
 end

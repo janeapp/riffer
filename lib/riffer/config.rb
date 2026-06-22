@@ -61,16 +61,16 @@ class Riffer::Config
     # content routinely carries sensitive data.
     attr_reader :capture_messages #: bool
 
-    # Explicit OTEL tracer provider; defaults to +nil+, which resolves the
-    # global <tt>OpenTelemetry.tracer_provider</tt> at first span.
-    attr_reader :tracer_provider #: untyped
+    # The backend riffer routes spans through; defaults to +nil+, a no-op.
+    # Riffer auto-detects no backend; assigning one is opt-in.
+    attr_reader :backend #: untyped
 
     #--
     #: () -> void
     def initialize
       @enabled = true
       @capture_messages = false
-      @tracer_provider = nil
+      @backend = nil
     end
 
     # Sets the enabled flag, coercing boolean-ish values so an env-var
@@ -91,17 +91,17 @@ class Riffer::Config
       @capture_messages = Riffer::Helpers::Boolean.coerce(value, attribute: "capture_messages")
     end
 
-    # Sets an explicit tracer provider, forcing the OTEL backend. Raises
-    # Riffer::ArgumentError when the OpenTelemetry API gem isn't available
-    # at a supported version.
+    # Sets the tracing backend riffer routes spans through. Raises
+    # Riffer::ArgumentError unless the value is +nil+ or responds to the full
+    # delegated contract: +in_span+, +current_context+, and +with_context+.
     #--
     #: (untyped) -> void
-    def tracer_provider=(value)
-      if !value.nil? && !Riffer::Tracing::Otel.available?
-        raise Riffer::ArgumentError,
-          "tracer_provider requires the opentelemetry-api gem (#{Riffer::Tracing::Otel::SUPPORTED_API_VERSIONS})"
+    def backend=(value)
+      contract = %i[in_span current_context with_context]
+      unless value.nil? || contract.all? { |method| value.respond_to?(method) }
+        raise Riffer::ArgumentError, "tracing backend must respond to #in_span, #current_context, and #with_context"
       end
-      @tracer_provider = value
+      @backend = value
       Riffer::Tracing.reset!
     end
   end
@@ -113,15 +113,15 @@ class Riffer::Config
     # no-op until a host wires an OTEL metrics SDK.
     attr_reader :enabled #: bool
 
-    # Explicit OTEL meter provider; defaults to +nil+, which resolves the
-    # global <tt>OpenTelemetry.meter_provider</tt> at first record.
-    attr_reader :meter_provider #: untyped
+    # The backend riffer routes measurements through; defaults to +nil+, a no-op.
+    # Riffer auto-detects no backend; assigning one is opt-in.
+    attr_reader :backend #: untyped
 
     #--
     #: () -> void
     def initialize
       @enabled = true
-      @meter_provider = nil
+      @backend = nil
     end
 
     # Sets the enabled flag, coercing boolean-ish values so an env-var
@@ -133,17 +133,16 @@ class Riffer::Config
       @enabled = Riffer::Helpers::Boolean.coerce(value, attribute: "enabled")
     end
 
-    # Sets an explicit meter provider, forcing the OTEL backend. Raises
-    # Riffer::ArgumentError when the OpenTelemetry metrics API gem isn't
-    # available at a supported version.
+    # Sets the metrics backend riffer routes measurements through. Raises
+    # Riffer::ArgumentError unless the value is +nil+ or responds to
+    # +record_histogram+.
     #--
     #: (untyped) -> void
-    def meter_provider=(value)
-      if !value.nil? && !Riffer::Metrics::Otel.available?
-        raise Riffer::ArgumentError,
-          "meter_provider requires the opentelemetry-metrics-api gem (#{Riffer::Metrics::Otel::SUPPORTED_API_VERSIONS})"
+    def backend=(value)
+      unless value.nil? || value.respond_to?(:record_histogram)
+        raise Riffer::ArgumentError, "metrics backend must respond to #record_histogram"
       end
-      @meter_provider = value
+      @backend = value
       Riffer::Metrics.reset!
     end
   end
