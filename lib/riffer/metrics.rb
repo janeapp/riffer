@@ -59,7 +59,7 @@ module Riffer::Metrics # :nodoc: all
   #--
   #: () -> bool
   def recording?
-    Riffer.config.metrics.enabled && !backend.equal?(Null)
+    Riffer.config.metrics.enabled && !backend.equal?(NoOp)
   end
 
   # Reads the monotonic clock in seconds — the time source for duration metrics,
@@ -89,6 +89,6 @@ module Riffer::Metrics # :nodoc: all
   #--
   #: () -> untyped
   def resolve_backend
-    Riffer.config.metrics.backend || Null
+    Riffer.config.metrics.backend || NoOp
   end
 end

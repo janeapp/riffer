@@ -14,8 +14,8 @@ module Riffer::Tracing
 
   # Opens a span around the block, yielding the span.
   # --
-  # : [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
-  def in_span: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+  # : [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
+  def in_span: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
 
   # Returns the active trace context, for re-attachment across fiber or
   # thread boundaries.
@@ -32,8 +32,8 @@ module Riffer::Tracing
   # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
   # when the model was priced, <tt>riffer.cost</tt>.
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Providers::TokenUsage?) -> void
-  def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span, Riffer::Providers::TokenUsage?) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Providers::TokenUsage?) -> void
+  def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Providers::TokenUsage?) -> void
 
   # Discards the resolved backend so the next span re-resolves it.
   # --

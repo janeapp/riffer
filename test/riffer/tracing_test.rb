@@ -52,17 +52,17 @@ describe Riffer::Tracing do
       expect(result).must_equal :value
     end
 
-    it "yields the null span when tracing is disabled" do
+    it "yields the no-op span when tracing is disabled" do
       Riffer.config.tracing.enabled = false
       yielded = nil
       Riffer::Tracing.in_span("test") { |span| yielded = span }
-      expect(yielded).must_be_same_as Riffer::Tracing::Null::SPAN
+      expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
 
-    it "yields the null span when no backend is configured" do
+    it "yields the no-op span when no backend is configured" do
       yielded = nil
       Riffer::Tracing.in_span("test") { |span| yielded = span }
-      expect(yielded).must_be_same_as Riffer::Tracing::Null::SPAN
+      expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
 
     it "exports a span with the given name" do
@@ -283,13 +283,13 @@ describe Riffer::Tracing do
       expect(backend.context_calls).must_equal 1
     end
 
-    it "yields the null span when tracing is disabled, bypassing the backend" do
+    it "yields the no-op span when tracing is disabled, bypassing the backend" do
       backend = FakeTracingBackend.new
       Riffer.config.tracing.backend = backend
       Riffer.config.tracing.enabled = false
       yielded = nil
       Riffer::Tracing.in_span("custom") { |span| yielded = span }
-      expect(yielded).must_be_same_as Riffer::Tracing::Null::SPAN
+      expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
   end
 

@@ -43,7 +43,7 @@ Riffer.configure do |config|
 end
 ```
 
-The backend is duck-typed: any object that responds to `record_histogram(name, value, unit:, description:, attributes:)` works, and the setter validates only that (otherwise it raises `Riffer::ArgumentError`). `Riffer::Metrics::Null` is the reference shape. All three instruments are histograms, so the single `record_histogram` method covers the full contract; tell them apart by `name` (or by `unit`: `s` for `gen_ai.client.operation.duration`, `{token}` for `gen_ai.client.token.usage`, `USD` for `riffer.gen_ai.cost`).
+The backend is duck-typed: any object that responds to `record_histogram(name, value, unit:, description:, attributes:)` works, and the setter validates only that (otherwise it raises `Riffer::ArgumentError`). `Riffer::Metrics::NoOp` is the reference shape. All three instruments are histograms, so the single `record_histogram` method covers the full contract; tell them apart by `name` (or by `unit`: `s` for `gen_ai.client.operation.duration`, `{token}` for `gen_ai.client.token.usage`, `USD` for `riffer.gen_ai.cost`).
 
 A custom backend counts as a **live** sink, so the providers still compute the token counts and cost that feed it — the same data that, under OTEL, populates `gen_ai.client.token.usage` and `riffer.gen_ai.cost`. The `enabled` kill switch is honoured ahead of the backend: with `config.metrics.enabled = false`, measurements short-circuit to the no-op without ever reaching a custom backend.
 

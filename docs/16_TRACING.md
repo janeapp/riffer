@@ -64,7 +64,7 @@ The backend is duck-typed — any object satisfying the contract works, and the 
 - `current_context` — return the active trace context (for re-attaching across fiber/thread boundaries), or `nil` when there is none.
 - `with_context(context) { … }` — run the block with the given context active; a `nil` context passes straight through, so a span re-attached while tracing was dark stays harmless.
 
-The yielded span must respond to `set_attribute(key, value)`, `add_event(name, attributes:)`, `record_exception(exception)`, `error!(description)`, and `recording?` — the same surface the OTEL span exposes. `Riffer::Tracing::Null` is the reference shape for both the backend and the span contract. The `enabled` kill switch is still honoured ahead of the backend: with `config.tracing.enabled = false`, spans short-circuit to the no-op without ever reaching a custom backend.
+The yielded span must respond to `set_attribute(key, value)`, `add_event(name, attributes:)`, `record_exception(exception)`, `error!(description)`, and `recording?` — the same surface the OTEL span exposes. `Riffer::Tracing::NoOp` is the reference shape for both the backend and the span contract. The `enabled` kill switch is still honoured ahead of the backend: with `config.tracing.enabled = false`, spans short-circuit to the no-op without ever reaching a custom backend.
 
 ## Spans
 
