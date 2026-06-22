@@ -220,7 +220,7 @@ class Riffer::Providers::Base
   }.freeze #: Hash[Symbol, String]
 
   #--
-  #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span) -> R } -> R
+  #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_chat_span(model, messages, options)
     start = Riffer::Metrics.monotonic_now
     error_type = nil #: String?
@@ -302,7 +302,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Symbol?, String?) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Symbol?, String?) -> void
   def record_finish_reason(span, reason, raw)
     return unless reason
 
@@ -311,7 +311,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tracing::StreamRecorder) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tracing::StreamRecorder) -> void
   def record_stream_outcome(span, recorder)
     Riffer::Tracing.record_usage(span, recorder.token_usage)
     record_finish_reason(span, recorder.finish_reason, recorder.raw_finish_reason)
@@ -319,7 +319,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Array[Riffer::Messages::Base]) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Array[Riffer::Messages::Base]) -> void
   def capture_input(span, messages)
     return unless capture_messages?(span)
 
@@ -329,7 +329,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
   def capture_output(span, content:, tool_calls:, finish_reason:)
     return unless capture_messages?(span)
 
@@ -337,7 +337,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> bool
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
   def capture_messages?(span)
     Riffer.config.tracing.capture_messages && span.recording?
   end

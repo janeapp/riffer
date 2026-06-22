@@ -113,7 +113,7 @@ class Riffer::Tools::Runtime
 
   # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
   #--
-  #: [R] (Riffer::Messages::Assistant::ToolCall) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> R } -> R
+  #: [R] (Riffer::Messages::Assistant::ToolCall) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
   def in_tool_span(tool_call)
     Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call), kind: :internal) do |span|
       capture_tool_arguments(span, tool_call)
@@ -150,7 +150,7 @@ class Riffer::Tools::Runtime
   # A returned error Response is a handled outcome, so its status stays unset —
   # an error span status is reserved for a raised exception.
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tools::Response) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
   def record_tool_outcome(span, result)
     error_type = result.error_type
     span.set_attribute("error.type", error_type.to_s) if error_type
@@ -158,7 +158,7 @@ class Riffer::Tools::Runtime
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Messages::Assistant::ToolCall) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Messages::Assistant::ToolCall) -> void
   def capture_tool_arguments(span, tool_call)
     return unless capture_tool_content?(span)
 
@@ -167,7 +167,7 @@ class Riffer::Tools::Runtime
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span), Riffer::Tools::Response) -> void
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
   def capture_tool_result(span, result)
     return unless capture_tool_content?(span)
 
@@ -175,7 +175,7 @@ class Riffer::Tools::Runtime
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::Null::Span)) -> bool
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
   def capture_tool_content?(span)
     Riffer.config.tracing.capture_messages && span.recording?
   end

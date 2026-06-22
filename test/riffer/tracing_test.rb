@@ -2,15 +2,48 @@
 
 require "test_helper"
 
+class FakeTracingBackend
+  Span = Struct.new(:attributes) do
+    def set_attribute(key, value) = attributes[key] = value
+
+    def add_event(name, attributes: nil) = nil
+
+    def record_exception(exception) = nil
+
+    def error!(description = "") = nil
+
+    def recording? = true
+  end
+
+  attr_reader :opened, :context_calls
+
+  def initialize
+    @opened = []
+    @context_calls = 0
+  end
+
+  def in_span(name, attributes: nil, kind: :internal)
+    @opened << name
+    yield Span.new({})
+  end
+
+  def current_context = :fake_context
+
+  def with_context(context)
+    @context_calls += 1
+    yield
+  end
+end
+
 describe Riffer::Tracing do
   before do
     Riffer.config.tracing.enabled = true
-    Riffer.config.tracing.tracer_provider = nil
+    Riffer.config.tracing.backend = nil
   end
 
   after do
     Riffer.config.tracing.enabled = true
-    Riffer.config.tracing.tracer_provider = nil
+    Riffer.config.tracing.backend = nil
   end
 
   describe "#in_span" do
@@ -19,18 +52,17 @@ describe Riffer::Tracing do
       expect(result).must_equal :value
     end
 
-    it "yields the null span when tracing is disabled" do
+    it "yields the no-op span when tracing is disabled" do
       Riffer.config.tracing.enabled = false
       yielded = nil
       Riffer::Tracing.in_span("test") { |span| yielded = span }
-      expect(yielded).must_be_same_as Riffer::Tracing::Null::SPAN
+      expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
 
-    it "falls back to the null backend when opentelemetry is not bundled" do
-      skip "opentelemetry is bundled" if OTEL_SDK_AVAILABLE
+    it "yields the no-op span when no backend is configured" do
       yielded = nil
       Riffer::Tracing.in_span("test") { |span| yielded = span }
-      expect(yielded).must_be_same_as Riffer::Tracing::Null::SPAN
+      expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
 
     it "exports a span with the given name" do
@@ -165,8 +197,7 @@ describe Riffer::Tracing do
       expect(Riffer::Tracing.current_context).must_be_nil
     end
 
-    it "returns nil when opentelemetry is not bundled" do
-      skip "opentelemetry is bundled" if OTEL_SDK_AVAILABLE
+    it "returns nil when no backend is configured" do
       expect(Riffer::Tracing.current_context).must_be_nil
     end
   end
@@ -216,6 +247,49 @@ describe Riffer::Tracing do
       parent = exporter.finished_spans.find { |span| span.name == "parent" }
       child = exporter.finished_spans.find { |span| span.name == "child" }
       expect(child.parent_span_id).must_equal parent.span_id
+    end
+  end
+
+  describe "consumer-supplied backend" do
+    it "routes spans to the configured backend" do
+      backend = FakeTracingBackend.new
+      Riffer.config.tracing.backend = backend
+      Riffer::Tracing.in_span("custom") {}
+      expect(backend.opened).must_equal ["custom"]
+    end
+
+    it "yields the backend's span to the block" do
+      Riffer.config.tracing.backend = FakeTracingBackend.new
+      yielded = nil
+      Riffer::Tracing.in_span("custom") { |span| yielded = span }
+      expect(yielded).must_be_instance_of FakeTracingBackend::Span
+    end
+
+    it "returns the block's value through the backend" do
+      Riffer.config.tracing.backend = FakeTracingBackend.new
+      result = Riffer::Tracing.in_span("custom") { :value }
+      expect(result).must_equal :value
+    end
+
+    it "delegates current_context to the backend" do
+      Riffer.config.tracing.backend = FakeTracingBackend.new
+      expect(Riffer::Tracing.current_context).must_equal :fake_context
+    end
+
+    it "delegates with_context to the backend" do
+      backend = FakeTracingBackend.new
+      Riffer.config.tracing.backend = backend
+      Riffer::Tracing.with_context(:ctx) {}
+      expect(backend.context_calls).must_equal 1
+    end
+
+    it "yields the no-op span when tracing is disabled, bypassing the backend" do
+      backend = FakeTracingBackend.new
+      Riffer.config.tracing.backend = backend
+      Riffer.config.tracing.enabled = false
+      yielded = nil
+      Riffer::Tracing.in_span("custom") { |span| yielded = span }
+      expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
   end
 

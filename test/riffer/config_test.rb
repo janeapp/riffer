@@ -184,11 +184,6 @@ describe Riffer::Config do
       expect(config.tracing.enabled).must_equal true
     end
 
-    it "initializes tracer_provider to nil" do
-      config = Riffer::Config.new
-      expect(config.tracing.tracer_provider).must_be_nil
-    end
-
     it "coerces a 'false' string for enabled" do
       config = Riffer::Config.new
       config.tracing.enabled = "false"
@@ -222,24 +217,37 @@ describe Riffer::Config do
       expect { config.tracing.capture_messages = "yes" }.must_raise Riffer::ArgumentError
     end
 
-    it "allows setting tracer_provider to nil" do
+    it "initializes backend to nil" do
       config = Riffer::Config.new
-      config.tracing.tracer_provider = nil
-      expect(config.tracing.tracer_provider).must_be_nil
+      expect(config.tracing.backend).must_be_nil
     end
 
-    it "allows setting a tracer_provider when opentelemetry is available" do
-      skip "opentelemetry is not available" unless Riffer::Tracing::Otel.available?
+    it "accepts a backend satisfying the tracing contract" do
       config = Riffer::Config.new
-      provider = OpenTelemetry::SDK::Trace::TracerProvider.new
-      config.tracing.tracer_provider = provider
-      expect(config.tracing.tracer_provider).must_equal provider
+      backend = Object.new
+      def backend.in_span(*) = yield
+      def backend.current_context = nil
+      def backend.with_context(_) = yield
+      config.tracing.backend = backend
+      expect(config.tracing.backend).must_be_same_as backend
     end
 
-    it "raises for a tracer_provider when opentelemetry is not available" do
-      skip "opentelemetry is available" if Riffer::Tracing::Otel.available?
+    it "allows clearing the backend with nil" do
       config = Riffer::Config.new
-      expect { config.tracing.tracer_provider = Object.new }.must_raise Riffer::ArgumentError
+      config.tracing.backend = nil
+      expect(config.tracing.backend).must_be_nil
+    end
+
+    it "raises for a backend missing every contract method" do
+      config = Riffer::Config.new
+      expect { config.tracing.backend = Object.new }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a backend that responds to in_span but not the context methods" do
+      config = Riffer::Config.new
+      backend = Object.new
+      def backend.in_span(*) = yield
+      expect { config.tracing.backend = backend }.must_raise Riffer::ArgumentError
     end
   end
 
@@ -247,11 +255,6 @@ describe Riffer::Config do
     it "initializes enabled to true" do
       config = Riffer::Config.new
       expect(config.metrics.enabled).must_equal true
-    end
-
-    it "initializes meter_provider to nil" do
-      config = Riffer::Config.new
-      expect(config.metrics.meter_provider).must_be_nil
     end
 
     it "coerces a 'false' string for enabled" do
@@ -271,24 +274,27 @@ describe Riffer::Config do
       expect { config.metrics.enabled = "yes" }.must_raise Riffer::ArgumentError
     end
 
-    it "allows setting meter_provider to nil" do
+    it "initializes backend to nil" do
       config = Riffer::Config.new
-      config.metrics.meter_provider = nil
-      expect(config.metrics.meter_provider).must_be_nil
+      expect(config.metrics.backend).must_be_nil
     end
 
-    it "allows setting a meter_provider when opentelemetry metrics is available" do
-      skip "opentelemetry metrics is not available" unless Riffer::Metrics::Otel.available?
+    it "accepts a backend that responds to record_histogram" do
       config = Riffer::Config.new
-      provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-      config.metrics.meter_provider = provider
-      expect(config.metrics.meter_provider).must_equal provider
+      backend = Object.new.tap { |o| def o.record_histogram(*, **) = nil }
+      config.metrics.backend = backend
+      expect(config.metrics.backend).must_be_same_as backend
     end
 
-    it "raises for a meter_provider when opentelemetry metrics is not available" do
-      skip "opentelemetry metrics is available" if Riffer::Metrics::Otel.available?
+    it "allows clearing the backend with nil" do
       config = Riffer::Config.new
-      expect { config.metrics.meter_provider = Object.new }.must_raise Riffer::ArgumentError
+      config.metrics.backend = nil
+      expect(config.metrics.backend).must_be_nil
+    end
+
+    it "raises for a backend that does not respond to record_histogram" do
+      config = Riffer::Config.new
+      expect { config.metrics.backend = Object.new }.must_raise Riffer::ArgumentError
     end
   end
 end

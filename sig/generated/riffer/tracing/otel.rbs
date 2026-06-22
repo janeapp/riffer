@@ -39,10 +39,11 @@ class Riffer::Tracing::Otel
   end
 
   # Builds a backend when the OpenTelemetry API is loadable at a supported
-  # version; returns +nil+ so resolution falls back to Null.
+  # version; returns +nil+ so resolution falls back to NoOp. +provider+
+  # defaults to the global <tt>OpenTelemetry.tracer_provider</tt>.
   # --
-  # : (provider: untyped) -> Riffer::Tracing::Otel?
-  def self.build: (provider: untyped) -> Riffer::Tracing::Otel?
+  # : (?provider: untyped) -> Riffer::Tracing::Otel?
+  def self.build: (?provider: untyped) -> Riffer::Tracing::Otel?
 
   # Whether the OpenTelemetry API gem is loadable at a supported version.
   # --
