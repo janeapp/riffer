@@ -459,6 +459,29 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "tags" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1") }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+    let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+
+    # Tags arrive already normalized (Run stringifies keys/values and drops nils
+    # before they reach the provider), so these pass clean String=>String maps.
+    it "maps all tags (including the reserved user_id) to request_metadata" do
+      params = provider.send(:build_request_params, messages, model, {tags: {"team" => "growth", "user_id" => "u_1"}})
+      expect(params[:request_metadata]).must_equal({"team" => "growth", "user_id" => "u_1"})
+    end
+
+    it "omits request_metadata when no tags are given" do
+      params = provider.send(:build_request_params, messages, model, {})
+      expect(params.key?(:request_metadata)).must_equal false
+    end
+
+    it "does not pass tags through to API params" do
+      params = provider.send(:build_request_params, messages, model, {tags: {"team" => "growth"}})
+      expect(params.key?(:tags)).must_equal false
+    end
+  end
+
   describe "#extract_content" do
     let(:provider) do
       # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes

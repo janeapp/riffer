@@ -48,6 +48,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     tools = options[:tools]
     structured_output = options[:structured_output]
     web_search = options[:web_search]
+    tags = options[:tags] || {}
 
     max_tokens = options.fetch(:max_tokens, 4096)
 
@@ -55,10 +56,16 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       model: model,
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
-      **options.except(:tools, :max_tokens, :structured_output, :web_search)
+      **options.except(:tools, :max_tokens, :structured_output, :web_search, :tags)
     } #: Hash[Symbol, untyped]
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
+
+    # Anthropic's only request-metadata field is metadata.user_id (opaque, no
+    # PII). It carries the reserved user_id tag; all other tags are dropped
+    # here and survive only on spans/metrics.
+    user_id = tags["user_id"]
+    params[:metadata] = {user_id: user_id} if user_id
 
     anthropic_tools = [] #: Array[Hash[Symbol, untyped]]
     anthropic_tools.concat(tools.map { |t| convert_tool_to_anthropic_format(t) }) if tools && !tools.empty?

@@ -152,6 +152,32 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe "tags" do
+    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    # Tags arrive already normalized from Run, so these pass clean String maps.
+    it "maps all tags to metadata" do
+      params = provider.send(:build_request_params, messages, "openai/gpt-4o-mini", {tags: {"team" => "growth", "user_id" => "u_1"}})
+      expect(params[:metadata]).must_equal({"team" => "growth", "user_id" => "u_1"})
+    end
+
+    it "maps the reserved user_id to the user field while keeping it in metadata" do
+      params = provider.send(:build_request_params, messages, "openai/gpt-4o-mini", {tags: {"user_id" => "u_1"}})
+      expect([params[:user], params[:metadata]]).must_equal(["u_1", {"user_id" => "u_1"}])
+    end
+
+    it "omits the user field when no user_id tag is present" do
+      params = provider.send(:build_request_params, messages, "openai/gpt-4o-mini", {tags: {"team" => "growth"}})
+      expect(params.key?(:user)).must_equal false
+    end
+
+    it "does not pass tags through to API params" do
+      params = provider.send(:build_request_params, messages, "openai/gpt-4o-mini", {tags: {"team" => "growth"}})
+      expect(params.key?(:tags)).must_equal false
+    end
+  end
+
   describe "tool conversion" do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
 

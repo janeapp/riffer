@@ -10,37 +10,43 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
-  def generate(agent:, prompt: nil, files: nil)
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  def generate(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
-    run_loop(agent)
+    run_loop(agent, tags: normalize_tags(tags))
   end
 
   # Runs the streaming loop for the given agent. See Riffer::Agent#stream
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(agent:, prompt: nil, files: nil)
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
+    normalized_tags = normalize_tags(tags)
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
-    # context is empty — capture here so the run span parents to the caller's trace.
+    # context is empty — capture here so the run span parents to the caller's
+    # trace. tags ride as an ordinary argument captured in the closure, so they
+    # cross the fiber boundary without any re-propagation.
     trace_context = Riffer::Tracing.current_context
     Enumerator.new do |stream_yielder|
-      Riffer::Tracing.with_context(trace_context) { run_loop(agent, stream_yielder: stream_yielder) }
+      Riffer::Tracing.with_context(trace_context) { run_loop(agent, tags: normalized_tags, stream_yielder: stream_yielder) }
     end
   end
 
   private
 
+  # +tags+ is the normalized <tt>String => String</tt> map; it is threaded to
+  # every span/metric builder in the run as +riffer.tag.*+ and to each provider
+  # call (via +merged_model_options+) for native request-metadata mapping.
   #--
-  #: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
-  def run_loop(agent, stream_yielder: nil)
+  #: (Riffer::Agent, ?tags: Hash[String, String], ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  def run_loop(agent, tags: {}, stream_yielder: nil)
     start = Riffer::Metrics.monotonic_now
     error_type = nil #: String?
     begin
-      Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent), kind: :internal) do |span|
-        response = execute_run(agent, stream_yielder)
+      Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent, tags), kind: :internal) do |span|
+        response = execute_run(agent, stream_yielder, tags)
         record_run_outcome(span, response)
         response
       rescue => error
@@ -55,18 +61,18 @@ module Riffer::Agent::Run
       error_type = error.class.name #: String?
       raise
     ensure
-      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: run_metric_attributes(agent, error_type))
+      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: run_metric_attributes(agent, error_type, tags))
     end
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
-  def execute_run(agent, stream_yielder)
+  #: (Riffer::Agent, Enumerator::Yielder?, ?Hash[String, String]) -> Riffer::Agent::Response
+  def execute_run(agent, stream_yielder, tags = {})
     all_modifications = [] #: Array[Riffer::Guardrails::Modification]
     run_usage = nil #: Riffer::Providers::TokenUsage?
     run_steps = 0
 
-    run_before_guardrails(agent, stream_yielder, all_modifications) do |tripwire|
+    run_before_guardrails(agent, stream_yielder, all_modifications, tags) do |tripwire|
       return tripwire_response(agent, stream_yielder, tripwire, all_modifications, steps: run_steps)
     end
 
@@ -84,16 +90,16 @@ module Riffer::Agent::Run
       step = agent.session.steps
 
       reason = catch(:riffer_interrupt) do
-        execute_pending_tool_calls(agent)
+        execute_pending_tool_calls(agent, tags)
 
         loop do
-          response = stream_yielder ? accumulate_streamed_response(agent, stream_yielder) : call_llm(agent)
+          response = stream_yielder ? accumulate_streamed_response(agent, stream_yielder, tags) : call_llm(agent, tags)
           step += 1
           run_steps += 1
           track_token_usage(agent, response.token_usage)
           run_usage = sum_usage(run_usage, response.token_usage)
 
-          processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications) do |tripwire|
+          processed_response = run_after_guardrails(agent, response, stream_yielder, all_modifications, tags) do |tripwire|
             return tripwire_response(agent, stream_yielder, tripwire, all_modifications, token_usage: run_usage, steps: run_steps)
           end
 
@@ -104,7 +110,7 @@ module Riffer::Agent::Run
           max_steps = agent.config.max_steps
           throw :riffer_interrupt, Riffer::Agent::INTERRUPT_MAX_STEPS if max_steps && step >= max_steps
 
-          execute_tool_calls(agent, processed_response)
+          execute_tool_calls(agent, processed_response, tags: tags)
         end
 
         return final_response(agent, all_modifications, token_usage: run_usage, steps: run_steps)
@@ -122,14 +128,14 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
-  def accumulate_streamed_response(agent, stream_yielder)
+  #: (Riffer::Agent, Enumerator::Yielder, ?Hash[String, String]) -> Riffer::Messages::Assistant
+  def accumulate_streamed_response(agent, stream_yielder, tags = {})
     accumulated_content = ""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
 
-    call_llm_stream(agent).each do |event|
+    call_llm_stream(agent, tags).each do |event|
       stream_yielder << event
 
       case event
@@ -180,33 +186,33 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent) -> Riffer::Messages::Assistant
-  def call_llm(agent)
+  #: (Riffer::Agent, ?Hash[String, String]) -> Riffer::Messages::Assistant
+  def call_llm(agent, tags = {})
     agent.provider.generate_text(
       messages: agent.session.messages,
       model: agent.model_name,
       tools: effective_tools(agent),
-      **merged_model_options(agent)
+      **merged_model_options(agent, tags)
     )
   end
 
   #--
-  #: (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def call_llm_stream(agent)
+  #: (Riffer::Agent, ?Hash[String, String]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def call_llm_stream(agent, tags = {})
     agent.provider.stream_text(
       messages: agent.session.messages,
       model: agent.model_name,
       tools: effective_tools(agent),
-      **merged_model_options(agent)
+      **merged_model_options(agent, tags)
     )
   end
 
   #--
-  #: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-  def execute_tool_calls(agent, assistant_message, tool_calls: assistant_message.tool_calls)
+  #: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?tags: Hash[String, String]) -> void
+  def execute_tool_calls(agent, assistant_message, tool_calls: assistant_message.tool_calls, tags: {})
     return if tool_calls.empty?
 
-    results = agent.tool_runtime.execute(tool_calls, tools: effective_tools(agent), context: agent.context, assistant_message: assistant_message)
+    results = agent.tool_runtime.execute(tool_calls, tools: effective_tools(agent), context: agent.context, assistant_message: assistant_message, tags: tags)
 
     inject_discovered_tools(agent, results)
 
@@ -233,19 +239,19 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent) -> void
-  def execute_pending_tool_calls(agent)
+  #: (Riffer::Agent, ?Hash[String, String]) -> void
+  def execute_pending_tool_calls(agent, tags = {})
     assistant_message, pending = agent.session.pending_tool_calls
-    execute_tool_calls(agent, assistant_message, tool_calls: pending) if assistant_message
+    execute_tool_calls(agent, assistant_message, tool_calls: pending, tags: tags) if assistant_message
   end
 
   #--
-  #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> void
-  def run_before_guardrails(agent, stream_yielder, all_modifications)
+  #: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  def run_before_guardrails(agent, stream_yielder, all_modifications, tags = {})
     guardrails = agent.config.guardrails_for(:before)
     return if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: agent.context)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :before, context: agent.context, tags: tags)
     processed_messages, tripwire, modifications = runner.run(agent.session.messages)
     agent.session.set(processed_messages) unless tripwire
     record_modifications!(stream_yielder, all_modifications, modifications)
@@ -253,12 +259,12 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
-  def run_after_guardrails(agent, response, stream_yielder, all_modifications)
+  #: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
+  def run_after_guardrails(agent, response, stream_yielder, all_modifications, tags = {})
     guardrails = agent.config.guardrails_for(:after)
     return response if guardrails.empty?
 
-    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: agent.context)
+    runner = Riffer::Guardrails::Runner.new(guardrails, phase: :after, context: agent.context, tags: tags)
     processed_response, tripwire, modifications = runner.run(response, messages: agent.session.messages)
 
     response_index = agent.session.messages.length
@@ -285,11 +291,16 @@ module Riffer::Agent::Run
     discovered.empty? ? agent.tools : agent.tools + discovered
   end
 
+  # +tags+ rides in the options hash as a curated key the providers extract for
+  # native request-metadata mapping (alongside +:structured_output+); it never
+  # reaches an SDK call verbatim. Span/metric tagging is threaded separately to
+  # each builder.
   #--
-  #: (Riffer::Agent) -> Hash[Symbol, untyped]
-  def merged_model_options(agent)
+  #: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
+  def merged_model_options(agent, tags = {})
     opts = agent.config.model_options.dup
     opts[:structured_output] = agent.structured_output if agent.structured_output
+    opts[:tags] = tags unless tags.empty?
     opts
   end
 
@@ -329,19 +340,19 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent) -> Hash[String, untyped]
-  def run_span_attributes(agent)
+  #: (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
+  def run_span_attributes(agent, tags = {})
     {
       "gen_ai.operation.name" => "invoke_agent",
       "gen_ai.agent.name" => agent.class.identifier,
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name
-    }
+    }.merge(tag_attributes(tags))
   end
 
   #--
-  #: (Riffer::Agent, String?) -> Hash[String, untyped]
-  def run_metric_attributes(agent, error_type)
+  #: (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
+  def run_metric_attributes(agent, error_type, tags = {})
     attributes = {
       "gen_ai.operation.name" => "invoke_agent",
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
@@ -349,7 +360,31 @@ module Riffer::Agent::Run
       "gen_ai.agent.name" => agent.class.identifier
     } #: Hash[String, untyped]
     attributes["error.type"] = error_type if error_type
-    attributes
+    attributes.merge(tag_attributes(tags))
+  end
+
+  # Normalizes a raw tags hash into a flat <tt>String => String</tt> map: keys
+  # and values are stringified and +nil+-valued entries dropped. Run is the
+  # single place this happens, so providers and span/metric builders downstream
+  # all receive already-clean tags.
+  #--
+  #: (Hash[(String | Symbol), untyped]) -> Hash[String, String]
+  def normalize_tags(tags)
+    result = {} #: Hash[String, String]
+    tags.each do |key, value|
+      next if value.nil?
+      result[key.to_s] = value.to_s
+    end
+    result
+  end
+
+  # Maps normalized tags to their namespaced span/metric attribute form, e.g.
+  # <tt>{"team" => "growth"}</tt> becomes <tt>{"riffer.tag.team" => "growth"}</tt>.
+  # An empty map yields an empty hash, so merging it is a no-op.
+  #--
+  #: (Hash[String, String]) -> Hash[String, String]
+  def tag_attributes(tags)
+    tags.transform_keys { |key| "riffer.tag.#{key}" }
   end
 
   #--

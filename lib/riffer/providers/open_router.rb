@@ -44,12 +44,21 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     reasoning = options[:reasoning]
     tools = options[:tools]
     structured_output = options[:structured_output]
+    tags = options[:tags] || {}
 
     params = {
       model: model,
       messages: convert_messages_to_chat_completions_format(messages),
-      **options.except(:reasoning, :tools, :structured_output)
+      **options.except(:reasoning, :tools, :structured_output, :tags)
     } #: Hash[Symbol, untyped]
+
+    unless tags.empty?
+      params[:metadata] = tags
+      # OpenRouter exposes the legacy Chat Completions user field rather than
+      # safety_identifier; the reserved user_id maps there and stays in metadata.
+      user = tags["user_id"]
+      params[:user] = user if user
+    end
 
     if reasoning
       params[:reasoning] = reasoning.is_a?(String) ? {effort: reasoning} : reasoning

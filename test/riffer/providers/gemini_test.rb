@@ -463,6 +463,26 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "tags" do
+    let(:provider) { Riffer::Providers::Gemini.new(api_key: api_key) }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    it "does not add a labels field (the Developer API has none)" do
+      params = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {tags: {"team" => "growth"}})
+      expect(params.key?(:labels)).must_equal false
+    end
+
+    it "does not pass tags through to API params" do
+      params = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {tags: {"team" => "growth"}})
+      expect(params.key?(:tags)).must_equal false
+    end
+
+    it "never leaks tags into generationConfig" do
+      params = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {temperature: 0.5, tags: {"team" => "growth"}})
+      expect(params[:generationConfig].key?(:tags)).must_equal false
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

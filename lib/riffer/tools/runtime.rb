@@ -18,14 +18,16 @@ class Riffer::Tools::Runtime
 
   # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
   #--
-  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
-  def execute(tool_calls, tools:, context:, assistant_message: nil)
+  #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?, ?tags: Hash[String, String]) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
+  def execute(tool_calls, tools:, context:, assistant_message: nil, tags: {})
     # Each Runner worker runs in its own thread/fiber, where the OTEL context
     # starts empty — capture here so the execute_tool span parents correctly.
+    # tags are an ordinary local captured in the block, so they reach the
+    # worker's span/metric without re-propagation.
     trace_context = Riffer::Tracing.current_context
     @runner.map(tool_calls, context: context) do |tool_call|
       Riffer::Tracing.with_context(trace_context) do
-        instrument_tool_call(tool_call) do
+        instrument_tool_call(tool_call, tags) do
           around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
             dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
           end
@@ -57,12 +59,12 @@ class Riffer::Tools::Runtime
   private
 
   #--
-  #: (Riffer::Messages::Assistant::ToolCall) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
-  def instrument_tool_call(tool_call)
+  #: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
+  def instrument_tool_call(tool_call, tags = {})
     start = Riffer::Metrics.monotonic_now
     error_type = nil #: String?
     begin
-      result = in_tool_span(tool_call) do |span|
+      result = in_tool_span(tool_call, tags) do |span|
         response = yield
         record_tool_outcome(span, response)
         response
@@ -73,7 +75,7 @@ class Riffer::Tools::Runtime
       error_type = error.class.name #: String?
       raise
     ensure
-      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: tool_metric_attributes(tool_call, error_type))
+      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: tool_metric_attributes(tool_call, error_type, tags))
     end
   end
 
@@ -113,9 +115,9 @@ class Riffer::Tools::Runtime
 
   # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
   #--
-  #: [R] (Riffer::Messages::Assistant::ToolCall) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
-  def in_tool_span(tool_call)
-    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call), kind: :internal) do |span|
+  #: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
+  def in_tool_span(tool_call, tags = {})
+    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call, tags), kind: :internal) do |span|
       capture_tool_arguments(span, tool_call)
       yield span
     rescue => error
@@ -127,24 +129,32 @@ class Riffer::Tools::Runtime
   end
 
   #--
-  #: (Riffer::Messages::Assistant::ToolCall) -> Hash[String, untyped]
-  def tool_span_attributes(tool_call)
+  #: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
+  def tool_span_attributes(tool_call, tags = {})
     {
       "gen_ai.operation.name" => "execute_tool",
       "gen_ai.tool.name" => tool_call.name,
       "gen_ai.tool.call.id" => tool_call.call_id
-    }
+    }.merge(tag_attributes(tags))
   end
 
   #--
-  #: (Riffer::Messages::Assistant::ToolCall, String?) -> Hash[String, untyped]
-  def tool_metric_attributes(tool_call, error_type)
+  #: (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
+  def tool_metric_attributes(tool_call, error_type, tags = {})
     attributes = {
       "gen_ai.operation.name" => "execute_tool",
       "gen_ai.tool.name" => tool_call.name
     } #: Hash[String, untyped]
     attributes["error.type"] = error_type if error_type
-    attributes
+    attributes.merge(tag_attributes(tags))
+  end
+
+  # Maps normalized tags to their namespaced span/metric attribute form. An
+  # empty map yields an empty hash, so merging it is a no-op.
+  #--
+  #: (Hash[String, String]) -> Hash[String, String]
+  def tag_attributes(tags)
+    tags.transform_keys { |key| "riffer.tag.#{key}" }
   end
 
   # A returned error Response is a handled outcome, so its status stays unset —

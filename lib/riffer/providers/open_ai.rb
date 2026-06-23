@@ -30,6 +30,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     tools = options[:tools]
     structured_output = options[:structured_output]
     web_search = options[:web_search]
+    tags = options[:tags] || {}
 
     params = {
       input: convert_messages_to_openai_format(messages),
@@ -38,8 +39,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         effort: reasoning,
         summary: "auto"
       },
-      **options.except(:reasoning, :tools, :structured_output, :web_search)
+      **options.except(:reasoning, :tools, :structured_output, :web_search, :tags)
     } #: Hash[Symbol, untyped]
+
+    unless tags.empty?
+      params[:metadata] = tags
+      # The reserved user_id also maps to the native safety identifier while
+      # staying in metadata as an ordinary tag.
+      user_id = tags["user_id"]
+      params[:safety_identifier] = user_id if user_id
+    end
 
     openai_tools = [] #: Array[Hash[Symbol, untyped]]
     openai_tools.concat(tools.map { |t| convert_tool_to_openai_format(t) }) if tools && !tools.empty?

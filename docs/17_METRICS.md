@@ -74,6 +74,8 @@ OpenTelemetry.meter_provider.add_view(
 
 Each instrument is documented here as a row carrying its name, instrument type, unit, and attribute set.
 
+> **Per-call tags become dimensions.** Any tags passed to `#generate` / `#stream` via `tags:` are added as `riffer.tag.<key>` attributes to **every** instrument below — `operation.duration` (each operation), `token.usage` (each point), `cost`, and `guardrail.duration` — so the attribute lists omit them. Tags are promoted verbatim with no allow-list — a high-cardinality value like a unique `user_id` per request multiplies time series accordingly; drop it with a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) or keep metric-bound tags low-cardinality. See [Per-Call Tags](10_CONFIGURATION.md#per-call-tags).
+
 ### `gen_ai.client.operation.duration`
 
 Histogram, unit `s`. The latency of a single GenAI operation, recorded around the same wrap as the matching [span](16_TRACING.md) on both the success and error paths and timed with a monotonic clock. Recording is independent of tracing — the metric fires even with `config.tracing.enabled = false`. Tell the three operations apart by `gen_ai.operation.name`.
@@ -123,9 +125,9 @@ Histogram, unit `s`. The latency of a single guardrail execution, recorded aroun
 
 This instrument is Riffer-owned (`riffer.*`, not `gen_ai.*`) by the same reasoning as its span: a guardrail is not a GenAI semantic-convention operation, so the `execute_guardrail` span deliberately carries no `gen_ai.operation.name` and lives in riffer's own `riffer.guardrail.*` namespace (see [Tracing](16_TRACING.md)). Folding the metric into `gen_ai.client.operation.duration` would contradict that, so the duration is its own riffer-owned histogram instead; see [Stability](#stability).
 
-| Value                                | Attributes                                                            |
-| ------------------------------------ | --------------------------------------------------------------------- |
-| duration of the guardrail execution  | `riffer.guardrail.name`, `riffer.guardrail.phase`, `error.type` (on raise) |
+| Value                               | Attributes                                                                 |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| duration of the guardrail execution | `riffer.guardrail.name`, `riffer.guardrail.phase`, `error.type` (on raise) |
 
 `riffer.guardrail.phase` is `before` or `after`. A pass, transform, or block is a **handled** outcome and records no `error.type` — that attribute carries the exception class only when a guardrail raises, mirroring the span. One time series exists per `riffer.guardrail.name` × `riffer.guardrail.phase`; guardrail names are bounded by the guardrails you configure, so cardinality is safe — unlike the dynamic tool names on `gen_ai.client.operation.duration`.
 

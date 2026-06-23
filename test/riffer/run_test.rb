@@ -3332,4 +3332,177 @@ describe Riffer::Agent::Run do
       expect(operations).must_equal ["chat"]
     end
   end
+
+  describe "tags" do
+    let(:agent_class) do
+      Class.new(Riffer::Agent) do
+        identifier "tagged-agent"
+        model "mock/riffer-1"
+      end
+    end
+
+    let(:tool_class) do
+      Class.new(Riffer::Tool) do
+        description "Tagged tool"
+        def call(context:)
+          text("done")
+        end
+      end.tap { |t| t.identifier("run_tags_tool") }
+    end
+
+    let(:agent_class_with_tools) do
+      tc = tool_class
+      Class.new(Riffer::Agent) do
+        identifier "tagged-agent"
+        model "mock/riffer-1"
+        uses_tools [tc]
+      end
+    end
+
+    describe "provider threading" do
+      it "passes normalized tags to the provider on generate" do
+        agent = agent_class.new
+        agent.generate("Hello", tags: {team: "growth", user_id: "u_1"})
+        expect(agent.provider.calls.last[:tags]).must_equal({"team" => "growth", "user_id" => "u_1"})
+      end
+
+      it "stringifies symbol values and drops nil-valued entries" do
+        agent = agent_class.new
+        agent.generate("Hello", tags: {team: :growth, region: nil})
+        expect(agent.provider.calls.last[:tags]).must_equal({"team" => "growth"})
+      end
+
+      it "passes tags on every provider call across the tool loop" do
+        agent = agent_class_with_tools.new
+        agent.provider.stub_response("", tool_calls: [{name: "run_tags_tool", arguments: "{}"}])
+        agent.provider.stub_response("Done!")
+        agent.generate("Call the tool", tags: {team: "growth"})
+        tags_per_call = agent.provider.calls.map { |c| c[:tags] }
+        expect(tags_per_call).must_equal([{"team" => "growth"}, {"team" => "growth"}])
+      end
+
+      it "passes tags to the provider on stream" do
+        agent = agent_class.new
+        agent.stream("Hello", tags: {team: "growth"}).each { |_| }
+        expect(agent.provider.calls.last[:tags]).must_equal({"team" => "growth"})
+      end
+
+      it "omits the tags option entirely when none are given" do
+        agent = agent_class.new
+        agent.generate("Hello")
+        expect(agent.provider.calls.last.key?(:tags)).must_equal false
+      end
+
+      it "omits the tags option for an empty hash" do
+        agent = agent_class.new
+        agent.generate("Hello", tags: {})
+        expect(agent.provider.calls.last.key?(:tags)).must_equal false
+      end
+
+      it "raises when tags is not a hash" do
+        agent = agent_class.new
+        err = expect { agent.generate("Hello", tags: "growth") }.must_raise Riffer::ArgumentError
+        expect(err.message).must_match(/tags: must be a Hash/)
+      end
+    end
+
+    describe "tracing" do
+      before do
+        skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
+        Riffer.config.tracing.enabled = true
+        @exporter = install_in_memory_tracer_provider
+      end
+
+      after do
+        Riffer.config.tracing.enabled = true
+        Riffer.config.tracing.backend = nil
+      end
+
+      def span_named(prefix)
+        @exporter.finished_spans.find { |span| span.name.start_with?(prefix) }
+      end
+
+      it "stamps riffer.tag.* on the invoke_agent span" do
+        agent_class.new.generate("Hello", tags: {team: "growth"})
+        expect(span_named("invoke_agent").attributes["riffer.tag.team"]).must_equal "growth"
+      end
+
+      it "stamps riffer.tag.* on the chat span" do
+        agent_class.new.generate("Hello", tags: {team: "growth"})
+        expect(span_named("chat").attributes["riffer.tag.team"]).must_equal "growth"
+      end
+
+      it "stamps riffer.tag.* on the execute_tool span" do
+        agent = agent_class_with_tools.new
+        agent.provider.stub_response("", tool_calls: [{name: "run_tags_tool", arguments: "{}"}])
+        agent.provider.stub_response("Done!")
+        agent.generate("Call the tool", tags: {team: "growth"})
+        expect(span_named("execute_tool").attributes["riffer.tag.team"]).must_equal "growth"
+      end
+
+      it "stamps riffer.tag.* on chat spans emitted while streaming" do
+        agent_class.new.stream("Hello", tags: {team: "growth"}).each { |_| }
+        expect(span_named("chat").attributes["riffer.tag.team"]).must_equal "growth"
+      end
+
+      it "stamps riffer.tag.* on the execute_guardrail span" do
+        klass = Class.new(Riffer::Agent) do
+          identifier "tagged-agent"
+          model "mock/riffer-1"
+        end
+        klass.guardrail(:before, with: RunTracingPassingGuardrail)
+        klass.new.generate("Hello", tags: {team: "growth"})
+        expect(span_named("execute_guardrail").attributes["riffer.tag.team"]).must_equal "growth"
+      end
+
+      it "leaves spans untagged when no tags are given" do
+        agent_class.new.generate("Hello")
+        tag_keys = span_named("invoke_agent").attributes.keys.grep(/\Ariffer\.tag\./)
+        expect(tag_keys).must_be_empty
+      end
+    end
+
+    describe "metrics" do
+      before do
+        skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
+        Riffer.config.metrics.enabled = true
+        @exporter = install_in_memory_meter_provider
+      end
+
+      after do
+        Riffer.config.metrics.enabled = true
+        Riffer.config.metrics.backend = nil
+      end
+
+      def data_points(instrument)
+        @exporter.pull
+        @exporter.metric_snapshots.find { |s| s.name == instrument }.data_points
+      end
+
+      it "stamps riffer.tag.* on the duration metric for every operation" do
+        agent_class.new.generate("Hello", tags: {team: "growth"})
+        operations = data_points("gen_ai.client.operation.duration").map { |dp| dp.attributes["riffer.tag.team"] }.uniq
+        expect(operations).must_equal ["growth"]
+      end
+
+      it "stamps riffer.tag.* on the token usage metric" do
+        agent = agent_class.new
+        agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
+        agent.generate("Hello", tags: {team: "growth"})
+        tags = data_points("gen_ai.client.token.usage").map { |dp| dp.attributes["riffer.tag.team"] }.uniq
+        expect(tags).must_equal ["growth"]
+      end
+
+      it "stamps riffer.tag.* on the guardrail duration metric" do
+        klass = Class.new(Riffer::Agent) do
+          identifier "tagged-agent"
+          model "mock/riffer-1"
+        end
+        klass.guardrail(:before, with: RunTracingPassingGuardrail)
+        klass.new.generate("Hello", tags: {team: "growth"})
+        tags = data_points("riffer.guardrail.duration").map { |dp| dp.attributes["riffer.tag.team"] }.uniq
+        expect(tags).must_equal ["growth"]
+      end
+    end
+  end
 end

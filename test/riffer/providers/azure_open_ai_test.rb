@@ -96,6 +96,15 @@ describe Riffer::Providers::AzureOpenAI do
     end
   end
 
+  describe "tags" do
+    it "inherits the OpenAI mapping: tags to metadata and user_id to safety_identifier" do
+      provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
+      messages = [Riffer::Messages::User.new("Hello")]
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"team" => "growth", "user_id" => "u_1"}})
+      expect([params[:metadata], params[:safety_identifier]]).must_equal([{"team" => "growth", "user_id" => "u_1"}, "u_1"])
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do
