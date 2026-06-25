@@ -74,7 +74,7 @@ OpenTelemetry.meter_provider.add_view(
 
 Each instrument is documented here as a row carrying its name, instrument type, unit, and attribute set.
 
-> **Per-call tags become dimensions.** Any tags passed to `#generate` / `#stream` via `tags:` are added as `riffer.tag.<key>` attributes to **every** instrument below — `operation.duration` (each operation), `token.usage` (each point), `cost`, and `guardrail.duration` — so the attribute lists omit them. Tags are promoted verbatim with no allow-list — a high-cardinality value like a unique `user_id` per request multiplies time series accordingly; drop it with a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) or keep metric-bound tags low-cardinality. See [Per-Call Tags](10_CONFIGURATION.md#per-call-tags).
+> **Per-call tags become dimensions.** Any tags passed to `#generate` / `#stream` via `tags:` are added as `riffer.tag.<key>` attributes to **every** instrument below — `operation.duration` (each operation), `token.usage` (each point), `cost`, and `guardrail.duration` — so the attribute lists omit them. Tags are promoted verbatim with no allow-list — a high-cardinality value like a unique `user_id` per request multiplies time series accordingly; drop it with a [View](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view) or keep metric-bound tags low-cardinality. See [Per-Call Tags](03_AGENTS.md#per-call-tags).
 
 ### `gen_ai.client.operation.duration`
 

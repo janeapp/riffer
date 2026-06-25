@@ -482,6 +482,17 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-west-2") }
+
+    it "forwards per-call tags to the request" do
+      VCR.use_cassette("Riffer_Providers_AmazonBedrock/tags/forwards_request_metadata") do
+        result = provider.generate_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "#extract_content" do
     let(:provider) do
       # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes

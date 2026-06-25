@@ -1,0 +1,76 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"Say
+        hello"}],"metadata":{"user_id":"u_1","team":"growth"},"user":"u_1"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.68.0
+      Host:
+      - openrouter.ai
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.68.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENROUTER_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '147'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 25 Jun 2026 23:27:53 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1782430071-IjbVakJPYBMzW5OAOU3z
+      Access-Control-Expose-Headers:
+      - X-Generation-Id,cf-ray
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a117becb89f02005-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        CiAgICAgICAgIAoKICAgICAgICAgCgogICAgICAgICAKeyJpZCI6Imdlbi0xNzgyNDMwMDcxLUlqYlZha0pQWUJNelc1T0FPVTN6Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY3JlYXRlZCI6MTc4MjQzMDA3MSwibW9kZWwiOiJhbnRocm9waWMvY2xhdWRlLTQuNS1oYWlrdS0yMDI1MTAwMSIsInByb3ZpZGVyIjoiQW1hem9uIEJlZHJvY2siLCJzeXN0ZW1fZmluZ2VycHJpbnQiOm51bGwsInNlcnZpY2VfdGllciI6bnVsbCwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImxvZ3Byb2JzIjpudWxsLCJmaW5pc2hfcmVhc29uIjoic3RvcCIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoiZW5kX3R1cm4iLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjoiSGVsbG8hIPCfkYsgSG93IGNhbiBJIGhlbHAgeW91IHRvZGF5PyIsInJlZnVzYWwiOm51bGwsInJlYXNvbmluZyI6bnVsbH19XSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6OSwiY29tcGxldGlvbl90b2tlbnMiOjE2LCJ0b3RhbF90b2tlbnMiOjI1LCJjb3N0IjowLjAwMDA4OSwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDA4OSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDAwOSwidXBzdHJlYW1faW5mZXJlbmNlX2NvbXBsZXRpb25zX2Nvc3QiOjAuMDAwMDh9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjAsImltYWdlX3Rva2VucyI6MCwiYXVkaW9fdG9rZW5zIjowfX19
+  recorded_at: Thu, 25 Jun 2026 23:27:53 GMT
+recorded_with: VCR 6.4.0

@@ -428,6 +428,20 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::Anthropic.new(api_key: api_key) }
+
+    # The cassette records the request body Anthropic receives when tags are
+    # passed (only the reserved user_id is forwarded, as metadata.user_id).
+    # VCR's :body matcher fails the test if tags ever stop reaching the wire.
+    it "forwards per-call tags to the request" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/tags/forwards_user_id_metadata") do
+        result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do

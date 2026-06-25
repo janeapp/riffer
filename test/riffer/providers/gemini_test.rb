@@ -483,6 +483,21 @@ describe Riffer::Providers::Gemini do
     end
   end
 
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::Gemini.new(api_key: api_key) }
+
+    # Gemini drops tags, so a tagged call must reproduce the untagged request
+    # body. Replaying the existing untagged cassette with record: :none means
+    # any future leak into the Gemini request changes the body and fails the
+    # :body matcher — confirming no regression. No new cassette needed.
+    it "sends no tags on the wire, matching the untagged request" do
+      VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message", record: :none) do
+        result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "tool calling" do
     let(:weather_tool) do
       Class.new(Riffer::Tool) do

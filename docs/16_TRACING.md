@@ -95,7 +95,7 @@ The contract promise is: **when present**, a key carries the documented meaning 
 
 ### Per-call tags (`riffer.tag.*`)
 
-Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, and `execute_guardrail` spans. See [Per-Call Tags](10_CONFIGURATION.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
+Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, and `execute_guardrail` spans. See [Per-Call Tags](03_AGENTS.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
 
 ## `invoke_agent {agent}` — the run span
 

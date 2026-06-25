@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":"Say
+        hello"}],"max_tokens":4096,"metadata":{"user_id":"u_1"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.49.0
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.49.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '135'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 25 Jun 2026 20:52:24 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-06-25T20:52:24Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-06-25T20:52:24Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '20000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '19999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-06-25T20:52:23Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-06-25T20:52:24Z'
+      Request-Id:
+      - req_011CcQe7YLBbix4Ng7svvzSs
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Traceresponse:
+      - 00-192082fe427fd0450ac98c5da4d8f2cb-cabc178299944f99-01
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      Set-Cookie:
+      - _cfuvid=FdTyv8hLfGUAiKv4Ywevpt4ePN7duV4ewDV8R9xYPmg-1782420743.4539623-1.0.1.1-MP5oypi3UV5H7zgzO7bNBKUoIxcHUFKD0Q_U6g5F0_c;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.anthropic.com
+      X-Robots-Tag:
+      - none
+      Cf-Cache-Status:
+      - DYNAMIC
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Ray:
+      - a116db0e9860ba10-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS00LTUtMjAyNTEwMDEiLCJpZCI6Im1zZ18wMUEzNTFlaWpLWFhmOWJKYUs0djc4MVoiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGV4dCIsInRleHQiOiJIZWxsbyEg8J+RiyBIb3cgY2FuIEkgaGVscCB5b3UgdG9kYXk/In1dLCJzdG9wX3JlYXNvbiI6ImVuZF90dXJuIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwic3RvcF9kZXRhaWxzIjpudWxsLCJ1c2FnZSI6eyJpbnB1dF90b2tlbnMiOjksImNhY2hlX2NyZWF0aW9uX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOjAsImNhY2hlX2NyZWF0aW9uIjp7ImVwaGVtZXJhbF81bV9pbnB1dF90b2tlbnMiOjAsImVwaGVtZXJhbF8xaF9pbnB1dF90b2tlbnMiOjB9LCJvdXRwdXRfdG9rZW5zIjoxNiwic2VydmljZV90aWVyIjoic3RhbmRhcmQiLCJpbmZlcmVuY2VfZ2VvIjoibm90X2F2YWlsYWJsZSJ9fQ==
+  recorded_at: Thu, 25 Jun 2026 20:52:24 GMT
+recorded_with: VCR 6.4.0

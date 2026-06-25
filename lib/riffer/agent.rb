@@ -291,14 +291,14 @@ class Riffer::Agent
   # +tags:+ is an optional flat hash of attribution tags applied to this single
   # call: they propagate to the provider's native request-metadata field, and
   # are stamped as +riffer.tag.*+ on every span and metric the call emits. See
-  # +docs/10_CONFIGURATION.md+ for the per-provider mapping. The reserved key
+  # +docs/03_AGENTS.md+ for the per-provider mapping. The reserved key
   # +user_id+ also maps to the provider's native user identifier where one
   # exists.
   #
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate(prompt = nil, files: nil, tags: {})
-    Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files, tags: validate_tags(tags))
+    Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
   # Streams a response from the agent, returning an +Enumerator+ of
@@ -310,7 +310,7 @@ class Riffer::Agent
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt = nil, files: nil, tags: {})
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @structured_output
-    Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files, tags: validate_tags(tags))
+    Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
   # Interrupts the agent loop from an +on_message+ callback. Equivalent to
@@ -338,17 +338,6 @@ class Riffer::Agent
   end
 
   private
-
-  # Tags must be a flat hash; key/value coercion happens later in the run.
-  # Validated here so a bad type fails fast at the public boundary. A +nil+ is
-  # tolerated and collapses to an empty hash.
-  #--
-  #: (Hash[(String | Symbol), untyped]?) -> Hash[(String | Symbol), untyped]
-  def validate_tags(tags)
-    return tags if tags.is_a?(Hash)
-    return {} if tags.nil?
-    raise Riffer::ArgumentError, "tags: must be a Hash, got #{tags.class}"
-  end
 
   #--
   #: () -> Riffer::Messages::System?

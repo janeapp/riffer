@@ -19,12 +19,14 @@ module Riffer::Agent::Run
 
   private
 
-  # +tags+ is the normalized <tt>String => String</tt> map; it is threaded to
-  # every span/metric builder in the run as +riffer.tag.*+ and to each provider
-  # call (via +merged_model_options+) for native request-metadata mapping.
+  # Both +generate+ and +stream+ funnel here, so this is the single place raw
+  # +tags+ are normalized. The clean <tt>String => String</tt> map is then
+  # threaded to every span/metric builder in the run as +riffer.tag.*+ and to
+  # each provider call (via +merged_model_options+) for native request-metadata
+  # mapping.
   # --
-  # : (Riffer::Agent, ?tags: Hash[String, String], ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
-  def run_loop: (Riffer::Agent, ?tags: Hash[String, String], ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  # : (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  def run_loop: (Riffer::Agent, ?tags: Hash[String | Symbol, untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
 
   # --
   # : (Riffer::Agent, Enumerator::Yielder?, ?Hash[String, String]) -> Riffer::Agent::Response
@@ -116,17 +118,10 @@ module Riffer::Agent::Run
   # : (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
   def run_metric_attributes: (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
 
-  # Normalizes a raw tags hash into a flat <tt>String => String</tt> map: keys
-  # and values are stringified and +nil+-valued entries dropped. Run is the
-  # single place this happens, so providers and span/metric builders downstream
-  # all receive already-clean tags.
   # --
-  # : (Hash[(String | Symbol), untyped]) -> Hash[String, String]
-  def normalize_tags: (Hash[String | Symbol, untyped]) -> Hash[String, String]
+  # : (Hash[(String | Symbol), untyped]?) -> Hash[String, String]
+  def normalize_tags: (Hash[String | Symbol, untyped]?) -> Hash[String, String]
 
-  # Maps normalized tags to their namespaced span/metric attribute form, e.g.
-  # <tt>{"team" => "growth"}</tt> becomes <tt>{"riffer.tag.team" => "growth"}</tt>.
-  # An empty map yields an empty hash, so merging it is a no-op.
   # --
   # : (Hash[String, String]) -> Hash[String, String]
   def tag_attributes: (Hash[String, String]) -> Hash[String, String]

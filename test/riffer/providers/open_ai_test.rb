@@ -463,6 +463,17 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+
+    it "forwards per-call tags to the request" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/tags/forwards_metadata_and_safety_identifier") do
+        result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do

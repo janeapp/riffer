@@ -178,6 +178,20 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+
+    # The cassette records the request body OpenRouter receives when tags are
+    # passed (all tags as metadata, user_id also as the user field). VCR's :body
+    # matcher fails the test if tags ever stop reaching the wire.
+    it "forwards per-call tags to the request" do
+      VCR.use_cassette("Riffer_Providers_OpenRouter/tags/forwards_metadata_and_user") do
+        result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "tool conversion" do
     let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
 

@@ -13,7 +13,7 @@ module Riffer::Agent::Run
   #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
-    run_loop(agent, tags: normalize_tags(tags))
+    run_loop(agent, tags: tags)
   end
 
   # Runs the streaming loop for the given agent. See Riffer::Agent#stream
@@ -23,25 +23,27 @@ module Riffer::Agent::Run
   #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
-    normalized_tags = normalize_tags(tags)
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
     # context is empty — capture here so the run span parents to the caller's
     # trace. tags ride as an ordinary argument captured in the closure, so they
     # cross the fiber boundary without any re-propagation.
     trace_context = Riffer::Tracing.current_context
     Enumerator.new do |stream_yielder|
-      Riffer::Tracing.with_context(trace_context) { run_loop(agent, tags: normalized_tags, stream_yielder: stream_yielder) }
+      Riffer::Tracing.with_context(trace_context) { run_loop(agent, tags: tags, stream_yielder: stream_yielder) }
     end
   end
 
   private
 
-  # +tags+ is the normalized <tt>String => String</tt> map; it is threaded to
-  # every span/metric builder in the run as +riffer.tag.*+ and to each provider
-  # call (via +merged_model_options+) for native request-metadata mapping.
+  # Both +generate+ and +stream+ funnel here, so this is the single place raw
+  # +tags+ are normalized. The clean <tt>String => String</tt> map is then
+  # threaded to every span/metric builder in the run as +riffer.tag.*+ and to
+  # each provider call (via +merged_model_options+) for native request-metadata
+  # mapping.
   #--
-  #: (Riffer::Agent, ?tags: Hash[String, String], ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  #: (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, tags: {}, stream_yielder: nil)
+    tags = normalize_tags(tags)
     start = Riffer::Metrics.monotonic_now
     error_type = nil #: String?
     begin
@@ -363,13 +365,12 @@ module Riffer::Agent::Run
     attributes.merge(tag_attributes(tags))
   end
 
-  # Normalizes a raw tags hash into a flat <tt>String => String</tt> map: keys
-  # and values are stringified and +nil+-valued entries dropped. Run is the
-  # single place this happens, so providers and span/metric builders downstream
-  # all receive already-clean tags.
   #--
-  #: (Hash[(String | Symbol), untyped]) -> Hash[String, String]
+  #: (Hash[(String | Symbol), untyped]?) -> Hash[String, String]
   def normalize_tags(tags)
+    return {} if tags.nil?
+    raise Riffer::ArgumentError, "tags: must be a Hash, got #{tags.class}" unless tags.is_a?(Hash)
+
     result = {} #: Hash[String, String]
     tags.each do |key, value|
       next if value.nil?
@@ -378,9 +379,6 @@ module Riffer::Agent::Run
     result
   end
 
-  # Maps normalized tags to their namespaced span/metric attribute form, e.g.
-  # <tt>{"team" => "growth"}</tt> becomes <tt>{"riffer.tag.team" => "growth"}</tt>.
-  # An empty map yields an empty hash, so merging it is a no-op.
   #--
   #: (Hash[String, String]) -> Hash[String, String]
   def tag_attributes(tags)
