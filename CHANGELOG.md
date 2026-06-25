@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.35.0](https://github.com/janeapp/riffer/compare/riffer/v0.34.0...riffer/v0.35.0) (2026-06-25)
+
+
+### Features
+
+* per-call tags: for Agent#generate and #stream ([#339](https://github.com/janeapp/riffer/issues/339)) ([ddfda89](https://github.com/janeapp/riffer/commit/ddfda8929ca3b594415f827957d8c91104387317))
+
 ## [0.34.0](https://github.com/janeapp/riffer/compare/riffer/v0.33.0...riffer/v0.34.0) (2026-06-22)
 
 
