@@ -953,6 +953,7 @@
   <span class="ruby-identifier">validate_normalized_messages!</span>(<span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">merge_consecutive_messages</span>(<span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">params</span> = <span class="ruby-identifier">build_request_params</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-identifier">model</span>, <span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">tags</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tags</span>] <span class="ruby-operator">||</span> {}
 
   <span class="ruby-identifier">in_chat_span</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">messages</span>, <span class="ruby-identifier">options</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">span</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">response</span> = <span class="ruby-identifier">execute_generate</span>(<span class="ruby-identifier">params</span>)
@@ -964,8 +965,8 @@
     <span class="ruby-identifier">structured_output</span> = <span class="ruby-identifier">parse_structured_output</span>(<span class="ruby-identifier">content</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:structured_output</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">empty?</span>
 
     <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">record_usage</span>(<span class="ruby-identifier">span</span>, <span class="ruby-identifier">token_usage</span>)
-    <span class="ruby-identifier">record_token_usage_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">token_usage</span>)
-    <span class="ruby-identifier">record_cost_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">token_usage</span>)
+    <span class="ruby-identifier">record_token_usage_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">token_usage</span>, <span class="ruby-identifier">tags</span>)
+    <span class="ruby-identifier">record_cost_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">token_usage</span>, <span class="ruby-identifier">tags</span>)
     <span class="ruby-identifier">record_finish_reason</span>(<span class="ruby-identifier">span</span>, <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">reason</span>, <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">raw</span>)
     <span class="ruby-identifier">capture_output</span>(<span class="ruby-identifier">span</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">finish_reason:</span> <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">reason</span>)
 
@@ -1016,7 +1017,7 @@
             </details>
           </div>
           <div class="method-source-code" id="stream_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 79</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
   <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
   <span class="ruby-ivar">@current_tools</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tools</span>] <span class="ruby-operator">||</span> [] <span class="ruby-comment">#: Array[singleton(Riffer::Tool)]</span>
@@ -1025,10 +1026,12 @@
   <span class="ruby-identifier">validate_normalized_messages!</span>(<span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">merge_consecutive_messages</span>(<span class="ruby-identifier">messages</span>)
   <span class="ruby-identifier">params</span> = <span class="ruby-identifier">build_request_params</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-identifier">model</span>, <span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">tags</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tags</span>] <span class="ruby-operator">||</span> {}
 
   <span class="ruby-comment"># The enumerator body runs in its own fiber, where the fiber-local OTEL</span>
-  <span class="ruby-comment"># context is empty — capture here so the chat span parents to the</span>
-  <span class="ruby-comment"># caller&#39;s trace.</span>
+  <span class="ruby-comment"># context is empty — capture here so the chat span parents to the caller&#39;s</span>
+  <span class="ruby-comment"># trace. tags are an ordinary local captured in the closure, so they reach</span>
+  <span class="ruby-comment"># the span/metric builders without re-propagation.</span>
   <span class="ruby-identifier">trace_context</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">current_context</span>
   <span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">yielder</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">with_context</span>(<span class="ruby-identifier">trace_context</span>) <span class="ruby-keyword">do</span>
@@ -1040,8 +1043,8 @@
         <span class="ruby-identifier">execute_stream</span>(<span class="ruby-identifier">params</span>, <span class="ruby-identifier">sink</span>)
         <span class="ruby-keyword">if</span> <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamRecorder</span>)
           <span class="ruby-identifier">record_stream_outcome</span>(<span class="ruby-identifier">span</span>, <span class="ruby-identifier">sink</span>)
-          <span class="ruby-identifier">record_token_usage_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">token_usage</span>)
-          <span class="ruby-identifier">record_cost_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">token_usage</span>)
+          <span class="ruby-identifier">record_token_usage_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">token_usage</span>, <span class="ruby-identifier">tags</span>)
+          <span class="ruby-identifier">record_cost_metric</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">token_usage</span>, <span class="ruby-identifier">tags</span>)
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>

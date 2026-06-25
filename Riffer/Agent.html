@@ -1265,7 +1265,7 @@
             <div class="method-heading">
               <a href="#method-c-generate" title="Link to this method">
                 <span class="method-name">generate</span>
-                <span class="method-args">(prompt = nil, files: nil, context: nil)</span>
+                <span class="method-args">(prompt = nil, files: nil, context: nil, tags: {})</span>
               </a>
             </div>
 
@@ -1279,8 +1279,8 @@
           </div>
           <div class="method-source-code" id="generate-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 173</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>, <span class="ruby-value">tags:</span> <span class="ruby-identifier">tags</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1816,7 +1816,7 @@
             <div class="method-heading">
               <a href="#method-c-stream" title="Link to this method">
                 <span class="method-name">stream</span>
-                <span class="method-args">(prompt = nil, files: nil, context: nil)</span>
+                <span class="method-args">(prompt = nil, files: nil, context: nil, tags: {})</span>
               </a>
             </div>
 
@@ -1830,8 +1830,8 @@
           </div>
           <div class="method-source-code" id="stream-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 180</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">stream</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>).<span class="ruby-identifier">stream</span>(<span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>, <span class="ruby-value">tags:</span> <span class="ruby-identifier">tags</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2048,7 +2048,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             <div class="method-heading">
               <a href="#method-i-generate" title="Link to this method">
                 <span class="method-name">generate</span>
-                <span class="method-args">(prompt = nil, files: nil)</span>
+                <span class="method-args">(prompt = nil, files: nil, tags: {})</span>
               </a>
             </div>
 
@@ -2061,9 +2061,9 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="generate-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 293</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 300</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>, <span class="ruby-value">tags:</span> <span class="ruby-identifier">tags</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2075,6 +2075,8 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
           <p>Generates a response from the agent.</p>
 
 <p>With <code>prompt</code>, a new user message is appended (silently — <code>on_message</code> does not fire for user inputs) before the loop runs. Without it, the loop runs against the current session, resuming a persisted conversation or pending tool calls. <code>files:</code> requires <code>prompt</code>.</p>
+
+<p><code>tags:</code> is an optional flat hash of attribution tags applied to this single call: they propagate to the provider’s native request-metadata field, and are stamped as <code>riffer.tag.*</code> on every span and metric the call emits. See <code>docs/03_AGENTS.md</code> for the per-provider mapping. The reserved key <code>user_id</code> also maps to the provider’s native user identifier where one exists.</p>
 
 
         </div>
@@ -2105,7 +2107,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="interrupt-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 313</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 320</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupt!</span>(<span class="ruby-identifier">reason</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">throw</span> <span class="ruby-value">:riffer_interrupt</span>, <span class="ruby-identifier">reason</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2134,7 +2136,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             <div class="method-heading">
               <a href="#method-i-stream" title="Link to this method">
                 <span class="method-name">stream</span>
-                <span class="method-args">(prompt = nil, files: nil)</span>
+                <span class="method-args">(prompt = nil, files: nil, tags: {})</span>
               </a>
             </div>
 
@@ -2147,10 +2149,10 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 304</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 311</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Structured output is not supported with streaming. Use #generate instead.&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@structured_output</span>
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
+  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Run</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>, <span class="ruby-value">tags:</span> <span class="ruby-identifier">tags</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2159,7 +2161,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
         <div class="method-description">
 
 
-          <p>Streams a response from the agent, returning an <code>Enumerator</code> of <a href="StreamEvents.html"><code>Riffer::StreamEvents</code></a>. See <a href="Agent.html#method-i-generate"><code>generate</code></a> for prompt/files semantics.</p>
+          <p>Streams a response from the agent, returning an <code>Enumerator</code> of <a href="StreamEvents.html"><code>Riffer::StreamEvents</code></a>. See <a href="Agent.html#method-i-generate"><code>generate</code></a> for prompt/files/tags semantics.</p>
 
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if structured output is configured.</p>
 
@@ -2192,7 +2194,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 321</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 328</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">to_h</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2234,7 +2236,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="to_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 329</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 336</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json</span>(<span class="ruby-operator">*</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">to_json</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>

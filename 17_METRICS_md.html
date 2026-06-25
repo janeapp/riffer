@@ -750,6 +750,10 @@
 
 <p>Each instrument is documented here as a row carrying its name, instrument type, unit, and attribute set.</p>
 
+<blockquote>
+<p><strong>Per-call tags become dimensions.</strong> Any tags passed to generate / stream via <code>tags:</code> are added as <code>riffer.tag.&lt;key&gt;</code> attributes to <strong>every</strong> instrument below — <code>operation.duration</code> (each operation), <code>token.usage</code> (each point), <code>cost</code>, and <code>guardrail.duration</code> — so the attribute lists omit them. Tags are promoted verbatim with no allow-list — a high-cardinality value like a unique <code>user_id</code> per request multiplies time series accordingly; drop it with a <a href="https://opentelemetry.io/docs/specs/otel/metrics/sdk/#view">View</a> or keep metric-bound tags low-cardinality. See <a href="03_AGENTS_md.html#per-call-tags">Per-Call Tags</a>.</p>
+</blockquote>
+
 <span id="label-gen_ai.client.operation.duration" class="legacy-anchor"></span>
 <h3 id="genaiclientoperationduration"><a href="#genaiclientoperationduration"><code>gen_ai.client.operation.duration</code></a></h3>
 

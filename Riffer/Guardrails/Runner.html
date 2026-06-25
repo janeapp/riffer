@@ -838,6 +838,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-tags" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-tags" title="Link to this attribute">
+            <span class="method-name">tags</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The normalized per-call tags, stamped as <code>riffer.tag.*</code> on guardrail spans.</p>
+
+        </div>
+      </div>
+
     </section>
 
 
@@ -857,7 +873,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(guardrail_configs, phase:, context: nil)</span>
+                <span class="method-args">(guardrail_configs, phase:, context: nil, tags: {})</span>
               </a>
             </div>
 
@@ -870,11 +886,12 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/runner.rb, line 18</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">guardrail_configs</span>, <span class="ruby-value">phase:</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/runner.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">guardrail_configs</span>, <span class="ruby-value">phase:</span>, <span class="ruby-value">context:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
   <span class="ruby-ivar">@guardrail_configs</span> = <span class="ruby-identifier">guardrail_configs</span>
   <span class="ruby-ivar">@phase</span> = <span class="ruby-identifier">phase</span>
   <span class="ruby-ivar">@context</span> = <span class="ruby-identifier">context</span>
+  <span class="ruby-ivar">@tags</span> = <span class="ruby-identifier">tags</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -928,7 +945,7 @@
             </details>
           </div>
           <div class="method-source-code" id="run-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/runner.rb, line 29</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/guardrails/runner.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>(<span class="ruby-identifier">data</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">current_data</span> = <span class="ruby-identifier">data</span>
   <span class="ruby-identifier">modifications</span> = [] <span class="ruby-comment">#: Array[Riffer::Guardrails::Modification]</span>

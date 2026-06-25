@@ -991,6 +991,85 @@
 
 <p>When <code>config:</code> is supplied, the class-level configuration is ignored for that instance.</p>
 
+<span id="label-Per-Call+Tags" class="legacy-anchor"></span>
+<h2 id="per-call-tags"><a href="#per-call-tags">Per-Call Tags</a></h2>
+
+<p>generate and stream accept an optional <code>tags:</code> hash — a flat map of attribution labels scoped to that single call (for cost/usage attribution, filtering audit logs, slicing telemetry). It is <strong>per-call only</strong>.</p>
+
+<pre class="ruby"><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-string">&quot;Summarize this ticket.&quot;</span>,
+  <span class="ruby-value">tags:</span> {<span class="ruby-value">team:</span> <span class="ruby-string">&quot;growth&quot;</span>, <span class="ruby-value">feature:</span> <span class="ruby-string">&quot;summarizer&quot;</span>, <span class="ruby-value">user_id:</span> <span class="ruby-string">&quot;u_abc123&quot;</span>})
+
+<span class="ruby-identifier">agent</span>.<span class="ruby-identifier">stream</span>(<span class="ruby-string">&quot;...&quot;</span>, <span class="ruby-value">tags:</span> {<span class="ruby-value">team:</span> <span class="ruby-string">&quot;growth&quot;</span>, <span class="ruby-value">environment:</span> <span class="ruby-string">&quot;production&quot;</span>})
+</pre>
+
+<p>Keys and values may be <code>String</code> or <code>Symbol</code>; both are stringified, and entries with a <code>nil</code> value are dropped. Passing a non-<code>Hash</code> raises <a href="Riffer/ArgumentError.html"><code>Riffer::ArgumentError</code></a>. An omitted or empty <code>tags:</code> is a complete no-op.</p>
+
+<p>Tags propagate to <strong>two</strong> places:</p>
+<ol><li>
+<p>The provider’s native per-request metadata field (see the mapping below).</p>
+</li><li>
+<p>Observability — stamped as <code>riffer.tag.&lt;key&gt;</code> on <strong>every</strong> span and metric the call emits (<code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, <code>execute_guardrail</code> spans, and the duration/token-usage/cost metrics). See <a href="16_TRACING_md.html">Tracing</a> and <a href="17_METRICS_md.html">Metrics</a>.</p>
+</li></ol>
+
+<span id="label-Reserved+key-3A+user_id" class="legacy-anchor"></span>
+<h3 id="reserved-key-userid"><a href="#reserved-key-userid">Reserved key: <code>user_id</code></a></h3>
+
+<p><code>user_id</code> is a reserved tag. Beyond appearing like any other tag, it maps to the provider’s native end-user identifier where one exists (see the table).</p>
+
+<span id="label-Provider+mapping" class="legacy-anchor"></span>
+<h3 id="provider-mapping"><a href="#provider-mapping">Provider mapping</a></h3>
+
+<table role="table">
+<thead>
+<tr>
+<th>Provider</th>
+<th>Native request field</th>
+<th><code>user_id</code> handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amazon Bedrock</td>
+<td><code>request_metadata</code> (all tags)</td>
+<td>Ordinary entry; no dedicated user field</td>
+</tr>
+<tr>
+<td>OpenAI / Azure OpenAI</td>
+<td><code>metadata</code> (all tags)</td>
+<td>Also mapped to <code>safety_identifier</code></td>
+</tr>
+<tr>
+<td>OpenRouter</td>
+<td><code>metadata</code> (all tags)</td>
+<td>Also mapped to <code>user</code></td>
+</tr>
+<tr>
+<td>Anthropic</td>
+<td><code>metadata.user_id</code> <strong>only</strong></td>
+<td>The only tag forwarded</td>
+</tr>
+<tr>
+<td>Gemini</td>
+<td><em>(none — observability only)</em></td>
+<td>Tag only; no request field</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Anthropic silently drops non-<code>user_id</code> tags.</strong> The Messages API has no free-form request-metadata field — only <code>metadata.user_id</code>. So for Anthropic, <code>user_id</code> is forwarded as <code>metadata: {user_id: …}</code> and <strong>every other tag is dropped from the request</strong> (it still appears on spans and metrics). This is intentional.</p>
+
+<p><strong>Gemini is observability-only.</strong> Riffer’s Gemini adapter targets the Gemini Developer API (<code>generativelanguage.googleapis.com</code>), whose <code>generateContent</code> request has <strong>no</strong> <code>labels</code> field — sending unknown fields is rejected. So tags are <strong>not</strong> added to the Gemini request; they propagate to spans and metrics only. Native request labels (<code>labels</code>, lowercase <code>[a-z0-9_-]</code>, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.</p>
+
+<span id="label-Provider+limits+-28not+enforced-29" class="legacy-anchor"></span>
+<h3 id="provider-limits-not-enforced"><a href="#provider-limits-not-enforced">Provider limits (not enforced)</a></h3>
+
+<p><a href="Riffer.html"><code>Riffer</code></a> does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock <code>requestMetadata</code> ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter <code>metadata</code> ≤16 pairs (OpenRouter: 64-char keys, 512-char values).</p>
+
+<span id="label-Metric+cardinality" class="legacy-anchor"></span>
+<h3 id="metric-cardinality"><a href="#metric-cardinality">Metric cardinality</a></h3>
+
+<p>Tags are promoted onto metric dimensions verbatim — there is no allow-list. High-cardinality values (e.g. a unique <code>user_id</code> per request) will create a correspondingly large number of metric series in your backend. Keep metric-bound tags low-cardinality.</p>
+
 <span id="label-Expand+Your+Agent" class="legacy-anchor"></span>
 <h2 id="expand-your-agent"><a href="#expand-your-agent">Expand Your Agent</a></h2>
 

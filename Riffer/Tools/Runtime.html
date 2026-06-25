@@ -873,7 +873,7 @@
             </details>
           </div>
           <div class="method-source-code" id="around_tool_call-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/runtime.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/runtime.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">yield</span>
 <span class="ruby-keyword">end</span></pre>
@@ -914,7 +914,7 @@
             <div class="method-heading">
               <a href="#method-i-execute" title="Link to this method">
                 <span class="method-name">execute</span>
-                <span class="method-args">(tool_calls, tools:, context:, assistant_message: nil)</span>
+                <span class="method-args">(tool_calls, tools:, context:, assistant_message: nil, tags: {})</span>
               </a>
             </div>
 
@@ -928,13 +928,15 @@
           </div>
           <div class="method-source-code" id="execute-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/runtime.rb, line 22</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">execute</span>(<span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">tools:</span>, <span class="ruby-value">context:</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-keyword">nil</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">execute</span>(<span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">tools:</span>, <span class="ruby-value">context:</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
   <span class="ruby-comment"># Each Runner worker runs in its own thread/fiber, where the OTEL context</span>
   <span class="ruby-comment"># starts empty — capture here so the execute_tool span parents correctly.</span>
+  <span class="ruby-comment"># tags are an ordinary local captured in the block, so they reach the</span>
+  <span class="ruby-comment"># worker&#39;s span/metric without re-propagation.</span>
   <span class="ruby-identifier">trace_context</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">current_context</span>
   <span class="ruby-ivar">@runner</span>.<span class="ruby-identifier">map</span>(<span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tool_call</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">with_context</span>(<span class="ruby-identifier">trace_context</span>) <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">instrument_tool_call</span>(<span class="ruby-identifier">tool_call</span>) <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">instrument_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-identifier">tags</span>) <span class="ruby-keyword">do</span>
         <span class="ruby-identifier">around_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-identifier">assistant_message</span>) <span class="ruby-keyword">do</span>
           <span class="ruby-identifier">dispatch_tool_call</span>(<span class="ruby-identifier">tool_call</span>, <span class="ruby-value">tools:</span> <span class="ruby-identifier">tools</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span>, <span class="ruby-value">assistant_message:</span> <span class="ruby-identifier">assistant_message</span>)
         <span class="ruby-keyword">end</span>

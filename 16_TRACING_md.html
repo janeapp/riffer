@@ -771,6 +771,11 @@
 
 <p>The contract promise is: <strong>when present</strong>, a key carries the documented meaning and type. It is <em>not</em> a promise that every key appears on every span.</p>
 
+<span id="label-Per-call+tags+-28riffer.tag.-2A-29" class="legacy-anchor"></span>
+<h3 id="per-call-tags-riffertag"><a href="#per-call-tags-riffertag">Per-call tags (<code>riffer.tag.*</code>)</a></h3>
+
+<p>Any tags passed to generate / stream via <code>tags:</code> are stamped on <strong>all four</strong> span types as <code>riffer.tag.&lt;key&gt;</code> (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: <code>tags: {team: &quot;growth&quot;}</code> adds <code>riffer.tag.team</code> → <code>&quot;growth&quot;</code> to the <code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, and <code>execute_guardrail</code> spans. See <a href="03_AGENTS_md.html#per-call-tags">Per-Call Tags</a> for the full surface and the per-provider request-metadata mapping.</p>
+
 <span id="label-invoke_agent+-7Bagent-7D+-E2-80-94+the+run+span" class="legacy-anchor"></span>
 <h2 id="invokeagent-agent--the-run-span"><a href="#invokeagent-agent--the-run-span"><code>invoke_agent {agent}</code> — the run span</a></h2>
 
