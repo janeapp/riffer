@@ -96,6 +96,26 @@ describe Riffer::Providers::AzureOpenAI do
     end
   end
 
+  describe "tags" do
+    it "inherits the OpenAI mapping: tags to metadata and user_id to safety_identifier" do
+      provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
+      messages = [Riffer::Messages::User.new("Hello")]
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"team" => "growth", "user_id" => "u_1"}})
+      expect([params[:metadata], params[:safety_identifier]]).must_equal([{"team" => "growth", "user_id" => "u_1"}, "u_1"])
+    end
+  end
+
+  # Currently unable to access azure, keeping commented out for now.
+  # describe "per-call tags (end-to-end)" do
+  #   it "forwards per-call tags to the request" do
+  #     provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
+  #     VCR.use_cassette("Riffer_Providers_AzureOpenAI/tags/forwards_metadata_and_safety_identifier") do
+  #       result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini", tags: {"user_id" => "u_1", "team" => "growth"})
+  #       expect(result).must_be_instance_of Riffer::Messages::Assistant
+  #     end
+  #   end
+  # end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do

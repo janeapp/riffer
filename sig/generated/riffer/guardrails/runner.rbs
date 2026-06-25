@@ -12,9 +12,12 @@ class Riffer::Guardrails::Runner
   # The context passed to guardrails.
   attr_reader context: untyped
 
+  # The normalized per-call tags, stamped as +riffer.tag.*+ on guardrail spans.
+  attr_reader tags: Hash[String, String]
+
   # --
-  # : (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
-  def initialize: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
+  # : (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped, ?tags: Hash[String, String]) -> void
+  def initialize: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped, ?tags: Hash[String, String]) -> void
 
   # Runs the guardrails sequentially. For the +:before+ phase +data+ is the
   # messages array; for +:after+ it's the response (and +messages+ must be

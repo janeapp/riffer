@@ -93,6 +93,10 @@ Every attribute a span can carry is listed below, including the conditional ones
 
 The contract promise is: **when present**, a key carries the documented meaning and type. It is _not_ a promise that every key appears on every span.
 
+### Per-call tags (`riffer.tag.*`)
+
+Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, and `execute_guardrail` spans. See [Per-Call Tags](03_AGENTS.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
+
 ## `invoke_agent {agent}` — the run span
 
 `INTERNAL`. One per call to `Agent#generate` or `Agent#stream`. The span name suffix is the agent's identifier (e.g. `invoke_agent weather-agent`).

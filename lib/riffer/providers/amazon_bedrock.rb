@@ -64,13 +64,19 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     tools = options[:tools]
     structured_output = options[:structured_output]
     cache_control = options[:cache_control]
+    tags = options[:tags] || {}
 
     params = {
       model_id: model,
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
-      **options.except(:tools, :structured_output, :cache_control)
+      **options.except(:tools, :structured_output, :cache_control, :tags)
     } #: Hash[Symbol, untyped]
+
+    # requestMetadata is a flat String=>String map used to filter invocation
+    # logs; every tag (including the reserved user_id) rides along, since
+    # Converse has no dedicated end-user field.
+    params[:request_metadata] = tags unless tags.empty?
 
     if tools && !tools.empty?
       params[:tool_config] = {

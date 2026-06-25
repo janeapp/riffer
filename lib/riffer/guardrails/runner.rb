@@ -13,12 +13,16 @@ class Riffer::Guardrails::Runner
   # The context passed to guardrails.
   attr_reader :context #: untyped
 
+  # The normalized per-call tags, stamped as +riffer.tag.*+ on guardrail spans.
+  attr_reader :tags #: Hash[String, String]
+
   #--
-  #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped) -> void
-  def initialize(guardrail_configs, phase:, context: nil)
+  #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped, ?tags: Hash[String, String]) -> void
+  def initialize(guardrail_configs, phase:, context: nil, tags: {})
     @guardrail_configs = guardrail_configs
     @phase = phase
     @context = context
+    @tags = tags
   end
 
   # Runs the guardrails sequentially. For the +:before+ phase +data+ is the
@@ -129,7 +133,7 @@ class Riffer::Guardrails::Runner
     {
       "riffer.guardrail.name" => guardrail.name,
       "riffer.guardrail.phase" => phase.to_s
-    }
+    }.merge(tags.transform_keys { |key| "riffer.tag.#{key}" })
   end
 
   #--

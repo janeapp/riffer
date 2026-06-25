@@ -169,16 +169,16 @@ class Riffer::Agent
 
   # Generates a response using a new agent instance.
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Riffer::Agent::Response
-  def self.generate(prompt = nil, files: nil, context: nil)
-    new(context: context).generate(prompt, files: files)
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  def self.generate(prompt = nil, files: nil, context: nil, tags: {})
+    new(context: context).generate(prompt, files: files, tags: tags)
   end
 
   # Streams a response using a new agent instance.
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def self.stream(prompt = nil, files: nil, context: nil)
-    new(context: context).stream(prompt, files: files)
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def self.stream(prompt = nil, files: nil, context: nil, tags: {})
+    new(context: context).stream(prompt, files: files, tags: tags)
   end
 
   # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
@@ -288,22 +288,29 @@ class Riffer::Agent
   # against the current session, resuming a persisted conversation or pending
   # tool calls. +files:+ requires +prompt+.
   #
+  # +tags:+ is an optional flat hash of attribution tags applied to this single
+  # call: they propagate to the provider's native request-metadata field, and
+  # are stamped as +riffer.tag.*+ on every span and metric the call emits. See
+  # +docs/03_AGENTS.md+ for the per-provider mapping. The reserved key
+  # +user_id+ also maps to the provider's native user identifier where one
+  # exists.
+  #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
-  def generate(prompt = nil, files: nil)
-    Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files)
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  def generate(prompt = nil, files: nil, tags: {})
+    Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
   # Streams a response from the agent, returning an +Enumerator+ of
-  # +Riffer::StreamEvents+. See +#generate+ for prompt/files semantics.
+  # +Riffer::StreamEvents+. See +#generate+ for prompt/files/tags semantics.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream(prompt = nil, files: nil)
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream(prompt = nil, files: nil, tags: {})
     raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @structured_output
-    Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files)
+    Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
   # Interrupts the agent loop from an +on_message+ callback. Equivalent to

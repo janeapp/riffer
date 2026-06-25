@@ -7,29 +7,34 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
-  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Riffer::Agent::Response
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Riffer::Agent::Response
 
   # Runs the streaming loop for the given agent. See Riffer::Agent#stream
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   private
 
+  # Both +generate+ and +stream+ funnel here, so this is the single place raw
+  # +tags+ are normalized. The clean <tt>String => String</tt> map is then
+  # threaded to every span/metric builder in the run as +riffer.tag.*+ and to
+  # each provider call (via +merged_model_options+) for native request-metadata
+  # mapping.
   # --
-  # : (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
-  def run_loop: (Riffer::Agent, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  # : (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
+  def run_loop: (Riffer::Agent, ?tags: Hash[String | Symbol, untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
-  def execute_run: (Riffer::Agent, Enumerator::Yielder?) -> Riffer::Agent::Response
+  # : (Riffer::Agent, Enumerator::Yielder?, ?Hash[String, String]) -> Riffer::Agent::Response
+  def execute_run: (Riffer::Agent, Enumerator::Yielder?, ?Hash[String, String]) -> Riffer::Agent::Response
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
-  def accumulate_streamed_response: (Riffer::Agent, Enumerator::Yielder) -> Riffer::Messages::Assistant
+  # : (Riffer::Agent, Enumerator::Yielder, ?Hash[String, String]) -> Riffer::Messages::Assistant
+  def accumulate_streamed_response: (Riffer::Agent, Enumerator::Yielder, ?Hash[String, String]) -> Riffer::Messages::Assistant
 
   # --
   # : (Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], Array[Riffer::Guardrails::Modification]) -> void
@@ -44,32 +49,32 @@ module Riffer::Agent::Run
   def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
 
   # --
-  # : (Riffer::Agent) -> Riffer::Messages::Assistant
-  def call_llm: (Riffer::Agent) -> Riffer::Messages::Assistant
+  # : (Riffer::Agent, ?Hash[String, String]) -> Riffer::Messages::Assistant
+  def call_llm: (Riffer::Agent, ?Hash[String, String]) -> Riffer::Messages::Assistant
 
   # --
-  # : (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def call_llm_stream: (Riffer::Agent) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (Riffer::Agent, ?Hash[String, String]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def call_llm_stream: (Riffer::Agent, ?Hash[String, String]) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # --
-  # : (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
-  def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall]) -> void
+  # : (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?tags: Hash[String, String]) -> void
+  def execute_tool_calls: (Riffer::Agent, Riffer::Messages::Assistant, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?tags: Hash[String, String]) -> void
 
   # --
   # : (Riffer::Agent, Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]) -> void
   def inject_discovered_tools: (Riffer::Agent, Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]) -> void
 
   # --
-  # : (Riffer::Agent) -> void
-  def execute_pending_tool_calls: (Riffer::Agent) -> void
+  # : (Riffer::Agent, ?Hash[String, String]) -> void
+  def execute_pending_tool_calls: (Riffer::Agent, ?Hash[String, String]) -> void
 
   # --
-  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> void
-  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  # : (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
+  def run_before_guardrails: (Riffer::Agent, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> void
 
   # --
-  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
-  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
+  # : (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
+  def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
 
   # --
   # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
@@ -79,9 +84,13 @@ module Riffer::Agent::Run
   # : (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
   def effective_tools: (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
 
+  # +tags+ rides in the options hash as a curated key the providers extract for
+  # native request-metadata mapping (alongside +:structured_output+); it never
+  # reaches an SDK call verbatim. Span/metric tagging is threaded separately to
+  # each builder.
   # --
-  # : (Riffer::Agent) -> Hash[Symbol, untyped]
-  def merged_model_options: (Riffer::Agent) -> Hash[Symbol, untyped]
+  # : (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
+  def merged_model_options: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
@@ -102,12 +111,20 @@ module Riffer::Agent::Run
   def sum_usage: (Riffer::Providers::TokenUsage?, Riffer::Providers::TokenUsage?) -> Riffer::Providers::TokenUsage?
 
   # --
-  # : (Riffer::Agent) -> Hash[String, untyped]
-  def run_span_attributes: (Riffer::Agent) -> Hash[String, untyped]
+  # : (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
+  def run_span_attributes: (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
 
   # --
-  # : (Riffer::Agent, String?) -> Hash[String, untyped]
-  def run_metric_attributes: (Riffer::Agent, String?) -> Hash[String, untyped]
+  # : (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
+  def run_metric_attributes: (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
+
+  # --
+  # : (Hash[(String | Symbol), untyped]?) -> Hash[String, String]
+  def normalize_tags: (Hash[String | Symbol, untyped]?) -> Hash[String, String]
+
+  # --
+  # : (Hash[String, String]) -> Hash[String, String]
+  def tag_attributes: (Hash[String, String]) -> Hash[String, String]
 
   # --
   # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Agent::Response) -> void

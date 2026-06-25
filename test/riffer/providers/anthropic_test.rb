@@ -406,6 +406,42 @@ describe Riffer::Providers::Anthropic do
     end
   end
 
+  describe "tags" do
+    let(:provider) { Riffer::Providers::Anthropic.new(api_key: api_key) }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+    let(:model) { "claude-haiku-4-5-20251001" }
+
+    # Tags arrive already normalized from Run, so these pass clean String maps.
+    it "maps only the reserved user_id to metadata.user_id, dropping all other tags" do
+      params = provider.send(:build_request_params, messages, model, {tags: {"user_id" => "u_1", "team" => "growth"}})
+      expect(params[:metadata]).must_equal({user_id: "u_1"})
+    end
+
+    it "omits metadata when no user_id tag is present" do
+      params = provider.send(:build_request_params, messages, model, {tags: {"team" => "growth"}})
+      expect(params.key?(:metadata)).must_equal false
+    end
+
+    it "does not pass tags through to API params" do
+      params = provider.send(:build_request_params, messages, model, {tags: {"user_id" => "u_1"}})
+      expect(params.key?(:tags)).must_equal false
+    end
+  end
+
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::Anthropic.new(api_key: api_key) }
+
+    # The cassette records the request body Anthropic receives when tags are
+    # passed (only the reserved user_id is forwarded, as metadata.user_id).
+    # VCR's :body matcher fails the test if tags ever stop reaching the wire.
+    it "forwards per-call tags to the request" do
+      VCR.use_cassette("Riffer_Providers_Anthropic/tags/forwards_user_id_metadata") do
+        result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do

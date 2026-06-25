@@ -437,6 +437,43 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "tags" do
+    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+    let(:messages) { [Riffer::Messages::User.new("Hello")] }
+
+    # Tags arrive already normalized from Run, so these pass clean String maps.
+    it "maps all tags to metadata" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"team" => "growth", "user_id" => "u_1"}})
+      expect(params[:metadata]).must_equal({"team" => "growth", "user_id" => "u_1"})
+    end
+
+    it "maps the reserved user_id to safety_identifier while keeping it in metadata" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"user_id" => "u_1"}})
+      expect([params[:safety_identifier], params[:metadata]]).must_equal(["u_1", {"user_id" => "u_1"}])
+    end
+
+    it "omits safety_identifier when no user_id tag is present" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"team" => "growth"}})
+      expect(params.key?(:safety_identifier)).must_equal false
+    end
+
+    it "does not pass tags through to API params" do
+      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"team" => "growth"}})
+      expect(params.key?(:tags)).must_equal false
+    end
+  end
+
+  describe "per-call tags (end-to-end)" do
+    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+
+    it "forwards per-call tags to the request" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/tags/forwards_metadata_and_safety_identifier") do
+        result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini", tags: {"user_id" => "u_1", "team" => "growth"})
+        expect(result).must_be_instance_of Riffer::Messages::Assistant
+      end
+    end
+  end
+
   describe "#stream_text" do
     describe "when prompt is provided" do
       it "returns an Enumerator" do
