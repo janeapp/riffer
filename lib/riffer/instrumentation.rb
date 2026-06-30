@@ -60,6 +60,10 @@ module Riffer::Instrumentation # :nodoc: all
     built = event.call(result, completion)
 
     Riffer::Events.publish(built) if built
+  rescue
+    # This runs in instrument's ensure; a failure building or publishing the
+    # event must not break — or mask the error of — the operation it observes.
+    nil
   end
 
   # The monotonic clock in seconds — immune to wall-clock adjustments, so a

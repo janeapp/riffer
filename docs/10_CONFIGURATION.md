@@ -136,7 +136,7 @@ end
 | `unsubscribe(sub)`    | Removes a previously registered subscriber.                                                                                                                                                                                                                                                             |
 | `clear`               | Removes every subscriber.                                                                                                                                                                                                                                                                               |
 | `subscribers`         | A snapshot array of the registered subscribers, in registration order.                                                                                                                                                                                                                                  |
-| `on_error`            | The handler invoked when a subscriber raises — `call(error, event)`. Defaults to logging a warning; delivery continues regardless, so an observability failure never breaks the operation. Re-raise from your own handler for fail-fast behavior.                                                       |
+| `on_error`            | The handler invoked when a subscriber raises — `call(error, event)`. Defaults to logging a warning. Use it to log or report subscriber failures; it is the last line of defense, so even if the handler itself raises the operation is unaffected — an observability failure never breaks the operation. |
 
 ### Pricing
 

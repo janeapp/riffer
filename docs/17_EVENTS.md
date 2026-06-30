@@ -27,7 +27,7 @@ Every subscriber receives **every** event and filters by type — typically with
 
 Delivery is **synchronous and in-process**: subscribers run inline, in registration order, on the thread (or fiber, when streaming) that produced the event. Keep them fast — a slow subscriber slows the operation. If a subscriber needs to do real work, enqueue it and return.
 
-A subscriber that raises is **isolated**: the exception is routed to `config.events.on_error` (which by default logs a warning) and delivery continues to the next subscriber, so an observability failure never breaks the LLM call that produced the event. Set `config.events.on_error` to your own handler — re-raise from it for strict, fail-fast behavior in development or tests.
+A subscriber that raises is **isolated**: the exception is routed to `config.events.on_error` (which by default logs a warning) and delivery continues to the next subscriber, so an observability failure never breaks the LLM call that produced the event. Set `config.events.on_error` to your own handler to log or report subscriber failures — it is the last line of defense, so even if the handler itself raises, the operation is unaffected.
 
 ## Events
 

@@ -131,8 +131,8 @@ class Riffer::Config
 
     # Registers a subscriber — an object responding to +#call+, or a block — to
     # receive every published event. A +nil+ subscriber is ignored, so wiring a
-    # backend whose builder returns +nil+ when its SDK is absent (e.g.
-    # +Metrics::Otel.build+) stays a one-liner.
+    # backend whose builder returns +nil+ when its SDK is absent stays a
+    # one-liner.
     #--
     #: (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
     def subscribe(subscriber = nil, &block)
@@ -158,11 +158,12 @@ class Riffer::Config
       @mutex.synchronize { @subscribers = [] }
     end
 
-    # A snapshot of the registered subscribers, in registration order.
+    # A snapshot of the registered subscribers, in registration order. Returns a
+    # copy so a caller can't mutate the registry outside the mutex.
     #--
     #: () -> Array[^(Riffer::Events::Base) -> void]
     def subscribers
-      @mutex.synchronize { @subscribers }
+      @mutex.synchronize { @subscribers.dup }
     end
 
     # Sets the handler invoked when a subscriber raises. Raises

@@ -31,7 +31,9 @@ class Riffer::Events::Base
     @duration = duration
     @error_type = error_type
     @error = error
-    @tags = tags
+    # Copy so one subscriber can't mutate the hash and change what later
+    # subscribers (handed the same event) observe.
+    @tags = tags.dup.freeze
     @trace_id = trace_id
     @span_id = span_id
   end
