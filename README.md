@@ -63,7 +63,7 @@ For comprehensive documentation, see the [docs](docs/) directory:
 - [MCP](docs/14_MCP.md) - Integrating third-party MCP servers
 - [Serialization](docs/15_SERIALIZATION.md) - Persisting and transferring agent definitions
 - [Tracing](docs/16_TRACING.md) - OpenTelemetry span contract and host wiring
-- [Metrics](docs/17_METRICS.md) - OpenTelemetry metric contract and host wiring
+- [Events](docs/17_EVENTS.md) - Event bus and schema for driving metrics, logs, and other observability
 - [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
 
 ### API Reference

@@ -314,16 +314,14 @@ describe Riffer::Guardrails::Runner do
     end
   end
 
-  describe "metrics" do
+  describe "events" do
     before do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
-      Riffer.config.metrics.enabled = true
-      @exporter = install_in_memory_meter_provider
+      Riffer.config.events.clear
+      @events = record_events
     end
 
     after do
-      Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.backend = nil
+      Riffer.config.events.clear
     end
 
     let(:named_pass_guardrail_class) do
@@ -346,52 +344,53 @@ describe Riffer::Guardrails::Runner do
       end
     end
 
-    def duration_data_points
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "riffer.guardrail.duration" }
-      snapshot ? snapshot.data_points : []
+    def guardrail_events
+      @events.select { |event| event.is_a?(Riffer::Events::GuardrailExecuted) }
     end
 
-    it "records a duration data point when a guardrail passes" do
+    it "publishes an event when a guardrail passes" do
       runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :before)
       runner.run([Riffer::Messages::User.new("Hello")])
-      expect(duration_data_points.length).must_equal 1
+      expect(guardrail_events.length).must_equal 1
     end
 
-    it "records the guardrail name and phase attributes" do
+    it "carries the guardrail name and phase" do
       runner = Riffer::Guardrails::Runner.new([config_for(named_pass_guardrail_class)], phase: :before)
       runner.run([Riffer::Messages::User.new("Hello")])
-      expect(duration_data_points.first.attributes).must_equal({
-        "riffer.guardrail.name" => "metrics_guardrail",
-        "riffer.guardrail.phase" => "before"
-      })
+      expect([guardrail_events.first.guardrail, guardrail_events.first.phase]).must_equal ["metrics_guardrail", :before]
     end
 
-    it "records a data point when a guardrail transforms" do
+    it "records the pass outcome" do
+      runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :before)
+      runner.run([Riffer::Messages::User.new("Hello")])
+      expect(guardrail_events.first.outcome).must_equal :pass
+    end
+
+    it "records the transform outcome" do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       runner.run([Riffer::Messages::User.new("Hello")])
-      expect(duration_data_points.length).must_equal 1
+      expect(guardrail_events.first.outcome).must_equal :transform
     end
 
-    it "records a data point when a guardrail blocks" do
+    it "records the block outcome" do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       runner.run([Riffer::Messages::User.new("Hello")])
-      expect(duration_data_points.length).must_equal 1
+      expect(guardrail_events.first.outcome).must_equal :block
     end
 
-    it "omits error.type on a handled outcome" do
+    it "omits error_type on a handled outcome" do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       runner.run([Riffer::Messages::User.new("Hello")])
-      expect(duration_data_points.first.attributes).wont_include "error.type"
+      expect(guardrail_events.first.error_type).must_be_nil
     end
 
-    it "records error.type when a guardrail raises" do
+    it "carries error_type when a guardrail raises" do
       runner = Riffer::Guardrails::Runner.new([config_for(raising_guardrail_class)], phase: :before)
       begin
         runner.run([Riffer::Messages::User.new("Hello")])
       rescue RuntimeError
       end
-      expect(duration_data_points.first.attributes["error.type"]).must_equal "RuntimeError"
+      expect(guardrail_events.first.error_type).must_equal "RuntimeError"
     end
   end
 end

@@ -129,4 +129,12 @@ class Riffer::Tracing::Otel # :nodoc: all
     return yield if context.nil?
     ::OpenTelemetry::Context.with_current(context) { yield }
   end
+
+  #--
+  #: () -> Hash[Symbol, String?]
+  def current_trace_ids
+    span_context = ::OpenTelemetry::Trace.current_span.context
+    return {trace_id: nil, span_id: nil} unless span_context.valid?
+    {trace_id: span_context.hex_trace_id, span_id: span_context.hex_span_id}
+  end
 end

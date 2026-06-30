@@ -39,6 +39,13 @@ class Riffer::Tools::Runtime
   # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   def instrument_tool_call: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]
 
+  # A returned error response and a raised exception both make the outcome
+  # +:error+; the raised case has no result, so its type comes from the
+  # exception.
+  # --
+  # : (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::ToolExecuted
+  def build_tool_event: (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::ToolExecuted
+
   # --
   # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
   def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
@@ -47,21 +54,12 @@ class Riffer::Tools::Runtime
   # : (String?) -> Hash[Symbol, untyped]
   def parse_arguments: (String?) -> Hash[Symbol, untyped]
 
-  # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
-  # --
-  # : [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
-  def in_tool_span: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
-
   # --
   # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
   def tool_span_attributes: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
 
-  # --
-  # : (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def tool_metric_attributes: (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
-
-  # Maps normalized tags to their namespaced span/metric attribute form. An
-  # empty map yields an empty hash, so merging it is a no-op.
+  # Maps normalized tags to their namespaced span attribute form. An empty map
+  # yields an empty hash, so merging it is a no-op.
   # --
   # : (Hash[String, String]) -> Hash[String, String]
   def tag_attributes: (Hash[String, String]) -> Hash[String, String]

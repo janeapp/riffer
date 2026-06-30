@@ -251,50 +251,72 @@ describe Riffer::Config do
     end
   end
 
-  describe "metrics namespace" do
-    it "initializes enabled to true" do
+  describe "events namespace" do
+    it "initializes with no subscribers" do
       config = Riffer::Config.new
-      expect(config.metrics.enabled).must_equal true
+      expect(config.events.subscribers).must_be_empty
     end
 
-    it "coerces a 'false' string for enabled" do
+    it "registers a callable subscriber" do
       config = Riffer::Config.new
-      config.metrics.enabled = "false"
-      expect(config.metrics.enabled).must_equal false
+      subscriber = ->(event) {}
+      config.events.subscribe(subscriber)
+      expect(config.events.subscribers).must_equal [subscriber]
     end
 
-    it "coerces a 'true' string for enabled" do
+    it "registers a block subscriber" do
       config = Riffer::Config.new
-      config.metrics.enabled = "true"
-      expect(config.metrics.enabled).must_equal true
+      config.events.subscribe { |event| }
+      expect(config.events.subscribers.length).must_equal 1
     end
 
-    it "raises for an unrecognized enabled value" do
+    it "returns the registered subscriber" do
       config = Riffer::Config.new
-      expect { config.metrics.enabled = "yes" }.must_raise Riffer::ArgumentError
+      subscriber = ->(event) {}
+      expect(config.events.subscribe(subscriber)).must_be_same_as subscriber
     end
 
-    it "initializes backend to nil" do
+    it "ignores a nil subscriber" do
       config = Riffer::Config.new
-      expect(config.metrics.backend).must_be_nil
+      config.events.subscribe(nil)
+      expect(config.events.subscribers).must_be_empty
     end
 
-    it "accepts a backend that responds to record_histogram" do
+    it "raises for a non-callable subscriber" do
       config = Riffer::Config.new
-      backend = Object.new.tap { |o| def o.record_histogram(*, **) = nil }
-      config.metrics.backend = backend
-      expect(config.metrics.backend).must_be_same_as backend
+      expect { config.events.subscribe(Object.new) }.must_raise Riffer::ArgumentError
     end
 
-    it "allows clearing the backend with nil" do
+    it "unsubscribes a registered subscriber" do
       config = Riffer::Config.new
-      config.metrics.backend = nil
-      expect(config.metrics.backend).must_be_nil
+      subscriber = config.events.subscribe(->(event) {})
+      config.events.unsubscribe(subscriber)
+      expect(config.events.subscribers).must_be_empty
     end
 
-    it "raises for a backend that does not respond to record_histogram" do
+    it "clears every subscriber" do
       config = Riffer::Config.new
-      expect { config.metrics.backend = Object.new }.must_raise Riffer::ArgumentError
+      config.events.subscribe(->(event) {})
+      config.events.subscribe(->(event) {})
+      config.events.clear
+      expect(config.events.subscribers).must_be_empty
+    end
+
+    it "defaults on_error to a callable" do
+      config = Riffer::Config.new
+      expect(config.events.on_error).must_respond_to :call
+    end
+
+    it "accepts a callable on_error handler" do
+      config = Riffer::Config.new
+      handler = ->(error, event) {}
+      config.events.on_error = handler
+      expect(config.events.on_error).must_be_same_as handler
+    end
+
+    it "raises for a non-callable on_error handler" do
+      config = Riffer::Config.new
+      expect { config.events.on_error = Object.new }.must_raise Riffer::ArgumentError
     end
   end
 end

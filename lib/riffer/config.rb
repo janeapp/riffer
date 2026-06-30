@@ -106,44 +106,72 @@ class Riffer::Config
     end
   end
 
-  # Metrics-related global configuration, independent of +config.tracing+ so a
-  # host can run one signal without the other.
-  class Metrics
-    # Whether riffer records OTEL metric instruments; defaults to +true+, a
-    # no-op until a host wires an OTEL metrics SDK.
-    attr_reader :enabled #: bool
+  # Event-bus configuration. Subscribers registered here receive every
+  # completion event riffer publishes; observability backends are subscribers.
+  class Events
+    # @rbs @subscribers: Array[^(Riffer::Events::Base) -> void]
+    # @rbs @mutex: Thread::Mutex
 
-    # The backend riffer routes measurements through; defaults to +nil+, a no-op.
-    # Riffer auto-detects no backend; assigning one is opt-in.
-    attr_reader :backend #: untyped
+    # Warns rather than raises — an observability failure must not surface as an
+    # application error.
+    DEFAULT_ERROR_HANDLER = ->(error, event) {
+      Kernel.warn("riffer: events subscriber raised #{error.class}: #{error.message}")
+    } #: ^(Exception, Riffer::Events::Base) -> void
+
+    # The handler invoked when a subscriber raises; defaults to a warning.
+    attr_reader :on_error #: ^(Exception, Riffer::Events::Base) -> void
 
     #--
     #: () -> void
     def initialize
-      @enabled = true
-      @backend = nil
+      @subscribers = []
+      @on_error = DEFAULT_ERROR_HANDLER
+      @mutex = Mutex.new
     end
 
-    # Sets the enabled flag, coercing boolean-ish values so an env-var
-    # +"false"+ (truthy in Ruby) doesn't silently keep metrics on. Raises
-    # Riffer::ArgumentError on an unrecognized value.
+    # Registers a subscriber — an object responding to +#call+, or a block — to
+    # receive every published event. A +nil+ subscriber is ignored, so wiring a
+    # backend whose builder returns +nil+ when its SDK is absent (e.g.
+    # +Metrics::Otel.build+) stays a one-liner.
     #--
-    #: (untyped) -> void
-    def enabled=(value)
-      @enabled = Riffer::Helpers::Boolean.coerce(value, attribute: "enabled")
+    #: (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
+    def subscribe(subscriber = nil, &block)
+      subscriber ||= block
+      return nil if subscriber.nil?
+      raise Riffer::ArgumentError, "subscribe requires a callable or a block" unless subscriber.respond_to?(:call)
+
+      @mutex.synchronize { @subscribers += [subscriber] }
+      subscriber
     end
 
-    # Sets the metrics backend riffer routes measurements through. Raises
-    # Riffer::ArgumentError unless the value is +nil+ or responds to
-    # +record_histogram+.
+    # Removes a previously registered subscriber.
     #--
-    #: (untyped) -> void
-    def backend=(value)
-      unless value.nil? || value.respond_to?(:record_histogram)
-        raise Riffer::ArgumentError, "metrics backend must respond to #record_histogram"
-      end
-      @backend = value
-      Riffer::Metrics.reset!
+    #: ((^(Riffer::Events::Base) -> void)) -> void
+    def unsubscribe(subscriber)
+      @mutex.synchronize { @subscribers -= [subscriber] }
+    end
+
+    # Removes every subscriber.
+    #--
+    #: () -> void
+    def clear
+      @mutex.synchronize { @subscribers = [] }
+    end
+
+    # A snapshot of the registered subscribers, in registration order.
+    #--
+    #: () -> Array[^(Riffer::Events::Base) -> void]
+    def subscribers
+      @mutex.synchronize { @subscribers }
+    end
+
+    # Sets the handler invoked when a subscriber raises. Raises
+    # Riffer::ArgumentError unless it responds to +#call+.
+    #--
+    #: ((^(Exception, Riffer::Events::Base) -> void)) -> void
+    def on_error=(handler)
+      raise Riffer::ArgumentError, "on_error must be callable" unless handler.respond_to?(:call)
+      @on_error = handler
     end
   end
 
@@ -306,8 +334,8 @@ class Riffer::Config
   # Tracing-related global configuration.
   attr_reader :tracing #: Riffer::Config::Tracing
 
-  # Metrics-related global configuration.
-  attr_reader :metrics #: Riffer::Config::Metrics
+  # Event-bus configuration.
+  attr_reader :events #: Riffer::Config::Events
 
   # Consumer-configured per-model token pricing.
   attr_reader :pricing #: Riffer::Config::Pricing
@@ -357,7 +385,7 @@ class Riffer::Config
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
     @tracing = Tracing.new
-    @metrics = Metrics.new
+    @events = Events.new
     @pricing = Pricing.new
     @message_id_strategy = :none
     @experimental_history_healing = false

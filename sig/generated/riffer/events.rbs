@@ -1,0 +1,30 @@
+# Generated from lib/riffer/events.rb with RBS::Inline
+
+# Synchronous in-process event bus. Riffer publishes one completion event per
+# instrumented operation, and subscribers registered through +config.events+
+# receive every event. Observability backends (metrics, Datadog, logs) are
+# subscribers, so observability never couples to one vendor.
+module Riffer::Events
+  # Whether any subscriber is registered. Call sites build an event only when
+  # someone is listening, so an idle bus costs nothing.
+  # --
+  # : () -> bool
+  def subscribed?: () -> bool
+
+  # Publishes an event to every subscriber synchronously, in registration order.
+  # A subscriber that raises is isolated — the error routes to
+  # +config.events.on_error+ and delivery continues — so an observability
+  # failure never breaks the operation that produced the event.
+  # --
+  # : (Riffer::Events::Base) -> void
+  def publish: (Riffer::Events::Base) -> void
+
+  private
+
+  # The error handler is the last line of defense; if it raises too there's
+  # nowhere left to route, so swallow to keep delivery going to the next
+  # subscriber.
+  # --
+  # : (^(Exception, Riffer::Events::Base) -> void, Exception, Riffer::Events::Base) -> void
+  def handle_error: (^(Exception, Riffer::Events::Base) -> void, Exception, Riffer::Events::Base) -> void
+end

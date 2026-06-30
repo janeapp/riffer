@@ -264,6 +264,10 @@ When enabled, content is serialized as GenAI-semconv JSON strings. File attachme
 
 `gen_ai.provider.name` carries a GenAI-semconv well-known value where one exists: `openai`, `anthropic`, `aws.bedrock`, `azure.ai.openai`, `gcp.gemini`, `openrouter`. A custom provider that doesn't override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.
 
+## Correlating with events
+
+The same operations that open these spans also publish [completion events](17_EVENTS.md). When tracing is live, each event carries the active span's `trace_id` and `span_id` (hex strings), so a metric or log line emitted by an event subscriber can be linked back to its trace. The ids are `nil` when tracing is off — events never depend on tracing being enabled.
+
 ## Stability
 
 The span and attribute shape is a public, versioned contract, in two tiers:

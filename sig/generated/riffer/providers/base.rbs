@@ -91,36 +91,33 @@ class Riffer::Providers::Base
   REQUEST_PARAM_ATTRIBUTES: Hash[Symbol, String]
 
   # --
-  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
-  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
+  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
+  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
+
+  # Defers reading the call outcome to publish time: +outcome+ returns the
+  # token usage and finish reason as locals the chat block fills, so the event
+  # carries final values even when an early error leaves them nil. The block
+  # result is unused — for a streamed call the outcome lives on the recorder,
+  # not the return value.
+  # --
+  # : (String?, Hash[String, String]) { () -> [Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason?] } -> ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted
+  def chat_event_builder: (String?, Hash[String, String]) { () -> [ Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason? ] } -> ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted
+
+  # Reconstructs a FinishReason from a stream recorder, which holds the reason
+  # and raw value separately rather than the value object.
+  # --
+  # : (Riffer::Tracing::StreamRecorder?) -> Riffer::Providers::FinishReason?
+  def stream_finish_reason: (Riffer::Tracing::StreamRecorder?) -> Riffer::Providers::FinishReason?
 
   # --
   # : (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
   def chat_span_attributes: (String?, Hash[Symbol, untyped]) -> Hash[String, untyped]
 
-  # --
-  # : (String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def chat_metric_base_attributes: (String?, ?Hash[String, String]) -> Hash[String, untyped]
-
-  # --
-  # : (String?, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def chat_metric_attributes: (String?, String?, ?Hash[String, String]) -> Hash[String, untyped]
-
-  # Maps normalized tags to their namespaced span/metric attribute form. An
-  # empty map yields an empty hash, so merging it is a no-op.
+  # Maps normalized tags to their namespaced span attribute form. An empty map
+  # yields an empty hash, so merging it is a no-op.
   # --
   # : (Hash[String, String]) -> Hash[String, String]
   def tag_attributes: (Hash[String, String]) -> Hash[String, String]
-
-  # Per-call only — the run level would double-count an aggregate.
-  # --
-  # : (String?, Riffer::Providers::TokenUsage?, ?Hash[String, String]) -> void
-  def record_token_usage_metric: (String?, Riffer::Providers::TokenUsage?, ?Hash[String, String]) -> void
-
-  # Per-call only — the run level would double-count an aggregate.
-  # --
-  # : (String?, Riffer::Providers::TokenUsage?, ?Hash[String, String]) -> void
-  def record_cost_metric: (String?, Riffer::Providers::TokenUsage?, ?Hash[String, String]) -> void
 
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Symbol?, String?) -> void

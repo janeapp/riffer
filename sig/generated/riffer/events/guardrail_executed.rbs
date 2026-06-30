@@ -1,0 +1,29 @@
+# Generated from lib/riffer/events/guardrail_executed.rb with RBS::Inline
+
+# Published when a guardrail finishes. +outcome+ is the result action; it is
+# +nil+ when the guardrail raised, in which case +error_type+ is set.
+class Riffer::Events::GuardrailExecuted < Riffer::Events::Base
+  # The guardrail identifier.
+  attr_reader guardrail: String
+
+  # The execution phase, +:before+ or +:after+.
+  attr_reader phase: Symbol
+
+  # The result action — +:pass+, +:transform+, or +:block+ — or +nil+ when the
+  # guardrail raised.
+  attr_reader outcome: Symbol?
+
+  # --
+  # : (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+
+  # The operation identifier.
+  # --
+  # : () -> Symbol
+  def operation: () -> Symbol
+
+  # The dotted event name.
+  # --
+  # : () -> String
+  def name: () -> String
+end

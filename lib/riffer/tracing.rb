@@ -41,6 +41,18 @@ module Riffer::Tracing # :nodoc: all
     backend.with_context(context, &block)
   end
 
+  NO_TRACE_IDS = {trace_id: nil, span_id: nil}.freeze #: Hash[Symbol, String?]
+
+  # Returns the active +:trace_id+/+:span_id+ as hex strings for event
+  # correlation, or nils when tracing is dark or the backend can't supply them.
+  #--
+  #: () -> Hash[Symbol, String?]
+  def current_trace_ids
+    return NO_TRACE_IDS unless Riffer.config.tracing.enabled
+    resolved = backend
+    resolved.respond_to?(:current_trace_ids) ? resolved.current_trace_ids : NO_TRACE_IDS
+  end
+
   # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
   # when the model was priced, <tt>riffer.cost</tt>.
   #--

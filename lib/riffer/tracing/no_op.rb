@@ -58,4 +58,10 @@ module Riffer::Tracing::NoOp # :nodoc: all
   def with_context(_context)
     yield
   end
+
+  #--
+  #: () -> Hash[Symbol, String?]
+  def current_trace_ids
+    {trace_id: nil, span_id: nil}
+  end
 end

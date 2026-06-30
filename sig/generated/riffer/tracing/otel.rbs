@@ -81,4 +81,8 @@ class Riffer::Tracing::Otel
   # --
   # : [R] (untyped) { () -> R } -> R
   def with_context: [R] (untyped) { () -> R } -> R
+
+  # --
+  # : () -> Hash[Symbol, String?]
+  def current_trace_ids: () -> Hash[Symbol, String?]
 end

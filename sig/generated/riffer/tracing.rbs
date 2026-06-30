@@ -29,6 +29,14 @@ module Riffer::Tracing
   # : [R] (untyped) { () -> R } -> R
   def with_context: [R] (untyped) { () -> R } -> R
 
+  NO_TRACE_IDS: Hash[Symbol, String?]
+
+  # Returns the active +:trace_id+/+:span_id+ as hex strings for event
+  # correlation, or nils when tracing is dark or the backend can't supply them.
+  # --
+  # : () -> Hash[Symbol, String?]
+  def current_trace_ids: () -> Hash[Symbol, String?]
+
   # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
   # when the model was priced, <tt>riffer.cost</tt>.
   # --

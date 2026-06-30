@@ -61,22 +61,38 @@ class Riffer::Tools::Runtime
   #--
   #: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   def instrument_tool_call(tool_call, tags = {})
-    start = Riffer::Metrics.monotonic_now
-    error_type = nil #: String?
-    begin
-      result = in_tool_span(tool_call, tags) do |span|
-        response = yield
-        record_tool_outcome(span, response)
-        response
-      end
-      error_type = result.error_type&.to_s
-      [tool_call, result] #: [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
-    rescue => error
-      error_type = error.class.name #: String?
-      raise
-    ensure
-      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: tool_metric_attributes(tool_call, error_type, tags))
+    executed = Riffer::Instrumentation.instrument(
+      "execute_tool #{tool_call.name}",
+      attributes: tool_span_attributes(tool_call, tags),
+      kind: :internal,
+      event: ->(result, completion) { build_tool_event(tool_call, tags, result, completion) }
+    ) do |span|
+      capture_tool_arguments(span, tool_call)
+      response = yield
+      record_tool_outcome(span, response)
+      response
     end
+    [tool_call, executed]
+  end
+
+  # A returned error response and a raised exception both make the outcome
+  # +:error+; the raised case has no result, so its type comes from the
+  # exception.
+  #--
+  #: (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::ToolExecuted
+  def build_tool_event(tool_call, tags, result, completion)
+    final_error_type = completion.error_type || result&.error_type&.to_s
+    Riffer::Events::ToolExecuted.new(
+      tool: tool_call.name,
+      call_id: tool_call.call_id,
+      outcome: final_error_type ? :error : :success,
+      duration: completion.duration,
+      error_type: final_error_type,
+      error: completion.error,
+      tags: tags,
+      trace_id: completion.trace_id,
+      span_id: completion.span_id
+    )
   end
 
   #--
@@ -113,21 +129,6 @@ class Riffer::Tools::Runtime
     JSON.parse(arguments, symbolize_names: true)
   end
 
-  # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
-  #--
-  #: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
-  def in_tool_span(tool_call, tags = {})
-    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call, tags), kind: :internal) do |span|
-      capture_tool_arguments(span, tool_call)
-      yield span
-    rescue => error
-      # The backend records the exception and error status on the re-raise;
-      # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
-      raise
-    end
-  end
-
   #--
   #: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
   def tool_span_attributes(tool_call, tags = {})
@@ -138,19 +139,8 @@ class Riffer::Tools::Runtime
     }.merge(tag_attributes(tags))
   end
 
-  #--
-  #: (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def tool_metric_attributes(tool_call, error_type, tags = {})
-    attributes = {
-      "gen_ai.operation.name" => "execute_tool",
-      "gen_ai.tool.name" => tool_call.name
-    } #: Hash[String, untyped]
-    attributes["error.type"] = error_type if error_type
-    attributes.merge(tag_attributes(tags))
-  end
-
-  # Maps normalized tags to their namespaced span/metric attribute form. An
-  # empty map yields an empty hash, so merging it is a no-op.
+  # Maps normalized tags to their namespaced span attribute form. An empty map
+  # yields an empty hash, so merging it is a no-op.
   #--
   #: (Hash[String, String]) -> Hash[String, String]
   def tag_attributes(tags)

@@ -1,12 +1,9 @@
-# Minimal signatures for the `opentelemetry-api` and `opentelemetry-metrics-api`
-# gems (undeclared, runtime detected), which ship no RBS.
+# Minimal signatures for the `opentelemetry-api` gem (undeclared, runtime
+# detected), which ships no RBS.
 #
-# Only the surface used by Riffer::Tracing::Otel and Riffer::Metrics::Otel is
-# declared.
+# Only the surface used by Riffer::Tracing::Otel is declared.
 module OpenTelemetry
   def self.tracer_provider: () -> untyped
-
-  def self.meter_provider: () -> untyped
 
   class Context
     def self.current: () -> OpenTelemetry::Context
@@ -18,5 +15,19 @@ module OpenTelemetry
     class Status
       def self.error: (?String) -> OpenTelemetry::Trace::Status
     end
+
+    class SpanContext
+      def valid?: () -> bool
+
+      def hex_trace_id: () -> String
+
+      def hex_span_id: () -> String
+    end
+
+    class Span
+      def context: () -> OpenTelemetry::Trace::SpanContext
+    end
+
+    def self.current_span: () -> OpenTelemetry::Trace::Span
   end
 end

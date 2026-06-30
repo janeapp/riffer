@@ -447,167 +447,107 @@ describe Riffer::Providers::Base do
     end
   end
 
-  describe "metrics" do
+  describe "events" do
     before do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
-      Riffer.config.metrics.enabled = true
-      @exporter = install_in_memory_meter_provider
+      Riffer.config.events.clear
+      @events = record_events
     end
 
     after do
-      Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.backend = nil
+      Riffer.config.events.clear
       Riffer.config.tracing.enabled = true
     end
 
     let(:provider) { Riffer::Providers::Mock.new }
 
-    def duration_attributes
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
-      snapshot.data_points.first.attributes
+    def chat_event
+      @events.find { |event| event.is_a?(Riffer::Events::ChatCompleted) }
     end
 
-    it "records the operation duration histogram in seconds" do
+    it "publishes a chat completed event" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
-      expect([snapshot.name, snapshot.unit]).must_equal ["gen_ai.client.operation.duration", "s"]
+      expect(chat_event).must_be_instance_of Riffer::Events::ChatCompleted
     end
 
-    it "records the chat operation attributes" do
+    it "carries the provider and model" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(duration_attributes).must_equal({
-        "gen_ai.operation.name" => "chat",
-        "gen_ai.provider.name" => "mock",
-        "gen_ai.request.model" => "riffer-1"
-      })
+      expect([chat_event.provider, chat_event.model]).must_equal ["mock", "riffer-1"]
     end
 
-    it "omits the request model when none is given" do
+    it "carries a nil model when none is given" do
       provider.generate_text(prompt: "Hello")
-      expect(duration_attributes).wont_include "gen_ai.request.model"
+      expect(chat_event.model).must_be_nil
     end
 
-    it "records error.type when the provider raises" do
+    it "measures a duration" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(chat_event.duration).must_be_kind_of Float
+    end
+
+    it "carries error_type when the provider raises" do
       exploding = ChatTracingExplodingProvider.new
       expect { exploding.generate_text(prompt: "Hello", model: "riffer-1") }.must_raise(Riffer::Error)
-      expect(duration_attributes["error.type"]).must_equal "Riffer::Error"
+      expect(chat_event.error_type).must_equal "Riffer::Error"
     end
 
-    it "records the duration when the stream drains" do
+    it "publishes when the stream drains" do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
-      expect(duration_attributes["gen_ai.operation.name"]).must_equal "chat"
+      expect(chat_event).wont_be_nil
     end
 
-    it "records even when tracing is disabled" do
+    it "publishes even when tracing is disabled" do
       Riffer.config.tracing.enabled = false
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(duration_attributes["gen_ai.operation.name"]).must_equal "chat"
+      expect(chat_event).wont_be_nil
     end
 
-    def token_usage_snapshot
-      @exporter.pull
-      @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.token.usage" }
-    end
-
-    it "records the token usage histogram in tokens" do
+    it "carries the token usage" do
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      snapshot = token_usage_snapshot
-      expect([snapshot.name, snapshot.unit]).must_equal ["gen_ai.client.token.usage", "{token}"]
+      expect([chat_event.token_usage.input_tokens, chat_event.token_usage.output_tokens]).must_equal [12, 7]
     end
 
-    it "records one input and one output data point carrying the token counts" do
-      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
+    it "carries nil token usage when the provider reports none" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      counts = token_usage_snapshot.data_points.to_h { |dp| [dp.attributes["gen_ai.token.type"], dp.sum] }
-      expect(counts).must_equal({"input" => 12, "output" => 7})
+      expect(chat_event.token_usage).must_be_nil
     end
 
-    it "records the chat attributes on each data point" do
-      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
-      provider.generate_text(prompt: "Hello", model: "riffer-1")
-      input_point = token_usage_snapshot.data_points.find { |dp| dp.attributes["gen_ai.token.type"] == "input" }
-      expect(input_point.attributes).must_equal({
-        "gen_ai.operation.name" => "chat",
-        "gen_ai.provider.name" => "mock",
-        "gen_ai.request.model" => "riffer-1",
-        "gen_ai.token.type" => "input"
-      })
-    end
-
-    it "omits the request model when none is given" do
-      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
-      provider.generate_text(prompt: "Hello")
-      expect(token_usage_snapshot.data_points.first.attributes).wont_include "gen_ai.request.model"
-    end
-
-    it "records nothing when the provider reports no usage" do
-      provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(token_usage_snapshot).must_be_nil
-    end
-
-    it "records two data points when the stream drains" do
+    it "carries the token usage from a stream" do
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
-      counts = token_usage_snapshot.data_points.to_h { |dp| [dp.attributes["gen_ai.token.type"], dp.sum] }
-      expect(counts).must_equal({"input" => 12, "output" => 7})
+      expect([chat_event.token_usage.input_tokens, chat_event.token_usage.output_tokens]).must_equal [12, 7]
     end
 
-    it "records token usage from a stream even when tracing is disabled" do
+    it "carries token usage from a stream even when tracing is disabled" do
       Riffer.config.tracing.enabled = false
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
-      types = token_usage_snapshot.data_points.map { |dp| dp.attributes["gen_ai.token.type"] }.sort
-      expect(types).must_equal ["input", "output"]
+      expect(chat_event.token_usage).wont_be_nil
     end
 
-    def cost_snapshot
-      @exporter.pull
-      @exporter.metric_snapshots.find { |s| s.name == "riffer.gen_ai.cost" }
-    end
-
-    it "records the cost histogram in USD" do
+    it "carries the call cost" do
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      snapshot = cost_snapshot
-      expect([snapshot.name, snapshot.unit]).must_equal ["riffer.gen_ai.cost", "USD"]
+      expect(chat_event.cost).must_equal 0.0021
     end
 
-    it "records one data point carrying the call cost" do
-      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
-      provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(cost_snapshot.data_points.map(&:sum)).must_equal [0.0021]
-    end
-
-    it "records the chat attributes on the data point" do
-      provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
-      provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(cost_snapshot.data_points.first.attributes).must_equal({
-        "gen_ai.operation.name" => "chat",
-        "gen_ai.provider.name" => "mock",
-        "gen_ai.request.model" => "riffer-1"
-      })
-    end
-
-    it "records nothing when the call carries no cost" do
+    it "carries nil cost when the call has none" do
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7))
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(cost_snapshot).must_be_nil
+      expect(chat_event.cost).must_be_nil
     end
 
-    it "records the cost when the stream drains" do
+    it "carries the cost when the stream drains" do
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
-      expect(cost_snapshot.data_points.map(&:sum)).must_equal [0.0021]
+      expect(chat_event.cost).must_equal 0.0021
     end
 
-    it "records cost even when tracing is disabled" do
+    it "carries cost even when tracing is disabled" do
       Riffer.config.tracing.enabled = false
       provider.stub_response("Hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 12, output_tokens: 7, cost: 0.0021))
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      expect(cost_snapshot.data_points.map(&:sum)).must_equal [0.0021]
+      expect(chat_event.cost).must_equal 0.0021
     end
   end
 end

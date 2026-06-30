@@ -1,0 +1,28 @@
+# Generated from lib/riffer/events/tool_executed.rb with RBS::Inline
+
+# Published when a tool call finishes. A returned error response and a raised
+# exception both yield +outcome+ +:error+; the latter also carries +error+.
+class Riffer::Events::ToolExecuted < Riffer::Events::Base
+  # The tool name.
+  attr_reader tool: String
+
+  # The provider-assigned tool call id.
+  attr_reader call_id: String
+
+  # The outcome, +:success+ or +:error+.
+  attr_reader outcome: Symbol
+
+  # --
+  # : (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+
+  # The operation identifier.
+  # --
+  # : () -> Symbol
+  def operation: () -> Symbol
+
+  # The dotted event name.
+  # --
+  # : () -> String
+  def name: () -> String
+end

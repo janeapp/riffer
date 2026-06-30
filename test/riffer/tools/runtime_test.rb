@@ -489,16 +489,14 @@ describe Riffer::Tools::Runtime do
     end
   end
 
-  describe "metrics" do
+  describe "events" do
     before do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
-      Riffer.config.metrics.enabled = true
-      @exporter = install_in_memory_meter_provider
+      Riffer.config.events.clear
+      @events = record_events
     end
 
     after do
-      Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.backend = nil
+      Riffer.config.events.clear
     end
 
     let(:buggy_tool_class) do
@@ -512,34 +510,41 @@ describe Riffer::Tools::Runtime do
       end
     end
 
-    def duration_attributes
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
-      snapshot.data_points.first.attributes
+    def tool_event
+      @events.find { |event| event.is_a?(Riffer::Events::ToolExecuted) }
     end
 
-    it "records the execute_tool operation attributes" do
+    it "publishes a tool executed event with the tool name" do
       tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
       Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
-      expect(duration_attributes).must_equal({
-        "gen_ai.operation.name" => "execute_tool",
-        "gen_ai.tool.name" => "weather_tool"
-      })
+      expect(tool_event.tool).must_equal "weather_tool"
     end
 
-    it "records error.type from a handled-error response" do
+    it "marks a success outcome" do
+      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
+      Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
+      expect(tool_event.outcome).must_equal :success
+    end
+
+    it "marks an error outcome on a handled-error response" do
       tool_call = make_tool_call(name: "weather_tool", arguments: "{}")
       Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
-      expect(duration_attributes["error.type"]).must_equal "validation_error"
+      expect(tool_event.outcome).must_equal :error
     end
 
-    it "records error.type from a raised exception" do
+    it "carries error_type from a handled-error response" do
+      tool_call = make_tool_call(name: "weather_tool", arguments: "{}")
+      Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
+      expect(tool_event.error_type).must_equal "validation_error"
+    end
+
+    it "carries error_type from a raised exception" do
       tool_call = make_tool_call(name: "buggy_tool")
       begin
         Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [buggy_tool_class], context: nil)
       rescue NoMethodError
       end
-      expect(duration_attributes["error.type"]).must_equal "NoMethodError"
+      expect(tool_event.error_type).must_equal "NoMethodError"
     end
   end
 end

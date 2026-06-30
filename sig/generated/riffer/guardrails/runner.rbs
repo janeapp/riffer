@@ -40,9 +40,11 @@ class Riffer::Guardrails::Runner
   # : (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
 
+  # +result+ is nil when the guardrail raised, so +outcome+ is nil and the
+  # error fields carry the failure instead.
   # --
-  # : (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
-  def instrument_guardrail: (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
+  # : (Riffer::Guardrail, Riffer::Guardrails::Result?, Riffer::Instrumentation::Completion) -> Riffer::Events::GuardrailExecuted
+  def build_guardrail_event: (Riffer::Guardrail, Riffer::Guardrails::Result?, Riffer::Instrumentation::Completion) -> Riffer::Events::GuardrailExecuted
 
   # --
   # : (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
@@ -51,10 +53,6 @@ class Riffer::Guardrails::Runner
   # --
   # : (Riffer::Guardrail) -> Hash[String, untyped]
   def guardrail_span_attributes: (Riffer::Guardrail) -> Hash[String, untyped]
-
-  # --
-  # : (Riffer::Guardrail, String?) -> Hash[String, untyped]
-  def guardrail_metric_attributes: (Riffer::Guardrail, String?) -> Hash[String, untyped]
 
   # A block is a handled outcome, so its span status stays unset — an error
   # span status is reserved for a raised exception.

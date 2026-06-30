@@ -1,0 +1,35 @@
+# Generated from lib/riffer/events/chat_completed.rb with RBS::Inline
+
+# Published when a single LLM chat call completes, on success or failure.
+class Riffer::Events::ChatCompleted < Riffer::Events::Base
+  # The provider name, ideally a GenAI semconv value (e.g. +openai+).
+  attr_reader provider: String
+
+  # The requested model id, when one was set.
+  attr_reader model: String?
+
+  # Token usage for the call, when the provider reported it.
+  attr_reader token_usage: Riffer::Providers::TokenUsage?
+
+  # The normalized finish reason, when the provider reported one.
+  attr_reader finish_reason: Riffer::Providers::FinishReason?
+
+  # --
+  # : (provider: String, duration: Float, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Riffer::Providers::FinishReason?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (provider: String, duration: Float, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Riffer::Providers::FinishReason?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+
+  # The operation identifier.
+  # --
+  # : () -> Symbol
+  def operation: () -> Symbol
+
+  # The dotted event name.
+  # --
+  # : () -> String
+  def name: () -> String
+
+  # The call cost in USD, when the model was priced.
+  # --
+  # : () -> Float?
+  def cost: () -> Float?
+end

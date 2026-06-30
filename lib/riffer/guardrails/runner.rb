@@ -85,33 +85,34 @@ class Riffer::Guardrails::Runner
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
-    instrument_guardrail(guardrail) do
-      Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail), kind: :internal) do |span|
-        result = run_guardrail_phase(guardrail, data, messages: messages)
-        record_guardrail_outcome(span, result)
-        result
-      rescue => error
-        # The backend records the exception and error status on the re-raise;
-        # error.type is the one semconv attribute it doesn't set.
-        span.set_attribute("error.type", error.class.name)
-        raise
-      end
+    Riffer::Instrumentation.instrument(
+      "execute_guardrail #{guardrail.name}",
+      attributes: guardrail_span_attributes(guardrail),
+      kind: :internal,
+      event: ->(result, completion) { build_guardrail_event(guardrail, result, completion) }
+    ) do |span|
+      result = run_guardrail_phase(guardrail, data, messages: messages)
+      record_guardrail_outcome(span, result)
+      result
     end
   end
 
+  # +result+ is nil when the guardrail raised, so +outcome+ is nil and the
+  # error fields carry the failure instead.
   #--
-  #: (Riffer::Guardrail) { () -> Riffer::Guardrails::Result } -> Riffer::Guardrails::Result
-  def instrument_guardrail(guardrail)
-    start = Riffer::Metrics.monotonic_now
-    error_type = nil #: String?
-    begin
-      yield
-    rescue => error
-      error_type = error.class.name #: String?
-      raise
-    ensure
-      Riffer::Metrics::Instruments::GUARDRAIL_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: guardrail_metric_attributes(guardrail, error_type))
-    end
+  #: (Riffer::Guardrail, Riffer::Guardrails::Result?, Riffer::Instrumentation::Completion) -> Riffer::Events::GuardrailExecuted
+  def build_guardrail_event(guardrail, result, completion)
+    Riffer::Events::GuardrailExecuted.new(
+      guardrail: guardrail.name,
+      phase: phase,
+      outcome: result&.type,
+      duration: completion.duration,
+      error_type: completion.error_type,
+      error: completion.error,
+      tags: tags,
+      trace_id: completion.trace_id,
+      span_id: completion.span_id
+    )
   end
 
   #--
@@ -134,14 +135,6 @@ class Riffer::Guardrails::Runner
       "riffer.guardrail.name" => guardrail.name,
       "riffer.guardrail.phase" => phase.to_s
     }.merge(tags.transform_keys { |key| "riffer.tag.#{key}" })
-  end
-
-  #--
-  #: (Riffer::Guardrail, String?) -> Hash[String, untyped]
-  def guardrail_metric_attributes(guardrail, error_type)
-    attributes = guardrail_span_attributes(guardrail)
-    attributes["error.type"] = error_type if error_type
-    attributes
   end
 
   # A block is a handled outcome, so its span status stays unset — an error

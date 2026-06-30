@@ -137,34 +137,52 @@ class Riffer::Config
     def backend=: (untyped) -> void
   end
 
-  # Metrics-related global configuration, independent of +config.tracing+ so a
-  # host can run one signal without the other.
-  class Metrics
-    # Whether riffer records OTEL metric instruments; defaults to +true+, a
-    # no-op until a host wires an OTEL metrics SDK.
-    attr_reader enabled: bool
+  # Event-bus configuration. Subscribers registered here receive every
+  # completion event riffer publishes; observability backends are subscribers.
+  class Events
+    @subscribers: Array[^(Riffer::Events::Base) -> void]
 
-    # The backend riffer routes measurements through; defaults to +nil+, a no-op.
-    # Riffer auto-detects no backend; assigning one is opt-in.
-    attr_reader backend: untyped
+    @mutex: Thread::Mutex
+
+    # Warns rather than raises — an observability failure must not surface as an
+    # application error.
+    DEFAULT_ERROR_HANDLER: ^(Exception, Riffer::Events::Base) -> void
+
+    # The handler invoked when a subscriber raises; defaults to a warning.
+    attr_reader on_error: ^(Exception, Riffer::Events::Base) -> void
 
     # --
     # : () -> void
     def initialize: () -> void
 
-    # Sets the enabled flag, coercing boolean-ish values so an env-var
-    # +"false"+ (truthy in Ruby) doesn't silently keep metrics on. Raises
-    # Riffer::ArgumentError on an unrecognized value.
+    # Registers a subscriber — an object responding to +#call+, or a block — to
+    # receive every published event. A +nil+ subscriber is ignored, so wiring a
+    # backend whose builder returns +nil+ when its SDK is absent (e.g.
+    # +Metrics::Otel.build+) stays a one-liner.
     # --
-    # : (untyped) -> void
-    def enabled=: (untyped) -> void
+    # : (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
+    def subscribe: (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
 
-    # Sets the metrics backend riffer routes measurements through. Raises
-    # Riffer::ArgumentError unless the value is +nil+ or responds to
-    # +record_histogram+.
+    # Removes a previously registered subscriber.
     # --
-    # : (untyped) -> void
-    def backend=: (untyped) -> void
+    # : ((^(Riffer::Events::Base) -> void)) -> void
+    def unsubscribe: (^(Riffer::Events::Base) -> void) -> void
+
+    # Removes every subscriber.
+    # --
+    # : () -> void
+    def clear: () -> void
+
+    # A snapshot of the registered subscribers, in registration order.
+    # --
+    # : () -> Array[^(Riffer::Events::Base) -> void]
+    def subscribers: () -> Array[^(Riffer::Events::Base) -> void]
+
+    # Sets the handler invoked when a subscriber raises. Raises
+    # Riffer::ArgumentError unless it responds to +#call+.
+    # --
+    # : ((^(Exception, Riffer::Events::Base) -> void)) -> void
+    def on_error=: (^(Exception, Riffer::Events::Base) -> void) -> void
   end
 
   # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer
@@ -276,8 +294,8 @@ class Riffer::Config
   # Tracing-related global configuration.
   attr_reader tracing: Riffer::Config::Tracing
 
-  # Metrics-related global configuration.
-  attr_reader metrics: Riffer::Config::Metrics
+  # Event-bus configuration.
+  attr_reader events: Riffer::Config::Events
 
   # Consumer-configured per-model token pricing.
   attr_reader pricing: Riffer::Config::Pricing
