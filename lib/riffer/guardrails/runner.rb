@@ -85,11 +85,11 @@ class Riffer::Guardrails::Runner
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
-    Riffer::Instrumentation.instrument(
+    Riffer::Events.observe(
       "execute_guardrail #{guardrail.name}",
       attributes: guardrail_span_attributes(guardrail),
       kind: :internal,
-      event: ->(result, completion) { build_guardrail_event(guardrail, result, completion) }
+      event: ->(result, outcome) { build_guardrail_event(guardrail, result, outcome) }
     ) do |span|
       result = run_guardrail_phase(guardrail, data, messages: messages)
       record_guardrail_outcome(span, result)
@@ -100,18 +100,14 @@ class Riffer::Guardrails::Runner
   # +result+ is nil when the guardrail raised, so +outcome+ is nil and the
   # error fields carry the failure instead.
   #--
-  #: (Riffer::Guardrail, Riffer::Guardrails::Result?, Riffer::Instrumentation::Completion) -> Riffer::Events::GuardrailExecuted
-  def build_guardrail_event(guardrail, result, completion)
+  #: (Riffer::Guardrail, Riffer::Guardrails::Result?, Riffer::Events::Outcome) -> Riffer::Events::GuardrailExecuted
+  def build_guardrail_event(guardrail, result, outcome)
     Riffer::Events::GuardrailExecuted.new(
       guardrail: guardrail.name,
       phase: phase,
       outcome: result&.type,
-      duration: completion.duration,
-      error_type: completion.error_type,
-      error: completion.error,
       tags: tags,
-      trace_id: completion.trace_id,
-      span_id: completion.span_id
+      **outcome.to_h
     )
   end
 

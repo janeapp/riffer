@@ -106,10 +106,12 @@ class Riffer::Config
     end
   end
 
-  # Event-bus configuration. Subscribers registered here receive every
-  # completion event riffer publishes; observability backends are subscribers.
+  # Event-bus configuration. Subscribers registered here receive the completion
+  # events riffer publishes; observability backends are subscribers. A
+  # subscriber can filter to one event type at registration, or take every
+  # event and pattern-match itself.
   class Events
-    # @rbs @subscribers: Array[^(Riffer::Events::Base) -> void]
+    # @rbs @subscriptions: Array[[singleton(Riffer::Events::Base)?, ^(Riffer::Events::Base) -> void]]
     # @rbs @mutex: Thread::Mutex
 
     # Warns rather than raises — an observability failure must not surface as an
@@ -124,38 +126,50 @@ class Riffer::Config
     #--
     #: () -> void
     def initialize
-      @subscribers = []
+      @subscriptions = []
       @on_error = DEFAULT_ERROR_HANDLER
       @mutex = Mutex.new
     end
 
     # Registers a subscriber — an object responding to +#call+, or a block — to
-    # receive every published event. A +nil+ subscriber is ignored, so wiring a
+    # receive published events. Pass an event class as the first argument to
+    # receive only that type (and its subclasses); omit it to receive every
+    # event and filter with a +case+. A +nil+ subscriber is ignored, so wiring a
     # backend whose builder returns +nil+ when its SDK is absent stays a
     # one-liner.
     #--
-    #: (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
-    def subscribe(subscriber = nil, &block)
+    #: (?(singleton(Riffer::Events::Base) | ^(Riffer::Events::Base) -> void)?, ?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
+    def subscribe(type = nil, subscriber = nil, &block)
+      # subscribe(callable) / subscribe { } — no type filter, callable is first.
+      if type && !type.is_a?(Class)
+        subscriber = type
+        type = nil
+      end
       subscriber ||= block
       return nil if subscriber.nil?
       raise Riffer::ArgumentError, "subscribe requires a callable or a block" unless subscriber.respond_to?(:call)
+      if type && !(type < Riffer::Events::Base)
+        raise Riffer::ArgumentError, "event type must be a Riffer::Events::Base subclass, got #{type}"
+      end
 
-      @mutex.synchronize { @subscribers += [subscriber] }
+      entry = [type, subscriber] #: [singleton(Riffer::Events::Base)?, ^(Riffer::Events::Base) -> void]
+      @mutex.synchronize { @subscriptions += [entry] }
       subscriber
     end
 
-    # Removes a previously registered subscriber.
+    # Removes a previously registered subscriber, whatever type it was filtered
+    # to.
     #--
     #: ((^(Riffer::Events::Base) -> void)) -> void
     def unsubscribe(subscriber)
-      @mutex.synchronize { @subscribers -= [subscriber] }
+      @mutex.synchronize { @subscriptions = @subscriptions.reject { |(_type, callable)| callable.equal?(subscriber) } }
     end
 
     # Removes every subscriber.
     #--
     #: () -> void
     def clear
-      @mutex.synchronize { @subscribers = [] }
+      @mutex.synchronize { @subscriptions = [] }
     end
 
     # A snapshot of the registered subscribers, in registration order. Returns a
@@ -163,7 +177,19 @@ class Riffer::Config
     #--
     #: () -> Array[^(Riffer::Events::Base) -> void]
     def subscribers
-      @mutex.synchronize { @subscribers.dup }
+      @mutex.synchronize { @subscriptions.map { |(_type, callable)| callable } }
+    end
+
+    # Yields each subscriber whose filter matches +event+, in registration
+    # order; a subscriber registered without a type matches every event. Takes a
+    # snapshot under the mutex so delivery runs outside the lock.
+    #--
+    #: (Riffer::Events::Base) { (^(Riffer::Events::Base) -> void) -> void } -> void
+    def each_subscriber(event)
+      snapshot = @mutex.synchronize { @subscriptions.dup }
+      snapshot.each do |(type, subscriber)|
+        yield subscriber if type.nil? || event.is_a?(type)
+      end
     end
 
     # Sets the handler invoked when a subscriber raises. Raises

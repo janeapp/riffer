@@ -44,11 +44,11 @@ module Riffer::Agent::Run
   #: (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, tags: {}, stream_yielder: nil)
     tags = normalize_tags(tags)
-    Riffer::Instrumentation.instrument(
+    Riffer::Events.observe(
       "invoke_agent #{agent.class.identifier}",
       attributes: run_span_attributes(agent, tags),
       kind: :internal,
-      event: ->(response, completion) { build_run_event(agent, tags, response, completion) }
+      event: ->(response, outcome) { build_run_event(agent, tags, response, outcome) }
     ) do |span|
       response = execute_run(agent, stream_yielder, tags)
       record_run_outcome(span, response)
@@ -344,20 +344,16 @@ module Riffer::Agent::Run
   # +response+ is nil when the run raised before producing one, so usage/steps
   # fall back to empty.
   #--
-  #: (Riffer::Agent, Hash[String, String], Riffer::Agent::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::AgentInvoked
-  def build_run_event(agent, tags, response, completion)
+  #: (Riffer::Agent, Hash[String, String], Riffer::Agent::Response?, Riffer::Events::Outcome) -> Riffer::Events::AgentInvoked
+  def build_run_event(agent, tags, response, outcome)
     Riffer::Events::AgentInvoked.new(
       agent: agent.class.identifier,
       provider: agent.provider.class.semconv_provider_name,
       model: agent.model_name,
       token_usage: response&.token_usage,
       steps: response&.steps || 0,
-      duration: completion.duration,
-      error_type: completion.error_type,
-      error: completion.error,
       tags: tags,
-      trace_id: completion.trace_id,
-      span_id: completion.span_id
+      **outcome.to_h
     )
   end
 

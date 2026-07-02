@@ -15,21 +15,27 @@ class Riffer::Events::GuardrailExecuted < Riffer::Events::Base
   attr_reader :outcome #: Symbol?
 
   #--
-  #: (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-  def initialize(guardrail:, phase:, duration:, outcome: nil, error_type: nil, error: nil, tags: {}, trace_id: nil, span_id: nil)
-    super(duration: duration, error_type: error_type, error: error, tags: tags, trace_id: trace_id, span_id: span_id)
+  #: (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize(guardrail:, phase:, duration:, outcome: nil, error: nil, error_type: nil, tags: {}, trace_id: nil, span_id: nil)
+    super(duration: duration, error: error, error_type: error_type, tags: tags, trace_id: trace_id, span_id: span_id)
     @guardrail = guardrail
     @phase = phase
     @outcome = outcome
   end
 
-  # The operation identifier.
-  #--
-  #: () -> Symbol
-  def operation = :execute_guardrail
-
   # The dotted event name.
   #--
   #: () -> String
   def name = "riffer.execute_guardrail"
+
+  # Guardrail, phase, and the result action, on top of the shared dimensions.
+  #--
+  #: () -> Hash[String, String]
+  def dimensions
+    dims = super
+    dims["guardrail"] = guardrail
+    dims["phase"] = phase.to_s
+    dims["action"] = outcome.to_s if outcome
+    dims
+  end
 end

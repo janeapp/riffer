@@ -13,16 +13,17 @@ class Riffer::Events::ToolExecuted < Riffer::Events::Base
   attr_reader outcome: Symbol
 
   # --
-  # : (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-  def initialize: (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-
-  # The operation identifier.
-  # --
-  # : () -> Symbol
-  def operation: () -> Symbol
+  # : (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
 
   # The dotted event name.
   # --
   # : () -> String
   def name: () -> String
+
+  # Tool and outcome, on top of the shared dimensions. The call id is unbounded,
+  # so it stays a typed accessor rather than a metric label.
+  # --
+  # : () -> Hash[String, String]
+  def dimensions: () -> Hash[String, String]
 end

@@ -14,21 +14,24 @@ class Riffer::Events::ToolExecuted < Riffer::Events::Base
   attr_reader :outcome #: Symbol
 
   #--
-  #: (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-  def initialize(tool:, call_id:, outcome:, duration:, error_type: nil, error: nil, tags: {}, trace_id: nil, span_id: nil)
-    super(duration: duration, error_type: error_type, error: error, tags: tags, trace_id: trace_id, span_id: span_id)
+  #: (tool: String, call_id: String, outcome: Symbol, duration: Float, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize(tool:, call_id:, outcome:, duration:, error: nil, error_type: nil, tags: {}, trace_id: nil, span_id: nil)
+    super(duration: duration, error: error, error_type: error_type, tags: tags, trace_id: trace_id, span_id: span_id)
     @tool = tool
     @call_id = call_id
     @outcome = outcome
   end
 
-  # The operation identifier.
-  #--
-  #: () -> Symbol
-  def operation = :execute_tool
-
   # The dotted event name.
   #--
   #: () -> String
   def name = "riffer.execute_tool"
+
+  # Tool and outcome, on top of the shared dimensions. The call id is unbounded,
+  # so it stays a typed accessor rather than a metric label.
+  #--
+  #: () -> Hash[String, String]
+  def dimensions
+    super.merge("tool" => tool, "outcome" => outcome.to_s)
+  end
 end

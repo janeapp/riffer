@@ -117,8 +117,8 @@ module Riffer::Agent::Run
   # +response+ is nil when the run raised before producing one, so usage/steps
   # fall back to empty.
   # --
-  # : (Riffer::Agent, Hash[String, String], Riffer::Agent::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::AgentInvoked
-  def build_run_event: (Riffer::Agent, Hash[String, String], Riffer::Agent::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::AgentInvoked
+  # : (Riffer::Agent, Hash[String, String], Riffer::Agent::Response?, Riffer::Events::Outcome) -> Riffer::Events::AgentInvoked
+  def build_run_event: (Riffer::Agent, Hash[String, String], Riffer::Agent::Response?, Riffer::Events::Outcome) -> Riffer::Events::AgentInvoked
 
   # --
   # : (Hash[(String | Symbol), untyped]?) -> Hash[String, String]
