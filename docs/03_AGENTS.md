@@ -333,7 +333,7 @@ Keys and values may be `String` or `Symbol`; both are stringified, and entries w
 Tags propagate to **two** places:
 
 1. The provider's native per-request metadata field (see the mapping below).
-2. Observability — stamped as `riffer.tag.<key>` on **every** span and metric the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail` spans, and the duration/token-usage/cost metrics). See [Tracing](16_TRACING.md) and [Metrics](17_METRICS.md).
+2. Observability — stamped as `riffer.tag.<key>` on **every** span the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`). See [Tracing](16_TRACING.md).
 
 ### Reserved key: `user_id`
 
@@ -349,17 +349,13 @@ Tags propagate to **two** places:
 | Anthropic             | `metadata.user_id` **only**   | The only tag forwarded                  |
 | Gemini                | _(none — observability only)_ | Tag only; no request field              |
 
-**Anthropic silently drops non-`user_id` tags.** The Messages API has no free-form request-metadata field — only `metadata.user_id`. So for Anthropic, `user_id` is forwarded as `metadata: {user_id: …}` and **every other tag is dropped from the request** (it still appears on spans and metrics). This is intentional.
+**Anthropic silently drops non-`user_id` tags.** The Messages API has no free-form request-metadata field — only `metadata.user_id`. So for Anthropic, `user_id` is forwarded as `metadata: {user_id: …}` and **every other tag is dropped from the request** (it still appears on spans). This is intentional.
 
-**Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans and metrics only. Native request labels (`labels`, lowercase `[a-z0-9_-]`, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.
+**Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only. Native request labels (`labels`, lowercase `[a-z0-9_-]`, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.
 
 ### Provider limits (not enforced)
 
 Riffer does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock `requestMetadata` ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter `metadata` ≤16 pairs (OpenRouter: 64-char keys, 512-char values).
-
-### Metric cardinality
-
-Tags are promoted onto metric dimensions verbatim — there is no allow-list. High-cardinality values (e.g. a unique `user_id` per request) will create a correspondingly large number of metric series in your backend. Keep metric-bound tags low-cardinality.
 
 ## Expand Your Agent
 

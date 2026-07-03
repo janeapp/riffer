@@ -119,23 +119,6 @@ end
 | `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                                  |
 | `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `in_span`. See [Tracing → Routing to a non-OpenTelemetry backend](16_TRACING.md#routing-to-a-non-opentelemetry-backend). |
 
-### Metrics
-
-Metrics-related global configuration lives under `config.metrics`, **independent** of `config.tracing` — each has its own kill switch and its own backend, so you can run one signal without the other. Riffer records measurements only through the backend you assign to `config.metrics.backend` — there is **no auto-detection**. OpenTelemetry is a built-in backend you opt into explicitly with `Riffer::Metrics::Otel.build`; with no backend set every measurement is a silent no-op, and riffer carries no OTEL gem dependency either way. The metrics API and SDK are separate, still-experimental (pre-1.0) gems from the traces API.
-
-```ruby
-Riffer.configure do |config|
-  config.metrics.enabled = ENV.fetch("RIFFER_METRICS_ENABLED", "true")
-  # Opt into OpenTelemetry (uses the global meter provider):
-  config.metrics.backend = Riffer::Metrics::Otel.build
-end
-```
-
-| Option    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `enabled` | The kill switch, consulted on every measurement — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                                                                                                                                                                                 |
-| `backend` | The backend riffer routes measurements through. Assign `Riffer::Metrics::Otel.build` (pass `provider:` to override the global meter provider — e.g. an in-memory provider in tests), or any object responding to `record_histogram` to route into a non-OTEL system (e.g. DogStatsD). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `record_histogram`. See [Metrics → Routing to a non-OpenTelemetry backend](17_METRICS.md#routing-to-a-non-opentelemetry-backend). |
-
 ### Pricing
 
 Configure per-model token prices and riffer computes the cost of each LLM call onto its [`TokenUsage`](08_MESSAGES.md#token-usage-semantics). Riffer ships **no** price table — so an unconfigured model simply carries no cost (`token_usage.cost` is `nil`).

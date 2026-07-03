@@ -37,33 +37,22 @@ module Riffer::Agent::Run
 
   # Both +generate+ and +stream+ funnel here, so this is the single place raw
   # +tags+ are normalized. The clean <tt>String => String</tt> map is then
-  # threaded to every span/metric builder in the run as +riffer.tag.*+ and to
-  # each provider call (via +merged_model_options+) for native request-metadata
+  # threaded to every span builder in the run as +riffer.tag.*+ and to each
+  # provider call (via +merged_model_options+) for native request-metadata
   # mapping.
   #--
   #: (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, tags: {}, stream_yielder: nil)
     tags = normalize_tags(tags)
-    start = Riffer::Metrics.monotonic_now
-    error_type = nil #: String?
-    begin
-      Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent, tags), kind: :internal) do |span|
-        response = execute_run(agent, stream_yielder, tags)
-        record_run_outcome(span, response)
-        response
-      rescue => error
-        # The backend records the exception and error status on the re-raise;
-        # error.type is the one semconv attribute it doesn't set.
-        span.set_attribute("error.type", error.class.name)
-        raise
-      end
+    Riffer::Tracing.in_span("invoke_agent #{agent.class.identifier}", attributes: run_span_attributes(agent, tags), kind: :internal) do |span|
+      response = execute_run(agent, stream_yielder, tags)
+      record_run_outcome(span, response)
+      response
     rescue => error
-      # The inner rescue tags the span; capture error.type here too, at method
-      # scope, where the ensure can read it onto the metric.
-      error_type = error.class.name #: String?
+      # The backend records the exception and error status on the re-raise;
+      # error.type is the one semconv attribute it doesn't set.
+      span.set_attribute("error.type", error.class.name)
       raise
-    ensure
-      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: run_metric_attributes(agent, error_type, tags))
     end
   end
 
@@ -295,8 +284,8 @@ module Riffer::Agent::Run
 
   # +tags+ rides in the options hash as a curated key the providers extract for
   # native request-metadata mapping (alongside +:structured_output+); it never
-  # reaches an SDK call verbatim. Span/metric tagging is threaded separately to
-  # each builder.
+  # reaches an SDK call verbatim. Span tagging is threaded separately to each
+  # builder.
   #--
   #: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
   def merged_model_options(agent, tags = {})
@@ -350,19 +339,6 @@ module Riffer::Agent::Run
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name
     }.merge(tag_attributes(tags))
-  end
-
-  #--
-  #: (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def run_metric_attributes(agent, error_type, tags = {})
-    attributes = {
-      "gen_ai.operation.name" => "invoke_agent",
-      "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
-      "gen_ai.request.model" => agent.model_name,
-      "gen_ai.agent.name" => agent.class.identifier
-    } #: Hash[String, untyped]
-    attributes["error.type"] = error_type if error_type
-    attributes.merge(tag_attributes(tags))
   end
 
   #--

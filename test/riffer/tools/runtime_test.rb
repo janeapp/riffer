@@ -488,60 +488,6 @@ describe Riffer::Tools::Runtime do
       expect(tool_span.parent_span_id).must_equal run_span.span_id
     end
   end
-
-  describe "metrics" do
-    before do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
-      Riffer.config.metrics.enabled = true
-      @exporter = install_in_memory_meter_provider
-    end
-
-    after do
-      Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.backend = nil
-    end
-
-    let(:buggy_tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "buggy_tool"
-        description "Has a bug"
-
-        def call(context:, **)
-          nil.nonexistent_method
-        end
-      end
-    end
-
-    def duration_attributes
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
-      snapshot.data_points.first.attributes
-    end
-
-    it "records the execute_tool operation attributes" do
-      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}')
-      Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
-      expect(duration_attributes).must_equal({
-        "gen_ai.operation.name" => "execute_tool",
-        "gen_ai.tool.name" => "weather_tool"
-      })
-    end
-
-    it "records error.type from a handled-error response" do
-      tool_call = make_tool_call(name: "weather_tool", arguments: "{}")
-      Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
-      expect(duration_attributes["error.type"]).must_equal "validation_error"
-    end
-
-    it "records error.type from a raised exception" do
-      tool_call = make_tool_call(name: "buggy_tool")
-      begin
-        Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [buggy_tool_class], context: nil)
-      rescue NoMethodError
-      end
-      expect(duration_attributes["error.type"]).must_equal "NoMethodError"
-    end
-  end
 end
 
 describe Riffer::Tools::Runtime::Inline do

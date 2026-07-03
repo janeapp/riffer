@@ -21,8 +21,8 @@ module Riffer::Agent::Run
 
   # Both +generate+ and +stream+ funnel here, so this is the single place raw
   # +tags+ are normalized. The clean <tt>String => String</tt> map is then
-  # threaded to every span/metric builder in the run as +riffer.tag.*+ and to
-  # each provider call (via +merged_model_options+) for native request-metadata
+  # threaded to every span builder in the run as +riffer.tag.*+ and to each
+  # provider call (via +merged_model_options+) for native request-metadata
   # mapping.
   # --
   # : (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
@@ -86,8 +86,8 @@ module Riffer::Agent::Run
 
   # +tags+ rides in the options hash as a curated key the providers extract for
   # native request-metadata mapping (alongside +:structured_output+); it never
-  # reaches an SDK call verbatim. Span/metric tagging is threaded separately to
-  # each builder.
+  # reaches an SDK call verbatim. Span tagging is threaded separately to each
+  # builder.
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
   def merged_model_options: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
@@ -113,10 +113,6 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
   def run_span_attributes: (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
-
-  # --
-  # : (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def run_metric_attributes: (Riffer::Agent, String?, ?Hash[String, String]) -> Hash[String, untyped]
 
   # --
   # : (Hash[(String | Symbol), untyped]?) -> Hash[String, String]

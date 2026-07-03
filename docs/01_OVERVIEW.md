@@ -132,7 +132,6 @@ Response
 - [Tools](06_TOOLS.md) - Creating tools
 - [Configuration](10_CONFIGURATION.md) - Global configuration
 - [Tracing](16_TRACING.md) - OpenTelemetry span contract and host wiring
-- [Metrics](17_METRICS.md) - OpenTelemetry metric contract and host wiring
 - [Evals](11_EVALS.md) - Evaluating agent quality
 - [Guardrails](12_GUARDRAILS.md) - Input/output validation
 - [Skills](13_SKILLS.md) - Packaged agent capabilities

@@ -215,7 +215,7 @@ class Riffer::Agent
   #
   # +tags:+ is an optional flat hash of attribution tags applied to this single
   # call: they propagate to the provider's native request-metadata field, and
-  # are stamped as +riffer.tag.*+ on every span and metric the call emits. See
+  # are stamped as +riffer.tag.*+ on every span the call emits. See
   # +docs/03_AGENTS.md+ for the per-provider mapping. The reserved key
   # +user_id+ also maps to the provider's native user identifier where one
   # exists.
