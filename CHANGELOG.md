@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.36.0](https://github.com/janeapp/riffer/compare/riffer/v0.35.0...riffer/v0.36.0) (2026-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* config.metrics, the Riffer::Metrics module, and Riffer::Metrics::Otel are removed. Hosts wiring a metrics backend must drop that configuration.
+
+### Features
+
+* remove the metrics primitive ([#347](https://github.com/janeapp/riffer/issues/347)) ([70a838e](https://github.com/janeapp/riffer/commit/70a838e9d49da12f89886c6e6f7bca35f427f77c))
+
 ## [0.35.0](https://github.com/janeapp/riffer/compare/riffer/v0.34.0...riffer/v0.35.0) (2026-06-25)
 
 
