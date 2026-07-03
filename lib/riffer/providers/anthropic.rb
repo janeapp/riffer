@@ -63,7 +63,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     # Anthropic's only request-metadata field is metadata.user_id (opaque, no
     # PII). It carries the reserved user_id tag; all other tags are dropped
-    # here and survive only on spans/metrics.
+    # here and survive only on spans.
     user_id = tags["user_id"]
     params[:metadata] = {user_id: user_id} if user_id
 

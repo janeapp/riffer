@@ -46,7 +46,6 @@ class Riffer::Providers::Base
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
-    tags = options[:tags] || {}
 
     in_chat_span(model, messages, options) do |span|
       response = execute_generate(params)
@@ -58,8 +57,6 @@ class Riffer::Providers::Base
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
 
       Riffer::Tracing.record_usage(span, token_usage)
-      record_token_usage_metric(model, token_usage, tags)
-      record_cost_metric(model, token_usage, tags)
       record_finish_reason(span, finish_reason&.reason, finish_reason&.raw)
       capture_output(span, content: content, tool_calls: tool_calls, finish_reason: finish_reason&.reason)
 
@@ -85,26 +82,17 @@ class Riffer::Providers::Base
     validate_normalized_messages!(messages)
     messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
-    tags = options[:tags] || {}
 
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
     # context is empty — capture here so the chat span parents to the caller's
-    # trace. tags are an ordinary local captured in the closure, so they reach
-    # the span/metric builders without re-propagation.
+    # trace.
     trace_context = Riffer::Tracing.current_context
     Enumerator.new do |yielder|
       Riffer::Tracing.with_context(trace_context) do
         in_chat_span(model, messages, options) do |span|
-          # The recorder feeds both the span and the token-usage metric, so build
-          # it whenever either is live — metrics fire even with tracing off.
-          observe = span.recording? || Riffer::Metrics.recording?
-          sink = observe ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
+          sink = span.recording? ? Riffer::Tracing::StreamRecorder.new(yielder) : yielder
           execute_stream(params, sink)
-          if sink.is_a?(Riffer::Tracing::StreamRecorder)
-            record_stream_outcome(span, sink)
-            record_token_usage_metric(model, sink.token_usage, tags)
-            record_cost_metric(model, sink.token_usage, tags)
-          end
+          record_stream_outcome(span, sink) if sink.is_a?(Riffer::Tracing::StreamRecorder)
         end
       end
     end
@@ -225,26 +213,14 @@ class Riffer::Providers::Base
   #--
   #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_chat_span(model, messages, options)
-    start = Riffer::Metrics.monotonic_now
-    error_type = nil #: String?
-    tags = options[:tags] || {} #: Hash[String, String]
-    begin
-      Riffer::Tracing.in_span(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client) do |span|
-        capture_input(span, messages)
-        yield span
-      rescue => error
-        # The backend records the exception and error status on the re-raise;
-        # error.type is the one semconv attribute it doesn't set.
-        span.set_attribute("error.type", error.class.name)
-        raise
-      end
+    Riffer::Tracing.in_span(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client) do |span|
+      capture_input(span, messages)
+      yield span
     rescue => error
-      # The inner rescue tags the span; capture error.type here too, at method
-      # scope, where the ensure can read it onto the metric.
-      error_type = error.class.name #: String?
+      # The backend records the exception and error status on the re-raise;
+      # error.type is the one semconv attribute it doesn't set.
+      span.set_attribute("error.type", error.class.name)
       raise
-    ensure
-      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: chat_metric_attributes(model, error_type, tags))
     end
   end
 
@@ -265,52 +241,12 @@ class Riffer::Providers::Base
     attributes.merge(tag_attributes(options[:tags] || {}))
   end
 
-  #--
-  #: (String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def chat_metric_base_attributes(model, tags = {})
-    attributes = {
-      "gen_ai.operation.name" => "chat",
-      "gen_ai.provider.name" => self.class.semconv_provider_name
-    } #: Hash[String, untyped]
-    attributes["gen_ai.request.model"] = model if model
-    attributes.merge(tag_attributes(tags))
-  end
-
-  #--
-  #: (String?, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def chat_metric_attributes(model, error_type, tags = {})
-    attributes = chat_metric_base_attributes(model, tags)
-    attributes["error.type"] = error_type if error_type
-    attributes
-  end
-
-  # Maps normalized tags to their namespaced span/metric attribute form. An
-  # empty map yields an empty hash, so merging it is a no-op.
+  # Maps normalized tags to their namespaced span attribute form. An empty map
+  # yields an empty hash, so merging it is a no-op.
   #--
   #: (Hash[String, String]) -> Hash[String, String]
   def tag_attributes(tags)
     tags.transform_keys { |key| "riffer.tag.#{key}" }
-  end
-
-  # Per-call only — the run level would double-count an aggregate.
-  #--
-  #: (String?, Riffer::Providers::TokenUsage?, ?Hash[String, String]) -> void
-  def record_token_usage_metric(model, usage, tags = {})
-    return unless usage
-
-    base = chat_metric_base_attributes(model, tags)
-    Riffer::Metrics::Instruments::TOKEN_USAGE.record(usage.input_tokens, attributes: base.merge("gen_ai.token.type" => "input"))
-    Riffer::Metrics::Instruments::TOKEN_USAGE.record(usage.output_tokens, attributes: base.merge("gen_ai.token.type" => "output"))
-  end
-
-  # Per-call only — the run level would double-count an aggregate.
-  #--
-  #: (String?, Riffer::Providers::TokenUsage?, ?Hash[String, String]) -> void
-  def record_cost_metric(model, usage, tags = {})
-    cost = usage&.cost
-    return unless cost
-
-    Riffer::Metrics::Instruments::COST.record(cost, attributes: chat_metric_base_attributes(model, tags))
   end
 
   #--

@@ -3273,66 +3273,6 @@ describe Riffer::Agent::Run do
     end
   end
 
-  describe "metrics" do
-    before do
-      skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
-      Riffer.config.metrics.enabled = true
-      @exporter = install_in_memory_meter_provider
-    end
-
-    after do
-      Riffer.config.metrics.enabled = true
-      Riffer.config.metrics.backend = nil
-    end
-
-    let(:agent_class) do
-      Class.new(Riffer::Agent) do
-        identifier "metered-agent"
-        model "mock/riffer-1"
-      end
-    end
-
-    # The agent records both a chat and an invoke_agent data point on the shared
-    # histogram, so select the invoke_agent point by operation name.
-    def invoke_agent_attributes
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.operation.duration" }
-      snapshot.data_points.find { |dp| dp.attributes["gen_ai.operation.name"] == "invoke_agent" }.attributes
-    end
-
-    it "records the invoke_agent operation attributes" do
-      agent_class.new.generate("Hello")
-      expect(invoke_agent_attributes).must_equal({
-        "gen_ai.operation.name" => "invoke_agent",
-        "gen_ai.provider.name" => "mock",
-        "gen_ai.request.model" => "riffer-1",
-        "gen_ai.agent.name" => "metered-agent"
-      })
-    end
-
-    it "records error.type when the run raises" do
-      agent = agent_class.new
-      agent.session.on_message { raise "boom" }
-      expect { agent.generate("Hello") }.must_raise(RuntimeError)
-      expect(invoke_agent_attributes["error.type"]).must_equal "RuntimeError"
-    end
-
-    it "records the duration when the stream drains" do
-      agent_class.new.stream("Hello").each { |_| }
-      expect(invoke_agent_attributes["gen_ai.operation.name"]).must_equal "invoke_agent"
-    end
-
-    it "never records token usage at the run level" do
-      agent = agent_class.new
-      agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
-      agent.generate("Hello")
-      @exporter.pull
-      snapshot = @exporter.metric_snapshots.find { |s| s.name == "gen_ai.client.token.usage" }
-      operations = snapshot.data_points.map { |dp| dp.attributes["gen_ai.operation.name"] }.uniq
-      expect(operations).must_equal ["chat"]
-    end
-  end
-
   describe "tags" do
     let(:agent_class) do
       Class.new(Riffer::Agent) do
@@ -3459,49 +3399,6 @@ describe Riffer::Agent::Run do
         agent_class.new.generate("Hello")
         tag_keys = span_named("invoke_agent").attributes.keys.grep(/\Ariffer\.tag\./)
         expect(tag_keys).must_be_empty
-      end
-    end
-
-    describe "metrics" do
-      before do
-        skip "opentelemetry metrics is not bundled" unless METRICS_SDK_AVAILABLE
-        Riffer.config.metrics.enabled = true
-        @exporter = install_in_memory_meter_provider
-      end
-
-      after do
-        Riffer.config.metrics.enabled = true
-        Riffer.config.metrics.backend = nil
-      end
-
-      def data_points(instrument)
-        @exporter.pull
-        @exporter.metric_snapshots.find { |s| s.name == instrument }.data_points
-      end
-
-      it "stamps riffer.tag.* on the duration metric for every operation" do
-        agent_class.new.generate("Hello", tags: {team: "growth"})
-        operations = data_points("gen_ai.client.operation.duration").map { |dp| dp.attributes["riffer.tag.team"] }.uniq
-        expect(operations).must_equal ["growth"]
-      end
-
-      it "stamps riffer.tag.* on the token usage metric" do
-        agent = agent_class.new
-        agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
-        agent.generate("Hello", tags: {team: "growth"})
-        tags = data_points("gen_ai.client.token.usage").map { |dp| dp.attributes["riffer.tag.team"] }.uniq
-        expect(tags).must_equal ["growth"]
-      end
-
-      it "stamps riffer.tag.* on the guardrail duration metric" do
-        klass = Class.new(Riffer::Agent) do
-          identifier "tagged-agent"
-          model "mock/riffer-1"
-        end
-        klass.guardrail(:before, with: RunTracingPassingGuardrail)
-        klass.new.generate("Hello", tags: {team: "growth"})
-        tags = data_points("riffer.guardrail.duration").map { |dp| dp.attributes["riffer.tag.team"] }.uniq
-        expect(tags).must_equal ["growth"]
       end
     end
   end

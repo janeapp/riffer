@@ -19,25 +19,6 @@ rescue LoadError
   false
 end
 
-# Metrics tests assert real instruments via the SDK's in-memory pull exporter.
-# The metrics SDK is a separate gem from the traces SDK, so it gets its own flag.
-METRICS_SDK_AVAILABLE = begin
-  require "opentelemetry-metrics-sdk"
-  true
-rescue LoadError
-  false
-end
-
-# Backend detection (`Riffer::Metrics::Otel.available?`) keys on the metrics
-# *API* gem — which the SDK depends on — so the Otel backend tests gate on the
-# API's presence, not the SDK's.
-METRICS_API_AVAILABLE = begin
-  require "opentelemetry-metrics-api"
-  true
-rescue LoadError
-  false
-end
-
 begin
   require "dotenv"
   Dotenv.load
@@ -81,13 +62,5 @@ def install_in_memory_tracer_provider
   provider = OpenTelemetry::SDK::Trace::TracerProvider.new
   provider.add_span_processor(OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter))
   Riffer.config.tracing.backend = Riffer::Tracing::Otel.build(provider: provider)
-  exporter
-end
-
-def install_in_memory_meter_provider
-  exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-  provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-  provider.add_metric_reader(exporter)
-  Riffer.config.metrics.backend = Riffer::Metrics::Otel.build(provider: provider)
   exporter
 end

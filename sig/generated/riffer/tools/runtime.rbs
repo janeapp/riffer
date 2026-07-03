@@ -56,12 +56,8 @@ class Riffer::Tools::Runtime
   # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
   def tool_span_attributes: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
 
-  # --
-  # : (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def tool_metric_attributes: (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
-
-  # Maps normalized tags to their namespaced span/metric attribute form. An
-  # empty map yields an empty hash, so merging it is a no-op.
+  # Maps normalized tags to their namespaced span attribute form. An empty map
+  # yields an empty hash, so merging it is a no-op.
   # --
   # : (Hash[String, String]) -> Hash[String, String]
   def tag_attributes: (Hash[String, String]) -> Hash[String, String]

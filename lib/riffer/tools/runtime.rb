@@ -23,7 +23,7 @@ class Riffer::Tools::Runtime
     # Each Runner worker runs in its own thread/fiber, where the OTEL context
     # starts empty — capture here so the execute_tool span parents correctly.
     # tags are an ordinary local captured in the block, so they reach the
-    # worker's span/metric without re-propagation.
+    # worker's span without re-propagation.
     trace_context = Riffer::Tracing.current_context
     @runner.map(tool_calls, context: context) do |tool_call|
       Riffer::Tracing.with_context(trace_context) do
@@ -61,22 +61,12 @@ class Riffer::Tools::Runtime
   #--
   #: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   def instrument_tool_call(tool_call, tags = {})
-    start = Riffer::Metrics.monotonic_now
-    error_type = nil #: String?
-    begin
-      result = in_tool_span(tool_call, tags) do |span|
-        response = yield
-        record_tool_outcome(span, response)
-        response
-      end
-      error_type = result.error_type&.to_s
-      [tool_call, result] #: [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
-    rescue => error
-      error_type = error.class.name #: String?
-      raise
-    ensure
-      Riffer::Metrics::Instruments::OPERATION_DURATION.record(Riffer::Metrics.monotonic_now - start, attributes: tool_metric_attributes(tool_call, error_type, tags))
+    result = in_tool_span(tool_call, tags) do |span|
+      response = yield
+      record_tool_outcome(span, response)
+      response
     end
+    [tool_call, result] #: [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   end
 
   #--
@@ -138,19 +128,8 @@ class Riffer::Tools::Runtime
     }.merge(tag_attributes(tags))
   end
 
-  #--
-  #: (Riffer::Messages::Assistant::ToolCall, String?, ?Hash[String, String]) -> Hash[String, untyped]
-  def tool_metric_attributes(tool_call, error_type, tags = {})
-    attributes = {
-      "gen_ai.operation.name" => "execute_tool",
-      "gen_ai.tool.name" => tool_call.name
-    } #: Hash[String, untyped]
-    attributes["error.type"] = error_type if error_type
-    attributes.merge(tag_attributes(tags))
-  end
-
-  # Maps normalized tags to their namespaced span/metric attribute form. An
-  # empty map yields an empty hash, so merging it is a no-op.
+  # Maps normalized tags to their namespaced span attribute form. An empty map
+  # yields an empty hash, so merging it is a no-op.
   #--
   #: (Hash[String, String]) -> Hash[String, String]
   def tag_attributes(tags)

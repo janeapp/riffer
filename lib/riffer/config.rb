@@ -106,47 +106,6 @@ class Riffer::Config
     end
   end
 
-  # Metrics-related global configuration, independent of +config.tracing+ so a
-  # host can run one signal without the other.
-  class Metrics
-    # Whether riffer records OTEL metric instruments; defaults to +true+, a
-    # no-op until a host wires an OTEL metrics SDK.
-    attr_reader :enabled #: bool
-
-    # The backend riffer routes measurements through; defaults to +nil+, a no-op.
-    # Riffer auto-detects no backend; assigning one is opt-in.
-    attr_reader :backend #: untyped
-
-    #--
-    #: () -> void
-    def initialize
-      @enabled = true
-      @backend = nil
-    end
-
-    # Sets the enabled flag, coercing boolean-ish values so an env-var
-    # +"false"+ (truthy in Ruby) doesn't silently keep metrics on. Raises
-    # Riffer::ArgumentError on an unrecognized value.
-    #--
-    #: (untyped) -> void
-    def enabled=(value)
-      @enabled = Riffer::Helpers::Boolean.coerce(value, attribute: "enabled")
-    end
-
-    # Sets the metrics backend riffer routes measurements through. Raises
-    # Riffer::ArgumentError unless the value is +nil+ or responds to
-    # +record_histogram+.
-    #--
-    #: (untyped) -> void
-    def backend=(value)
-      unless value.nil? || value.respond_to?(:record_histogram)
-        raise Riffer::ArgumentError, "metrics backend must respond to #record_histogram"
-      end
-      @backend = value
-      Riffer::Metrics.reset!
-    end
-  end
-
   # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer
   # ships no price table, so an unconfigured model carries no cost.
   class Pricing
@@ -306,9 +265,6 @@ class Riffer::Config
   # Tracing-related global configuration.
   attr_reader :tracing #: Riffer::Config::Tracing
 
-  # Metrics-related global configuration.
-  attr_reader :metrics #: Riffer::Config::Metrics
-
   # Consumer-configured per-model token pricing.
   attr_reader :pricing #: Riffer::Config::Pricing
 
@@ -357,7 +313,6 @@ class Riffer::Config
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
     @tracing = Tracing.new
-    @metrics = Metrics.new
     @pricing = Pricing.new
     @message_id_strategy = :none
     @experimental_history_healing = false
