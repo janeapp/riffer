@@ -15,13 +15,8 @@ class Riffer::Events::ChatCompleted < Riffer::Events::Base
   attr_reader finish_reason: Riffer::Providers::FinishReason?
 
   # --
-  # : (provider: String, duration: Float, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Riffer::Providers::FinishReason?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-  def initialize: (provider: String, duration: Float, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Riffer::Providers::FinishReason?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-
-  # The operation identifier.
-  # --
-  # : () -> Symbol
-  def operation: () -> Symbol
+  # : (provider: String, duration: Float, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Riffer::Providers::FinishReason?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (provider: String, duration: Float, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Riffer::Providers::FinishReason?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
 
   # The dotted event name.
   # --
@@ -32,4 +27,15 @@ class Riffer::Events::ChatCompleted < Riffer::Events::Base
   # --
   # : () -> Float?
   def cost: () -> Float?
+
+  # Provider, model, and the normalized finish reason, on top of the shared
+  # dimensions.
+  # --
+  # : () -> Hash[String, String]
+  def dimensions: () -> Hash[String, String]
+
+  # Duration, plus token counts and cost when the provider reported them.
+  # --
+  # : () -> Hash[String, Numeric]
+  def measurements: () -> Hash[String, Numeric]
 end

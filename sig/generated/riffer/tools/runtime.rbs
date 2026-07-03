@@ -43,8 +43,8 @@ class Riffer::Tools::Runtime
   # +:error+; the raised case has no result, so its type comes from the
   # exception.
   # --
-  # : (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::ToolExecuted
-  def build_tool_event: (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::ToolExecuted
+  # : (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Events::Outcome) -> Riffer::Events::ToolExecuted
+  def build_tool_event: (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Events::Outcome) -> Riffer::Events::ToolExecuted
 
   # --
   # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response

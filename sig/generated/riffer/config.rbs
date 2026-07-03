@@ -137,10 +137,12 @@ class Riffer::Config
     def backend=: (untyped) -> void
   end
 
-  # Event-bus configuration. Subscribers registered here receive every
-  # completion event riffer publishes; observability backends are subscribers.
+  # Event-bus configuration. Subscribers registered here receive the completion
+  # events riffer publishes; observability backends are subscribers. A
+  # subscriber can filter to one event type at registration, or take every
+  # event and pattern-match itself.
   class Events
-    @subscribers: Array[^(Riffer::Events::Base) -> void]
+    @subscriptions: Array[[ singleton(Riffer::Events::Base)?, ^(Riffer::Events::Base) -> void ]]
 
     @mutex: Thread::Mutex
 
@@ -156,14 +158,17 @@ class Riffer::Config
     def initialize: () -> void
 
     # Registers a subscriber — an object responding to +#call+, or a block — to
-    # receive every published event. A +nil+ subscriber is ignored, so wiring a
+    # receive published events. Pass an event class as the first argument to
+    # receive only that type (and its subclasses); omit it to receive every
+    # event and filter with a +case+. A +nil+ subscriber is ignored, so wiring a
     # backend whose builder returns +nil+ when its SDK is absent stays a
     # one-liner.
     # --
-    # : (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
-    def subscribe: (?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
+    # : (?(singleton(Riffer::Events::Base) | ^(Riffer::Events::Base) -> void)?, ?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
+    def subscribe: (?(singleton(Riffer::Events::Base) | ^(Riffer::Events::Base) -> void)?, ?(^(Riffer::Events::Base) -> void)?) ?{ (Riffer::Events::Base) -> void } -> (^(Riffer::Events::Base) -> void)?
 
-    # Removes a previously registered subscriber.
+    # Removes a previously registered subscriber, whatever type it was filtered
+    # to.
     # --
     # : ((^(Riffer::Events::Base) -> void)) -> void
     def unsubscribe: (^(Riffer::Events::Base) -> void) -> void
@@ -178,6 +183,13 @@ class Riffer::Config
     # --
     # : () -> Array[^(Riffer::Events::Base) -> void]
     def subscribers: () -> Array[^(Riffer::Events::Base) -> void]
+
+    # Yields each subscriber whose filter matches +event+, in registration
+    # order; a subscriber registered without a type matches every event. Takes a
+    # snapshot under the mutex so delivery runs outside the lock.
+    # --
+    # : (Riffer::Events::Base) { (^(Riffer::Events::Base) -> void) -> void } -> void
+    def each_subscriber: (Riffer::Events::Base) { (^(Riffer::Events::Base) -> void) -> void } -> void
 
     # Sets the handler invoked when a subscriber raises. Raises
     # Riffer::ArgumentError unless it responds to +#call+.

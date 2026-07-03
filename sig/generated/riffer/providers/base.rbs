@@ -91,17 +91,17 @@ class Riffer::Providers::Base
   REQUEST_PARAM_ATTRIBUTES: Hash[Symbol, String]
 
   # --
-  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
-  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
+  # : [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Events::Outcome) -> Riffer::Events::ChatCompleted) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
+  def in_chat_span: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Events::Outcome) -> Riffer::Events::ChatCompleted) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
 
-  # Defers reading the call outcome to publish time: +outcome+ returns the
+  # Defers reading the call outcome to publish time: +read_outcome+ returns the
   # token usage and finish reason as locals the chat block fills, so the event
   # carries final values even when an early error leaves them nil. The block
   # result is unused — for a streamed call the outcome lives on the recorder,
   # not the return value.
   # --
-  # : (String?, Hash[String, String]) { () -> [Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason?] } -> ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted
-  def chat_event_builder: (String?, Hash[String, String]) { () -> [ Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason? ] } -> ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted
+  # : (String?, Hash[String, String]) { () -> [Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason?] } -> ^(untyped, Riffer::Events::Outcome) -> Riffer::Events::ChatCompleted
+  def chat_event_builder: (String?, Hash[String, String]) { () -> [ Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason? ] } -> ^(untyped, Riffer::Events::Outcome) -> Riffer::Events::ChatCompleted
 
   # Reconstructs a FinishReason from a stream recorder, which holds the reason
   # and raw value separately rather than the value object.

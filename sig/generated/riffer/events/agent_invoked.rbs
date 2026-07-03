@@ -20,13 +20,8 @@ class Riffer::Events::AgentInvoked < Riffer::Events::Base
   attr_reader steps: Integer
 
   # --
-  # : (agent: String, provider: String, duration: Float, steps: Integer, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-  def initialize: (agent: String, provider: String, duration: Float, steps: Integer, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-
-  # The operation identifier.
-  # --
-  # : () -> Symbol
-  def operation: () -> Symbol
+  # : (agent: String, provider: String, duration: Float, steps: Integer, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (agent: String, provider: String, duration: Float, steps: Integer, ?model: String?, ?token_usage: Riffer::Providers::TokenUsage?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
 
   # The dotted event name.
   # --
@@ -37,4 +32,14 @@ class Riffer::Events::AgentInvoked < Riffer::Events::Base
   # --
   # : () -> Float?
   def cost: () -> Float?
+
+  # Agent, provider, and model, on top of the shared dimensions.
+  # --
+  # : () -> Hash[String, String]
+  def dimensions: () -> Hash[String, String]
+
+  # Duration and step count, plus aggregate token counts and cost when reported.
+  # --
+  # : () -> Hash[String, Numeric]
+  def measurements: () -> Hash[String, Numeric]
 end

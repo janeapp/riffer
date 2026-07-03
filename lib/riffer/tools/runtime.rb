@@ -61,11 +61,11 @@ class Riffer::Tools::Runtime
   #--
   #: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   def instrument_tool_call(tool_call, tags = {})
-    executed = Riffer::Instrumentation.instrument(
+    executed = Riffer::Events.observe(
       "execute_tool #{tool_call.name}",
       attributes: tool_span_attributes(tool_call, tags),
       kind: :internal,
-      event: ->(result, completion) { build_tool_event(tool_call, tags, result, completion) }
+      event: ->(result, outcome) { build_tool_event(tool_call, tags, result, outcome) }
     ) do |span|
       capture_tool_arguments(span, tool_call)
       response = yield
@@ -79,19 +79,16 @@ class Riffer::Tools::Runtime
   # +:error+; the raised case has no result, so its type comes from the
   # exception.
   #--
-  #: (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Instrumentation::Completion) -> Riffer::Events::ToolExecuted
-  def build_tool_event(tool_call, tags, result, completion)
-    final_error_type = completion.error_type || result&.error_type&.to_s
+  #: (Riffer::Messages::Assistant::ToolCall, Hash[String, String], Riffer::Tools::Response?, Riffer::Events::Outcome) -> Riffer::Events::ToolExecuted
+  def build_tool_event(tool_call, tags, result, outcome)
+    final_error_type = outcome.error_type || result&.error_type&.to_s
     Riffer::Events::ToolExecuted.new(
       tool: tool_call.name,
       call_id: tool_call.call_id,
       outcome: final_error_type ? :error : :success,
-      duration: completion.duration,
       error_type: final_error_type,
-      error: completion.error,
       tags: tags,
-      trace_id: completion.trace_id,
-      span_id: completion.span_id
+      **outcome.to_h
     )
   end
 

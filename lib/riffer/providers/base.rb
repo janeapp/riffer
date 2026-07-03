@@ -223,36 +223,32 @@ class Riffer::Providers::Base
   }.freeze #: Hash[Symbol, String]
 
   #--
-  #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
+  #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped], event: ^(untyped, Riffer::Events::Outcome) -> Riffer::Events::ChatCompleted) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
   def in_chat_span(model, messages, options, event:)
-    Riffer::Instrumentation.instrument(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client, event: event) do |span|
+    Riffer::Events.observe(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client, event: event) do |span|
       capture_input(span, messages)
       yield span
     end
   end
 
-  # Defers reading the call outcome to publish time: +outcome+ returns the
+  # Defers reading the call outcome to publish time: +read_outcome+ returns the
   # token usage and finish reason as locals the chat block fills, so the event
   # carries final values even when an early error leaves them nil. The block
   # result is unused — for a streamed call the outcome lives on the recorder,
   # not the return value.
   #--
-  #: (String?, Hash[String, String]) { () -> [Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason?] } -> ^(untyped, Riffer::Instrumentation::Completion) -> Riffer::Events::ChatCompleted
-  def chat_event_builder(model, tags, &outcome)
+  #: (String?, Hash[String, String]) { () -> [Riffer::Providers::TokenUsage?, Riffer::Providers::FinishReason?] } -> ^(untyped, Riffer::Events::Outcome) -> Riffer::Events::ChatCompleted
+  def chat_event_builder(model, tags, &read_outcome)
     provider = self.class.semconv_provider_name
-    ->(_result, completion) {
-      token_usage, finish_reason = outcome.call
+    ->(_result, outcome) {
+      token_usage, finish_reason = read_outcome.call
       Riffer::Events::ChatCompleted.new(
         provider: provider,
         model: model,
         token_usage: token_usage,
         finish_reason: finish_reason,
-        duration: completion.duration,
-        error_type: completion.error_type,
-        error: completion.error,
         tags: tags,
-        trace_id: completion.trace_id,
-        span_id: completion.span_id
+        **outcome.to_h
       )
     }
   end

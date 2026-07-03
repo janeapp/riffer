@@ -14,16 +14,16 @@ class Riffer::Events::GuardrailExecuted < Riffer::Events::Base
   attr_reader outcome: Symbol?
 
   # --
-  # : (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-  def initialize: (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error_type: String?, ?error: Exception?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
-
-  # The operation identifier.
-  # --
-  # : () -> Symbol
-  def operation: () -> Symbol
+  # : (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
+  def initialize: (guardrail: String, phase: Symbol, duration: Float, ?outcome: Symbol?, ?error: Exception?, ?error_type: String?, ?tags: Hash[String, String], ?trace_id: String?, ?span_id: String?) -> void
 
   # The dotted event name.
   # --
   # : () -> String
   def name: () -> String
+
+  # Guardrail, phase, and the result action, on top of the shared dimensions.
+  # --
+  # : () -> Hash[String, String]
+  def dimensions: () -> Hash[String, String]
 end
