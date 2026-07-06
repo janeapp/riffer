@@ -14,7 +14,7 @@ GEM
       connection_pool
       standardwebhooks
     ast (2.4.3)
-    async (2.41.0)
+    async (2.42.0)
       console (~> 1.29)
       fiber-annotation
       io-event (~> 1.11)
@@ -267,7 +267,7 @@ PLATFORMS
 
 DEPENDENCIES
   anthropic (~> 1.55.0)
-  async (~> 2.25, < 2.42)
+  async (~> 2.25, < 2.43)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
   faraday (>= 1.0)
