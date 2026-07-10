@@ -285,6 +285,16 @@ def self.semconv_provider_name
 end
 ```
 
+## Pricing Key
+
+[Pricing](../10_CONFIGURATION.md#pricing) rates are looked up by the `provider/model` id returned from `pricing_key`, which defaults to your registry name joined to the model. Override it when your provider routes to different backends, so it reports one stable declared id and consumers register rates once rather than against whichever backend executed:
+
+```ruby
+def pricing_key(model)
+  "my_provider/#{model}"
+end
+```
+
 ## Error Handling
 
 Raise appropriate Riffer errors:

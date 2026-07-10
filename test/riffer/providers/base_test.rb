@@ -19,6 +19,14 @@ class ChatTracingExplodingProvider < Riffer::Providers::Mock
   end
 end
 
+class DeclaredKeyProvider < Riffer::Providers::Mock
+  private
+
+  def pricing_key(model)
+    "jane/#{model}"
+  end
+end
+
 describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
@@ -39,6 +47,19 @@ describe Riffer::Providers::Base do
 
     it "falls back to unknown for anonymous classes" do
       expect(Class.new(Riffer::Providers::Base).semconv_provider_name).must_equal "unknown"
+    end
+  end
+
+  describe "#pricing_key" do
+    before { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
+    after { Riffer.instance_variable_set(:@config, Riffer::Config.new) }
+
+    it "resolves rates against the overridden declared id, independent of the concrete class" do
+      Riffer.config.pricing.set("jane/claude-sonnet-4-6", input: 3.0, output: 15.0)
+      provider = DeclaredKeyProvider.new
+      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      message = provider.generate_text(prompt: "x", model: "claude-sonnet-4-6")
+      expect(message.token_usage.cost).must_equal 18.0
     end
   end
 

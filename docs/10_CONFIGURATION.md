@@ -153,6 +153,8 @@ cost = (input − cache_read − cache_write) × input_rate
 
 (all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing — it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](08_MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
 
+The lookup key defaults to the declared `provider/model` id — the provider's registry name joined to the model you passed. A provider can override `Riffer::Providers::Base#pricing_key(model)` to return a different id, which is what a routing provider that delegates to different backends does: it returns one stable declared name so consumers register rates once instead of against whichever backend happened to execute.
+
 ### Message ID Strategy
 
 Opt in to stable identifiers on every message for logging, persistence, or replay:

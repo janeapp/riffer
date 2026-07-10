@@ -171,10 +171,22 @@ class Riffer::Providers::Base
     pricing = Riffer.config.pricing
     return nil if pricing.empty?
 
+    key = pricing_key(model)
+    return nil unless key
+
+    pricing.rates_for(key)
+  end
+
+  # An override seam: a routing provider that delegates to different backends
+  # overrides this to return a stable declared id, so consumers register rates
+  # once rather than against whichever backend happened to execute.
+  #--
+  #: (String) -> String?
+  def pricing_key(model)
     key = Riffer::Providers::Repository.key_for(self.class)
     return nil unless key
 
-    pricing.rates_for("#{key}/#{model}")
+    "#{key}/#{model}"
   end
 
   # Defaults to nil rather than raising — finish reasons are optional, so

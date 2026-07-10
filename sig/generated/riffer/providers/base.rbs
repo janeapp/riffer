@@ -73,6 +73,13 @@ class Riffer::Providers::Base
   # : () -> Riffer::Config::Pricing::Rates?
   def pricing_rates: () -> Riffer::Config::Pricing::Rates?
 
+  # An override seam: a routing provider that delegates to different backends
+  # overrides this to return a stable declared id, so consumers register rates
+  # once rather than against whichever backend happened to execute.
+  # --
+  # : (String) -> String?
+  def pricing_key: (String) -> String?
+
   # Defaults to nil rather than raising — finish reasons are optional, so
   # providers that don't report one stay valid.
   # --
