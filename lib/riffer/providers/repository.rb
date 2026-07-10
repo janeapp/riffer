@@ -2,11 +2,11 @@
 # rbs_inline: enabled
 
 # Resolves provider classes by identifier, combining the built-in REPO with
-# consumer registrations added through +register+.
+# consumer registrations added through +register+. Registration is not
+# synchronized — register during boot, before concurrent generation begins.
 module Riffer::Providers::Repository
   extend self
 
-  # @rbs @mutex: Thread::Mutex
   # @rbs @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
   # @rbs @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
 
@@ -20,13 +20,10 @@ module Riffer::Providers::Repository
     mock: -> { Riffer::Providers::Mock }
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  @mutex = Mutex.new
   @registrations = {} #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  # Registers a custom provider under +identifier+, resolved lazily by the
-  # block so the provider class need not be loaded at registration time. Takes
-  # precedence over a built-in sharing the identifier, and is idempotent —
-  # re-registering an identifier replaces the previous factory.
+  # Registers a custom provider under +identifier+, resolved lazily by the block.
+  # Takes precedence over a built-in sharing the identifier.
   #
   #   Riffer::Providers::Repository.register(:jane) { MyApp::JaneProvider }
   #
@@ -37,10 +34,8 @@ module Riffer::Providers::Repository
   def register(identifier, &factory)
     raise Riffer::ArgumentError, "register requires a block returning a provider class" unless factory
 
-    @mutex.synchronize do
-      @registrations[identifier.to_sym] = factory
-      @key_for = nil
-    end
+    @registrations[identifier.to_sym] = factory
+    @key_for = nil
   end
 
   # Removes a custom registration by identifier, leaving any built-in of the
@@ -48,10 +43,8 @@ module Riffer::Providers::Repository
   #--
   #: ((String | Symbol)) -> void
   def unregister(identifier)
-    @mutex.synchronize do
-      @registrations.delete(identifier.to_sym)
-      @key_for = nil
-    end
+    @registrations.delete(identifier.to_sym)
+    @key_for = nil
   end
 
   # Finds a provider class by identifier, preferring a custom registration over
@@ -61,15 +54,14 @@ module Riffer::Providers::Repository
   #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
   def find(identifier)
     key = identifier.to_sym
-    factory = @mutex.synchronize { @registrations[key] } || REPO[key]
-    factory&.call
+    (@registrations[key] || REPO[key])&.call
   end
 
   # Returns the registry identifier for a provider class, or nil when unregistered.
   #--
   #: (singleton(Riffer::Providers::Base)) -> Symbol?
   def key_for(provider_class)
-    @mutex.synchronize { @key_for ||= build_key_index }[provider_class]
+    (@key_for ||= build_key_index)[provider_class]
   end
 
   private

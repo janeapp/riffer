@@ -137,13 +137,15 @@ end
 
 ## Registering Your Provider
 
-Register your provider under an identifier — from an initializer or anywhere during boot:
+Register your provider under an identifier.
 
 ```ruby
 Riffer::Providers::Repository.register(:my_provider) { Riffer::Providers::MyProvider }
 ```
 
 The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Both `find` and `key_for` (used for pricing and observability keys) honor the registration. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
+
+Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.
 
 ## Using Your Provider
 

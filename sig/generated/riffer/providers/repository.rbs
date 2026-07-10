@@ -1,20 +1,17 @@
 # Generated from lib/riffer/providers/repository.rb with RBS::Inline
 
 # Resolves provider classes by identifier, combining the built-in REPO with
-# consumer registrations added through +register+.
+# consumer registrations added through +register+. Registration is not
+# synchronized — register during boot, before concurrent generation begins.
 module Riffer::Providers::Repository
-  @mutex: Thread::Mutex
-
   @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
 
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  # Registers a custom provider under +identifier+, resolved lazily by the
-  # block so the provider class need not be loaded at registration time. Takes
-  # precedence over a built-in sharing the identifier, and is idempotent —
-  # re-registering an identifier replaces the previous factory.
+  # Registers a custom provider under +identifier+, resolved lazily by the block.
+  # Takes precedence over a built-in sharing the identifier.
   #
   #   Riffer::Providers::Repository.register(:jane) { MyApp::JaneProvider }
   #
