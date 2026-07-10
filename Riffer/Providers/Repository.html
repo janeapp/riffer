@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="module Riffer::Providers::Repository: Registry for finding provider classes by identifier."
+      content="module Riffer::Providers::Repository: Resolves provider classes by identifier, combining the built-in REPO with consumer registrations added through +register+. Registration is not synchro"
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Registry for finding provider classes by identifier.">
+    <meta property="og:description" content="Resolves provider classes by identifier, combining the built-in REPO with consumer registrations added through +register+. Registration is not synchro">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Registry for finding provider classes by identifier.">
+    <meta name="twitter:description" content="Resolves provider classes by identifier, combining the built-in REPO with consumer registrations added through +register+. Registration is not synchro">
 
 
 
@@ -673,6 +673,10 @@
 
         <li ><a href="#method-i-key_for">key_for</a></li>
 
+        <li ><a href="#method-i-register">register</a></li>
+
+        <li ><a href="#method-i-unregister">unregister</a></li>
+
       </ul>
     </details>
   </div>
@@ -729,7 +733,7 @@
 
   <section class="description">
     
-<p>Registry for finding provider classes by identifier.</p>
+<p>Resolves provider classes by identifier, combining the built-in <a href="Repository.html#REPO"><code>REPO</code></a> with consumer registrations added through <code>register</code>. Registration is not synchronized — register during boot, before concurrent generation begins.</p>
 
   </section>
 
@@ -751,7 +755,7 @@
 
         <dd>
 
-          <p>@rbs @key_for: Hash[singleton(<a href="Base.html"><code>Riffer::Providers::Base</code></a>), Symbol]?</p>
+          <p>@rbs @registrations: Hash[Symbol, ^() -&gt; singleton(<a href="Base.html"><code>Riffer::Providers::Base</code></a>)] @rbs @key_for: Hash[singleton(<a href="Base.html"><code>Riffer::Providers::Base</code></a>), Symbol]?</p>
         </dd>
 
 
@@ -796,9 +800,10 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/repository.rb, line 24</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/repository.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
-  <span class="ruby-constant">REPO</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-keyword">nil</span>)&amp;.<span class="ruby-identifier">call</span>
+  <span class="ruby-identifier">key</span> = <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_sym</span>
+  (<span class="ruby-ivar">@registrations</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">REPO</span>[<span class="ruby-identifier">key</span>])&amp;.<span class="ruby-identifier">call</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -807,7 +812,7 @@
         <div class="method-description">
 
 
-          <p>Finds a provider class by identifier.</p>
+          <p>Finds a provider class by identifier, preferring a custom registration over a built-in of the same name.</p>
 
 
         </div>
@@ -838,9 +843,9 @@
             </details>
           </div>
           <div class="method-source-code" id="key_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/repository.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/repository.rb, line 63</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">key_for</span>(<span class="ruby-identifier">provider_class</span>)
-  (<span class="ruby-ivar">@key_for</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">REPO</span>.<span class="ruby-identifier">to_h</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">factory</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">factory</span>.<span class="ruby-identifier">call</span>, <span class="ruby-identifier">key</span>] })[<span class="ruby-identifier">provider_class</span>]
+  (<span class="ruby-ivar">@key_for</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">build_key_index</span>)[<span class="ruby-identifier">provider_class</span>]
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -850,6 +855,99 @@
 
 
           <p>Returns the registry identifier for a provider class, or nil when unregistered.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-register" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-register" title="Link to this method">
+                <span class="method-name">register</span>
+                <span class="method-args">(identifier, &amp;factory)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="register-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/repository.rb, line 34</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">register</span>(<span class="ruby-identifier">identifier</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">factory</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;register requires a block returning a provider class&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">factory</span>
+
+  <span class="ruby-ivar">@registrations</span>[<span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-identifier">factory</span>
+  <span class="ruby-ivar">@key_for</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Registers a custom provider under <code>identifier</code>, resolved lazily by the block. Takes precedence over a built-in sharing the identifier.</p>
+
+<pre class="ruby"><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">register</span>(<span class="ruby-value">:jane</span>) { <span class="ruby-constant">MyApp</span><span class="ruby-operator">::</span><span class="ruby-constant">JaneProvider</span> }
+</pre>
+
+<p>Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> when called without a block.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-unregister" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-unregister" title="Link to this method">
+                <span class="method-name">unregister</span>
+                <span class="method-args">(identifier)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="unregister-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/repository.rb, line 45</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unregister</span>(<span class="ruby-identifier">identifier</span>)
+  <span class="ruby-ivar">@registrations</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_sym</span>)
+  <span class="ruby-ivar">@key_for</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Removes a custom registration by identifier, leaving any built-in of the same name intact.</p>
 
 
         </div>

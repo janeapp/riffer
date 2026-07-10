@@ -803,28 +803,14 @@
 <span id="label-Registering+Your+Provider" class="legacy-anchor"></span>
 <h2 id="registering-your-provider"><a href="#registering-your-provider">Registering Your Provider</a></h2>
 
-<p>Add your provider to the repository:</p>
+<p>Register your provider under an identifier.</p>
 
-<pre class="ruby"><span class="ruby-comment"># In lib/riffer/providers/repository.rb or your own code</span>
-
-<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span><span class="ruby-operator">::</span><span class="ruby-constant">REPO</span>[<span class="ruby-value">:my_provider</span>] = <span class="ruby-operator">-&gt;</span> { <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span> }
+<pre class="ruby"><span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">register</span>(<span class="ruby-value">:my_provider</span>) { <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span> }
 </pre>
 
-<p>Or create a custom repository:</p>
+<p>The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. <code>openai</code>) through your own backend. Both <code>find</code> and <code>key_for</code> (used for pricing and observability keys) honor the registration. Remove one with <code>Riffer::Providers::Repository.unregister(:my_provider)</code>.</p>
 
-<pre class="ruby"><span class="ruby-keyword">module</span> <span class="ruby-constant">MyApp</span>
-  <span class="ruby-keyword">module</span> <span class="ruby-constant">Providers</span>
-    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
-      <span class="ruby-keyword">case</span> <span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_sym</span>
-      <span class="ruby-keyword">when</span> <span class="ruby-value">:my_provider</span>
-        <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">MyProvider</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Providers</span><span class="ruby-operator">::</span><span class="ruby-constant">Repository</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">identifier</span>)
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-</pre>
+<p>Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.</p>
 
 <span id="label-Using+Your+Provider" class="legacy-anchor"></span>
 <h2 id="using-your-provider"><a href="#using-your-provider">Using Your Provider</a></h2>
