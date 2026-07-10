@@ -62,4 +62,72 @@ describe Riffer::Providers::Repository do
       expect(Riffer::Providers::Repository.key_for(String)).must_be_nil
     end
   end
+
+  describe ".register" do
+    after do
+      %i[jane openai].each { |id| Riffer::Providers::Repository.unregister(id) }
+    end
+
+    it "resolves a registered custom provider via find" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { custom }
+      expect(Riffer::Providers::Repository.find(:jane)).must_equal custom
+    end
+
+    it "resolves a registered custom provider from a string identifier" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { custom }
+      expect(Riffer::Providers::Repository.find("jane")).must_equal custom
+    end
+
+    it "takes precedence over a built-in sharing the identifier" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:openai) { custom }
+      expect(Riffer::Providers::Repository.find(:openai)).must_equal custom
+    end
+
+    it "replaces the previous factory when re-registering the same identifier" do
+      first = Class.new(Riffer::Providers::Base)
+      second = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { first }
+      Riffer::Providers::Repository.register(:jane) { second }
+      expect(Riffer::Providers::Repository.find(:jane)).must_equal second
+    end
+
+    it "makes key_for return the registered identifier" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { custom }
+      expect(Riffer::Providers::Repository.key_for(custom)).must_equal :jane
+    end
+
+    it "does not add custom registrations to the built-in REPO" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { custom }
+      expect(Riffer::Providers::Repository::REPO).wont_include(:jane)
+    end
+
+    it "raises Riffer::ArgumentError without a block" do
+      expect { Riffer::Providers::Repository.register(:jane) }.must_raise(Riffer::ArgumentError)
+    end
+  end
+
+  describe ".unregister" do
+    it "removes a custom registration" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { custom }
+      Riffer::Providers::Repository.unregister(:jane)
+      expect(Riffer::Providers::Repository.find(:jane)).must_be_nil
+    end
+
+    it "restores the built-in shadowed by a custom registration" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:openai) { custom }
+      Riffer::Providers::Repository.unregister(:openai)
+      expect(Riffer::Providers::Repository.find(:openai)).must_equal Riffer::Providers::OpenAI
+    end
+
+    it "does not raise when the identifier is not registered" do
+      expect(Riffer::Providers::Repository.unregister(:never_registered)).must_be_nil
+    end
+  end
 end
