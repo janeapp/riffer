@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.37.0](https://github.com/janeapp/riffer/compare/riffer/v0.36.0...riffer/v0.37.0) (2026-07-10)
+
+
+### Features
+
+* **providers:** first-class provider registration API ([#353](https://github.com/janeapp/riffer/issues/353)) ([551d80b](https://github.com/janeapp/riffer/commit/551d80bf615de813629768156c6674d232877150))
+
 ## [0.36.0](https://github.com/janeapp/riffer/compare/riffer/v0.35.0...riffer/v0.36.0) (2026-07-03)
 
 
