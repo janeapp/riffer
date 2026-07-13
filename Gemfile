@@ -12,5 +12,5 @@ gem "guard-shell"
 # Gemfile group (not gemspec dev deps) so the no-OTEL CI lane can exclude it
 # with BUNDLE_WITHOUT and prove the Null fallback.
 group :opentelemetry do
-  gem "opentelemetry-sdk", "~> 1.8"
+  gem "opentelemetry-sdk", "~> 1.12"
 end
