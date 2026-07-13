@@ -36,6 +36,11 @@ describe Riffer::Skills::MarkdownAdapter do
     it "instructs the model not to re-activate skills already in context" do
       assert_includes adapter.render_catalog(skills), "instead of activating the skill again"
     end
+
+    it "keeps a multi-line description within its list item" do
+      skill = Riffer::Skills::Frontmatter.new(name: "code-review", description: "Reviews code.\nUse for pull requests.\n")
+      assert_includes adapter.render_catalog([skill]), "- **code-review**: Reviews code. Use for pull requests."
+    end
   end
 
   describe "#render_activation" do
