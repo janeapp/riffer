@@ -1,0 +1,61 @@
+# Generated from lib/riffer/workflow/step.rb with RBS::Inline
+
+# Base class for workflow steps. Subclasses declare +input+/+output+ contracts
+# and implement +#execute+.
+#
+#   class FormatMessage < Riffer::Workflow::Step
+#     input do
+#       required :message, String
+#     end
+#
+#     output do
+#       required :formatted, String
+#     end
+#
+#     def execute(message:)
+#       {formatted: message.upcase}
+#     end
+#   end
+class Riffer::Workflow::Step
+  self.@input_params: Riffer::Params?
+
+  self.@output_params: Riffer::Params?
+
+  self.@identifier_value: String?
+
+  self.@uses: Array[Module]?
+
+  @context: Hash[Symbol, untyped]?
+
+  # The workflow-level context passed at construction time.
+  attr_reader context: Hash[Symbol, untyped]?
+
+  # --
+  # : (?context: Hash[Symbol, untyped]?) -> void
+  def initialize: (?context: Hash[Symbol, untyped]?) -> void
+
+  # Gets or sets the step identifier. Defaults to the snake_case class name.
+  # --
+  # : (?String?) -> String
+  def self.identifier: (?String?) -> String
+
+  # Defines the input contract using the Params DSL.
+  # --
+  # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def self.input: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+
+  # Defines the output contract using the Params DSL.
+  # --
+  # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+  def self.output: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
+
+  # Declares agents or tools this step depends on (for visualization).
+  # --
+  # : (*Module) -> Array[Module]
+  def self.uses: (*Module) -> Array[Module]
+
+  # Executes the step. Subclasses must override this.
+  # --
+  # : (**untyped) -> Hash[Symbol, untyped]
+  def execute: (**untyped) -> Hash[Symbol, untyped]
+end

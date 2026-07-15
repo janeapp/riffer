@@ -1,0 +1,68 @@
+# Generated from lib/riffer/workflow.rb with RBS::Inline
+
+# Base class for workflows. Subclass it and declare steps to build a sequential
+# pipeline.
+#
+#   class HelpDeskWorkflow < Riffer::Workflow
+#     step CategorizeRequest
+#     step FetchAccount
+#     step DraftReply
+#   end
+#
+#   result = HelpDeskWorkflow.execute(
+#     {message: "I can't log in"},
+#     context: {patient_id: "patient_123"}
+#   )
+class Riffer::Workflow
+  self.@steps: Array[singleton(Riffer::Workflow::Step)]?
+
+  self.@identifier_value: String?
+
+  @context: Hash[Symbol, untyped]?
+
+  # The workflow-level context.
+  attr_reader context: Hash[Symbol, untyped]?
+
+  # Gets or sets the workflow identifier. Defaults to the snake_case class name.
+  # --
+  # : (?String?) -> String
+  def self.identifier: (?String?) -> String
+
+  # Registers a step class in the workflow pipeline.
+  # --
+  # : (singleton(Riffer::Workflow::Step)) -> void
+  def self.step: (singleton(Riffer::Workflow::Step)) -> void
+
+  # Returns the registered step classes.
+  # --
+  # : () -> Array[singleton(Riffer::Workflow::Step)]
+  def self.steps: () -> Array[singleton(Riffer::Workflow::Step)]
+
+  # Convenience class method. Creates a new instance and runs the workflow.
+  # --
+  # : (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?) -> Riffer::Workflow::Result
+  def self.execute: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?) -> Riffer::Workflow::Result
+
+  # Returns a Mermaid flowchart string of the step pipeline.
+  # --
+  # : () -> String
+  def self.to_mermaid: () -> String
+
+  # Prints a text summary of the workflow to +$stdout+.
+  # --
+  # : () -> void
+  def self.describe: () -> void
+
+  # --
+  # : (singleton(Riffer::Workflow::Step)) -> String
+  def self.mermaid_node: (singleton(Riffer::Workflow::Step)) -> String
+
+  # --
+  # : (?context: Hash[Symbol, untyped]?) -> void
+  def initialize: (?context: Hash[Symbol, untyped]?) -> void
+
+  # Runs the workflow pipeline with the given input.
+  # --
+  # : (**untyped) -> Riffer::Workflow::Result
+  def execute: (**untyped) -> Riffer::Workflow::Result
+end

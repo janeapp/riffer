@@ -1,0 +1,45 @@
+# Generated from lib/riffer/workflow/step_result.rb with RBS::Inline
+
+# Captures the outcome of a single step within a workflow run.
+class Riffer::Workflow::StepResult
+  @status: Symbol
+
+  @output: Hash[Symbol, untyped]?
+
+  @error: StandardError?
+
+  @payload: Hash[Symbol, untyped]?
+
+  # The step status: +:success+, +:failed+, or +:pending+.
+  attr_reader status: Symbol
+
+  # The validated output hash, or +nil+ unless the step succeeded.
+  attr_reader output: Hash[Symbol, untyped]?
+
+  # The captured exception, or +nil+ unless the step failed.
+  attr_reader error: StandardError?
+
+  # The input received by this step, or +nil+ when pending.
+  attr_reader payload: Hash[Symbol, untyped]?
+
+  # --
+  # : (status: Symbol, ?output: Hash[Symbol, untyped]?, ?error: StandardError?, ?payload: Hash[Symbol, untyped]?) -> void
+  def initialize: (status: Symbol, ?output: Hash[Symbol, untyped]?, ?error: StandardError?, ?payload: Hash[Symbol, untyped]?) -> void
+
+  # --
+  # : () -> bool
+  def success?: () -> bool
+
+  # --
+  # : () -> bool
+  def failed?: () -> bool
+
+  # --
+  # : () -> bool
+  def pending?: () -> bool
+
+  # Returns a hash representation of this step result.
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+end

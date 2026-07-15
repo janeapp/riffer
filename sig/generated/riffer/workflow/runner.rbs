@@ -1,0 +1,30 @@
+# Generated from lib/riffer/workflow/runner.rb with RBS::Inline
+
+# Sequentially executes a workflow's steps, validating input/output at each
+# boundary and capturing per-step results.
+module Riffer::Workflow::Runner
+  # Runs the given step classes in order, threading each step's output into the
+  # next step's input.
+  # --
+  # : (steps: Array[singleton(Riffer::Workflow::Step)], input: Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?) -> Riffer::Workflow::Result
+  def execute: (steps: Array[singleton(Riffer::Workflow::Step)], input: Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?) -> Riffer::Workflow::Result
+
+  private
+
+  # --
+  # : (singleton(Riffer::Workflow::Step), Hash[Symbol, untyped], Hash[Symbol, untyped]?) -> Riffer::Workflow::StepResult
+  def run_step: (singleton(Riffer::Workflow::Step), Hash[Symbol, untyped], Hash[Symbol, untyped]?) -> Riffer::Workflow::StepResult
+
+  # --
+  # : (singleton(Riffer::Workflow::Step), Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def validate_input: (singleton(Riffer::Workflow::Step), Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # --
+  # : (singleton(Riffer::Workflow::Step), Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def validate_output: (singleton(Riffer::Workflow::Step), Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # Marks remaining steps as pending after a failure.
+  # --
+  # : (Array[singleton(Riffer::Workflow::Step)], Hash[String, Riffer::Workflow::StepResult]) -> void
+  def mark_pending: (Array[singleton(Riffer::Workflow::Step)], Hash[String, Riffer::Workflow::StepResult]) -> void
+end
