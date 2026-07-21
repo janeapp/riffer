@@ -263,6 +263,8 @@ class Riffer::Providers::Base
   def record_stream_outcome(span, recorder)
     Riffer::Tracing.record_usage(span, recorder.token_usage)
     record_finish_reason(span, recorder.finish_reason, recorder.raw_finish_reason)
+    time_to_first_chunk = recorder.time_to_first_chunk
+    span.set_attribute("gen_ai.response.time_to_first_chunk", time_to_first_chunk) if time_to_first_chunk
     capture_output(span, content: recorder.content, tool_calls: recorder.tool_calls, finish_reason: recorder.finish_reason)
   end
 

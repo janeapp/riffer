@@ -147,6 +147,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | `riffer.cost`                              | float    | When the call's model was priced                                              |
 | `gen_ai.response.finish_reasons`           | string[] | When the provider reported a finish reason                                    |
 | `riffer.finish_reason.raw`                 | string   | When the raw value differs from the normalized one                            |
+| `gen_ai.response.time_to_first_chunk`      | float    | Streaming only — seconds from request issuance to the first stream event      |
 | `gen_ai.input.messages`                    | string   | When `capture_messages` is on (JSON; see [capture](#message-content-capture)) |
 | `gen_ai.system_instructions`               | string   | When `capture_messages` is on and a system prompt exists                      |
 | `gen_ai.output.messages`                   | string   | When `capture_messages` is on (JSON)                                          |
