@@ -19,6 +19,13 @@ class ChatTracingExplodingProvider < Riffer::Providers::Mock
   end
 end
 
+class ChatTracingSilentStreamProvider < Riffer::Providers::Mock
+  private
+
+  def execute_stream(params, yielder)
+  end
+end
+
 describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
@@ -404,6 +411,22 @@ describe Riffer::Providers::Base do
     it "records the finish reason from the stream" do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
       expect(chat_span.attributes["gen_ai.response.finish_reasons"]).must_equal ["stop"]
+    end
+
+    it "stamps the time to first chunk on the streamed span" do
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      expect(chat_span.attributes["gen_ai.response.time_to_first_chunk"]).must_be :>, 0
+    end
+
+    it "omits the time to first chunk when the stream yields no events" do
+      silent = ChatTracingSilentStreamProvider.new
+      silent.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+      expect(chat_span.attributes).wont_include "gen_ai.response.time_to_first_chunk"
+    end
+
+    it "keeps the time to first chunk off the generate_text span" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+      expect(chat_span.attributes).wont_include "gen_ai.response.time_to_first_chunk"
     end
 
     it "parents the chat span to the trace active at the call" do
