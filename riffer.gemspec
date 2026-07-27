@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "faraday", ">= 1.0"
   spec.add_development_dependency "mcp", "~> 0.8"
   spec.add_development_dependency "openai", "~> 0.71.0"
-  spec.add_development_dependency "async", "~> 2.25", "< 2.43"
+  spec.add_development_dependency "async", "~> 2.25", "< 2.44"
   spec.add_development_dependency "io-event", "< 1.20"
 
   # Testing
