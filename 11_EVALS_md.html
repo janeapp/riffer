@@ -790,9 +790,11 @@
 
 <p>The runner returns a <a href="Riffer/Evals/RunResult.html"><code>Riffer::Evals::RunResult</code></a>:</p>
 
-<pre class="ruby"><span class="ruby-identifier">result</span>.<span class="ruby-identifier">scores</span>             <span class="ruby-comment"># =&gt; { EvaluatorClass =&gt; avg_score } across all scenarios</span>
-<span class="ruby-identifier">result</span>.<span class="ruby-identifier">scenario_results</span>   <span class="ruby-comment"># =&gt; Array of ScenarioResult objects</span>
-<span class="ruby-identifier">result</span>.<span class="ruby-identifier">to_h</span>               <span class="ruby-comment"># =&gt; Hash representation</span>
+<pre class="ruby"><span class="ruby-identifier">result</span>.<span class="ruby-identifier">scores</span>                  <span class="ruby-comment"># =&gt; { EvaluatorClass =&gt; avg_score } across all scenarios</span>
+<span class="ruby-identifier">result</span>.<span class="ruby-identifier">scenario_results</span>        <span class="ruby-comment"># =&gt; Array of ScenarioResult objects</span>
+<span class="ruby-identifier">result</span>.<span class="ruby-identifier">token_usage</span>             <span class="ruby-comment"># =&gt; TokenUsage the agent under test spent, summed across scenarios (nil if none reported)</span>
+<span class="ruby-identifier">result</span>.<span class="ruby-identifier">evaluator_token_usage</span>   <span class="ruby-comment"># =&gt; TokenUsage the judges spent, summed across scenarios (nil if no judge ran)</span>
+<span class="ruby-identifier">result</span>.<span class="ruby-identifier">to_h</span>                    <span class="ruby-comment"># =&gt; Hash representation</span>
 </pre>
 
 <span id="label-ScenarioResult" class="legacy-anchor"></span>
@@ -801,13 +803,15 @@
 <p>Each scenario produces a <a href="Riffer/Evals/ScenarioResult.html"><code>Riffer::Evals::ScenarioResult</code></a>:</p>
 
 <pre class="ruby"><span class="ruby-identifier">scenario</span> = <span class="ruby-identifier">result</span>.<span class="ruby-identifier">scenario_results</span>.<span class="ruby-identifier">first</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">input</span>        <span class="ruby-comment"># =&gt; &quot;What is the capital of France?&quot;</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">output</span>       <span class="ruby-comment"># =&gt; &quot;The capital of France is Paris.&quot;</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">ground_truth</span> <span class="ruby-comment"># =&gt; &quot;Paris&quot;</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">scores</span>       <span class="ruby-comment"># =&gt; { EvaluatorClass =&gt; score } for this scenario</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">results</span>      <span class="ruby-comment"># =&gt; Array of Result objects</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">messages</span>     <span class="ruby-comment"># =&gt; Array of Message objects (system, user, assistant, tool)</span>
-<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">to_h</span>         <span class="ruby-comment"># =&gt; Hash representation</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">input</span>                  <span class="ruby-comment"># =&gt; &quot;What is the capital of France?&quot;</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">output</span>                 <span class="ruby-comment"># =&gt; &quot;The capital of France is Paris.&quot;</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">ground_truth</span>           <span class="ruby-comment"># =&gt; &quot;Paris&quot;</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">scores</span>                 <span class="ruby-comment"># =&gt; { EvaluatorClass =&gt; score } for this scenario</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">results</span>                <span class="ruby-comment"># =&gt; Array of Result objects</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">messages</span>               <span class="ruby-comment"># =&gt; Array of Message objects (system, user, assistant, tool)</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">token_usage</span>            <span class="ruby-comment"># =&gt; TokenUsage the agent under test spent on this scenario (nil if not reported)</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">evaluator_token_usage</span>  <span class="ruby-comment"># =&gt; TokenUsage the judges spent on this scenario (nil if no judge ran)</span>
+<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">to_h</span>                   <span class="ruby-comment"># =&gt; Hash representation</span>
 </pre>
 
 <span id="label-Result" class="legacy-anchor"></span>
@@ -820,7 +824,12 @@
 <span class="ruby-identifier">r</span>.<span class="ruby-identifier">score</span>            <span class="ruby-comment"># =&gt; 0.92</span>
 <span class="ruby-identifier">r</span>.<span class="ruby-identifier">reason</span>           <span class="ruby-comment"># =&gt; &quot;The response directly addresses...&quot;</span>
 <span class="ruby-identifier">r</span>.<span class="ruby-identifier">higher_is_better</span> <span class="ruby-comment"># =&gt; true</span>
+<span class="ruby-identifier">r</span>.<span class="ruby-identifier">token_usage</span>      <span class="ruby-comment"># =&gt; TokenUsage for the judge call (nil for rule-based evaluators)</span>
 </pre>
+
+<p><a href="lib/riffer/providers/token_usage_rb.html">token_usage</a> is a <a href="Riffer/Providers/TokenUsage.html"><code>Riffer::Providers::TokenUsage</code></a>, the same type the agent exposes on <code>Agent::Response</code>, so eval usage accumulates with the <code>+</code> operator just like agent usage. On a <code>Result</code> it’s populated for LLM-as-judge evaluators and <code>nil</code> for rule-based ones that never call an LLM.</p>
+
+<p><code>ScenarioResult</code> and <code>RunResult</code> keep the two sources separate rather than exposing a single total: <a href="lib/riffer/providers/token_usage_rb.html">token_usage</a> is what the agent under test spent generating the output, and <code>evaluator_token_usage</code> is what the judges spent scoring it. Add them yourself if you want a combined figure.</p>
 
 <span id="label-Defining+Custom+Evaluators" class="legacy-anchor"></span>
 <h2 id="defining-custom-evaluators"><a href="#defining-custom-evaluators">Defining Custom Evaluators</a></h2>
@@ -878,7 +887,7 @@
 </li><li>
 <p><code>judge</code> - Returns a Judge instance for LLM-as-judge calls</p>
 </li><li>
-<p><code>result(score:, reason:, metadata:)</code> - Helper to build Result objects</p>
+<p><code>result(score:, reason:, metadata:, token_usage:)</code> - Helper to build Result objects</p>
 </li></ul>
 
 <span id="label-Advanced-3A+Custom+Evaluate+Override" class="legacy-anchor"></span>

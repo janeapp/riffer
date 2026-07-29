@@ -861,6 +861,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-token_usage" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-token_usage" title="Link to this attribute">
+            <span class="method-name">token_usage</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Token usage for the judge call that produced this result, when the evaluator used an LLM. Nil for rule-based evaluators.</p>
+
+        </div>
+      </div>
+
     </section>
 
 
@@ -880,7 +896,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(evaluator:, score:, reason: nil, metadata: {}, higher_is_better: true)</span>
+                <span class="method-args">(evaluator:, score:, reason: nil, metadata: {}, higher_is_better: true, token_usage: nil)</span>
               </a>
             </div>
 
@@ -893,14 +909,15 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/result.rb, line 24</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">evaluator:</span>, <span class="ruby-value">score:</span>, <span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">metadata:</span> {}, <span class="ruby-value">higher_is_better:</span> <span class="ruby-keyword">true</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/result.rb, line 28</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">evaluator:</span>, <span class="ruby-value">score:</span>, <span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">metadata:</span> {}, <span class="ruby-value">higher_is_better:</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@evaluator</span> = <span class="ruby-identifier">evaluator</span>
   <span class="ruby-ivar">@score</span> = <span class="ruby-identifier">score</span>.<span class="ruby-identifier">to_f</span>
   <span class="ruby-identifier">validate_score!</span>
   <span class="ruby-ivar">@reason</span> = <span class="ruby-identifier">reason</span>
   <span class="ruby-ivar">@metadata</span> = <span class="ruby-identifier">metadata</span>
   <span class="ruby-ivar">@higher_is_better</span> = <span class="ruby-identifier">higher_is_better</span>
+  <span class="ruby-ivar">@token_usage</span> = <span class="ruby-identifier">token_usage</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -954,14 +971,15 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/result.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/result.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   {
     <span class="ruby-value">evaluator:</span> <span class="ruby-identifier">evaluator</span>.<span class="ruby-identifier">name</span>,
     <span class="ruby-value">score:</span> <span class="ruby-identifier">score</span>,
     <span class="ruby-value">reason:</span> <span class="ruby-identifier">reason</span>,
     <span class="ruby-value">metadata:</span> <span class="ruby-identifier">metadata</span>,
-    <span class="ruby-value">higher_is_better:</span> <span class="ruby-identifier">higher_is_better</span>
+    <span class="ruby-value">higher_is_better:</span> <span class="ruby-identifier">higher_is_better</span>,
+    <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>&amp;.<span class="ruby-identifier">to_h</span>
   }
 <span class="ruby-keyword">end</span></pre>
           </div>

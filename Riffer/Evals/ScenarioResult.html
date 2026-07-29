@@ -703,6 +703,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-evaluator_token_usage">evaluator_token_usage</a></li>
+
         <li ><a href="#method-i-scores">scores</a></li>
 
         <li ><a href="#method-i-to_h">to_h</a></li>
@@ -863,6 +865,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-token_usage" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-token_usage" title="Link to this attribute">
+            <span class="method-name">token_usage</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>Token usage the agent under test spent generating this scenario’s output.</p>
+
+        </div>
+      </div>
+
     </section>
 
 
@@ -882,7 +900,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(input:, output:, ground_truth:, results:, messages: [])</span>
+                <span class="method-args">(input:, output:, ground_truth:, results:, messages: [], token_usage: nil)</span>
               </a>
             </div>
 
@@ -895,13 +913,14 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 23</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">input:</span>, <span class="ruby-value">output:</span>, <span class="ruby-value">ground_truth:</span>, <span class="ruby-value">results:</span>, <span class="ruby-value">messages:</span> [])
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">input:</span>, <span class="ruby-value">output:</span>, <span class="ruby-value">ground_truth:</span>, <span class="ruby-value">results:</span>, <span class="ruby-value">messages:</span> [], <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@input</span> = <span class="ruby-identifier">input</span>
   <span class="ruby-ivar">@output</span> = <span class="ruby-identifier">output</span>
   <span class="ruby-ivar">@ground_truth</span> = <span class="ruby-identifier">ground_truth</span>
   <span class="ruby-ivar">@results</span> = <span class="ruby-identifier">results</span>
   <span class="ruby-ivar">@messages</span> = <span class="ruby-identifier">messages</span>
+  <span class="ruby-ivar">@token_usage</span> = <span class="ruby-identifier">token_usage</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -936,6 +955,48 @@
        </header>
 
 
+      <div id="method-i-evaluator_token_usage" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-evaluator_token_usage" title="Link to this method">
+                <span class="method-name">evaluator_token_usage</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="evaluator_token_usage-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 51</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">evaluator_token_usage</span>
+  <span class="ruby-identifier">results</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:token_usage</span>).<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">reduce</span>(<span class="ruby-value">:+</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns the summed token usage across this scenario’s LLM-as-judge evaluators, or nil when none reported usage.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-scores" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -955,7 +1016,7 @@
             </details>
           </div>
           <div class="method-source-code" id="scores-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 35</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scores</span>
   <span class="ruby-identifier">acc</span> = {} <span class="ruby-comment">#: Hash[singleton(Riffer::Evals::Evaluator), Float]</span>
   <span class="ruby-identifier">results</span>.<span class="ruby-identifier">each_with_object</span>(<span class="ruby-identifier">acc</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">result</span>, <span class="ruby-identifier">hash</span><span class="ruby-operator">|</span>
@@ -1000,7 +1061,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 46</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/scenario_result.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   {
     <span class="ruby-value">input:</span> <span class="ruby-identifier">input</span>,
@@ -1008,7 +1069,9 @@
     <span class="ruby-value">ground_truth:</span> <span class="ruby-identifier">ground_truth</span>,
     <span class="ruby-value">scores:</span> <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">transform_keys</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:name</span>),
     <span class="ruby-value">results:</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_h</span>),
-    <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_h</span>)
+    <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_h</span>),
+    <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>&amp;.<span class="ruby-identifier">to_h</span>,
+    <span class="ruby-value">evaluator_token_usage:</span> <span class="ruby-identifier">evaluator_token_usage</span>&amp;.<span class="ruby-identifier">to_h</span>
   }
 <span class="ruby-keyword">end</span></pre>
           </div>

@@ -979,7 +979,7 @@
     <span class="ruby-value">ground_truth:</span> <span class="ruby-identifier">ground_truth</span>
   )
 
-  <span class="ruby-identifier">result</span>(<span class="ruby-value">score:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:score</span>], <span class="ruby-value">reason:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:reason</span>])
+  <span class="ruby-identifier">result</span>(<span class="ruby-value">score:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:score</span>], <span class="ruby-value">reason:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:reason</span>], <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">evaluation</span>[<span class="ruby-value">:token_usage</span>])
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1061,7 +1061,7 @@
             <div class="method-heading">
               <a href="#method-i-result" title="Link to this method">
                 <span class="method-name">result</span>
-                <span class="method-args">(score:, reason: nil, metadata: {})</span>
+                <span class="method-args">(score:, reason: nil, metadata: {}, token_usage: nil)</span>
               </a>
             </div>
 
@@ -1075,13 +1075,14 @@
           </div>
           <div class="method-source-code" id="result-source">
             <pre class="ruby"><span class="ruby-comment"># File lib/riffer/evals/evaluator.rb, line 109</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">result</span>(<span class="ruby-value">score:</span>, <span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">metadata:</span> {})
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">result</span>(<span class="ruby-value">score:</span>, <span class="ruby-value">reason:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">metadata:</span> {}, <span class="ruby-value">token_usage:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Evals</span><span class="ruby-operator">::</span><span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">evaluator:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>,
     <span class="ruby-value">score:</span> <span class="ruby-identifier">score</span>,
     <span class="ruby-value">reason:</span> <span class="ruby-identifier">reason</span>,
     <span class="ruby-value">metadata:</span> <span class="ruby-identifier">metadata</span>,
-    <span class="ruby-value">higher_is_better:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">higher_is_better</span>
+    <span class="ruby-value">higher_is_better:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">higher_is_better</span>,
+    <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>
   )
 <span class="ruby-keyword">end</span></pre>
           </div>
