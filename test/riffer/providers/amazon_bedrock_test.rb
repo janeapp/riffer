@@ -697,6 +697,54 @@ describe Riffer::Providers::AmazonBedrock do
         expect(usage_done.token_usage.input_tokens).must_equal 5
       end
     end
+
+    describe "text delta accumulation" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new(api_token: "test", region: "us-east-1") }
+
+      def stub_stream_events(provider, events)
+        stream_double = Object.new
+        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+        client_double = Object.new
+        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+        provider.instance_variable_set(:@client, client_double)
+      end
+
+      # Guards the in-place << accumulation of streamed text: the assembled
+      # TextDone content must be byte-identical to the plain concatenation of a
+      # few hundred deltas. Catches both the frozen-string seed regression (a
+      # frozen "" would raise FrozenError on the first delta) and any
+      # mutation-aliasing where a shared reference gets clobbered mid-stream.
+      it "assembles hundreds of deltas byte-identically to their concatenation" do
+        provider # force SDK load before constructing the Aws types below
+        deltas = Array.new(500) { |i| format("delta-%03d-%s ", i, "x" * 12) }
+        events = deltas.map do |text|
+          Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+            delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(text: text),
+            content_block_index: 0,
+            event_type: :content_block_delta
+          )
+        end
+        events << Aws::BedrockRuntime::Types::ContentBlockStopEvent.new(
+          content_block_index: 0,
+          event_type: :content_block_stop
+        )
+        stub_stream_events(provider, events)
+
+        stream_events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+
+        expected = deltas.join
+        text_done = stream_events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+        expect(text_done).wont_be_nil
+        expect(text_done.content).must_equal expected
+        expect(text_done.content.bytesize).must_equal expected.bytesize
+
+        # Each TextDelta must still carry its own unmutated fragment, and joining
+        # them must reproduce the buffer exactly.
+        streamed = stream_events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }.map(&:content)
+        expect(streamed).must_equal deltas
+        expect(streamed.join).must_equal expected
+      end
+    end
   end
 
   describe "usage" do

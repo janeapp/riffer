@@ -121,7 +121,7 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, Enumerator::Yielder, ?Hash[String, String]) -> Riffer::Messages::Assistant
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
-    accumulated_content = ""
+    accumulated_content = +""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
@@ -131,9 +131,13 @@ module Riffer::Agent::Run
 
       case event
       when Riffer::StreamEvents::TextDelta
-        accumulated_content += event.content
+        # Append in place rather than += (which reallocates and copies the whole
+        # buffer per delta, O(n^2) over a stream). accumulated_content stays an
+        # owned buffer; replace (not =) on TextDone keeps it that way so a later
+        # delta's << can never mutate the string held by a TextDone event.
+        accumulated_content << event.content
       when Riffer::StreamEvents::TextDone
-        accumulated_content = event.content
+        accumulated_content.replace(event.content)
       when Riffer::StreamEvents::ToolCallDone
         accumulated_tool_calls << Riffer::Messages::Assistant::ToolCall.new(
           call_id: event.call_id,

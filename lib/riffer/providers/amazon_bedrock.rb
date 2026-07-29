@@ -267,7 +267,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     state[:tool_call] = {
       id: typed_event.start.tool_use.tool_use_id,
       name: decode_tool_name(typed_event.start.tool_use.name, tools: @current_tools),
-      arguments: ""
+      arguments: +""
     }
   end
 
@@ -276,8 +276,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     delta_text = typed_event.delta.text
-    state[:text] ||= ""
-    state[:text] += delta_text
+    # Mutating append: += would reallocate and copy the whole accumulated
+    # buffer on every delta (O(n^2) per content block). state[:text] is handed
+    # off to TextDone and then cleared on block stop, so nothing reads the
+    # pre-append string, making in-place mutation safe. Seed with an unfrozen
+    # String (+"") so << does not raise under frozen_string_literal.
+    state[:text] ||= +""
+    state[:text] << delta_text
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
   end
 
@@ -287,7 +292,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     input_delta = typed_event.delta.tool_use.input
 
-    state[:tool_call][:arguments] += input_delta
+    state[:tool_call][:arguments] << input_delta
 
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
       item_id: state[:tool_call][:id],

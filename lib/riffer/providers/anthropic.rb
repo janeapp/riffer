@@ -233,7 +233,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     content_block = event.content_block
     if content_block.type.to_s == "server_tool_use" && content_block.name.to_s == "web_search"
       state[:web_search_index] = event.index
-      state[:web_search_json] = ""
+      state[:web_search_json] = +""
     end
   end
 
@@ -243,22 +243,27 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     return unless state[:web_search_index] == event.index
 
     delta = event.delta
-    state[:web_search_json] += delta.partial_json if delta.respond_to?(:partial_json)
+    state[:web_search_json] << delta.partial_json if delta.respond_to?(:partial_json)
   end
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_text_event(event, state:, yielder:)
-    state[:text] ||= ""
-    state[:text] += event.text
+    # Mutating append instead of += to avoid reallocating and copying the whole
+    # accumulated buffer on every delta (O(n^2) per content block). The buffer
+    # is handed to TextDone and cleared on block stop, so no reader observes the
+    # pre-append string. Seed with an unfrozen String so << is legal under
+    # frozen_string_literal.
+    state[:text] ||= +""
+    state[:text] << event.text
     yielder << Riffer::StreamEvents::TextDelta.new(event.text)
   end
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_thinking_event(event, state:, yielder:)
-    state[:reasoning] ||= ""
-    state[:reasoning] += event.thinking
+    state[:reasoning] ||= +""
+    state[:reasoning] << event.thinking
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
   end
 
@@ -266,9 +271,9 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_input_json_event(event, state:, yielder:)
     if state[:tool_call].nil?
-      state[:tool_call] = {id: nil, name: nil, arguments: ""}
+      state[:tool_call] = {id: nil, name: nil, arguments: +""}
     end
-    state[:tool_call][:arguments] += event.partial_json
+    state[:tool_call][:arguments] << event.partial_json
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
       item_id: state[:tool_call][:id] || "pending",
       name: state[:tool_call][:name],
