@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.38.1](https://github.com/janeapp/riffer/compare/riffer/v0.38.0...riffer/v0.38.1) (2026-07-29)
+
+
+### Performance Improvements
+
+* avoid O(n^2) text accumulation in streaming providers ([#378](https://github.com/janeapp/riffer/issues/378)) ([d344fa7](https://github.com/janeapp/riffer/commit/d344fa7122492d14ee1c91c0be3a88501170e255))
+
 ## [0.38.0](https://github.com/janeapp/riffer/compare/riffer/v0.37.1...riffer/v0.38.0) (2026-07-21)
 
 
