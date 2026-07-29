@@ -35,6 +35,24 @@ class Riffer::Evals::RunResult
     end
   end
 
+  # Returns the summed token usage the agents under test spent across every
+  # scenario, or nil when none reported usage.
+  #
+  #--
+  #: () -> Riffer::Providers::TokenUsage?
+  def token_usage
+    scenario_results.map(&:token_usage).compact.reduce(:+)
+  end
+
+  # Returns the summed token usage across every scenario's LLM-as-judge
+  # evaluators, or nil when none reported usage.
+  #
+  #--
+  #: () -> Riffer::Providers::TokenUsage?
+  def evaluator_token_usage
+    scenario_results.map(&:evaluator_token_usage).compact.reduce(:+)
+  end
+
   # Returns a hash representation of the run result.
   #
   #--
@@ -42,7 +60,9 @@ class Riffer::Evals::RunResult
   def to_h
     {
       scores: scores.transform_keys(&:name),
-      scenario_results: scenario_results.map(&:to_h)
+      scenario_results: scenario_results.map(&:to_h),
+      token_usage: token_usage&.to_h,
+      evaluator_token_usage: evaluator_token_usage&.to_h
     }
   end
 end

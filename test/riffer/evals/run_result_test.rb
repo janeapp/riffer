@@ -69,6 +69,66 @@ describe Riffer::Evals::RunResult do
     end
   end
 
+  describe "#evaluator_token_usage" do
+    it "sums evaluator usage across scenarios" do
+      scenario_with_usage = Riffer::Evals::ScenarioResult.new(
+        input: "What is Ruby?",
+        output: "A programming language.",
+        ground_truth: nil,
+        results: [
+          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9, token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+        ]
+      )
+      other_scenario_with_usage = Riffer::Evals::ScenarioResult.new(
+        input: "What is Python?",
+        output: "A snake.",
+        ground_truth: nil,
+        results: [
+          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.3, token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8))
+        ]
+      )
+
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_with_usage, other_scenario_with_usage])
+
+      expect(run_result.evaluator_token_usage.total_tokens).must_equal 43
+    end
+
+    it "returns nil when no scenario reports evaluator usage" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, scenario_b])
+
+      expect(run_result.evaluator_token_usage).must_be_nil
+    end
+  end
+
+  describe "#token_usage" do
+    it "sums agent usage across scenarios" do
+      scenario_with_usage = Riffer::Evals::ScenarioResult.new(
+        input: "What is Ruby?",
+        output: "A programming language.",
+        ground_truth: nil,
+        results: [],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+      )
+      other_scenario_with_usage = Riffer::Evals::ScenarioResult.new(
+        input: "What is Python?",
+        output: "A snake.",
+        ground_truth: nil,
+        results: [],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8)
+      )
+
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_with_usage, other_scenario_with_usage])
+
+      expect(run_result.token_usage.total_tokens).must_equal 43
+    end
+
+    it "returns nil when no scenario reports agent usage" do
+      run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a, scenario_b])
+
+      expect(run_result.token_usage).must_be_nil
+    end
+  end
+
   describe "#to_h" do
     it "returns a hash representation" do
       run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a])

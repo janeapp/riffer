@@ -66,7 +66,7 @@ class Riffer::Evals::Evaluator
       ground_truth: ground_truth
     )
 
-    result(score: evaluation[:score], reason: evaluation[:reason])
+    result(score: evaluation[:score], reason: evaluation[:reason], token_usage: evaluation[:token_usage])
   end
 
   private
@@ -105,14 +105,15 @@ class Riffer::Evals::Evaluator
 
   # Builds a Result for this evaluator.
   #--
-  #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
-  def result(score:, reason: nil, metadata: {})
+  #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?token_usage: Riffer::Providers::TokenUsage?) -> Riffer::Evals::Result
+  def result(score:, reason: nil, metadata: {}, token_usage: nil)
     Riffer::Evals::Result.new(
       evaluator: self.class,
       score: score,
       reason: reason,
       metadata: metadata,
-      higher_is_better: self.class.higher_is_better
+      higher_is_better: self.class.higher_is_better,
+      token_usage: token_usage
     )
   end
 end

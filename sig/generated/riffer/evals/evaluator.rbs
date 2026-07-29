@@ -57,6 +57,6 @@ class Riffer::Evals::Evaluator
 
   # Builds a Result for this evaluator.
   # --
-  # : (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
-  def result: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped]) -> Riffer::Evals::Result
+  # : (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?token_usage: Riffer::Providers::TokenUsage?) -> Riffer::Evals::Result
+  def result: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?token_usage: Riffer::Providers::TokenUsage?) -> Riffer::Evals::Result
 end
