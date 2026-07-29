@@ -17,9 +17,12 @@ class Riffer::Evals::ScenarioResult
   # The full message history from the agent conversation.
   attr_reader messages: Array[Riffer::Messages::Base]
 
+  # Token usage the agent under test spent generating this scenario's output.
+  attr_reader token_usage: Riffer::Providers::TokenUsage?
+
   # --
-  # : (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
-  def initialize: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base]) -> void
+  # : (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?) -> void
+  def initialize: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?) -> void
 
   # Returns scores keyed by evaluator class.
   #
@@ -32,7 +35,7 @@ class Riffer::Evals::ScenarioResult
   #
   # --
   # : () -> Riffer::Providers::TokenUsage?
-  def token_usage: () -> Riffer::Providers::TokenUsage?
+  def evaluator_token_usage: () -> Riffer::Providers::TokenUsage?
 
   # Returns a hash representation of the scenario result.
   #

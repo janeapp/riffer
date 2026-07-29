@@ -108,10 +108,11 @@ Per-scenario `context` overrides the top-level value. Scenarios without their ow
 The runner returns a `Riffer::Evals::RunResult`:
 
 ```ruby
-result.scores             # => { EvaluatorClass => avg_score } across all scenarios
-result.scenario_results   # => Array of ScenarioResult objects
-result.token_usage        # => TokenUsage summed across all scenarios (nil if no judge ran)
-result.to_h               # => Hash representation
+result.scores                  # => { EvaluatorClass => avg_score } across all scenarios
+result.scenario_results        # => Array of ScenarioResult objects
+result.token_usage             # => TokenUsage the agent under test spent, summed across scenarios (nil if none reported)
+result.evaluator_token_usage   # => TokenUsage the judges spent, summed across scenarios (nil if no judge ran)
+result.to_h                    # => Hash representation
 ```
 
 ### ScenarioResult
@@ -120,14 +121,15 @@ Each scenario produces a `Riffer::Evals::ScenarioResult`:
 
 ```ruby
 scenario = result.scenario_results.first
-scenario.input        # => "What is the capital of France?"
-scenario.output       # => "The capital of France is Paris."
-scenario.ground_truth # => "Paris"
-scenario.scores       # => { EvaluatorClass => score } for this scenario
-scenario.results      # => Array of Result objects
-scenario.messages     # => Array of Message objects (system, user, assistant, tool)
-scenario.token_usage  # => TokenUsage summed across this scenario's evaluators (nil if no judge ran)
-scenario.to_h         # => Hash representation
+scenario.input                  # => "What is the capital of France?"
+scenario.output                 # => "The capital of France is Paris."
+scenario.ground_truth           # => "Paris"
+scenario.scores                 # => { EvaluatorClass => score } for this scenario
+scenario.results                # => Array of Result objects
+scenario.messages               # => Array of Message objects (system, user, assistant, tool)
+scenario.token_usage            # => TokenUsage the agent under test spent on this scenario (nil if not reported)
+scenario.evaluator_token_usage  # => TokenUsage the judges spent on this scenario (nil if no judge ran)
+scenario.to_h                   # => Hash representation
 ```
 
 ### Result
@@ -143,7 +145,9 @@ r.higher_is_better # => true
 r.token_usage      # => TokenUsage for the judge call (nil for rule-based evaluators)
 ```
 
-`token_usage` is a `Riffer::Providers::TokenUsage`, the same type the agent exposes on `Agent::Response`, so eval usage accumulates with the `+` operator just like agent usage. It's populated for LLM-as-judge evaluators and `nil` for rule-based ones that never call an LLM.
+`token_usage` is a `Riffer::Providers::TokenUsage`, the same type the agent exposes on `Agent::Response`, so eval usage accumulates with the `+` operator just like agent usage. On a `Result` it's populated for LLM-as-judge evaluators and `nil` for rule-based ones that never call an LLM.
+
+`ScenarioResult` and `RunResult` keep the two sources separate rather than exposing a single total: `token_usage` is what the agent under test spent generating the output, and `evaluator_token_usage` is what the judges spent scoring it. Add them yourself if you want a combined figure.
 
 ## Defining Custom Evaluators
 
