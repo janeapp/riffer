@@ -121,7 +121,8 @@ class Riffer::Evals::Judge
 
     {
       score: score.to_f,
-      reason: reason
+      reason: reason,
+      token_usage: response.token_usage
     }
   rescue JSON::ParserError => e
     raise Riffer::Error, "Invalid judge response: #{e.message}"

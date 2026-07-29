@@ -110,6 +110,7 @@ The runner returns a `Riffer::Evals::RunResult`:
 ```ruby
 result.scores             # => { EvaluatorClass => avg_score } across all scenarios
 result.scenario_results   # => Array of ScenarioResult objects
+result.token_usage        # => TokenUsage summed across all scenarios (nil if no judge ran)
 result.to_h               # => Hash representation
 ```
 
@@ -125,6 +126,7 @@ scenario.ground_truth # => "Paris"
 scenario.scores       # => { EvaluatorClass => score } for this scenario
 scenario.results      # => Array of Result objects
 scenario.messages     # => Array of Message objects (system, user, assistant, tool)
+scenario.token_usage  # => TokenUsage summed across this scenario's evaluators (nil if no judge ran)
 scenario.to_h         # => Hash representation
 ```
 
@@ -138,7 +140,10 @@ r.evaluator        # => AnswerRelevancyEvaluator
 r.score            # => 0.92
 r.reason           # => "The response directly addresses..."
 r.higher_is_better # => true
+r.token_usage      # => TokenUsage for the judge call (nil for rule-based evaluators)
 ```
+
+`token_usage` is a `Riffer::Providers::TokenUsage`, the same type the agent exposes on `Agent::Response`, so eval usage accumulates with the `+` operator just like agent usage. It's populated for LLM-as-judge evaluators and `nil` for rule-based ones that never call an LLM.
 
 ## Defining Custom Evaluators
 
@@ -190,7 +195,7 @@ Instance methods:
 
 - `evaluate(input:, output:, ground_truth:, messages:)` - Override for custom logic; default calls judge with `instructions`
 - `judge` - Returns a Judge instance for LLM-as-judge calls
-- `result(score:, reason:, metadata:)` - Helper to build Result objects
+- `result(score:, reason:, metadata:, token_usage:)` - Helper to build Result objects
 
 ### Advanced: Custom Evaluate Override
 

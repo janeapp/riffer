@@ -120,6 +120,26 @@ describe Riffer::Evals::Evaluator do
 
       expect(result.score).must_equal 0.95
     end
+
+    it "captures the judge's token usage on the result" do
+      klass = Class.new(Riffer::Evals::Evaluator) do
+        instructions "Evaluate quality."
+        judge_model "mock/eval-model"
+      end
+
+      evaluator = klass.new
+      judge = evaluator.send(:judge)
+      provider = judge.send(:provider_instance)
+      provider.stub_response(
+        "",
+        tool_calls: [{name: "evaluation", arguments: {score: 0.8, reason: "Good"}}],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 30, output_tokens: 12)
+      )
+
+      result = evaluator.evaluate(input: "test input", output: "test output")
+
+      expect(result.token_usage.total_tokens).must_equal 42
+    end
   end
 
   describe "#result (protected)" do

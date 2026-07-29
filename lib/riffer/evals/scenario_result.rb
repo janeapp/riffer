@@ -39,6 +39,15 @@ class Riffer::Evals::ScenarioResult
     end
   end
 
+  # Returns the summed token usage across this scenario's LLM-as-judge
+  # evaluators, or nil when none reported usage.
+  #
+  #--
+  #: () -> Riffer::Providers::TokenUsage?
+  def token_usage
+    results.map(&:token_usage).compact.reduce(:+)
+  end
+
   # Returns a hash representation of the scenario result.
   #
   #--
@@ -50,7 +59,8 @@ class Riffer::Evals::ScenarioResult
       ground_truth: ground_truth,
       scores: scores.transform_keys(&:name),
       results: results.map(&:to_h),
-      messages: messages.map(&:to_h)
+      messages: messages.map(&:to_h),
+      token_usage: token_usage&.to_h
     }
   end
 end

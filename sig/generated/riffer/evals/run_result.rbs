@@ -15,6 +15,13 @@ class Riffer::Evals::RunResult
   # : () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
 
+  # Returns the summed token usage across every scenario, or nil when none
+  # reported usage.
+  #
+  # --
+  # : () -> Riffer::Providers::TokenUsage?
+  def token_usage: () -> Riffer::Providers::TokenUsage?
+
   # Returns a hash representation of the run result.
   #
   # --

@@ -35,6 +35,15 @@ class Riffer::Evals::RunResult
     end
   end
 
+  # Returns the summed token usage across every scenario, or nil when none
+  # reported usage.
+  #
+  #--
+  #: () -> Riffer::Providers::TokenUsage?
+  def token_usage
+    scenario_results.map(&:token_usage).compact.reduce(:+)
+  end
+
   # Returns a hash representation of the run result.
   #
   #--
@@ -42,7 +51,8 @@ class Riffer::Evals::RunResult
   def to_h
     {
       scores: scores.transform_keys(&:name),
-      scenario_results: scenario_results.map(&:to_h)
+      scenario_results: scenario_results.map(&:to_h),
+      token_usage: token_usage&.to_h
     }
   end
 end

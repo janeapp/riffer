@@ -27,6 +27,13 @@ class Riffer::Evals::ScenarioResult
   # : () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
 
+  # Returns the summed token usage across this scenario's LLM-as-judge
+  # evaluators, or nil when none reported usage.
+  #
+  # --
+  # : () -> Riffer::Providers::TokenUsage?
+  def token_usage: () -> Riffer::Providers::TokenUsage?
+
   # Returns a hash representation of the scenario result.
   #
   # --

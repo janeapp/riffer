@@ -44,6 +44,17 @@ describe Riffer::Evals::Result do
       expect(result.higher_is_better).must_equal true
     end
 
+    it "sets token_usage" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+      result = Riffer::Evals::Result.new(evaluator: Riffer::Evals::Evaluator, score: 0.8, token_usage: usage)
+      expect(result.token_usage).must_equal usage
+    end
+
+    it "defaults token_usage to nil" do
+      result = Riffer::Evals::Result.new(evaluator: Riffer::Evals::Evaluator, score: 0.8)
+      expect(result.token_usage).must_be_nil
+    end
+
     it "raises an error if score is below 0" do
       error = expect do
         Riffer::Evals::Result.new(evaluator: Riffer::Evals::Evaluator, score: -0.1)
@@ -88,6 +99,21 @@ describe Riffer::Evals::Result do
       expect(hash[:reason]).must_equal "Good"
       expect(hash[:metadata]).must_equal({key: "value"})
       expect(hash[:higher_is_better]).must_equal true
+    end
+
+    it "includes token_usage when present" do
+      result = Riffer::Evals::Result.new(
+        evaluator: Riffer::Evals::Evaluator,
+        score: 0.85,
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+      )
+
+      expect(result.to_h[:token_usage]).must_equal({input_tokens: 10, output_tokens: 5})
+    end
+
+    it "includes token_usage as nil when absent" do
+      result = Riffer::Evals::Result.new(evaluator: Riffer::Evals::Evaluator, score: 0.85)
+      expect(result.to_h[:token_usage]).must_be_nil
     end
   end
 end
