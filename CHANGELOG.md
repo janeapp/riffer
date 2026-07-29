@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.39.0](https://github.com/janeapp/riffer/compare/riffer/v0.38.1...riffer/v0.39.0) (2026-07-29)
+
+
+### Features
+
+* **evals:** expose token usage on evaluation results ([#380](https://github.com/janeapp/riffer/issues/380)) ([32d576e](https://github.com/janeapp/riffer/commit/32d576e492809845c36f44ebf37de3af3b6785b0))
+
 ## [0.38.1](https://github.com/janeapp/riffer/compare/riffer/v0.38.0...riffer/v0.38.1) (2026-07-29)
 
 
