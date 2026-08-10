@@ -46,7 +46,7 @@ class Riffer::Evals::Result
       reason: reason,
       metadata: metadata,
       higher_is_better: higher_is_better,
-      token_usage: token_usage&.to_h
+      token_usage: token_usage&.to_h,
     }
   end
 

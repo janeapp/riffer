@@ -39,7 +39,7 @@ describe Riffer::Agent::Serializer do
         model -> { "mock/riffer-1" }
         instructions ->(context) { "Hi #{context[:name]}" }
       end
-      dict = klass.new(context: {name: "Sam"}).to_h
+      dict = klass.new(context: { name: "Sam" }).to_h
 
       expect(dict[:model]).must_equal "mock/riffer-1"
       expect(dict[:instructions]).must_equal "Hi Sam"
@@ -52,8 +52,8 @@ describe Riffer::Agent::Serializer do
       end
       dict = klass.new.to_h
 
-      expect(dict[:provider_options]).must_equal({foo: "bar"})
-      expect(dict[:model_options]).must_equal({temperature: 0.2})
+      expect(dict[:provider_options]).must_equal({ foo: "bar" })
+      expect(dict[:model_options]).must_equal({ temperature: 0.2 })
     end
 
     it "carries structured output as JSON Schema" do
@@ -131,14 +131,14 @@ describe Riffer::Agent::Serializer do
       agent = Riffer::Agent.from_h(klass.new.to_h, context: nil)
       result = agent.structured_output.parse_and_validate('{"answer":"yes"}')
 
-      expect(result.object).must_equal({answer: "yes", score: 0.0})
+      expect(result.object).must_equal({ answer: "yes", score: 0.0 })
     end
 
     it "restores provider and model options" do
       klass = build_agent_class { provider_options foo: "bar" }
       agent = Riffer::Agent.from_h(klass.new.to_h, context: nil)
 
-      expect(agent.config.provider_options).must_equal({foo: "bar"})
+      expect(agent.config.provider_options).must_equal({ foo: "bar" })
     end
 
     describe "max_steps" do
@@ -190,7 +190,7 @@ describe Riffer::Agent::Serializer do
         history = [
           Riffer::Messages::System.new("You are helpful."),
           Riffer::Messages::User.new("Hello"),
-          Riffer::Messages::Assistant.new("Hi there!")
+          Riffer::Messages::Assistant.new("Hi there!"),
         ]
         session = Riffer::Agent::Session.new(messages: history)
 
@@ -247,7 +247,7 @@ describe Riffer::Agent::Serializer do
         model -> { "mock/riffer-1" }
       end
 
-      expect(klass.new.to_json).must_match(/"model":"mock\/riffer-1"/)
+      expect(klass.new.to_json).must_match(%r{"model":"mock/riffer-1"})
     end
   end
 
@@ -288,7 +288,7 @@ describe Riffer::Agent::Serializer do
     describe "custom resolver (registry lookup)" do
       it "rebuilds the real tool class and runs it in-process" do
         dict = build_agent_class { uses_tools [SerializerWeatherTool] }.new.to_h
-        registry = {"serializer_weather_tool" => SerializerWeatherTool}
+        registry = { "serializer_weather_tool" => SerializerWeatherTool }
         agent = Riffer::Agent.from_h(dict, context: nil, tool_resolver: ->(d) { registry.fetch(d[:name]) })
 
         expect(agent.tools.first).must_equal SerializerWeatherTool
@@ -297,7 +297,7 @@ describe Riffer::Agent::Serializer do
 
       it "is byte-stable with the origin dict" do
         dict = build_agent_class { uses_tools [SerializerWeatherTool] }.new.to_h
-        registry = {"serializer_weather_tool" => SerializerWeatherTool}
+        registry = { "serializer_weather_tool" => SerializerWeatherTool }
         rebuilt = Riffer::Agent.from_h(dict, context: nil, tool_resolver: ->(d) { registry.fetch(d[:name]) })
 
         expect(rebuilt.to_h).must_equal dict

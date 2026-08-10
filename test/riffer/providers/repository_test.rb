@@ -6,21 +6,25 @@ describe Riffer::Providers::Repository do
   describe ".find" do
     it "returns the OpenAI provider class for :openai symbol" do
       result = Riffer::Providers::Repository.find(:openai)
+
       expect(result).must_equal Riffer::Providers::OpenAI
     end
 
     it "returns the OpenAI provider class for 'openai' string" do
       result = Riffer::Providers::Repository.find("openai")
+
       expect(result).must_equal Riffer::Providers::OpenAI
     end
 
     it "returns the AmazonBedrock provider class for :amazon_bedrock symbol" do
       result = Riffer::Providers::Repository.find(:amazon_bedrock)
+
       expect(result).must_equal Riffer::Providers::AmazonBedrock
     end
 
     it "returns the AmazonBedrock provider class for 'amazon_bedrock' string" do
       result = Riffer::Providers::Repository.find("amazon_bedrock")
+
       expect(result).must_equal Riffer::Providers::AmazonBedrock
     end
 
@@ -71,18 +75,21 @@ describe Riffer::Providers::Repository do
     it "resolves a registered custom provider via find" do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:jane) { custom }
+
       expect(Riffer::Providers::Repository.find(:jane)).must_equal custom
     end
 
     it "resolves a registered custom provider from a string identifier" do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:jane) { custom }
+
       expect(Riffer::Providers::Repository.find("jane")).must_equal custom
     end
 
     it "takes precedence over a built-in sharing the identifier" do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:openai) { custom }
+
       expect(Riffer::Providers::Repository.find(:openai)).must_equal custom
     end
 
@@ -91,18 +98,21 @@ describe Riffer::Providers::Repository do
       second = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:jane) { first }
       Riffer::Providers::Repository.register(:jane) { second }
+
       expect(Riffer::Providers::Repository.find(:jane)).must_equal second
     end
 
     it "makes key_for return the registered identifier" do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:jane) { custom }
+
       expect(Riffer::Providers::Repository.key_for(custom)).must_equal :jane
     end
 
     it "does not add custom registrations to the built-in REPO" do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:jane) { custom }
+
       expect(Riffer::Providers::Repository::REPO).wont_include(:jane)
     end
 
@@ -116,6 +126,7 @@ describe Riffer::Providers::Repository do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:jane) { custom }
       Riffer::Providers::Repository.unregister(:jane)
+
       expect(Riffer::Providers::Repository.find(:jane)).must_be_nil
     end
 
@@ -123,6 +134,7 @@ describe Riffer::Providers::Repository do
       custom = Class.new(Riffer::Providers::Base)
       Riffer::Providers::Repository.register(:openai) { custom }
       Riffer::Providers::Repository.unregister(:openai)
+
       expect(Riffer::Providers::Repository.find(:openai)).must_equal Riffer::Providers::OpenAI
     end
 

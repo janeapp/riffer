@@ -9,8 +9,9 @@ describe Riffer::StreamEvents::ToolCallDone do
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       )
+
       expect(event.item_id).must_equal "item_123"
     end
 
@@ -19,8 +20,9 @@ describe Riffer::StreamEvents::ToolCallDone do
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       )
+
       expect(event.call_id).must_equal "call_123"
     end
 
@@ -29,8 +31,9 @@ describe Riffer::StreamEvents::ToolCallDone do
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       )
+
       expect(event.name).must_equal "weather_lookup"
     end
 
@@ -39,8 +42,9 @@ describe Riffer::StreamEvents::ToolCallDone do
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       )
+
       expect(event.arguments).must_equal '{"city":"Toronto"}'
     end
 
@@ -49,8 +53,9 @@ describe Riffer::StreamEvents::ToolCallDone do
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       )
+
       expect(event.role).must_equal :assistant
     end
   end
@@ -61,15 +66,16 @@ describe Riffer::StreamEvents::ToolCallDone do
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       )
       expected = {
         role: :assistant,
         item_id: "item_123",
         call_id: "call_123",
         name: "weather_lookup",
-        arguments: '{"city":"Toronto"}'
+        arguments: '{"city":"Toronto"}',
       }
+
       expect(event.to_h).must_equal expected
     end
   end

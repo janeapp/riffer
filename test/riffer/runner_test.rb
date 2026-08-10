@@ -6,6 +6,7 @@ describe Riffer::Runner do
   describe "#map" do
     it "raises NotImplementedError" do
       runner = Riffer::Runner.new
+
       expect { runner.map([1, 2, 3], context: nil) { |n| n } }.must_raise NotImplementedError
     end
   end
@@ -20,8 +21,9 @@ describe Riffer::Runner do
         end
       end
 
-      runner_class.new.map([1], context: {user_id: 42}) { |n| n }
-      expect(captured_context).must_equal({user_id: 42})
+      runner_class.new.map([1], context: { user_id: 42 }) { |n| n }
+
+      expect(captured_context).must_equal({ user_id: 42 })
     end
   end
 end
@@ -31,18 +33,21 @@ describe Riffer::Runner::Sequential do
     it "returns results in order" do
       runner = Riffer::Runner::Sequential.new
       results = runner.map([1, 2, 3], context: nil) { |n| n * 2 }
+
       expect(results).must_equal [2, 4, 6]
     end
 
     it "handles empty items" do
       runner = Riffer::Runner::Sequential.new
       results = runner.map([], context: nil) { |n| n }
+
       expect(results).must_equal []
     end
 
     it "accepts context keyword" do
       runner = Riffer::Runner::Sequential.new
-      results = runner.map([1], context: {user: "test"}) { |n| n }
+      results = runner.map([1], context: { user: "test" }) { |n| n }
+
       expect(results).must_equal [1]
     end
   end
@@ -53,6 +58,7 @@ describe Riffer::Runner::Fibers do
     it "returns results in order" do
       runner = Riffer::Runner::Fibers.new
       results = runner.map([1, 2, 3], context: nil) { |n| n * 2 }
+
       expect(results).must_equal [2, 4, 6]
     end
 
@@ -90,17 +96,20 @@ describe Riffer::Runner::Fibers do
     it "handles empty items" do
       runner = Riffer::Runner::Fibers.new
       results = runner.map([], context: nil) { |n| n }
+
       expect(results).must_equal []
     end
 
     it "propagates exceptions" do
       runner = Riffer::Runner::Fibers.new
-      expect {
+
+      expect do
         runner.map([1, 2, 3], context: nil) do |n|
           raise "boom" if n == 2
+
           n
         end
-      }.must_raise RuntimeError
+      end.must_raise RuntimeError
     end
   end
 end
@@ -110,6 +119,7 @@ describe Riffer::Runner::Threaded do
     it "returns results in order" do
       runner = Riffer::Runner::Threaded.new
       results = runner.map([1, 2, 3], context: nil) { |n| n * 2 }
+
       expect(results).must_equal [2, 4, 6]
     end
 
@@ -150,22 +160,26 @@ describe Riffer::Runner::Threaded do
     it "handles empty items" do
       runner = Riffer::Runner::Threaded.new
       results = runner.map([], context: nil) { |n| n }
+
       expect(results).must_equal []
     end
 
     it "propagates exceptions from worker threads" do
       runner = Riffer::Runner::Threaded.new(max_concurrency: 2)
-      expect {
+
+      expect do
         runner.map([1, 2, 3], context: nil) do |n|
           raise "boom" if n == 2
+
           n
         end
-      }.must_raise RuntimeError
+      end.must_raise RuntimeError
     end
 
     it "accepts context keyword" do
       runner = Riffer::Runner::Threaded.new
-      results = runner.map([1], context: {user: "test"}) { |n| n }
+      results = runner.map([1], context: { user: "test" }) { |n| n }
+
       expect(results).must_equal [1]
     end
   end

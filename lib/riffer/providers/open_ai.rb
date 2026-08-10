@@ -37,9 +37,9 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       model: model,
       reasoning: reasoning && {
         effort: reasoning,
-        summary: "auto"
+        summary: "auto",
       },
-      **options.except(:reasoning, :tools, :structured_output, :web_search, :tags)
+      **options.except(:reasoning, :tools, :structured_output, :web_search, :tags),
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
@@ -54,7 +54,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     openai_tools.concat(tools.map { |t| convert_tool_to_openai_format(t) }) if tools && !tools.empty?
 
     if web_search
-      web_search_tool = {type: WEB_SEARCH_TOOL_TYPE}
+      web_search_tool = { type: WEB_SEARCH_TOOL_TYPE }
       web_search_tool.merge!(web_search) if web_search.is_a?(Hash)
       openai_tools << web_search_tool
     end
@@ -67,8 +67,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           type: "json_schema",
           name: "response",
           schema: structured_output.json_schema(strict: true),
-          strict: true
-        }
+          strict: true,
+        },
       }
     end
 
@@ -97,10 +97,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
     apply_pricing(Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens,
-      output_tokens: usage.output_tokens,
-      cache_read_tokens: usage.input_tokens_details&.cached_tokens
-    ))
+                    input_tokens: usage.input_tokens,
+                    output_tokens: usage.output_tokens,
+                    cache_read_tokens: usage.input_tokens_details&.cached_tokens,
+                  ))
   end
 
   #--
@@ -137,10 +137,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     raw = typed_response.incomplete_details&.reason&.to_s
 
     reason = case raw
-    when "max_output_tokens" then :length
-    when "content_filter" then :content_filter
-    else :other
-    end
+             when "max_output_tokens" then :length
+             when "content_filter" then :content_filter
+             else :other
+             end
 
     Riffer::Providers::FinishReason.new(reason: reason, raw: raw || "incomplete")
   end
@@ -173,7 +173,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       tool_calls << Riffer::Messages::Assistant::ToolCall.new(
         call_id: item.call_id,
         name: decode_tool_name(item.name, tools: @current_tools),
-        arguments: item.arguments
+        arguments: item.arguments,
       )
     end
 
@@ -184,7 +184,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
-      tool_info: {}
+      tool_info: {},
     } #: Hash[Symbol, untyped]
 
     stream = @client.responses.stream(params)
@@ -192,7 +192,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       stream.each do |event|
         case event.type
         when :"response.output_item.added"
-          handle_output_item_added_function_call(event, state: current_state, yielder: yielder) if event.item&.type == :function_call
+          if event.item&.type == :function_call
+            handle_output_item_added_function_call(event, state: current_state,
+                                                          yielder: yielder,)
+          end
         when :"response.output_text.delta"
           handle_output_text_delta(event, state: current_state, yielder: yielder)
         when :"response.output_text.done"
@@ -230,7 +233,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def handle_output_item_added_function_call(event, state:, yielder:)
     state[:tool_info][event.item.id] = {
       name: decode_tool_name(event.item.name, tools: @current_tools),
-      call_id: event.item.call_id
+      call_id: event.item.call_id,
     }
   end
 
@@ -265,7 +268,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
       item_id: event.item_id,
       name: tracked[:name],
-      arguments_delta: event.delta
+      arguments_delta: event.delta,
     )
   end
 
@@ -277,7 +280,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       item_id: event.item_id,
       call_id: tracked[:call_id] || event.item_id,
       name: tracked[:name],
-      arguments: event.arguments
+      arguments: event.arguments,
     )
   end
 
@@ -311,7 +314,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       # WebSearchDone — emit as a status notification instead.
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: action.url)
     when ::OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search
-      sources = (action.sources || []).map { |s| {title: nil, url: s.url} }
+      sources = (action.sources || []).map { |s| { title: nil, url: s.url } }
       yielder << Riffer::StreamEvents::WebSearchDone.new(action.query || "", sources: sources)
     end
   end
@@ -322,14 +325,14 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     messages.flat_map do |message|
       case message
       when Riffer::Messages::System
-        {role: "developer", content: message.content}
+        { role: "developer", content: message.content }
       when Riffer::Messages::User
         if message.files.empty?
-          {role: "user", content: message.content}
+          { role: "user", content: message.content }
         else
-          content = [{type: "input_text", text: message.content}]
+          content = [{ type: "input_text", text: message.content }]
           message.files.each { |file| content << convert_file_part_to_openai_format(file) }
-          {role: "user", content: content}
+          { role: "user", content: content }
         end
       when Riffer::Messages::Assistant
         convert_assistant_to_openai_format(message)
@@ -337,7 +340,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         {
           type: "function_call_output",
           call_id: message.tool_call_id,
-          output: message.content
+          output: message.content,
         }
       else
         raise Riffer::ArgumentError, "unsupported message type: #{message.class}"
@@ -349,16 +352,19 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format(message)
     if message.tool_calls.empty?
-      {role: "assistant", content: message.content}
+      { role: "assistant", content: message.content }
     else
       items = [] #: Array[Hash[Symbol, untyped]]
-      items << {type: "message", role: "assistant", content: message.content} if message.content && !message.content.empty?
+      if message.content && !message.content.empty?
+        items << { type: "message", role: "assistant",
+                   content: message.content, }
+      end
       message.tool_calls.each do |tc|
         items << {
           type: "function_call",
           call_id: tc.call_id,
           name: encode_tool_name(tc.name),
-          arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json
+          arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
         }
       end
       items
@@ -370,10 +376,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def convert_file_part_to_openai_format(file)
     if file.image?
       image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"
-      {type: "input_image", image_url: image_url}
+      { type: "input_image", image_url: image_url }
     else
       data_uri = "data:#{file.media_type};base64,#{file.data}"
-      block = {type: "input_file", file_data: data_uri}
+      block = { type: "input_file", file_data: data_uri }
       block[:filename] = file.filename if file.filename
       block
     end
@@ -387,7 +393,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       name: encode_tool_name(tool.name),
       description: tool.description,
       parameters: tool.parameters_schema(strict: true),
-      strict: true
+      strict: true,
     }
   end
 end

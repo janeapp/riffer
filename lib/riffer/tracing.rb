@@ -18,9 +18,10 @@ module Riffer::Tracing # :nodoc: all
   # Opens a span around the block, yielding the span.
   #--
   #: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
-  def in_span(name, attributes: nil, kind: :internal, &block)
-    return NoOp.in_span(name, &block) unless Riffer.config.tracing.enabled
-    backend.in_span(name, attributes: attributes, kind: kind, &block)
+  def in_span(name, attributes: nil, kind: :internal, &)
+    return NoOp.in_span(name, &) unless Riffer.config.tracing.enabled
+
+    backend.in_span(name, attributes: attributes, kind: kind, &)
   end
 
   # Returns the active trace context, for re-attachment across fiber or
@@ -29,6 +30,7 @@ module Riffer::Tracing # :nodoc: all
   #: () -> untyped
   def current_context
     return NoOp.current_context unless Riffer.config.tracing.enabled
+
     backend.current_context
   end
 
@@ -36,9 +38,10 @@ module Riffer::Tracing # :nodoc: all
   # so captures taken while tracing was dark stay harmless.
   #--
   #: [R] (untyped) { () -> R } -> R
-  def with_context(context, &block)
-    return NoOp.with_context(context, &block) unless Riffer.config.tracing.enabled
-    backend.with_context(context, &block)
+  def with_context(context, &)
+    return NoOp.with_context(context, &) unless Riffer.config.tracing.enabled
+
+    backend.with_context(context, &)
   end
 
   # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,

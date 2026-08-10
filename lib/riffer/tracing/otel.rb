@@ -73,7 +73,9 @@ class Riffer::Tracing::Otel # :nodoc: all
     #: () -> bool
     def available?
       version = api_version
-      !version.nil? && supported?(version)
+      return false if version.nil?
+
+      supported?(version)
     end
 
     # Whether the given opentelemetry-api version is one riffer codes
@@ -125,8 +127,9 @@ class Riffer::Tracing::Otel # :nodoc: all
   # Runs the block with the given OTEL context active.
   #--
   #: [R] (untyped) { () -> R } -> R
-  def with_context(context)
+  def with_context(context, &)
     return yield if context.nil?
-    ::OpenTelemetry::Context.with_current(context) { yield }
+
+    ::OpenTelemetry::Context.with_current(context, &)
   end
 end

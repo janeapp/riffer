@@ -62,7 +62,7 @@ class Riffer::Evals::RunResult
       scores: scores.transform_keys(&:name),
       scenario_results: scenario_results.map(&:to_h),
       token_usage: token_usage&.to_h,
-      evaluator_token_usage: evaluator_token_usage&.to_h
+      evaluator_token_usage: evaluator_token_usage&.to_h,
     }
   end
 end

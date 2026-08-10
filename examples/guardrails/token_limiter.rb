@@ -42,7 +42,7 @@ class TokenLimiterGuardrail < Riffer::Guardrail
     when :block
       block(
         "Response exceeds token limit of #{limit}",
-        metadata: {tokens: tokens, limit: limit}
+        metadata: { tokens: tokens, limit: limit },
       )
     else
       pass(response)

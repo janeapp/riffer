@@ -13,7 +13,7 @@ describe Riffer::Tool do
       end
 
       def call(context:, city:, units: nil)
-        text("Weather in #{city}: 20 #{units || "celsius"}")
+        text("Weather in #{city}: 20 #{units || 'celsius'}")
       end
     end
   end
@@ -22,7 +22,7 @@ describe Riffer::Tool do
     Class.new(Riffer::Tool) do
       description "A simple tool"
 
-      def call(context:, **kwargs)
+      def call(context:, **_kwargs)
         text("Simple result")
       end
     end
@@ -32,23 +32,26 @@ describe Riffer::Tool do
     it "raises NotImplementedError when not implemented" do
       tool_class = Class.new(Riffer::Tool)
       tool = tool_class.new
+
       expect { tool.call(context: nil) }.must_raise(NotImplementedError)
     end
 
     it "executes with provided arguments" do
       tool = weather_tool_class.new
       result = tool.call(context: nil, city: "Toronto", units: "fahrenheit")
+
       expect(result.content).must_equal "Weather in Toronto: 20 fahrenheit"
     end
 
     it "receives context" do
       tool_class = Class.new(Riffer::Tool) do
-        def call(context:, **kwargs)
+        def call(context:, **_kwargs)
           text(context[:user_id])
         end
       end
       tool = tool_class.new
-      result = tool.call(context: {user_id: 123})
+      result = tool.call(context: { user_id: 123 })
+
       expect(result.content).must_equal "123"
     end
   end
@@ -56,6 +59,7 @@ describe Riffer::Tool do
   describe "#call_with_validation" do
     it "raises ValidationError for missing required params" do
       tool = weather_tool_class.new
+
       expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::ValidationError)
     end
 
@@ -68,6 +72,7 @@ describe Riffer::Tool do
     it "applies defaults for optional params" do
       tool = weather_tool_class.new
       result = tool.call_with_validation(context: nil, city: "Toronto")
+
       expect(result.content).must_equal "Weather in Toronto: 20 celsius"
     end
 
@@ -82,13 +87,15 @@ describe Riffer::Tool do
         end
       end
       tool = tool_class.new
-      result = tool.call_with_validation(context: {greeting: "Hello"}, name: "World")
+      result = tool.call_with_validation(context: { greeting: "Hello" }, name: "World")
+
       expect(result.content).must_equal "Hello, World!"
     end
 
     it "works without params definition" do
       tool = simple_tool_class.new
       result = tool.call_with_validation(context: nil)
+
       expect(result.content).must_equal "Simple result"
     end
 
@@ -103,6 +110,7 @@ describe Riffer::Tool do
       end
 
       tool = slow_tool_class.new
+
       expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::TimeoutError)
     end
 
@@ -132,6 +140,7 @@ describe Riffer::Tool do
 
       tool = fast_tool_class.new
       result = tool.call_with_validation(context: nil)
+
       expect(result.content).must_equal "fast result"
     end
 
@@ -152,6 +161,7 @@ describe Riffer::Tool do
     it "creates a text response" do
       tool = simple_tool_class.new
       response = tool.text("hello")
+
       expect(response).must_be_instance_of Riffer::Tools::Response
       expect(response.content).must_equal "hello"
       expect(response.success?).must_equal true
@@ -161,7 +171,8 @@ describe Riffer::Tool do
   describe "#json" do
     it "creates a JSON response" do
       tool = simple_tool_class.new
-      response = tool.json({name: "Alice"})
+      response = tool.json({ name: "Alice" })
+
       expect(response).must_be_instance_of Riffer::Tools::Response
       expect(response.content).must_equal '{"name":"Alice"}'
       expect(response.success?).must_equal true
@@ -172,6 +183,7 @@ describe Riffer::Tool do
     it "creates an error response" do
       tool = simple_tool_class.new
       response = tool.error("something failed")
+
       expect(response).must_be_instance_of Riffer::Tools::Response
       expect(response.content).must_equal "something failed"
       expect(response.error?).must_equal true
@@ -180,6 +192,7 @@ describe Riffer::Tool do
     it "accepts custom error type" do
       tool = simple_tool_class.new
       response = tool.error("not found", type: :not_found)
+
       expect(response.error_type).must_equal :not_found
     end
   end

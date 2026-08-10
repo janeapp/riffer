@@ -7,13 +7,14 @@ describe Riffer::Skills::MarkdownAdapter do
   let(:skills) do
     [
       Riffer::Skills::Frontmatter.new(name: "code-review", description: "Reviews code for quality."),
-      Riffer::Skills::Frontmatter.new(name: "data-analysis", description: "Analyzes datasets.")
+      Riffer::Skills::Frontmatter.new(name: "data-analysis", description: "Analyzes datasets."),
     ]
   end
 
   describe "#render_catalog" do
     it "renders a Markdown skill catalog" do
       output = adapter.render_catalog(skills)
+
       assert_includes output, "## Available Skills"
       assert_includes output, "skill_activate"
       assert_includes output, "- **code-review**: Reviews code for quality."
@@ -30,6 +31,7 @@ describe Riffer::Skills::MarkdownAdapter do
       end
       custom_adapter = Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: custom)
       output = custom_adapter.render_catalog(skills)
+
       assert_includes output, "`custom_activate`"
     end
 
@@ -38,7 +40,9 @@ describe Riffer::Skills::MarkdownAdapter do
     end
 
     it "keeps a multi-line description within its list item" do
-      skill = Riffer::Skills::Frontmatter.new(name: "code-review", description: "Reviews code.\nUse for pull requests.\n")
+      skill = Riffer::Skills::Frontmatter.new(name: "code-review",
+                                              description: "Reviews code.\nUse for pull requests.\n",)
+
       assert_includes adapter.render_catalog([skill]), "- **code-review**: Reviews code. Use for pull requests."
     end
   end
@@ -46,6 +50,7 @@ describe Riffer::Skills::MarkdownAdapter do
   describe "#render_activation" do
     it "wraps the body in skill_content tags" do
       output = adapter.render_activation(skills.first, "The body.")
+
       assert_equal %(<skill_content name="code-review">\nThe body.\n</skill_content>), output
     end
   end

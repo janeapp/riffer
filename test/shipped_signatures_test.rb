@@ -36,8 +36,8 @@ describe "shipped RBS signatures" do
     end
 
     assert_empty violations,
-      "Optional-dependency types leaked into shipped RBS. Use an inline body assertion " \
-      "instead of naming the SDK type in a `#:` signature (see .agents/rbs-inline.md):\n" +
-        violations.uniq.join("\n")
+                 "Optional-dependency types leaked into shipped RBS. Use an inline body assertion " \
+                 "instead of naming the SDK type in a `#:` signature (see .agents/rbs-inline.md):\n" +
+                 violations.uniq.join("\n")
   end
 end

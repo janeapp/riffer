@@ -22,8 +22,8 @@ describe Riffer::Evals::RunResult do
       ground_truth: nil,
       results: [
         Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9),
-        Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.8)
-      ]
+        Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.8),
+      ],
     )
   end
 
@@ -34,8 +34,8 @@ describe Riffer::Evals::RunResult do
       ground_truth: nil,
       results: [
         Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.3),
-        Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.6)
-      ]
+        Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.6),
+      ],
     )
   end
 
@@ -76,16 +76,18 @@ describe Riffer::Evals::RunResult do
         output: "A programming language.",
         ground_truth: nil,
         results: [
-          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9, token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
-        ]
+          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9,
+                                    token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5),),
+        ],
       )
       other_scenario_with_usage = Riffer::Evals::ScenarioResult.new(
         input: "What is Python?",
         output: "A snake.",
         ground_truth: nil,
         results: [
-          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.3, token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8))
-        ]
+          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.3,
+                                    token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8),),
+        ],
       )
 
       run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_with_usage, other_scenario_with_usage])
@@ -107,14 +109,14 @@ describe Riffer::Evals::RunResult do
         output: "A programming language.",
         ground_truth: nil,
         results: [],
-        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5),
       )
       other_scenario_with_usage = Riffer::Evals::ScenarioResult.new(
         input: "What is Python?",
         output: "A snake.",
         ground_truth: nil,
         results: [],
-        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8)
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8),
       )
 
       run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_with_usage, other_scenario_with_usage])
@@ -134,6 +136,7 @@ describe Riffer::Evals::RunResult do
       run_result = Riffer::Evals::RunResult.new(scenario_results: [scenario_a])
 
       hash = run_result.to_h
+
       expect(hash[:scores]).must_be_instance_of Hash
       expect(hash[:scenario_results].length).must_equal 1
     end

@@ -7,7 +7,7 @@
 class Riffer::Agent::Context
   # @rbs @data: Hash[Symbol, untyped]
 
-  RESERVED_KEYS = [:skills, :token_usage, :mcp_progressive_tools, :discovered_tools].freeze #: Array[Symbol]
+  RESERVED_KEYS = %i[skills token_usage mcp_progressive_tools discovered_tools].freeze #: Array[Symbol]
 
   # Builds a new context. The caller Hash is duped so later caller mutations
   # don't leak in. Raises Riffer::ArgumentError if it contains a reserved key.
@@ -17,7 +17,7 @@ class Riffer::Agent::Context
     reserved = data.keys & RESERVED_KEYS
     if reserved.any?
       raise Riffer::ArgumentError,
-        "Reserved keys cannot be passed in context: #{reserved.join(", ")}"
+            "Reserved keys cannot be passed in context: #{reserved.join(', ')}"
     end
 
     @data = data.dup
@@ -43,7 +43,7 @@ class Riffer::Agent::Context
   def skills=(value)
     unless value.nil? || value.is_a?(Riffer::Skills::Context)
       raise Riffer::ArgumentError,
-        "skills must be a Riffer::Skills::Context or nil, got #{value.class}"
+            "skills must be a Riffer::Skills::Context or nil, got #{value.class}"
     end
     @data[:skills] = value
   end
@@ -64,7 +64,7 @@ class Riffer::Agent::Context
   def token_usage=(value)
     unless value.nil? || value.is_a?(Riffer::Providers::TokenUsage)
       raise Riffer::ArgumentError,
-        "token_usage must be a Riffer::Providers::TokenUsage or nil, got #{value.class}"
+            "token_usage must be a Riffer::Providers::TokenUsage or nil, got #{value.class}"
     end
     @data[:token_usage] = value
   end
@@ -94,7 +94,7 @@ class Riffer::Agent::Context
     )
     unless valid
       raise Riffer::ArgumentError,
-        "mcp_progressive_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
+            "mcp_progressive_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
     end
     @data[:mcp_progressive_tools] = value
   end
@@ -117,7 +117,7 @@ class Riffer::Agent::Context
     )
     unless valid
       raise Riffer::ArgumentError,
-        "discovered_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
+            "discovered_tools must be an Array of Riffer::Tool subclasses or nil, got #{value.class}"
     end
     @data[:discovered_tools] = value
   end

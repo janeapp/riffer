@@ -36,20 +36,23 @@ describe Riffer::Agent do
   describe ".provider_options" do
     it "sets the provider options" do
       agent_class.provider_options(api_key: "test-key")
-      expect(agent_class.provider_options).must_equal({api_key: "test-key"})
+
+      expect(agent_class.provider_options).must_equal({ api_key: "test-key" })
     end
   end
 
   describe ".model_options" do
     it "sets the model options" do
       agent_class.model_options(reasoning: "medium")
-      expect(agent_class.model_options).must_equal({reasoning: "medium"})
+
+      expect(agent_class.model_options).must_equal({ reasoning: "medium" })
     end
   end
 
   describe ".max_steps" do
     it "sets the value" do
       agent_class.max_steps(5)
+
       expect(agent_class.max_steps).must_equal 5
     end
   end
@@ -57,38 +60,44 @@ describe Riffer::Agent do
   describe "#initialize" do
     it "seeds the session with the configured instruction system message" do
       agent = agent_class.new
+
       expect(agent.session.messages.map(&:role)).must_equal [:system]
       expect(agent.session.messages.first.content).must_equal "You are a helpful assistant."
     end
 
     it "leaves the session empty when no instructions or skills are configured" do
       bare = Class.new(Riffer::Agent) { model "mock/riffer-1" }.new
+
       expect(bare.session.messages).must_equal []
     end
 
     it "uses the provided session as-is when passed" do
       seeded = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hi")])
       agent = agent_class.new(session: seeded)
+
       expect(agent.session).must_be_same_as seeded
       expect(agent.session.messages.map(&:role)).must_equal [:user]
     end
 
     it "initializes with nil token_usage" do
       agent = agent_class.new
+
       expect(agent.context.token_usage).must_be_nil
     end
 
     it "does not mutate a caller-supplied context Hash" do
-      shared = {tenant: "alpha"}
+      shared = { tenant: "alpha" }
       agent_class.new(context: shared).generate("hi")
-      expect(shared).must_equal({tenant: "alpha"})
+
+      expect(shared).must_equal({ tenant: "alpha" })
     end
 
     it "isolates context between agents constructed with the same Hash" do
-      shared = {tenant: "alpha"}
+      shared = { tenant: "alpha" }
       first = agent_class.new(context: shared)
       second = agent_class.new(context: shared)
       first.generate("hi")
+
       expect(second.context[:token_usage]).must_be_nil
     end
 
@@ -124,6 +133,7 @@ describe Riffer::Agent do
 
         agent = klass.new
         system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+
         expect(system_message.content).must_equal "Dynamic instructions"
       end
 
@@ -133,8 +143,9 @@ describe Riffer::Agent do
           instructions ->(context) { "You are assisting #{context[:name]}" }
         end
 
-        agent = klass.new(context: {name: "Jane"})
+        agent = klass.new(context: { name: "Jane" })
         system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+
         expect(system_message.content).must_equal "You are assisting Jane"
       end
 
@@ -146,6 +157,7 @@ describe Riffer::Agent do
 
         agent = klass.new
         system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+
         expect(system_message.content).must_equal "No name"
       end
 
@@ -158,6 +170,7 @@ describe Riffer::Agent do
 
         agent = klass.new
         system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+
         expect(system_message).must_be_nil
       end
     end
@@ -166,11 +179,13 @@ describe Riffer::Agent do
   describe ".config" do
     it "returns a Riffer::Agent::Config" do
       klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+
       expect(klass.config).must_be_instance_of Riffer::Agent::Config
     end
 
     it "returns the same instance across multiple reads on one class" do
       klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+
       expect(klass.config).must_be_same_as klass.config
     end
 
@@ -183,6 +198,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         max_steps 7
       end
+
       expect(sibling_a.config).wont_be_same_as sibling_b.config
       expect(sibling_a.config.max_steps).must_equal 3
       expect(sibling_b.config.max_steps).must_equal 7
@@ -194,6 +210,7 @@ describe Riffer::Agent do
         max_steps 3
       end
       child = Class.new(parent)
+
       expect(child.config).wont_be_same_as parent.config
       # Each subclass starts fresh; only tool_runtime walks the chain.
       expect(child.config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
@@ -205,12 +222,13 @@ describe Riffer::Agent do
       Riffer::Agent::Config.new(
         model: "mock/riffer-1",
         instructions: "You are explicit.",
-        max_steps: 4
+        max_steps: 4,
       )
     end
 
     it "uses the explicit config when provided" do
       agent = Riffer::Agent.new(config: explicit_config)
+
       expect(agent.session.messages.first.content).must_equal "You are explicit."
     end
 
@@ -221,6 +239,7 @@ describe Riffer::Agent do
         max_steps 99
       end
       agent = klass.new(config: explicit_config)
+
       expect(agent.session.messages.first.content).must_equal "You are explicit."
       expect(agent.instance_variable_get(:@config).max_steps).must_equal 4
     end
@@ -231,25 +250,28 @@ describe Riffer::Agent do
         instructions "From class."
       end
       agent = klass.new
+
       expect(agent.instance_variable_get(:@config)).must_be_same_as klass.config
     end
 
     it "threads context: through Procs in the explicit config" do
       cfg = Riffer::Agent::Config.new(
         model: "mock/riffer-1",
-        instructions: ->(ctx) { "Hello #{ctx[:name]}" }
+        instructions: ->(ctx) { "Hello #{ctx[:name]}" },
       )
-      agent = Riffer::Agent.new(config: cfg, context: {name: "Jane"})
+      agent = Riffer::Agent.new(config: cfg, context: { name: "Jane" })
+
       expect(agent.session.messages.first.content).must_equal "Hello Jane"
     end
 
     it "uses an explicit config's model_options in the LLM call" do
       cfg = Riffer::Agent::Config.new(
         model: "mock/riffer-1",
-        model_options: {temperature: 0.3}
+        model_options: { temperature: 0.3 },
       )
       agent = Riffer::Agent.new(config: cfg)
       agent.generate("hi")
+
       expect(agent.provider.calls.last[:temperature]).must_equal 0.3
     end
   end
@@ -262,6 +284,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
       end
       klass.structured_output(params)
+
       expect(klass.structured_output).must_equal params
     end
 
@@ -273,6 +296,7 @@ describe Riffer::Agent do
           optional :score, Float
         end
       end
+
       expect(klass.structured_output).must_be_instance_of Riffer::Params
       expect(klass.structured_output.parameters.size).must_equal 2
     end
@@ -280,14 +304,16 @@ describe Riffer::Agent do
 
   describe ".generate with files" do
     it "passes files to the agent" do
-      result = agent_class.generate("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      result = agent_class.generate("Describe this", files: [{ data: "aGVsbG8=", media_type: "image/png" }])
+
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
   end
 
   describe ".stream with files" do
     it "passes files to the agent" do
-      result = agent_class.stream("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      result = agent_class.stream("Describe this", files: [{ data: "aGVsbG8=", media_type: "image/png" }])
+
       expect(result).must_be_instance_of Enumerator
     end
   end
@@ -302,11 +328,13 @@ describe Riffer::Agent do
 
     it "returns the agent class with matching identifier" do
       found_agent = Riffer::Agent.find("findable-agent")
+
       expect(found_agent).must_equal @test_agent_class
     end
 
     it "returns nil when identifier is not found" do
       found_agent = Riffer::Agent.find("nonexistent-agent")
+
       expect(found_agent).must_be_nil
     end
   end
@@ -326,16 +354,19 @@ describe Riffer::Agent do
 
     it "returns an array of agent classes" do
       result = Riffer::Agent.all
+
       expect(result).must_be_instance_of Array
     end
 
     it "includes agent 1" do
       all_agents = Riffer::Agent.all
+
       expect(all_agents).must_include @agent1
     end
 
     it "includes agent 2" do
       all_agents = Riffer::Agent.all
+
       expect(all_agents).must_include @agent2
     end
   end
@@ -343,6 +374,7 @@ describe Riffer::Agent do
   describe ".generate" do
     it "returns a Response object" do
       result = agent_class.generate("Hello")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
@@ -362,13 +394,14 @@ describe Riffer::Agent do
       received_context = nil
       custom_agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        uses_tools ->(context) {
+        uses_tools lambda { |context|
           received_context = context
           [tool]
         }
       end
 
-      custom_agent_class.generate("Hello", context: {user_name: "Bob"})
+      custom_agent_class.generate("Hello", context: { user_name: "Bob" })
+
       expect(received_context[:user_name]).must_equal "Bob"
     end
   end
@@ -376,11 +409,13 @@ describe Riffer::Agent do
   describe ".stream" do
     it "returns an enumerator" do
       result = agent_class.stream("Hello")
+
       expect(result).must_be_instance_of Enumerator
     end
 
     it "yields stream events" do
       events = agent_class.stream("Hello").to_a
+
       expect(events).wont_be_empty
     end
 
@@ -400,13 +435,14 @@ describe Riffer::Agent do
       received_context = nil
       custom_agent_class = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        uses_tools ->(context) {
+        uses_tools lambda { |context|
           received_context = context
           [tool]
         }
       end
 
-      custom_agent_class.stream("Hello", context: {user_id: "42"}).each { |_| }
+      custom_agent_class.stream("Hello", context: { user_id: "42" }).each { |_| }
+
       expect(received_context[:user_id]).must_equal "42"
     end
   end
@@ -448,6 +484,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         uses_tools -> { [tool_class] }
       end
+
       expect(agent.uses_tools).must_be_instance_of Proc
     end
   end
@@ -458,6 +495,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         tool_runtime Riffer::Tools::Runtime::Threaded
       end
+
       expect(agent.tool_runtime).must_equal Riffer::Tools::Runtime::Threaded
     end
   end
@@ -472,6 +510,7 @@ describe Riffer::Agent do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
       end
+
       expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
     end
 
@@ -480,6 +519,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         tool_runtime Riffer::Tools::Runtime::Threaded
       end
+
       expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
     end
 
@@ -490,6 +530,7 @@ describe Riffer::Agent do
         klass = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
         end
+
         expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Threaded
       ensure
         Riffer.config.tool_runtime = original
@@ -504,6 +545,7 @@ describe Riffer::Agent do
           model "mock/riffer-1"
           tool_runtime Riffer::Tools::Runtime::Inline
         end
+
         expect(runtime_for(klass)).must_be_instance_of Riffer::Tools::Runtime::Inline
       ensure
         Riffer.config.tool_runtime = original
@@ -514,14 +556,14 @@ describe Riffer::Agent do
       received_contexts = []
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
-        tool_runtime ->(context) {
+        tool_runtime lambda { |context|
           received_contexts << context
           Riffer::Tools::Runtime::Inline.new
         }
       end
 
-      klass.new(context: {a: 1}).tool_runtime
-      klass.new(context: {b: 2}).tool_runtime
+      klass.new(context: { a: 1 }).tool_runtime
+      klass.new(context: { b: 2 }).tool_runtime
 
       expect(received_contexts.map { |c| c[:a] || c[:b] }).must_equal [1, 2]
     end
@@ -534,11 +576,11 @@ describe Riffer::Agent do
 
     let(:block_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        def process_input(messages, context:)
+        def process_input(_messages, context:)
           block("Input blocked")
         end
 
-        def process_output(response, messages:, context:)
+        def process_output(_response, messages:, context:)
           block("Output blocked")
         end
       end
@@ -551,6 +593,7 @@ describe Riffer::Agent do
       end
       agent.guardrail(:before, with: gr)
       configs = agent.guardrails_for(:before)
+
       expect(configs.any? { |c| c[:class] == gr }).must_equal true
     end
 
@@ -561,13 +604,15 @@ describe Riffer::Agent do
       end
       agent.guardrail(:before, with: gr, foo: :bar)
       config = agent.guardrails_for(:before).first
-      expect(config[:options]).must_equal({foo: :bar})
+
+      expect(config[:options]).must_equal({ foo: :bar })
     end
   end
 
   describe "#instruction_message" do
     it "returns a System message with instructions" do
       agent = agent_class.new
+
       expect(agent.instruction_message).must_be_instance_of Riffer::Messages::System
       expect(agent.instruction_message.content).must_equal "You are a helpful assistant."
     end
@@ -576,6 +621,7 @@ describe Riffer::Agent do
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
       end
+
       expect(klass.new.instruction_message).must_be_nil
     end
 
@@ -584,7 +630,8 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         instructions ->(context) { "Helping #{context[:name]}" }
       end
-      agent = klass.new(context: {name: "Alice"})
+      agent = klass.new(context: { name: "Alice" })
+
       expect(agent.instruction_message.content).must_equal "Helping Alice"
     end
 
@@ -594,6 +641,7 @@ describe Riffer::Agent do
         model "mock/riffer-1"
         instructions returner
       end
+
       expect(klass.new.instruction_message).must_be_nil
     end
   end
@@ -601,6 +649,7 @@ describe Riffer::Agent do
   describe "#skills_message" do
     it "returns nil when no skills configured" do
       agent = agent_class.new
+
       expect(agent.skills_message).must_be_nil
     end
 
@@ -612,6 +661,7 @@ describe Riffer::Agent do
         end
       end
       agent = klass.new
+
       expect(agent.skills_message).must_be_instance_of Riffer::Messages::System
       expect(agent.skills_message.content).must_include "Available Skills"
     end
@@ -625,9 +675,10 @@ describe Riffer::Agent do
         use_mcp :github
         use_mcp :jira, progressive: false
       end
+
       expect(klass.mcp_configs).must_equal [
-        {tags: [:github], progressive: true},
-        {tags: [:jira], progressive: false}
+        { tags: [:github], progressive: true },
+        { tags: [:jira], progressive: false },
       ]
     end
   end
@@ -664,10 +715,10 @@ describe Riffer::Agent do
     end
 
     it "merges MCP tools with uses_tools tools" do
-      static_tool = Class.new(Riffer::Tool) {
+      static_tool = Class.new(Riffer::Tool) do
         identifier "static_tool"
         description "Static tool"
-      }
+      end
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
       klass = Class.new(Riffer::Agent) do
@@ -677,15 +728,16 @@ describe Riffer::Agent do
       end
 
       tools = resolved_tools_for(klass)
+
       expect(tools).must_include static_tool
       expect(tools).must_include fake_tool_class
     end
 
     it "raises ArgumentError when tools share the same name" do
-      static = Class.new(Riffer::Tool) {
+      static = Class.new(Riffer::Tool) do
         identifier "srv__mcp_tool"
         description "Static tool"
-      }
+      end
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
       klass = Class.new(Riffer::Agent) do
@@ -728,7 +780,7 @@ describe Riffer::Agent do
     it "uses AuthenticatedTool wrappers when credentials proc is set" do
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
       prev = Riffer.config.mcp.credentials
-      Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { {"Authorization" => "Bearer x"} }
+      Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { { "Authorization" => "Bearer x" } }
 
       klass = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
@@ -736,6 +788,7 @@ describe Riffer::Agent do
       end
 
       tools = resolved_tools_for(klass)
+
       expect(tools.size).must_equal 1
       expect(tools.first).wont_equal fake_tool_class
       expect(tools.first.name).must_equal fake_tool_class.name
@@ -770,6 +823,7 @@ describe Riffer::Agent do
 
         tools = resolved_tools_for(klass)
         names = tools.map(&:name)
+
         expect(tools.size).must_equal 1
         expect(names).must_include "mcp_search"
       end
@@ -785,6 +839,7 @@ describe Riffer::Agent do
         tools, ctx = resolved_tools_and_context_for(klass)
         st = tools.find { |t| t.name == "mcp_search" }
         resp = st.new.call(context: ctx, query: "tool_a")
+
         expect(resp.success?).must_equal true
         expect(resp.content).must_include "srv__tool_a"
         expect(resp.discovered_tools).wont_be_empty
@@ -803,12 +858,14 @@ describe Riffer::Agent do
 
         tools, ctx = resolved_tools_and_context_for(klass)
         names = tools.map(&:name)
+
         expect(names).must_include "srv__tool_b"
         expect(names).must_include "mcp_search"
         expect(names).wont_include "mcp_call"
 
         st = tools.find { |t| t.name == "mcp_search" }
         resp = st.new.call(context: ctx, query: "tool_a")
+
         expect(resp.content).must_include "srv__tool_a"
         expect(resp.content).wont_include "srv__tool_b"
       end
@@ -824,10 +881,12 @@ describe Riffer::Agent do
         end
 
         tools, ctx = resolved_tools_and_context_for(klass)
+
         expect(tools.count { |t| t.name == "mcp_search" }).must_equal 1
         expect(tools.map(&:name)).wont_include "mcp_call"
 
         resp = tools.find { |t| t.name == "mcp_search" }.new.call(context: ctx, query: "tool")
+
         expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_a"
         expect(resp.discovered_tools.map(&:name)).must_include "srv__tool_b"
       end
@@ -851,8 +910,8 @@ describe Riffer::Agent do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
         inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
         prev = Riffer.config.mcp.credentials
-        Riffer.config.mcp.credentials = ->(matched_tags:, **) {
-          matched_tags.include?(:srv) ? nil : {token: "tok"}
+        Riffer.config.mcp.credentials = lambda { |matched_tags:, **|
+          matched_tags.include?(:srv) ? nil : { token: "tok" }
         }
 
         klass = Class.new(Riffer::Agent) do
@@ -863,6 +922,7 @@ describe Riffer::Agent do
 
         tools = resolved_tools_for(klass)
         names = tools.map(&:name)
+
         expect(names).wont_include "mcp_search"
         expect(tools).wont_be_empty
       ensure
@@ -875,12 +935,14 @@ describe Riffer::Agent do
           use_mcp :bar, progressive: false   # explicit opt-out
         end
         configs = klass.mcp_configs
+
         expect(configs.first[:progressive]).must_equal true
         expect(configs.last[:progressive]).must_equal false
       end
 
       it "defaults progressive to true when not specified" do
         klass = Class.new(Riffer::Agent) { use_mcp :foo }
+
         expect(klass.mcp_configs.first[:progressive]).must_equal true
       end
     end
@@ -945,9 +1007,9 @@ describe Riffer::Agent do
       agent = custom_class.new
       provider = agent.provider
       provider.stub_response("", tool_calls: [
-        {name: "interrupt_heal_tool", arguments: "{}"},
-        {name: "interrupt_heal_tool", arguments: "{}"}
-      ])
+                               { name: "interrupt_heal_tool", arguments: "{}" },
+                               { name: "interrupt_heal_tool", arguments: "{}" },
+                             ],)
 
       agent.session.on_message do |msg|
         agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
@@ -959,6 +1021,7 @@ describe Riffer::Agent do
       expect(result.healed_tool_call_ids.length).must_equal 2
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       tools = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+
       expect(tools.length).must_equal 2
       expect(tools.first.error_type).must_equal :interrupted
       expect(tools.first.content).must_equal "Tool call interrupted before completion."
@@ -973,7 +1036,7 @@ describe Riffer::Agent do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
 
       agent.session.on_message do |msg|
         agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
@@ -996,7 +1059,7 @@ describe Riffer::Agent do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
 
       seen = []
       agent.session.on_message do |msg|
@@ -1036,8 +1099,8 @@ describe Riffer::Agent do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
 
       result = agent.generate("Loop forever")
 
@@ -1046,6 +1109,7 @@ describe Riffer::Agent do
       expect(result.healed_tool_call_ids.length).must_equal 1
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       synth = agent.session.messages.last
+
       expect(synth).must_be_kind_of Riffer::Messages::Tool
       expect(synth.error_type).must_equal :interrupted
     end
@@ -1060,8 +1124,8 @@ describe Riffer::Agent do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
 
       result = agent.generate("Loop forever")
 
@@ -1080,23 +1144,25 @@ describe Riffer::Agent do
     it "passes seeded history through untouched when healing is off (default)" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
       seeded = Riffer::Agent::Session.new(messages: [
-        Riffer::Messages::User.new("hi"),
-        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
-        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-        Riffer::Messages::User.new("follow up"),
-        Riffer::Messages::Assistant.new("ok")
-      ])
+                                            Riffer::Messages::User.new("hi"),
+                                            Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
+                                            Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+                                            Riffer::Messages::User.new("follow up"),
+                                            Riffer::Messages::Assistant.new("ok"),
+                                          ])
       agent = custom_class.new(session: seeded)
       agent.provider.stub_response("Hello!")
       agent.generate
 
-      assistant_with_orphan = agent.session.messages.find { |m|
+      assistant_with_orphan = agent.session.messages.find do |m|
         m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
-      }
+      end
+
       refute_nil assistant_with_orphan
-      parentless = agent.session.messages.find { |m|
+      parentless = agent.session.messages.find do |m|
         m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
-      }
+      end
+
       refute_nil parentless
     end
 
@@ -1104,9 +1170,9 @@ describe Riffer::Agent do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
       seeded = Riffer::Agent::Session.new(messages: [
-        Riffer::Messages::User.new("Call tool"),
-        Riffer::Messages::Assistant.new("", tool_calls: [tc])
-      ])
+                                            Riffer::Messages::User.new("Call tool"),
+                                            Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+                                          ])
       tool = Class.new(Riffer::Tool) do
         description "Pending tool"
         def call(context:)
@@ -1121,6 +1187,7 @@ describe Riffer::Agent do
       agent = with_tools.new(session: seeded)
       agent.provider.stub_response("All done!")
       result = agent.generate
+
       expect(result.interrupted?).must_equal false
     end
   end

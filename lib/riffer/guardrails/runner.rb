@@ -43,7 +43,7 @@ class Riffer::Guardrails::Runner
           reason: result.data,
           guardrail: guardrail.class,
           phase: phase,
-          metadata: result.metadata
+          metadata: result.metadata,
         )
         return [current_data, tripwire, modifications]
       end
@@ -52,7 +52,7 @@ class Riffer::Guardrails::Runner
         modifications << Riffer::Guardrails::Modification.new(
           guardrail: guardrail.class,
           phase: phase,
-          message_indices: detect_changed_indices(current_data, result.data)
+          message_indices: detect_changed_indices(current_data, result.data),
         )
       end
 
@@ -78,21 +78,22 @@ class Riffer::Guardrails::Runner
       max_len = [old_data.length, new_data.length].max
       (0...max_len).select { |i| old_data[i] != new_data[i] }
     else
-      (old_data == new_data) ? [] : [0]
+      old_data == new_data ? [] : [0]
     end
   end
 
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
-    Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail), kind: :internal) do |span|
+    Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail),
+                                                                   kind: :internal,) do |span|
       result = run_guardrail_phase(guardrail, data, messages: messages)
       record_guardrail_outcome(span, result)
       result
-    rescue => error
+    rescue StandardError => e
       # The backend records the exception and error status on the re-raise;
       # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
+      span.set_attribute("error.type", e.class.name)
       raise
     end
   end
@@ -106,7 +107,8 @@ class Riffer::Guardrails::Runner
     when :after
       guardrail.process_output(data, messages: messages || [], context: context)
     else
-      raise Riffer::Error, "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(", ")}"
+      raise Riffer::Error,
+            "Unexpected guardrail phase: #{phase}. Valid phases: #{Riffer::Guardrails::PHASES.join(', ')}"
     end
   end
 
@@ -115,7 +117,7 @@ class Riffer::Guardrails::Runner
   def guardrail_span_attributes(guardrail)
     {
       "riffer.guardrail.name" => guardrail.name,
-      "riffer.guardrail.phase" => phase.to_s
+      "riffer.guardrail.phase" => phase.to_s,
     }.merge(tags.transform_keys { |key| "riffer.tag.#{key}" })
   end
 

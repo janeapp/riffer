@@ -65,7 +65,7 @@ class Riffer::Evals::ScenarioResult
       results: results.map(&:to_h),
       messages: messages.map(&:to_h),
       token_usage: token_usage&.to_h,
-      evaluator_token_usage: evaluator_token_usage&.to_h
+      evaluator_token_usage: evaluator_token_usage&.to_h,
     }
   end
 end

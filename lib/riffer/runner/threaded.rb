@@ -35,8 +35,8 @@ class Riffer::Runner::Threaded < Riffer::Runner
           end
           item, index = pair
           begin
-            results[index] = block.call(item)
-          rescue => e
+            results[index] = yield(item)
+          rescue StandardError => e
             errors[index] = e
           end
         end

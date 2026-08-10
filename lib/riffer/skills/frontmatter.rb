@@ -35,7 +35,11 @@ class Riffer::Skills::Frontmatter
   def self.parse(raw)
     yaml, body = split_frontmatter(raw)
     raise Riffer::ArgumentError, "missing YAML frontmatter (expected --- delimiters)" if yaml.empty?
-    [new(name: yaml.delete(:name), description: yaml.delete(:description), disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml), body]
+
+    [
+      new(name: yaml.delete(:name), description: yaml.delete(:description),
+          disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml,), body,
+    ]
   end
 
   # Parses only the frontmatter from a raw SKILL.md string, ignoring the body.
@@ -43,9 +47,11 @@ class Riffer::Skills::Frontmatter
   #--
   #: (String) -> Riffer::Skills::Frontmatter
   def self.parse_frontmatter(raw)
-    yaml, _ = split_frontmatter(raw)
+    yaml, = split_frontmatter(raw)
     raise Riffer::ArgumentError, "missing YAML frontmatter (expected --- delimiters)" if yaml.empty?
-    new(name: yaml.delete(:name), description: yaml.delete(:description), disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml)
+
+    new(name: yaml.delete(:name), description: yaml.delete(:description),
+        disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml,)
   end
 
   #--
@@ -56,6 +62,7 @@ class Riffer::Skills::Frontmatter
     if parts.length >= 3 && parts[0].strip.empty?
       parsed = YAML.safe_load(parts[1])
       raise Riffer::ArgumentError, "frontmatter must be a YAML mapping" unless parsed.nil? || parsed.is_a?(Hash)
+
       [parsed&.transform_keys(&:to_sym) || {}, parts[2].lstrip]
     else
       [{}, raw]
@@ -82,7 +89,10 @@ class Riffer::Skills::Frontmatter
   #: (untyped) -> void
   def validate_name!(name)
     raise Riffer::ArgumentError, "name must be a String" unless name.is_a?(String)
-    raise Riffer::ArgumentError, "name must be 1-#{MAX_NAME_LENGTH} characters" if name.empty? || name.length > MAX_NAME_LENGTH
+    if name.empty? || name.length > MAX_NAME_LENGTH
+      raise Riffer::ArgumentError,
+            "name must be 1-#{MAX_NAME_LENGTH} characters"
+    end
     raise Riffer::ArgumentError, "name must match #{NAME_PATTERN.source}" unless NAME_PATTERN.match?(name)
   end
 
@@ -90,6 +100,9 @@ class Riffer::Skills::Frontmatter
   #: (untyped) -> void
   def validate_description!(description)
     raise Riffer::ArgumentError, "description must be a String" unless description.is_a?(String)
-    raise Riffer::ArgumentError, "description must be 1-#{MAX_DESCRIPTION_LENGTH} characters" if description.empty? || description.length > MAX_DESCRIPTION_LENGTH
+    return unless description.empty? || description.length > MAX_DESCRIPTION_LENGTH
+
+    raise Riffer::ArgumentError,
+          "description must be 1-#{MAX_DESCRIPTION_LENGTH} characters"
   end
 end

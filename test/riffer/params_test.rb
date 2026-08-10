@@ -7,37 +7,43 @@ describe Riffer::Params do
     it "adds a parameter" do
       params = Riffer::Params.new
       params.required(:city, String)
+
       expect(params.parameters.length).must_equal 1
     end
 
     it "marks the parameter as required" do
       params = Riffer::Params.new
       params.required(:city, String)
+
       expect(params.parameters.first.required).must_equal true
     end
 
     it "sets the parameter name" do
       params = Riffer::Params.new
       params.required(:city, String)
+
       expect(params.parameters.first.name).must_equal :city
     end
 
     it "sets the parameter type" do
       params = Riffer::Params.new
       params.required(:city, String)
+
       expect(params.parameters.first.type).must_equal String
     end
 
     it "sets the description" do
       params = Riffer::Params.new
       params.required(:city, String, description: "The city name")
+
       expect(params.parameters.first.description).must_equal "The city name"
     end
 
     it "sets the enum" do
       params = Riffer::Params.new
-      params.required(:unit, String, enum: ["celsius", "fahrenheit"])
-      expect(params.parameters.first.enum).must_equal ["celsius", "fahrenheit"]
+      params.required(:unit, String, enum: %w[celsius fahrenheit])
+
+      expect(params.parameters.first.enum).must_equal %w[celsius fahrenheit]
     end
   end
 
@@ -45,18 +51,21 @@ describe Riffer::Params do
     it "adds a parameter" do
       params = Riffer::Params.new
       params.optional(:units, String)
+
       expect(params.parameters.length).must_equal 1
     end
 
     it "marks the parameter as not required" do
       params = Riffer::Params.new
       params.optional(:units, String)
+
       expect(params.parameters.first.required).must_equal false
     end
 
     it "sets the default value" do
       params = Riffer::Params.new
       params.optional(:units, String, default: "celsius")
+
       expect(params.parameters.first.default).must_equal "celsius"
     end
   end
@@ -65,13 +74,15 @@ describe Riffer::Params do
     it "returns validated arguments for valid input" do
       params = Riffer::Params.new
       params.required(:city, String)
-      result = params.validate({city: "Toronto"})
-      expect(result).must_equal({city: "Toronto"})
+      result = params.validate({ city: "Toronto" })
+
+      expect(result).must_equal({ city: "Toronto" })
     end
 
     it "raises ValidationError for missing required param" do
       params = Riffer::Params.new
       params.required(:city, String)
+
       expect { params.validate({}) }.must_raise(Riffer::ValidationError)
     end
 
@@ -85,26 +96,28 @@ describe Riffer::Params do
     it "raises ValidationError for wrong type" do
       params = Riffer::Params.new
       params.required(:city, String)
-      expect { params.validate({city: 123}) }.must_raise(Riffer::ValidationError)
+
+      expect { params.validate({ city: 123 }) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes param name in wrong type error" do
       params = Riffer::Params.new
       params.required(:city, String)
-      error = expect { params.validate({city: 123}) }.must_raise(Riffer::ValidationError)
+      error = expect { params.validate({ city: 123 }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/city must be a string/)
     end
 
     it "raises ValidationError for enum violation" do
       params = Riffer::Params.new
-      params.required(:unit, String, enum: ["celsius", "fahrenheit"])
-      expect { params.validate({unit: "kelvin"}) }.must_raise(Riffer::ValidationError)
+      params.required(:unit, String, enum: %w[celsius fahrenheit])
+
+      expect { params.validate({ unit: "kelvin" }) }.must_raise(Riffer::ValidationError)
     end
 
     it "includes allowed values in enum violation error" do
       params = Riffer::Params.new
-      params.required(:unit, String, enum: ["celsius", "fahrenheit"])
-      error = expect { params.validate({unit: "kelvin"}) }.must_raise(Riffer::ValidationError)
+      params.required(:unit, String, enum: %w[celsius fahrenheit])
+      error = expect { params.validate({ unit: "kelvin" }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/must be one of/)
     end
 
@@ -112,13 +125,15 @@ describe Riffer::Params do
       params = Riffer::Params.new
       params.optional(:units, String, default: "celsius")
       result = params.validate({})
+
       expect(result[:units]).must_equal "celsius"
     end
 
     it "uses provided value over default" do
       params = Riffer::Params.new
       params.optional(:units, String, default: "celsius")
-      result = params.validate({units: "fahrenheit"})
+      result = params.validate({ units: "fahrenheit" })
+
       expect(result[:units]).must_equal "fahrenheit"
     end
 
@@ -144,7 +159,8 @@ describe Riffer::Params do
       params = Riffer::Params.new
       params.required(:tags, Array, of: String)
       schema = params.to_json_schema
-      expect(schema[:properties]["tags"][:items]).must_equal({type: "string"})
+
+      expect(schema[:properties]["tags"][:items]).must_equal({ type: "string" })
     end
 
     it "supports block on Hash for nested objects" do
@@ -156,9 +172,10 @@ describe Riffer::Params do
       end
       schema = params.to_json_schema
       address = schema[:properties]["address"]
+
       expect(address[:type]).must_equal "object"
-      expect(address[:properties].keys).must_equal ["street", "city", "zip"]
-      expect(address[:required]).must_equal ["street", "city"]
+      expect(address[:properties].keys).must_equal %w[street city zip]
+      expect(address[:required]).must_equal %w[street city]
       expect(address[:additionalProperties]).must_equal false
     end
 
@@ -171,67 +188,76 @@ describe Riffer::Params do
       end
       schema = params.to_json_schema
       items = schema[:properties]["line_items"][:items]
+
       expect(items[:type]).must_equal "object"
-      expect(items[:properties].keys).must_equal ["product", "quantity", "note"]
-      expect(items[:required]).must_equal ["product", "quantity"]
+      expect(items[:properties].keys).must_equal %w[product quantity note]
+      expect(items[:required]).must_equal %w[product quantity]
     end
 
     it "raises ArgumentError when both of: and block are given" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:tags, Array, of: String) do
           required :name, String
         end
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when of: is Hash" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:items, Array, of: Hash)
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when of: is Array" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:items, Array, of: Array)
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when of: is a non-JSON-Schema type" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:items, Array, of: Regexp)
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when of: is used on Hash type" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:data, Hash, of: String)
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when of: is used on String type" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:name, String, of: String)
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when block is used on String type" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.required(:name, String) { required :foo, String }
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises ArgumentError when block is used on Integer type" do
       params = Riffer::Params.new
-      expect {
+
+      expect do
         params.optional(:count, Integer) { required :foo, String }
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "supports deep nesting with blocks within blocks" do
@@ -248,9 +274,10 @@ describe Riffer::Params do
         :properties, "orders",
         :items, :properties, "shipping",
         :properties, "address",
-        :properties, "street"
+        :properties, "street",
       )
-      expect(street).must_equal({type: "string"})
+
+      expect(street).must_equal({ type: "string" })
     end
   end
 
@@ -258,14 +285,15 @@ describe Riffer::Params do
     it "validates typed array accepts valid items" do
       params = Riffer::Params.new
       params.required(:tags, Array, of: String)
-      result = params.validate({tags: ["a", "b"]})
-      expect(result[:tags]).must_equal ["a", "b"]
+      result = params.validate({ tags: %w[a b] })
+
+      expect(result[:tags]).must_equal %w[a b]
     end
 
     it "validates typed array rejects invalid items" do
       params = Riffer::Params.new
       params.required(:tags, Array, of: String)
-      error = expect { params.validate({tags: ["a", 123]}) }.must_raise(Riffer::ValidationError)
+      error = expect { params.validate({ tags: ["a", 123] }) }.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/tags\[1\] must be a string/)
     end
 
@@ -275,9 +303,9 @@ describe Riffer::Params do
         required :street, String
         required :city, String
       end
-      error = expect {
-        params.validate({address: {street: "123 Main"}})
-      }.must_raise(Riffer::ValidationError)
+      error = expect do
+        params.validate({ address: { street: "123 Main" } })
+      end.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/address\.city is required/)
     end
 
@@ -287,9 +315,9 @@ describe Riffer::Params do
         required :name, String
         required :qty, Integer
       end
-      error = expect {
-        params.validate({items: [{name: "A", qty: 1}, {name: "B"}]})
-      }.must_raise(Riffer::ValidationError)
+      error = expect do
+        params.validate({ items: [{ name: "A", qty: 1 }, { name: "B" }] })
+      end.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/items\[1\]\.qty is required/)
     end
 
@@ -302,9 +330,9 @@ describe Riffer::Params do
           end
         end
       end
-      error = expect {
-        params.validate({orders: [{shipping: {address: {}}}]})
-      }.must_raise(Riffer::ValidationError)
+      error = expect do
+        params.validate({ orders: [{ shipping: { address: {} } }] })
+      end.must_raise(Riffer::ValidationError)
       expect(error.message).must_match(/orders\[0\]\.shipping\.address\.street is required/)
     end
 
@@ -313,8 +341,9 @@ describe Riffer::Params do
       params.required(:address, Hash) do
         required :city, String
       end
-      result = params.validate({address: {city: "Toronto"}})
-      expect(result[:address]).must_equal({city: "Toronto"})
+      result = params.validate({ address: { city: "Toronto" } })
+
+      expect(result[:address]).must_equal({ city: "Toronto" })
     end
 
     it "accepts valid array of objects" do
@@ -322,14 +351,16 @@ describe Riffer::Params do
       params.required(:items, Array) do
         required :name, String
       end
-      result = params.validate({items: [{name: "A"}, {name: "B"}]})
-      expect(result[:items]).must_equal [{name: "A"}, {name: "B"}]
+      result = params.validate({ items: [{ name: "A" }, { name: "B" }] })
+
+      expect(result[:items]).must_equal [{ name: "A" }, { name: "B" }]
     end
   end
 
   describe "#to_json_schema" do
     it "returns object type" do
       params = Riffer::Params.new
+
       expect(params.to_json_schema[:type]).must_equal "object"
     end
 
@@ -338,7 +369,8 @@ describe Riffer::Params do
       params.required(:city, String)
       params.optional(:units, String)
       schema = params.to_json_schema
-      expect(schema[:properties].keys).must_equal ["city", "units"]
+
+      expect(schema[:properties].keys).must_equal %w[city units]
     end
 
     it "includes required array" do
@@ -346,23 +378,27 @@ describe Riffer::Params do
       params.required(:city, String)
       params.optional(:units, String)
       schema = params.to_json_schema
+
       expect(schema[:required]).must_equal ["city"]
     end
 
     it "sets additionalProperties to false" do
       params = Riffer::Params.new
+
       expect(params.to_json_schema[:additionalProperties]).must_equal false
     end
 
     it "returns empty properties for no params" do
       params = Riffer::Params.new
       schema = params.to_json_schema
+
       expect(schema[:properties]).must_equal({})
     end
 
     it "returns empty required array for no params" do
       params = Riffer::Params.new
       schema = params.to_json_schema
+
       expect(schema[:required]).must_equal([])
     end
   end
@@ -377,7 +413,7 @@ describe Riffer::Params do
       expect(schema[:required]).must_include "name"
       expect(schema[:required]).must_include "age"
       expect(schema[:properties]["name"][:type]).must_equal "string"
-      expect(schema[:properties]["age"][:type]).must_equal ["integer", "null"]
+      expect(schema[:properties]["age"][:type]).must_equal %w[integer null]
     end
 
     it "recurses into nested objects" do
@@ -392,7 +428,7 @@ describe Riffer::Params do
       expect(address[:required]).must_include "city"
       expect(address[:required]).must_include "zip"
       expect(address[:properties]["city"][:type]).must_equal "string"
-      expect(address[:properties]["zip"][:type]).must_equal ["string", "null"]
+      expect(address[:properties]["zip"][:type]).must_equal %w[string null]
     end
 
     it "recurses into array items" do
@@ -407,7 +443,7 @@ describe Riffer::Params do
       expect(items_schema[:required]).must_include "name"
       expect(items_schema[:required]).must_include "note"
       expect(items_schema[:properties]["name"][:type]).must_equal "string"
-      expect(items_schema[:properties]["note"][:type]).must_equal ["string", "null"]
+      expect(items_schema[:properties]["note"][:type]).must_equal %w[string null]
     end
 
     it "keeps required properties non-nullable" do
@@ -446,11 +482,11 @@ describe Riffer::Params do
   describe ".from_json_schema" do
     it "reconstructs a simple required parameter" do
       params = Riffer::Params.from_json_schema({
-        type: "object",
-        properties: {"city" => {type: "string", description: "city name"}},
-        required: ["city"],
-        additionalProperties: false
-      })
+                                                 type: "object",
+                                                 properties: { "city" => { type: "string", description: "city name" } },
+                                                 required: ["city"],
+                                                 additionalProperties: false,
+                                               })
       param = params.parameters.first
 
       expect(param.name).must_equal :city
@@ -461,68 +497,70 @@ describe Riffer::Params do
 
     it "marks properties absent from required as optional" do
       params = Riffer::Params.from_json_schema({
-        type: "object",
-        properties: {"note" => {type: "string"}},
-        required: [],
-        additionalProperties: false
-      })
+                                                 type: "object",
+                                                 properties: { "note" => { type: "string" } },
+                                                 required: [],
+                                                 additionalProperties: false,
+                                               })
 
       expect(params.parameters.first.required).must_equal false
     end
 
     it "reconstructs enum and default" do
       params = Riffer::Params.from_json_schema({
-        type: "object",
-        properties: {"units" => {type: "string", enum: ["celsius", "fahrenheit"], default: "celsius"}},
-        required: [],
-        additionalProperties: false
-      })
+                                                 type: "object",
+                                                 properties: { "units" => { type: "string",
+                                                                            enum: %w[celsius fahrenheit], default: "celsius", } },
+                                                 required: [],
+                                                 additionalProperties: false,
+                                               })
       param = params.parameters.first
 
-      expect(param.enum).must_equal ["celsius", "fahrenheit"]
+      expect(param.enum).must_equal %w[celsius fahrenheit]
       expect(param.default).must_equal "celsius"
     end
 
     it "reconstructs each JSON Schema type to its Ruby type" do
       params = Riffer::Params.from_json_schema({
-        type: "object",
-        properties: {
-          "s" => {type: "string"}, "i" => {type: "integer"},
-          "n" => {type: "number"}, "b" => {type: "boolean"}
-        },
-        required: [],
-        additionalProperties: false
-      })
+                                                 type: "object",
+                                                 properties: {
+                                                   "s" => { type: "string" }, "i" => { type: "integer" },
+                                                   "n" => { type: "number" }, "b" => { type: "boolean" },
+                                                 },
+                                                 required: [],
+                                                 additionalProperties: false,
+                                               })
       types = params.parameters.to_h { |p| [p.name, p.type] }
 
-      expect(types).must_equal({s: String, i: Integer, n: Float, b: Riffer::Params::Boolean})
+      expect(types).must_equal({ s: String, i: Integer, n: Float, b: Riffer::Params::Boolean })
     end
 
     it "reconstructs typed arrays" do
       params = Riffer::Params.from_json_schema({
-        type: "object",
-        properties: {"tags" => {type: "array", items: {type: "integer"}}},
-        required: ["tags"],
-        additionalProperties: false
-      })
+                                                 type: "object",
+                                                 properties: { "tags" => { type: "array",
+                                                                           items: { type: "integer" }, } },
+                                                 required: ["tags"],
+                                                 additionalProperties: false,
+                                               })
 
       expect(params.parameters.first.item_type).must_equal Integer
     end
 
     it "reconstructs nested object params" do
       params = Riffer::Params.from_json_schema({
-        type: "object",
-        properties: {
-          "address" => {
-            type: "object",
-            properties: {"street" => {type: "string"}},
-            required: ["street"],
-            additionalProperties: false
-          }
-        },
-        required: ["address"],
-        additionalProperties: false
-      })
+                                                 type: "object",
+                                                 properties: {
+                                                   "address" => {
+                                                     type: "object",
+                                                     properties: { "street" => { type: "string" } },
+                                                     required: ["street"],
+                                                     additionalProperties: false,
+                                                   },
+                                                 },
+                                                 required: ["address"],
+                                                 additionalProperties: false,
+                                               })
       nested = params.parameters.first.nested_params
 
       expect(nested).must_be_instance_of Riffer::Params
@@ -530,20 +568,20 @@ describe Riffer::Params do
     end
 
     it "raises on an unsupported JSON Schema type" do
-      expect {
+      expect do
         Riffer::Params.from_json_schema({
-          type: "object",
-          properties: {"x" => {type: "anyOf-thing"}},
-          required: [],
-          additionalProperties: false
-        })
-      }.must_raise Riffer::ArgumentError
+                                          type: "object",
+                                          properties: { "x" => { type: "anyOf-thing" } },
+                                          required: [],
+                                          additionalProperties: false,
+                                        })
+      end.must_raise Riffer::ArgumentError
     end
 
     it "round-trips losslessly with to_json_schema(strict: false)" do
       params = Riffer::Params.new
       params.required(:city, String, description: "city name")
-      params.optional(:units, String, default: "celsius", enum: ["celsius", "fahrenheit"])
+      params.optional(:units, String, default: "celsius", enum: %w[celsius fahrenheit])
       params.required(:tags, Array, of: Integer)
       params.required(:address, Hash) do
         required :street, String
@@ -574,15 +612,15 @@ describe Riffer::Params do
       schema = {
         type: "object",
         properties: {
-          "answer" => {type: "string"},
-          "score" => {type: "number", default: 0.0}
+          "answer" => { type: "string" },
+          "score" => { type: "number", default: 0.0 },
         },
         required: ["answer"],
-        additionalProperties: false
+        additionalProperties: false,
       }
       rebuilt = Riffer::Params.from_json_schema(schema)
 
-      expect(rebuilt.validate({answer: "yes"})).must_equal({answer: "yes", score: 0.0})
+      expect(rebuilt.validate({ answer: "yes" })).must_equal({ answer: "yes", score: 0.0 })
     end
   end
 end

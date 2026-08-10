@@ -38,6 +38,7 @@ class Riffer::Skills::Context
   #: (String) -> String
   def read(name)
     raise Riffer::ArgumentError, "Unknown skill: '#{name}'" unless skills.key?(name)
+
     @bodies[name] ||= @backend.read_skill(name)
   end
 
@@ -88,6 +89,7 @@ class Riffer::Skills::Context
   #: (String) -> void
   def deactivate(name)
     raise Riffer::ArgumentError, "Unknown skill: '#{name}'" unless skills.key?(name)
+
     @activated.delete(name)
     nil
   end
@@ -105,7 +107,7 @@ class Riffer::Skills::Context
   #: (String) -> bool
   def model_invocable?(name)
     skill = skills[name]
-    !skill.nil? && !skill.disable_model_invocation
+    skill && !skill.disable_model_invocation
   end
 
   # Returns whether any skill is available for the model to activate.

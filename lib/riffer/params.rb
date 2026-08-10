@@ -35,7 +35,7 @@ class Riffer::Params
 
     properties.each do |name, property_schema|
       params.parameters << Riffer::Params::Param.from_json_schema(
-        name.to_sym, property_schema, required: required.include?(name.to_s)
+        name.to_sym, property_schema, required: required.include?(name.to_s),
       )
     end
 
@@ -46,8 +46,8 @@ class Riffer::Params
   #
   #--
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def required(name, type, description: nil, enum: nil, of: nil, &block)
-    nested = build_nested(type, of, &block)
+  def required(name, type, description: nil, enum: nil, of: nil, &)
+    nested = build_nested(type, of, &)
     @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
@@ -55,7 +55,7 @@ class Riffer::Params
       description: description,
       enum: enum,
       item_type: of,
-      nested_params: nested
+      nested_params: nested,
     )
   end
 
@@ -63,8 +63,8 @@ class Riffer::Params
   #
   #--
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
-  def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &block)
-    nested = build_nested(type, of, &block)
+  def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &)
+    nested = build_nested(type, of, &)
     @parameters << Riffer::Params::Param.new(
       name: name,
       type: type,
@@ -73,7 +73,7 @@ class Riffer::Params
       enum: enum,
       default: default,
       item_type: of,
-      nested_params: nested
+      nested_params: nested,
     )
   end
 
@@ -106,7 +106,7 @@ class Riffer::Params
       end
 
       if param.enum && !param.enum.include?(value)
-        errors << "#{param.name} must be one of: #{param.enum.join(", ")}"
+        errors << "#{param.name} must be one of: #{param.enum.join(', ')}"
         next
       end
 
@@ -138,7 +138,7 @@ class Riffer::Params
       type: "object",
       properties: properties,
       required: required_params,
-      additionalProperties: false
+      additionalProperties: false,
     }
   end
 
@@ -147,29 +147,25 @@ class Riffer::Params
   #--
   #: (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested(type, of, &block)
-    if of && block
-      raise Riffer::ArgumentError, "cannot use both of: and a block"
-    end
+    raise Riffer::ArgumentError, "cannot use both of: and a block" if of && block
 
     if of
-      unless type == Array
-        raise Riffer::ArgumentError, "of: can only be used with Array type, got #{type}"
-      end
+      raise Riffer::ArgumentError, "of: can only be used with Array type, got #{type}" unless type == Array
       unless Riffer::Params::Param::PRIMITIVE_TYPES.include?(of)
         raise Riffer::ArgumentError,
-          "of: must be a primitive type (#{Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(", ")}), got #{of}"
+              "of: must be a primitive type (#{Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(', ')}), got #{of}"
       end
       return nil
     end
 
-    if block
-      unless type == Hash || type == Array
-        raise Riffer::ArgumentError, "block can only be used with Hash or Array type, got #{type}"
-      end
-      nested = Riffer::Params.new
-      nested.instance_eval(&block)
-      nested
+    return unless block
+    unless [Hash, Array].include?(type)
+      raise Riffer::ArgumentError, "block can only be used with Hash or Array type, got #{type}"
     end
+
+    nested = Riffer::Params.new
+    nested.instance_eval(&block)
+    nested
   end
 
   #--
@@ -192,6 +188,7 @@ class Riffer::Params
   def validate_nested_hash(param, value, errors)
     nested = param.nested_params
     return value unless nested
+
     nested.validate(value)
   rescue Riffer::ValidationError => e
     e.message.split("; ").each do |msg|
@@ -205,6 +202,7 @@ class Riffer::Params
   def validate_nested_array_of_objects(param, value, errors)
     nested = param.nested_params
     return value unless nested
+
     value.map.with_index do |item, i|
       unless item.is_a?(Hash)
         errors << "#{param.name}[#{i}] must be an object"
@@ -224,13 +222,14 @@ class Riffer::Params
   def validate_typed_array(param, value, errors)
     item_type = param.item_type
     return unless item_type
+
     type_name = Riffer::Params::Param::TYPE_MAPPINGS[item_type]
     value.each_with_index do |item, i|
-      valid = if item_type == Riffer::Params::Boolean || item_type == TrueClass || item_type == FalseClass
-        item == true || item == false
-      else
-        item.is_a?(item_type)
-      end
+      valid = if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(item_type)
+                [true, false].include?(item)
+              else
+                item.is_a?(item_type)
+              end
       errors << "#{param.name}[#{i}] must be a #{type_name}" unless valid
     end
   end

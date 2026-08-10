@@ -12,7 +12,11 @@ class Riffer::Tools::Runtime
   #--
   #: (runner: Riffer::Runner) -> void
   def initialize(runner:)
-    raise NotImplementedError, "#{self.class} is abstract — use a subclass like Riffer::Tools::Runtime::Inline" if instance_of?(Riffer::Tools::Runtime)
+    if instance_of?(Riffer::Tools::Runtime)
+      raise NotImplementedError,
+            "#{self.class} is abstract — use a subclass like Riffer::Tools::Runtime::Inline"
+    end
+
     @runner = runner
   end
 
@@ -52,7 +56,7 @@ class Riffer::Tools::Runtime
   #
   #--
   #: (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
-  def around_tool_call(tool_call, context:, assistant_message: nil)
+  def around_tool_call(_tool_call, context:, assistant_message: nil)
     yield
   end
 
@@ -77,7 +81,7 @@ class Riffer::Tools::Runtime
     if tool_class.nil?
       return Riffer::Tools::Response.error(
         "Unknown tool '#{tool_call.name}'",
-        type: :unknown_tool
+        type: :unknown_tool,
       )
     end
 
@@ -107,13 +111,14 @@ class Riffer::Tools::Runtime
   #--
   #: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
   def in_tool_span(tool_call, tags = {})
-    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call, tags), kind: :internal) do |span|
+    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call, tags),
+                                                              kind: :internal,) do |span|
       capture_tool_arguments(span, tool_call)
       yield span
-    rescue => error
+    rescue StandardError => e
       # The backend records the exception and error status on the re-raise;
       # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
+      span.set_attribute("error.type", e.class.name)
       raise
     end
   end
@@ -124,7 +129,7 @@ class Riffer::Tools::Runtime
     {
       "gen_ai.operation.name" => "execute_tool",
       "gen_ai.tool.name" => tool_call.name,
-      "gen_ai.tool.call.id" => tool_call.call_id
+      "gen_ai.tool.call.id" => tool_call.call_id,
     }.merge(tag_attributes(tags))
   end
 

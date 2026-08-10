@@ -48,6 +48,7 @@ module Riffer::Tools::Toolable
   #: (?String?) -> String?
   def description(value = nil)
     return @description if value.nil?
+
     @description = value.to_s
   end
 
@@ -56,7 +57,10 @@ module Riffer::Tools::Toolable
   #--
   #: (?String?) -> String
   def identifier(value = nil)
-    return @identifier || Riffer::Helpers::ClassNameConverter.convert(Module.instance_method(:name).bind_call(self)) if value.nil?
+    if value.nil?
+      return @identifier || Riffer::Helpers::ClassNameConverter.convert(Module.instance_method(:name).bind_call(self))
+    end
+
     @identifier = value.to_s
   end
 
@@ -65,7 +69,8 @@ module Riffer::Tools::Toolable
   #--
   #: (?String?) -> String
   def name(value = nil)
-    return identifier(value) unless value.nil?
+    return identifier(value) if value
+
     identifier
   end
 
@@ -75,6 +80,7 @@ module Riffer::Tools::Toolable
   #: (?(Integer | Float)?) -> (Integer | Float)
   def timeout(value = nil)
     return @timeout || DEFAULT_TIMEOUT if value.nil?
+
     @timeout = value.to_f
   end
 
@@ -84,6 +90,7 @@ module Riffer::Tools::Toolable
   #: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def params(&block)
     return @params_builder if block.nil?
+
     builder = Riffer::Params.new
     builder.instance_eval(&block)
     @params_builder = builder
@@ -102,6 +109,7 @@ module Riffer::Tools::Toolable
   #: (?Symbol?) -> Symbol
   def kind(value = nil)
     return @kind || :tool if value.nil?
+
     @kind = value.to_sym
   end
 
@@ -113,7 +121,7 @@ module Riffer::Tools::Toolable
     {
       name: name,
       description: description,
-      parameters_schema: parameters_schema(strict: strict)
+      parameters_schema: parameters_schema(strict: strict),
     }
   end
 
@@ -124,8 +132,12 @@ module Riffer::Tools::Toolable
   #--
   #: () -> true
   def validate_as_tool!
-    raise Riffer::ArgumentError, "#{self} must define a description" if description.nil? || description.to_s.strip.empty?
+    if description.nil? || description.to_s.strip.empty?
+      raise Riffer::ArgumentError,
+            "#{self} must define a description"
+    end
     raise Riffer::ArgumentError, "#{self} must have an identifier" if identifier.nil? || identifier.to_s.strip.empty?
+
     true
   end
 
@@ -134,6 +146,6 @@ module Riffer::Tools::Toolable
   def empty_schema # :nodoc:
     properties = {} #: Hash[Symbol, untyped]
     required = [] #: Array[untyped]
-    {type: "object", properties: properties, required: required, additionalProperties: false}
+    { type: "object", properties: properties, required: required, additionalProperties: false }
   end
 end

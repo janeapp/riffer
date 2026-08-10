@@ -44,18 +44,18 @@ class KeywordCoverageEvaluator < Riffer::Evals::Evaluator
     result(
       score: score.round(2),
       reason: "Covered #{covered.size}/#{truth_keywords.size} keywords from ground truth",
-      metadata: {covered: covered.to_a, missing: (truth_keywords - output_keywords).to_a}
+      metadata: { covered: covered.to_a, missing: (truth_keywords - output_keywords).to_a },
     )
   end
 
   private
 
   def extract_keywords(text)
-    text
-      .downcase
-      .gsub(/[^a-z0-9\s]/, "")
-      .split
-      .reject { |w| STOP_WORDS.include?(w) || w.length < 2 }
-      .to_set
+    text.
+      downcase.
+      gsub(/[^a-z0-9\s]/, "").
+      split.
+      reject { |w| STOP_WORDS.include?(w) || w.length < 2 }.
+      to_set
   end
 end

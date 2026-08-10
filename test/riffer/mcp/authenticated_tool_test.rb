@@ -21,11 +21,13 @@ describe Riffer::Mcp::AuthenticatedTool do
 
   it "returns a Riffer::Mcp::Tool subclass" do
     wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
-    assert wrapped < Riffer::Mcp::Tool
+
+    assert_operator wrapped, :<, Riffer::Mcp::Tool
   end
 
   it "copies the inner class's mcp_server_tool_name" do
     wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
+
     assert_equal "echo", wrapped.mcp_server_tool_name
   end
 
@@ -34,6 +36,7 @@ describe Riffer::Mcp::AuthenticatedTool do
     Riffer.config.mcp.credentials = nil
     wrapped = Riffer::Mcp::AuthenticatedTool.wrap_one(inner, manifest, [:t])
     resp = wrapped.new.call(context: {}, x: 1)
+
     assert_equal "inner-1", resp.content
   ensure
     Riffer.config.mcp.credentials = prev

@@ -40,7 +40,7 @@ module Riffer::Agent::Serializer
       provider_options: config.provider_options,
       max_steps: encode_max_steps(config.max_steps),
       structured_output: config.structured_output&.to_json_schema(strict: false),
-      tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) }
+      tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
     }
   end
 
@@ -59,7 +59,8 @@ module Riffer::Agent::Serializer
     when SCHEMA_VERSION
       decode_v1(hash, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
     else
-      raise VersionError, "Unsupported schema_version: #{hash[:schema_version].inspect} (this Riffer supports #{SCHEMA_VERSION})"
+      raise VersionError,
+            "Unsupported schema_version: #{hash[:schema_version].inspect} (this Riffer supports #{SCHEMA_VERSION})"
     end
   end
 
@@ -75,7 +76,8 @@ module Riffer::Agent::Serializer
   #--
   #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def from_json(json, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    from_h(JSON.parse(json, symbolize_names: true), context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+    from_h(JSON.parse(json, symbolize_names: true), context: context, session: session, tool_resolver: tool_resolver,
+                                                    tool_runtime: tool_runtime,)
   end
 
   private
@@ -93,7 +95,7 @@ module Riffer::Agent::Serializer
       model_options: hash[:model_options] || {},
       structured_output: decode_structured_output(hash[:structured_output]),
       max_steps: decode_max_steps(hash),
-      tools_config: tools
+      tools_config: tools,
     } #: Hash[Symbol, untyped]
     # tool_runtime= rejects nil, so only inject when supplied; otherwise the
     # Config default (Riffer.config.tool_runtime) applies.
@@ -110,6 +112,7 @@ module Riffer::Agent::Serializer
   #: (Hash[Symbol, untyped]?) -> Riffer::Params?
   def decode_structured_output(schema)
     return nil if schema.nil?
+
     Riffer::Params.from_json_schema(schema)
   end
 
@@ -127,7 +130,8 @@ module Riffer::Agent::Serializer
   #: (Hash[Symbol, untyped]) -> Numeric?
   def decode_max_steps(hash)
     return Riffer::Agent::Config::DEFAULT_MAX_STEPS unless hash.key?(:max_steps)
-    (hash[:max_steps] == -1) ? nil : hash[:max_steps]
+
+    hash[:max_steps] == -1 ? nil : hash[:max_steps]
   end
 
   #--
@@ -155,10 +159,10 @@ module Riffer::Agent::Serializer
       timeout tool_timeout if tool_timeout
       define_singleton_method(:parameters_schema) { |strict: false| schema }
 
-      define_method(:call) do |context:, **kwargs|
+      define_method(:call) do |context:, **_kwargs|
         raise Riffer::Error,
-          "#{self.class.name || "wire tool shell"} '#{self.class.identifier}' has no body; " \
-          "route its calls through a remote Riffer::Tools::Runtime (see Riffer::Agent::Serializer)"
+              "#{self.class.name || 'wire tool shell'} '#{self.class.identifier}' has no body; " \
+              "route its calls through a remote Riffer::Tools::Runtime (see Riffer::Agent::Serializer)"
       end
       # steep:ignore:end
     end

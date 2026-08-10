@@ -28,7 +28,7 @@ class Riffer::Guardrails::Modification
     {
       guardrail: guardrail.name,
       phase: phase,
-      message_indices: message_indices
+      message_indices: message_indices,
     }
   end
 end

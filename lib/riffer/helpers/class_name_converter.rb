@@ -12,11 +12,11 @@ module Riffer::Helpers::ClassNameConverter
   #--
   #: (String, ?separator: String) -> String
   def convert(class_name, separator: DEFAULT_SEPARATOR)
-    class_name
-      .to_s
-      .gsub("::", separator)
-      .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-      .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-      .downcase
+    class_name.
+      to_s.
+      gsub("::", separator).
+      gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
+      gsub(/([a-z\d])([A-Z])/, '\1_\2').
+      downcase
   end
 end

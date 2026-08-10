@@ -13,6 +13,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(model = nil)
     return Riffer::Skills::XmlAdapter if model&.include?("claude")
+
     Riffer::Skills::MarkdownAdapter
   end
 
@@ -54,7 +55,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #--
   #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?) -> void
   def stub_response(content, tool_calls: [], token_usage: nil, finish_reason: nil)
-    @stubbed_responses << normalize_response(content: content, tool_calls: tool_calls, token_usage: token_usage, finish_reason: finish_reason)
+    @stubbed_responses << normalize_response(content: content, tool_calls: tool_calls, token_usage: token_usage,
+                                             finish_reason: finish_reason,)
   end
 
   # Clears all stubbed responses.
@@ -72,10 +74,11 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def normalize_response(response)
     formatted_tool_calls = (response[:tool_calls] || []).map.with_index do |tc, idx|
       next tc if tc.is_a?(Riffer::Messages::Assistant::ToolCall)
+
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: tc[:call_id] || tc[:id] || "mock_call_#{idx}",
         name: tc[:name],
-        arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json
+        arguments: tc[:arguments].is_a?(String) ? tc[:arguments] : tc[:arguments].to_json,
       )
     end
     {
@@ -83,7 +86,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
       content: response[:content] || "",
       tool_calls: formatted_tool_calls,
       token_usage: response[:token_usage],
-      finish_reason: response[:finish_reason] || (formatted_tool_calls.empty? ? :stop : :tool_calls)
+      finish_reason: response[:finish_reason] || (formatted_tool_calls.empty? ? :stop : :tool_calls),
     }
   end
 
@@ -91,10 +94,10 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def build_request_params(messages, model, options)
     web_search = options[:web_search]
-    @calls << {messages: messages.map(&:to_h), model: model, **options.except(:web_search)}
+    @calls << { messages: messages.map(&:to_h), model: model, **options.except(:web_search) }
     response = next_response
     response[:web_search] = web_search if web_search
-    {response: response}
+    { response: response }
   end
 
   #--
@@ -145,7 +148,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
       yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: "mock search query")
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: "https://example.com")
       yielder << Riffer::StreamEvents::WebSearchStatus.new("completed")
-      yielder << Riffer::StreamEvents::WebSearchDone.new("mock search query", sources: [{title: "Example", url: "https://example.com"}])
+      yielder << Riffer::StreamEvents::WebSearchDone.new("mock search query",
+                                                         sources: [{ title: "Example", url: "https://example.com" }],)
     end
 
     unless full_content.empty?
@@ -159,13 +163,13 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
       yielder << Riffer::StreamEvents::ToolCallDelta.new(
         item_id: tc.call_id,
         name: tc.name,
-        arguments_delta: tc.arguments
+        arguments_delta: tc.arguments,
       )
       yielder << Riffer::StreamEvents::ToolCallDone.new(
         item_id: tc.call_id,
         call_id: tc.call_id,
         name: tc.name,
-        arguments: tc.arguments
+        arguments: tc.arguments,
       )
     end
 

@@ -28,6 +28,6 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, item_id: @item_id, call_id: @call_id, name: @name, arguments: @arguments}
+    { role: @role, item_id: @item_id, call_id: @call_id, name: @name, arguments: @arguments }
   end
 end

@@ -17,16 +17,16 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
   def initialize(**options)
     depends_on "openai"
 
-    api_key = options.fetch(:api_key) {
-      Riffer.config.azure_openai.api_key || ENV["AZURE_OPENAI_API_KEY"]
-    }
-    base_url = options.fetch(:base_url) {
-      Riffer.config.azure_openai.endpoint || ENV["AZURE_OPENAI_ENDPOINT"]
-    }
+    api_key = options.fetch(:api_key) do
+      Riffer.config.azure_openai.api_key || ENV.fetch("AZURE_OPENAI_API_KEY", nil)
+    end
+    base_url = options.fetch(:base_url) do
+      Riffer.config.azure_openai.endpoint || ENV.fetch("AZURE_OPENAI_ENDPOINT", nil)
+    end
     @client = ::OpenAI::Client.new(
       api_key: api_key,
       base_url: base_url,
-      **options.except(:api_key, :base_url)
+      **options.except(:api_key, :base_url),
     )
   end
 end

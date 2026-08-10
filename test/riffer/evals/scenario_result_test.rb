@@ -29,7 +29,7 @@ describe Riffer::Evals::ScenarioResult do
         input: "What is Ruby?",
         output: "A programming language.",
         ground_truth: "A programming language",
-        results: [result_a]
+        results: [result_a],
       )
 
       expect(scenario.input).must_equal "What is Ruby?"
@@ -45,7 +45,7 @@ describe Riffer::Evals::ScenarioResult do
         input: "test",
         output: "test",
         ground_truth: nil,
-        results: []
+        results: [],
       )
 
       expect(scenario.messages).must_equal []
@@ -58,7 +58,7 @@ describe Riffer::Evals::ScenarioResult do
         output: "test",
         ground_truth: nil,
         results: [],
-        messages: messages
+        messages: messages,
       )
 
       expect(scenario.messages).must_equal messages
@@ -71,7 +71,7 @@ describe Riffer::Evals::ScenarioResult do
         input: "test",
         output: "test",
         ground_truth: nil,
-        results: [result_a, result_b]
+        results: [result_a, result_b],
       )
 
       expect(scenario.scores[evaluator_class]).must_equal 0.9
@@ -83,7 +83,7 @@ describe Riffer::Evals::ScenarioResult do
         input: "test",
         output: "test",
         ground_truth: nil,
-        results: []
+        results: [],
       )
 
       expect(scenario.scores).must_be_empty
@@ -97,9 +97,11 @@ describe Riffer::Evals::ScenarioResult do
         output: "test",
         ground_truth: nil,
         results: [
-          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9, token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)),
-          Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.7, token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8))
-        ]
+          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9,
+                                    token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5),),
+          Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.7,
+                                    token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8),),
+        ],
       )
 
       expect(scenario.evaluator_token_usage.total_tokens).must_equal 43
@@ -110,7 +112,7 @@ describe Riffer::Evals::ScenarioResult do
         input: "test",
         output: "test",
         ground_truth: nil,
-        results: [result_a, result_b]
+        results: [result_a, result_b],
       )
 
       expect(scenario.evaluator_token_usage).must_be_nil
@@ -125,7 +127,7 @@ describe Riffer::Evals::ScenarioResult do
         output: "test",
         ground_truth: nil,
         results: [],
-        token_usage: usage
+        token_usage: usage,
       )
 
       expect(scenario.token_usage).must_equal usage
@@ -136,7 +138,7 @@ describe Riffer::Evals::ScenarioResult do
         input: "test",
         output: "test",
         ground_truth: nil,
-        results: []
+        results: [],
       )
 
       expect(scenario.token_usage).must_be_nil
@@ -149,10 +151,11 @@ describe Riffer::Evals::ScenarioResult do
         input: "What is Ruby?",
         output: "A language.",
         ground_truth: "A programming language",
-        results: [result_a]
+        results: [result_a],
       )
 
       hash = scenario.to_h
+
       expect(hash[:input]).must_equal "What is Ruby?"
       expect(hash[:output]).must_equal "A language."
       expect(hash[:ground_truth]).must_equal "A programming language"

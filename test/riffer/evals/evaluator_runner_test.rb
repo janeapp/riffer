@@ -19,7 +19,7 @@ describe Riffer::Evals::EvaluatorRunner do
       higher_is_better true
 
       def evaluate(input:, output:, ground_truth: nil, messages: [])
-        score = (ground_truth == output) ? 1.0 : 0.5
+        score = ground_truth == output ? 1.0 : 0.5
         result(score: score, reason: "Ground truth match")
       end
     end
@@ -33,15 +33,17 @@ describe Riffer::Evals::EvaluatorRunner do
   end
 
   before do
-    Riffer::Providers::Repository.register("mock", Riffer::Providers::Mock) unless Riffer::Providers::Repository.find("mock")
+    unless Riffer::Providers::Repository.find("mock")
+      Riffer::Providers::Repository.register("mock", Riffer::Providers::Mock)
+    end
   end
 
   describe ".run" do
     it "returns a RunResult" do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
-        scenarios: [{input: "What is Ruby?"}],
-        evaluators: [evaluator_class]
+        scenarios: [{ input: "What is Ruby?" }],
+        evaluators: [evaluator_class],
       )
 
       expect(result).must_be_instance_of Riffer::Evals::RunResult
@@ -51,10 +53,10 @@ describe Riffer::Evals::EvaluatorRunner do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
         scenarios: [
-          {input: "What is Ruby?"},
-          {input: "What is Python?"}
+          { input: "What is Ruby?" },
+          { input: "What is Python?" },
         ],
-        evaluators: [evaluator_class]
+        evaluators: [evaluator_class],
       )
 
       expect(result.scenario_results.length).must_equal 2
@@ -63,8 +65,8 @@ describe Riffer::Evals::EvaluatorRunner do
     it "runs all evaluators per scenario" do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
-        scenarios: [{input: "What is Ruby?"}],
-        evaluators: [evaluator_class, ground_truth_evaluator_class]
+        scenarios: [{ input: "What is Ruby?" }],
+        evaluators: [evaluator_class, ground_truth_evaluator_class],
       )
 
       expect(result.scenario_results.first.results.length).must_equal 2
@@ -73,8 +75,8 @@ describe Riffer::Evals::EvaluatorRunner do
     it "passes ground_truth to evaluators" do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
-        scenarios: [{input: "test", ground_truth: "Mock response"}],
-        evaluators: [ground_truth_evaluator_class]
+        scenarios: [{ input: "test", ground_truth: "Mock response" }],
+        evaluators: [ground_truth_evaluator_class],
       )
 
       expect(result.scenario_results.first.results.first.score).must_equal 1.0
@@ -83,8 +85,8 @@ describe Riffer::Evals::EvaluatorRunner do
     it "captures agent output in scenario results" do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
-        scenarios: [{input: "Hello"}],
-        evaluators: [evaluator_class]
+        scenarios: [{ input: "Hello" }],
+        evaluators: [evaluator_class],
       )
 
       expect(result.scenario_results.first.output).must_equal "Mock response"
@@ -93,11 +95,12 @@ describe Riffer::Evals::EvaluatorRunner do
     it "includes message history in scenario results" do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
-        scenarios: [{input: "Hello"}],
-        evaluators: [evaluator_class]
+        scenarios: [{ input: "Hello" }],
+        evaluators: [evaluator_class],
       )
 
       messages = result.scenario_results.first.messages
+
       expect(messages).wont_be_empty
       expect(messages.any? { |m| m.is_a?(Riffer::Messages::System) }).must_equal true
       expect(messages.any? { |m| m.is_a?(Riffer::Messages::User) }).must_equal true
@@ -117,8 +120,8 @@ describe Riffer::Evals::EvaluatorRunner do
 
       Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
-        scenarios: [{input: "Hello"}],
-        evaluators: [messages_evaluator]
+        scenarios: [{ input: "Hello" }],
+        evaluators: [messages_evaluator],
       )
 
       expect(received_messages).wont_be_nil
@@ -130,14 +133,14 @@ describe Riffer::Evals::EvaluatorRunner do
         model "mock/mock-model"
         instructions "You are a helpful assistant."
         provider_options responses: [
-          {content: "Answer", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 15, output_tokens: 6)}
+          { content: "Answer", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 15, output_tokens: 6) },
         ]
       end
 
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: usage_agent,
-        scenarios: [{input: "Hello"}],
-        evaluators: [evaluator_class]
+        scenarios: [{ input: "Hello" }],
+        evaluators: [evaluator_class],
       )
 
       expect(result.scenario_results.first.token_usage.total_tokens).must_equal 21
@@ -147,10 +150,10 @@ describe Riffer::Evals::EvaluatorRunner do
       result = Riffer::Evals::EvaluatorRunner.run(
         agent: agent_class,
         scenarios: [
-          {input: "What is Ruby?"},
-          {input: "What is Python?"}
+          { input: "What is Ruby?" },
+          { input: "What is Python?" },
         ],
-        evaluators: [evaluator_class]
+        evaluators: [evaluator_class],
       )
 
       expect(result.scores[evaluator_class]).must_be_instance_of Float
@@ -161,7 +164,7 @@ describe Riffer::Evals::EvaluatorRunner do
     it "passes context to agent" do
       received_context = nil
       context_agent = Class.new(Riffer::Agent) do
-        model ->(context) {
+        model lambda { |context|
           received_context = context
           "mock/mock-model"
         }
@@ -170,9 +173,9 @@ describe Riffer::Evals::EvaluatorRunner do
 
       Riffer::Evals::EvaluatorRunner.run(
         agent: context_agent,
-        scenarios: [{input: "Hello"}],
+        scenarios: [{ input: "Hello" }],
         evaluators: [evaluator_class],
-        context: {user_id: 42}
+        context: { user_id: 42 },
       )
 
       expect(received_context[:user_id]).must_equal 42
@@ -181,7 +184,7 @@ describe Riffer::Evals::EvaluatorRunner do
     it "allows per-scenario context to override top-level" do
       received_contexts = []
       context_agent = Class.new(Riffer::Agent) do
-        model ->(context) {
+        model lambda { |context|
           received_contexts << context
           "mock/mock-model"
         }
@@ -191,11 +194,11 @@ describe Riffer::Evals::EvaluatorRunner do
       Riffer::Evals::EvaluatorRunner.run(
         agent: context_agent,
         scenarios: [
-          {input: "Hello", context: {user_id: 99}},
-          {input: "Hi"}
+          { input: "Hello", context: { user_id: 99 } },
+          { input: "Hi" },
         ],
         evaluators: [evaluator_class],
-        context: {user_id: 42}
+        context: { user_id: 42 },
       )
 
       expect(received_contexts[0][:user_id]).must_equal 99
@@ -205,23 +208,23 @@ describe Riffer::Evals::EvaluatorRunner do
 
   describe "validation" do
     it "raises error when agent is not an Agent subclass" do
-      expect {
+      expect do
         Riffer::Evals::EvaluatorRunner.run(
           agent: String,
-          scenarios: [{input: "test"}],
-          evaluators: [evaluator_class]
+          scenarios: [{ input: "test" }],
+          evaluators: [evaluator_class],
         )
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
 
     it "raises error when eval is not an Evaluator subclass" do
-      expect {
+      expect do
         Riffer::Evals::EvaluatorRunner.run(
           agent: agent_class,
-          scenarios: [{input: "test"}],
-          evaluators: [String]
+          scenarios: [{ input: "test" }],
+          evaluators: [String],
         )
-      }.must_raise(Riffer::ArgumentError)
+      end.must_raise(Riffer::ArgumentError)
     end
   end
 end

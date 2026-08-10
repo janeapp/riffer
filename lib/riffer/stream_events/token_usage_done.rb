@@ -16,6 +16,6 @@ class Riffer::StreamEvents::TokenUsageDone < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, token_usage: @token_usage.to_h}
+    { role: @role, token_usage: @token_usage.to_h }
   end
 end

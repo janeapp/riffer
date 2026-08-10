@@ -65,6 +65,7 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   #: (String, String) -> void
   def validate_dirname_matches_name!(dirname, name)
     return if dirname == name
+
     raise Riffer::ArgumentError, "Skill directory '#{dirname}' does not match name '#{name}'"
   end
 end

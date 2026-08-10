@@ -29,6 +29,7 @@ describe Riffer::Tools::Toolable do
 
     it "returns nil when not set" do
       klass = Class.new { extend Riffer::Tools::Toolable }
+
       expect(klass.description).must_be_nil
     end
   end
@@ -37,6 +38,7 @@ describe Riffer::Tools::Toolable do
     it "can be set explicitly" do
       klass = Class.new { extend Riffer::Tools::Toolable }
       klass.identifier("custom_id")
+
       expect(klass.identifier).must_equal "custom_id"
     end
   end
@@ -45,6 +47,7 @@ describe Riffer::Tools::Toolable do
     it "is an alias for identifier" do
       klass = Class.new { extend Riffer::Tools::Toolable }
       klass.identifier("my_tool")
+
       expect(klass.name).must_equal "my_tool"
     end
   end
@@ -52,6 +55,7 @@ describe Riffer::Tools::Toolable do
   describe "#timeout" do
     it "returns DEFAULT_TIMEOUT when not set" do
       klass = Class.new { extend Riffer::Tools::Toolable }
+
       expect(klass.timeout).must_equal 10
     end
 
@@ -61,6 +65,7 @@ describe Riffer::Tools::Toolable do
 
         timeout 30
       end
+
       expect(klass.timeout).must_equal 30.0
     end
 
@@ -70,6 +75,7 @@ describe Riffer::Tools::Toolable do
 
         timeout 15
       end
+
       expect(klass.timeout).must_be_instance_of Float
     end
   end
@@ -81,6 +87,7 @@ describe Riffer::Tools::Toolable do
 
     it "returns nil when no params defined" do
       klass = Class.new { extend Riffer::Tools::Toolable }
+
       expect(klass.params).must_be_nil
     end
   end
@@ -88,6 +95,7 @@ describe Riffer::Tools::Toolable do
   describe "#parameters_schema" do
     it "returns JSON schema for params" do
       schema = toolable_class.parameters_schema
+
       expect(schema[:type]).must_equal "object"
       expect(schema[:properties].key?("input")).must_equal true
       expect(schema[:required]).must_include "input"
@@ -96,6 +104,7 @@ describe Riffer::Tools::Toolable do
     it "returns empty schema when no params defined" do
       klass = Class.new { extend Riffer::Tools::Toolable }
       schema = klass.parameters_schema
+
       expect(schema[:type]).must_equal "object"
       expect(schema[:properties]).must_equal({})
     end
@@ -104,6 +113,7 @@ describe Riffer::Tools::Toolable do
   describe "#kind" do
     it "defaults to :tool" do
       klass = Class.new { extend Riffer::Tools::Toolable }
+
       expect(klass.kind).must_equal :tool
     end
 
@@ -113,6 +123,7 @@ describe Riffer::Tools::Toolable do
 
         kind :agent
       end
+
       expect(klass.kind).must_equal :agent
     end
   end
@@ -129,6 +140,7 @@ describe Riffer::Tools::Toolable do
 
     it "passes strict option through" do
       schema = toolable_class.to_tool_schema(strict: true)
+
       expect(schema[:parameters_schema][:required]).must_include "flag"
     end
   end
@@ -136,6 +148,7 @@ describe Riffer::Tools::Toolable do
   describe "#validate_as_tool!" do
     it "raises when description is missing" do
       klass = Class.new { extend Riffer::Tools::Toolable }
+
       expect { klass.validate_as_tool! }.must_raise(Riffer::ArgumentError)
     end
 
@@ -146,6 +159,7 @@ describe Riffer::Tools::Toolable do
         description "Valid tool"
       end
       klass.identifier("valid_tool")
+
       expect(klass.validate_as_tool!).must_equal true
     end
   end

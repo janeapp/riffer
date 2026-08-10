@@ -38,7 +38,7 @@ class Riffer::Guardrails::Tripwire
       reason: reason,
       guardrail: guardrail.name,
       phase: phase,
-      metadata: metadata
+      metadata: metadata,
     }
   end
 end

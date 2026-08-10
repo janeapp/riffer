@@ -16,7 +16,8 @@ class Riffer::StreamEvents::FinishReasonDone < Riffer::StreamEvents::Base
   #: (finish_reason: Symbol, ?raw_finish_reason: String?, ?role: Symbol) -> void
   def initialize(finish_reason:, raw_finish_reason: nil, role: :assistant)
     unless Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
-      raise Riffer::ArgumentError, "finish_reason must be one of #{Riffer::Providers::FinishReason::VALUES.inspect}, got #{finish_reason.inspect}"
+      raise Riffer::ArgumentError,
+            "finish_reason must be one of #{Riffer::Providers::FinishReason::VALUES.inspect}, got #{finish_reason.inspect}"
     end
 
     super(role: role)
@@ -27,7 +28,7 @@ class Riffer::StreamEvents::FinishReasonDone < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = {role: @role, finish_reason: @finish_reason} #: Hash[Symbol, untyped]
+    hash = { role: @role, finish_reason: @finish_reason } #: Hash[Symbol, untyped]
     hash[:raw_finish_reason] = @raw_finish_reason if @raw_finish_reason
     hash
   end
