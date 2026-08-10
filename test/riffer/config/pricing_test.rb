@@ -109,8 +109,12 @@ describe Riffer::Config::Pricing::Rates do
 
     it "subtracts the cache subsets and prices them at their own rates" do
       rates = Riffer::Config::Pricing::Rates.new(input: 3.0, output: 15.0, cache_read: 1.0, cache_write: 5.0)
-      cost = rates.cost_for(input_tokens: 4_000_000, output_tokens: 0, cache_read_tokens: 1_000_000,
-                            cache_write_tokens: 1_000_000,)
+      cost = rates.cost_for(
+        input_tokens: 4_000_000,
+        output_tokens: 0,
+        cache_read_tokens: 1_000_000,
+        cache_write_tokens: 1_000_000,
+      )
 
       expect(cost).must_equal 12.0
     end
@@ -131,8 +135,12 @@ describe Riffer::Config::Pricing::Rates do
 
     it "clamps the uncached portion at zero rather than going negative" do
       rates = Riffer::Config::Pricing::Rates.new(input: 4.0, output: 15.0, cache_read: 1.0, cache_write: 1.0)
-      cost = rates.cost_for(input_tokens: 2_000_000, output_tokens: 0, cache_read_tokens: 1_500_000,
-                            cache_write_tokens: 1_500_000,)
+      cost = rates.cost_for(
+        input_tokens: 2_000_000,
+        output_tokens: 0,
+        cache_read_tokens: 1_500_000,
+        cache_write_tokens: 1_500_000,
+      )
 
       expect(cost).must_equal 3.0
     end

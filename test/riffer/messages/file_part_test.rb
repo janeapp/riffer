@@ -189,8 +189,11 @@ describe Riffer::Messages::FilePart do
     end
 
     it "returns data when both url and data are provided" do
-      file = Riffer::Messages::FilePart.new(url: "https://example.com/image.png", data: "aGVsbG8=",
-                                            media_type: "image/png",)
+      file = Riffer::Messages::FilePart.new(
+        url: "https://example.com/image.png",
+        data: "aGVsbG8=",
+        media_type: "image/png",
+      )
 
       expect(file.data).must_equal "aGVsbG8="
     end

@@ -33,7 +33,9 @@ class Riffer::Skills::Adapter
   #--
   #: () -> String
   def catalog_instructions
-    "When a user's request matches a skill description below, call the `#{skill_activate_tool.name}` tool with the skill name. After activation, follow the skill's instructions. " \
-      "If a skill's instructions already appear in your context (inside <skill_content> tags), follow them instead of activating the skill again."
+    "When a user's request matches a skill description below, call the `#{skill_activate_tool.name}` tool " \
+      "with the skill name. After activation, follow the skill's instructions. " \
+      "If a skill's instructions already appear in your context (inside <skill_content> tags), " \
+      "follow them instead of activating the skill again."
   end
 end

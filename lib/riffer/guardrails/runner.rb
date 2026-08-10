@@ -85,8 +85,11 @@ class Riffer::Guardrails::Runner
   #--
   #: (Riffer::Guardrail, untyped, messages: Array[Riffer::Messages::Base]?) -> Riffer::Guardrails::Result
   def execute_guardrail(guardrail, data, messages:)
-    Riffer::Tracing.in_span("execute_guardrail #{guardrail.name}", attributes: guardrail_span_attributes(guardrail),
-                                                                   kind: :internal,) do |span|
+    Riffer::Tracing.in_span(
+      "execute_guardrail #{guardrail.name}",
+      attributes: guardrail_span_attributes(guardrail),
+      kind: :internal,
+    ) do |span|
       result = run_guardrail_phase(guardrail, data, messages: messages)
       record_guardrail_outcome(span, result)
       result

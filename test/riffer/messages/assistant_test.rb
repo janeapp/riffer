@@ -34,8 +34,10 @@ describe Riffer::Messages::Assistant do
     end
 
     it "returns true when structured_output is provided" do
-      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}',
-                                                structured_output: { sentiment: "positive" },)
+      message = Riffer::Messages::Assistant.new(
+        '{"sentiment":"positive"}',
+        structured_output: { sentiment: "positive" },
+      )
 
       expect(message.structured_output?).must_equal true
     end
@@ -49,8 +51,10 @@ describe Riffer::Messages::Assistant do
     end
 
     it "returns the stored hash" do
-      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}',
-                                                structured_output: { sentiment: "positive" },)
+      message = Riffer::Messages::Assistant.new(
+        '{"sentiment":"positive"}',
+        structured_output: { sentiment: "positive" },
+      )
 
       expect(message.structured_output).must_equal({ sentiment: "positive" })
     end
@@ -147,8 +151,10 @@ describe Riffer::Messages::Assistant do
     end
 
     it "includes structured_output when present" do
-      message = Riffer::Messages::Assistant.new('{"sentiment":"positive"}',
-                                                structured_output: { sentiment: "positive" },)
+      message = Riffer::Messages::Assistant.new(
+        '{"sentiment":"positive"}',
+        structured_output: { sentiment: "positive" },
+      )
 
       expect(message.to_h[:structured_output]).must_equal({ sentiment: "positive" })
     end

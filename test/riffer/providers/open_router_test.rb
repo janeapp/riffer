@@ -45,7 +45,9 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "extracts the finish reason when generating" do
-      VCR.use_cassette("Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+      VCR.use_cassette(
+        "Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+      ) do
         result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
         expect(result.finish_reason).must_equal :stop
@@ -97,8 +99,12 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "forwards arbitrary options to the request body" do
-      params = provider.send(:build_request_params, [user_message], "openai/gpt-4o-mini",
-                             { temperature: 0.5, max_tokens: 100 })
+      params = provider.send(
+        :build_request_params,
+        [user_message],
+        "openai/gpt-4o-mini",
+        { temperature: 0.5, max_tokens: 100 },
+      )
 
       expect(params[:temperature]).must_equal 0.5
       expect(params[:max_tokens]).must_equal 100
@@ -111,8 +117,12 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "passes hash reasoning through verbatim" do
-      params = provider.send(:build_request_params, [user_message], "deepseek/deepseek-r1",
-                             { reasoning: { effort: "medium", max_tokens: 5000 } })
+      params = provider.send(
+        :build_request_params,
+        [user_message],
+        "deepseek/deepseek-r1",
+        { reasoning: { effort: "medium", max_tokens: 5000 } },
+      )
 
       expect(params[:reasoning]).must_equal({ effort: "medium", max_tokens: 5000 })
     end
@@ -125,8 +135,12 @@ describe Riffer::Providers::OpenRouter do
 
     it "passes OpenRouter `provider` option through verbatim" do
       provider_block = { order: ["anthropic"], allow_fallbacks: false }
-      params = provider.send(:build_request_params, [user_message], "anthropic/claude-sonnet-4.6",
-                             { provider: provider_block })
+      params = provider.send(
+        :build_request_params,
+        [user_message],
+        "anthropic/claude-sonnet-4.6",
+        { provider: provider_block },
+      )
 
       expect(params[:provider]).must_equal provider_block
     end
@@ -139,8 +153,12 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "passes `transforms` array through verbatim" do
-      params = provider.send(:build_request_params, [user_message], "openai/gpt-4o-mini",
-                             { transforms: ["middle-out"] })
+      params = provider.send(
+        :build_request_params,
+        [user_message],
+        "openai/gpt-4o-mini",
+        { transforms: ["middle-out"] },
+      )
 
       expect(params[:transforms]).must_equal ["middle-out"]
     end
@@ -150,8 +168,12 @@ describe Riffer::Providers::OpenRouter do
       params_obj.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params_obj)
 
-      params = provider.send(:build_request_params, [user_message], "openai/gpt-4o-mini",
-                             { structured_output: structured_output })
+      params = provider.send(
+        :build_request_params,
+        [user_message],
+        "openai/gpt-4o-mini",
+        { structured_output: structured_output },
+      )
 
       expect(params.key?(:structured_output)).must_equal false
     end
@@ -161,8 +183,12 @@ describe Riffer::Providers::OpenRouter do
       params_obj.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params_obj)
 
-      params = provider.send(:build_request_params, [user_message], "openai/gpt-4o-mini",
-                             { structured_output: structured_output })
+      params = provider.send(
+        :build_request_params,
+        [user_message],
+        "openai/gpt-4o-mini",
+        { structured_output: structured_output },
+      )
 
       expect(params[:response_format][:type]).must_equal "json_schema"
       expect(params[:response_format][:json_schema][:strict]).must_equal true
@@ -181,8 +207,12 @@ describe Riffer::Providers::OpenRouter do
 
     # Tags arrive already normalized from Run, so these pass clean String maps.
     it "maps all tags to metadata" do
-      params = provider.send(:build_request_params, messages, "openai/gpt-4o-mini",
-                             { tags: { "team" => "growth", "user_id" => "u_1" } })
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "openai/gpt-4o-mini",
+        { tags: { "team" => "growth", "user_id" => "u_1" } },
+      )
 
       expect(params[:metadata]).must_equal({ "team" => "growth", "user_id" => "u_1" })
     end
@@ -214,8 +244,11 @@ describe Riffer::Providers::OpenRouter do
     # matcher fails the test if tags ever stop reaching the wire.
     it "forwards per-call tags to the request" do
       VCR.use_cassette("Riffer_Providers_OpenRouter/tags/forwards_metadata_and_user") do
-        result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5",
-                                        tags: { "user_id" => "u_1", "team" => "growth" },)
+        result = provider.generate_text(
+          prompt: "Say hello",
+          model: "anthropic/claude-haiku-4.5",
+          tags: { "user_id" => "u_1", "team" => "growth" },
+        )
 
         expect(result).must_be_instance_of Riffer::Messages::Assistant
       end
@@ -236,8 +269,12 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "wraps the tool definition in a function envelope" do
-      params = provider.send(:build_request_params, [Riffer::Messages::User.new("hi")], "openai/gpt-4o-mini",
-                             { tools: [weather_tool] })
+      params = provider.send(
+        :build_request_params,
+        [Riffer::Messages::User.new("hi")],
+        "openai/gpt-4o-mini",
+        { tools: [weather_tool] },
+      )
       tool = params[:tools].first
 
       expect(tool[:type]).must_equal "function"
@@ -271,8 +308,10 @@ describe Riffer::Providers::OpenRouter do
 
     it "maps User messages with image files to multi-part content" do
       file = Riffer::Messages::FilePart.new(data: "abc", media_type: "image/png")
-      result = provider.send(:convert_messages_to_chat_completions_format,
-                             [Riffer::Messages::User.new("Look", files: [file])],)
+      result = provider.send(
+        :convert_messages_to_chat_completions_format,
+        [Riffer::Messages::User.new("Look", files: [file])],
+      )
       content = result.first[:content]
 
       expect(content.first).must_equal({ type: "text", text: "Look" })
@@ -287,9 +326,16 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "maps Assistant tool calls to the nested tool_calls array shape" do
-      assistant = Riffer::Messages::Assistant.new("", tool_calls: [
-                                                    Riffer::Messages::Assistant::ToolCall.new(call_id: "call_123", name: "get_weather", arguments: '{"city":"Toronto"}'),
-                                                  ],)
+      assistant = Riffer::Messages::Assistant.new(
+        "",
+        tool_calls: [
+          Riffer::Messages::Assistant::ToolCall.new(
+            call_id: "call_123",
+            name: "get_weather",
+            arguments: '{"city":"Toronto"}',
+          ),
+        ],
+      )
       result = provider.send(:convert_messages_to_chat_completions_format, [assistant])
       assistant_msg = result.first
 
@@ -365,7 +411,9 @@ describe Riffer::Providers::OpenRouter do
   describe "#generate_text" do
     describe "when prompt is provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
           result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
@@ -374,7 +422,9 @@ describe Riffer::Providers::OpenRouter do
       end
 
       it "returns non-empty content" do
-        VCR.use_cassette("Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
           result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
@@ -539,11 +589,21 @@ describe Riffer::Providers::OpenRouter do
           provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new("", tool_calls: [
-                                              Riffer::Messages::Assistant::ToolCall.new(call_id: "call_abc", name: "get_weather", arguments: '{"city":"Toronto"}'),
-                                            ],),
-            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "call_abc",
-                                                                                        name: "get_weather",),
+            Riffer::Messages::Assistant.new(
+              "",
+              tool_calls: [
+                Riffer::Messages::Assistant::ToolCall.new(
+                  call_id: "call_abc",
+                  name: "get_weather",
+                  arguments: '{"city":"Toronto"}',
+                ),
+              ],
+            ),
+            Riffer::Messages::Tool.new(
+              "The weather in Toronto is 15 degrees Celsius.",
+              tool_call_id: "call_abc",
+              name: "get_weather",
+            ),
           ]
           result = provider.generate_text(
             messages: messages,
@@ -579,7 +639,8 @@ describe Riffer::Providers::OpenRouter do
 
   describe "file handling" do
     let(:image_base64) do
-      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
+      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/" \
+        "oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
     end
 
     describe "#generate_text with image" do

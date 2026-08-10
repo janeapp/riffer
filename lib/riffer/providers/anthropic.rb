@@ -32,6 +32,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **)
+    super()
     depends_on "anthropic"
 
     api_key ||= Riffer.config.anthropic.api_key
@@ -130,12 +131,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     cache_write = usage.cache_creation_input_tokens
     cache_read = usage.cache_read_input_tokens
 
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-                    input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
-                    output_tokens: usage.output_tokens,
-                    cache_write_tokens: cache_write,
-                    cache_read_tokens: cache_read,
-                  ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
+        output_tokens: usage.output_tokens,
+        cache_write_tokens: cache_write,
+        cache_read_tokens: cache_read,
+      ),
+    )
   end
 
   #--
@@ -211,15 +214,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
           block = event.content_block
           if block.is_a?(::Anthropic::Models::TextBlock) && current_state[:text]
-            handle_content_block_stop_text(event, state: current_state,
-                                                  yielder: yielder,)
+            handle_content_block_stop_text(event, state: current_state, yielder: yielder)
           end
           if block.is_a?(::Anthropic::Models::ToolUseBlock)
             handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
           end
           if block.is_a?(::Anthropic::Models::ThinkingBlock) && current_state[:reasoning]
-            handle_content_block_stop_thinking(event, state: current_state,
-                                                      yielder: yielder,)
+            handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
           end
           if block.is_a?(::Anthropic::Models::ServerToolUseBlock)
             handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder)

@@ -112,7 +112,9 @@ describe Riffer::Providers::Gemini do
   describe "#generate_text" do
     describe "when prompt is provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
 
@@ -123,7 +125,9 @@ describe Riffer::Providers::Gemini do
 
     describe "when system and prompt are provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           params = { system: "Be concise", prompt: "Say hello", model: "gemini-2.5-flash-lite" }
           result = provider.generate_text(**params)
@@ -135,7 +139,9 @@ describe Riffer::Providers::Gemini do
 
     describe "with a hash messages array" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           messages = [
             { role: "system", content: "Be concise" },
@@ -177,7 +183,9 @@ describe Riffer::Providers::Gemini do
 
     describe "with an Assistant message" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_an_Assistant_message/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("Say hello"),
@@ -295,7 +303,9 @@ describe Riffer::Providers::Gemini do
       end
 
       it "returns valid JSON with nested object keys" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output_nested_object/returns_nested_json") do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/structured_output_nested_object/returns_nested_json",
+        ) do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           result = provider.generate_text(
             prompt: nested_object_prompt,
@@ -355,7 +365,9 @@ describe Riffer::Providers::Gemini do
       end
 
       it "returns valid JSON with array of objects content" do
-        VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output_array_of_objects/returns_array_of_objects") do
+        VCR.use_cassette(
+          "Riffer_Providers_Gemini/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
+        ) do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           result = provider.generate_text(
             prompt: array_of_objects_prompt,
@@ -452,8 +464,12 @@ describe Riffer::Providers::Gemini do
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
-      result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite",
-                             { structured_output: structured_output })
+      result = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-2.5-flash-lite",
+        { structured_output: structured_output },
+      )
 
       expect(result[:generationConfig][:responseMimeType]).must_equal "application/json"
     end
@@ -465,8 +481,12 @@ describe Riffer::Providers::Gemini do
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
-      result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite",
-                             { structured_output: structured_output })
+      result = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-2.5-flash-lite",
+        { structured_output: structured_output },
+      )
 
       expect(result[:generationConfig][:responseSchema][:type]).must_equal "object"
     end
@@ -487,8 +507,12 @@ describe Riffer::Providers::Gemini do
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
-      result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite",
-                             { structured_output: structured_output })
+      result = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-2.5-flash-lite",
+        { structured_output: structured_output },
+      )
 
       expect(result.key?(:structured_output)).must_equal false
     end
@@ -511,8 +535,12 @@ describe Riffer::Providers::Gemini do
     end
 
     it "never leaks tags into generationConfig" do
-      params = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite",
-                             { temperature: 0.5, tags: { "team" => "growth" } })
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gemini-2.5-flash-lite",
+        { temperature: 0.5, tags: { "team" => "growth" } },
+      )
 
       expect(params[:generationConfig].key?(:tags)).must_equal false
     end
@@ -526,10 +554,15 @@ describe Riffer::Providers::Gemini do
     # any future leak into the Gemini request changes the body and fails the
     # :body matcher — confirming no regression. No new cassette needed.
     it "sends no tags on the wire, matching the untagged request" do
-      VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
-                       record: :none,) do
-        result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite",
-                                        tags: { "user_id" => "u_1", "team" => "growth" },)
+      VCR.use_cassette(
+        "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+        record: :none,
+      ) do
+        result = provider.generate_text(
+          prompt: "Say hello",
+          model: "gemini-2.5-flash-lite",
+          tags: { "user_id" => "u_1", "team" => "growth" },
+        )
 
         expect(result).must_be_instance_of Riffer::Messages::Assistant
       end
@@ -621,11 +654,21 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new("", tool_calls: [
-                                              Riffer::Messages::Assistant::ToolCall.new(call_id: "gemini_call_abc123", name: "get_weather", arguments: '{"city":"Toronto"}'),
-                                            ],),
-            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.",
-                                       tool_call_id: "gemini_call_abc123", name: "get_weather",),
+            Riffer::Messages::Assistant.new(
+              "",
+              tool_calls: [
+                Riffer::Messages::Assistant::ToolCall.new(
+                  call_id: "gemini_call_abc123",
+                  name: "get_weather",
+                  arguments: '{"city":"Toronto"}',
+                ),
+              ],
+            ),
+            Riffer::Messages::Tool.new(
+              "The weather in Toronto is 15 degrees Celsius.",
+              tool_call_id: "gemini_call_abc123",
+              name: "get_weather",
+            ),
           ]
           result = provider.generate_text(
             messages: messages,
@@ -642,11 +685,21 @@ describe Riffer::Providers::Gemini do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new("", tool_calls: [
-                                              Riffer::Messages::Assistant::ToolCall.new(call_id: "gemini_call_abc123", name: "get_weather", arguments: '{"city":"Toronto"}'),
-                                            ],),
-            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.",
-                                       tool_call_id: "gemini_call_abc123", name: "get_weather",),
+            Riffer::Messages::Assistant.new(
+              "",
+              tool_calls: [
+                Riffer::Messages::Assistant::ToolCall.new(
+                  call_id: "gemini_call_abc123",
+                  name: "get_weather",
+                  arguments: '{"city":"Toronto"}',
+                ),
+              ],
+            ),
+            Riffer::Messages::Tool.new(
+              "The weather in Toronto is 15 degrees Celsius.",
+              tool_call_id: "gemini_call_abc123",
+              name: "get_weather",
+            ),
           ]
           result = provider.generate_text(
             messages: messages,
@@ -732,17 +785,20 @@ describe Riffer::Providers::Gemini do
     describe "cache read tokens" do
       it "surfaces cachedContentTokenCount when present" do
         provider = Riffer::Providers::Gemini.new(api_key: api_key)
-        usage = provider.send(:extract_token_usage,
-                              { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20,
-                                                 cachedContentTokenCount: 80, } })
+        usage = provider.send(
+          :extract_token_usage,
+          { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20, cachedContentTokenCount: 80 } },
+        )
 
         expect(usage.cache_read_tokens).must_equal 80
       end
 
       it "leaves cache_read_tokens nil when absent" do
         provider = Riffer::Providers::Gemini.new(api_key: api_key)
-        usage = provider.send(:extract_token_usage,
-                              { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } })
+        usage = provider.send(
+          :extract_token_usage,
+          { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } },
+        )
 
         expect(usage.cache_read_tokens).must_be_nil
       end
@@ -751,17 +807,20 @@ describe Riffer::Providers::Gemini do
     describe "thinking tokens" do
       it "folds thoughtsTokenCount into output_tokens" do
         provider = Riffer::Providers::Gemini.new(api_key: api_key)
-        usage = provider.send(:extract_token_usage,
-                              { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20,
-                                                 thoughtsTokenCount: 30, } })
+        usage = provider.send(
+          :extract_token_usage,
+          { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20, thoughtsTokenCount: 30 } },
+        )
 
         expect(usage.output_tokens).must_equal 50
       end
 
       it "keeps output_tokens as candidatesTokenCount when absent" do
         provider = Riffer::Providers::Gemini.new(api_key: api_key)
-        usage = provider.send(:extract_token_usage,
-                              { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } })
+        usage = provider.send(
+          :extract_token_usage,
+          { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } },
+        )
 
         expect(usage.output_tokens).must_equal 20
       end
@@ -770,7 +829,8 @@ describe Riffer::Providers::Gemini do
 
   describe "file handling" do
     let(:image_base64) do
-      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
+      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/" \
+        "oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
     end
 
     describe "#generate_text with image" do

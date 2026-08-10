@@ -97,10 +97,16 @@ describe Riffer::Evals::ScenarioResult do
         output: "test",
         ground_truth: nil,
         results: [
-          Riffer::Evals::Result.new(evaluator: evaluator_class, score: 0.9,
-                                    token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5),),
-          Riffer::Evals::Result.new(evaluator: other_evaluator_class, score: 0.7,
-                                    token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8),),
+          Riffer::Evals::Result.new(
+            evaluator: evaluator_class,
+            score: 0.9,
+            token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5),
+          ),
+          Riffer::Evals::Result.new(
+            evaluator: other_evaluator_class,
+            score: 0.7,
+            token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 20, output_tokens: 8),
+          ),
         ],
       )
 

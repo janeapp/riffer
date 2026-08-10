@@ -55,7 +55,9 @@ describe Riffer::Providers::Anthropic do
     end
 
     it "extracts the finish reason when generating" do
-      VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+      VCR.use_cassette(
+        "Riffer_Providers_Anthropic/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+      ) do
         result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001")
 
         expect(result.finish_reason).must_equal :stop
@@ -89,7 +91,9 @@ describe Riffer::Providers::Anthropic do
   describe "#generate_text" do
     describe "when prompt is provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001")
 
@@ -100,7 +104,9 @@ describe Riffer::Providers::Anthropic do
 
     describe "when system and prompt are provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           params = { system: "Be concise", prompt: "Say hello", model: "claude-haiku-4-5-20251001" }
           result = provider.generate_text(**params)
@@ -112,7 +118,9 @@ describe Riffer::Providers::Anthropic do
 
     describe "with a hash messages array" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           messages = [
             { role: "system", content: "Be concise" },
@@ -139,7 +147,9 @@ describe Riffer::Providers::Anthropic do
 
     describe "with a System message" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/with_a_System_message/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/with_a_System_message/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           messages = [
             Riffer::Messages::System.new("Be concise"),
@@ -154,7 +164,9 @@ describe Riffer::Providers::Anthropic do
 
     describe "with an Assistant message" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/with_an_Assistant_message/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("Say hello"),
@@ -271,7 +283,9 @@ describe Riffer::Providers::Anthropic do
       end
 
       it "returns valid JSON with nested object keys" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output_nested_object/returns_nested_json") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/structured_output_nested_object/returns_nested_json",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: nested_object_prompt,
@@ -290,7 +304,8 @@ describe Riffer::Providers::Anthropic do
 
     describe "structured output with null optional fields" do
       let(:null_optional_prompt) do
-        "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. Return null for any unknown fields."
+        "Extract info from: Jane works at 42 King St in Vancouver. No other details are known. " \
+          "Return null for any unknown fields."
       end
 
       let(:null_optional_structured_output) do
@@ -306,7 +321,9 @@ describe Riffer::Providers::Anthropic do
       end
 
       it "returns null for optional fields when info is unavailable" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output_null_optionals/returns_null_for_optional_fields") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/structured_output_null_optionals/returns_null_for_optional_fields",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: null_optional_prompt,
@@ -337,7 +354,9 @@ describe Riffer::Providers::Anthropic do
       end
 
       it "returns an enum value when present" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output_optional_enum/returns_enum_value") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/structured_output_optional_enum/returns_enum_value",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: "Classify the session: yoga class, in-person format. Return session_type from the enum.",
@@ -355,7 +374,8 @@ describe Riffer::Providers::Anthropic do
         VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output_optional_enum/returns_null") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
-            prompt: "Classify the session: yoga class, underwater format. The session_type enum does not cover this, return null for session_type.",
+            prompt: "Classify the session: yoga class, underwater format. The session_type enum does not " \
+                    "cover this, return null for session_type.",
             model: "claude-haiku-4-5-20251001",
             structured_output: optional_enum_structured_output,
           )
@@ -378,7 +398,9 @@ describe Riffer::Providers::Anthropic do
       end
 
       it "returns valid JSON with typed array content" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output_typed_array/returns_typed_arrays") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/structured_output_typed_array/returns_typed_arrays",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: typed_array_prompt,
@@ -410,7 +432,9 @@ describe Riffer::Providers::Anthropic do
       end
 
       it "returns valid JSON with array of objects content" do
-        VCR.use_cassette("Riffer_Providers_Anthropic/_generate_text/structured_output_array_of_objects/returns_array_of_objects") do
+        VCR.use_cassette(
+          "Riffer_Providers_Anthropic/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
+        ) do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           result = provider.generate_text(
             prompt: array_of_objects_prompt,
@@ -437,8 +461,12 @@ describe Riffer::Providers::Anthropic do
 
     # Tags arrive already normalized from Run, so these pass clean String maps.
     it "maps only the reserved user_id to metadata.user_id, dropping all other tags" do
-      params = provider.send(:build_request_params, messages, model,
-                             { tags: { "user_id" => "u_1", "team" => "growth" } })
+      params = provider.send(
+        :build_request_params,
+        messages,
+        model,
+        { tags: { "user_id" => "u_1", "team" => "growth" } },
+      )
 
       expect(params[:metadata]).must_equal({ user_id: "u_1" })
     end
@@ -464,8 +492,11 @@ describe Riffer::Providers::Anthropic do
     # VCR's :body matcher fails the test if tags ever stop reaching the wire.
     it "forwards per-call tags to the request" do
       VCR.use_cassette("Riffer_Providers_Anthropic/tags/forwards_user_id_metadata") do
-        result = provider.generate_text(prompt: "Say hello", model: "claude-haiku-4-5-20251001",
-                                        tags: { "user_id" => "u_1", "team" => "growth" },)
+        result = provider.generate_text(
+          prompt: "Say hello",
+          model: "claude-haiku-4-5-20251001",
+          tags: { "user_id" => "u_1", "team" => "growth" },
+        )
 
         expect(result).must_be_instance_of Riffer::Messages::Assistant
       end
@@ -549,8 +580,12 @@ describe Riffer::Providers::Anthropic do
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
-      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001",
-                             { structured_output: structured_output })
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "claude-haiku-4-5-20251001",
+        { structured_output: structured_output },
+      )
 
       expect(params[:output_config][:format][:type]).must_equal "json_schema"
     end
@@ -562,8 +597,12 @@ describe Riffer::Providers::Anthropic do
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
-      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001",
-                             { structured_output: structured_output })
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "claude-haiku-4-5-20251001",
+        { structured_output: structured_output },
+      )
 
       expect(params[:output_config][:format][:schema][:type]).must_equal "object"
     end
@@ -584,8 +623,12 @@ describe Riffer::Providers::Anthropic do
       structured_output = Riffer::Agent::StructuredOutput.new(params)
       messages = [Riffer::Messages::User.new("Analyze")]
 
-      params = provider.send(:build_request_params, messages, "claude-haiku-4-5-20251001",
-                             { structured_output: structured_output })
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "claude-haiku-4-5-20251001",
+        { structured_output: structured_output },
+      )
 
       expect(params.key?(:structured_output)).must_equal false
     end
@@ -596,8 +639,11 @@ describe Riffer::Providers::Anthropic do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_generate_text/returns_an_Assistant_message") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          result = provider.generate_text(prompt: "What is the latest Ruby version?",
-                                          model: "claude-haiku-4-5-20251001", web_search: true,)
+          result = provider.generate_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          )
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -606,8 +652,11 @@ describe Riffer::Providers::Anthropic do
       it "accepts hash web_search options" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_generate_text/accepts_hash_web_search_options") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          result = provider.generate_text(prompt: "What is the latest Ruby version?",
-                                          model: "claude-haiku-4-5-20251001", web_search: { max_uses: 3 },)
+          result = provider.generate_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: { max_uses: 3 },
+          )
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -618,8 +667,11 @@ describe Riffer::Providers::Anthropic do
       it "yields WebSearchStatus events" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_status") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001",
-                                        web_search: true,).to_a
+          events = provider.stream_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          ).to_a
           web_search_statuses = events.grep(Riffer::StreamEvents::WebSearchStatus)
 
           expect(web_search_statuses).wont_be_empty
@@ -629,8 +681,11 @@ describe Riffer::Providers::Anthropic do
       it "yields WebSearchDone event" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_result") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001",
-                                        web_search: true,).to_a
+          events = provider.stream_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          ).to_a
           web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
 
           expect(web_search_result).wont_be_nil
@@ -640,8 +695,11 @@ describe Riffer::Providers::Anthropic do
       it "includes sources in WebSearchDone event" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_result") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001",
-                                        web_search: true,).to_a
+          events = provider.stream_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          ).to_a
           web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
 
           expect(web_search_result.sources).wont_be_empty
@@ -653,8 +711,11 @@ describe Riffer::Providers::Anthropic do
       it "includes query in WebSearchStatus searching event" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_status") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001",
-                                        web_search: true,).to_a
+          events = provider.stream_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          ).to_a
           searching_status = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) && e.status == "searching" }
 
           expect(searching_status).wont_be_nil
@@ -665,8 +726,11 @@ describe Riffer::Providers::Anthropic do
       it "does not yield ToolCallDelta events" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/no_phantom_tool_call_delta") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "claude-haiku-4-5-20251001",
-                                        web_search: true,).to_a
+          events = provider.stream_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          ).to_a
           tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
 
           expect(tool_deltas).must_be_empty
@@ -677,7 +741,8 @@ describe Riffer::Providers::Anthropic do
 
   describe "file handling" do
     let(:image_base64) do
-      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
+      "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAQ0lEQVR4nO3OMQ0AMAwDsPAnvRHonxyWDMB5yaD+QEtLS0tLa0N/" \
+        "oKWlpaWltaE/0NLS0tLS2tAfaGlpaWlpbegPTh97K7rEaOcNTQAAAABJRU5ErkJggg=="
     end
 
     describe "#generate_text with image" do
@@ -685,8 +750,11 @@ describe Riffer::Providers::Anthropic do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001",
-                                          files: [file],)
+          result = provider.generate_text(
+            prompt: "Describe this image",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          )
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -696,8 +764,11 @@ describe Riffer::Providers::Anthropic do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
-          result = provider.generate_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001",
-                                          files: [file],)
+          result = provider.generate_text(
+            prompt: "Describe this image",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          )
 
           expect(result.content).wont_be_empty
         end
@@ -708,10 +779,19 @@ describe Riffer::Providers::Anthropic do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_document") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          pdf_data = Base64.strict_encode64(
+            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
+            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
+            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
+            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
+            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
+          )
           file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
-          result = provider.generate_text(prompt: "What is in this document?", model: "claude-haiku-4-5-20251001",
-                                          files: [file],)
+          result = provider.generate_text(
+            prompt: "What is in this document?",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          )
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
@@ -720,10 +800,19 @@ describe Riffer::Providers::Anthropic do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_document") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          pdf_data = Base64.strict_encode64(
+            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
+            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
+            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
+            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
+            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
+          )
           file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
-          result = provider.generate_text(prompt: "What is in this document?", model: "claude-haiku-4-5-20251001",
-                                          files: [file],)
+          result = provider.generate_text(
+            prompt: "What is in this document?",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          )
 
           expect(result.content).wont_be_empty
         end
@@ -734,10 +823,19 @@ describe Riffer::Providers::Anthropic do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_document") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          pdf_data = Base64.strict_encode64(
+            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
+            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
+            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
+            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
+            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
+          )
           file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
-          events = provider.stream_text(prompt: "What is in this document?", model: "claude-haiku-4-5-20251001",
-                                        files: [file],).to_a
+          events = provider.stream_text(
+            prompt: "What is in this document?",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          ).to_a
 
           expect(events).wont_be_empty
         end
@@ -746,10 +844,19 @@ describe Riffer::Providers::Anthropic do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_document") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-          pdf_data = Base64.strict_encode64("%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF")
+          pdf_data = Base64.strict_encode64(
+            "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
+            "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
+            "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n" \
+            "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
+            "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
+          )
           file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
-          events = provider.stream_text(prompt: "What is in this document?", model: "claude-haiku-4-5-20251001",
-                                        files: [file],).to_a
+          events = provider.stream_text(
+            prompt: "What is in this document?",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          ).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
           expect(done).wont_be_nil
@@ -762,8 +869,11 @@ describe Riffer::Providers::Anthropic do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
-          events = provider.stream_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001",
-                                        files: [file],).to_a
+          events = provider.stream_text(
+            prompt: "Describe this image",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          ).to_a
 
           expect(events).wont_be_empty
         end
@@ -773,8 +883,11 @@ describe Riffer::Providers::Anthropic do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
-          events = provider.stream_text(prompt: "Describe this image", model: "claude-haiku-4-5-20251001",
-                                        files: [file],).to_a
+          events = provider.stream_text(
+            prompt: "Describe this image",
+            model: "claude-haiku-4-5-20251001",
+            files: [file],
+          ).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
           expect(done).wont_be_nil
@@ -888,11 +1001,21 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new("", tool_calls: [
-                                              Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_123", name: "get_weather", arguments: '{"city":"Toronto"}'),
-                                            ],),
-            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "toolu_123",
-                                                                                        name: "get_weather",),
+            Riffer::Messages::Assistant.new(
+              "",
+              tool_calls: [
+                Riffer::Messages::Assistant::ToolCall.new(
+                  call_id: "toolu_123",
+                  name: "get_weather",
+                  arguments: '{"city":"Toronto"}',
+                ),
+              ],
+            ),
+            Riffer::Messages::Tool.new(
+              "The weather in Toronto is 15 degrees Celsius.",
+              tool_call_id: "toolu_123",
+              name: "get_weather",
+            ),
           ]
           result = provider.generate_text(
             messages: messages,
@@ -909,11 +1032,21 @@ describe Riffer::Providers::Anthropic do
           provider = Riffer::Providers::Anthropic.new(api_key: api_key)
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
-            Riffer::Messages::Assistant.new("", tool_calls: [
-                                              Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_123", name: "get_weather", arguments: '{"city":"Toronto"}'),
-                                            ],),
-            Riffer::Messages::Tool.new("The weather in Toronto is 15 degrees Celsius.", tool_call_id: "toolu_123",
-                                                                                        name: "get_weather",),
+            Riffer::Messages::Assistant.new(
+              "",
+              tool_calls: [
+                Riffer::Messages::Assistant::ToolCall.new(
+                  call_id: "toolu_123",
+                  name: "get_weather",
+                  arguments: '{"city":"Toronto"}',
+                ),
+              ],
+            ),
+            Riffer::Messages::Tool.new(
+              "The weather in Toronto is 15 degrees Celsius.",
+              tool_call_id: "toolu_123",
+              name: "get_weather",
+            ),
           ]
           result = provider.generate_text(
             messages: messages,
@@ -1030,8 +1163,12 @@ describe Riffer::Providers::Anthropic do
     describe "normalization" do
       it "folds cache buckets into input_tokens" do
         provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3,
-                                             cache_read_input_tokens: 100,)
+        usage = Anthropic::Models::Usage.new(
+          input_tokens: 9,
+          output_tokens: 16,
+          cache_creation_input_tokens: 3,
+          cache_read_input_tokens: 100,
+        )
         token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
 
         expect(token_usage.input_tokens).must_equal 112
@@ -1039,8 +1176,12 @@ describe Riffer::Providers::Anthropic do
 
       it "passes cache_write_tokens through" do
         provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3,
-                                             cache_read_input_tokens: 100,)
+        usage = Anthropic::Models::Usage.new(
+          input_tokens: 9,
+          output_tokens: 16,
+          cache_creation_input_tokens: 3,
+          cache_read_input_tokens: 100,
+        )
         token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
 
         expect(token_usage.cache_write_tokens).must_equal 3
@@ -1048,8 +1189,12 @@ describe Riffer::Providers::Anthropic do
 
       it "passes cache_read_tokens through" do
         provider = Riffer::Providers::Anthropic.new(api_key: api_key)
-        usage = Anthropic::Models::Usage.new(input_tokens: 9, output_tokens: 16, cache_creation_input_tokens: 3,
-                                             cache_read_input_tokens: 100,)
+        usage = Anthropic::Models::Usage.new(
+          input_tokens: 9,
+          output_tokens: 16,
+          cache_creation_input_tokens: 3,
+          cache_read_input_tokens: 100,
+        )
         token_usage = provider.send(:extract_token_usage, Anthropic::Models::Message.new(usage: usage))
 
         expect(token_usage.cache_read_tokens).must_equal 100

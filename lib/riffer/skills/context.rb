@@ -107,7 +107,9 @@ class Riffer::Skills::Context
   #: (String) -> bool
   def model_invocable?(name)
     skill = skills[name]
-    skill && !skill.disable_model_invocation
+    return false unless skill
+
+    !skill.disable_model_invocation
   end
 
   # Returns whether any skill is available for the model to activate.

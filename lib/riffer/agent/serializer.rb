@@ -76,8 +76,13 @@ module Riffer::Agent::Serializer
   #--
   #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def from_json(json, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    from_h(JSON.parse(json, symbolize_names: true), context: context, session: session, tool_resolver: tool_resolver,
-                                                    tool_runtime: tool_runtime,)
+    from_h(
+      JSON.parse(json, symbolize_names: true),
+      context: context,
+      session: session,
+      tool_resolver: tool_resolver,
+      tool_runtime: tool_runtime,
+    )
   end
 
   private

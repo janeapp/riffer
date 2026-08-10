@@ -39,6 +39,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize(api_token: nil, region: nil, **)
+    super()
     depends_on "aws-sdk-bedrockruntime"
 
     api_token ||= Riffer.config.amazon_bedrock.api_token
@@ -154,12 +155,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     cache_write = usage.cache_write_input_tokens
     cache_read = usage.cache_read_input_tokens
 
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-                    input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
-                    output_tokens: usage.output_tokens,
-                    cache_write_tokens: cache_write,
-                    cache_read_tokens: cache_read,
-                  ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
+        output_tokens: usage.output_tokens,
+        cache_write_tokens: cache_write,
+        cache_read_tokens: cache_read,
+      ),
+    )
   end
 
   #--
@@ -423,6 +426,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "text/csv" => "csv",
     "text/html" => "html",
   }.freeze #: Hash[String, String]
+  private_constant :BEDROCK_FORMAT_MAP
 
   #--
   #: (String) -> String

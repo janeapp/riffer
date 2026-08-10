@@ -65,9 +65,9 @@ describe Riffer::Helpers::CallOrValue do
     end
 
     it "defaults context to nil and passes nil to arity-1 procs" do
-      result = Riffer::Helpers::CallOrValue.resolve(lambda(&:inspect))
+      result = Riffer::Helpers::CallOrValue.resolve(->(c) { [c] })
 
-      assert_equal "nil", result
+      assert_equal [nil], result
     end
 
     it "treats a variadic proc as non-zero arity and passes context" do

@@ -61,7 +61,8 @@ class Riffer::Tracing::Otel # :nodoc: all
       return nil unless version
 
       unless supported?(version)
-        Kernel.warn "riffer: opentelemetry-api #{version} is outside the supported range (#{SUPPORTED_API_VERSIONS}); tracing is disabled"
+        Kernel.warn "riffer: opentelemetry-api #{version} is outside the supported range " \
+                    "(#{SUPPORTED_API_VERSIONS}); tracing is disabled"
         return nil
       end
 
@@ -73,7 +74,7 @@ class Riffer::Tracing::Otel # :nodoc: all
     #: () -> bool
     def available?
       version = api_version
-      return false if version.nil?
+      return false unless version
 
       supported?(version)
     end

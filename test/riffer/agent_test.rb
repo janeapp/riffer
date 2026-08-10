@@ -987,11 +987,12 @@ describe Riffer::Agent do
   describe "interrupt! with experimental_history_healing" do
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "interrupt_heal_tool"
         description "Slow tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("interrupt_heal_tool") }
+      end
     end
 
     after { Riffer.config.experimental_history_healing = false }
@@ -1006,10 +1007,13 @@ describe Riffer::Agent do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [
-                               { name: "interrupt_heal_tool", arguments: "{}" },
-                               { name: "interrupt_heal_tool", arguments: "{}" },
-                             ],)
+      provider.stub_response(
+        "",
+        tool_calls: [
+          { name: "interrupt_heal_tool", arguments: "{}" },
+          { name: "interrupt_heal_tool", arguments: "{}" },
+        ],
+      )
 
       agent.session.on_message do |msg|
         agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
@@ -1079,11 +1083,12 @@ describe Riffer::Agent do
   describe "max_steps interrupt with experimental_history_healing" do
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "max_steps_heal_tool"
         description "Loop tool"
         def call(context:)
           text("ok")
         end
-      end.tap { |t| t.identifier("max_steps_heal_tool") }
+      end
     end
 
     after { Riffer.config.experimental_history_healing = false }
@@ -1143,13 +1148,19 @@ describe Riffer::Agent do
 
     it "passes seeded history through untouched when healing is off (default)" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
-      seeded = Riffer::Agent::Session.new(messages: [
-                                            Riffer::Messages::User.new("hi"),
-                                            Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
-                                            Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-                                            Riffer::Messages::User.new("follow up"),
-                                            Riffer::Messages::Assistant.new("ok"),
-                                          ])
+      seeded = Riffer::Agent::Session.new(
+        messages: [
+          Riffer::Messages::User.new("hi"),
+          Riffer::Messages::Tool.new(
+            "ghost",
+            tool_call_id: "c_missing",
+            name: "t",
+          ),
+          Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+          Riffer::Messages::User.new("follow up"),
+          Riffer::Messages::Assistant.new("ok"),
+        ],
+      )
       agent = custom_class.new(session: seeded)
       agent.provider.stub_response("Hello!")
       agent.generate
@@ -1169,16 +1180,19 @@ describe Riffer::Agent do
     it "preserves a pending tool_use on the resume boundary even when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
-      seeded = Riffer::Agent::Session.new(messages: [
-                                            Riffer::Messages::User.new("Call tool"),
-                                            Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-                                          ])
+      seeded = Riffer::Agent::Session.new(
+        messages: [
+          Riffer::Messages::User.new("Call tool"),
+          Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        ],
+      )
       tool = Class.new(Riffer::Tool) do
+        identifier "pending_seed_tool"
         description "Pending tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("pending_seed_tool") }
+      end
       with_tools = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         uses_tools [tool]

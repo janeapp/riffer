@@ -40,30 +40,34 @@ describe Riffer::Providers::Mock do
 
     describe "with responses: kwarg" do
       it "serves the first response" do
-        provider = Riffer::Providers::Mock.new(responses: [
-                                                 { content: "First" },
-                                                 { content: "Second" },
-                                               ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "First" },
+            { content: "Second" },
+          ],
+        )
 
         expect(provider.generate_text(prompt: "x").content).must_equal "First"
       end
 
       it "serves the second response on the second call" do
-        provider = Riffer::Providers::Mock.new(responses: [
-                                                 { content: "First" },
-                                                 { content: "Second" },
-                                               ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "First" },
+            { content: "Second" },
+          ],
+        )
         provider.generate_text(prompt: "x")
 
         expect(provider.generate_text(prompt: "y").content).must_equal "Second"
       end
 
       it "normalises raw tool_calls hashes into ToolCall instances" do
-        provider = Riffer::Providers::Mock.new(responses: [
-                                                 { content: "",
-                                                   tool_calls: [{ name: "weather",
-                                                                  arguments: '{"city":"Toronto"}', }], },
-                                               ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "", tool_calls: [{ name: "weather", arguments: '{"city":"Toronto"}' }] },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
 
         expect(result.tool_calls.first).must_be_instance_of Riffer::Messages::Assistant::ToolCall
@@ -72,9 +76,11 @@ describe Riffer::Providers::Mock do
       end
 
       it "generates a default call_id when omitted" do
-        provider = Riffer::Providers::Mock.new(responses: [
-                                                 { content: "", tool_calls: [{ name: "t", arguments: "{}" }] },
-                                               ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "", tool_calls: [{ name: "t", arguments: "{}" }] },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
 
         expect(result.tool_calls.first.call_id).must_equal "mock_call_0"
@@ -82,9 +88,11 @@ describe Riffer::Providers::Mock do
 
       it "passes through pre-built ToolCall instances unchanged" do
         tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "custom_id", name: "t", arguments: "{}")
-        provider = Riffer::Providers::Mock.new(responses: [
-                                                 { content: "", tool_calls: [tool_call] },
-                                               ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "", tool_calls: [tool_call] },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
 
         expect(result.tool_calls.first.call_id).must_equal "custom_id"
@@ -92,9 +100,11 @@ describe Riffer::Providers::Mock do
 
       it "preserves token_usage on a queued response" do
         usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
-        provider = Riffer::Providers::Mock.new(responses: [
-                                                 { content: "Hello", token_usage: usage },
-                                               ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "Hello", token_usage: usage },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
 
         expect(result.token_usage).must_equal usage
@@ -245,30 +255,39 @@ describe Riffer::Providers::Mock do
       end
 
       it "handles multiple tool calls count" do
-        provider.stub_response("", tool_calls: [
-                                 { name: "tool_a", arguments: "{}" },
-                                 { name: "tool_b", arguments: "{}" },
-                               ],)
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         result = provider.generate_text(prompt: "Call tools")
 
         expect(result.tool_calls.length).must_equal 2
       end
 
       it "handles multiple tool calls first name" do
-        provider.stub_response("", tool_calls: [
-                                 { name: "tool_a", arguments: "{}" },
-                                 { name: "tool_b", arguments: "{}" },
-                               ],)
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         result = provider.generate_text(prompt: "Call tools")
 
         expect(result.tool_calls[0].name).must_equal "tool_a"
       end
 
       it "handles multiple tool calls second name" do
-        provider.stub_response("", tool_calls: [
-                                 { name: "tool_a", arguments: "{}" },
-                                 { name: "tool_b", arguments: "{}" },
-                               ],)
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         result = provider.generate_text(prompt: "Call tools")
 
         expect(result.tool_calls[1].name).must_equal "tool_b"
@@ -335,10 +354,13 @@ describe Riffer::Providers::Mock do
       end
 
       it "emits events for multiple tool calls" do
-        provider.stub_response("", tool_calls: [
-                                 { name: "tool_a", arguments: "{}" },
-                                 { name: "tool_b", arguments: "{}" },
-                               ],)
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         events = provider.stream_text(prompt: "Call tools").to_a
         tool_done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
 
@@ -475,9 +497,13 @@ describe Riffer::Providers::Mock do
     it "attaches cost to token usage when the model is priced" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
       provider = Riffer::Providers::Mock.new
-      provider.stub_response("hi",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000,
-                                                                            output_tokens: 1_000_000,),)
+      provider.stub_response(
+        "hi",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 1_000_000,
+          output_tokens: 1_000_000,
+        ),
+      )
       message = provider.generate_text(prompt: "x", model: "riffer-1")
 
       expect(message.token_usage.cost).must_equal 18.0
@@ -485,9 +511,13 @@ describe Riffer::Providers::Mock do
 
     it "leaves cost nil when the model is unpriced" do
       provider = Riffer::Providers::Mock.new
-      provider.stub_response("hi",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000,
-                                                                            output_tokens: 1_000_000,),)
+      provider.stub_response(
+        "hi",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 1_000_000,
+          output_tokens: 1_000_000,
+        ),
+      )
       message = provider.generate_text(prompt: "x", model: "riffer-1")
 
       expect(message.token_usage.cost).must_be_nil
@@ -496,9 +526,13 @@ describe Riffer::Providers::Mock do
     it "carries cost on the streamed TokenUsageDone event" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
       provider = Riffer::Providers::Mock.new
-      provider.stub_response("hi",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000,
-                                                                            output_tokens: 1_000_000,),)
+      provider.stub_response(
+        "hi",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 1_000_000,
+          output_tokens: 1_000_000,
+        ),
+      )
       events = provider.stream_text(prompt: "x", model: "riffer-1").to_a
       usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 

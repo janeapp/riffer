@@ -15,6 +15,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (**untyped) -> void
   def initialize(**options)
+    super()
     depends_on "openai"
 
     api_key = options.fetch(:api_key, Riffer.config.openai.api_key)
@@ -96,11 +97,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-                    input_tokens: usage.input_tokens,
-                    output_tokens: usage.output_tokens,
-                    cache_read_tokens: usage.input_tokens_details&.cached_tokens,
-                  ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens,
+        cache_read_tokens: usage.input_tokens_details&.cached_tokens,
+      ),
+    )
   end
 
   #--
@@ -193,8 +196,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         case event.type
         when :"response.output_item.added"
           if event.item&.type == :function_call
-            handle_output_item_added_function_call(event, state: current_state,
-                                                          yielder: yielder,)
+            handle_output_item_added_function_call(event, state: current_state, yielder: yielder)
           end
         when :"response.output_text.delta"
           handle_output_text_delta(event, state: current_state, yielder: yielder)

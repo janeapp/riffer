@@ -93,8 +93,11 @@ describe Riffer::Mcp::ToolFactory do
           received_args = args
           "ok"
         end
-        klass = Riffer::Mcp::ToolFactory.build("srv", client,
-                                               [{ name: "t", description: "T", input_schema: nil }],).first
+        klass = Riffer::Mcp::ToolFactory.build(
+          "srv",
+          client,
+          [{ name: "t", description: "T", input_schema: nil }],
+        ).first
         klass.new.call(context: nil, key: "value")
 
         assert_equal({ key: "value" }, received_args)
@@ -104,15 +107,21 @@ describe Riffer::Mcp::ToolFactory do
 
   describe "name sanitization" do
     it "replaces spaces and special characters with underscores" do
-      tools = Riffer::Mcp::ToolFactory.build("my server!", fake_client,
-                                             [{ name: "get items", description: "G", input_schema: nil }],)
+      tools = Riffer::Mcp::ToolFactory.build(
+        "my server!",
+        fake_client,
+        [{ name: "get items", description: "G", input_schema: nil }],
+      )
 
       assert_equal "my_server___get_items", tools.first.name
     end
 
     it "preserves hyphens and underscores" do
-      tools = Riffer::Mcp::ToolFactory.build("my-srv_1", fake_client,
-                                             [{ name: "get-items_v2", description: "G", input_schema: nil }],)
+      tools = Riffer::Mcp::ToolFactory.build(
+        "my-srv_1",
+        fake_client,
+        [{ name: "get-items_v2", description: "G", input_schema: nil }],
+      )
 
       assert_equal "my-srv_1__get-items_v2", tools.first.name
     end

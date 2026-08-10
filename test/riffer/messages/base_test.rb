@@ -131,8 +131,10 @@ describe Riffer::Messages::Base do
     end
 
     it "converts tool hash to Tool message" do
-      result = Riffer::Messages::Base.from_hash({ role: "tool", content: "Result", tool_call_id: "123",
-                                                  name: "search", })
+      result = Riffer::Messages::Base.from_hash(
+        { role: "tool", content: "Result", tool_call_id: "123",
+          name: "search", },
+      )
 
       expect(result).must_be_instance_of Riffer::Messages::Tool
       expect(result.content).must_equal "Result"
@@ -167,8 +169,10 @@ describe Riffer::Messages::Base do
       end
 
       it "propagates id to Tool messages" do
-        result = Riffer::Messages::Base.from_hash({ role: "tool", content: "ok", tool_call_id: "c-1", name: "x",
-                                                    id: "t-1", })
+        result = Riffer::Messages::Base.from_hash(
+          { role: "tool", content: "ok", tool_call_id: "c-1", name: "x",
+            id: "t-1", },
+        )
 
         expect(result.id).must_equal "t-1"
       end
@@ -176,8 +180,10 @@ describe Riffer::Messages::Base do
 
     describe "with assistant structured_output" do
       it "preserves structured_output from hash with symbol keys" do
-        result = Riffer::Messages::Base.from_hash({ role: "assistant", content: '{"sentiment":"positive"}',
-                                                    structured_output: { sentiment: "positive" }, })
+        result = Riffer::Messages::Base.from_hash(
+          { role: "assistant", content: '{"sentiment":"positive"}',
+            structured_output: { sentiment: "positive" }, },
+        )
 
         expect(result.structured_output?).must_equal true
         expect(result.structured_output).must_equal({ sentiment: "positive" })
@@ -209,18 +215,22 @@ describe Riffer::Messages::Base do
       let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(name: "search") }
 
       it "preserves tool_calls in assistant messages" do
-        result = Riffer::Messages::Base.from_hash({ role: "assistant", content: "Let me search",
-                                                    tool_calls: [tool_call], })
+        result = Riffer::Messages::Base.from_hash(
+          { role: "assistant", content: "Let me search",
+            tool_calls: [tool_call], },
+        )
 
         expect(result.tool_calls).must_equal [tool_call]
       end
 
       it "converts tool_call hashes to ToolCall structs" do
-        result = Riffer::Messages::Base.from_hash({
-                                                    role: "assistant",
-                                                    content: "Let me search",
-                                                    tool_calls: [{ call_id: "c1", name: "search", arguments: "{}" }],
-                                                  })
+        result = Riffer::Messages::Base.from_hash(
+          {
+            role: "assistant",
+            content: "Let me search",
+            tool_calls: [{ call_id: "c1", name: "search", arguments: "{}" }],
+          },
+        )
         tc = result.tool_calls.first
 
         expect(tc).must_be_instance_of Riffer::Messages::Assistant::ToolCall
@@ -232,11 +242,13 @@ describe Riffer::Messages::Base do
 
     describe "with user files" do
       it "converts file hashes to FilePart objects" do
-        result = Riffer::Messages::Base.from_hash({
-                                                    role: "user",
-                                                    content: "Describe this",
-                                                    files: [{ data: "aGVsbG8=", media_type: "image/png" }],
-                                                  })
+        result = Riffer::Messages::Base.from_hash(
+          {
+            role: "user",
+            content: "Describe this",
+            files: [{ data: "aGVsbG8=", media_type: "image/png" }],
+          },
+        )
 
         expect(result.files.length).must_equal 1
         expect(result.files.first).must_be_instance_of Riffer::Messages::FilePart

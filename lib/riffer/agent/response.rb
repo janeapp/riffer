@@ -44,8 +44,18 @@ class Riffer::Agent::Response
 
   #--
   #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> void
-  def initialize(content, tripwire: nil, modifications: [], interrupted: false, interrupt_reason: nil,
-                 structured_output: nil, messages: [], healed_tool_call_ids: [], token_usage: nil, steps: 0)
+  def initialize(
+    content,
+    tripwire: nil,
+    modifications: [],
+    interrupted: false,
+    interrupt_reason: nil,
+    structured_output: nil,
+    messages: [],
+    healed_tool_call_ids: [],
+    token_usage: nil,
+    steps: 0
+  )
     @content = content
     @tripwire = tripwire
     @modifications = modifications

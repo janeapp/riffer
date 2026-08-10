@@ -19,8 +19,11 @@ describe Riffer::Tracing::Capture do
     end
 
     it "serializes assistant tool calls with parsed arguments" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "weather",
-                                                            arguments: '{"city":"Toronto"}',)
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(
+        call_id: "call_1",
+        name: "weather",
+        arguments: '{"city":"Toronto"}',
+      )
       json = Riffer::Tracing::Capture.input_messages([Riffer::Messages::Assistant.new("", tool_calls: [tool_call])])
 
       expect(JSON.parse(json)).must_equal [{
@@ -51,9 +54,9 @@ describe Riffer::Tracing::Capture do
       file = Riffer::Messages::FilePart.from_hash({ data: "aGVsbG8=", media_type: "image/png", filename: "photo.png" })
       json = Riffer::Tracing::Capture.input_messages([Riffer::Messages::User.new("Look", files: [file])])
 
-      expect(JSON.parse(json).dig(0, "parts",
-                                  1,)).must_equal({ "type" => "file", "media_type" => "image/png",
-                                                    "name" => "photo.png", })
+      part = JSON.parse(json).dig(0, "parts", 1)
+
+      expect(part).must_equal({ "type" => "file", "media_type" => "image/png", "name" => "photo.png" })
     end
   end
 
@@ -72,8 +75,11 @@ describe Riffer::Tracing::Capture do
   describe ".output_messages" do
     it "serializes content, tool calls, and the finish reason" do
       tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "weather", arguments: "{}")
-      json = Riffer::Tracing::Capture.output_messages(content: "Checking", tool_calls: [tool_call],
-                                                      finish_reason: :tool_calls,)
+      json = Riffer::Tracing::Capture.output_messages(
+        content: "Checking",
+        tool_calls: [tool_call],
+        finish_reason: :tool_calls,
+      )
 
       expect(JSON.parse(json)).must_equal [{
         "role" => "assistant",

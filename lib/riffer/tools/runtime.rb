@@ -111,8 +111,11 @@ class Riffer::Tools::Runtime
   #--
   #: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
   def in_tool_span(tool_call, tags = {})
-    Riffer::Tracing.in_span("execute_tool #{tool_call.name}", attributes: tool_span_attributes(tool_call, tags),
-                                                              kind: :internal,) do |span|
+    Riffer::Tracing.in_span(
+      "execute_tool #{tool_call.name}",
+      attributes: tool_span_attributes(tool_call, tags),
+      kind: :internal,
+    ) do |span|
       capture_tool_arguments(span, tool_call)
       yield span
     rescue StandardError => e

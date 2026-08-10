@@ -40,8 +40,10 @@ describe Riffer::Skills::MarkdownAdapter do
     end
 
     it "keeps a multi-line description within its list item" do
-      skill = Riffer::Skills::Frontmatter.new(name: "code-review",
-                                              description: "Reviews code.\nUse for pull requests.\n",)
+      skill = Riffer::Skills::Frontmatter.new(
+        name: "code-review",
+        description: "Reviews code.\nUse for pull requests.\n",
+      )
 
       assert_includes adapter.render_catalog([skill]), "- **code-review**: Reviews code. Use for pull requests."
     end

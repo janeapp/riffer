@@ -175,9 +175,7 @@ class Riffer::Agent::Session
   #: () -> Riffer::Messages::Assistant?
   def final_assistant_message
     # TODO: Replace with rfind when minimum Ruby is 4.0+
-    # rubocop:disable Style/ReverseFind
     @messages.reverse_each.find { |m| m.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
-    # rubocop:enable Style/ReverseFind
   end
 
   private

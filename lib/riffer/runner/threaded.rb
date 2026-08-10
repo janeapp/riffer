@@ -12,6 +12,7 @@ class Riffer::Runner::Threaded < Riffer::Runner
   #--
   #: (?max_concurrency: Integer) -> void
   def initialize(max_concurrency: DEFAULT_MAX_CONCURRENCY)
+    super()
     @max_concurrency = max_concurrency
   end
 

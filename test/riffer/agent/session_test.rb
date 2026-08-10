@@ -330,7 +330,7 @@ describe Riffer::Agent::Session do
 
   describe "Enumerable" do
     it "yields each message via #each" do
-      collected = session.map { |m| m }
+      collected = session.to_a
 
       expect(collected).must_equal [user, plain_assistant, tool_assistant, tool_msg]
     end
@@ -345,9 +345,8 @@ describe Riffer::Agent::Session do
 
     it "supports #reverse_each" do
       # TODO: Replace with rfind when minimum Ruby is 4.0+
-      # rubocop:disable Style/ReverseFind
       first_assistant_from_end = session.reverse_each.find { |m| m.is_a?(Riffer::Messages::Assistant) }
-      # rubocop:enable Style/ReverseFind
+
       expect(first_assistant_from_end).must_equal tool_assistant
     end
 

@@ -290,26 +290,38 @@ describe Riffer::Providers::Base do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
       attributes = chat_span.attributes.slice("gen_ai.operation.name", "gen_ai.provider.name", "gen_ai.request.model")
 
-      expect(attributes).must_equal({
-                                      "gen_ai.operation.name" => "chat",
-                                      "gen_ai.provider.name" => "mock",
-                                      "gen_ai.request.model" => "riffer-1",
-                                    })
+      expect(attributes).must_equal(
+        {
+          "gen_ai.operation.name" => "chat",
+          "gen_ai.provider.name" => "mock",
+          "gen_ai.request.model" => "riffer-1",
+        },
+      )
     end
 
     it "records token usage when reported" do
-      provider.stub_response("Hi!",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50,
-                                                                            cache_read_tokens: 30,),)
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cache_read_tokens: 30,
+        ),
+      )
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      usage = chat_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens",
-                                         "gen_ai.usage.cache_read.input_tokens",)
+      usage = chat_span.attributes.slice(
+        "gen_ai.usage.input_tokens",
+        "gen_ai.usage.output_tokens",
+        "gen_ai.usage.cache_read.input_tokens",
+      )
 
-      expect(usage).must_equal({
-                                 "gen_ai.usage.input_tokens" => 100,
-                                 "gen_ai.usage.output_tokens" => 50,
-                                 "gen_ai.usage.cache_read.input_tokens" => 30,
-                               })
+      expect(usage).must_equal(
+        {
+          "gen_ai.usage.input_tokens" => 100,
+          "gen_ai.usage.output_tokens" => 50,
+          "gen_ai.usage.cache_read.input_tokens" => 30,
+        },
+      )
     end
 
     it "omits usage attributes when not reported" do
@@ -319,9 +331,14 @@ describe Riffer::Providers::Base do
     end
 
     it "stamps the cost when the call carries one" do
-      provider.stub_response("Hi!",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50,
-                                                                            cost: 0.0021,),)
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cost: 0.0021,
+        ),
+      )
       provider.generate_text(prompt: "Hello", model: "riffer-1")
 
       expect(chat_span.attributes["riffer.cost"]).must_equal 0.0021
@@ -425,8 +442,10 @@ describe Riffer::Providers::Base do
     end
 
     it "records token usage from the stream" do
-      provider.stub_response("Hi!",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50),)
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50),
+      )
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
       usage = chat_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens")
 
@@ -434,9 +453,14 @@ describe Riffer::Providers::Base do
     end
 
     it "stamps the cost from the stream" do
-      provider.stub_response("Hi!",
-                             token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50,
-                                                                            cost: 0.0021,),)
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cost: 0.0021,
+        ),
+      )
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
 
       expect(chat_span.attributes["riffer.cost"]).must_equal 0.0021

@@ -37,8 +37,13 @@ class Riffer::Skills::Frontmatter
     raise Riffer::ArgumentError, "missing YAML frontmatter (expected --- delimiters)" if yaml.empty?
 
     [
-      new(name: yaml.delete(:name), description: yaml.delete(:description),
-          disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml,), body,
+      new(
+        name: yaml.delete(:name),
+        description: yaml.delete(:description),
+        disable_model_invocation: yaml.delete(:"disable-model-invocation"),
+        metadata: yaml,
+      ),
+      body,
     ]
   end
 
@@ -50,8 +55,12 @@ class Riffer::Skills::Frontmatter
     yaml, = split_frontmatter(raw)
     raise Riffer::ArgumentError, "missing YAML frontmatter (expected --- delimiters)" if yaml.empty?
 
-    new(name: yaml.delete(:name), description: yaml.delete(:description),
-        disable_model_invocation: yaml.delete(:"disable-model-invocation"), metadata: yaml,)
+    new(
+      name: yaml.delete(:name),
+      description: yaml.delete(:description),
+      disable_model_invocation: yaml.delete(:"disable-model-invocation"),
+      metadata: yaml,
+    )
   end
 
   #--

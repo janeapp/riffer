@@ -11,8 +11,11 @@ describe Riffer::StreamEvents::ToolCallDelta do
     end
 
     it "sets the name" do
-      event = Riffer::StreamEvents::ToolCallDelta.new(item_id: "call_123", name: "weather_lookup",
-                                                      arguments_delta: '{"city":',)
+      event = Riffer::StreamEvents::ToolCallDelta.new(
+        item_id: "call_123",
+        name: "weather_lookup",
+        arguments_delta: '{"city":',
+      )
 
       expect(event.name).must_equal "weather_lookup"
     end

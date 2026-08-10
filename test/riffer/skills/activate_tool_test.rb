@@ -7,8 +7,11 @@ describe Riffer::Skills::ActivateTool do
   let(:backend) { Riffer::Skills::FilesystemBackend.new(fixtures_path) }
   let(:skills) { backend.list_skills.to_h { |s| [s.name, s] } }
   let(:skills_context) do
-    Riffer::Skills::Context.new(backend: backend, skills: skills,
-                                adapter: Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool),)
+    Riffer::Skills::Context.new(
+      backend: backend,
+      skills: skills,
+      adapter: Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool),
+    )
   end
   let(:context) do
     ctx = Riffer::Agent::Context.new
@@ -68,10 +71,16 @@ describe Riffer::Skills::ActivateTool do
     end
 
     it "returns error for a skill that disables model invocation" do
-      disabled = Riffer::Skills::Frontmatter.new(name: "deploy-prod", description: "Deploys.",
-                                                 disable_model_invocation: true,)
-      disabled_context = Riffer::Skills::Context.new(backend: backend, skills: { "deploy-prod" => disabled },
-                                                     adapter: Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool),)
+      disabled = Riffer::Skills::Frontmatter.new(
+        name: "deploy-prod",
+        description: "Deploys.",
+        disable_model_invocation: true,
+      )
+      disabled_context = Riffer::Skills::Context.new(
+        backend: backend,
+        skills: { "deploy-prod" => disabled },
+        adapter: Riffer::Skills::MarkdownAdapter.new(skill_activate_tool: Riffer::Skills::ActivateTool),
+      )
       ctx = Riffer::Agent::Context.new
       ctx.skills = disabled_context
 

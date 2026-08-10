@@ -38,6 +38,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #--
   #: (**untyped) -> void
   def initialize(**options)
+    super()
     @responses = (options[:responses] || []).map { |r| normalize_response(r) }
     @current_index = 0
     @calls = []
@@ -49,14 +50,19 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #
   #   provider.stub_response("Hello")
   #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
-  #   provider.stub_response("Final response", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+  #   provider.stub_response("Final response",
+  #                          token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
   #   provider.stub_response("Truncated...", finish_reason: :length)
   #
   #--
   #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?) -> void
   def stub_response(content, tool_calls: [], token_usage: nil, finish_reason: nil)
-    @stubbed_responses << normalize_response(content: content, tool_calls: tool_calls, token_usage: token_usage,
-                                             finish_reason: finish_reason,)
+    @stubbed_responses << normalize_response(
+      content: content,
+      tool_calls: tool_calls,
+      token_usage: token_usage,
+      finish_reason: finish_reason,
+    )
   end
 
   # Clears all stubbed responses.
@@ -148,8 +154,10 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
       yielder << Riffer::StreamEvents::WebSearchStatus.new("searching", query: "mock search query")
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: "https://example.com")
       yielder << Riffer::StreamEvents::WebSearchStatus.new("completed")
-      yielder << Riffer::StreamEvents::WebSearchDone.new("mock search query",
-                                                         sources: [{ title: "Example", url: "https://example.com" }],)
+      yielder << Riffer::StreamEvents::WebSearchDone.new(
+        "mock search query",
+        sources: [{ title: "Example", url: "https://example.com" }],
+      )
     end
 
     unless full_content.empty?

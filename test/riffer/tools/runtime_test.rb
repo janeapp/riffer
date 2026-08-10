@@ -322,11 +322,12 @@ describe Riffer::Tools::Runtime do
 
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "integration_tool"
         description "Traced tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("integration_tool") }
+      end
     end
 
     let(:agent_class_with_tools) do
@@ -383,11 +384,13 @@ describe Riffer::Tools::Runtime do
       it "sets the tool attributes" do
         attributes = tool_span.attributes.slice("gen_ai.operation.name", "gen_ai.tool.name", "gen_ai.tool.call.id")
 
-        expect(attributes).must_equal({
-                                        "gen_ai.operation.name" => "execute_tool",
-                                        "gen_ai.tool.name" => "weather_tool",
-                                        "gen_ai.tool.call.id" => "tc_42",
-                                      })
+        expect(attributes).must_equal(
+          {
+            "gen_ai.operation.name" => "execute_tool",
+            "gen_ai.tool.name" => "weather_tool",
+            "gen_ai.tool.call.id" => "tc_42",
+          },
+        )
       end
 
       it "leaves the span status unset on success" do
@@ -419,6 +422,7 @@ describe Riffer::Tools::Runtime do
         begin
           runtime.execute([tool_call], tools: [buggy_tool_class], context: nil)
         rescue NoMethodError
+          # swallow the raise — the recorded span is the subject under test
         end
       end
 

@@ -8,6 +8,7 @@ describe Riffer::Skills::Context do
       attr_reader :reads
 
       def initialize
+        super
         @reads = []
       end
 

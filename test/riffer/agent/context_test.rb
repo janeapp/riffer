@@ -17,7 +17,7 @@ describe Riffer::Agent::Context do
     end
 
     it "exposes caller keys via #dig" do
-      expect(Riffer::Agent::Context.new(user_id: 42)[:user_id]).must_equal 42
+      expect(Riffer::Agent::Context.new(user: { id: 42 }).dig(:user, :id)).must_equal 42
     end
 
     it "returns nil for unknown keys" do

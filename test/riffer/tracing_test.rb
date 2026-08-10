@@ -132,6 +132,7 @@ describe Riffer::Tracing do
       begin
         Riffer::Tracing.in_span("test") { raise Riffer::Error, "boom" }
       rescue Riffer::Error
+        # swallow the raise — the recorded span is the subject under test
       end
 
       expect(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
@@ -162,16 +163,22 @@ describe Riffer::Tracing do
     it "stamps the gen_ai.usage attributes onto the span" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
       exporter = install_in_memory_tracer_provider
-      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cache_read_tokens: 30,
-                                                cache_write_tokens: 10,)
+      usage = Riffer::Providers::TokenUsage.new(
+        input_tokens: 100,
+        output_tokens: 50,
+        cache_read_tokens: 30,
+        cache_write_tokens: 10,
+      )
       Riffer::Tracing.in_span("test") { |span| Riffer::Tracing.record_usage(span, usage) }
 
-      expect(exporter.finished_spans.first.attributes).must_equal({
-                                                                    "gen_ai.usage.input_tokens" => 100,
-                                                                    "gen_ai.usage.output_tokens" => 50,
-                                                                    "gen_ai.usage.cache_read.input_tokens" => 30,
-                                                                    "gen_ai.usage.cache_creation.input_tokens" => 10,
-                                                                  })
+      expect(exporter.finished_spans.first.attributes).must_equal(
+        {
+          "gen_ai.usage.input_tokens" => 100,
+          "gen_ai.usage.output_tokens" => 50,
+          "gen_ai.usage.cache_read.input_tokens" => 30,
+          "gen_ai.usage.cache_creation.input_tokens" => 10,
+        },
+      )
     end
 
     it "stamps nothing when usage is nil" do
@@ -335,9 +342,9 @@ describe Riffer::Tracing do
       second_exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("second") {}
 
-      expect([first_exporter, second_exporter].map do |e|
-        e.finished_spans.map(&:name)
-      end).must_equal [["first"], ["second"]]
+      span_names = [first_exporter, second_exporter].map { |e| e.finished_spans.map(&:name) }
+
+      expect(span_names).must_equal [["first"], ["second"]]
     end
   end
 end

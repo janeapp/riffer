@@ -23,9 +23,10 @@ describe Riffer::Evals::Judge do
     it "evaluates with instructions, input, and output" do
       judge = Riffer::Evals::Judge.new(model: "mock/eval-model")
       provider = judge.send(:provider_instance)
-      provider.stub_response("",
-                             tool_calls: [{ name: "evaluation",
-                                            arguments: { score: 0.85, reason: "Good response." }, }],)
+      provider.stub_response(
+        "",
+        tool_calls: [{ name: "evaluation", arguments: { score: 0.85, reason: "Good response." } }],
+      )
 
       result = judge.evaluate(
         instructions: "Assess answer relevancy.",
@@ -57,9 +58,10 @@ describe Riffer::Evals::Judge do
     it "evaluates with ground_truth" do
       judge = Riffer::Evals::Judge.new(model: "mock/eval-model")
       provider = judge.send(:provider_instance)
-      provider.stub_response("",
-                             tool_calls: [{ name: "evaluation",
-                                            arguments: { score: 0.9, reason: "Matches ground truth." }, }],)
+      provider.stub_response(
+        "",
+        tool_calls: [{ name: "evaluation", arguments: { score: 0.9, reason: "Matches ground truth." } }],
+      )
 
       result = judge.evaluate(
         instructions: "Compare output to ground truth.",

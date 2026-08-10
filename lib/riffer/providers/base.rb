@@ -209,12 +209,16 @@ class Riffer::Providers::Base
     seed: "gen_ai.request.seed",
     stop_sequences: "gen_ai.request.stop_sequences",
   }.freeze #: Hash[Symbol, String]
+  private_constant :REQUEST_PARAM_ATTRIBUTES
 
   #--
   #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_chat_span(model, messages, options)
-    Riffer::Tracing.in_span(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options),
-                                                              kind: :client,) do |span|
+    Riffer::Tracing.in_span(
+      model ? "chat #{model}" : "chat",
+      attributes: chat_span_attributes(model, options),
+      kind: :client,
+    ) do |span|
       capture_input(span, messages)
       yield span
     rescue StandardError => e
@@ -266,8 +270,12 @@ class Riffer::Providers::Base
     record_finish_reason(span, recorder.finish_reason, recorder.raw_finish_reason)
     time_to_first_chunk = recorder.time_to_first_chunk
     span.set_attribute("gen_ai.response.time_to_first_chunk", time_to_first_chunk) if time_to_first_chunk
-    capture_output(span, content: recorder.content, tool_calls: recorder.tool_calls,
-                         finish_reason: recorder.finish_reason,)
+    capture_output(
+      span,
+      content: recorder.content,
+      tool_calls: recorder.tool_calls,
+      finish_reason: recorder.finish_reason,
+    )
   end
 
   #--
@@ -285,9 +293,14 @@ class Riffer::Providers::Base
   def capture_output(span, content:, tool_calls:, finish_reason:)
     return unless capture_messages?(span)
 
-    span.set_attribute("gen_ai.output.messages",
-                       Riffer::Tracing::Capture.output_messages(content: content, tool_calls: tool_calls,
-                                                                finish_reason: finish_reason,),)
+    span.set_attribute(
+      "gen_ai.output.messages",
+      Riffer::Tracing::Capture.output_messages(
+        content: content,
+        tool_calls: tool_calls,
+        finish_reason: finish_reason,
+      ),
+    )
   end
 
   #--
@@ -301,8 +314,10 @@ class Riffer::Providers::Base
   def yield_finish_reason(yielder, finish_reason)
     return unless finish_reason
 
-    yielder << Riffer::StreamEvents::FinishReasonDone.new(finish_reason: finish_reason.reason,
-                                                          raw_finish_reason: finish_reason.raw,)
+    yielder << Riffer::StreamEvents::FinishReasonDone.new(
+      finish_reason: finish_reason.reason,
+      raw_finish_reason: finish_reason.raw,
+    )
   end
 
   #--

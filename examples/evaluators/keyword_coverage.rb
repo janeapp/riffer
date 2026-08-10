@@ -12,7 +12,8 @@
 #   result = Riffer::Evals::EvaluatorRunner.run(
 #     agent: MyAgent,
 #     scenarios: [
-#       { input: "What is Ruby?", ground_truth: "Ruby is a dynamic, open-source programming language focused on simplicity and productivity." }
+#       { input: "What is Ruby?",
+#         ground_truth: "Ruby is a dynamic, open-source programming language focused on simplicity and productivity." }
 #     ],
 #     evals: [KeywordCoverageEvaluator]
 #   )

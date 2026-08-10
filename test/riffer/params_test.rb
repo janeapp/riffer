@@ -271,10 +271,15 @@ describe Riffer::Params do
       end
       schema = params.to_json_schema
       street = schema.dig(
-        :properties, "orders",
-        :items, :properties, "shipping",
-        :properties, "address",
-        :properties, "street",
+        :properties,
+        "orders",
+        :items,
+        :properties,
+        "shipping",
+        :properties,
+        "address",
+        :properties,
+        "street",
       )
 
       expect(street).must_equal({ type: "string" })
@@ -481,12 +486,14 @@ describe Riffer::Params do
 
   describe ".from_json_schema" do
     it "reconstructs a simple required parameter" do
-      params = Riffer::Params.from_json_schema({
-                                                 type: "object",
-                                                 properties: { "city" => { type: "string", description: "city name" } },
-                                                 required: ["city"],
-                                                 additionalProperties: false,
-                                               })
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: { "city" => { type: "string", description: "city name" } },
+          required: ["city"],
+          additionalProperties: false,
+        },
+      )
       param = params.parameters.first
 
       expect(param.name).must_equal :city
@@ -496,24 +503,27 @@ describe Riffer::Params do
     end
 
     it "marks properties absent from required as optional" do
-      params = Riffer::Params.from_json_schema({
-                                                 type: "object",
-                                                 properties: { "note" => { type: "string" } },
-                                                 required: [],
-                                                 additionalProperties: false,
-                                               })
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: { "note" => { type: "string" } },
+          required: [],
+          additionalProperties: false,
+        },
+      )
 
       expect(params.parameters.first.required).must_equal false
     end
 
     it "reconstructs enum and default" do
-      params = Riffer::Params.from_json_schema({
-                                                 type: "object",
-                                                 properties: { "units" => { type: "string",
-                                                                            enum: %w[celsius fahrenheit], default: "celsius", } },
-                                                 required: [],
-                                                 additionalProperties: false,
-                                               })
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: { "units" => { type: "string", enum: %w[celsius fahrenheit], default: "celsius" } },
+          required: [],
+          additionalProperties: false,
+        },
+      )
       param = params.parameters.first
 
       expect(param.enum).must_equal %w[celsius fahrenheit]
@@ -521,46 +531,51 @@ describe Riffer::Params do
     end
 
     it "reconstructs each JSON Schema type to its Ruby type" do
-      params = Riffer::Params.from_json_schema({
-                                                 type: "object",
-                                                 properties: {
-                                                   "s" => { type: "string" }, "i" => { type: "integer" },
-                                                   "n" => { type: "number" }, "b" => { type: "boolean" },
-                                                 },
-                                                 required: [],
-                                                 additionalProperties: false,
-                                               })
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: {
+            "s" => { type: "string" }, "i" => { type: "integer" },
+            "n" => { type: "number" }, "b" => { type: "boolean" },
+          },
+          required: [],
+          additionalProperties: false,
+        },
+      )
       types = params.parameters.to_h { |p| [p.name, p.type] }
 
       expect(types).must_equal({ s: String, i: Integer, n: Float, b: Riffer::Params::Boolean })
     end
 
     it "reconstructs typed arrays" do
-      params = Riffer::Params.from_json_schema({
-                                                 type: "object",
-                                                 properties: { "tags" => { type: "array",
-                                                                           items: { type: "integer" }, } },
-                                                 required: ["tags"],
-                                                 additionalProperties: false,
-                                               })
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: { "tags" => { type: "array", items: { type: "integer" } } },
+          required: ["tags"],
+          additionalProperties: false,
+        },
+      )
 
       expect(params.parameters.first.item_type).must_equal Integer
     end
 
     it "reconstructs nested object params" do
-      params = Riffer::Params.from_json_schema({
-                                                 type: "object",
-                                                 properties: {
-                                                   "address" => {
-                                                     type: "object",
-                                                     properties: { "street" => { type: "string" } },
-                                                     required: ["street"],
-                                                     additionalProperties: false,
-                                                   },
-                                                 },
-                                                 required: ["address"],
-                                                 additionalProperties: false,
-                                               })
+      params = Riffer::Params.from_json_schema(
+        {
+          type: "object",
+          properties: {
+            "address" => {
+              type: "object",
+              properties: { "street" => { type: "string" } },
+              required: ["street"],
+              additionalProperties: false,
+            },
+          },
+          required: ["address"],
+          additionalProperties: false,
+        },
+      )
       nested = params.parameters.first.nested_params
 
       expect(nested).must_be_instance_of Riffer::Params
@@ -569,12 +584,14 @@ describe Riffer::Params do
 
     it "raises on an unsupported JSON Schema type" do
       expect do
-        Riffer::Params.from_json_schema({
-                                          type: "object",
-                                          properties: { "x" => { type: "anyOf-thing" } },
-                                          required: [],
-                                          additionalProperties: false,
-                                        })
+        Riffer::Params.from_json_schema(
+          {
+            type: "object",
+            properties: { "x" => { type: "anyOf-thing" } },
+            required: [],
+            additionalProperties: false,
+          },
+        )
       end.must_raise Riffer::ArgumentError
     end
 

@@ -31,8 +31,13 @@ class Riffer::Messages::Base
       end
       structured_output = msg[:structured_output]
       finish_reason = msg[:finish_reason]&.to_sym
-      Riffer::Messages::Assistant.new(content, id: id, tool_calls: tool_calls, structured_output: structured_output,
-                                               finish_reason: finish_reason,)
+      Riffer::Messages::Assistant.new(
+        content,
+        id: id,
+        tool_calls: tool_calls,
+        structured_output: structured_output,
+        finish_reason: finish_reason,
+      )
     when :system
       Riffer::Messages::System.new(content, id: id)
     when :tool

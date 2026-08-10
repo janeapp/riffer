@@ -272,7 +272,8 @@ class Riffer::Config
   #--
   #: ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> void
   def tool_runtime=(value)
-    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) || value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
+    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) ||
+            value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
     unless valid
       raise Riffer::ArgumentError,
             "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc"

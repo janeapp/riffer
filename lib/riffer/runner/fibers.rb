@@ -11,6 +11,7 @@ class Riffer::Runner::Fibers < Riffer::Runner
   #--
   #: (?max_concurrency: Integer?) -> void
   def initialize(max_concurrency: nil)
+    super()
     depends_on "async"
     depends_on "async/semaphore" if max_concurrency
     @max_concurrency = max_concurrency

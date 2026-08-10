@@ -5,8 +5,12 @@ require "test_helper"
 describe Riffer::Mcp::Manifest do
   describe ".new" do
     it "stores name, endpoint, and discovery_headers" do
-      manifest = Riffer::Mcp::Manifest.new(name: "github", tags: [:github], endpoint: "https://example.com",
-                                           discovery_headers: {},)
+      manifest = Riffer::Mcp::Manifest.new(
+        name: "github",
+        tags: [:github],
+        endpoint: "https://example.com",
+        discovery_headers: {},
+      )
 
       assert_equal "github", manifest.name
       assert_equal "https://example.com", manifest.endpoint
@@ -39,8 +43,12 @@ describe Riffer::Mcp::Manifest do
 
     it "accepts a Proc for discovery_headers" do
       proc_headers = -> { { "Authorization" => "Bearer token" } }
-      manifest = Riffer::Mcp::Manifest.new(name: "srv", tags: [], endpoint: "https://x.com",
-                                           discovery_headers: proc_headers,)
+      manifest = Riffer::Mcp::Manifest.new(
+        name: "srv",
+        tags: [],
+        endpoint: "https://x.com",
+        discovery_headers: proc_headers,
+      )
 
       assert_equal proc_headers, manifest.discovery_headers
     end

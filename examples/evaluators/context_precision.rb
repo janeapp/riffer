@@ -12,7 +12,8 @@
 #   result = Riffer::Evals::EvaluatorRunner.run(
 #     agent: MyAgent,
 #     scenarios: [
-#       { input: "What is the capital of France?", ground_truth: "Paris is the capital and most populous city of France." }
+#       { input: "What is the capital of France?",
+#         ground_truth: "Paris is the capital and most populous city of France." }
 #     ],
 #     evals: [ContextPrecisionEvaluator]
 #   )

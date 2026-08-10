@@ -29,6 +29,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (?api_key: String?, **untyped) -> void
   def initialize(api_key: nil, **)
+    super()
     depends_on "openai"
 
     api_key ||= Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
@@ -99,11 +100,13 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-                    input_tokens: usage.prompt_tokens,
-                    output_tokens: usage.completion_tokens,
-                    cache_read_tokens: usage.prompt_tokens_details&.cached_tokens,
-                  ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.prompt_tokens,
+        output_tokens: usage.completion_tokens,
+        cache_read_tokens: usage.prompt_tokens_details&.cached_tokens,
+      ),
+    )
   end
 
   #--

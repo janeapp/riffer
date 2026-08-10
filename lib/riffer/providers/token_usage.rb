@@ -66,19 +66,19 @@ class Riffer::Providers::TokenUsage
 
   #--
   #: (Integer?, Integer?) -> Integer?
-  def add_nullable(a, b)
-    return nil if a.nil? && b.nil?
+  def add_nullable(left, right)
+    return nil if left.nil? && right.nil?
 
-    (a || 0) + (b || 0)
+    (left || 0) + (right || 0)
   end
 
   # nil is absorbing, not zero: one unpriced call makes the run total nil
   # rather than silently under-reporting.
   #--
   #: (Float?, Float?) -> Float?
-  def add_cost(a, b)
-    return nil if a.nil? || b.nil?
+  def add_cost(left, right)
+    return nil if left.nil? || right.nil?
 
-    a + b
+    left + right
   end
 end

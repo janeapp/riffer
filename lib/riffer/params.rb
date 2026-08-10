@@ -153,7 +153,8 @@ class Riffer::Params
       raise Riffer::ArgumentError, "of: can only be used with Array type, got #{type}" unless type == Array
       unless Riffer::Params::Param::PRIMITIVE_TYPES.include?(of)
         raise Riffer::ArgumentError,
-              "of: must be a primitive type (#{Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(', ')}), got #{of}"
+              "of: must be a primitive type (#{Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(', ')}), " \
+              "got #{of}"
       end
       return nil
     end
@@ -224,13 +225,13 @@ class Riffer::Params
     return unless item_type
 
     type_name = Riffer::Params::Param::TYPE_MAPPINGS[item_type]
+    valid_item = if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(item_type)
+                   ->(item) { [true, false].include?(item) }
+                 else
+                   ->(item) { item.is_a?(item_type) }
+                 end
     value.each_with_index do |item, i|
-      valid = if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(item_type)
-                [true, false].include?(item)
-              else
-                item.is_a?(item_type)
-              end
-      errors << "#{param.name}[#{i}] must be a #{type_name}" unless valid
+      errors << "#{param.name}[#{i}] must be a #{type_name}" unless valid_item.call(item)
     end
   end
 end

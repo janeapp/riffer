@@ -39,6 +39,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
   def initialize(api_key: nil, open_timeout: nil, read_timeout: nil, **_options)
+    super()
     api_key ||= Riffer.config.gemini.api_key
     @api_key = api_key
     @open_timeout = open_timeout || Riffer.config.gemini.open_timeout || DEFAULT_OPEN_TIMEOUT
@@ -132,8 +133,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(response)
-    parts = response.dig(:candidates, 0, :content, :parts) || []
-    has_function_call = parts.any? { |part| part[:functionCall] }
+    parts = response.dig(:candidates, 0, :content, :parts)
+    has_function_call = parts&.any? { |part| part[:functionCall] } || false
     build_finish_reason(response.dig(:candidates, 0, :finishReason), tool_calls: has_function_call)
   end
 
@@ -155,11 +156,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-                    input_tokens: usage[:promptTokenCount] || 0,
-                    output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
-                    cache_read_tokens: usage[:cachedContentTokenCount],
-                  ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage[:promptTokenCount] || 0,
+        output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
+        cache_read_tokens: usage[:cachedContentTokenCount],
+      ),
+    )
   end
 
   #--
@@ -347,7 +350,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     return if model.match?(VALID_MODEL_PATTERN)
 
     raise Riffer::ArgumentError,
-          "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, hyphens, dots, and underscores."
+          "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, " \
+          "hyphens, dots, and underscores."
   end
 
   #--

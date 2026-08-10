@@ -185,19 +185,39 @@ class Riffer::Agent
   # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
   #--
   #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_h(hash, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER,
-                  tool_runtime: nil)
-    Riffer::Agent::Serializer.from_h(hash, context: context, session: session, tool_resolver: tool_resolver,
-                                           tool_runtime: tool_runtime,)
+  def self.from_h(
+    hash,
+    context: nil,
+    session: nil,
+    tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER,
+    tool_runtime: nil
+  )
+    Riffer::Agent::Serializer.from_h(
+      hash,
+      context: context,
+      session: session,
+      tool_resolver: tool_resolver,
+      tool_runtime: tool_runtime,
+    )
   end
 
   # Reconstructs a runnable agent from a JSON string produced by +#to_json+.
   #--
   #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_json(json, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER,
-                     tool_runtime: nil)
-    Riffer::Agent::Serializer.from_json(json, context: context, session: session, tool_resolver: tool_resolver,
-                                              tool_runtime: tool_runtime,)
+  def self.from_json(
+    json,
+    context: nil,
+    session: nil,
+    tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER,
+    tool_runtime: nil
+  )
+    Riffer::Agent::Serializer.from_json(
+      json,
+      context: context,
+      session: session,
+      tool_resolver: tool_resolver,
+      tool_runtime: tool_runtime,
+    )
   end
 
   # Registers a guardrail for input, output, or both phases. Raises
@@ -374,7 +394,8 @@ class Riffer::Agent
 
     provider_name, model_name = model_string.split("/", 2)
 
-    unless provider_name.is_a?(String) && !provider_name.strip.empty? && model_name.is_a?(String) && !model_name.strip.empty?
+    unless provider_name.is_a?(String) && !provider_name.strip.empty? &&
+           model_name.is_a?(String) && !model_name.strip.empty?
       raise Riffer::ArgumentError, "Invalid model string: #{model_string}"
     end
 

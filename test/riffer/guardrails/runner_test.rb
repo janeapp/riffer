@@ -18,9 +18,11 @@ describe Riffer::Guardrails::Runner do
   let(:transform_guardrail_class) do
     Class.new(Riffer::Guardrail) do
       def process_input(messages, context:)
-        transform(messages.map do |m|
-          Riffer::Messages::User.new("[transformed] #{m.content}")
-        end)
+        transform(
+          messages.map do |m|
+            Riffer::Messages::User.new("[transformed] #{m.content}")
+          end,
+        )
       end
 
       def process_output(response, messages:, context:)
@@ -203,8 +205,11 @@ describe Riffer::Guardrails::Runner do
     end
 
     it "passes context to guardrails" do
-      runner = Riffer::Guardrails::Runner.new([config_for(context_guardrail_class)], phase: :before,
-                                                                                     context: { block: true },)
+      runner = Riffer::Guardrails::Runner.new(
+        [config_for(context_guardrail_class)],
+        phase: :before,
+        context: { block: true },
+      )
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
 
@@ -231,9 +236,11 @@ describe Riffer::Guardrails::Runner do
         end
 
         def process_input(messages, context:)
-          transform(messages.map do |m|
-            Riffer::Messages::User.new("#{prefix} #{m.content}")
-          end)
+          transform(
+            messages.map do |m|
+              Riffer::Messages::User.new("#{prefix} #{m.content}")
+            end,
+          )
         end
       end
     end
