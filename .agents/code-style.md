@@ -2,9 +2,10 @@
 
 ## Formatting
 
-- Use StandardRB for linting and formatting
-- Custom rules are defined in `.standard.yml`
-- Run `bin/lint` to check, `bin/lint --fix` to auto-fix
+- Use RuboCop for linting and formatting
+- Config lives in `.rubocop.yml`, with cops sorted alphabetically
+- Run `bin/lint` to check, `bin/lint -a` to auto-fix (safe autocorrect), `bin/lint -A` for unsafe autocorrect
+- Never silence violations with inline `rubocop:disable` comments — fix them, or when an exception is genuinely warranted add a narrowly scoped override in `.rubocop.yml` with a comment explaining why
 
 ## Required Header
 

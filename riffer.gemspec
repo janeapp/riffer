@@ -9,12 +9,15 @@ Gem::Specification.new do |spec|
   spec.email = ["jakebottrall@gmail.com"]
 
   spec.summary = "The all-in-one Ruby framework for building AI-powered applications and agents."
-  spec.description = "Riffer is a comprehensive Ruby framework designed to simplify the development of AI-powered applications and agents. It provides a complete toolkit for integrating artificial intelligence capabilities into your Ruby projects."
+  spec.description = "Riffer is a comprehensive Ruby framework designed to simplify the development of " \
+                     "AI-powered applications and agents. It provides a complete toolkit for integrating " \
+                     "artificial intelligence capabilities into your Ruby projects."
   spec.homepage = "https://riffer.ai"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
+  spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/janeapp/riffer"
@@ -39,28 +42,6 @@ Gem::Specification.new do |spec|
 
   # Runtime dependencies
   spec.add_dependency "zeitwerk", "~> 2.6", ">= 2.6.0"
-
-  # Development dependencies
-  spec.add_development_dependency "anthropic", "~> 1.59.0"
-  spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.42"
-  spec.add_development_dependency "faraday", ">= 1.0"
-  spec.add_development_dependency "mcp", "~> 1.0"
-  spec.add_development_dependency "openai", "~> 0.77.1"
-  spec.add_development_dependency "async", "~> 2.25", "< 2.45"
-  spec.add_development_dependency "io-event", "< 1.20"
-
-  # Testing
-  spec.add_development_dependency "minitest", "~> 6.0"
-  spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "vcr", "~> 6.0"
-  spec.add_development_dependency "webmock", "~> 3.0"
-
-  # Quality / Linting
-  spec.add_development_dependency "standard", "~> 1.3"
-
-  # Type checking
-  spec.add_development_dependency "rbs-inline", "~> 0.12"
-  spec.add_development_dependency "steep", "~> 2.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
