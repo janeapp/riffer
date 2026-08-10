@@ -505,7 +505,7 @@ describe Riffer::Agent::Run do
 
       it "still yields text events before blocking" do
         events = agent_with_blocking_output.stream("Hello").to_a
-        text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        text_events = events.grep(Riffer::StreamEvents::TextDelta)
 
         expect(text_events).wont_be_empty
       end
@@ -538,7 +538,7 @@ describe Riffer::Agent::Run do
 
       it "emits GuardrailModification events on transforms" do
         events = agent_with_stream_transform.stream("Hello").to_a
-        mod_events = events.select { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
+        mod_events = events.grep(Riffer::StreamEvents::GuardrailModification)
 
         expect(mod_events).wont_be_empty
       end
@@ -810,7 +810,7 @@ describe Riffer::Agent::Run do
       result = agent.generate("Call tool")
 
       expect(result.interrupted?).must_equal false
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 1
     end
@@ -851,7 +851,7 @@ describe Riffer::Agent::Run do
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
 
       expect(interrupt_event).wont_be_nil
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 1
 
@@ -859,7 +859,7 @@ describe Riffer::Agent::Run do
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
 
       expect(interrupt_event).must_be_nil
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 2
     end
@@ -902,7 +902,7 @@ describe Riffer::Agent::Run do
       expect(result.interrupted?).must_equal true
       expect(result.healed_tool_call_ids.length).must_equal 2
       expect(agent.session.orphaned_tool_call_ids).must_equal []
-      tools = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tools = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tools.length).must_equal 2
       expect(tools.first.error_type).must_equal :interrupted
@@ -1123,7 +1123,7 @@ describe Riffer::Agent::Run do
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 1
       end
@@ -1145,7 +1145,7 @@ describe Riffer::Agent::Run do
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.first.content).must_equal "Weather in Toronto: 20 degrees"
       end
@@ -1187,7 +1187,7 @@ describe Riffer::Agent::Run do
 
         agent.generate("Get my name")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.first.content).must_equal "Alice"
       end
@@ -1207,7 +1207,7 @@ describe Riffer::Agent::Run do
 
         agent.generate("Call nonexistent tool")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.first.content).must_match(/Unknown tool/)
       end
@@ -1251,7 +1251,7 @@ describe Riffer::Agent::Run do
 
         agent.generate("What's the weather?")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.first.content).must_match(/city is required/)
       end
@@ -1352,7 +1352,7 @@ describe Riffer::Agent::Run do
 
         events = agent.stream("What's the weather?").to_a
 
-        tool_call_done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        tool_call_done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
 
         expect(tool_call_done_events).wont_be_empty
       end
@@ -1374,7 +1374,7 @@ describe Riffer::Agent::Run do
 
         agent.stream("What's the weather?").each { |_| }
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 1
       end
@@ -1396,7 +1396,7 @@ describe Riffer::Agent::Run do
 
         agent.stream("Get my id").each { |_| }
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.first.content).must_equal "12345"
       end
@@ -1893,9 +1893,8 @@ describe Riffer::Agent::Run do
 
       it "yields stream events" do
         agent = agent_class.new
-        chunks = []
-        agent.stream("Hello").each do |chunk|
-          chunks << chunk
+        chunks = agent.stream("Hello").map do |chunk|
+          chunk
         end
 
         expect(chunks).wont_be_empty
@@ -1904,7 +1903,7 @@ describe Riffer::Agent::Run do
       it "yields TextDelta events" do
         agent = agent_class.new
         events = agent.stream("Hello").to_a
-        text_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        text_deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
         expect(text_deltas).wont_be_empty
       end
@@ -2311,14 +2310,14 @@ describe Riffer::Agent::Run do
         result = agent.generate("Call tools")
 
         expect(result.interrupted?).must_equal true
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 1
 
         result = agent.generate("Continue")
 
         expect(result.interrupted?).must_equal false
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 2
       end
@@ -2349,14 +2348,14 @@ describe Riffer::Agent::Run do
         result = agent.generate("Call tools")
 
         expect(result.interrupted?).must_equal true
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 0
 
         result = agent.generate("Continue")
 
         expect(result.interrupted?).must_equal false
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 2
       end
@@ -2483,7 +2482,7 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       agent.generate("Continue")
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
 
       expect(system_messages.length).must_equal 1
     end
@@ -2560,7 +2559,7 @@ describe Riffer::Agent::Run do
                                                                       Riffer::Messages::Assistant.new("Hello!"),
                                                                     ]))
         agent.generate("How are you?")
-        user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+        user_messages = agent.session.messages.grep(Riffer::Messages::User)
 
         expect(user_messages.length).must_equal 2
         expect(user_messages.last.content).must_equal "How are you?"
@@ -2593,7 +2592,7 @@ describe Riffer::Agent::Run do
 
         agent.generate
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.first.content).must_equal "Alice"
       end
@@ -2605,7 +2604,7 @@ describe Riffer::Agent::Run do
         ]
         agent = agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         agent.generate
-        system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+        system_messages = agent.session.messages.grep(Riffer::Messages::System)
 
         expect(system_messages.length).must_equal 1
         expect(system_messages.first.content).must_equal "Custom instructions."
@@ -2639,7 +2638,7 @@ describe Riffer::Agent::Run do
 
         expect(result.interrupted?).must_equal false
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 1
         expect(tool_messages.first.content).must_equal "done"
@@ -2776,7 +2775,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       events = agent.stream("Continue").to_a
-      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_events = events.grep(Riffer::StreamEvents::TextDelta)
 
       expect(text_events).wont_be_empty
     end
@@ -2807,7 +2806,7 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       events = agent.stream("Continue").to_a
-      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_events = events.grep(Riffer::StreamEvents::TextDelta)
 
       expect(text_events).wont_be_empty
     end
@@ -2836,7 +2835,7 @@ describe Riffer::Agent::Run do
                                              ])
         agent = agent_class.new(session: session)
         events = agent.stream.to_a
-        text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        text_events = events.grep(Riffer::StreamEvents::TextDelta)
 
         expect(text_events).wont_be_empty
       end
@@ -2868,7 +2867,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       agent.generate("Follow up")
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
 
       expect(system_messages.length).must_equal 1
     end
@@ -2877,7 +2876,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       agent.generate("Follow up")
-      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.grep(Riffer::Messages::User)
 
       expect(user_messages.length).must_equal 2
       expect(user_messages.last.content).must_equal "Follow up"
@@ -2900,7 +2899,7 @@ describe Riffer::Agent::Run do
       result = agent.generate("Continue please")
 
       expect(result.interrupted?).must_equal false
-      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.grep(Riffer::Messages::User)
 
       expect(user_messages.length).must_equal 2
     end
@@ -2938,14 +2937,14 @@ describe Riffer::Agent::Run do
       result = agent.generate("Call tools")
 
       expect(result.interrupted?).must_equal true
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 1
 
       result = agent.generate("Go ahead")
 
       expect(result.interrupted?).must_equal false
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 2
     end
@@ -2992,11 +2991,11 @@ describe Riffer::Agent::Run do
       agent.generate("Hello")
 
       events = agent.stream("Follow up").to_a
-      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_events = events.grep(Riffer::StreamEvents::TextDelta)
 
       expect(text_events).wont_be_empty
 
-      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.grep(Riffer::Messages::User)
 
       expect(user_messages.length).must_equal 2
     end

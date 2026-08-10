@@ -57,7 +57,7 @@ module Riffer::Agent::Session::Repair
     resume_boundary = (messages.length - 1).downto(0).find do |idx|
       m = messages[idx]
       m.is_a?(Riffer::Messages::Assistant) &&
-        (messages[(idx + 1)..] || []).all? { |later| later.is_a?(Riffer::Messages::Tool) }
+        (messages[(idx + 1)..] || []).all?(Riffer::Messages::Tool)
     end
 
     result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }

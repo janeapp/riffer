@@ -65,7 +65,7 @@ describe Riffer::Helpers::CallOrValue do
     end
 
     it "defaults context to nil and passes nil to arity-1 procs" do
-      result = Riffer::Helpers::CallOrValue.resolve(->(c) { c.inspect })
+      result = Riffer::Helpers::CallOrValue.resolve(lambda(&:inspect))
 
       assert_equal "nil", result
     end

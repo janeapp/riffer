@@ -62,6 +62,6 @@ class TokenLimiterGuardrail < Riffer::Guardrail
     truncated = response.content[0, max_chars]
     # Cut at the last word boundary to avoid mid-word truncation
     truncated = truncated.sub(/\s+\S*\z/, "") if truncated.length < response.content.length
-    Riffer::Messages::Assistant.new(truncated + "...")
+    Riffer::Messages::Assistant.new("#{truncated}...")
   end
 end

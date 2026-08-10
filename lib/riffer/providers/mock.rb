@@ -155,7 +155,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     unless full_content.empty?
       content_parts = full_content.split(". ").map { |part| part + (part.end_with?(".") ? "" : ".") }
       content_parts.each do |part|
-        yielder << Riffer::StreamEvents::TextDelta.new(part + " ")
+        yielder << Riffer::StreamEvents::TextDelta.new("#{part} ")
       end
     end
 

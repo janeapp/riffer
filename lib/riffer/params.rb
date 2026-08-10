@@ -31,7 +31,7 @@ class Riffer::Params
   def self.from_json_schema(schema)
     params = new
     properties = schema[:properties] || {}
-    required = (schema[:required] || []).map { |key| key.to_s }
+    required = (schema[:required] || []).map(&:to_s)
 
     properties.each do |name, property_schema|
       params.parameters << Riffer::Params::Param.from_json_schema(

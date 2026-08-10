@@ -93,7 +93,7 @@ describe Riffer::Agent::Serializer do
       dict = build_agent_class { uses_tools [SerializerWeatherTool] }.new.to_h
 
       refute_includes dict.keys, :tool_runtime
-      expect(dict.values.none? { |v| v.is_a?(Proc) }).must_equal true
+      expect(dict.values.none?(Proc)).must_equal true
     end
   end
 

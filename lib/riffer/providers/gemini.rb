@@ -132,8 +132,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(response)
-    parts = response.dig(:candidates, 0, :content, :parts)
-    has_function_call = !!parts&.any? { |part| part[:functionCall] }
+    parts = response.dig(:candidates, 0, :content, :parts) || []
+    has_function_call = parts.any? { |part| part[:functionCall] }
     build_finish_reason(response.dig(:candidates, 0, :finishReason), tool_calls: has_function_call)
   end
 

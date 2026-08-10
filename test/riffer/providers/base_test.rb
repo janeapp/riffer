@@ -92,13 +92,13 @@ describe Riffer::Providers::Base do
     it "converts prompt to User message" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: nil, messages: nil)
 
-      expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
+      expect(result.all?(Riffer::Messages::Base)).must_equal true
     end
 
     it "converts system and prompt to System and User messages" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: "Be helpful", messages: nil)
 
-      expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
+      expect(result.all?(Riffer::Messages::Base)).must_equal true
     end
 
     describe "with message objects" do

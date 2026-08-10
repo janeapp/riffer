@@ -147,7 +147,7 @@ describe Riffer::Agent::Session::Repair do
 
         result = Riffer::Agent::Session::Repair.prune_orphans(messages)
 
-        expect(result.none? { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal true
+        expect(result.none?(Riffer::Messages::Tool)).must_equal true
       end
 
       it "preserves a pending tool_use on the resume boundary" do

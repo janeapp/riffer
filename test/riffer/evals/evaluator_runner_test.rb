@@ -102,9 +102,9 @@ describe Riffer::Evals::EvaluatorRunner do
       messages = result.scenario_results.first.messages
 
       expect(messages).wont_be_empty
-      expect(messages.any? { |m| m.is_a?(Riffer::Messages::System) }).must_equal true
-      expect(messages.any? { |m| m.is_a?(Riffer::Messages::User) }).must_equal true
-      expect(messages.any? { |m| m.is_a?(Riffer::Messages::Assistant) }).must_equal true
+      expect(messages.any?(Riffer::Messages::System)).must_equal true
+      expect(messages.any?(Riffer::Messages::User)).must_equal true
+      expect(messages.any?(Riffer::Messages::Assistant)).must_equal true
     end
 
     it "passes messages to evaluators" do

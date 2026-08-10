@@ -347,7 +347,7 @@ describe Riffer::Tools::Runtime do
     end
 
     def assert_parents_under_host(runtime)
-      tool_calls = 3.times.map do |i|
+      tool_calls = Array.new(3) do |i|
         make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}', call_id: "cid_#{i}")
       end
 
@@ -546,7 +546,7 @@ describe Riffer::Tools::Runtime::Fibers do
     end
 
     runtime = Riffer::Tools::Runtime::Fibers.new
-    tool_calls = 3.times.map do |i|
+    tool_calls = Array.new(3) do |i|
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}",
       )
@@ -576,7 +576,7 @@ describe Riffer::Tools::Runtime::Threaded do
     end
 
     runtime = Riffer::Tools::Runtime::Threaded.new(max_concurrency: 3)
-    tool_calls = 3.times.map do |i|
+    tool_calls = Array.new(3) do |i|
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}",
       )

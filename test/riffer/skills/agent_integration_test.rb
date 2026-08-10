@@ -18,7 +18,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
 
       assert_equal 2, system_messages.length
       assert_includes system_messages[0].content, "You are helpful."
@@ -38,7 +38,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_message = system_messages.find { |m| m.content.include?("Available Skills") }
 
       assert_includes skills_message.content, "## Available Skills"
@@ -57,7 +57,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_message = system_messages.find { |m| m.content.include?("available_skills") }
 
       assert_includes skills_message.content, "<available_skills>"
@@ -74,7 +74,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_message = system_messages.find { |m| m.content.include?("<available_skills>") }
 
       refute_nil skills_message
@@ -95,7 +95,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_message = system_messages.find { |m| m.content.include?("Available Skills") }
 
       refute_nil skills_message
@@ -241,7 +241,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_msg = system_messages.find { |m| m.content.include?("code-review") }
 
       refute_nil skills_msg
@@ -385,7 +385,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
 
       assert_equal 2, system_messages.length
       assert_includes system_messages[0].content, "Base instructions."
@@ -410,7 +410,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_msg = system_messages.find { |m| m.content.include?("code review assistant") }
 
       refute_nil skills_msg
@@ -444,7 +444,7 @@ describe "Agent skills integration" do
       agent = agent_class.new(context: { activate_skills: ["data-analysis"] })
       agent.generate("Hello")
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
       skills_msg = system_messages.find { |m| m.content.include?("data analysis assistant") }
 
       refute_nil skills_msg
@@ -464,7 +464,7 @@ describe "Agent skills integration" do
       agent = agent_class.new
       agent.stream("Hello").each { |_| }
 
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
 
       assert_equal 2, system_messages.length
       skills_msg = system_messages.find { |m| m.content.include?("Available Skills") }
@@ -487,7 +487,7 @@ describe "Agent skills integration" do
       agent.provider.stub_response("", tool_calls: [{ name: "skill_activate", arguments: '{"name":"code-review"}' }])
       agent.provider.stub_response("Here is my review.")
 
-      events = agent.stream("Review this code").select { |e| e.is_a?(Riffer::StreamEvents::SkillActivation) }
+      events = agent.stream("Review this code").grep(Riffer::StreamEvents::SkillActivation)
 
       assert_equal 1, events.size
       assert_equal "code-review", events.first.name
@@ -507,7 +507,7 @@ describe "Agent skills integration" do
       agent.provider.stub_response("", tool_calls: [{ name: "skill_activate", arguments: '{"name":"code-review"}' }])
       agent.provider.stub_response("Done.")
 
-      events = agent.stream("Review").select { |e| e.is_a?(Riffer::StreamEvents::SkillActivation) }
+      events = agent.stream("Review").grep(Riffer::StreamEvents::SkillActivation)
 
       assert_equal 1, events.size
     end

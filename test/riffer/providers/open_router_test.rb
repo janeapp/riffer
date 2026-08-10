@@ -399,7 +399,7 @@ describe Riffer::Providers::OpenRouter do
         VCR.use_cassette("Riffer_Providers_OpenRouter/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
           events = provider.stream_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5").to_a
-          deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+          deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
           expect(deltas).wont_be_empty
         end
@@ -610,7 +610,7 @@ describe Riffer::Providers::OpenRouter do
             model: "deepseek/deepseek-r1",
             reasoning: "low",
           ).to_a
-          reasoning_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
+          reasoning_deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
 
           expect(reasoning_deltas).wont_be_empty
         end
@@ -764,7 +764,7 @@ describe Riffer::Providers::OpenRouter do
       install_chunks(provider, [tool_chunk, stop_chunk])
 
       events = provider.stream_text(prompt: "weather?", model: "x/y").to_a
-      done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+      done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
 
       expect(done_events.size).must_equal 1
       expect(done_events.first.name).must_equal "get_weather"
@@ -784,7 +784,7 @@ describe Riffer::Providers::OpenRouter do
       install_chunks(provider, [chunk])
 
       events = provider.stream_text(prompt: "do things", model: "x/y").to_a
-      done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+      done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
       item_ids = done_events.map(&:item_id)
       call_ids = done_events.map(&:call_id)
 

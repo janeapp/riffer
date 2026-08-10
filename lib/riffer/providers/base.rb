@@ -324,7 +324,7 @@ class Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def merge_consecutive_messages(messages)
-    messages.chunk { |msg| msg.role }.flat_map do |role, group|
+    messages.chunk(&:role).flat_map do |role, group|
       next group if role == :tool || group.size == 1
 
       group.inject { |merged, msg| merged + msg }
@@ -362,7 +362,7 @@ class Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> void
   def validate_normalized_messages!(messages)
-    has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }
+    has_user = messages.any?(Riffer::Messages::User)
     raise Riffer::ArgumentError, "messages must include at least one user message" unless has_user
   end
 end

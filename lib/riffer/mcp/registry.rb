@@ -53,7 +53,7 @@ module Riffer::Mcp::Registry
   def find_by_tags(tags)
     normalized = tags.map(&:to_sym)
     @mutex.synchronize do
-      @store.values.select { |reg| (reg.manifest.tags & normalized).any? }
+      @store.values.select { |reg| reg.manifest.tags.intersect?(normalized) }
     end
   end
 end

@@ -1020,7 +1020,7 @@ describe Riffer::Agent do
       expect(result.interrupted?).must_equal true
       expect(result.healed_tool_call_ids.length).must_equal 2
       expect(agent.session.orphaned_tool_call_ids).must_equal []
-      tools = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tools = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tools.length).must_equal 2
       expect(tools.first.error_type).must_equal :interrupted

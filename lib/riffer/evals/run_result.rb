@@ -41,7 +41,7 @@ class Riffer::Evals::RunResult
   #--
   #: () -> Riffer::Providers::TokenUsage?
   def token_usage
-    scenario_results.map(&:token_usage).compact.reduce(:+)
+    scenario_results.filter_map(&:token_usage).reduce(:+)
   end
 
   # Returns the summed token usage across every scenario's LLM-as-judge
@@ -50,7 +50,7 @@ class Riffer::Evals::RunResult
   #--
   #: () -> Riffer::Providers::TokenUsage?
   def evaluator_token_usage
-    scenario_results.map(&:evaluator_token_usage).compact.reduce(:+)
+    scenario_results.filter_map(&:evaluator_token_usage).reduce(:+)
   end
 
   # Returns a hash representation of the run result.

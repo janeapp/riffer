@@ -188,7 +188,7 @@ describe Riffer::Providers::Mock do
 
     it "emits TextDelta events" do
       events = provider.stream_text(prompt: "Question").to_a
-      text_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
       expect(text_deltas.size).must_be :>, 0
     end
@@ -305,7 +305,7 @@ describe Riffer::Providers::Mock do
       it "emits ToolCallDelta events" do
         provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"key":"value"}' }])
         events = provider.stream_text(prompt: "Call a tool").to_a
-        tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+        tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
 
         expect(tool_deltas).wont_be_empty
       end
@@ -313,7 +313,7 @@ describe Riffer::Providers::Mock do
       it "emits ToolCallDone events" do
         provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"key":"value"}' }])
         events = provider.stream_text(prompt: "Call a tool").to_a
-        tool_done = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        tool_done = events.grep(Riffer::StreamEvents::ToolCallDone)
 
         expect(tool_done).wont_be_empty
       end
@@ -340,7 +340,7 @@ describe Riffer::Providers::Mock do
                                  { name: "tool_b", arguments: "{}" },
                                ],)
         events = provider.stream_text(prompt: "Call tools").to_a
-        tool_done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        tool_done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
 
         expect(tool_done_events.length).must_equal 2
       end

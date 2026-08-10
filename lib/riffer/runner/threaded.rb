@@ -25,7 +25,7 @@ class Riffer::Runner::Threaded < Riffer::Runner
     queue = Queue.new
     items.each_with_index { |item, i| queue << [item, i] }
 
-    workers = [items.size, @max_concurrency].min.times.map do
+    workers = Array.new([items.size, @max_concurrency].min) do
       Thread.new do
         loop do
           pair = begin

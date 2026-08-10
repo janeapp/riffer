@@ -605,7 +605,7 @@ describe Riffer::Providers::AmazonBedrock do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
           provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
           events = provider.stream_text(prompt: "Say hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
-          deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+          deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
           expect(deltas).wont_be_empty
         end
@@ -790,7 +790,7 @@ describe Riffer::Providers::AmazonBedrock do
 
         # Each TextDelta must still carry its own unmutated fragment, and joining
         # them must reproduce the buffer exactly.
-        streamed = stream_events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }.map(&:content)
+        streamed = stream_events.grep(Riffer::StreamEvents::TextDelta).map(&:content)
 
         expect(streamed).must_equal deltas
         expect(streamed.join).must_equal expected
@@ -1428,7 +1428,7 @@ describe Riffer::Providers::AmazonBedrock do
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
             tools: [weather_tool],
           ).to_a
-          tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+          tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
 
           expect(tool_deltas).wont_be_empty
         end

@@ -536,7 +536,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
           provider = Riffer::Providers::OpenAI.new(api_key: api_key)
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-          deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+          deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
           expect(deltas).wont_be_empty
         end
@@ -584,7 +584,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDelta_events") do
           provider = Riffer::Providers::OpenAI.new(api_key: api_key)
           events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
-          reasoning_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
+          reasoning_deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
 
           expect(reasoning_deltas).wont_be_empty
         end
@@ -841,7 +841,7 @@ describe Riffer::Providers::OpenAI do
           provider = Riffer::Providers::OpenAI.new(api_key: api_key)
           events = provider.stream_text(prompt: "What is the latest Ruby version?", model: "gpt-5-mini",
                                         web_search: true,).to_a
-          web_search_statuses = events.select { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
+          web_search_statuses = events.grep(Riffer::StreamEvents::WebSearchStatus)
 
           expect(web_search_statuses).wont_be_empty
         end
@@ -1159,7 +1159,7 @@ describe Riffer::Providers::OpenAI do
             model: "gpt-5-mini",
             tools: [weather_tool],
           ).to_a
-          tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+          tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
 
           expect(tool_deltas).wont_be_empty
         end

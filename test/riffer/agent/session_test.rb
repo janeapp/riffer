@@ -330,8 +330,7 @@ describe Riffer::Agent::Session do
 
   describe "Enumerable" do
     it "yields each message via #each" do
-      collected = []
-      session.each { |m| collected << m }
+      collected = session.map { |m| m }
 
       expect(collected).must_equal [user, plain_assistant, tool_assistant, tool_msg]
     end

@@ -76,7 +76,7 @@ class Riffer::Guardrails::Runner
   def detect_changed_indices(old_data, new_data)
     if old_data.is_a?(Array) && new_data.is_a?(Array)
       max_len = [old_data.length, new_data.length].max
-      (0...max_len).select { |i| old_data[i] != new_data[i] }
+      (0...max_len).reject { |i| old_data[i] == new_data[i] }
     else
       old_data == new_data ? [] : [0]
     end

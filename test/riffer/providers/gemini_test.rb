@@ -399,7 +399,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
           provider = Riffer::Providers::Gemini.new(api_key: api_key)
           events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
-          deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+          deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
           expect(deltas).wont_be_empty
         end
