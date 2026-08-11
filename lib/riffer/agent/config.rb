@@ -46,7 +46,20 @@ class Riffer::Agent::Config
   # Builds a new Config. Raises Riffer::ArgumentError if +model+ or
   # +instructions+ is invalid (e.g. an empty string).
   #--
-  #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  #: (
+  #    ?identifier: String?,
+  #    ?model: (String | Proc)?,
+  #    ?instructions: (String | Proc)?,
+  #    ?provider_options: Hash[Symbol, untyped],
+  #    ?model_options: Hash[Symbol, untyped],
+  #    ?structured_output: Riffer::Params?,
+  #    ?max_steps: Numeric?,
+  #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
+  #    ?mcp_configs: Array[Hash[Symbol, untyped]],
+  #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc),
+  #    ?skills_config: Riffer::Skills::Config?,
+  #    ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
+  #  ) -> void
   def initialize(
     identifier: nil,
     model: nil,

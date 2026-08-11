@@ -25,9 +25,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?) -> void
   def initialize(content, id: nil, tool_calls: [], token_usage: nil, structured_output: nil, finish_reason: nil)
     if finish_reason && !Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
-      raise Riffer::ArgumentError,
-            "finish_reason must be one of #{Riffer::Providers::FinishReason::VALUES.inspect}, " \
-            "got #{finish_reason.inspect}"
+      values = Riffer::Providers::FinishReason::VALUES.inspect
+      raise Riffer::ArgumentError, "finish_reason must be one of #{values}, got #{finish_reason.inspect}"
     end
 
     super(content, id: id)

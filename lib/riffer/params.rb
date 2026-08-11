@@ -151,10 +151,10 @@ class Riffer::Params
 
     if of
       raise Riffer::ArgumentError, "of: can only be used with Array type, got #{type}" unless type == Array
+
       unless Riffer::Params::Param::PRIMITIVE_TYPES.include?(of)
-        raise Riffer::ArgumentError,
-              "of: must be a primitive type (#{Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(', ')}), " \
-              "got #{of}"
+        primitives = Riffer::Params::Param::PRIMITIVE_TYPES.map(&:name).join(", ")
+        raise Riffer::ArgumentError, "of: must be a primitive type (#{primitives}), got #{of}"
       end
       return nil
     end

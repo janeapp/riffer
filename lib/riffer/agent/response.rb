@@ -43,7 +43,18 @@ class Riffer::Agent::Response
   attr_reader :healed_tool_call_ids #: Array[String]
 
   #--
-  #: (String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> void
+  #: (
+  #    String,
+  #    ?tripwire: Riffer::Guardrails::Tripwire?,
+  #    ?modifications: Array[Riffer::Guardrails::Modification],
+  #    ?interrupted: bool,
+  #    ?interrupt_reason: (String | Symbol)?,
+  #    ?structured_output: Hash[Symbol, untyped]?,
+  #    ?messages: Array[Riffer::Messages::Base],
+  #    ?healed_tool_call_ids: Array[String],
+  #    ?token_usage: Riffer::Providers::TokenUsage?,
+  #    ?steps: Integer
+  #  ) -> void
   def initialize(
     content,
     tripwire: nil,

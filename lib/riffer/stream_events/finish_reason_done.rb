@@ -16,9 +16,8 @@ class Riffer::StreamEvents::FinishReasonDone < Riffer::StreamEvents::Base
   #: (finish_reason: Symbol, ?raw_finish_reason: String?, ?role: Symbol) -> void
   def initialize(finish_reason:, raw_finish_reason: nil, role: :assistant)
     unless Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
-      raise Riffer::ArgumentError,
-            "finish_reason must be one of #{Riffer::Providers::FinishReason::VALUES.inspect}, " \
-            "got #{finish_reason.inspect}"
+      values = Riffer::Providers::FinishReason::VALUES.inspect
+      raise Riffer::ArgumentError, "finish_reason must be one of #{values}, got #{finish_reason.inspect}"
     end
 
     super(role: role)

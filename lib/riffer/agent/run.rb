@@ -355,7 +355,18 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  #: (
+  #    Riffer::Agent,
+  #    String,
+  #    ?tripwire: Riffer::Guardrails::Tripwire?,
+  #    ?modifications: Array[Riffer::Guardrails::Modification],
+  #    ?interrupted: bool,
+  #    ?interrupt_reason: (String | Symbol)?,
+  #    ?structured_output: Hash[Symbol, untyped]?,
+  #    ?healed_tool_call_ids: Array[String],
+  #    ?token_usage: Riffer::Providers::TokenUsage?,
+  #    ?steps: Integer
+  #  ) -> Riffer::Agent::Response
   def build_response(
     agent,
     content,

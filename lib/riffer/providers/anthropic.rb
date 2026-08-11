@@ -212,20 +212,18 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::InputJsonEvent
           handle_input_json_event(event, state: current_state, yielder: yielder)
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
-          block = event.content_block
-          if block.is_a?(::Anthropic::Models::TextBlock) && current_state[:text]
-            handle_content_block_stop_text(event, state: current_state, yielder: yielder)
-          end
-          if block.is_a?(::Anthropic::Models::ToolUseBlock)
+          case event.content_block
+          when ::Anthropic::Models::TextBlock
+            handle_content_block_stop_text(event, state: current_state, yielder: yielder) if current_state[:text]
+          when ::Anthropic::Models::ToolUseBlock
             handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
-          end
-          if block.is_a?(::Anthropic::Models::ThinkingBlock) && current_state[:reasoning]
-            handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
-          end
-          if block.is_a?(::Anthropic::Models::ServerToolUseBlock)
+          when ::Anthropic::Models::ThinkingBlock
+            if current_state[:reasoning]
+              handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
+            end
+          when ::Anthropic::Models::ServerToolUseBlock
             handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder)
-          end
-          if block.is_a?(::Anthropic::Models::WebSearchToolResultBlock)
+          when ::Anthropic::Models::WebSearchToolResultBlock
             handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder)
           end
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
