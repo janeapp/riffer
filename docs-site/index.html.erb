@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riffer — Ruby framework for AI agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <script src="/copy.js" defer></script>
+    <style>
+      /* hero — left-aligned, no stage */
+      .hero {
+        padding: 84px 0 76px;
+        border-bottom: 3px solid var(--ink);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 52px;
+        align-items: center;
+      }
+      .hero h1 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 800;
+        font-size: clamp(42px, 5.7vw, 73px);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+      }
+      .hero h1 .accent {
+        color: var(--accent);
+      }
+      .hero h1 .jane {
+        color: var(--jane);
+      }
+      .hero .sub {
+        display: inline-block;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 600;
+        font-size: 19px;
+        background: var(--jane);
+        border: 3px solid var(--ink);
+        border-radius: 4px;
+        padding: 7px 18px;
+        transform: rotate(-1deg);
+        box-shadow: 4px 4px 0 var(--ink);
+        margin-top: 22px;
+      }
+      .hero .lede {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 46ch;
+        margin: 28px 0 32px;
+      }
+      .cta-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        padding: 13px 26px;
+        border: 3px solid var(--ink);
+        border-radius: 99px;
+        box-shadow: 4px 4px 0 var(--ink);
+        transition:
+          transform 0.12s,
+          box-shadow 0.12s;
+        background: var(--cream);
+      }
+      .btn:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--ink);
+      }
+      .btn-primary {
+        background: var(--jane);
+        color: var(--ink);
+      }
+      .install {
+        margin-top: 28px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 14.5px;
+      }
+      .install code {
+        background: var(--ink);
+        color: var(--jane);
+        padding: 6px 14px;
+        border-radius: 6px;
+      }
+
+      /* hero code card */
+      .hero-code {
+        transform: rotate(0.8deg);
+        position: relative;
+        min-width: 0;
+      }
+
+      /* the gem, poster-style */
+      .gem-sticker {
+        position: absolute;
+        top: -58px;
+        right: -26px;
+        width: 150px;
+        z-index: 2;
+        transform: rotate(9deg);
+        filter: drop-shadow(6px 7px 0 var(--ink));
+        pointer-events: none;
+      }
+      .gem-sticker svg {
+        width: 100%;
+        height: auto;
+        display: block;
+        overflow: visible;
+      }
+      .sparkle {
+        position: absolute;
+        font-size: 26px;
+        color: var(--gold);
+        top: -14px;
+        left: -22px;
+        transform: rotate(-12deg);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .gem-sticker {
+          animation: bob 6s ease-in-out infinite;
+        }
+        @keyframes bob {
+          50% {
+            transform: translateY(-10px) rotate(12deg);
+          }
+        }
+      }
+      .code-card {
+        background: var(--ink);
+        border: 3px solid var(--ink);
+        border-radius: 14px;
+        box-shadow: 8px 8px 0 var(--accent);
+        overflow: hidden;
+      }
+      .code-card .bar {
+        background: var(--jane);
+        border-bottom: 3px solid var(--ink);
+        padding: 9px 16px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+      pre {
+        position: relative;
+        padding: 22px 24px;
+        overflow-x: auto;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+        line-height: 1.75;
+        color: #ecf6f4;
+      }
+      .k {
+        color: #e39fc7;
+      }
+      .c {
+        color: #4fd9e0;
+      }
+      .s {
+        color: #ffce80;
+      }
+
+      /* sections */
+      section {
+        padding: 80px 0;
+      }
+      section + section {
+        border-top: 3px solid var(--ink);
+      }
+      h2 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 800;
+        font-size: clamp(30px, 4vw, 44px);
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+      }
+      .sec-sub {
+        color: var(--muted);
+        margin-top: 8px;
+        max-width: 60ch;
+      }
+
+      /* features — stickers, plain tags */
+      .feats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-top: 44px;
+      }
+      .sticker {
+        border: 3px solid var(--ink);
+        border-radius: 14px;
+        padding: 24px 22px;
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--ink);
+        transition: transform 0.15s;
+      }
+      .sticker:nth-child(3n + 1) {
+        transform: rotate(-0.8deg);
+      }
+      .sticker:nth-child(3n + 2) {
+        transform: rotate(0.7deg);
+        background: #fbf1f7;
+      }
+      .sticker:nth-child(3n) {
+        transform: rotate(-0.4deg);
+      }
+      .sticker:hover {
+        transform: rotate(0) translateY(-4px);
+      }
+      .sticker .tag {
+        display: inline-block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 2px solid var(--ink);
+        border-radius: 99px;
+        padding: 2px 10px;
+        margin-bottom: 14px;
+      }
+      .sticker:nth-child(3n + 1) .tag {
+        background: var(--jane);
+      }
+      .sticker:nth-child(3n + 2) .tag {
+        background: #f3d0e5;
+      }
+      .sticker:nth-child(3n) .tag {
+        background: #ffe4ad;
+      }
+      .sticker h3 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 700;
+        font-size: 21px;
+        margin-bottom: 6px;
+      }
+      .sticker p {
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      /* docs — numbered cards in themed groups */
+      .group-label {
+        display: inline-block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 2px solid var(--ink);
+        border-radius: 99px;
+        padding: 2px 10px;
+        margin: 36px 0 14px;
+        background: #fff;
+      }
+      .group-label.jane {
+        background: var(--jane);
+      }
+      .group-label.rose {
+        background: #f3d0e5;
+      }
+      .group-label.gold {
+        background: #ffe4ad;
+      }
+      .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .doc.featured {
+        background: var(--jane);
+      }
+      .doc.featured .num,
+      .doc.featured .desc,
+      .doc.featured .go {
+        color: var(--ink);
+      }
+      .doc {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        text-decoration: none;
+        border: 3px solid var(--ink);
+        border-radius: 10px;
+        background: #fff;
+        padding: 15px 20px;
+        transition:
+          background 0.15s,
+          transform 0.12s;
+      }
+      .doc:hover {
+        background: var(--jane);
+        transform: translate(-2px, -2px);
+      }
+      .doc .num {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 800;
+        font-size: 24px;
+        color: var(--accent);
+        min-width: 44px;
+      }
+      .doc .name {
+        font-weight: 700;
+        font-size: 16.5px;
+        display: block;
+      }
+      .doc .desc {
+        font-family: "Gabarito", system-ui, sans-serif;
+        font-size: 13.5px;
+        letter-spacing: normal;
+        text-transform: none;
+        color: var(--muted);
+        display: block;
+      }
+      .doc .go {
+        margin-left: auto;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--jane);
+        transition: transform 0.15s;
+      }
+      .doc:hover .go {
+        transform: translateX(4px);
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-code {
+          transform: none;
+          margin-top: 26px;
+        }
+        .gem-sticker {
+          width: 104px;
+          top: -44px;
+          right: 2px;
+        }
+        .feats {
+          grid-template-columns: 1fr;
+        }
+        .doc-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="<%= pages.first.url %>">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v<%= version %></span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <h1>
+            From prompt<br /><span class="jane">to production.</span><br /><span
+              class="accent"
+              >One gem.</span
+            >
+          </h1>
+          <span class="sub">Agents are just classes now.</span>
+          <p class="lede">
+            Riffer is the all-in-one Ruby framework for AI agents — typed
+            tools, structured output, streaming, and adapters for all major
+            providers.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/guides/getting-started/">Get started</a>
+            <a class="btn" href="/api/">API reference</a>
+          </div>
+          <p class="install"><code>gem install riffer</code></p>
+        </div>
+        <div class="hero-code">
+          <div class="gem-sticker" aria-hidden="true">
+            <span class="sparkle">✦</span>
+            <svg viewBox="-6 -6 212 192">
+              <polygon points="50,20 150,20 120,70 80,70" fill="#6ddfe6" />
+              <polygon points="150,20 190,70 120,70" fill="#027989" />
+              <polygon points="50,20 80,70 10,70" fill="#db97c1" />
+              <polygon points="10,70 80,70 100,170" fill="#a03873" />
+              <polygon points="190,70 120,70 100,170" fill="#013646" />
+              <polygon points="80,70 120,70 100,170" fill="#6b2450" />
+              <g
+                fill="none"
+                stroke="#0e2b33"
+                stroke-width="6"
+                stroke-linejoin="round"
+              >
+                <polygon points="50,20 150,20 190,70 100,170 10,70" />
+                <line x1="80" y1="70" x2="120" y2="70" />
+                <line x1="50" y1="20" x2="80" y2="70" />
+                <line x1="150" y1="20" x2="120" y2="70" />
+                <line x1="10" y1="70" x2="80" y2="70" />
+                <line x1="190" y1="70" x2="120" y2="70" />
+                <line x1="80" y1="70" x2="100" y2="170" />
+                <line x1="120" y1="70" x2="100" y2="170" />
+              </g>
+            </svg>
+          </div>
+          <div class="code-card">
+            <div class="bar">weather_agent.rb</div>
+            <pre><code><span class="k">class</span> <span class="c">WeatherTool</span> &lt; <span class="c">Riffer::Tool</span>
+  description <span class="s">'Current weather for a city'</span>
+
+  params <span class="k">do</span>
+    required :city, <span class="c">String</span>, description: <span class="s">'City name'</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> call(context:, city:)
+    text <span class="c">WeatherAPI</span>.fetch(city).summary
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="c">WeatherAgent</span> &lt; <span class="c">Riffer::Agent</span>
+  model <span class="s">'openai/gpt-5-mini'</span>
+  uses_tools [<span class="c">WeatherTool</span>]
+<span class="k">end</span>
+
+puts <span class="c">WeatherAgent</span>.generate(<span class="s">'Raining in Vancouver?'</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>Everything an agent needs</h2>
+        <p class="sec-sub">
+          One gem covers the full lifecycle — from defining agents and tools to
+          evaluating, guarding, and tracing them in production.
+        </p>
+        <div class="feats">
+          <div class="sticker">
+            <span class="tag">Core</span>
+            <h3>Agents</h3>
+            <p>
+              Declarative classes carry the model, instructions, tools, and
+              output schema.
+            </p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Core</span>
+            <h3>Tools</h3>
+            <p>Typed params with automatic validation before your code runs.</p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Core</span>
+            <h3>Structured output</h3>
+            <p>
+              Schema-validated JSON responses, parsed into Ruby data for you.
+            </p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Runtime</span>
+            <h3>Providers</h3>
+            <p>
+              OpenAI, Azure OpenAI, Amazon Bedrock, Anthropic — plus a mock for
+              tests.
+            </p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Runtime</span>
+            <h3>Streaming</h3>
+            <p>Typed stream events from text deltas to web-search progress.</p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Production</span>
+            <h3>Evals &amp; guardrails</h3>
+            <p>
+              Measure agent quality and validate input and output at the
+              boundary.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="docs">
+      <div class="wrap">
+        <h2>The guides</h2>
+        <p class="sec-sub">
+          Read them in order, or jump straight to your topic.
+        </p>
+        <%- groups.each do |group| -%>
+
+        <span class="group-label <%= group.tone %>"><%= group.label %></span>
+        <div class="doc-grid">
+          <%- group.pages.each do |page| -%>
+          <a class="doc<%= " featured" if page.featured %>" href="<%= page.url %>"
+            ><span class="num"><%= page.num %></span
+            ><span
+              ><span class="name"><%= page.title %></span
+              ><span class="desc"><%= page.description %></span></span
+            ><span class="go">→</span></a
+          >
+          <%- end -%>
+        </div>
+        <%- end -%>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span
+          ><a href="https://github.com/janeapp/riffer"
+            >github.com/janeapp/riffer</a
+          ></span
+        >
+      </div>
+    </footer>
+  </body>
+</html>

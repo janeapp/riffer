@@ -121,7 +121,7 @@ Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four
 
 The `riffer.tripwire.*` attributes are the run-level summary of the guardrail that halted the run; `riffer.tripwire.guardrail` carries the same name value as the blocking [`execute_guardrail`](#execute_guardrail-name--the-guardrail-span) span's `riffer.guardrail.name`, so the two join on a single key.
 
-Usage on this span is the run total, aggregated across every step. See [Token usage](#token-usage) for the trap this creates.
+Usage on this span is the run total, aggregated across every step. See [Token usage](#token-usage-and-cost) for the trap this creates.
 
 ## `chat {model}` — the LLM call span
 

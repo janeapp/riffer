@@ -25,6 +25,12 @@ gem "steep", "~> 2.0"
 gem "vcr", "~> 6.0"
 gem "webmock", "~> 3.0"
 
+# Docs site build (docs-site/build.rb, rake docs:*). Rouge is pinned below 5
+# because kramdown's rouge integration trips deprecation warnings on rouge 5.
+gem "kramdown"
+gem "kramdown-parser-gfm"
+gem "rouge", "~> 4.6"
+
 # Tracing tests assert real spans via the SDK's in-memory exporter. Lives in a
 # Gemfile group (not gemspec dev deps) so the no-OTEL CI lane can exclude it
 # with BUNDLE_WITHOUT and prove the Null fallback.

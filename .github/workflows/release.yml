@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
     permissions:
       contents: write
       pull-requests: write
@@ -38,7 +40,11 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     needs: release
-    if: ${{ needs.release.outputs.release_created == 'true' }}
+    # always() lets a manual dispatch deploy docs even though the release job
+    # is skipped for that event. The ref gate keeps docs deploying only ever
+    # from main — the deploy force-pushes gh-pages, so a dispatch from a
+    # feature branch would overwrite the live site with WIP docs.
+    if: ${{ always() && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || needs.release.outputs.release_created == 'true') }}
     permissions:
       contents: write
     steps:
@@ -50,4 +56,4 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@65b5dfd4f5bcd3a7403bbc2959c144256167464e
         with:
           branch: gh-pages
-          folder: ./doc
+          folder: ./_site

@@ -4,8 +4,8 @@ _yardoc
 .env
 .vscode
 .yardo
+_site
 coverage
-doc
 pkg
 test/reports
 tmp

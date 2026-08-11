@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page not found — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <style>
+      .lost {
+        padding: 96px 0 120px;
+      }
+      .lost .chapter {
+        display: inline-block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 2px solid var(--ink);
+        border-radius: 99px;
+        padding: 2px 10px;
+        background: #f3d0e5;
+      }
+      .lost h1 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 800;
+        font-size: clamp(42px, 6vw, 72px);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        margin: 14px 0 18px;
+      }
+      .lost p {
+        color: var(--muted);
+        max-width: 52ch;
+        margin-bottom: 32px;
+      }
+      .cta-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        padding: 13px 26px;
+        border: 3px solid var(--ink);
+        border-radius: 99px;
+        box-shadow: 4px 4px 0 var(--ink);
+        transition:
+          transform 0.12s,
+          box-shadow 0.12s;
+        background: #fff;
+      }
+      .btn:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--ink);
+      }
+      .btn-primary {
+        background: var(--jane);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap lost">
+      <span class="chapter">Error · 404</span>
+      <h1>Page not found</h1>
+      <p>
+        This page doesn't exist — it may have moved, or the link is out of
+        date. The guides and API reference have everything that does exist.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/">Back home</a>
+        <a class="btn" href="/guides/overview/">Read the guides</a>
+        <a class="btn" href="/api/">API reference</a>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

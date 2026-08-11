@@ -32,7 +32,7 @@ Riffer.config.anthropic.api_key
 
 ## Provider-Specific Configuration
 
-For provider credentials and setup, see the individual [Provider guides](providers/).
+For provider credentials and setup, see the individual [Provider guides](providers/01_PROVIDERS.md).
 
 ### MCP (Model Context Protocol)
 
