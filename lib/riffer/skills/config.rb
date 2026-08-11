@@ -28,6 +28,7 @@ class Riffer::Skills::Config
   #: (?(Riffer::Skills::Backend | Proc)?) -> (Riffer::Skills::Backend | Proc)?
   def backend(value = nil)
     return @backend if value.nil?
+
     @backend = value
   end
 
@@ -37,6 +38,7 @@ class Riffer::Skills::Config
   #: (?singleton(Riffer::Skills::Adapter)?) -> singleton(Riffer::Skills::Adapter)?
   def adapter(value = nil)
     return @adapter if value.nil?
+
     @adapter = value
   end
 
@@ -47,6 +49,7 @@ class Riffer::Skills::Config
   #: (?(Array[String] | Proc)?) -> (Array[String] | Proc)?
   def activate(value = nil)
     return @activate if value.nil?
+
     @activate = value
   end
 
@@ -58,7 +61,10 @@ class Riffer::Skills::Config
   #: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
   def activate_tool(value = nil)
     return @activate_tool if value.nil?
-    raise Riffer::ArgumentError, "activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+    unless value.is_a?(Class) && value < Riffer::Tool
+      raise Riffer::ArgumentError, "activate_tool must be a Riffer::Tool subclass"
+    end
+
     @activate_tool = value
   end
 end

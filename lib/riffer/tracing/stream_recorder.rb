@@ -47,7 +47,11 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
     when Riffer::StreamEvents::TextDone
       @content = event.content
     when Riffer::StreamEvents::ToolCallDone
-      @tool_calls << Riffer::Messages::Assistant::ToolCall.new(call_id: event.call_id, name: event.name, arguments: event.arguments)
+      @tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+        call_id: event.call_id,
+        name: event.name,
+        arguments: event.arguments,
+      )
     when Riffer::StreamEvents::TokenUsageDone
       @token_usage = event.token_usage
     when Riffer::StreamEvents::FinishReasonDone

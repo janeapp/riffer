@@ -12,16 +12,12 @@ class Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
 
-    unless msg.is_a?(Hash)
-      raise Riffer::ArgumentError, "Message must be a Hash or Message object, got #{msg.class}"
-    end
+    raise Riffer::ArgumentError, "Message must be a Hash or Message object, got #{msg.class}" unless msg.is_a?(Hash)
 
     role = msg[:role]
     content = msg[:content]
 
-    if role.nil? || role.empty?
-      raise Riffer::ArgumentError, "Message hash must include a 'role' key"
-    end
+    raise Riffer::ArgumentError, "Message hash must include a 'role' key" if role.nil? || role.empty?
 
     id = msg[:id]
 
@@ -30,12 +26,18 @@ class Riffer::Messages::Base
       files = (msg[:files] || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
       Riffer::Messages::User.new(content, id: id, files: files)
     when :assistant
-      tool_calls = (msg[:tool_calls] || []).map { |tc|
+      tool_calls = (msg[:tool_calls] || []).map do |tc|
         tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
-      }
+      end
       structured_output = msg[:structured_output]
       finish_reason = msg[:finish_reason]&.to_sym
-      Riffer::Messages::Assistant.new(content, id: id, tool_calls: tool_calls, structured_output: structured_output, finish_reason: finish_reason)
+      Riffer::Messages::Assistant.new(
+        content,
+        id: id,
+        tool_calls: tool_calls,
+        structured_output: structured_output,
+        finish_reason: finish_reason,
+      )
     when :system
       Riffer::Messages::System.new(content, id: id)
     when :tool
@@ -65,8 +67,8 @@ class Riffer::Messages::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = {role: role, content: content}
-    hash[:id] = id unless id.nil?
+    hash = { role: role, content: content }
+    hash[:id] = id if id
     hash
   end
 

@@ -8,7 +8,7 @@ module Riffer::Agent::Session::Repair
   extend self
 
   # Placeholder response filled in for an orphaned +tool_use+ on interrupt.
-  ORPHAN_PLACEHOLDER = ->(_tool_call) {
+  ORPHAN_PLACEHOLDER = lambda { |_tool_call|
     Riffer::Tools::Response.error("Tool call interrupted before completion.", type: :interrupted)
   } #: ^(Riffer::Messages::Assistant::ToolCall) -> Riffer::Tools::Response
 
@@ -36,7 +36,7 @@ module Riffer::Agent::Session::Repair
           tool_call_id: tc.call_id,
           name: tc.name,
           error: response.error_message,
-          error_type: response.error_type
+          error_type: response.error_type,
         )
         filled << tc.call_id
       end
@@ -54,25 +54,26 @@ module Riffer::Agent::Session::Repair
   def prune_orphans(messages)
     return messages unless Riffer.config.experimental_history_healing
 
-    resume_boundary = (messages.length - 1).downto(0).find { |idx|
+    resume_boundary = (messages.length - 1).downto(0).find do |idx|
       m = messages[idx]
       m.is_a?(Riffer::Messages::Assistant) &&
-        (messages[(idx + 1)..] || []).all? { |later| later.is_a?(Riffer::Messages::Tool) }
-    }
+        (messages[(idx + 1)..] || []).all?(Riffer::Messages::Tool)
+    end
 
     result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
-    parent_ids = messages.flat_map { |m|
+    parent_ids = messages.flat_map do |m|
       m.is_a?(Riffer::Messages::Assistant) ? m.tool_calls.map(&:call_id) : []
-    }
+    end
 
-    strip_offenders = messages.each_with_index.flat_map { |m, idx|
+    strip_offenders = messages.each_with_index.flat_map do |m, idx|
       next [] unless m.is_a?(Riffer::Messages::Assistant) && !m.tool_calls.empty?
       next [] if idx == resume_boundary # preserve pending exchange
       next [] if m.tool_calls.all? { |tc| result_ids.include?(tc.call_id) }
-      m.tool_calls.map(&:call_id)
-    }
 
-    messages.reject { |m|
+      m.tool_calls.map(&:call_id)
+    end
+
+    messages.reject do |m|
       case m
       when Riffer::Messages::Assistant
         !m.tool_calls.empty? && m.tool_calls.any? { |tc| strip_offenders.include?(tc.call_id) }
@@ -81,6 +82,6 @@ module Riffer::Agent::Session::Repair
       else
         false
       end
-    }
+    end
   end
 end

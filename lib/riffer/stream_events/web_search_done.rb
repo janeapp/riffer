@@ -20,6 +20,6 @@ class Riffer::StreamEvents::WebSearchDone < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, query: @query, sources: @sources}
+    { role: @role, query: @query, sources: @sources }
   end
 end

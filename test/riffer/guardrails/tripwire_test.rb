@@ -8,8 +8,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "PII detected",
         guardrail: Riffer::Guardrail,
-        phase: :before
+        phase: :before,
       )
+
       expect(tripwire.reason).must_equal "PII detected"
     end
 
@@ -17,8 +18,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :before
+        phase: :before,
       )
+
       expect(tripwire.guardrail).must_equal Riffer::Guardrail
     end
 
@@ -26,8 +28,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :after
+        phase: :after,
       )
+
       expect(tripwire.phase).must_equal :after
     end
 
@@ -35,8 +38,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :before
+        phase: :before,
       )
+
       expect(tripwire.phase).must_equal :before
     end
 
@@ -44,8 +48,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :after
+        phase: :after,
       )
+
       expect(tripwire.phase).must_equal :after
     end
 
@@ -54,7 +59,7 @@ describe Riffer::Guardrails::Tripwire do
         Riffer::Guardrails::Tripwire.new(
           reason: "blocked",
           guardrail: Riffer::Guardrail,
-          phase: :invalid
+          phase: :invalid,
         )
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/Invalid phase/)
@@ -65,17 +70,19 @@ describe Riffer::Guardrails::Tripwire do
         reason: "blocked",
         guardrail: Riffer::Guardrail,
         phase: :before,
-        metadata: {detected: [:email]}
+        metadata: { detected: [:email] },
       )
-      expect(tripwire.metadata).must_equal({detected: [:email]})
+
+      expect(tripwire.metadata).must_equal({ detected: [:email] })
     end
 
     it "allows nil metadata" do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :before
+        phase: :before,
       )
+
       expect(tripwire.metadata).must_be_nil
     end
   end
@@ -86,9 +93,10 @@ describe Riffer::Guardrails::Tripwire do
         reason: "PII detected",
         guardrail: Riffer::Guardrail,
         phase: :before,
-        metadata: {types: [:email]}
+        metadata: { types: [:email] },
       )
       hash = tripwire.to_h
+
       expect(hash[:reason]).must_equal "PII detected"
     end
 
@@ -96,8 +104,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :after
+        phase: :after,
       )
+
       expect(tripwire.to_h[:guardrail]).must_be_kind_of String
       expect(tripwire.to_h[:guardrail]).wont_be_empty
     end
@@ -106,8 +115,9 @@ describe Riffer::Guardrails::Tripwire do
       tripwire = Riffer::Guardrails::Tripwire.new(
         reason: "blocked",
         guardrail: Riffer::Guardrail,
-        phase: :before
+        phase: :before,
       )
+
       expect(tripwire.to_h[:phase]).must_equal :before
     end
 
@@ -116,9 +126,10 @@ describe Riffer::Guardrails::Tripwire do
         reason: "blocked",
         guardrail: Riffer::Guardrail,
         phase: :before,
-        metadata: {key: "value"}
+        metadata: { key: "value" },
       )
-      expect(tripwire.to_h[:metadata]).must_equal({key: "value"})
+
+      expect(tripwire.to_h[:metadata]).must_equal({ key: "value" })
     end
   end
 end

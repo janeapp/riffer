@@ -20,6 +20,7 @@ describe Riffer::Mcp::Registration do
   describe "#manifest" do
     it "returns the manifest" do
       reg = build_stub_registration(manifest)
+
       assert_equal manifest, reg.manifest
     end
   end
@@ -27,12 +28,14 @@ describe Riffer::Mcp::Registration do
   describe "#tools" do
     it "returns empty array before discovery" do
       reg = build_stub_registration(manifest)
+
       assert_empty reg.tools
     end
 
     it "returns tool classes after discovery" do
       tool_class = Class.new(Riffer::Tool)
       reg = build_stub_registration(manifest, tools: [tool_class])
+
       assert_equal [tool_class], reg.tools
     end
   end
@@ -40,13 +43,15 @@ describe Riffer::Mcp::Registration do
   describe "#retired?" do
     it "returns false initially" do
       reg = build_stub_registration(manifest)
-      refute reg.retired?
+
+      refute_predicate reg, :retired?
     end
 
     it "returns true after retire!" do
       reg = build_stub_registration(manifest)
       reg.retire!
-      assert reg.retired?
+
+      assert_predicate reg, :retired?
     end
   end
 
@@ -54,7 +59,8 @@ describe Riffer::Mcp::Registration do
     it "sets the cancelled flag" do
       reg = build_stub_registration(manifest)
       reg.retire!
-      assert reg.retired?
+
+      assert_predicate reg, :retired?
     end
 
     it "prevents in-flight discovery from publishing state" do
@@ -69,11 +75,11 @@ describe Riffer::Mcp::Registration do
         def build_client
           client = Object.new
           l = @latch
-          client.define_singleton_method(:tools_list) {
+          client.define_singleton_method(:tools_list) do
             l.lock
             l.unlock
             []
-          }
+          end
           client
         end
       end
@@ -135,7 +141,8 @@ describe Riffer::Mcp::Registration do
 
   describe "discovery" do
     it "populates tools when discovery succeeds" do
-      td = {name: "ping", description: "Ping", input_schema: {type: "object", properties: {}, required: [], additionalProperties: false}}
+      td = { name: "ping", description: "Ping",
+             input_schema: { type: "object", properties: {}, required: [], additionalProperties: false }, }
       fake_client = Object.new
       fake_client.define_singleton_method(:tools_list) { [td] }
 

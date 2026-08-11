@@ -44,14 +44,12 @@ module Riffer::Mcp::AuthenticatedTool
 
       define_method(:call) do |context:, **kwargs|
         cred = Riffer.config.mcp.credentials
-        unless cred
-          next inner.new.call(context: context, **kwargs)
-        end
+        next inner.new.call(context: context, **kwargs) unless cred
 
         headers = cred.call(manifest: man, matched_tags: tags, context: context)
         if headers.nil?
           raise Riffer::Mcp::CredentialsDeniedError,
-            "MCP credentials returned nil for server '#{man.name}' during tools/call"
+                "MCP credentials returned nil for server '#{man.name}' during tools/call"
         end
 
         client = build_call_client(man.endpoint, headers)

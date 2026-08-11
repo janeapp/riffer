@@ -7,16 +7,19 @@ describe Riffer::Tracing::NoOp do
     it "yields the frozen no-op span" do
       yielded = nil
       Riffer::Tracing::NoOp.in_span("test") { |span| yielded = span }
+
       expect(yielded).must_be_same_as Riffer::Tracing::NoOp::SPAN
     end
 
     it "returns the block's value" do
       result = Riffer::Tracing::NoOp.in_span("test") { :value }
+
       expect(result).must_equal :value
     end
 
     it "ignores span options" do
-      result = Riffer::Tracing::NoOp.in_span("test", attributes: {"key" => "value"}, kind: :client) { :value }
+      result = Riffer::Tracing::NoOp.in_span("test", attributes: { "key" => "value" }, kind: :client) { :value }
+
       expect(result).must_equal :value
     end
   end
@@ -30,6 +33,7 @@ describe Riffer::Tracing::NoOp do
   describe "#with_context" do
     it "returns the block's value" do
       result = Riffer::Tracing::NoOp.with_context(nil) { :value }
+
       expect(result).must_equal :value
     end
   end
@@ -46,7 +50,7 @@ describe Riffer::Tracing::NoOp do
     it "accepts every span operation without error" do
       span = Riffer::Tracing::NoOp::SPAN
       span.set_attribute("key", "value")
-      span.add_event("event", attributes: {"key" => "value"})
+      span.add_event("event", attributes: { "key" => "value" })
       span.record_exception(Riffer::Error.new("boom"))
       span.error!("boom")
     end

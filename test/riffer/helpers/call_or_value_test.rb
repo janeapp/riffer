@@ -14,11 +14,13 @@ describe Riffer::Helpers::CallOrValue do
 
     it "returns an Array value unchanged" do
       array = [1, 2, 3]
+
       assert_same array, Riffer::Helpers::CallOrValue.resolve(array, context: {})
     end
 
     it "returns a Hash value unchanged" do
-      hash = {a: 1}
+      hash = { a: 1 }
+
       assert_same hash, Riffer::Helpers::CallOrValue.resolve(hash, context: {})
     end
 
@@ -32,39 +34,46 @@ describe Riffer::Helpers::CallOrValue do
 
     it "does not return the default when a proc returns nil" do
       result = Riffer::Helpers::CallOrValue.resolve(-> {}, context: {}, default: :unused)
+
       assert_nil result
     end
 
     it "calls an arity-0 lambda with no arguments" do
-      result = Riffer::Helpers::CallOrValue.resolve(-> { :no_args }, context: {ignored: true})
+      result = Riffer::Helpers::CallOrValue.resolve(-> { :no_args }, context: { ignored: true })
+
       assert_equal :no_args, result
     end
 
     it "calls an arity-0 proc with no arguments" do
-      result = Riffer::Helpers::CallOrValue.resolve(proc { :no_args }, context: {ignored: true})
+      result = Riffer::Helpers::CallOrValue.resolve(proc { :no_args }, context: { ignored: true })
+
       assert_equal :no_args, result
     end
 
     it "calls an arity-1 lambda with the supplied context" do
-      ctx = {user_id: 7}
+      ctx = { user_id: 7 }
       result = Riffer::Helpers::CallOrValue.resolve(->(c) { c[:user_id] }, context: ctx)
+
       assert_equal 7, result
     end
 
     it "calls an arity-1 proc with the supplied context" do
-      ctx = {user_id: 7}
+      ctx = { user_id: 7 }
       result = Riffer::Helpers::CallOrValue.resolve(proc { |c| c[:user_id] }, context: ctx)
+
       assert_equal 7, result
     end
 
     it "defaults context to nil and passes nil to arity-1 procs" do
-      result = Riffer::Helpers::CallOrValue.resolve(->(c) { c.inspect })
-      assert_equal "nil", result
+      result = Riffer::Helpers::CallOrValue.resolve(->(c) { [c] })
+
+      assert_equal [nil], result
     end
 
     it "treats a variadic proc as non-zero arity and passes context" do
-      ctx = {a: 1}
+      ctx = { a: 1 }
       result = Riffer::Helpers::CallOrValue.resolve(->(*args) { args }, context: ctx)
+
       assert_equal [ctx], result
     end
   end

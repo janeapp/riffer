@@ -11,23 +11,19 @@ module Riffer::Tracing::NoOp # :nodoc: all
   class Span
     #--
     #: (String, untyped) -> void
-    def set_attribute(key, value)
-    end
+    def set_attribute(key, value); end
 
     #--
     #: (String, ?attributes: Hash[String, untyped]?) -> void
-    def add_event(name, attributes: nil)
-    end
+    def add_event(name, attributes: nil); end
 
     #--
     #: (Exception) -> void
-    def record_exception(exception)
-    end
+    def record_exception(exception); end
 
     #--
     #: (?String) -> void
-    def error!(description = "")
-    end
+    def error!(description = ""); end
 
     #--
     #: () -> bool

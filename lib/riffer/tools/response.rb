@@ -36,10 +36,10 @@ class Riffer::Tools::Response
   #: (untyped, ?format: Symbol) -> Riffer::Tools::Response
   def self.success(result, format: :text)
     unless VALID_FORMATS.include?(format)
-      raise Riffer::ArgumentError, "Invalid format: #{format}. Must be one of: #{VALID_FORMATS.join(", ")}"
+      raise Riffer::ArgumentError, "Invalid format: #{format}. Must be one of: #{VALID_FORMATS.join(', ')}"
     end
 
-    content = (format == :json) ? result.to_json : result.to_s
+    content = format == :json ? result.to_json : result.to_s
     new(content: content, success: true)
   end
 
@@ -82,7 +82,7 @@ class Riffer::Tools::Response
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {content: @content, error: @error_message, error_type: @error_type}
+    { content: @content, error: @error_message, error_type: @error_type }
   end
 
   private

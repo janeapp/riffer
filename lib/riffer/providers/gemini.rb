@@ -26,7 +26,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "PROHIBITED_CONTENT" => :content_filter,
     "SPII" => :content_filter,
     "IMAGE_SAFETY" => :content_filter,
-    "MALFORMED_FUNCTION_CALL" => :error
+    "MALFORMED_FUNCTION_CALL" => :error,
   }.freeze #: Hash[String, Symbol]
 
   # The GenAI semconv well-known provider name.
@@ -38,7 +38,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   #--
   #: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-  def initialize(api_key: nil, open_timeout: nil, read_timeout: nil, **options)
+  def initialize(api_key: nil, open_timeout: nil, read_timeout: nil, **_options)
+    super()
     api_key ||= Riffer.config.gemini.api_key
     @api_key = api_key
     @open_timeout = open_timeout || Riffer.config.gemini.open_timeout || DEFAULT_OPEN_TIMEOUT
@@ -56,14 +57,14 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     params = {
       model: model,
-      contents: partitioned[:contents]
+      contents: partitioned[:contents],
     } #: Hash[Symbol, untyped]
 
     params[:systemInstruction] = partitioned[:system_instruction] if partitioned[:system_instruction]
 
     if tools && !tools.empty?
       params[:tools] = [{
-        functionDeclarations: tools.map { |t| convert_tool_to_gemini_format(t) }
+        functionDeclarations: tools.map { |t| convert_tool_to_gemini_format(t) },
       }]
     end
 
@@ -115,7 +116,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: "gemini_call_#{SecureRandom.hex(12)}",
         name: fc[:name],
-        arguments: encode_tool_arguments(fc[:args])
+        arguments: encode_tool_arguments(fc[:args]),
       )
     end
   end
@@ -133,7 +134,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(response)
     parts = response.dig(:candidates, 0, :content, :parts)
-    has_function_call = !!parts&.any? { |part| part[:functionCall] }
+    has_function_call = parts&.any? { |part| part[:functionCall] } || false
     build_finish_reason(response.dig(:candidates, 0, :finishReason), tool_calls: has_function_call)
   end
 
@@ -155,11 +156,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-      input_tokens: usage[:promptTokenCount] || 0,
-      output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
-      cache_read_tokens: usage[:cachedContentTokenCount]
-    ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage[:promptTokenCount] || 0,
+        output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
+        cache_read_tokens: usage[:cachedContentTokenCount],
+      ),
+    )
   end
 
   #--
@@ -168,7 +171,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     model = params[:model]
     body = params.except(:model)
 
-    uri = URI("#{BASE_URI}/#{api_path(model, "streamGenerateContent")}?alt=sse")
+    uri = URI("#{BASE_URI}/#{api_path(model, 'streamGenerateContent')}?alt=sse")
     host = uri.hostname #: String
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
@@ -207,7 +210,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
               item_id: call_id,
               call_id: call_id,
               name: fc[:name],
-              arguments: arguments
+              arguments: arguments,
             )
           end
         end
@@ -246,14 +249,14 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     messages.each do |message|
       case message
       when Riffer::Messages::System
-        system_parts << {text: message.content}
+        system_parts << { text: message.content }
       when Riffer::Messages::User
         if message.files.empty?
-          contents << {role: "user", parts: [{text: message.content}]}
+          contents << { role: "user", parts: [{ text: message.content }] }
         else
-          parts = [{text: message.content}]
+          parts = [{ text: message.content }]
           message.files.each { |file| parts << convert_file_part_to_gemini_format(file) }
-          contents << {role: "user", parts: parts}
+          contents << { role: "user", parts: parts }
         end
       when Riffer::Messages::Assistant
         contents << convert_assistant_to_gemini_format(message)
@@ -263,15 +266,15 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           parts: [{
             functionResponse: {
               name: message.name,
-              response: {result: message.content}
-            }
-          }]
+              response: { result: message.content },
+            },
+          }],
         }
       end
     end
 
-    result = {contents: contents} #: Hash[Symbol, untyped]
-    result[:system_instruction] = {parts: system_parts} unless system_parts.empty?
+    result = { contents: contents } #: Hash[Symbol, untyped]
+    result[:system_instruction] = { parts: system_parts } unless system_parts.empty?
     result
   end
 
@@ -279,18 +282,18 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
     parts = [] #: Array[Hash[Symbol, untyped]]
-    parts << {text: message.content} if message.content && !message.content.empty?
+    parts << { text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
       parts << {
         functionCall: {
           name: tc.name,
-          args: parse_tool_arguments(tc.arguments)
-        }
+          args: parse_tool_arguments(tc.arguments),
+        },
       }
     end
 
-    {role: "model", parts: parts}
+    { role: "model", parts: parts }
   end
 
   #--
@@ -298,10 +301,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def convert_file_part_to_gemini_format(file)
     if file.url?
       raise Riffer::ArgumentError,
-        "Gemini provider does not support URL-based file references. Provide base64-encoded data instead."
+            "Gemini provider does not support URL-based file references. Provide base64-encoded data instead."
     end
 
-    {inlineData: {mimeType: file.media_type, data: file.data}}
+    { inlineData: { mimeType: file.media_type, data: file.data } }
   end
 
   #--
@@ -310,7 +313,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     {
       name: tool.name,
       description: tool.description,
-      parameters: strip_additional_properties(tool.parameters_schema)
+      parameters: strip_additional_properties(tool.parameters_schema),
     }
   end
 
@@ -346,7 +349,9 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def validate_model!(model)
     return if model.match?(VALID_MODEL_PATTERN)
 
-    raise Riffer::ArgumentError, "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, hyphens, dots, and underscores."
+    raise Riffer::ArgumentError,
+          "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, " \
+          "hyphens, dots, and underscores."
   end
 
   #--
@@ -361,9 +366,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    if schema[:items].is_a?(Hash)
-      schema[:items] = strip_additional_properties(schema[:items])
-    end
+    schema[:items] = strip_additional_properties(schema[:items]) if schema[:items].is_a?(Hash)
 
     schema
   end
@@ -374,7 +377,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     body = begin
       JSON.parse(response.body, symbolize_names: true)
     rescue JSON::ParserError
-      {message: response.body}
+      { message: response.body }
     end
     error_message = body.dig(:error, :message) || body[:message] || response.body
     raise Riffer::Error, "Gemini API error (#{response.code}): #{error_message}"

@@ -23,6 +23,7 @@ describe Riffer::Mcp do
     it "delegates to Registry and returns a Registration" do
       inject_stub_registration(name: "srv", tags: [:t])
       reg = Riffer::Mcp.registrations["srv"]
+
       assert_instance_of Riffer::Mcp::Registration, reg
     end
   end
@@ -31,6 +32,7 @@ describe Riffer::Mcp do
     it "removes the registration" do
       inject_stub_registration(name: "srv")
       Riffer::Mcp.unregister("srv")
+
       refute Riffer::Mcp.registrations.key?("srv")
     end
   end
@@ -43,11 +45,11 @@ describe Riffer::Mcp do
 
   describe "error hierarchy" do
     it "CredentialsDeniedError is a Riffer::Mcp::Error" do
-      assert Riffer::Mcp::CredentialsDeniedError < Riffer::Mcp::Error
+      assert_operator Riffer::Mcp::CredentialsDeniedError, :<, Riffer::Mcp::Error
     end
 
     it "Mcp::Error is a Riffer::Error" do
-      assert Riffer::Mcp::Error < Riffer::Error
+      assert_operator Riffer::Mcp::Error, :<, Riffer::Error
     end
   end
 end

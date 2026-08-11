@@ -24,7 +24,7 @@ class Riffer::Evals::Judge
     #--
     #: (context: Riffer::Agent::Context?, score: Float, reason: String) -> Riffer::Tools::Response
     def call(context:, score:, reason:)
-      json({score: score, reason: reason})
+      json({ score: score, reason: reason })
     end
   end
 
@@ -55,7 +55,7 @@ class Riffer::Evals::Judge
       system: system_message,
       prompt: user_message,
       model: model_name,
-      tools: [EvaluationTool]
+      tools: [EvaluationTool],
     )
 
     parse_tool_response(response)
@@ -91,6 +91,7 @@ class Riffer::Evals::Judge
     @provider_instance ||= begin
       provider_class = Riffer::Providers::Repository.find(provider_name)
       raise Riffer::ArgumentError, "Provider not found: #{provider_name}" unless provider_class
+
       provider_class.new(**@provider_options)
     end
   end
@@ -122,7 +123,7 @@ class Riffer::Evals::Judge
     {
       score: score.to_f,
       reason: reason,
-      token_usage: response.token_usage
+      token_usage: response.token_usage,
     }
   rescue JSON::ParserError => e
     raise Riffer::Error, "Invalid judge response: #{e.message}"

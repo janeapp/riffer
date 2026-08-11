@@ -3,18 +3,20 @@
 require "test_helper"
 
 describe Riffer::Mcp::ToolFactory do
-  let(:schema) { {type: "object", properties: {query: {type: "string"}}, required: ["query"], additionalProperties: false} }
+  let(:schema) do
+    { type: "object", properties: { query: { type: "string" } }, required: ["query"], additionalProperties: false }
+  end
 
   let(:tool_defs) do
     [
-      {name: "search", description: "Search the web", input_schema: schema},
-      {name: "calculator", description: "Do math", input_schema: nil}
+      { name: "search", description: "Search the web", input_schema: schema },
+      { name: "calculator", description: "Do math", input_schema: nil },
     ]
   end
 
   let(:fake_client) do
     client = Object.new
-    client.define_singleton_method(:tools_call) { |name, args| "result from #{name}" }
+    client.define_singleton_method(:tools_call) { |name, _args| "result from #{name}" }
     client
   end
 
@@ -26,7 +28,7 @@ describe Riffer::Mcp::ToolFactory do
     end
 
     it "returns Riffer::Mcp::Tool subclasses" do
-      tool_classes.each { |klass| assert klass < Riffer::Mcp::Tool }
+      tool_classes.each { |klass| assert_operator klass, :<, Riffer::Mcp::Tool }
     end
   end
 
@@ -65,6 +67,7 @@ describe Riffer::Mcp::ToolFactory do
       it "returns empty schema when input_schema is nil" do
         calc_class = tool_classes.last
         result = calc_class.parameters_schema
+
         assert_equal "object", result[:type]
         assert_empty result[:properties]
       end
@@ -78,6 +81,7 @@ describe Riffer::Mcp::ToolFactory do
       it "delegates to the MCP client and returns a text response" do
         tool = search_class.new
         result = tool.call(context: nil, query: "ruby")
+
         assert_instance_of Riffer::Tools::Response, result
         assert_equal "result from search", result.content
       end
@@ -85,25 +89,40 @@ describe Riffer::Mcp::ToolFactory do
       it "passes kwargs as arguments to tools_call" do
         received_args = nil
         client = Object.new
-        client.define_singleton_method(:tools_call) { |name, args|
+        client.define_singleton_method(:tools_call) do |_name, args|
           received_args = args
           "ok"
-        }
-        klass = Riffer::Mcp::ToolFactory.build("srv", client, [{name: "t", description: "T", input_schema: nil}]).first
+        end
+        klass = Riffer::Mcp::ToolFactory.build(
+          "srv",
+          client,
+          [{ name: "t", description: "T", input_schema: nil }],
+        ).first
         klass.new.call(context: nil, key: "value")
-        assert_equal({key: "value"}, received_args)
+
+        assert_equal({ key: "value" }, received_args)
       end
     end
   end
 
   describe "name sanitization" do
     it "replaces spaces and special characters with underscores" do
-      tools = Riffer::Mcp::ToolFactory.build("my server!", fake_client, [{name: "get items", description: "G", input_schema: nil}])
+      tools = Riffer::Mcp::ToolFactory.build(
+        "my server!",
+        fake_client,
+        [{ name: "get items", description: "G", input_schema: nil }],
+      )
+
       assert_equal "my_server___get_items", tools.first.name
     end
 
     it "preserves hyphens and underscores" do
-      tools = Riffer::Mcp::ToolFactory.build("my-srv_1", fake_client, [{name: "get-items_v2", description: "G", input_schema: nil}])
+      tools = Riffer::Mcp::ToolFactory.build(
+        "my-srv_1",
+        fake_client,
+        [{ name: "get-items_v2", description: "G", input_schema: nil }],
+      )
+
       assert_equal "my-srv_1__get-items_v2", tools.first.name
     end
   end

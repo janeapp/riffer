@@ -48,7 +48,8 @@ module Riffer::Evals::EvaluatorRunner
     evaluators.each do |evaluator_class|
       next if evaluator_class.is_a?(Class) && evaluator_class < Riffer::Evals::Evaluator
 
-      raise Riffer::ArgumentError, "each evaluator must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}"
+      raise Riffer::ArgumentError,
+            "each evaluator must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}"
     end
   end
 
@@ -74,7 +75,7 @@ module Riffer::Evals::EvaluatorRunner
       ground_truth: ground_truth,
       results: results,
       messages: messages,
-      token_usage: token_usage
+      token_usage: token_usage,
     )
   end
 end

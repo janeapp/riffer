@@ -32,6 +32,7 @@ class Riffer::Agent::Session
   #: () { (Riffer::Messages::Base) -> void } -> self
   def on_message(&block)
     raise Riffer::ArgumentError, "on_message requires a block" unless block_given?
+
     @callbacks << block
     self
   end
@@ -76,7 +77,7 @@ class Riffer::Agent::Session
     target = @messages[idx]
     if target.is_a?(Riffer::Messages::Tool)
       raise Riffer::ArgumentError,
-        "remove cannot drop a Tool message (would orphan the parent's tool_use); use #update instead"
+            "remove cannot drop a Tool message (would orphan the parent's tool_use); use #update instead"
     end
 
     if target.is_a?(Riffer::Messages::Assistant) && !target.tool_calls.empty?
@@ -100,10 +101,10 @@ class Riffer::Agent::Session
     raise Riffer::ArgumentError, "update accepts id: or tool_call_id:, not both" if id && tool_call_id
 
     idx = if id
-      @messages.index { |m| m.id == id }
-    else
-      @messages.index { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == tool_call_id }
-    end
+            @messages.index { |m| m.id == id }
+          else
+            @messages.index { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == tool_call_id }
+          end
 
     unless idx
       key = id ? "id #{id.inspect}" : "tool_call_id #{tool_call_id.inspect}"
@@ -124,10 +125,11 @@ class Riffer::Agent::Session
   #: () -> Array[String]
   def orphaned_tool_call_ids
     result_ids = @messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
-    @messages.flat_map { |m|
+    @messages.flat_map do |m|
       next [] unless m.is_a?(Riffer::Messages::Assistant)
+
       m.tool_calls.reject { |tc| result_ids.include?(tc.call_id) }.map(&:call_id)
-    }
+    end
   end
 
   # Returns +[last_assistant, pending_tool_calls]+; the second element is empty
@@ -141,9 +143,9 @@ class Riffer::Agent::Session
     assistant = @messages[last_assistant_idx] #: Riffer::Messages::Assistant
     return [assistant, []] if assistant.tool_calls.empty?
 
-    executed_ids = (@messages[(last_assistant_idx + 1)..] || []).filter_map { |m|
+    executed_ids = (@messages[(last_assistant_idx + 1)..] || []).filter_map do |m|
       m.tool_call_id if m.is_a?(Riffer::Messages::Tool)
-    }
+    end
 
     [assistant, assistant.tool_calls.reject { |tc| executed_ids.include?(tc.call_id) }]
   end
@@ -154,6 +156,7 @@ class Riffer::Agent::Session
   #: () { (Riffer::Messages::Base) -> void } -> untyped
   def each(&block)
     return @messages.each unless block
+
     @messages.each(&block)
   end
 
@@ -172,9 +175,7 @@ class Riffer::Agent::Session
   #: () -> Riffer::Messages::Assistant?
   def final_assistant_message
     # TODO: Replace with rfind when minimum Ruby is 4.0+
-    # rubocop:disable Style/ReverseFind
     @messages.reverse_each.find { |m| m.is_a?(Riffer::Messages::Assistant) } #: Riffer::Messages::Assistant?
-    # rubocop:enable Style/ReverseFind
   end
 
   private
@@ -201,7 +202,7 @@ class Riffer::Agent::Session
         id: attrs.fetch(:id, old.id),
         tool_calls: attrs.fetch(:tool_calls, old.tool_calls),
         token_usage: attrs.fetch(:token_usage, old.token_usage),
-        structured_output: attrs.fetch(:structured_output, old.structured_output)
+        structured_output: attrs.fetch(:structured_output, old.structured_output),
       )
     when Riffer::Messages::Tool
       Riffer::Messages::Tool.new(
@@ -210,18 +211,18 @@ class Riffer::Agent::Session
         name: attrs.fetch(:name, old.name),
         id: attrs.fetch(:id, old.id),
         error: attrs.fetch(:error, old.error),
-        error_type: attrs.fetch(:error_type, old.error_type)
+        error_type: attrs.fetch(:error_type, old.error_type),
       )
     when Riffer::Messages::User
       Riffer::Messages::User.new(
         attrs.fetch(:content, old.content),
         id: attrs.fetch(:id, old.id),
-        files: attrs.fetch(:files, old.files)
+        files: attrs.fetch(:files, old.files),
       )
     else
       old.class.new(
         attrs.fetch(:content, old.content),
-        id: attrs.fetch(:id, old.id)
+        id: attrs.fetch(:id, old.id),
       )
     end
   end

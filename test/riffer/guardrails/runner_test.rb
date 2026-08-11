@@ -18,9 +18,11 @@ describe Riffer::Guardrails::Runner do
   let(:transform_guardrail_class) do
     Class.new(Riffer::Guardrail) do
       def process_input(messages, context:)
-        transform(messages.map { |m|
-          Riffer::Messages::User.new("[transformed] #{m.content}")
-        })
+        transform(
+          messages.map do |m|
+            Riffer::Messages::User.new("[transformed] #{m.content}")
+          end,
+        )
       end
 
       def process_output(response, messages:, context:)
@@ -31,18 +33,18 @@ describe Riffer::Guardrails::Runner do
 
   let(:block_guardrail_class) do
     Class.new(Riffer::Guardrail) do
-      def process_input(messages, context:)
-        block("Input blocked", metadata: {phase: :before})
+      def process_input(_messages, context:)
+        block("Input blocked", metadata: { phase: :before })
       end
 
-      def process_output(response, messages:, context:)
-        block("Output blocked", metadata: {phase: :after})
+      def process_output(_response, messages:, context:)
+        block("Output blocked", metadata: { phase: :after })
       end
     end
   end
 
   def config_for(klass, **options)
-    {class: klass, options: options}
+    { class: klass, options: options }
   end
 
   describe "#run for before phase" do
@@ -50,6 +52,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data).must_equal messages
     end
 
@@ -57,6 +60,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire).must_be_nil
     end
 
@@ -64,6 +68,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data.first.content).must_equal "Hello"
     end
 
@@ -71,6 +76,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data.first.content).must_equal "[transformed] Hello"
     end
 
@@ -78,6 +84,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire).wont_be_nil
     end
 
@@ -85,6 +92,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire.reason).must_equal "Input blocked"
     end
 
@@ -92,6 +100,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire.phase).must_equal :before
     end
 
@@ -99,6 +108,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire.guardrail).must_equal block_guardrail_class
     end
 
@@ -106,7 +116,8 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
-      expect(tripwire.metadata).must_equal({phase: :before})
+
+      expect(tripwire.metadata).must_equal({ phase: :before })
     end
   end
 
@@ -115,6 +126,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([], phase: :after)
       response = Riffer::Messages::Assistant.new("Hi!")
       data, _tripwire, _modifications = runner.run(response, messages: [])
+
       expect(data).must_equal response
     end
 
@@ -122,6 +134,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :after)
       response = Riffer::Messages::Assistant.new("Hi!")
       data, _tripwire, _modifications = runner.run(response, messages: [])
+
       expect(data.content).must_equal "Hi!"
     end
 
@@ -129,6 +142,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :after)
       response = Riffer::Messages::Assistant.new("Hi!")
       data, _tripwire, _modifications = runner.run(response, messages: [])
+
       expect(data.content).must_equal "[transformed] Hi!"
     end
 
@@ -136,6 +150,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :after)
       response = Riffer::Messages::Assistant.new("Hi!")
       _data, tripwire, _modifications = runner.run(response, messages: [])
+
       expect(tripwire.reason).must_equal "Output blocked"
     end
 
@@ -143,6 +158,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :after)
       response = Riffer::Messages::Assistant.new("Hi!")
       _data, tripwire, _modifications = runner.run(response, messages: [])
+
       expect(tripwire.phase).must_equal :after
     end
   end
@@ -153,6 +169,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new(configs, phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data.first.content).must_equal "[transformed] [transformed] Hello"
     end
 
@@ -161,6 +178,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new(configs, phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire.guardrail).must_equal block_guardrail_class
     end
 
@@ -168,6 +186,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(block_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data.first.content).must_equal "Hello"
     end
   end
@@ -186,9 +205,14 @@ describe Riffer::Guardrails::Runner do
     end
 
     it "passes context to guardrails" do
-      runner = Riffer::Guardrails::Runner.new([config_for(context_guardrail_class)], phase: :before, context: {block: true})
+      runner = Riffer::Guardrails::Runner.new(
+        [config_for(context_guardrail_class)],
+        phase: :before,
+        context: { block: true },
+      )
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire).wont_be_nil
     end
 
@@ -196,6 +220,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(context_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, _modifications = runner.run(messages)
+
       expect(tripwire).must_be_nil
     end
   end
@@ -211,9 +236,11 @@ describe Riffer::Guardrails::Runner do
         end
 
         def process_input(messages, context:)
-          transform(messages.map { |m|
-            Riffer::Messages::User.new("#{prefix} #{m.content}")
-          })
+          transform(
+            messages.map do |m|
+              Riffer::Messages::User.new("#{prefix} #{m.content}")
+            end,
+          )
         end
       end
     end
@@ -222,6 +249,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(options_guardrail_class, prefix: "[custom]")], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data.first.content).must_equal "[custom] Hello"
     end
 
@@ -229,6 +257,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(options_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       data, _tripwire, _modifications = runner.run(messages)
+
       expect(data.first.content).must_equal "[default] Hello"
     end
   end
@@ -238,6 +267,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(pass_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications).must_be_empty
     end
 
@@ -245,6 +275,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications.length).must_equal 1
     end
 
@@ -252,6 +283,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications.first.guardrail).must_equal transform_guardrail_class
     end
 
@@ -259,6 +291,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications.first.phase).must_equal :before
     end
 
@@ -266,6 +299,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications.first.message_indices).must_equal [0]
     end
 
@@ -274,6 +308,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new(configs, phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications.length).must_equal 2
     end
 
@@ -282,6 +317,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new(configs, phase: :before)
       messages = [Riffer::Messages::User.new("Hello")]
       _data, tripwire, modifications = runner.run(messages)
+
       expect(tripwire).wont_be_nil
       expect(modifications.length).must_equal 1
     end
@@ -289,9 +325,9 @@ describe Riffer::Guardrails::Runner do
     it "detects correct indices when only some messages change" do
       selective_guardrail_class = Class.new(Riffer::Guardrail) do
         def process_input(messages, context:)
-          transformed = messages.map.with_index { |m, i|
-            (i == 1) ? Riffer::Messages::User.new("[changed] #{m.content}") : m
-          }
+          transformed = messages.map.with_index do |m, i|
+            i == 1 ? Riffer::Messages::User.new("[changed] #{m.content}") : m
+          end
           transform(transformed)
         end
       end
@@ -300,9 +336,10 @@ describe Riffer::Guardrails::Runner do
       messages = [
         Riffer::Messages::User.new("First"),
         Riffer::Messages::User.new("Second"),
-        Riffer::Messages::User.new("Third")
+        Riffer::Messages::User.new("Third"),
       ]
       _data, _tripwire, modifications = runner.run(messages)
+
       expect(modifications.first.message_indices).must_equal [1]
     end
 
@@ -310,6 +347,7 @@ describe Riffer::Guardrails::Runner do
       runner = Riffer::Guardrails::Runner.new([config_for(transform_guardrail_class)], phase: :after)
       response = Riffer::Messages::Assistant.new("Hi!")
       _data, _tripwire, modifications = runner.run(response, messages: [])
+
       expect(modifications.first.message_indices).must_equal [0]
     end
   end

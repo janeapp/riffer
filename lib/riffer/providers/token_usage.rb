@@ -47,7 +47,7 @@ class Riffer::Providers::TokenUsage
       output_tokens: output_tokens + other.output_tokens,
       cache_write_tokens: add_nullable(cache_write_tokens, other.cache_write_tokens),
       cache_read_tokens: add_nullable(cache_read_tokens, other.cache_read_tokens),
-      cost: add_cost(cost, other.cost)
+      cost: add_cost(cost, other.cost),
     )
   end
 
@@ -55,7 +55,7 @@ class Riffer::Providers::TokenUsage
   #--
   #: () -> Hash[Symbol, (Integer | Float)]
   def to_h
-    hash = {input_tokens: input_tokens, output_tokens: output_tokens} #: Hash[Symbol, (Integer | Float)]
+    hash = { input_tokens: input_tokens, output_tokens: output_tokens } #: Hash[Symbol, (Integer | Float)]
     hash[:cache_write_tokens] = cache_write_tokens if cache_write_tokens
     hash[:cache_read_tokens] = cache_read_tokens if cache_read_tokens
     hash[:cost] = cost if cost
@@ -66,17 +66,19 @@ class Riffer::Providers::TokenUsage
 
   #--
   #: (Integer?, Integer?) -> Integer?
-  def add_nullable(a, b)
-    return nil if a.nil? && b.nil?
-    (a || 0) + (b || 0)
+  def add_nullable(left, right)
+    return nil if left.nil? && right.nil?
+
+    (left || 0) + (right || 0)
   end
 
   # nil is absorbing, not zero: one unpriced call makes the run total nil
   # rather than silently under-reporting.
   #--
   #: (Float?, Float?) -> Float?
-  def add_cost(a, b)
-    return nil if a.nil? || b.nil?
-    a + b
+  def add_cost(left, right)
+    return nil if left.nil? || right.nil?
+
+    left + right
   end
 end

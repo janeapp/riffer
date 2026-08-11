@@ -5,7 +5,10 @@ require "minitest/test_task"
 
 Minitest::TestTask.create
 
-require "standard/rake"
+require "rubocop/rake_task"
+
+RuboCop::RakeTask.new
+
 require "rdoc/task"
 
 RDoc::Task.new do |rdoc|
@@ -18,6 +21,7 @@ RDoc::Task.new do |rdoc|
   rdoc.options << "--page-dir" << "docs"
 end
 
+desc "Build RDoc HTML documentation"
 task docs: :rdoc
 
 namespace :rbs do
@@ -42,4 +46,4 @@ namespace :steep do
   end
 end
 
-task default: %i[test standard steep:check]
+task default: %i[test rubocop steep:check]

@@ -27,11 +27,11 @@ class UnicodeNormalizerGuardrail < Riffer::Guardrail
   def normalize_message(msg)
     return msg unless msg.respond_to?(:content) && msg.content
 
-    cleaned = msg.content
-      .unicode_normalize(:nfc)
-      .gsub(CONTROL_CHARS, "")
-      .gsub(/[[:space:]]+/, " ")
-      .strip
+    cleaned = msg.content.
+      unicode_normalize(:nfc).
+      gsub(CONTROL_CHARS, "").
+      gsub(/[[:space:]]+/, " ").
+      strip
 
     rebuild_message(msg, cleaned)
   end

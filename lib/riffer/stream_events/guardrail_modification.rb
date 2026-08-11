@@ -36,6 +36,6 @@ class Riffer::StreamEvents::GuardrailModification < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, modification: modification.to_h}
+    { role: @role, modification: modification.to_h }
   end
 end

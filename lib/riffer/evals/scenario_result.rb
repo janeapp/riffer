@@ -49,7 +49,7 @@ class Riffer::Evals::ScenarioResult
   #--
   #: () -> Riffer::Providers::TokenUsage?
   def evaluator_token_usage
-    results.map(&:token_usage).compact.reduce(:+)
+    results.filter_map(&:token_usage).reduce(:+)
   end
 
   # Returns a hash representation of the scenario result.
@@ -65,7 +65,7 @@ class Riffer::Evals::ScenarioResult
       results: results.map(&:to_h),
       messages: messages.map(&:to_h),
       token_usage: token_usage&.to_h,
-      evaluator_token_usage: evaluator_token_usage&.to_h
+      evaluator_token_usage: evaluator_token_usage&.to_h,
     }
   end
 end

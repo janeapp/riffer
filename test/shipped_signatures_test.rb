@@ -23,7 +23,7 @@ describe "shipped RBS signatures" do
     violations = []
 
     shipped_dirs.each do |dir|
-      Dir.glob(File.join(sig_root, dir, "**", "*.rbs")).sort.each do |path|
+      Dir.glob(File.join(sig_root, dir, "**", "*.rbs")).each do |path|
         File.foreach(path).with_index(1) do |line, lineno|
           code = line.sub(/#.*/, "") # strip RBS comments before scanning
           code.scan(qualified_root) do |(root)|
@@ -36,8 +36,8 @@ describe "shipped RBS signatures" do
     end
 
     assert_empty violations,
-      "Optional-dependency types leaked into shipped RBS. Use an inline body assertion " \
-      "instead of naming the SDK type in a `#:` signature (see .agents/rbs-inline.md):\n" +
-        violations.uniq.join("\n")
+                 "Optional-dependency types leaked into shipped RBS. Use an inline body assertion " \
+                 "instead of naming the SDK type in a `#:` signature (see .agents/rbs-inline.md):\n" +
+                 violations.uniq.join("\n")
   end
 end

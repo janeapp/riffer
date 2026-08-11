@@ -24,18 +24,18 @@ module Riffer::Mcp::ToolFactory
   end
 
   #: (String, Riffer::Mcp::Client, Hash[Symbol, untyped]) -> singleton(Riffer::Mcp::Tool)
-  def build_tool_class(manifest_name, client, td)
-    prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(td[:name])}"
+  def build_tool_class(manifest_name, client, descriptor)
+    prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(descriptor[:name])}"
 
     # steep does not model Class.new's class_eval semantics — the block body
     # typechecks against the enclosing module, so the ivar assignments and the
     # define_method body are unresolvable.
     Class.new(Riffer::Mcp::Tool) do
       # steep:ignore:start
-      @mcp_server_tool_name = td[:name]
+      @mcp_server_tool_name = descriptor[:name]
       @identifier = prefixed
-      @description = td[:description]
-      @input_schema = td[:input_schema]
+      @description = descriptor[:description]
+      @input_schema = descriptor[:input_schema]
 
       define_method(:call) do |context:, **kwargs|
         text(client.tools_call(self.class.mcp_server_tool_name, kwargs))

@@ -88,9 +88,9 @@ instead of typing `bundle exec` yourself:
 
 | Command         | Description                                 |
 | --------------- | ------------------------------------------- |
-| `bin/rake`      | Default task: test + standard + steep:check |
+| `bin/rake`      | Default task: test + rubocop + steep:check  |
 | `bin/test`      | Run tests                                   |
-| `bin/lint`      | Check code style (pass `--fix` to auto-fix) |
+| `bin/lint`      | Check code style (pass `-a` to auto-fix)    |
 | `bin/typecheck` | Run Steep type checker                      |
 | `bin/rbs`       | Generate RBS type signatures                |
 | `bin/rbs-watch` | Watch and regenerate RBS files              |

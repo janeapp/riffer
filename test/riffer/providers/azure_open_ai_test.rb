@@ -15,11 +15,13 @@ describe Riffer::Providers::AzureOpenAI do
   describe "#initialize" do
     it "creates Azure OpenAI client with api_key and endpoint" do
       provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
+
       expect(provider).must_be_instance_of Riffer::Providers::AzureOpenAI
     end
 
     it "is a subclass of OpenAI provider" do
       provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
+
       expect(provider).must_be_kind_of Riffer::Providers::OpenAI
     end
   end
@@ -27,9 +29,12 @@ describe Riffer::Providers::AzureOpenAI do
   describe "#generate_text" do
     describe "when prompt is provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AzureOpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_AzureOpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
+
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -37,10 +42,14 @@ describe Riffer::Providers::AzureOpenAI do
 
     describe "when system and prompt are provided" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AzureOpenAI/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_AzureOpenAI/_generate_text/when_system_and_prompt_are_provided/" \
+          "returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
-          params = {system: "Be concise", prompt: "Say hello", model: "gpt-5-mini"}
+          params = { system: "Be concise", prompt: "Say hello", model: "gpt-5-mini" }
           result = provider.generate_text(**params)
+
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -48,13 +57,16 @@ describe Riffer::Providers::AzureOpenAI do
 
     describe "with a hash messages array" do
       it "returns an Assistant message" do
-        VCR.use_cassette("Riffer_Providers_AzureOpenAI/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message") do
+        VCR.use_cassette(
+          "Riffer_Providers_AzureOpenAI/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
+        ) do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           messages = [
-            {role: "system", content: "Be concise"},
-            {role: "user", content: "Say hello"}
+            { role: "system", content: "Be concise" },
+            { role: "user", content: "Say hello" },
           ]
           result = provider.generate_text(messages: messages, model: "gpt-5-mini")
+
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -71,8 +83,9 @@ describe Riffer::Providers::AzureOpenAI do
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gpt-5-mini",
-            structured_output: structured_output
+            structured_output: structured_output,
           )
+
           expect(result).must_be_instance_of Riffer::Messages::Assistant
         end
       end
@@ -87,9 +100,10 @@ describe Riffer::Providers::AzureOpenAI do
           result = provider.generate_text(
             prompt: "Analyze the sentiment of the following text: 'I love this product, it is amazing!'",
             model: "gpt-5-mini",
-            structured_output: structured_output
+            structured_output: structured_output,
           )
           parsed = JSON.parse(result.content)
+
           expect(parsed.key?("sentiment")).must_equal true
         end
       end
@@ -100,8 +114,17 @@ describe Riffer::Providers::AzureOpenAI do
     it "inherits the OpenAI mapping: tags to metadata and user_id to safety_identifier" do
       provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
       messages = [Riffer::Messages::User.new("Hello")]
-      params = provider.send(:build_request_params, messages, "gpt-5-mini", {tags: {"team" => "growth", "user_id" => "u_1"}})
-      expect([params[:metadata], params[:safety_identifier]]).must_equal([{"team" => "growth", "user_id" => "u_1"}, "u_1"])
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5-mini",
+        { tags: { "team" => "growth", "user_id" => "u_1" } },
+      )
+
+      expect(
+        [params[:metadata],
+         params[:safety_identifier],],
+      ).must_equal([{ "team" => "growth", "user_id" => "u_1" }, "u_1"])
     end
   end
 
@@ -110,7 +133,8 @@ describe Riffer::Providers::AzureOpenAI do
   #   it "forwards per-call tags to the request" do
   #     provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
   #     VCR.use_cassette("Riffer_Providers_AzureOpenAI/tags/forwards_metadata_and_safety_identifier") do
-  #       result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini", tags: {"user_id" => "u_1", "team" => "growth"})
+  #       result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini",
+  #                                       tags: {"user_id" => "u_1", "team" => "growth"})
   #       expect(result).must_be_instance_of Riffer::Messages::Assistant
   #     end
   #   end
@@ -122,6 +146,7 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           result = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini")
+
           expect(result).must_be_instance_of Enumerator
         end
       end
@@ -130,6 +155,7 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
+
           expect(events).wont_be_empty
         end
       end
@@ -138,7 +164,8 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
-          deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+          deltas = events.grep(Riffer::StreamEvents::TextDelta)
+
           expect(deltas).wont_be_empty
         end
       end
@@ -148,6 +175,7 @@ describe Riffer::Providers::AzureOpenAI do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
           expect(done).wont_be_nil
         end
       end
@@ -172,8 +200,9 @@ describe Riffer::Providers::AzureOpenAI do
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
-            tools: [weather_tool]
+            tools: [weather_tool],
           )
+
           expect(result.tool_calls).wont_be_empty
         end
       end
@@ -184,8 +213,9 @@ describe Riffer::Providers::AzureOpenAI do
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
-            tools: [weather_tool]
+            tools: [weather_tool],
           )
+
           expect(result.tool_calls.first.name).must_equal "get_weather"
         end
       end
@@ -198,9 +228,10 @@ describe Riffer::Providers::AzureOpenAI do
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
-            tools: [weather_tool]
+            tools: [weather_tool],
           ).to_a
           tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+
           expect(tool_done).wont_be_nil
         end
       end
@@ -213,6 +244,7 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/usage/_generate_text/includes_usage") do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
+
           expect(result.token_usage).wont_be_nil
         end
       end
@@ -221,6 +253,7 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/usage/_generate_text/includes_usage") do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
+
           expect(result.token_usage.input_tokens).must_be :>, 0
         end
       end
@@ -229,6 +262,7 @@ describe Riffer::Providers::AzureOpenAI do
         VCR.use_cassette("Riffer_Providers_AzureOpenAI/usage/_generate_text/includes_usage") do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
+
           expect(result.token_usage.output_tokens).must_be :>, 0
         end
       end
@@ -240,6 +274,7 @@ describe Riffer::Providers::AzureOpenAI do
           provider = Riffer::Providers::AzureOpenAI.new(api_key: api_key, base_url: endpoint)
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
           usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
           expect(usage_done).wont_be_nil
         end
       end

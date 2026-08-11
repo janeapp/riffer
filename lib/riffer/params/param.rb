@@ -13,7 +13,7 @@ class Riffer::Params::Param
     TrueClass => "boolean",
     FalseClass => "boolean",
     Array => "array",
-    Hash => "object"
+    Hash => "object",
   }.freeze #: Hash[Module, String]
 
   # Primitive types allowed for the <tt>of:</tt> keyword on Array params
@@ -27,7 +27,7 @@ class Riffer::Params::Param
     "number" => Float,
     "boolean" => Riffer::Params::Boolean,
     "array" => Array,
-    "object" => Hash
+    "object" => Hash,
   }.freeze #: Hash[String, Module]
 
   # The parameter name.
@@ -70,7 +70,7 @@ class Riffer::Params::Param
       enum: schema[:enum],
       default: schema[:default],
       item_type: item_type,
-      nested_params: nested
+      nested_params: nested,
     )
   end
 
@@ -119,8 +119,8 @@ class Riffer::Params::Param
   def valid_type?(value)
     return true if value.nil? && !required
 
-    if type == Riffer::Params::Boolean || type == TrueClass || type == FalseClass
-      value == true || value == false
+    if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(type)
+      [true, false].include?(value)
     else
       value.is_a?(type)
     end
@@ -145,7 +145,7 @@ class Riffer::Params::Param
     nullable = strict && !required
 
     if nullable && enum
-      schema = {anyOf: [{type: type_name, enum: enum}, {type: "null"}]} #: Hash[Symbol, untyped]
+      schema = { anyOf: [{ type: type_name, enum: enum }, { type: "null" }] } #: Hash[Symbol, untyped]
       schema[:description] = description if description
       return schema
     end
@@ -153,7 +153,7 @@ class Riffer::Params::Param
     type = type_name
     type = [type, "null"] if nullable
 
-    schema = {type: type} #: Hash[Symbol, untyped]
+    schema = { type: type } #: Hash[Symbol, untyped]
     schema[:description] = description if description
     schema[:enum] = enum if enum
     # Strict providers reject the +default+ keyword; emit it only in
@@ -164,7 +164,7 @@ class Riffer::Params::Param
     if self.type == Array && nested_params
       schema[:items] = nested_params.to_json_schema(strict: strict)
     elsif self.type == Array && item_type
-      schema[:items] = {type: TYPE_MAPPINGS[item_type]}
+      schema[:items] = { type: TYPE_MAPPINGS[item_type] }
     elsif self.type == Hash && nested_params
       schema.merge!(nested_params.to_json_schema(strict: strict))
     end

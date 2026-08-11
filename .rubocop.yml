@@ -1,0 +1,112 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rake
+
+# ── Tier 1: house style — settings changed from RuboCop defaults everywhere ──
+
+Layout/BlockAlignment:
+  EnforcedStyleAlignWith: start_of_block
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either_consistent
+
+Style/NonNilCheck:
+  IncludeSemanticChanges: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+# ── Tier 2: shared base — additions and deviations from the house style ──
+
+AllCops:
+  DisabledByDefault: false
+  # Stricter than the house style, which leaves pending cops as warnings;
+  # enabling adopts new cops automatically and kills the warning spam.
+  NewCops: enable
+  SuggestExtensions: false
+
+# Size thresholds are noise; BlockNesting stays — deep nesting is the one
+# limit worth enforcing.
+Metrics:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: true
+
+# A comment on every class is a "what" — conflicts with the comments rule.
+Style/Documentation:
+  Enabled: false
+
+# The function-module pattern needs a working `private`.
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
+
+# Compact (`class Foo::Bar`) cuts LOC and nesting and ends the nested/compact
+# mix across codebases.
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+# Keyword arguments often stay unused to keep signatures uniform across
+# interchangeable implementations.
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
+# Additions, not overrides: RBS-inline annotations must lint.
+Layout/LeadingCommentSpace:
+  AllowRBSInlineAnnotation: true
+
+Layout/LineLength:
+  AllowedPatterns: ['#:']
+
+Minitest/MultipleAssertions:
+  Max: 3
+
+# ── Tier 3: riffer deviations, each with its reason ──
+
+# Tests use deliberately empty blocks: `.each { |_| }` to drain a stream for
+# its side effects, empty `in_span` bodies to assert span lifecycle, and no-op
+# stream doubles.
+Lint/EmptyBlock:
+  Exclude:
+    - test/**/*
+
+# Keyword-argument names are the calling contract for riffer's block-based
+# hooks (tool `execute` blocks, evaluator lambdas, dynamic instructions) —
+# underscore-prefixing a block keyword renames the keyword and breaks callers.
+Lint/UnusedBlockArgument:
+  AllowUnusedKeywordArguments: true
+
+# validate_as_tool! follows the validate!/save! idiom: raise or return true.
+# Its return value is not a predicate.
+Naming/PredicateMethod:
+  AllowBangMethods: true
+
+# has_tool_calls? is shipped public API — renaming it breaks consumers.
+Naming/PredicatePrefix:
+  AllowedMethods:
+    - has_tool_calls?
+
+# Riffer::Messages::Base#+ and Riffer::Providers::TokenUsage#+ merge objects;
+# the cop's `sum` rewrite starts the fold from 0 and raises on non-numeric
+# elements.
+Performance/Sum:
+  Exclude:
+    - lib/riffer/providers/base.rb
+    - lib/riffer/evals/run_result.rb
+    - lib/riffer/evals/scenario_result.rb
