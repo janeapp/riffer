@@ -99,17 +99,6 @@ describe Riffer::Providers::Gemini do
       expect(calls).must_equal 2
     end
 
-    it "passes the agent context to a client Proc with arity" do
-      received = nil
-      Riffer.config.gemini.client = ->(context) { received = context }
-      provider = Riffer::Providers::Gemini.new
-      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
-
-      provider.send(:client)
-
-      expect(received[:tenant]).must_equal "acme"
-    end
-
     it "prefers constructor credentials over the configured client" do
       Riffer.config.gemini.client = Object.new
       provider = Riffer::Providers::Gemini.new(api_key: api_key)

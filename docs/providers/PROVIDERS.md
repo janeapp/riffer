@@ -30,6 +30,21 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+## Credentials and Clients
+
+Provider constructors take **credentials only** — `api_key:`, plus an endpoint or region where the provider needs one to address the right account: `base_url:` (OpenAI), `endpoint:` (Azure OpenAI), and `region:` (Amazon Bedrock). Unknown options raise `Riffer::ArgumentError`.
+
+| Provider       | Constructor arguments   |
+| -------------- | ----------------------- |
+| OpenAI         | `api_key:`, `base_url:` |
+| Azure OpenAI   | `api_key:`, `endpoint:` |
+| Anthropic      | `api_key:`              |
+| Amazon Bedrock | `api_token:`, `region:` |
+| Gemini         | `api_key:`              |
+| OpenRouter     | `api_key:`              |
+
+Out of the box, each provider builds a default SDK client from its configured credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
+
 ## Provider Interface
 
 All providers inherit from `Riffer::Providers::Base` and implement:

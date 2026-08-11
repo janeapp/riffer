@@ -128,17 +128,6 @@ end
 
 Loads tools from registered [MCP](MCP.md) servers by tag. Like `uses_tools`, **`use_mcp` is not inherited**—add it on each subclass that should include MCP tools.
 
-### provider_options
-
-Passes options to the provider client:
-
-```ruby
-class MyAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-  provider_options api_key: ENV['CUSTOM_OPENAI_KEY']
-end
-```
-
 ### model_options
 
 Passes options to each LLM request:

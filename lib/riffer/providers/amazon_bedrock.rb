@@ -58,6 +58,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer.config.amazon_bedrock
   end
 
+  # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+
+  # and the shared config only for a missing argument, and raises
+  # +Aws::Errors::MissingRegionError+ on an explicit nil.
   #--
   #: () -> untyped
   def build_default_client
@@ -65,13 +68,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     region = @region || Riffer.config.amazon_bedrock.region
 
     if api_token && !api_token.empty?
-      Aws::BedrockRuntime::Client.new(
+      Aws::BedrockRuntime::Client.new(**{
         region: region,
         token_provider: Aws::StaticTokenProvider.new(api_token),
         auth_scheme_preference: ["httpBearerAuth"],
-      )
+      }.compact)
     else
-      Aws::BedrockRuntime::Client.new(region: region)
+      Aws::BedrockRuntime::Client.new(**{ region: region }.compact)
     end
   end
 

@@ -49,10 +49,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     Riffer.config.anthropic
   end
 
+  # Compacted for the same reason as the other providers: never hand an SDK an
+  # explicit nil credential, so its own +ANTHROPIC_API_KEY+ resolution stays
+  # reachable regardless of how that SDK distinguishes nil from absent.
   #--
   #: () -> untyped
   def build_default_client
-    ::Anthropic::Client.new(api_key: @api_key || Riffer.config.anthropic.api_key)
+    ::Anthropic::Client.new(**{ api_key: @api_key || Riffer.config.anthropic.api_key }.compact)
   end
 
   #--

@@ -107,22 +107,31 @@ describe Riffer::Providers::Anthropic do
       expect(calls).must_equal 2
     end
 
-    it "passes the agent context to a client Proc with arity" do
-      received = nil
-      Riffer.config.anthropic.client = ->(context) { received = context }
-      provider = Riffer::Providers::Anthropic.new
-      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
-
-      provider.send(:client)
-
-      expect(received[:tenant]).must_equal "acme"
-    end
-
     it "prefers constructor credentials over the configured client" do
       Riffer.config.anthropic.client = Object.new
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)
 
       expect(provider.send(:client)).must_be_instance_of Anthropic::Client
+    end
+
+    it "lets the default client pick up ANTHROPIC_API_KEY" do
+      original = ENV.fetch("ANTHROPIC_API_KEY", nil)
+      ENV["ANTHROPIC_API_KEY"] = "sk-ant-from-env"
+
+      expect(Riffer::Providers::Anthropic.new.send(:client).api_key).must_equal "sk-ant-from-env"
+    ensure
+      ENV["ANTHROPIC_API_KEY"] = original
+    end
+
+    it "prefers a configured api_key over ANTHROPIC_API_KEY" do
+      original = ENV.fetch("ANTHROPIC_API_KEY", nil)
+      ENV["ANTHROPIC_API_KEY"] = "sk-ant-from-env"
+      Riffer.config.anthropic.api_key = "sk-ant-from-config"
+
+      expect(Riffer::Providers::Anthropic.new.send(:client).api_key).must_equal "sk-ant-from-config"
+    ensure
+      ENV["ANTHROPIC_API_KEY"] = original
+      Riffer.config.anthropic.api_key = nil
     end
   end
 

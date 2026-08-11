@@ -23,6 +23,9 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : () -> untyped
   def provider_config: () -> untyped
 
+  # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /
+  # +OPENAI_BASE_URL+ only for a missing argument, and an explicit nil would
+  # suppress that fallback.
   # --
   # : () -> untyped
   def build_default_client: () -> untyped

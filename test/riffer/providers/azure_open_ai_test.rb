@@ -59,6 +59,20 @@ describe Riffer::Providers::AzureOpenAI do
 
       expect(provider.send(:client)).must_be_instance_of OpenAI::Client
     end
+
+    # Guards the deliberate non-compacting in build_default_client: borrowing the
+    # OpenAI SDK must never route Azure traffic, or an OpenAI credential, to
+    # whatever OPENAI_API_KEY / OPENAI_BASE_URL name.
+    it "never falls back to OPENAI_API_KEY or OPENAI_BASE_URL" do
+      originals = ENV.to_hash.slice("OPENAI_API_KEY", "OPENAI_BASE_URL", "AZURE_OPENAI_API_KEY")
+      ENV["OPENAI_API_KEY"] = "sk-openai-secret"
+      ENV["OPENAI_BASE_URL"] = "https://gateway.example/v1"
+      ENV["AZURE_OPENAI_API_KEY"] = nil
+
+      expect { Riffer::Providers::AzureOpenAI.new.send(:client) }.must_raise ArgumentError
+    ensure
+      %w[OPENAI_API_KEY OPENAI_BASE_URL AZURE_OPENAI_API_KEY].each { |k| ENV[k] = originals[k] }
+    end
   end
 
   describe "#generate_text" do

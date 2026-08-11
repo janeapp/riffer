@@ -15,10 +15,6 @@ class Riffer::Providers::Base
 
   WIRE_SEPARATOR: String
 
-  # The owning agent's runtime context, or +nil+ for standalone provider use.
-  # Threaded to a configured +client+ Proc at resolution time.
-  attr_accessor context: Riffer::Agent::Context?
-
   # Returns the preferred skill adapter for this provider; override in
   # subclasses (optionally introspecting +model+) for provider-specific formats.
   # --
@@ -53,8 +49,8 @@ class Riffer::Providers::Base
   # Returns the client for the current LLM call. Constructor credentials pin a
   # provider-built default (so an explicitly credentialed provider never rides
   # a shared configured client); otherwise a configured client wins, resolved
-  # on every call so a Proc can vary the client by process, tenant, or
-  # credential lifetime.
+  # on every call so a Proc can vary the client by process or credential
+  # lifetime.
   # --
   # : () -> untyped
   def client: () -> untyped
@@ -62,10 +58,6 @@ class Riffer::Providers::Base
   # --
   # : () -> untyped
   def default_client: () -> untyped
-
-  # --
-  # : (untyped) -> untyped
-  def resolve_client: (untyped) -> untyped
 
   # Returns the provider's global config struct (the +client+ / credential
   # holder); nil for providers without one.

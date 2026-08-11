@@ -77,12 +77,6 @@ describe Riffer::Agent do
       expect(agent.context.token_usage).must_be_nil
     end
 
-    it "threads the agent context to the provider" do
-      agent = agent_class.new
-
-      expect(agent.provider.context).must_be_same_as agent.context
-    end
-
     it "does not mutate a caller-supplied context Hash" do
       shared = { tenant: "alpha" }
       agent_class.new(context: shared).generate("hi")

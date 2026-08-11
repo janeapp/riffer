@@ -24,16 +24,21 @@ Riffer.configure do |config|
 end
 ```
 
-Or per-agent:
+The `api_key` resolves in order: constructor keyword arg → `Riffer.config.openrouter.api_key` → `ENV['OPENROUTER_API_KEY']`.
+
+For anything beyond the API key — timeouts, retries, proxies — supply your own `OpenAI::Client` pinned to the OpenRouter endpoint:
 
 ```ruby
-class MyAgent < Riffer::Agent
-  model 'openrouter/anthropic/claude-sonnet-4.6'
-  provider_options api_key: ENV['MY_OR_KEY']
+Riffer.configure do |config|
+  config.openrouter.client = OpenAI::Client.new(
+    api_key: ENV['OPENROUTER_API_KEY'],
+    base_url: 'https://openrouter.ai/api/v1',
+    timeout: 60
+  )
 end
 ```
 
-The `api_key` resolves in order: keyword arg → `Riffer.config.openrouter.api_key` → `ENV['OPENROUTER_API_KEY']`.
+The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
 
 ## Supported Models
 

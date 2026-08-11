@@ -22,6 +22,8 @@ Riffer.configure do |config|
 end
 ```
 
+`region` resolves in order: constructor keyword arg → `Riffer.config.amazon_bedrock.region` → the AWS SDK's own resolution (`AWS_REGION`, `AWS_DEFAULT_REGION`, shared config). Leaving it unset in riffer defers to the SDK rather than failing.
+
 ### Bearer Token Authentication
 
 For API token authentication:
@@ -33,14 +35,21 @@ Riffer.configure do |config|
 end
 ```
 
-Or per-agent:
+### Custom client
+
+AWS auth beyond the bearer token or default credential chain (profiles, STS, IRSA), plus retries, timeouts, and endpoints, is configured on your own `Aws::BedrockRuntime::Client`:
 
 ```ruby
-class MyAgent < Riffer::Agent
-  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
-  provider_options region: 'us-west-2', api_token: ENV['BEDROCK_API_TOKEN']
+Riffer.configure do |config|
+  config.amazon_bedrock.client = Aws::BedrockRuntime::Client.new(
+    region: 'us-east-1',
+    credentials: Aws::AssumeRoleCredentials.new(role_arn: ENV['BEDROCK_ROLE_ARN'], role_session_name: 'riffer'),
+    retry_limit: 5
+  )
 end
 ```
+
+The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
 
 ## Supported Models
 

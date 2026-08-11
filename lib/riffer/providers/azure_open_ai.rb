@@ -26,6 +26,10 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
     Riffer.config.azure_openai
   end
 
+  # Deliberately not compacted: this borrows the OpenAI SDK to talk to Azure, so
+  # omitting an unset argument would let the SDK fall back to +OPENAI_API_KEY+
+  # and +OPENAI_BASE_URL+ — sending Azure traffic, and an OpenAI credential, to
+  # whatever those name. Passing nil raises in the SDK instead.
   #--
   #: () -> untyped
   def build_default_client

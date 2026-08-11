@@ -159,22 +159,31 @@ describe Riffer::Providers::AmazonBedrock do
       expect(calls).must_equal 2
     end
 
-    it "passes the agent context to a client Proc with arity" do
-      received = nil
-      Riffer.config.amazon_bedrock.client = ->(context) { received = context }
-      provider = Riffer::Providers::AmazonBedrock.new
-      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
-
-      provider.send(:client)
-
-      expect(received[:tenant]).must_equal "acme"
-    end
-
     it "prefers constructor credentials over the configured client" do
       Riffer.config.amazon_bedrock.client = Object.new
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
 
       expect(provider.send(:client)).must_be_instance_of Aws::BedrockRuntime::Client
+    end
+
+    it "lets the default client resolve the region from AWS_REGION" do
+      original = ENV.fetch("AWS_REGION", nil)
+      ENV["AWS_REGION"] = "eu-central-1"
+
+      expect(Riffer::Providers::AmazonBedrock.new.send(:client).config.region).must_equal "eu-central-1"
+    ensure
+      ENV["AWS_REGION"] = original
+    end
+
+    it "prefers a configured region over AWS_REGION" do
+      original = ENV.fetch("AWS_REGION", nil)
+      ENV["AWS_REGION"] = "eu-central-1"
+      Riffer.config.amazon_bedrock.region = "us-east-1"
+
+      expect(Riffer::Providers::AmazonBedrock.new.send(:client).config.region).must_equal "us-east-1"
+    ensure
+      ENV["AWS_REGION"] = original
+      Riffer.config.amazon_bedrock.region = nil
     end
   end
 

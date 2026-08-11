@@ -128,22 +128,52 @@ describe Riffer::Providers::OpenAI do
       expect(calls).must_equal 2
     end
 
-    it "passes the agent context to a client Proc with arity" do
-      received = nil
-      Riffer.config.openai.client = ->(context) { received = context }
-      provider = Riffer::Providers::OpenAI.new
-      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
-
-      provider.send(:client)
-
-      expect(received[:tenant]).must_equal "acme"
-    end
-
     it "prefers constructor credentials over the configured client" do
       Riffer.config.openai.client = Object.new
       provider = Riffer::Providers::OpenAI.new(api_key: api_key)
 
       expect(provider.send(:client)).must_be_instance_of OpenAI::Client
+    end
+
+    it "lets the default client pick up OPENAI_BASE_URL" do
+      original = ENV.fetch("OPENAI_BASE_URL", nil)
+      ENV["OPENAI_BASE_URL"] = "https://gateway.example/v1"
+      Riffer.config.openai.api_key = api_key
+
+      expect(Riffer::Providers::OpenAI.new.send(:client).base_url.to_s).must_equal "https://gateway.example/v1"
+    ensure
+      ENV["OPENAI_BASE_URL"] = original
+      Riffer.config.openai.api_key = nil
+    end
+
+    it "prefers an explicit base_url over OPENAI_BASE_URL" do
+      original = ENV.fetch("OPENAI_BASE_URL", nil)
+      ENV["OPENAI_BASE_URL"] = "https://gateway.example/v1"
+      provider = Riffer::Providers::OpenAI.new(api_key: api_key, base_url: "https://localhost:4000/v1")
+
+      expect(provider.send(:client).base_url.to_s).must_equal "https://localhost:4000/v1"
+    ensure
+      ENV["OPENAI_BASE_URL"] = original
+    end
+
+    it "lets the default client pick up OPENAI_API_KEY" do
+      original = ENV.fetch("OPENAI_API_KEY", nil)
+      ENV["OPENAI_API_KEY"] = "sk-from-env"
+
+      expect(Riffer::Providers::OpenAI.new.send(:client).api_key).must_equal "sk-from-env"
+    ensure
+      ENV["OPENAI_API_KEY"] = original
+    end
+
+    it "prefers a configured api_key over OPENAI_API_KEY" do
+      original = ENV.fetch("OPENAI_API_KEY", nil)
+      ENV["OPENAI_API_KEY"] = "sk-from-env"
+      Riffer.config.openai.api_key = "sk-from-config"
+
+      expect(Riffer::Providers::OpenAI.new.send(:client).api_key).must_equal "sk-from-config"
+    ensure
+      ENV["OPENAI_API_KEY"] = original
+      Riffer.config.openai.api_key = nil
     end
   end
 

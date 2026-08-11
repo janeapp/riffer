@@ -46,6 +46,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     Riffer.config.openrouter
   end
 
+  # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
+  # different vendor, so omitting an unset +api_key+ would let the SDK fall
+  # back to +OPENAI_API_KEY+ and send an OpenAI credential to OpenRouter.
+  # Passing nil raises in the SDK instead.
   #--
   #: () -> untyped
   def build_default_client

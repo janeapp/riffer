@@ -48,7 +48,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: () -> untyped
   def build_default_client
-    Riffer::Providers::Gemini::Client.new(api_key: @api_key || Riffer.config.gemini.api_key)
+    Riffer::Providers::Gemini::Client.new(**{ api_key: @api_key || Riffer.config.gemini.api_key }.compact)
   end
 
   #--

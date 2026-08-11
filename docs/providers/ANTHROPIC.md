@@ -20,14 +20,18 @@ Riffer.configure do |config|
 end
 ```
 
-Or per-agent:
+For anything beyond the API key — timeouts, retries, proxies — supply your own `Anthropic::Client`:
 
 ```ruby
-class MyAgent < Riffer::Agent
-  model 'anthropic/claude-haiku-4-5-20251001'
-  provider_options api_key: ENV['ANTHROPIC_API_KEY']
+Riffer.configure do |config|
+  config.anthropic.client = Anthropic::Client.new(
+    api_key: ENV['ANTHROPIC_API_KEY'],
+    timeout: 60
+  )
 end
 ```
+
+The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
 
 ## Supported Models
 

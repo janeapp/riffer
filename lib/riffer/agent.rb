@@ -400,9 +400,7 @@ class Riffer::Agent
     provider_class = Riffer::Providers::Repository.find(@provider_name)
     raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
 
-    provider = provider_class.new
-    provider.context = @context
-    provider
+    provider_class.new
   end
 
   #--

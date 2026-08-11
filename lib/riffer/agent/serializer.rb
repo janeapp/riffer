@@ -91,8 +91,6 @@ module Riffer::Agent::Serializer
   def decode_v1(hash, context:, session:, tool_resolver:, tool_runtime:)
     tools = Array(hash[:tools]).map { |descriptor| tool_resolver.call(descriptor) }
 
-    # A legacy :provider_options key is ignored — provider construction takes
-    # no per-agent options, so the receiving side's provider config applies.
     config_args = {
       identifier: hash[:identifier],
       model: hash[:model],

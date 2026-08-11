@@ -34,6 +34,66 @@ Riffer.config.anthropic.api_key
 
 For provider credentials and setup, see the individual [Provider guides](providers/PROVIDERS.md).
 
+### Provider Clients
+
+Out of the box, each provider builds a default SDK client from its configured credentials. For anything beyond credentials — timeouts, retries, proxies, gateways — assign your own client to `config.<provider>.client`:
+
+```ruby
+Riffer.configure do |config|
+  config.openai.client = OpenAI::Client.new(
+    api_key: ENV['OPENAI_API_KEY'],
+    timeout: 30,
+    max_retries: 4
+  )
+  config.gemini.client = Riffer::Providers::Gemini::Client.new(
+    api_key: ENV['GEMINI_API_KEY'],
+    read_timeout: 120
+  )
+end
+```
+
+Every provider accepts a client instance or a `Proc` returning one:
+
+| Provider       | Setting                        | Default client built from credentials                         |
+| -------------- | ------------------------------ | ------------------------------------------------------------- |
+| OpenAI         | `config.openai.client`         | `OpenAI::Client`                                              |
+| Azure OpenAI   | `config.azure_openai.client`   | `OpenAI::Client` (with the Azure endpoint as `base_url`)      |
+| Anthropic      | `config.anthropic.client`      | `Anthropic::Client`                                           |
+| Amazon Bedrock | `config.amazon_bedrock.client` | `Aws::BedrockRuntime::Client`                                 |
+| Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below) |
+| OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)          |
+
+A `Proc` takes **no arguments** and is resolved on **every LLM call**, never cached by riffer — memoize inside the Proc when construction is expensive. This makes the Proc the right tool for:
+
+- **Fork safety** (Puma clustered, Sidekiq swarm): a client built at boot holds sockets that break across `fork`; build (and cache) per process instead.
+- **Expiring credentials** (Azure AD tokens, STS-vended keys): re-resolve before they go stale.
+
+```ruby
+Riffer.configure do |config|
+  # Fork-safe shared client: one per process, built on first use after fork.
+  config.anthropic.client = -> {
+    ClientRegistry.anthropic_for(Process.pid)
+  }
+
+  # Re-resolved before the token goes stale.
+  config.azure_openai.client = -> {
+    OpenAI::Client.new(api_key: AzureAd.current_token, base_url: ENV['AZURE_OPENAI_ENDPOINT'])
+  }
+end
+```
+
+Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, give each its own credentials at construction (see below).
+
+An agent (or standalone provider) constructed with explicit credentials — e.g. `Riffer::Providers::OpenAI.new(api_key: "...")` — always builds its own default client from them and ignores the configured client, so explicit credentials are never silently overridden by a shared client.
+
+### Falling through to the SDK
+
+A credential you leave unset in riffer is omitted from the default client rather than passed as `nil`, so each vendor SDK still applies its own resolution. `OPENAI_API_KEY` / `OPENAI_BASE_URL`, `ANTHROPIC_API_KEY`, and the AWS region chain (`AWS_REGION`, shared config, IAM roles) all work with no riffer configuration at all.
+
+Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
+
+The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/08_GEMINI.md).
+
 ### MCP (Model Context Protocol)
 
 Optional settings for [MCP server integrations](MCP.md):
@@ -200,19 +260,6 @@ There is no per-call override and no customizable placeholder. Callers needing f
 
 Override global configuration at the agent level:
 
-### provider_options
-
-Pass options directly to the provider client:
-
-```ruby
-class MyAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-
-  # Override API key for this agent only
-  provider_options api_key: ENV['CUSTOM_OPENAI_KEY']
-end
-```
-
 ### model_options
 
 Pass options to each LLM request:
@@ -305,17 +352,34 @@ end
 
 ## Multiple Configurations
 
-For different environments or use cases, use agent-level overrides:
+Provider credentials and clients are **global**, resolved per process rather than per agent. For different environments, branch at boot:
+
+```ruby
+Riffer.configure do |config|
+  config.openai.client = if Rails.env.production?
+    OpenAI::Client.new(api_key: ENV['PRODUCTION_OPENAI_KEY'], max_retries: 4)
+  else
+    OpenAI::Client.new(api_key: ENV['DEV_OPENAI_KEY'], timeout: 10)
+  end
+end
+```
+
+Agents do not take per-agent credentials — `Riffer::Agent` always builds its provider from global configuration. When a single process genuinely has to reach two different accounts or endpoints, skip the agent layer and use a provider directly:
+
+```ruby
+internal = Riffer::Providers::OpenAI.new(api_key: ENV['INTERNAL_OPENAI_KEY'], base_url: ENV['INTERNAL_GATEWAY'])
+internal.generate_text(prompt: 'Hello', model: 'gpt-5-mini')
+```
+
+A provider constructed with explicit credentials always builds its own client and ignores `config.<provider>.client`, so the two never interfere. What _can_ vary per agent is the model and the generation parameters:
 
 ```ruby
 class ProductionAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
-  provider_options api_key: ENV['PRODUCTION_OPENAI_KEY']
 end
 
 class DevelopmentAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
-  provider_options api_key: ENV['DEV_OPENAI_KEY']
-  model_options temperature: 0.0  # Deterministic for testing
+  model_options temperature: 0.0 # Deterministic for testing
 end
 ```

@@ -106,22 +106,25 @@ describe Riffer::Providers::OpenRouter do
       expect(calls).must_equal 2
     end
 
-    it "passes the agent context to a client Proc with arity" do
-      received = nil
-      Riffer.config.openrouter.client = ->(context) { received = context }
-      provider = Riffer::Providers::OpenRouter.new
-      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
-
-      provider.send(:client)
-
-      expect(received[:tenant]).must_equal "acme"
-    end
-
     it "prefers constructor credentials over the configured client" do
       Riffer.config.openrouter.client = Object.new
       provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
 
       expect(provider.send(:client)).must_be_instance_of OpenAI::Client
+    end
+
+    # Guards the deliberate non-compacting in build_default_client: borrowing the
+    # OpenAI SDK must never send an OpenAI credential to OpenRouter.
+    it "never falls back to OPENAI_API_KEY" do
+      original_openai = ENV.fetch("OPENAI_API_KEY", nil)
+      original_openrouter = ENV.fetch("OPENROUTER_API_KEY", nil)
+      ENV["OPENAI_API_KEY"] = "sk-openai-secret"
+      ENV["OPENROUTER_API_KEY"] = nil
+
+      expect { Riffer::Providers::OpenRouter.new.send(:client) }.must_raise ArgumentError
+    ensure
+      ENV["OPENAI_API_KEY"] = original_openai
+      ENV["OPENROUTER_API_KEY"] = original_openrouter
     end
   end
 

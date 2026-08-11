@@ -34,10 +34,16 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer.config.openai
   end
 
+  # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /
+  # +OPENAI_BASE_URL+ only for a missing argument, and an explicit nil would
+  # suppress that fallback.
   #--
   #: () -> untyped
   def build_default_client
-    ::OpenAI::Client.new(api_key: @api_key || Riffer.config.openai.api_key, base_url: @base_url)
+    ::OpenAI::Client.new(**{
+      api_key: @api_key || Riffer.config.openai.api_key,
+      base_url: @base_url,
+    }.compact)
   end
 
   #--
