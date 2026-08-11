@@ -16,9 +16,6 @@ class Riffer::Agent::Config
   # The configured instructions.
   attr_reader :instructions #: (String | Proc)?
 
-  # Options passed to the provider client.
-  attr_accessor :provider_options #: Hash[Symbol, untyped]
-
   # Options passed to generate_text/stream_text.
   attr_accessor :model_options #: Hash[Symbol, untyped]
 
@@ -50,7 +47,6 @@ class Riffer::Agent::Config
   #    ?identifier: String?,
   #    ?model: (String | Proc)?,
   #    ?instructions: (String | Proc)?,
-  #    ?provider_options: Hash[Symbol, untyped],
   #    ?model_options: Hash[Symbol, untyped],
   #    ?structured_output: Riffer::Params?,
   #    ?max_steps: Numeric?,
@@ -64,7 +60,6 @@ class Riffer::Agent::Config
     identifier: nil,
     model: nil,
     instructions: nil,
-    provider_options: {},
     model_options: {},
     structured_output: nil,
     max_steps: DEFAULT_MAX_STEPS,
@@ -74,7 +69,6 @@ class Riffer::Agent::Config
     skills_config: nil,
     guardrails: { before: [], after: [] }
   )
-    @provider_options = provider_options
     @model_options = model_options
     @max_steps = max_steps
     @tools_config = tools_config

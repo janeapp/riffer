@@ -15,9 +15,6 @@ class Riffer::Agent::Config
   # The configured instructions.
   attr_reader instructions: (String | Proc)?
 
-  # Options passed to the provider client.
-  attr_accessor provider_options: Hash[Symbol, untyped]
-
   # Options passed to generate_text/stream_text.
   attr_accessor model_options: Hash[Symbol, untyped]
 
@@ -49,7 +46,6 @@ class Riffer::Agent::Config
   #    ?identifier: String?,
   #    ?model: (String | Proc)?,
   #    ?instructions: (String | Proc)?,
-  #    ?provider_options: Hash[Symbol, untyped],
   #    ?model_options: Hash[Symbol, untyped],
   #    ?structured_output: Riffer::Params?,
   #    ?max_steps: Numeric?,
@@ -59,7 +55,7 @@ class Riffer::Agent::Config
   #    ?skills_config: Riffer::Skills::Config?,
   #    ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
   #  ) -> void
-  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  def initialize: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc, ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
 
   # Sets +identifier+, coercing the value to String.
   # --

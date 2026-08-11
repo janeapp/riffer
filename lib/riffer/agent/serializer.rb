@@ -37,7 +37,6 @@ module Riffer::Agent::Serializer
       model: "#{agent.provider_name}/#{agent.model_name}",
       instructions: agent.instruction_message&.content,
       model_options: config.model_options,
-      provider_options: config.provider_options,
       max_steps: encode_max_steps(config.max_steps),
       structured_output: config.structured_output&.to_json_schema(strict: false),
       tools: agent.tools.map { |tool_class| tool_descriptor(tool_class) },
@@ -92,11 +91,12 @@ module Riffer::Agent::Serializer
   def decode_v1(hash, context:, session:, tool_resolver:, tool_runtime:)
     tools = Array(hash[:tools]).map { |descriptor| tool_resolver.call(descriptor) }
 
+    # A legacy :provider_options key is ignored — provider construction takes
+    # no per-agent options, so the receiving side's provider config applies.
     config_args = {
       identifier: hash[:identifier],
       model: hash[:model],
       instructions: hash[:instructions],
-      provider_options: hash[:provider_options] || {},
       model_options: hash[:model_options] || {},
       structured_output: decode_structured_output(hash[:structured_output]),
       max_steps: decode_max_steps(hash),

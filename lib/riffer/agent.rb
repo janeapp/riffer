@@ -57,14 +57,6 @@ class Riffer::Agent
     value.nil? ? config.instructions : (config.instructions = value)
   end
 
-  # Gets or sets provider options passed to the provider client.
-  #
-  #--
-  #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
-  def self.provider_options(options = nil)
-    options.nil? ? config.provider_options : (config.provider_options = options)
-  end
-
   # Gets or sets model options passed to generate_text/stream_text.
   #
   #--
@@ -408,7 +400,9 @@ class Riffer::Agent
     provider_class = Riffer::Providers::Repository.find(@provider_name)
     raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
 
-    provider_class.new(**@config.provider_options)
+    provider = provider_class.new
+    provider.context = @context
+    provider
   end
 
   #--

@@ -33,14 +33,6 @@ describe Riffer::Agent do
     end
   end
 
-  describe ".provider_options" do
-    it "sets the provider options" do
-      agent_class.provider_options(api_key: "test-key")
-
-      expect(agent_class.provider_options).must_equal({ api_key: "test-key" })
-    end
-  end
-
   describe ".model_options" do
     it "sets the model options" do
       agent_class.model_options(reasoning: "medium")
@@ -83,6 +75,12 @@ describe Riffer::Agent do
       agent = agent_class.new
 
       expect(agent.context.token_usage).must_be_nil
+    end
+
+    it "threads the agent context to the provider" do
+      agent = agent_class.new
+
+      expect(agent.provider.context).must_be_same_as agent.context
     end
 
     it "does not mutate a caller-supplied context Hash" do
