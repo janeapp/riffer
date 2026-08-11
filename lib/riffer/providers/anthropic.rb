@@ -4,6 +4,8 @@
 # Anthropic provider for Claude models via the Anthropic API. Requires the
 # +anthropic+ gem.
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
+  # @rbs @api_key: String?
+
   WEB_SEARCH_TOOL_TYPE = "web_search_20250305" #: String
 
   FINISH_REASONS = {
@@ -30,17 +32,28 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **)
+  #: (?api_key: String?) -> void
+  def initialize(api_key: nil)
     super()
     depends_on "anthropic"
 
-    api_key ||= Riffer.config.anthropic.api_key
-
-    @client = ::Anthropic::Client.new(api_key: api_key, **)
+    @api_key = api_key
+    @explicit_credentials = !!api_key
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def provider_config
+    Riffer.config.anthropic
+  end
+
+  #--
+  #: () -> untyped
+  def build_default_client
+    ::Anthropic::Client.new(api_key: @api_key || Riffer.config.anthropic.api_key)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -97,7 +110,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.messages.create(**params)
+    client.messages.create(**params)
   end
 
   #--
@@ -193,7 +206,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
-    stream = @client.messages.stream(
+    stream = client.messages.stream(
       **params,
       request_options: { extra_headers: { "accept-encoding" => "identity" } },
     )

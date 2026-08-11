@@ -6,6 +6,9 @@ require "base64"
 # Amazon Bedrock provider for Claude and other foundation models. Requires the
 # +aws-sdk-bedrockruntime+ gem.
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
+  # @rbs @api_token: String?
+  # @rbs @region: String?
+
   # Matches Anthropic models on Bedrock — bare (+anthropic.claude-...+) and
   # cross-region (+us.anthropic.claude-...+) ids.
   ANTHROPIC_MODEL_PATTERN = /(?:^|\.)anthropic\./ #: Regexp
@@ -37,27 +40,40 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_token: String?, ?region: String?, **untyped) -> void
-  def initialize(api_token: nil, region: nil, **)
+  #: (?api_token: String?, ?region: String?) -> void
+  def initialize(api_token: nil, region: nil)
     super()
     depends_on "aws-sdk-bedrockruntime"
 
-    api_token ||= Riffer.config.amazon_bedrock.api_token
-    region ||= Riffer.config.amazon_bedrock.region
-
-    @client = if api_token && !api_token.empty?
-                Aws::BedrockRuntime::Client.new(
-                  region: region,
-                  token_provider: Aws::StaticTokenProvider.new(api_token),
-                  auth_scheme_preference: ["httpBearerAuth"],
-                  **,
-                )
-              else
-                Aws::BedrockRuntime::Client.new(region: region, **)
-              end
+    @api_token = api_token
+    @region = region
+    @explicit_credentials = !!(api_token || region)
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def provider_config
+    Riffer.config.amazon_bedrock
+  end
+
+  #--
+  #: () -> untyped
+  def build_default_client
+    api_token = @api_token || Riffer.config.amazon_bedrock.api_token
+    region = @region || Riffer.config.amazon_bedrock.region
+
+    if api_token && !api_token.empty?
+      Aws::BedrockRuntime::Client.new(
+        region: region,
+        token_provider: Aws::StaticTokenProvider.new(api_token),
+        auth_scheme_preference: ["httpBearerAuth"],
+      )
+    else
+      Aws::BedrockRuntime::Client.new(region: region)
+    end
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -137,7 +153,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.converse(**params)
+    client.converse(**params)
   end
 
   #--
@@ -227,7 +243,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       tool_call: nil,
     } #: Hash[Symbol, untyped]
 
-    @client.converse_stream(**params) do |stream|
+    client.converse_stream(**params) do |stream|
       stream.on_event do |event|
         case event
         when Aws::BedrockRuntime::Types::ContentBlockStartEvent

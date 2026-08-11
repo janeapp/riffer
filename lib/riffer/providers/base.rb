@@ -10,8 +10,14 @@ require "json"
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
+  # @rbs @explicit_credentials: bool
+  # @rbs @default_client: untyped
 
   WIRE_SEPARATOR = "__" #: String
+
+  # The owning agent's runtime context, or +nil+ for standalone provider use.
+  # Threaded to a configured +client+ Proc at resolution time.
+  attr_accessor :context #: Riffer::Agent::Context?
 
   # Returns the preferred skill adapter for this provider; override in
   # subclasses (optionally introspecting +model+) for provider-specific formats.
@@ -103,6 +109,46 @@ class Riffer::Providers::Base
   #: (String) -> true
   def depends_on(gem_name)
     Riffer::Helpers::Dependencies.depends_on(gem_name)
+  end
+
+  # Returns the client for the current LLM call. Constructor credentials pin a
+  # provider-built default (so an explicitly credentialed provider never rides
+  # a shared configured client); otherwise a configured client wins, resolved
+  # on every call so a Proc can vary the client by process, tenant, or
+  # credential lifetime.
+  #--
+  #: () -> untyped
+  def client
+    return default_client if @explicit_credentials
+
+    configured = provider_config&.client
+    configured ? resolve_client(configured) : default_client
+  end
+
+  #--
+  #: () -> untyped
+  def default_client
+    @default_client ||= build_default_client
+  end
+
+  #--
+  #: (untyped) -> untyped
+  def resolve_client(source)
+    Riffer::Helpers::CallOrValue.resolve(source, context: context)
+  end
+
+  # Returns the provider's global config struct (the +client+ / credential
+  # holder); nil for providers without one.
+  #--
+  #: () -> untyped
+  def provider_config
+    nil
+  end
+
+  #--
+  #: () -> untyped
+  def build_default_client
+    raise NotImplementedError, "Subclasses must implement #build_default_client"
   end
 
   #--

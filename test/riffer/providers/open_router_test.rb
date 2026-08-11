@@ -80,10 +80,48 @@ describe Riffer::Providers::OpenRouter do
       Riffer.config.openrouter.api_key = nil
     end
 
-    it "accepts additional client options" do
-      provider = Riffer::Providers::OpenRouter.new(api_key: api_key, timeout: 60)
+    it "raises on unknown constructor options" do
+      expect { Riffer::Providers::OpenRouter.new(timeout: 60) }.must_raise ArgumentError
+    end
+  end
 
-      expect(provider).must_be_instance_of Riffer::Providers::OpenRouter
+  describe "client resolution" do
+    after { Riffer.config.openrouter.client = nil }
+
+    it "uses the configured client" do
+      configured = Object.new
+      Riffer.config.openrouter.client = configured
+
+      expect(Riffer::Providers::OpenRouter.new.send(:client)).must_be_same_as configured
+    end
+
+    it "resolves a configured client Proc on every call" do
+      calls = 0
+      Riffer.config.openrouter.client = -> { calls += 1 }
+      provider = Riffer::Providers::OpenRouter.new
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
+    end
+
+    it "passes the agent context to a client Proc with arity" do
+      received = nil
+      Riffer.config.openrouter.client = ->(context) { received = context }
+      provider = Riffer::Providers::OpenRouter.new
+      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
+
+      provider.send(:client)
+
+      expect(received[:tenant]).must_equal "acme"
+    end
+
+    it "prefers constructor credentials over the configured client" do
+      Riffer.config.openrouter.client = Object.new
+      provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+
+      expect(provider.send(:client)).must_be_instance_of OpenAI::Client
     end
   end
 
@@ -759,7 +797,7 @@ describe Riffer::Providers::OpenRouter do
       chat_double.define_singleton_method(:completions) { completions_double }
       client_double = Object.new
       client_double.define_singleton_method(:chat) { chat_double }
-      provider.instance_variable_set(:@client, client_double)
+      provider.instance_variable_set(:@default_client, client_double)
     end
 
     it "calls stream.close when iteration raises mid-stream" do
@@ -810,7 +848,7 @@ describe Riffer::Providers::OpenRouter do
       chat_double.define_singleton_method(:completions) { completions_double }
       client_double = Object.new
       client_double.define_singleton_method(:chat) { chat_double }
-      provider.instance_variable_set(:@client, client_double)
+      provider.instance_variable_set(:@default_client, client_double)
     end
 
     it "flushes accumulated tool calls when the stream ends with finish_reason other than tool_calls" do
@@ -871,7 +909,7 @@ describe Riffer::Providers::OpenRouter do
       chat_double.define_singleton_method(:completions) { completions_double }
       client_double = Object.new
       client_double.define_singleton_method(:chat) { chat_double }
-      provider.instance_variable_set(:@client, client_double)
+      provider.instance_variable_set(:@default_client, client_double)
 
       provider.stream_text(
         prompt: "hi",

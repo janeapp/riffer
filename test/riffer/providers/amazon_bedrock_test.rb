@@ -109,44 +109,72 @@ describe Riffer::Providers::AmazonBedrock do
   end
 
   describe "#initialize" do
-    it "creates Bedrock client with an api_token" do
+    it "creates the provider with an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
 
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
 
-    it "sets the region correctly with an api_token" do
+    it "sets the region on the default client with an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
-      client = provider.instance_variable_get(:@client)
 
-      assert_equal "us-east-1", client.config.region
+      assert_equal "us-east-1", provider.send(:client).config.region
     end
 
-    it "accepts additional options with an api_token" do
-      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1", retry_limit: 60)
-      client = provider.instance_variable_get(:@client)
-
-      assert_equal 60, client.config.retry_limit
-    end
-
-    it "creates Bedrock client without an api_token" do
+    it "creates the provider without an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
 
       expect(provider).must_be_instance_of Riffer::Providers::AmazonBedrock
     end
 
-    it "sets the region correctly without an api_token" do
+    it "sets the region on the default client without an api_token" do
       provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1")
-      client = provider.instance_variable_get(:@client)
 
-      assert_equal "us-east-1", client.config.region
+      assert_equal "us-east-1", provider.send(:client).config.region
     end
 
-    it "accepts additional options without an api_token" do
-      provider = Riffer::Providers::AmazonBedrock.new(region: "us-east-1", retry_limit: 60)
-      client = provider.instance_variable_get(:@client)
+    it "raises on unknown constructor options" do
+      expect { Riffer::Providers::AmazonBedrock.new(region: "us-east-1", retry_limit: 60) }.must_raise ArgumentError
+    end
+  end
 
-      assert_equal 60, client.config.retry_limit
+  describe "client resolution" do
+    after { Riffer.config.amazon_bedrock.client = nil }
+
+    it "uses the configured client" do
+      configured = Object.new
+      Riffer.config.amazon_bedrock.client = configured
+
+      expect(Riffer::Providers::AmazonBedrock.new.send(:client)).must_be_same_as configured
+    end
+
+    it "resolves a configured client Proc on every call" do
+      calls = 0
+      Riffer.config.amazon_bedrock.client = -> { calls += 1 }
+      provider = Riffer::Providers::AmazonBedrock.new
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
+    end
+
+    it "passes the agent context to a client Proc with arity" do
+      received = nil
+      Riffer.config.amazon_bedrock.client = ->(context) { received = context }
+      provider = Riffer::Providers::AmazonBedrock.new
+      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
+
+      provider.send(:client)
+
+      expect(received[:tenant]).must_equal "acme"
+    end
+
+    it "prefers constructor credentials over the configured client" do
+      Riffer.config.amazon_bedrock.client = Object.new
+      provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+
+      expect(provider.send(:client)).must_be_instance_of Aws::BedrockRuntime::Client
     end
   end
 
@@ -701,7 +729,7 @@ describe Riffer::Providers::AmazonBedrock do
         stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
         client_double = Object.new
         client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-        provider.instance_variable_set(:@client, client_double)
+        provider.instance_variable_set(:@default_client, client_double)
       end
 
       # Covers the Types → Errors conversion for every stream-exception event
@@ -800,7 +828,7 @@ describe Riffer::Providers::AmazonBedrock do
         stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
         client_double = Object.new
         client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
-        provider.instance_variable_set(:@client, client_double)
+        provider.instance_variable_set(:@default_client, client_double)
       end
 
       # Guards the in-place << accumulation of streamed text: the assembled

@@ -3,12 +3,17 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
-  AmazonBedrock = Struct.new(:api_token, :region)
-  Anthropic = Struct.new(:api_key)
-  AzureOpenAI = Struct.new(:api_key, :endpoint)
-  Gemini = Struct.new(:api_key, :open_timeout, :read_timeout)
-  OpenAI = Struct.new(:api_key)
-  OpenRouter = Struct.new(:api_key)
+  # Each provider struct's +client+ member optionally carries a consumer-owned
+  # client replacing the default one riffer builds from the credential members —
+  # either a client instance or a Proc returning one, resolved on every LLM call
+  # (a Proc with non-zero arity receives the agent's +Riffer::Agent::Context+,
+  # which may be +nil+ for standalone provider use).
+  AmazonBedrock = Struct.new(:api_token, :region, :client)
+  Anthropic = Struct.new(:api_key, :client)
+  AzureOpenAI = Struct.new(:api_key, :endpoint, :client)
+  Gemini = Struct.new(:api_key, :client)
+  OpenAI = Struct.new(:api_key, :client)
+  OpenRouter = Struct.new(:api_key, :client)
   Evals = Struct.new(:judge_model)
   Mcp = Struct.new(:credentials, :discovery_runner)
 

@@ -2,20 +2,13 @@
 # rbs_inline: enabled
 
 require "json"
-require "net/http"
 require "securerandom"
-require "uri"
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   # @rbs @api_key: String?
-  # @rbs @open_timeout: Integer
-  # @rbs @read_timeout: Integer
 
-  BASE_URI = URI("https://generativelanguage.googleapis.com") #: URI::Generic
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
-  DEFAULT_OPEN_TIMEOUT = 10 #: Integer
-  DEFAULT_READ_TIMEOUT = 60 #: Integer
 
   FINISH_REASONS = {
     "STOP" => :stop,
@@ -37,16 +30,26 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-  def initialize(api_key: nil, open_timeout: nil, read_timeout: nil, **_options)
+  #: (?api_key: String?) -> void
+  def initialize(api_key: nil)
     super()
-    api_key ||= Riffer.config.gemini.api_key
     @api_key = api_key
-    @open_timeout = open_timeout || Riffer.config.gemini.open_timeout || DEFAULT_OPEN_TIMEOUT
-    @read_timeout = read_timeout || Riffer.config.gemini.read_timeout || DEFAULT_READ_TIMEOUT
+    @explicit_credentials = !!api_key
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def provider_config
+    Riffer.config.gemini
+  end
+
+  #--
+  #: () -> untyped
+  def build_default_client
+    Riffer::Providers::Gemini::Client.new(api_key: @api_key || Riffer.config.gemini.api_key)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -89,9 +92,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def execute_generate(params)
     model = params[:model]
     body = params.except(:model)
-    response = post_request(api_path(model, "generateContent"), body)
-    handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
-    JSON.parse(response.body, symbolize_names: true)
+    client.post(api_path(model, "generateContent"), body)
   end
 
   #--
@@ -171,13 +172,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     model = params[:model]
     body = params.except(:model)
 
-    uri = URI("#{BASE_URI}/#{api_path(model, 'streamGenerateContent')}?alt=sse")
-    host = uri.hostname #: String
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["x-goog-api-key"] = @api_key
-    request.body = body.to_json
-
     full_text = +""
     buffer = +""
     raw_finish_reason = nil #: String?
@@ -224,17 +218,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    Net::HTTP.start(host, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) do |http|
-      http.request(request) do |response|
-        handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
-
-        begin
-          response.read_body { |chunk| process_chunk.call(chunk) }
-        rescue IOError
-          process_chunk.call(response.body)
-        end
-      end
-    end
+    path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
+    client.post_stream(path, body) { |chunk| process_chunk.call(chunk) }
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
@@ -326,18 +311,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
-  def post_request(path, body)
-    uri = URI("#{BASE_URI}/#{path}")
-    host = uri.hostname #: String
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["x-goog-api-key"] = @api_key
-    request.body = body.to_json
-    Net::HTTP.start(host, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) { |http| http.request(request) }
-  end
-
-  #--
   #: (String, String) -> String
   def api_path(model, method)
     validate_model!(model)
@@ -369,17 +342,5 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     schema[:items] = strip_additional_properties(schema[:items]) if schema[:items].is_a?(Hash)
 
     schema
-  end
-
-  #--
-  #: (Net::HTTPResponse) -> void
-  def handle_api_error!(response)
-    body = begin
-      JSON.parse(response.body, symbolize_names: true)
-    rescue JSON::ParserError
-      { message: response.body }
-    end
-    error_message = body.dig(:error, :message) || body[:message] || response.body
-    raise Riffer::Error, "Gemini API error (#{response.code}): #{error_message}"
   end
 end

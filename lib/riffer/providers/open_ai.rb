@@ -3,6 +3,9 @@
 
 # OpenAI provider for GPT models. Requires the +openai+ gem.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
+  # @rbs @api_key: String?
+  # @rbs @base_url: String?
+
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
   # The GenAI semconv well-known provider name.
@@ -13,16 +16,29 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (**untyped) -> void
-  def initialize(**options)
+  #: (?api_key: String?, ?base_url: String?) -> void
+  def initialize(api_key: nil, base_url: nil)
     super()
     depends_on "openai"
 
-    api_key = options.fetch(:api_key, Riffer.config.openai.api_key)
-    @client = ::OpenAI::Client.new(api_key: api_key, **options.except(:api_key))
+    @api_key = api_key
+    @base_url = base_url
+    @explicit_credentials = !!(api_key || base_url)
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def provider_config
+    Riffer.config.openai
+  end
+
+  #--
+  #: () -> untyped
+  def build_default_client
+    ::OpenAI::Client.new(api_key: @api_key || Riffer.config.openai.api_key, base_url: @base_url)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -81,7 +97,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.responses.create(params)
+    client.responses.create(params)
   end
 
   #--
@@ -190,7 +206,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       tool_info: {},
     } #: Hash[Symbol, untyped]
 
-    stream = @client.responses.stream(params)
+    stream = client.responses.stream(params)
     begin
       stream.each do |event|
         case event.type

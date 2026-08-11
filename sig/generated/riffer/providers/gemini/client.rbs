@@ -1,0 +1,65 @@
+# Generated from lib/riffer/providers/gemini/client.rb with RBS::Inline
+
+# HTTP transport for the Gemini REST API. Riffer builds one from the
+# configured +api_key+ by default; construct your own to tune the HTTP knobs
+# and assign it to <tt>Riffer.config.gemini.client</tt>. Any object
+# implementing +post+ and +post_stream+ with these contracts works there —
+# the class is a default implementation, not a required base.
+#
+#   Riffer.configure do |config|
+#     config.gemini.client = Riffer::Providers::Gemini::Client.new(
+#       api_key: ENV["GEMINI_API_KEY"],
+#       read_timeout: 120
+#     )
+#   end
+class Riffer::Providers::Gemini::Client
+  @proxy_port: Integer?
+
+  @proxy_address: String?
+
+  @write_timeout: Integer?
+
+  @read_timeout: Integer
+
+  @open_timeout: Integer
+
+  @base_url: String
+
+  @api_key: String?
+
+  DEFAULT_BASE_URL: String
+
+  DEFAULT_OPEN_TIMEOUT: Integer
+
+  DEFAULT_READ_TIMEOUT: Integer
+
+  # : (?api_key: String?, ?base_url: String, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
+  def initialize: (?api_key: String?, ?base_url: String, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
+
+  # POSTs a JSON body to an API path and returns the parsed response hash.
+  # Raises Riffer::Error when the API responds with a non-success status.
+  # --
+  # : (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+  def post: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
+
+  # POSTs a JSON body to an API path, yielding raw response body chunks as
+  # they arrive. Raises Riffer::Error when the API responds with a
+  # non-success status.
+  # --
+  # : (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+  def post_stream: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
+
+  private
+
+  # --
+  # : (URI::Generic, Hash[Symbol, untyped]) -> Net::HTTP::Post
+  def build_request: (URI::Generic, Hash[Symbol, untyped]) -> Net::HTTP::Post
+
+  # --
+  # : [R] (URI::Generic) { (Net::HTTP) -> R } -> R
+  def start_http: [R] (URI::Generic) { (Net::HTTP) -> R } -> R
+
+  # --
+  # : (Net::HTTPResponse) -> void
+  def handle_api_error!: (Net::HTTPResponse) -> void
+end

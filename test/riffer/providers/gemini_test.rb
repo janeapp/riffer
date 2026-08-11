@@ -63,24 +63,58 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "#initialize" do
-    it "creates Gemini client with an api_key" do
+    it "creates the provider with an api_key" do
       provider = Riffer::Providers::Gemini.new(api_key: api_key)
 
       expect(provider).must_be_instance_of Riffer::Providers::Gemini
     end
 
-    it "uses default timeouts" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+    it "raises on unknown constructor options" do
+      expect { Riffer::Providers::Gemini.new(open_timeout: 5) }.must_raise ArgumentError
+    end
+  end
 
-      expect(provider.instance_variable_get(:@open_timeout)).must_equal 10
-      expect(provider.instance_variable_get(:@read_timeout)).must_equal 60
+  describe "client resolution" do
+    after { Riffer.config.gemini.client = nil }
+
+    it "builds a default Gemini::Client from the configured api_key" do
+      expect(Riffer::Providers::Gemini.new.send(:client)).must_be_instance_of Riffer::Providers::Gemini::Client
     end
 
-    it "allows custom timeouts" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key, open_timeout: 5, read_timeout: 30)
+    it "uses the configured client" do
+      configured = Object.new
+      Riffer.config.gemini.client = configured
 
-      expect(provider.instance_variable_get(:@open_timeout)).must_equal 5
-      expect(provider.instance_variable_get(:@read_timeout)).must_equal 30
+      expect(Riffer::Providers::Gemini.new.send(:client)).must_be_same_as configured
+    end
+
+    it "resolves a configured client Proc on every call" do
+      calls = 0
+      Riffer.config.gemini.client = -> { calls += 1 }
+      provider = Riffer::Providers::Gemini.new
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
+    end
+
+    it "passes the agent context to a client Proc with arity" do
+      received = nil
+      Riffer.config.gemini.client = ->(context) { received = context }
+      provider = Riffer::Providers::Gemini.new
+      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
+
+      provider.send(:client)
+
+      expect(received[:tenant]).must_equal "acme"
+    end
+
+    it "prefers constructor credentials over the configured client" do
+      Riffer.config.gemini.client = Object.new
+      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+
+      expect(provider.send(:client)).must_be_instance_of Riffer::Providers::Gemini::Client
     end
   end
 

@@ -75,16 +75,54 @@ describe Riffer::Providers::Anthropic do
   end
 
   describe "#initialize" do
-    it "creates Anthropic client with an api_key" do
+    it "creates the provider with an api_key" do
       provider = Riffer::Providers::Anthropic.new(api_key: api_key)
 
       expect(provider).must_be_instance_of Riffer::Providers::Anthropic
     end
 
-    it "accepts additional options" do
-      provider = Riffer::Providers::Anthropic.new(api_key: api_key, timeout: 60)
+    it "raises on unknown constructor options" do
+      expect { Riffer::Providers::Anthropic.new(timeout: 60) }.must_raise ArgumentError
+    end
+  end
 
-      expect(provider).must_be_instance_of Riffer::Providers::Anthropic
+  describe "client resolution" do
+    after { Riffer.config.anthropic.client = nil }
+
+    it "uses the configured client" do
+      configured = Object.new
+      Riffer.config.anthropic.client = configured
+
+      expect(Riffer::Providers::Anthropic.new.send(:client)).must_be_same_as configured
+    end
+
+    it "resolves a configured client Proc on every call" do
+      calls = 0
+      Riffer.config.anthropic.client = -> { calls += 1 }
+      provider = Riffer::Providers::Anthropic.new
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
+    end
+
+    it "passes the agent context to a client Proc with arity" do
+      received = nil
+      Riffer.config.anthropic.client = ->(context) { received = context }
+      provider = Riffer::Providers::Anthropic.new
+      provider.context = Riffer::Agent::Context.new({ tenant: "acme" })
+
+      provider.send(:client)
+
+      expect(received[:tenant]).must_equal "acme"
+    end
+
+    it "prefers constructor credentials over the configured client" do
+      Riffer.config.anthropic.client = Object.new
+      provider = Riffer::Providers::Anthropic.new(api_key: api_key)
+
+      expect(provider.send(:client)).must_be_instance_of Anthropic::Client
     end
   end
 
@@ -1282,7 +1320,7 @@ describe Riffer::Providers::Anthropic do
       messages_double.define_singleton_method(:stream) { |**_kwargs| stream_double }
       client_double = Object.new
       client_double.define_singleton_method(:messages) { messages_double }
-      provider.instance_variable_set(:@client, client_double)
+      provider.instance_variable_set(:@default_client, client_double)
     end
 
     it "calls stream.close when iteration raises mid-stream" do

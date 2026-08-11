@@ -8,6 +8,8 @@ require "json"
 # SDK with a +base_url+ override. +api_key+ falls back to config, then
 # +OPENROUTER_API_KEY+.
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
+  # @rbs @api_key: String?
+
   BASE_URL = "https://openrouter.ai/api/v1" #: String
 
   FINISH_REASONS = {
@@ -27,17 +29,29 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **)
+  #: (?api_key: String?) -> void
+  def initialize(api_key: nil)
     super()
     depends_on "openai"
 
-    api_key ||= Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
-
-    @client = ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL, **)
+    @api_key = api_key
+    @explicit_credentials = !!api_key
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def provider_config
+    Riffer.config.openrouter
+  end
+
+  #--
+  #: () -> untyped
+  def build_default_client
+    api_key = @api_key || Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
+    ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -84,7 +98,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.chat.completions.create(**params)
+    client.chat.completions.create(**params)
   end
 
   #--
@@ -174,7 +188,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     # events. We want raw ChatCompletionChunk objects with
     # +choices.first.delta+ so we can map deltas to Riffer::StreamEvents
     # ourselves.
-    stream = @client.chat.completions.stream_raw(**stream_params)
+    stream = client.chat.completions.stream_raw(**stream_params)
     begin
       stream.each do |chunk|
         handle_stream_chunk(chunk, state: state, yielder: yielder)

@@ -10,6 +10,16 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
   def self.semconv_provider_name: () -> String
 
   # --
-  # : (**untyped) -> void
-  def initialize: (**untyped) -> void
+  # : (?api_key: String?, ?endpoint: String?) -> void
+  def initialize: (?api_key: String?, ?endpoint: String?) -> void
+
+  private
+
+  # --
+  # : () -> untyped
+  def provider_config: () -> untyped
+
+  # --
+  # : () -> untyped
+  def build_default_client: () -> untyped
 end
