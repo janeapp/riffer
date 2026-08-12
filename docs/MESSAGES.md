@@ -77,7 +77,7 @@ end
 
 The cache buckets are subsets of `input_tokens`, never additions to it — summing `input_tokens + cache_read_tokens` double-counts. `total_tokens` (input + output) matches the totals providers report on their dashboards.
 
-- `cost` — the computed cost of the call, set when pricing is configured for the model in use (see [Configuration → Pricing](10_CONFIGURATION.md#pricing)); `nil` when the model is unpriced. It's for observability, not billing. Run-level usage sums per-call costs through `TokenUsage#+`, so `response.token_usage.cost` is the total spend across the run — but the sum is `nil` if any call in the run used an unpriced model, rather than silently under-reporting.
+- `cost` — the computed cost of the call, set when pricing is configured for the model in use (see [Configuration → Pricing](CONFIGURATION.md#pricing)); `nil` when the model is unpriced. It's for observability, not billing. Run-level usage sums per-call costs through `TokenUsage#+`, so `response.token_usage.cost` is the total spend across the run — but the sum is `nil` if any call in the run used an unpriced model, rather than silently under-reporting.
 
 #### Finish Reasons
 
@@ -269,7 +269,7 @@ When creating tool result messages, use the `id` as `tool_call_id`.
 
 Agents can emit messages as they're added during generation via the `on_message` callback. This is useful for persistence or real-time logging. Only agent-generated messages (Assistant, Tool) are emitted—not inputs (System, User).
 
-See [Agent Lifecycle - on_message](04_AGENT_LIFECYCLE.md#on_message) for details.
+See [Agent Lifecycle - on_message](AGENT_LIFECYCLE.md#on_message) for details.
 
 ## Consecutive Message Merging
 
@@ -317,7 +317,7 @@ msg.id     # => "0195a2e1-..." (auto-generated UUIDv7)
 msg.to_h   # => {role: :user, content: "Hello", id: "0195a2e1-..."}
 ```
 
-Supported strategies: `:none` (default), `:uuid`, `:uuidv7`. See [Configuration — Message ID Strategy](10_CONFIGURATION.md#message-id-strategy) for the full reference.
+Supported strategies: `:none` (default), `:uuid`, `:uuidv7`. See [Configuration — Message ID Strategy](CONFIGURATION.md#message-id-strategy) for the full reference.
 
 Ids pass through to subclass constructors via an `id:` kwarg and are preserved when set explicitly:
 
@@ -357,4 +357,4 @@ Subclasses implement `role` and optionally extend `to_h` with additional fields.
 
 ## Editing history after the fact
 
-The session's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, rewrite a tool result, fill an orphan `tool_use` — use the mutators on `agent.session` (`update`, `remove`). Each one enforces the `tool_use` ↔ `tool_result` invariant. See [Mutating history](04_AGENT_LIFECYCLE.md#mutating-history) for the full list.
+The session's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, rewrite a tool result, fill an orphan `tool_use` — use the mutators on `agent.session` (`update`, `remove`). Each one enforces the `tool_use` ↔ `tool_result` invariant. See [Mutating history](AGENT_LIFECYCLE.md#mutating-history) for the full list.

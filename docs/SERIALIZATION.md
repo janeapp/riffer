@@ -82,7 +82,7 @@ rebuilt = Riffer::Agent.from_h(data,
   tool_runtime: MyRemoteToolRuntime.new(client: rpc_client))
 ```
 
-Implement the remote runtime by subclassing `Riffer::Tools::Runtime` and overriding `#dispatch_tool_call` to forward the call over your transport, mapping any failure to `Tools::Response.error`. See [Advanced Tools](07_TOOL_ADVANCED.md) for the runtime API.
+Implement the remote runtime by subclassing `Riffer::Tools::Runtime` and overriding `#dispatch_tool_call` to forward the call over your transport, mapping any failure to `Tools::Response.error`. See [Advanced Tools](TOOL_ADVANCED.md) for the runtime API.
 
 You own what a resolved tool does: a resolver may return real in-process classes, shells, or classes that themselves make network calls. Riffer does not require a runtime — it only ships shells by default.
 
@@ -109,6 +109,6 @@ A finite integer round-trips as-is; a hash missing the key falls back to the def
 
 ## Next Steps
 
-- [Tools](06_TOOLS.md) - Creating tools
-- [Advanced Tools](07_TOOL_ADVANCED.md) - Tool runtime and dispatch
-- [Configuration](10_CONFIGURATION.md) - Global configuration
+- [Tools](TOOLS.md) - Creating tools
+- [Advanced Tools](TOOL_ADVANCED.md) - Tool runtime and dispatch
+- [Configuration](CONFIGURATION.md) - Global configuration

@@ -45,35 +45,37 @@ puts agent.generate('Hello world')
 
 ## Documentation
 
-For comprehensive documentation, see the [docs](docs/) directory:
+Comprehensive guides live at [docs.riffer.ai](https://docs.riffer.ai):
 
-- [Overview](docs/01_OVERVIEW.md) - Core concepts and architecture
-- [Getting Started](docs/02_GETTING_STARTED.md) - Installation and first steps
-- [Agents](docs/03_AGENTS.md) - Defining and configuring agents
-- [Agent Lifecycle](docs/04_AGENT_LIFECYCLE.md) - Generate, stream, and responses
-- [Agent Loop](docs/05_AGENT_LOOP.md) - Tool execution flow and stopping
-- [Tools](docs/06_TOOLS.md) - Creating tools for agents
-- [Advanced Tools](docs/07_TOOL_ADVANCED.md) - Timeouts, runtime, and registration
-- [Messages](docs/08_MESSAGES.md) - Message types and formats
-- [Stream Events](docs/09_STREAM_EVENTS.md) - Streaming responses
-- [Configuration](docs/10_CONFIGURATION.md) - Framework configuration
-- [Evals](docs/11_EVALS.md) - Evaluating agent quality
-- [Guardrails](docs/12_GUARDRAILS.md) - Input/output validation
-- [Skills](docs/13_SKILLS.md) - Packaged agent capabilities
-- [MCP](docs/14_MCP.md) - Integrating third-party MCP servers
-- [Serialization](docs/15_SERIALIZATION.md) - Persisting and transferring agent definitions
-- [Tracing](docs/16_TRACING.md) - OpenTelemetry span contract and host wiring
-- [Providers](docs/providers/01_PROVIDERS.md) - LLM provider adapters
+- [Overview](https://docs.riffer.ai/guides/overview/) - Core concepts and architecture
+- [Getting Started](https://docs.riffer.ai/guides/getting-started/) - Installation and first steps
+- [Agents](https://docs.riffer.ai/guides/agents/) - Defining and configuring agents
+- [Agent Lifecycle](https://docs.riffer.ai/guides/agent-lifecycle/) - Generate, stream, and responses
+- [Agent Loop](https://docs.riffer.ai/guides/agent-loop/) - Tool execution flow and stopping
+- [Tools](https://docs.riffer.ai/guides/tools/) - Creating tools for agents
+- [Advanced Tools](https://docs.riffer.ai/guides/advanced-tools/) - Timeouts, runtime, and registration
+- [Messages](https://docs.riffer.ai/guides/messages/) - Message types and formats
+- [Stream Events](https://docs.riffer.ai/guides/stream-events/) - Streaming responses
+- [Configuration](https://docs.riffer.ai/guides/configuration/) - Framework configuration
+- [Evals](https://docs.riffer.ai/guides/evals/) - Evaluating agent quality
+- [Guardrails](https://docs.riffer.ai/guides/guardrails/) - Input/output validation
+- [Skills](https://docs.riffer.ai/guides/skills/) - Packaged agent capabilities
+- [MCP](https://docs.riffer.ai/guides/mcp/) - Integrating third-party MCP servers
+- [Serialization](https://docs.riffer.ai/guides/serialization/) - Persisting and transferring agent definitions
+- [Tracing](https://docs.riffer.ai/guides/tracing/) - OpenTelemetry span contract and host wiring
+- [Providers](https://docs.riffer.ai/guides/providers/overview/) - LLM provider adapters
+
+The guide sources are in the [docs](docs/) directory.
 
 ### API Reference
 
-Generate the full API documentation with:
+The full API reference is published at [docs.riffer.ai/api](https://docs.riffer.ai/api/). Preview the site locally with:
 
 ```bash
-bin/docs
+bin/rake docs:serve
 ```
 
-Then open `doc/index.html` in your browser.
+Then open <http://localhost:8000>. The site uses root-absolute paths, so it must be served over HTTP — opening `_site/index.html` via `file://` won't work.
 
 ## Development
 
@@ -86,17 +88,17 @@ bin/setup
 Common workflows are wrapped in `bin/`. Each is a thin `exec bundle exec …` script — use them
 instead of typing `bundle exec` yourself:
 
-| Command         | Description                                 |
-| --------------- | ------------------------------------------- |
-| `bin/rake`      | Default task: test + rubocop + steep:check  |
-| `bin/test`      | Run tests                                   |
-| `bin/lint`      | Check code style (pass `-a` to auto-fix)    |
-| `bin/typecheck` | Run Steep type checker                      |
-| `bin/rbs`       | Generate RBS type signatures                |
-| `bin/rbs-watch` | Watch and regenerate RBS files              |
-| `bin/docs`      | Build RDoc HTML                             |
-| `bin/build`     | Build the gem package                       |
-| `bin/console`   | Interactive console                         |
+| Command         | Description                                |
+| --------------- | ------------------------------------------ |
+| `bin/rake`      | Default task: test + rubocop + steep:check |
+| `bin/test`      | Run tests                                  |
+| `bin/lint`      | Check code style (pass `-a` to auto-fix)   |
+| `bin/typecheck` | Run Steep type checker                     |
+| `bin/rbs`       | Generate RBS type signatures               |
+| `bin/rbs-watch` | Watch and regenerate RBS files             |
+| `bin/docs`      | Build the docs site + API reference        |
+| `bin/build`     | Build the gem package                      |
+| `bin/console`   | Interactive console                        |
 
 `bin/rake <task>` is the escape hatch for any rake task without a named wrapper (e.g.
 `bin/rake test:slow`, `bin/rake release`).

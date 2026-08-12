@@ -117,7 +117,7 @@ Options:
 
 ### Nested Parameters
 
-Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](03_AGENTS.md#nested-objects) for full syntax.
+Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
 
 ```ruby
 class CreateOrderTool < Riffer::Tool

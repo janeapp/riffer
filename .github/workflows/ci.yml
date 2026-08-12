@@ -61,3 +61,13 @@ jobs:
         run: git diff --exit-code sig/generated/
       - name: Run Steep type check
         run: bin/typecheck
+
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bin/rake docs:check

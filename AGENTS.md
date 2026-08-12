@@ -8,7 +8,7 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 - **Lint + Test**: `bin/rake` (runs the default task: test + rubocop + steep:check)
 - **Autoloading**: Zeitwerk (file paths must match module/class names)
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)
-- **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/10_CONFIGURATION.md`, `docs/08_MESSAGES.md`). RDoc ≠ user docs.
+- **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/CONFIGURATION.md`, `docs/MESSAGES.md`). Adding a NEW page under `docs/` also requires a `docs-site/manifest.yml` entry — the site build fails without one. RDoc ≠ user docs.
 
 ## Topic Guides
 
@@ -30,7 +30,7 @@ All wrappers `exec bundle exec …` under the hood.
 | `bin/typecheck` | Run Steep type checker                       |
 | `bin/rbs`       | Generate RBS type signatures                 |
 | `bin/rbs-watch` | Watch and regenerate RBS files               |
-| `bin/docs`      | Build RDoc HTML                              |
+| `bin/docs`      | Build the docs site + API reference          |
 | `bin/build`     | Build the gem package                        |
 | `bin/console`   | Interactive console                          |
 | `bin/setup`     | Install dependencies                         |

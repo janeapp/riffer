@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= page.title %> — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="<%= pages.first.url %>">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v<%= version %></span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <%- groups.each do |group| -%>
+            <span class="group-label <%= group.tone %>"><%= group.label %></span>
+            <ul>
+              <%- group.pages.each do |p| -%>
+              <li>
+                <a href="<%= p.url %>"<%= %( class="active" aria-current="page") if p == page %>
+                  ><span class="num"><%= p.num %></span> <%= p.title %></a
+                >
+              </li>
+              <%- end -%>
+            </ul>
+            <%- end -%>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter"><%= page.group_label %> · <%= page.num %></span></p>
+          <h1><%= page.title %></h1>
+          <%- if toc.size >= 2 -%>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <%- toc.each do |item| -%>
+              <li><a href="#<%= item[:id] %>"><%= item[:title] %></a></li>
+              <%- end -%>
+            </ul>
+          </nav>
+          <%- end -%>
+          <%= body %>
+        </article>
+
+        <nav class="pager">
+          <%- if prev_page -%>
+          <a class="doc" href="<%= prev_page.url %>"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name"><%= prev_page.title %></span></span
+            ></a
+          >
+          <%- else -%>
+          <span></span>
+          <%- end -%>
+          <%- if next_page -%>
+          <a class="doc next" href="<%= next_page.url %>"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name"><%= next_page.title %></span></span
+            ><span class="go">→</span></a
+          >
+          <%- end -%>
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

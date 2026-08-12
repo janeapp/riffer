@@ -12,17 +12,33 @@ RuboCop::RakeTask.new
 require "rdoc/task"
 
 RDoc::Task.new do |rdoc|
-  rdoc.rdoc_dir = "doc"
-  rdoc.title = "Riffer Documentation"
+  rdoc.rdoc_dir = "_site/api"
+  rdoc.title = "Riffer API Reference"
   rdoc.main = "README.md"
   rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "LICENSE.txt")
   rdoc.rdoc_files.include("lib/**/*.rb")
   rdoc.options << "--charset" << "utf-8"
-  rdoc.options << "--page-dir" << "docs"
 end
 
-desc "Build RDoc HTML documentation"
-task docs: :rdoc
+namespace :docs do
+  desc "Build the docs site (landing, guides, 404, assets) into _site/"
+  task :site do
+    ruby "docs-site/build.rb"
+  end
+
+  desc "Build the docs site and validate all internal links and anchors"
+  task check: :site do
+    ruby "docs-site/check.rb"
+  end
+
+  desc "Build the docs site and serve it at http://localhost:8000"
+  task serve: :site do
+    ruby "-run -e httpd _site -p 8000"
+  end
+end
+
+desc "Build the full deployable docs tree (site + API reference) into _site/"
+task docs: %w[docs:site rdoc]
 
 namespace :rbs do
   desc "Generate RBS type signatures from inline annotations"

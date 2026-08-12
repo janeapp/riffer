@@ -1,0 +1,96 @@
+# Every guide page on the docs site, in reading order. `source` is relative to
+# docs/; `slug` becomes the page URL (/guides/<slug>/). Page titles come from
+# each file's first H1 at build time. Adding a page under docs/ requires an
+# entry here — the build fails on any mismatch.
+groups:
+  - label: Start here
+    tone: jane
+    pages:
+      - source: OVERVIEW.md
+        slug: overview
+        description: Core concepts and architecture
+      - source: GETTING_STARTED.md
+        slug: getting-started
+        featured: true
+        description: Install the gem and ship your first agent
+
+  - label: The fundamentals
+    tone: rose
+    pages:
+      - source: AGENTS.md
+        slug: agents
+        description: Defining and configuring agents
+      - source: AGENT_LIFECYCLE.md
+        slug: agent-lifecycle
+        description: Generate, stream, and responses
+      - source: AGENT_LOOP.md
+        slug: agent-loop
+        description: Tool execution flow and stopping
+      - source: TOOLS.md
+        slug: tools
+        description: Creating tools for agents
+      - source: TOOL_ADVANCED.md
+        slug: advanced-tools
+        description: Timeouts, runtime, registration
+      - source: MESSAGES.md
+        slug: messages
+        description: Message types and formats
+      - source: STREAM_EVENTS.md
+        slug: stream-events
+        description: Streaming responses
+
+  - label: Going further
+    tone: gold
+    pages:
+      - source: CONFIGURATION.md
+        slug: configuration
+        description: Framework configuration
+      - source: EVALS.md
+        slug: evals
+        description: Evaluating agent quality
+      - source: GUARDRAILS.md
+        slug: guardrails
+        description: Input/output validation
+      - source: SKILLS.md
+        slug: skills
+        description: Packaged agent capabilities
+      - source: MCP.md
+        slug: mcp
+        description: Third-party MCP servers
+      - source: SERIALIZATION.md
+        slug: serialization
+        description: Persisting agent definitions
+      - source: TRACING.md
+        slug: tracing
+        description: OpenTelemetry spans
+
+  - label: Providers
+    tone: jane
+    pages:
+      - source: providers/PROVIDERS.md
+        slug: providers/overview
+        description: Adapters, model strings, and setup
+      - source: providers/AMAZON_BEDROCK.md
+        slug: providers/amazon-bedrock
+        description: Claude and more via AWS
+      - source: providers/ANTHROPIC.md
+        slug: providers/anthropic
+        description: Claude via the Anthropic API
+      - source: providers/OPENAI.md
+        slug: providers/openai
+        description: GPT models via the OpenAI API
+      - source: providers/AZURE_OPENAI.md
+        slug: providers/azure-openai
+        description: OpenAI models on Azure
+      - source: providers/GEMINI.md
+        slug: providers/gemini
+        description: Google Gemini models
+      - source: providers/OPENROUTER.md
+        slug: providers/openrouter
+        description: Hundreds of models, one API
+      - source: providers/MOCK_PROVIDER.md
+        slug: providers/mock
+        description: Deterministic responses for tests
+      - source: providers/CUSTOM_PROVIDERS.md
+        slug: providers/custom
+        description: Build your own provider adapter

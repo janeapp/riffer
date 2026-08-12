@@ -32,11 +32,11 @@ Riffer.config.anthropic.api_key
 
 ## Provider-Specific Configuration
 
-For provider credentials and setup, see the individual [Provider guides](providers/).
+For provider credentials and setup, see the individual [Provider guides](providers/PROVIDERS.md).
 
 ### MCP (Model Context Protocol)
 
-Optional settings for [MCP server integrations](14_MCP.md):
+Optional settings for [MCP server integrations](MCP.md):
 
 | Option             | Description                                                                                                     |
 | ------------------ | --------------------------------------------------------------------------------------------------------------- |
@@ -51,7 +51,7 @@ Riffer.configure do |config|
 end
 ```
 
-See [MCP](14_MCP.md) for registration, tags, and agent `use_mcp`.
+See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
 
 ### Tool Runtime (Experimental)
 
@@ -71,7 +71,7 @@ end
 | `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                                    |
 | `Proc`                            | Dynamic resolution                                                                                      |
 
-Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ### Skills
 
@@ -87,7 +87,7 @@ Riffer.configure do |config|
 end
 ```
 
-Per-agent override is available inside the `skills` block via `activate_tool MyCustomActivateTool`. See [Skills — Custom Activation Tool](13_SKILLS.md#custom-activation-tool).
+Per-agent override is available inside the `skills` block via `activate_tool MyCustomActivateTool`. See [Skills — Custom Activation Tool](SKILLS.md#custom-activation-tool).
 
 #### Default backend
 
@@ -117,11 +117,11 @@ end
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `enabled`          | The kill switch, consulted on every span — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                                                                                                                                                                                                                              |
 | `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                                  |
-| `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `in_span`. See [Tracing → Routing to a non-OpenTelemetry backend](16_TRACING.md#routing-to-a-non-opentelemetry-backend). |
+| `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `in_span`. See [Tracing → Routing to a non-OpenTelemetry backend](TRACING.md#routing-to-a-non-opentelemetry-backend). |
 
 ### Pricing
 
-Configure per-model token prices and riffer computes the cost of each LLM call onto its [`TokenUsage`](08_MESSAGES.md#token-usage-semantics). Riffer ships **no** price table — so an unconfigured model simply carries no cost (`token_usage.cost` is `nil`).
+Configure per-model token prices and riffer computes the cost of each LLM call onto its [`TokenUsage`](MESSAGES.md#token-usage-semantics). Riffer ships **no** price table — so an unconfigured model simply carries no cost (`token_usage.cost` is `nil`).
 
 ```ruby
 Riffer.configure do |config|
@@ -151,7 +151,7 @@ cost = (input − cache_read − cache_write) × input_rate
      + output      × output_rate
 ```
 
-(all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing — it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](08_MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
+(all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing — it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
 
 ### Message ID Strategy
 
@@ -173,7 +173,7 @@ When the strategy is not `:none`, every `Riffer::Messages::Base` instance — us
 
 When constructing a `Riffer::Agent::Session` from persisted history with the strategy enabled, supply ids on every seeded message yourself — Riffer never fabricates identifiers for pre-existing history. Messages built via the `Riffer::Messages::*` constructors auto-generate ids per the strategy, so as long as those constructors are used at message-creation time, ids flow through.
 
-See [Messages — IDs](08_MESSAGES.md#ids) for more details.
+See [Messages — IDs](MESSAGES.md#ids) for more details.
 
 ### Experimental: History Healing
 
@@ -194,7 +194,7 @@ When enabled, two repairs run automatically:
 
 Defaults to `false` — pre-healing behavior. Seeded sessions pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.
 
-There is no per-call override and no customizable placeholder. Callers needing finer control can call `agent.session.update(tool_call_id:, ...)` after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](04_AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
+There is no per-call override and no customizable placeholder. Callers needing finer control can call `agent.session.update(tool_call_id:, ...)` after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
 
 ## Agent-Level Configuration
 

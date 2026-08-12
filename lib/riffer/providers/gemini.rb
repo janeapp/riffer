@@ -71,7 +71,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     # tags propagate to observability only: the Gemini Developer API has no
     # request labels field (unknown body fields are rejected), so :tags is
     # stripped here rather than mapped. Native labels would arrive with a Vertex
-    # adapter. See docs/10_CONFIGURATION.md.
+    # adapter. See docs/CONFIGURATION.md.
     generation_config = options.except(:tools, :structured_output, :tags)
 
     if structured_output
