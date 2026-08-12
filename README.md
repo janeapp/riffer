@@ -140,7 +140,3 @@ All notable changes to this project are documented in `CHANGELOG.md`.
 ## License
 
 Licensed under the MIT License. See `LICENSE.txt` for details.
-
-## Maintainers
-
-- Jake Bottrall - https://github.com/bottrall
