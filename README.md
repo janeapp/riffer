@@ -45,31 +45,31 @@ puts agent.generate('Hello world')
 
 ## Documentation
 
-Comprehensive guides live at [docs.riffer.ai](https://docs.riffer.ai):
+Comprehensive guides live at [riffer.ai](https://riffer.ai):
 
-- [Overview](https://docs.riffer.ai/guides/overview/) - Core concepts and architecture
-- [Getting Started](https://docs.riffer.ai/guides/getting-started/) - Installation and first steps
-- [Agents](https://docs.riffer.ai/guides/agents/) - Defining and configuring agents
-- [Agent Lifecycle](https://docs.riffer.ai/guides/agent-lifecycle/) - Generate, stream, and responses
-- [Agent Loop](https://docs.riffer.ai/guides/agent-loop/) - Tool execution flow and stopping
-- [Tools](https://docs.riffer.ai/guides/tools/) - Creating tools for agents
-- [Advanced Tools](https://docs.riffer.ai/guides/advanced-tools/) - Timeouts, runtime, and registration
-- [Messages](https://docs.riffer.ai/guides/messages/) - Message types and formats
-- [Stream Events](https://docs.riffer.ai/guides/stream-events/) - Streaming responses
-- [Configuration](https://docs.riffer.ai/guides/configuration/) - Framework configuration
-- [Evals](https://docs.riffer.ai/guides/evals/) - Evaluating agent quality
-- [Guardrails](https://docs.riffer.ai/guides/guardrails/) - Input/output validation
-- [Skills](https://docs.riffer.ai/guides/skills/) - Packaged agent capabilities
-- [MCP](https://docs.riffer.ai/guides/mcp/) - Integrating third-party MCP servers
-- [Serialization](https://docs.riffer.ai/guides/serialization/) - Persisting and transferring agent definitions
-- [Tracing](https://docs.riffer.ai/guides/tracing/) - OpenTelemetry span contract and host wiring
-- [Providers](https://docs.riffer.ai/guides/providers/overview/) - LLM provider adapters
+- [Overview](https://riffer.ai/guides/overview/) - Core concepts and architecture
+- [Getting Started](https://riffer.ai/guides/getting-started/) - Installation and first steps
+- [Agents](https://riffer.ai/guides/agents/) - Defining and configuring agents
+- [Agent Lifecycle](https://riffer.ai/guides/agent-lifecycle/) - Generate, stream, and responses
+- [Agent Loop](https://riffer.ai/guides/agent-loop/) - Tool execution flow and stopping
+- [Tools](https://riffer.ai/guides/tools/) - Creating tools for agents
+- [Advanced Tools](https://riffer.ai/guides/advanced-tools/) - Timeouts, runtime, and registration
+- [Messages](https://riffer.ai/guides/messages/) - Message types and formats
+- [Stream Events](https://riffer.ai/guides/stream-events/) - Streaming responses
+- [Configuration](https://riffer.ai/guides/configuration/) - Framework configuration
+- [Evals](https://riffer.ai/guides/evals/) - Evaluating agent quality
+- [Guardrails](https://riffer.ai/guides/guardrails/) - Input/output validation
+- [Skills](https://riffer.ai/guides/skills/) - Packaged agent capabilities
+- [MCP](https://riffer.ai/guides/mcp/) - Integrating third-party MCP servers
+- [Serialization](https://riffer.ai/guides/serialization/) - Persisting and transferring agent definitions
+- [Tracing](https://riffer.ai/guides/tracing/) - OpenTelemetry span contract and host wiring
+- [Providers](https://riffer.ai/guides/providers/overview/) - LLM provider adapters
 
 The guide sources are in the [docs](docs/) directory.
 
 ### API Reference
 
-The full API reference is published at [docs.riffer.ai/api](https://docs.riffer.ai/api/). Preview the site locally with:
+The full API reference is published at [riffer.ai/api](https://riffer.ai/api/). Preview the site locally with:
 
 ```bash
 bin/rake docs:serve
