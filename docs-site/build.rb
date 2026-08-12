@@ -20,7 +20,7 @@ ROOT = HERE.parent
 DOCS = ROOT.join("docs")
 SITE = ROOT.join("_site")
 
-ASSETS = %w[site.css copy.js 404.html].freeze
+ASSETS = %w[site.css landing.css copy.js 404.html].freeze
 
 VERSION = Riffer::VERSION
 

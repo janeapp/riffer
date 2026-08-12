@@ -85,6 +85,34 @@ header .links a:hover {
   padding: 4px 12px;
 }
 
+/* buttons */
+.cta-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn {
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 13px 26px;
+  border: 3px solid var(--ink);
+  border-radius: 99px;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition:
+    transform 0.12s,
+    box-shadow 0.12s;
+  background: var(--cream);
+}
+.btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.btn-primary {
+  background: var(--jane);
+  color: var(--ink);
+}
+
 /* docs layout */
 .docs-layout {
   display: grid;
@@ -503,6 +531,36 @@ article tbody tr:nth-child(even) {
   font-weight: 700;
   font-size: 18px;
   color: var(--accent);
+}
+
+/* 404 */
+.lost {
+  padding: 96px 0 120px;
+}
+.lost .chapter {
+  display: inline-block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+  padding: 2px 10px;
+  background: #f3d0e5;
+}
+.lost h1 {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 800;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 14px 0 18px;
+}
+.lost p {
+  color: var(--muted);
+  max-width: 52ch;
+  margin-bottom: 32px;
 }
 
 /* footer */
