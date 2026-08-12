@@ -30,6 +30,7 @@ gem "webmock", "~> 3.0"
 gem "kramdown"
 gem "kramdown-parser-gfm"
 gem "rouge", "~> 4.6"
+gem "webrick"
 
 # Tracing tests assert real spans via the SDK's in-memory exporter. Lives in a
 # Gemfile group (not gemspec dev deps) so the no-OTEL CI lane can exclude it

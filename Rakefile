@@ -30,6 +30,11 @@ namespace :docs do
   task check: :site do
     ruby "docs-site/check.rb"
   end
+
+  desc "Build the docs site and serve it at http://localhost:8000"
+  task serve: :site do
+    ruby "-run -e httpd _site -p 8000"
+  end
 end
 
 desc "Build the full deployable docs tree (site + API reference) into _site/"

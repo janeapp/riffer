@@ -69,17 +69,13 @@ The guide sources are in the [docs](docs/) directory.
 
 ### API Reference
 
-The full API reference is published at [docs.riffer.ai/api](https://docs.riffer.ai/api/). Build the site locally with:
+The full API reference is published at [docs.riffer.ai/api](https://docs.riffer.ai/api/). Preview the site locally with:
 
 ```bash
-bin/docs
+bin/rake docs:serve
 ```
 
-Then serve `_site/` over HTTP — the site uses root-absolute paths, so `file://` won't work — and open <http://localhost:8000>:
-
-```bash
-ruby -run -e httpd _site -p 8000 # requires the webrick gem
-```
+Then open <http://localhost:8000>. The site uses root-absolute paths, so it must be served over HTTP — opening `_site/index.html` via `file://` won't work.
 
 ## Development
 
@@ -92,17 +88,17 @@ bin/setup
 Common workflows are wrapped in `bin/`. Each is a thin `exec bundle exec …` script — use them
 instead of typing `bundle exec` yourself:
 
-| Command         | Description                                 |
-| --------------- | ------------------------------------------- |
-| `bin/rake`      | Default task: test + rubocop + steep:check  |
-| `bin/test`      | Run tests                                   |
-| `bin/lint`      | Check code style (pass `-a` to auto-fix)    |
-| `bin/typecheck` | Run Steep type checker                      |
-| `bin/rbs`       | Generate RBS type signatures                |
-| `bin/rbs-watch` | Watch and regenerate RBS files              |
-| `bin/docs`      | Build the docs site + API reference         |
-| `bin/build`     | Build the gem package                       |
-| `bin/console`   | Interactive console                         |
+| Command         | Description                                |
+| --------------- | ------------------------------------------ |
+| `bin/rake`      | Default task: test + rubocop + steep:check |
+| `bin/test`      | Run tests                                  |
+| `bin/lint`      | Check code style (pass `-a` to auto-fix)   |
+| `bin/typecheck` | Run Steep type checker                     |
+| `bin/rbs`       | Generate RBS type signatures               |
+| `bin/rbs-watch` | Watch and regenerate RBS files             |
+| `bin/docs`      | Build the docs site + API reference        |
+| `bin/build`     | Build the gem package                      |
+| `bin/console`   | Interactive console                        |
 
 `bin/rake <task>` is the escape hatch for any rake task without a named wrapper (e.g.
 `bin/rake test:slow`, `bin/rake release`).
