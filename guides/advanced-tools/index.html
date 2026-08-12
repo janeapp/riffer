@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Advanced Tool Configuration — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/" class="active" aria-current="page"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 07</span></p>
+          <h1>Advanced Tool Configuration</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#timeout-configuration">Timeout Configuration</a></li>
+              <li><a href="#validation">Validation</a></li>
+              <li><a href="#json-schema-generation">JSON Schema Generation</a></li>
+              <li><a href="#registering-tools-with-agents">Registering Tools with Agents</a></li>
+              <li><a href="#error-handling">Error Handling</a></li>
+              <li><a href="#tool-runtime-experimental">Tool Runtime (Experimental)</a></li>
+            </ul>
+          </nav>
+          
+<h2 id="timeout-configuration">Timeout Configuration</h2>
+
+<p>Configure timeouts to prevent tools from running indefinitely. The default timeout is 10 seconds.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SlowExternalApiTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Calls a slow external API"</span>
+  <span class="n">timeout</span> <span class="mi">30</span>  <span class="c1"># 30 seconds</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">query</span><span class="p">:)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="no">ExternalAPI</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">text</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When a tool times out, the error is reported to the LLM with error type <code>:timeout_error</code>, allowing it to respond appropriately (e.g., suggest retrying or using a different approach).</p>
+
+<h2 id="validation">Validation</h2>
+
+<p>Arguments are automatically validated before <code>call</code> is invoked:</p>
+
+<ul>
+  <li>Required parameters must be present</li>
+  <li>Types must match the schema</li>
+  <li>Enum values must be in the allowed list</li>
+</ul>
+
+<p>Validation errors are captured and sent back to the LLM as tool results with error type <code>:validation_error</code>.</p>
+
+<h2 id="json-schema-generation">JSON Schema Generation</h2>
+
+<p>Riffer automatically generates JSON Schema for each tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">WeatherTool</span><span class="p">.</span><span class="nf">parameters_schema</span>
+<span class="c1"># =&gt; {</span>
+<span class="c1">#   type: "object",</span>
+<span class="c1">#   properties: {</span>
+<span class="c1">#     "city" =&gt; {type: "string", description: "The city name"},</span>
+<span class="c1">#     "units" =&gt; {type: "string", enum: ["celsius", "fahrenheit"]}</span>
+<span class="c1">#   },</span>
+<span class="c1">#   required: ["city"],</span>
+<span class="c1">#   additionalProperties: false</span>
+<span class="c1"># }</span>
+</code></pre></div></div>
+
+<h2 id="registering-tools-with-agents">Registering Tools with Agents</h2>
+
+<h3 id="static-registration">Static Registration</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="dynamic-registration">Dynamic Registration</h3>
+
+<p>Use a lambda for context-aware tool resolution:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+
+  <span class="n">uses_tools</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="no">PublicSearchTool</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">premium?</span>
+      <span class="n">tools</span> <span class="o">&lt;&lt;</span> <span class="no">PremiumAnalyticsTool</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">admin?</span>
+      <span class="n">tools</span> <span class="o">&lt;&lt;</span> <span class="no">AdminTool</span>
+    <span class="k">end</span>
+
+    <span class="n">tools</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="error-handling">Error Handling</h2>
+
+<p>Errors can be returned explicitly using <code>error</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">query</span><span class="p">:)</span>
+  <span class="n">results</span> <span class="o">=</span> <span class="no">ExternalAPI</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+  <span class="n">json</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="k">rescue</span> <span class="no">RateLimitError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="n">error</span><span class="p">(</span><span class="s2">"API rate limit exceeded, please try again later"</span><span class="p">,</span> <span class="ss">type: :rate_limit</span><span class="p">)</span>
+<span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="n">error</span><span class="p">(</span><span class="s2">"Search failed: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Unhandled <code>RuntimeError</code> exceptions are caught by Riffer and converted to error responses with type <code>:execution_error</code>. For expected execution errors, raise <code>Riffer::ToolExecutionError</code> — these are also caught and returned to the LLM. Programming bugs (<code>NoMethodError</code>, <code>NameError</code>, <code>TypeError</code>, etc.) propagate to the caller. It’s recommended to handle expected errors explicitly for better error messages.</p>
+
+<p>The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).</p>
+
+<h2 id="tool-runtime-experimental">Tool Runtime (Experimental)</h2>
+
+<blockquote>
+  <p><strong>Warning:</strong> This feature is experimental and may be removed or changed without warning in a future release.</p>
+</blockquote>
+
+<p>By default, tool calls are executed sequentially in the current thread using <code>Riffer::Tools::Runtime::Inline</code>. You can change how tool calls are executed by configuring a different tool runtime.</p>
+
+<h3 id="built-in-runtimes">Built-in Runtimes</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Runtime</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Riffer::Tools::Runtime::Inline</code></td>
+      <td>Executes tool calls sequentially (default)</td>
+    </tr>
+    <tr>
+      <td><code>Riffer::Tools::Runtime::Threaded</code></td>
+      <td>Executes tool calls concurrently using threads</td>
+    </tr>
+    <tr>
+      <td><code>Riffer::Tools::Runtime::Fibers</code></td>
+      <td>Executes tool calls concurrently using fibers</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="per-agent-configuration">Per-Agent Configuration</h3>
+
+<p>Use the <code>tool_runtime</code> class method on your agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+  <span class="n">tool_runtime</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Threaded</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Accepted values:</p>
+
+<ul>
+  <li>A <code>Riffer::Tools::Runtime</code> subclass — instantiated automatically (e.g., <code>Riffer::Tools::Runtime::Inline</code>, <code>Riffer::Tools::Runtime::Threaded</code>)</li>
+  <li>A <code>Riffer::Tools::Runtime</code> instance — for custom runtimes with specific options</li>
+  <li>A <code>Proc</code> — evaluated at runtime (see below)</li>
+</ul>
+
+<h3 id="dynamic-resolution">Dynamic Resolution</h3>
+
+<p>Use a lambda for context-aware runtime selection:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+
+  <span class="n">tool_runtime</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:parallel</span><span class="p">)</span> <span class="p">?</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Threaded</span><span class="p">.</span><span class="nf">new</span> <span class="p">:</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Inline</span><span class="p">.</span><span class="nf">new</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="p">{</span><span class="ss">parallel: </span><span class="kp">true</span><span class="p">}).</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Do work"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>When the lambda accepts a parameter, it receives the <code>context</code>. Zero-arity lambdas are also supported.</p>
+
+<h3 id="global-configuration">Global Configuration</h3>
+
+<p>Set a default tool runtime for all agents:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">tool_runtime</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Threaded</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Per-agent configuration overrides the global default.</p>
+
+<h3 id="threaded-runtime-considerations">Threaded Runtime Considerations</h3>
+
+<p>When using <code>Riffer::Tools::Runtime::Threaded</code>, each tool call runs in its own thread. The <code>around_tool_call</code> hook also runs inside that thread. Be mindful of thread-local state — for example, <code>ActiveRecord::Base.connection</code>, <code>RequestStore</code>, or any <code>Thread.current[]</code> values may not be available or may behave differently across threads. Ensure your tools and hooks are thread-safe.</p>
+
+<h3 id="threaded-runtime-options">Threaded Runtime Options</h3>
+
+<p>The threaded runtime accepts a <code>max_concurrency</code> option (default: 5):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+  <span class="n">tool_runtime</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Threaded</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">max_concurrency: </span><span class="mi">3</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="fibers-runtime">Fibers Runtime</h3>
+
+<p>The fibers runtime uses the <a href="https://github.com/socketry/async">async</a> gem for lightweight, cooperative concurrency. It requires the <code>async</code> gem to be installed:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gemfile</span>
+<span class="n">gem</span> <span class="s2">"async"</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+  <span class="n">tool_runtime</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Fibers</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>By default, all tool calls run as fibers without a concurrency limit. You can optionally set a limit:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+  <span class="n">tool_runtime</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Fibers</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">max_concurrency: </span><span class="mi">10</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Fibers use cooperative scheduling — they yield control at I/O boundaries (network calls, file reads, sleep). CPU-bound tools will not benefit from the fibers runtime. Be mindful of fiber-local state (<code>Fiber.[]</code>) and note that <code>Thread.current[]</code> values are shared across all fibers in the same thread.</p>
+
+<h3 id="custom-runtimes">Custom Runtimes</h3>
+
+<p>Create a custom runtime by subclassing <code>Riffer::Tools::Runtime</code> and overriding the private <code>dispatch_tool_call</code> method:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">HttpToolRuntime</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span>
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">dispatch_tool_call</span><span class="p">(</span><span class="n">tool_call</span><span class="p">,</span> <span class="n">tools</span><span class="p">:,</span> <span class="n">context</span><span class="p">:,</span> <span class="ss">assistant_message: </span><span class="kp">nil</span><span class="p">)</span>
+    <span class="c1"># Dispatch tool execution to an external service</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="no">HttpClient</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"/tools/execute"</span><span class="p">,</span> <span class="p">{</span>
+      <span class="ss">name: </span><span class="n">tool_call</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+      <span class="ss">arguments: </span><span class="n">tool_call</span><span class="p">.</span><span class="nf">arguments</span>
+    <span class="p">})</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">text</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">ToolExecutionError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="p">,</span> <span class="ss">type: :execution_error</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="no">RuntimeError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="s2">"Error executing tool: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="ss">type: :execution_error</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="around-call-hook">Around-Call Hook</h3>
+
+<p>Each tool call is wrapped by the <code>around_tool_call</code> method, which yields by default. Override it in a subclass to add instrumentation, logging, or other cross-cutting concerns:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">InstrumentedRuntime</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Inline</span>
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">around_tool_call</span><span class="p">(</span><span class="n">tool_call</span><span class="p">,</span> <span class="n">context</span><span class="p">:,</span> <span class="ss">assistant_message: </span><span class="kp">nil</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">yield</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="no">Rails</span><span class="p">.</span><span class="nf">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="s2">"Tool </span><span class="si">#{</span><span class="n">tool_call</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2"> took </span><span class="si">#{</span><span class="n">duration</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
+    <span class="n">result</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Subclasses inherit the hook and can override it further.</p>
+
+<p>The <code>assistant_message:</code> kwarg is the <code>Riffer::Messages::Assistant</code> that produced the tool calls (the same object the agent appends to message history). It is <code>nil</code> when the runtime is invoked outside an agent loop. Use it when your hook or dispatcher needs context that lives on the assistant turn — for example, the accompanying assistant text, the model’s reasoning content, or the full set of sibling tool calls from the same turn. The kwarg is <strong>not</strong> forwarded to <code>Tool#call</code>; tools that need it must read it via a custom <code>dispatch_tool_call</code> override.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Custom runtimes that override <code>around_tool_call</code> or <code>dispatch_tool_call</code> must accept the <code>assistant_message:</code> kwarg (or <code>**kwargs</code>). Older overrides that omit it will raise <code>ArgumentError: unknown keyword: :assistant_message</code>.</p>
+</blockquote>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/tools/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Tools</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/messages/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Messages</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock Provider — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/" class="active" aria-current="page"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 08</span></p>
+          <h1>Mock Provider</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#usage">Usage</a></li>
+              <li><a href="#stubbing-responses">Stubbing Responses</a></li>
+              <li><a href="#stubbing-tool-calls">Stubbing Tool Calls</a></li>
+              <li><a href="#queueing-multiple-responses">Queueing Multiple Responses</a></li>
+              <li><a href="#inspecting-calls">Inspecting Calls</a></li>
+              <li><a href="#clearing-state">Clearing State</a></li>
+              <li><a href="#example-test">Example Test</a></li>
+              <li><a href="#streaming">Streaming</a></li>
+              <li><a href="#web-search">Web Search</a></li>
+              <li><a href="#initial-responses">Initial Responses</a></li>
+              <li><a href="#default-response">Default Response</a></li>
+            </ul>
+          </nav>
+          
+<p>The Mock provider is a mock provider for testing agents without making real API calls.</p>
+
+<h2 id="usage">Usage</h2>
+
+<p>No additional gems required. Use the <code>mock</code> provider identifier:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TestableAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'mock/any'</span>  <span class="c1"># The model name doesn't matter for mock provider</span>
+  <span class="n">instructions</span> <span class="s1">'You are helpful.'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">MyTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="stubbing-responses">Stubbing Responses</h2>
+
+<p>Use <code>stub_response</code> to queue responses:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get the provider instance from the agent</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">TestableAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="ss">:provider_instance</span><span class="p">)</span>
+
+<span class="c1"># Stub a simple text response</span>
+<span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Hello, I'm here to help!"</span><span class="p">)</span>
+
+<span class="c1"># Now generate will return the stubbed response</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Hi"</span><span class="p">)</span>
+<span class="c1"># =&gt; "Hello, I'm here to help!"</span>
+</code></pre></div></div>
+
+<h2 id="stubbing-tool-calls">Stubbing Tool Calls</h2>
+
+<p>Stub responses that trigger tool execution:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="p">[</span>
+  <span class="p">{</span><span class="ss">name: </span><span class="s2">"my_tool"</span><span class="p">,</span> <span class="ss">arguments: </span><span class="s1">'{"query":"test"}'</span><span class="p">}</span>
+<span class="p">])</span>
+
+<span class="c1"># Queue the response after tool execution</span>
+<span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Based on the tool result, here's my answer."</span><span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Use the tool"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="queueing-multiple-responses">Queueing Multiple Responses</h2>
+
+<p>Responses are consumed in order:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"First response"</span><span class="p">)</span>
+<span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Second response"</span><span class="p">)</span>
+<span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Third response"</span><span class="p">)</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Message 1"</span><span class="p">)</span>  <span class="c1"># =&gt; "First response"</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Message 2"</span><span class="p">)</span>  <span class="c1"># =&gt; "Second response"</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Message 3"</span><span class="p">)</span>  <span class="c1"># =&gt; "Third response"</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Message 4"</span><span class="p">)</span>  <span class="c1"># =&gt; "Mock response" (default)</span>
+</code></pre></div></div>
+
+<h2 id="inspecting-calls">Inspecting Calls</h2>
+
+<p>Access recorded calls for assertions:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">calls</span>
+<span class="c1"># =&gt; [</span>
+<span class="c1">#   {messages: [...], model: "any", tools: [...], ...},</span>
+<span class="c1">#   {messages: [...], model: "any", tools: [...], ...}</span>
+<span class="c1"># ]</span>
+
+<span class="c1"># Check what was sent</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">provider</span><span class="p">.</span><span class="nf">calls</span><span class="p">.</span><span class="nf">last</span><span class="p">[</span><span class="ss">:messages</span><span class="p">].</span><span class="nf">last</span><span class="p">[</span><span class="ss">:content</span><span class="p">]).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"Hi"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="clearing-state">Clearing State</h2>
+
+<p>Reset stubbed responses:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">clear_stubs</span>
+</code></pre></div></div>
+
+<h2 id="example-test">Example Test</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'minitest/autorun'</span>
+
+<span class="k">class</span> <span class="nc">MyAgentTest</span> <span class="o">&lt;</span> <span class="no">Minitest</span><span class="o">::</span><span class="no">Test</span>
+  <span class="k">def</span> <span class="nf">setup</span>
+    <span class="vi">@agent</span> <span class="o">=</span> <span class="no">TestableAgent</span><span class="p">.</span><span class="nf">new</span>
+    <span class="vi">@provider</span> <span class="o">=</span> <span class="vi">@agent</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="ss">:provider_instance</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">test_generates_response</span>
+    <span class="vi">@provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="vi">@agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Hi"</span><span class="p">)</span>
+
+    <span class="n">assert_equal</span> <span class="s2">"Hello!"</span><span class="p">,</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">test_executes_tool</span>
+    <span class="vi">@provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="p">[</span>
+      <span class="p">{</span><span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span> <span class="ss">arguments: </span><span class="s1">'{"city":"Tokyo"}'</span><span class="p">}</span>
+    <span class="p">])</span>
+    <span class="vi">@provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"The weather is sunny."</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="vi">@agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"What's the weather?"</span><span class="p">)</span>
+
+    <span class="n">assert_equal</span> <span class="s2">"The weather is sunny."</span><span class="p">,</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+    <span class="n">assert_equal</span> <span class="mi">2</span><span class="p">,</span> <span class="vi">@provider</span><span class="p">.</span><span class="nf">calls</span><span class="p">.</span><span class="nf">length</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">test_passes_context_to_tools</span>
+    <span class="vi">@provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="p">[</span>
+      <span class="p">{</span><span class="ss">name: </span><span class="s2">"user_tool"</span><span class="p">,</span> <span class="ss">arguments: </span><span class="s1">'{}'</span><span class="p">}</span>
+    <span class="p">])</span>
+    <span class="vi">@provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Done."</span><span class="p">)</span>
+
+    <span class="n">agent</span> <span class="o">=</span> <span class="no">TestableAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+    <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Do something"</span><span class="p">)</span>
+
+    <span class="c1"># Tool receives the context</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="streaming">Streaming</h2>
+
+<p>The mock provider also supports streaming:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Hello world."</span><span class="p">)</span>
+
+<span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Hi"</span><span class="p">).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">events</span> <span class="o">&lt;&lt;</span> <span class="n">e</span> <span class="p">}</span>
+
+<span class="c1"># Events include TextDelta and TextDone</span>
+<span class="n">text_deltas</span> <span class="o">=</span> <span class="n">events</span><span class="p">.</span><span class="nf">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">text_done</span> <span class="o">=</span> <span class="n">events</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="web-search">Web Search</h2>
+
+<p>The test provider emits web search events when <code>web_search: true</code> is passed to the stream call:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"Here are the latest results."</span><span class="p">)</span>
+
+<span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"What's new in Ruby?"</span><span class="p">,</span> <span class="ss">web_search: </span><span class="kp">true</span><span class="p">).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">events</span> <span class="o">&lt;&lt;</span> <span class="n">e</span> <span class="p">}</span>
+
+<span class="c1"># Events include WebSearchStatus and WebSearchDone before text events</span>
+<span class="n">search_deltas</span> <span class="o">=</span> <span class="n">events</span><span class="p">.</span><span class="nf">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">search_done</span> <span class="o">=</span> <span class="n">events</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">search_done</span><span class="p">.</span><span class="nf">query</span>    <span class="c1"># =&gt; "test search query"</span>
+<span class="n">search_done</span><span class="p">.</span><span class="nf">sources</span>  <span class="c1"># =&gt; [{title: "Example", url: "https://example.com"}]</span>
+</code></pre></div></div>
+
+<h2 id="initial-responses">Initial Responses</h2>
+
+<p>Pass responses during initialization:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Mock</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">responses: </span><span class="p">[</span>
+  <span class="p">{</span><span class="ss">content: </span><span class="s2">"First"</span><span class="p">},</span>
+  <span class="p">{</span><span class="ss">content: </span><span class="s2">"Second"</span><span class="p">}</span>
+<span class="p">])</span>
+</code></pre></div></div>
+
+<h2 id="default-response">Default Response</h2>
+
+<p>When no stubs are queued and initial responses are exhausted, the provider returns:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="ss">role: </span><span class="s2">"assistant"</span><span class="p">,</span> <span class="ss">content: </span><span class="s2">"Mock response"</span><span class="p">}</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/openrouter/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">OpenRouter Provider</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/custom/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Creating Custom Providers</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

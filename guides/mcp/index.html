@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MCP — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/" class="active" aria-current="page"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 14</span></p>
+          <h1>MCP</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#registering-a-server">Registering a Server</a></li>
+              <li><a href="#session-credentials-callback">Session credentials callback</a></li>
+              <li><a href="#tags">Tags</a></li>
+              <li><a href="#opting-an-agent-in">Opting an Agent In</a></li>
+              <li><a href="#progressive-tool-discovery">Progressive Tool Discovery</a></li>
+              <li><a href="#unregistering-a-server">Unregistering a Server</a></li>
+              <li><a href="#introspection">Introspection</a></li>
+              <li><a href="#error-classes">Error Classes</a></li>
+              <li><a href="#limitations">Limitations</a></li>
+              <li><a href="#requirements">Requirements</a></li>
+            </ul>
+          </nav>
+          
+<p>Riffer can consume third-party <a href="https://modelcontextprotocol.io">Model Context Protocol</a> (MCP) servers as tool sources. Tools are discovered automatically at registration time — no handwritten Ruby per tool required.</p>
+
+<h2 id="overview">Overview</h2>
+
+<ol>
+  <li>Register an MCP server globally with <code>Riffer::Mcp.register</code>.</li>
+  <li>Opt an agent into that server’s tools using the <code>use_mcp</code> DSL.</li>
+  <li>The agent picks up the tools and calls them like any other Riffer tool.</li>
+</ol>
+
+<h2 id="registering-a-server">Registering a Server</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Mcp</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span>
+  <span class="ss">name: </span><span class="s2">"github"</span><span class="p">,</span>        <span class="c1"># unique identifier</span>
+  <span class="ss">tags: </span><span class="p">[</span><span class="ss">:github</span><span class="p">],</span>       <span class="c1"># agents opt-in by tag</span>
+  <span class="ss">endpoint: </span><span class="s2">"https://mcp.github.com"</span><span class="p">,</span>
+  <span class="ss">discovery_headers: </span><span class="o">-&gt;</span> <span class="p">{</span> <span class="p">{</span><span class="s2">"Authorization"</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GITHUB_TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span> <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><code>register</code> blocks until tool discovery completes (or fails). Discovery uses the configured <code>Riffer::Runner</code> (default <code>Runner::Sequential</code> — inline). To run discovery on a pool thread (e.g. for Rails connection-pool isolation), set <code>config.mcp.discovery_runner = Riffer::Runner::Threaded.new</code>; <code>register</code> still blocks but the work runs off the calling thread.</p>
+
+<h3 id="discovery-headers">Discovery headers</h3>
+
+<p><code>discovery_headers</code> is a Hash or Proc used <strong>only</strong> for MCP <code>tools/list</code> when the discovery client is built (the Proc runs once at that time). Use it for bootstrap identity: service account, env-based token, or <code>{}</code> if listing is unauthenticated.</p>
+
+<p>Optional <strong><code>credentials_scope</code></strong> on the manifest documents whether you expect invocation headers to depend on tenant and/or user keys in the agent <code>context</code> (e.g. <code>:global</code>, <code>:tenant</code>, <code>:user</code>). It does <strong>not</strong> store tenant or user ids — only a hint for your app and docs. For multi-tenant apps, <code>:user</code> often means “user in tenant” and your <code>context</code> may include both tenant and user identifiers.</p>
+
+<h2 id="session-credentials-callback">Session credentials callback</h2>
+
+<p>When <strong><code>Riffer.config.mcp.credentials</code></strong> is set to a Proc, each MCP <code>tools/call</code> resolves HTTP headers through that callback instead of reusing <code>discovery_headers</code>.</p>
+
+<p><strong>Signature:</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">mcp</span><span class="p">.</span><span class="nf">credentials</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">manifest</span><span class="p">:,</span> <span class="n">matched_tags</span><span class="p">:,</span> <span class="n">context</span><span class="ss">:|</span>
+    <span class="c1"># when caller does not have an integration, return nil to omit this server's tools for this run</span>
+    <span class="c1"># when server is unauthenticated or local, return {} to include this server's tools with no extra headers</span>
+    <span class="c1"># when authorization headers are required, return Hash&lt;String,String&gt; headers</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong><code>manifest</code></strong> — the server’s <code>Riffer::Mcp::Manifest</code>.</li>
+  <li><strong><code>matched_tags</code></strong> — intersection of the agent’s <code>use_mcp</code> tags and <code>manifest.tags</code> for this registration (unioned across multiple <code>use_mcp</code> lines).</li>
+  <li><strong><code>context</code></strong> — the same hash passed to <code>generate</code> / <code>stream</code> for this run.</li>
+</ul>
+
+<p><strong>Resolve time:</strong> The proc is invoked once per matching registration before tools are exposed to the model.</p>
+
+<p><strong>Call time:</strong> Authenticated tool wrappers invoke the proc again for each execution. If it returns <code>nil</code>, then <code>Riffer::Mcp::CredentialsDeniedError</code> is raised.</p>
+
+<p>If <strong><code>credentials</code> is unset</strong>, discovery and <code>tools/call</code> share one client built from <code>discovery_headers</code> (same behaviour as a single static token for both list and call).</p>
+
+<h2 id="tags">Tags</h2>
+
+<p>Tags are entirely up to your application; Riffer does not define a canonical vocabulary. Each server may declare multiple tags; an agent includes every registration that shares <strong>any</strong> tag passed to <code>use_mcp</code>.</p>
+
+<p>When MCPs are registered, assign <strong>stable bucket tags</strong> so agent classes can opt in without listing every server name—for example <code>tags: [:connectors, :github]</code> with <code>use_mcp :connectors</code> for all enabled connectors, or <code>use_mcp :github</code> for that integration only.</p>
+
+<p>Registrations are <strong>global</strong> (endpoint + tags); <strong>tenant and user</strong> access are enforced in your <strong><code>credentials</code></strong> proc and whatever you put in <strong><code>context</code></strong>, not by putting ids on the manifest.</p>
+
+<h2 id="opting-an-agent-in">Opting an Agent In</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ResearchAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"openai/gpt-5-mini"</span>
+  <span class="n">instructions</span> <span class="s2">"You are a research assistant."</span>
+
+  <span class="n">use_mcp</span> <span class="ss">:github</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>By default, <code>use_mcp</code> uses <strong>progressive discovery</strong>. The agent receives <code>mcp_search</code> rather than every schema up front. See <a href="#progressive-tool-discovery">Progressive Tool Discovery</a>.</p>
+
+<p><code>use_mcp</code> accepts any tag registered via <code>Riffer::Mcp.register</code>. Multiple calls accumulate — the agent receives tools from all matching servers:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MultiAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"openai/gpt-5-mini"</span>
+
+  <span class="n">use_mcp</span> <span class="ss">:github</span>
+  <span class="n">use_mcp</span> <span class="ss">:jira</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>MCP tools are appended after any tools declared with <code>uses_tools</code>.</p>
+
+<p>Tool names must be unique across <code>uses_tools</code> and all included MCP servers; duplicate names raise <code>Riffer::ArgumentError</code> when tools are resolved.</p>
+
+<h3 id="subclassing">Subclassing</h3>
+
+<p>Like <a href="/guides/agents/#uses_tools"><code>uses_tools</code></a>, <strong><code>use_mcp</code> is not inherited</strong> from the superclass. Declare <code>use_mcp</code> on each agent class that should load MCP tools.</p>
+
+<h2 id="progressive-tool-discovery">Progressive Tool Discovery</h2>
+
+<p>Progressive discovery is the default. The <code>use_mcp</code> instruction exposes <strong><code>mcp_search</code></strong> instead of flooding the context with every tool schema up front.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ResearchAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"openai/gpt-4o"</span>
+
+  <span class="n">use_mcp</span> <span class="ss">:github</span>                        <span class="c1"># default: tools discoverable on demand</span>
+  <span class="n">use_mcp</span> <span class="ss">:jira</span><span class="p">,</span> <span class="ss">progressive: </span><span class="kp">false</span>      <span class="c1"># opt-out: all Jira tools injected directly</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Only use <code>progressive: false</code> when the server has a small, stable set of tools you always want available.</p>
+
+<p><strong><code>mcp_search</code></strong> — Search for available tools by name or description.</p>
+
+<ul>
+  <li><code>query</code> (required, non-empty) — filter by name or description substring.</li>
+</ul>
+
+<p>On a successful search, matching tools are injected into the agent’s active tool list. The model calls them natively on the next turn — no proxy or JSON-encoded arguments.</p>
+
+<p><strong>Example flow:</strong></p>
+
+<ol>
+  <li>Agent starts — only <code>mcp_search</code> appears in the tool list.</li>
+  <li>LLM calls <code>mcp_search</code> with <code>query: "create pull request"</code>.</li>
+  <li>Riffer injects <code>github__create_pr</code> into the active tool list and returns an acknowledgment.</li>
+  <li>LLM calls <code>github__create_pr</code> directly with its real schema (e.g. <code>title:</code>, <code>body:</code>, <code>base:</code>).</li>
+  <li>The provider validates the arguments; the tool executes with all credential handling intact.</li>
+</ol>
+
+<p>Injected tools accumulate across turns — tools discovered in one search remain available for subsequent calls without re-searching.</p>
+
+<p><strong>Multiple progressive <code>use_mcp</code> calls:</strong> All matching registrations are combined into one <code>mcp_search</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">use_mcp</span> <span class="ss">:connectors_a</span>   <span class="c1"># both default to progressive</span>
+<span class="n">use_mcp</span> <span class="ss">:connectors_b</span>
+<span class="c1"># → one mcp_search exposing tools from both registrations</span>
+</code></pre></div></div>
+
+<p><strong>Credential handling:</strong> Progressive tools follow the same credential rules as regular tools — see <a href="#session-credentials-callback">Session credentials callback</a>.</p>
+
+<p><strong>Tool access in tools:</strong> The full discovery pool is available via <code>context[:mcp_progressive_tools]</code> and injected tools via <code>context[:injected_tools]</code> (both <code>Array[Riffer::Tool subclass]</code>). These keys are framework-managed — treat them as read-only from application code.</p>
+
+<h2 id="unregistering-a-server">Unregistering a Server</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Mcp</span><span class="p">.</span><span class="nf">unregister</span><span class="p">(</span><span class="s2">"github"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Subsequent agent runs will not include tools from that server. Call <code>register</code> again (with fresh <code>discovery_headers</code> if needed) to re-register.</p>
+
+<h2 id="introspection">Introspection</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Mcp</span><span class="p">.</span><span class="nf">registrations</span>
+<span class="c1"># =&gt; {"github" =&gt; #&lt;Riffer::Mcp::Registration ...&gt;, ...}</span>
+
+<span class="n">reg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Mcp</span><span class="p">.</span><span class="nf">registrations</span><span class="p">[</span><span class="s2">"github"</span><span class="p">]</span>
+<span class="n">reg</span><span class="p">.</span><span class="nf">tools</span>    <span class="c1"># =&gt; [&lt;Class:...&gt;, ...]  (Riffer::Mcp::Tool subclasses; .mcp_server_tool_name returns the server-side name)</span>
+</code></pre></div></div>
+
+<p>Discovery failures raise from <code>register</code> directly, typically <code>Faraday::Error</code> for network issues or <code>Riffer::DependencyError</code> if the <code>mcp</code>/<code>faraday</code> gems are missing. Rescue <code>StandardError</code> for graceful degradation:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">begin</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Mcp</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"github"</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="k">rescue</span> <span class="no">StandardError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="no">Rails</span><span class="p">.</span><span class="nf">logger</span><span class="p">.</span><span class="nf">warn</span><span class="p">(</span><span class="s2">"MCP registration failed: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="error-classes">Error Classes</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Class</th>
+      <th>Raised when</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Riffer::Mcp::CredentialsDeniedError</code></td>
+      <td><code>credentials</code> proc returns <code>nil</code> during <code>tools/call</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>All inherit from <code>Riffer::Mcp::Error &lt; Riffer::Error</code>.</p>
+
+<h2 id="limitations">Limitations</h2>
+
+<ul>
+  <li><strong>Tool results:</strong> <code>tools/call</code> responses are reduced to joined <strong>text</strong> content from MCP <code>content</code> items. Non-text parts (e.g. images, embedded resources) are not surfaced in this release.</li>
+  <li><strong>Session credentials:</strong> When <code>Riffer.config.mcp.credentials</code> is set, authenticated tool wrappers may build a <strong>new HTTP client per tool invocation</strong> so headers stay fresh; there is no connection pooling in this release.</li>
+  <li><strong>Context window / progressive disclosure:</strong> <code>use_mcp</code> defaults to progressive mode — tools are discovered via <code>mcp_search</code> and injected natively for subsequent calls. Use <code>progressive: false</code> to inject all schemas directly. See <a href="#progressive-tool-discovery">Progressive Tool Discovery</a>.</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+
+<p>The <code>mcp</code> and <code>faraday</code> gems are <strong>optional</strong> dependencies — they are not included in Riffer’s runtime gemspec. To use MCP integration, add both to your own Gemfile:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"mcp"</span>
+<span class="n">gem</span> <span class="s2">"faraday"</span>
+</code></pre></div></div>
+
+<p>Faraday is required for the MCP HTTP transport. If either gem is missing when <code>Riffer::Mcp.register</code> is called, a <code>Riffer::DependencyError</code> is raised.</p>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/skills/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Skills</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/serialization/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Serialization</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

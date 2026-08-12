@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Creating Custom Providers — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/" class="active" aria-current="page"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 09</span></p>
+          <h1>Creating Custom Providers</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#basic-structure">Basic Structure</a></li>
+              <li><a href="#using-depends_on">Using depends_on</a></li>
+              <li><a href="#registering-your-provider">Registering Your Provider</a></li>
+              <li><a href="#using-your-provider">Using Your Provider</a></li>
+              <li><a href="#tool-support">Tool Support</a></li>
+              <li><a href="#stream-events">Stream Events</a></li>
+              <li><a href="#token-usage-semantics">Token Usage Semantics</a></li>
+              <li><a href="#finish-reasons">Finish Reasons</a></li>
+              <li><a href="#trace-provider-name">Trace Provider Name</a></li>
+              <li><a href="#error-handling">Error Handling</a></li>
+              <li><a href="#complete-example">Complete Example</a></li>
+            </ul>
+          </nav>
+          
+<p>You can create custom providers to connect Riffer to other LLM services.</p>
+
+<h2 id="basic-structure">Basic Structure</h2>
+
+<p>Extend <code>Riffer::Providers::Base</code> and implement the five required hook methods:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Riffer::Providers::MyProvider</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="c1"># Initialize your client</span>
+    <span class="vi">@api_key</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:api_key</span><span class="p">]</span> <span class="o">||</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'MY_PROVIDER_API_KEY'</span><span class="p">]</span>
+    <span class="vi">@client</span> <span class="o">=</span> <span class="no">MyProviderClient</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="vi">@api_key</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># Hook methods (matching base.rb order)</span>
+
+  <span class="k">def</span> <span class="nf">build_request_params</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:tools</span><span class="p">]</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">model: </span><span class="n">model</span><span class="p">,</span>
+      <span class="ss">messages: </span><span class="n">convert_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">),</span>
+      <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">tools</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">tools</span><span class="p">.</span><span class="nf">empty?</span>
+      <span class="n">params</span><span class="p">[</span><span class="ss">:tools</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span> <span class="n">convert_tool</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">params</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">execute_generate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="vi">@client</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">execute_stream</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">yielder</span><span class="p">)</span>
+    <span class="vi">@client</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">chunk</span><span class="o">|</span>
+      <span class="k">case</span> <span class="n">chunk</span><span class="p">.</span><span class="nf">type</span>
+      <span class="k">when</span> <span class="ss">:text</span>
+        <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">chunk</span><span class="p">.</span><span class="nf">content</span><span class="p">)</span>
+      <span class="k">when</span> <span class="ss">:text_done</span>
+        <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">chunk</span><span class="p">.</span><span class="nf">content</span><span class="p">)</span>
+      <span class="k">when</span> <span class="ss">:tool_call</span>
+        <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+          <span class="ss">item_id: </span><span class="n">chunk</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+          <span class="ss">call_id: </span><span class="n">chunk</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+          <span class="ss">name: </span><span class="n">chunk</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+          <span class="ss">arguments: </span><span class="n">chunk</span><span class="p">.</span><span class="nf">arguments</span>
+        <span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">extract_token_usage</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">usage</span>
+    <span class="k">return</span> <span class="kp">nil</span> <span class="k">unless</span> <span class="n">usage</span>
+
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">TokenUsage</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="ss">input_tokens: </span><span class="n">usage</span><span class="p">.</span><span class="nf">input_tokens</span><span class="p">,</span>
+      <span class="ss">output_tokens: </span><span class="n">usage</span><span class="p">.</span><span class="nf">output_tokens</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">extract_assistant_message</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">token_usage</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">text</span>
+    <span class="n">tool_calls</span> <span class="o">=</span> <span class="n">extract_tool_calls</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="n">text</span><span class="p">,</span>
+      <span class="ss">tool_calls: </span><span class="n">tool_calls</span><span class="p">,</span>
+      <span class="ss">token_usage: </span><span class="n">token_usage</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Helper methods (provider-specific)</span>
+
+  <span class="k">def</span> <span class="nf">convert_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">messages</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+      <span class="k">case</span> <span class="n">msg</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">System</span>
+        <span class="p">{</span><span class="ss">role: </span><span class="s2">"system"</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">}</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span>
+        <span class="p">{</span><span class="ss">role: </span><span class="s2">"user"</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">}</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span>
+        <span class="n">convert_assistant</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span>
+        <span class="p">{</span><span class="ss">role: </span><span class="s2">"tool"</span><span class="p">,</span> <span class="ss">tool_call_id: </span><span class="n">msg</span><span class="p">.</span><span class="nf">tool_call_id</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">convert_assistant</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">role: </span><span class="s2">"assistant"</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="n">msg</span><span class="p">.</span><span class="nf">tool_calls</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">convert_tool</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="ss">name: </span><span class="n">tool</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+      <span class="ss">description: </span><span class="n">tool</span><span class="p">.</span><span class="nf">description</span><span class="p">,</span>
+      <span class="ss">parameters: </span><span class="n">tool</span><span class="p">.</span><span class="nf">parameters_schema</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">extract_tool_calls</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[]</span> <span class="k">unless</span> <span class="n">response</span><span class="p">.</span><span class="nf">tool_calls</span>
+
+    <span class="n">response</span><span class="p">.</span><span class="nf">tool_calls</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">tc</span><span class="o">|</span>
+      <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ToolCall</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+        <span class="ss">id: </span><span class="n">tc</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+        <span class="ss">call_id: </span><span class="n">tc</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+        <span class="ss">name: </span><span class="n">tc</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+        <span class="ss">arguments: </span><span class="n">tc</span><span class="p">.</span><span class="nf">arguments</span>
+      <span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="using-depends_on">Using depends_on</h2>
+
+<p>For lazy loading of external gems:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Riffer::Providers::MyProvider</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">depends_on</span> <span class="s2">"my_provider_gem"</span>  <span class="c1"># Only loaded when provider is used</span>
+
+    <span class="vi">@client</span> <span class="o">=</span> <span class="o">::</span><span class="no">MyProviderGem</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="registering-your-provider">Registering Your Provider</h2>
+
+<p>Register your provider under an identifier.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">:my_provider</span><span class="p">)</span> <span class="p">{</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">MyProvider</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. <code>openai</code>) through your own backend. Both <code>find</code> and <code>key_for</code> (used for pricing and observability keys) honor the registration. Remove one with <code>Riffer::Providers::Repository.unregister(:my_provider)</code>.</p>
+
+<p>Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.</p>
+
+<h2 id="using-your-provider">Using Your Provider</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'my_provider/model-name'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="tool-support">Tool Support</h2>
+
+<p>Tools are converted in <code>build_request_params</code> and passed through to both <code>execute_generate</code> and <code>execute_stream</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build_request_params</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+  <span class="n">tools</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:tools</span><span class="p">]</span>
+
+  <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">model: </span><span class="n">model</span><span class="p">,</span>
+    <span class="ss">messages: </span><span class="n">convert_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="n">tools</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">tools</span><span class="p">.</span><span class="nf">empty?</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:tools</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span> <span class="n">convert_tool</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="n">params</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">convert_tool</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="ss">name: </span><span class="n">tool</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="n">tool</span><span class="p">.</span><span class="nf">description</span><span class="p">,</span>
+    <span class="ss">parameters: </span><span class="n">tool</span><span class="p">.</span><span class="nf">parameters_schema</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="stream-events">Stream Events</h2>
+
+<p>Use the appropriate stream event classes in <code>execute_stream</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Text streaming</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"chunk of text"</span><span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"complete text"</span><span class="p">)</span>
+
+<span class="c1"># Tool calls</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">item_id: </span><span class="s2">"id"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"tool_name"</span><span class="p">,</span>
+  <span class="ss">arguments_delta: </span><span class="s1">'{"partial":'</span>
+<span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">item_id: </span><span class="s2">"id"</span><span class="p">,</span>
+  <span class="ss">call_id: </span><span class="s2">"call_id"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"tool_name"</span><span class="p">,</span>
+  <span class="ss">arguments: </span><span class="s1">'{"complete":"args"}'</span>
+<span class="p">)</span>
+
+<span class="c1"># Reasoning (if supported)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"thinking..."</span><span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"complete reasoning"</span><span class="p">)</span>
+
+<span class="c1"># Web search (if supported)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"searching"</span><span class="p">,</span> <span class="ss">query: </span><span class="s2">"search query"</span><span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="s2">"search query"</span><span class="p">,</span>
+  <span class="ss">sources: </span><span class="p">[{</span><span class="ss">title: </span><span class="s2">"Result"</span><span class="p">,</span> <span class="ss">url: </span><span class="s2">"https://example.com"</span><span class="p">}]</span>
+<span class="p">)</span>
+
+<span class="c1"># Token usage (emit at end of stream)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TokenUsageDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">token_usage: </span><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">TokenUsage</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">input_tokens: </span><span class="mi">100</span><span class="p">,</span>
+    <span class="ss">output_tokens: </span><span class="mi">50</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Finish reason (emit at end of stream)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">FinishReasonDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">finish_reason: :stop</span><span class="p">,</span>
+  <span class="ss">raw_finish_reason: </span><span class="s2">"done"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="token-usage-semantics">Token Usage Semantics</h2>
+
+<p><code>Riffer::Providers::TokenUsage</code> is a normalized contract — map your provider’s raw usage into the bucket meanings defined in <a href="/guides/messages/#token-usage-semantics">Messages — Token Usage Semantics</a> rather than passing fields through untouched.</p>
+
+<h2 id="finish-reasons">Finish Reasons</h2>
+
+<p><code>Riffer::Providers::FinishReason</code> is the same kind of normalized contract — map your provider’s raw finish/stop value into the vocabulary defined in <a href="/guides/messages/#finish-reasons">Messages — Finish Reasons</a> (<code>:stop</code>, <code>:length</code>, <code>:tool_calls</code>, <code>:content_filter</code>, <code>:error</code>, <code>:other</code>), keeping the raw wire value alongside:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_finish_reason</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">raw</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">stop_reason</span>
+  <span class="k">return</span> <span class="kp">nil</span> <span class="k">unless</span> <span class="n">raw</span>
+
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">FinishReason</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">reason: </span><span class="p">{</span><span class="s2">"done"</span> <span class="o">=&gt;</span> <span class="ss">:stop</span><span class="p">,</span> <span class="s2">"max_len"</span> <span class="o">=&gt;</span> <span class="ss">:length</span><span class="p">}.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="ss">:other</span><span class="p">),</span>
+    <span class="ss">raw: </span><span class="n">raw</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The hook is optional — the base class defaults to <code>nil</code> (no finish reason reported). Map unmapped values to <code>:other</code>, never raise on a novel wire value.</p>
+
+<p>For streaming, emit a <code>FinishReasonDone</code> event near the end of <code>execute_stream</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">FinishReasonDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">finish_reason: :stop</span><span class="p">,</span> <span class="ss">raw_finish_reason: </span><span class="s2">"done"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="trace-provider-name">Trace Provider Name</h2>
+
+<p>LLM-call and agent-run spans stamp <code>gen_ai.provider.name</code> from the <code>semconv_provider_name</code> class method. The default is your snake_cased class name; override it when a <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">GenAI semconv well-known value</a> exists for your provider:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">semconv_provider_name</span>
+  <span class="s2">"my_provider"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="error-handling">Error Handling</h2>
+
+<p>Raise appropriate Riffer errors:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_assistant_message</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">token_usage</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+  <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">raise</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Error</span><span class="p">,</span> <span class="s2">"No content returned from provider"</span> <span class="k">if</span> <span class="n">content</span><span class="p">.</span><span class="nf">nil?</span> <span class="o">||</span> <span class="n">content</span><span class="p">.</span><span class="nf">empty?</span>
+
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="ss">token_usage: </span><span class="n">token_usage</span><span class="p">)</span>
+<span class="k">rescue</span> <span class="no">MyProviderGem</span><span class="o">::</span><span class="no">AuthError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="k">raise</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">"Authentication failed: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="complete-example">Complete Example</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/riffer/providers/my_provider.rb</span>
+
+<span class="k">class</span> <span class="nc">Riffer::Providers::MyProvider</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">depends_on</span> <span class="s2">"my_provider_gem"</span>
+
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:api_key</span><span class="p">]</span> <span class="o">||</span> <span class="no">ENV</span><span class="p">[</span><span class="s2">"MY_PROVIDER_API_KEY"</span><span class="p">]</span>
+    <span class="vi">@client</span> <span class="o">=</span> <span class="o">::</span><span class="no">MyProviderGem</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="n">api_key</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># Hook methods</span>
+
+  <span class="k">def</span> <span class="nf">build_request_params</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">system_message</span> <span class="o">=</span> <span class="n">extract_system</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">conversation</span> <span class="o">=</span> <span class="n">messages</span><span class="p">.</span><span class="nf">reject</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">System</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:tools</span><span class="p">]</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">model: </span><span class="n">model</span><span class="p">,</span>
+      <span class="ss">messages: </span><span class="n">convert_messages</span><span class="p">(</span><span class="n">conversation</span><span class="p">),</span>
+      <span class="ss">system: </span><span class="n">system_message</span><span class="p">,</span>
+      <span class="ss">max_tokens: </span><span class="n">options</span><span class="p">[</span><span class="ss">:max_tokens</span><span class="p">]</span> <span class="o">||</span> <span class="mi">4096</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">,</span> <span class="ss">:max_tokens</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">tools</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">tools</span><span class="p">.</span><span class="nf">empty?</span>
+      <span class="n">params</span><span class="p">[</span><span class="ss">:tools</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span> <span class="n">convert_tool</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">params</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">execute_generate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="vi">@client</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">execute_stream</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">yielder</span><span class="p">)</span>
+    <span class="n">accumulated_text</span> <span class="o">=</span> <span class="s2">""</span>
+
+    <span class="vi">@client</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+      <span class="k">case</span> <span class="n">event</span><span class="p">.</span><span class="nf">type</span>
+      <span class="k">when</span> <span class="ss">:text_delta</span>
+        <span class="n">accumulated_text</span> <span class="o">+=</span> <span class="n">event</span><span class="p">.</span><span class="nf">text</span>
+        <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="nf">text</span><span class="p">)</span>
+      <span class="k">when</span> <span class="ss">:message_stop</span>
+        <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">accumulated_text</span><span class="p">)</span>
+      <span class="k">when</span> <span class="ss">:usage</span>
+        <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TokenUsageDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+          <span class="ss">token_usage: </span><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">TokenUsage</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+            <span class="ss">input_tokens: </span><span class="n">event</span><span class="p">.</span><span class="nf">usage</span><span class="p">.</span><span class="nf">input_tokens</span><span class="p">,</span>
+            <span class="ss">output_tokens: </span><span class="n">event</span><span class="p">.</span><span class="nf">usage</span><span class="p">.</span><span class="nf">output_tokens</span>
+          <span class="p">)</span>
+        <span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">extract_token_usage</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">usage</span>
+    <span class="k">return</span> <span class="kp">nil</span> <span class="k">unless</span> <span class="n">usage</span>
+
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">TokenUsage</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="ss">input_tokens: </span><span class="n">usage</span><span class="p">.</span><span class="nf">input_tokens</span><span class="p">,</span>
+      <span class="ss">output_tokens: </span><span class="n">usage</span><span class="p">.</span><span class="nf">output_tokens</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">extract_assistant_message</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">token_usage</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">tool_calls</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">response</span><span class="p">.</span><span class="nf">content</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">block</span><span class="o">|</span>
+      <span class="k">case</span> <span class="n">block</span><span class="p">.</span><span class="nf">type</span>
+      <span class="k">when</span> <span class="s2">"text"</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="nf">text</span>
+      <span class="k">when</span> <span class="s2">"tool_use"</span>
+        <span class="n">tool_calls</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ToolCall</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+          <span class="ss">id: </span><span class="n">block</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+          <span class="ss">call_id: </span><span class="n">block</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+          <span class="ss">name: </span><span class="n">block</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+          <span class="ss">arguments: </span><span class="n">block</span><span class="p">.</span><span class="nf">input</span><span class="p">.</span><span class="nf">to_json</span>
+        <span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">raise</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Error</span><span class="p">,</span> <span class="s2">"No content returned from provider"</span> <span class="k">if</span> <span class="n">text</span><span class="p">.</span><span class="nf">empty?</span> <span class="o">&amp;&amp;</span> <span class="n">tool_calls</span><span class="p">.</span><span class="nf">empty?</span>
+
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="n">tool_calls</span><span class="p">,</span> <span class="ss">token_usage: </span><span class="n">token_usage</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Helper methods</span>
+
+  <span class="k">def</span> <span class="nf">extract_system</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">system_msg</span> <span class="o">=</span> <span class="n">messages</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">System</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">system_msg</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">convert_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">messages</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+      <span class="k">case</span> <span class="n">msg</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span>
+        <span class="p">{</span><span class="ss">role: </span><span class="s2">"user"</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">}</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span>
+        <span class="p">{</span><span class="ss">role: </span><span class="s2">"assistant"</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">}</span>
+      <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span>
+        <span class="p">{</span><span class="ss">role: </span><span class="s2">"user"</span><span class="p">,</span> <span class="ss">content: </span><span class="p">[{</span><span class="ss">type: </span><span class="s2">"tool_result"</span><span class="p">,</span> <span class="ss">tool_use_id: </span><span class="n">msg</span><span class="p">.</span><span class="nf">tool_call_id</span><span class="p">,</span> <span class="ss">content: </span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="p">}]}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">convert_tool</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="ss">name: </span><span class="n">tool</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span>
+      <span class="ss">description: </span><span class="n">tool</span><span class="p">.</span><span class="nf">description</span><span class="p">,</span>
+      <span class="ss">input_schema: </span><span class="n">tool</span><span class="p">.</span><span class="nf">parameters_schema</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/mock/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Mock Provider</span></span
+            ></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

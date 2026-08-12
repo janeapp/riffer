@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stream Events — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/" class="active" aria-current="page"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 09</span></p>
+          <h1>Stream Events</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#using-streaming">Using Streaming</a></li>
+              <li><a href="#event-types">Event Types</a></li>
+              <li><a href="#streaming-with-tools">Streaming with Tools</a></li>
+              <li><a href="#complete-example">Complete Example</a></li>
+              <li><a href="#base-class">Base Class</a></li>
+            </ul>
+          </nav>
+          
+<p>When streaming responses, Riffer emits typed events that represent incremental updates from the LLM.</p>
+
+<h2 id="using-streaming">Using Streaming</h2>
+
+<p>Use <code>stream</code> instead of <code>generate</code> to receive events as they arrive:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Tell me a story"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Complete]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDelta</span>
+    <span class="c1"># Tool call being built</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span>
+    <span class="nb">puts</span> <span class="s2">"[Tool: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span>
+    <span class="nb">puts</span> <span class="s2">"[Searching: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">status</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span>
+    <span class="nb">puts</span> <span class="s2">"[Search complete: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="event-types">Event Types</h2>
+
+<h3 id="textdelta">TextDelta</h3>
+
+<p>Emitted when incremental text content is received:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hello "</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "Hello "</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :assistant, content: "Hello "}</span>
+</code></pre></div></div>
+
+<p>Use this to display text in real-time as it streams.</p>
+
+<h3 id="textdone">TextDone</h3>
+
+<p>Emitted when text generation is complete:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hello, how can I help you?"</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "Hello, how can I help you?"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :assistant, content: "Hello, how can I help you?"}</span>
+</code></pre></div></div>
+
+<p>Contains the complete final text.</p>
+
+<h3 id="toolcalldelta">ToolCallDelta</h3>
+
+<p>Emitted when tool call arguments are being streamed:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">item_id: </span><span class="s2">"item_123"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span>
+  <span class="ss">arguments_delta: </span><span class="s1">'{"city":'</span>
+<span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>             <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">item_id</span>          <span class="c1"># =&gt; "item_123"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">name</span>             <span class="c1"># =&gt; "weather_tool"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">arguments_delta</span>  <span class="c1"># =&gt; '{"city":'</span>
+</code></pre></div></div>
+
+<p>The <code>name</code> may only be present in the first delta. Accumulate <code>arguments_delta</code> to build the complete arguments.</p>
+
+<h3 id="toolcalldone">ToolCallDone</h3>
+
+<p>Emitted when a tool call is complete:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">item_id: </span><span class="s2">"item_123"</span><span class="p">,</span>
+  <span class="ss">call_id: </span><span class="s2">"call_456"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span>
+  <span class="ss">arguments: </span><span class="s1">'{"city":"Tokyo"}'</span>
+<span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>       <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">item_id</span>    <span class="c1"># =&gt; "item_123"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">call_id</span>    <span class="c1"># =&gt; "call_456"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">name</span>       <span class="c1"># =&gt; "weather_tool"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">arguments</span>  <span class="c1"># =&gt; '{"city":"Tokyo"}'</span>
+</code></pre></div></div>
+
+<p>Contains the complete tool call information.</p>
+
+<h3 id="reasoningdelta">ReasoningDelta</h3>
+
+<p>Emitted when reasoning/thinking content is streamed (OpenAI with reasoning enabled):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Let me think about "</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "Let me think about "</span>
+</code></pre></div></div>
+
+<h3 id="reasoningdone">ReasoningDone</h3>
+
+<p>Emitted when reasoning is complete:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Let me think about this step by step..."</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "Let me think about this step by step..."</span>
+</code></pre></div></div>
+
+<h3 id="websearchstatus">WebSearchStatus</h3>
+
+<p>Emitted during web search progress with status updates:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"searching"</span><span class="p">,</span> <span class="ss">query: </span><span class="s2">"Ruby language"</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>    <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">status</span>  <span class="c1"># =&gt; "searching"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">query</span>   <span class="c1"># =&gt; "Ruby language"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">url</span>     <span class="c1"># =&gt; nil</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>    <span class="c1"># =&gt; {role: :assistant, status: "searching", query: "Ruby language"}</span>
+</code></pre></div></div>
+
+<p>The <code>url</code> and <code>query</code> attributes are optional and only included in <code>to_h</code> when present. Status values include <code>"in_progress"</code>, <code>"searching"</code>, <code>"completed"</code>, and <code>"open_page"</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># "open_page" status includes a url</span>
+<span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"open_page"</span><span class="p">,</span> <span class="ss">url: </span><span class="s2">"https://example.com"</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">url</span>   <span class="c1"># =&gt; "https://example.com"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :assistant, status: "open_page", url: "https://example.com"}</span>
+</code></pre></div></div>
+
+<h3 id="websearchdone">WebSearchDone</h3>
+
+<p>Emitted when web search completes:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="s2">"Ruby language"</span><span class="p">,</span>
+  <span class="ss">sources: </span><span class="p">[{</span><span class="ss">title: </span><span class="s2">"Ruby Programming"</span><span class="p">,</span> <span class="ss">url: </span><span class="s2">"https://ruby-lang.org"</span><span class="p">}]</span>
+<span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">query</span>    <span class="c1"># =&gt; "Ruby language"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">sources</span>  <span class="c1"># =&gt; [{title: "Ruby Programming", url: "https://ruby-lang.org"}]</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :assistant, query: "Ruby language", sources: [...]}</span>
+</code></pre></div></div>
+
+<p>Contains the search query and an array of source hashes with <code>title</code> and <code>url</code> keys.</p>
+
+<h3 id="guardrailtripwire">GuardrailTripwire</h3>
+
+<p>Emitted when a guardrail blocks execution during streaming:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">GuardrailTripwire</span>
+    <span class="nb">puts</span> <span class="s2">"Blocked by: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">guardrail_id</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"Reason: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">reason</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"Phase: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">phase</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># :before or :after</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/guardrails/">Guardrails</a> for more information.</p>
+
+<h3 id="guardrailmodification">GuardrailModification</h3>
+
+<p>Emitted when a guardrail transforms data during streaming:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">GuardrailModification</span>
+    <span class="nb">puts</span> <span class="s2">"Modified by: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">guardrail_id</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"Phase: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">phase</span><span class="si">}</span><span class="s2">"</span>              <span class="c1"># :before or :after</span>
+    <span class="nb">puts</span> <span class="s2">"Changed: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">message_indices</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># Array of affected indices</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/guardrails/">Guardrails</a> for more information.</p>
+
+<h3 id="skillactivation">SkillActivation</h3>
+
+<p>Emitted when a skill is activated during streaming. Fired when the LLM calls the skill activation tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Review this code"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">SkillActivation</span>
+    <span class="nb">puts</span> <span class="s2">"[Skill activated: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">SkillActivation</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"code-review"</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>  <span class="c1"># =&gt; :system</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">name</span>  <span class="c1"># =&gt; "code-review"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :system, name: "code-review"}</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/skills/">Skills</a> for more information.</p>
+
+<h3 id="interrupt">Interrupt</h3>
+
+<p>Emitted when the agent loop is interrupted. This can happen in two ways:</p>
+
+<ul>
+  <li>An <code>on_message</code> callback calls <code>agent.interrupt!</code> or <code>throw :riffer_interrupt</code> (reason is a String or <code>nil</code>).</li>
+  <li>The <code>max_steps</code> limit is reached (reason is the Symbol <code>:max_steps</code>).</li>
+</ul>
+
+<p>This is the streaming equivalent of <code>Response#interrupted?</code> in generate mode.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Callback interrupt with a string reason</span>
+<span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">Interrupt</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">reason: </span><span class="s2">"needs approval"</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>    <span class="c1"># =&gt; :system</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">reason</span>  <span class="c1"># =&gt; "needs approval"</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>    <span class="c1"># =&gt; {role: :system, interrupt: true, reason: "needs approval"}</span>
+
+<span class="c1"># Max steps interrupt with a symbol reason</span>
+<span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">Interrupt</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">reason: :max_steps</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">reason</span>  <span class="c1"># =&gt; :max_steps</span>
+</code></pre></div></div>
+
+<p>The <code>reason</code> is <code>nil</code> when <code>throw :riffer_interrupt</code> is called without a second argument.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">Interrupt</span>
+    <span class="nb">puts</span> <span class="s2">"Loop was interrupted: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">reason</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>After an interrupt, call <code>stream</code> again with a string to continue the loop. See <a href="/guides/agent-lifecycle/#resuming-an-interrupted-loop">Agent Lifecycle — Resuming an Interrupted Loop</a> for details.</p>
+
+<h3 id="tokenusagedone">TokenUsageDone</h3>
+
+<p>Emitted when token usage data is available at the end of a response:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TokenUsageDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">token_usage: </span><span class="n">token_usage</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>                          <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">token_usage</span>                   <span class="c1"># =&gt; Riffer::Providers::TokenUsage</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">input_tokens</span>      <span class="c1"># =&gt; 100</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">output_tokens</span>     <span class="c1"># =&gt; 50</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">total_tokens</span>      <span class="c1"># =&gt; 150</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>                          <span class="c1"># =&gt; {role: :assistant, token_usage: {input_tokens: 100, output_tokens: 50}}</span>
+</code></pre></div></div>
+
+<p>Use this to track token consumption in real-time during streaming.</p>
+
+<h3 id="finishreasondone">FinishReasonDone</h3>
+
+<p>Emitted once near the end of the stream with the normalized reason the model finished (no ordering guarantee relative to <code>TokenUsageDone</code>):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">FinishReasonDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">finish_reason: :length</span><span class="p">,</span> <span class="ss">raw_finish_reason: </span><span class="s2">"max_tokens"</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>               <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">finish_reason</span>      <span class="c1"># =&gt; :length (see Messages — Finish Reasons for the vocabulary)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">raw_finish_reason</span>  <span class="c1"># =&gt; "max_tokens" (the provider's raw wire value, or nil)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>               <span class="c1"># =&gt; {role: :assistant, finish_reason: :length, raw_finish_reason: "max_tokens"}</span>
+</code></pre></div></div>
+
+<p>The agent loop stamps this value onto the accumulated assistant message’s <code>finish_reason</code>.</p>
+
+<h2 id="streaming-with-tools">Streaming with Tools</h2>
+
+<p>When an agent uses tools during streaming, the flow is:</p>
+
+<ol>
+  <li>Text events stream in (<code>TextDelta</code>, <code>TextDone</code>)</li>
+  <li>If tool calls are present: <code>ToolCallDelta</code> events, then <code>ToolCallDone</code></li>
+  <li>Agent executes tools internally</li>
+  <li>Agent sends results back to LLM</li>
+  <li>More text events stream in</li>
+  <li>Repeat until no more tool calls</li>
+</ol>
+
+<blockquote>
+  <p><strong>Note:</strong> When <code>web_search</code> is enabled, <code>WebSearchStatus</code> and <code>WebSearchDone</code> events may appear before text events as the provider performs a server-side search.</p>
+</blockquote>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"What's the weather in Tokyo?"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Calling </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">...]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="complete-example">Complete Example</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="s1">'You are a weather assistant.'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">]</span>
+<span class="k">end</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">WeatherAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">text_buffer</span> <span class="o">=</span> <span class="s2">""</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"What's the weather in Tokyo and New York?"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+    <span class="n">text_buffer</span> <span class="o">+=</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="c1"># Final text available</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">---"</span>
+    <span class="nb">puts</span> <span class="s2">"Complete response: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDelta</span>
+    <span class="c1"># Could show "typing..." indicator</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Tool: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">(</span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">arguments</span><span class="si">}</span><span class="s2">)]"</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span>
+    <span class="c1"># Show thinking process if desired</span>
+    <span class="nb">print</span> <span class="s2">"[thinking] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[reasoning complete]"</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span>
+    <span class="nb">puts</span> <span class="s2">"[search: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">status</span><span class="si">}</span><span class="s2">]"</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span>
+    <span class="nb">puts</span> <span class="s2">"[search complete: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">]"</span>
+    <span class="n">event</span><span class="p">.</span><span class="nf">sources</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"  - </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:title</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:url</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">Interrupt</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[interrupted]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="base-class">Base Class</h2>
+
+<p>All events inherit from <code>Riffer::StreamEvents::Base</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Riffer::StreamEvents::Base</span>
+  <span class="nb">attr_reader</span> <span class="ss">:role</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="ss">role: :assistant</span><span class="p">)</span>
+    <span class="vi">@role</span> <span class="o">=</span> <span class="n">role</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">to_h</span>
+    <span class="k">raise</span> <span class="no">NotImplementedError</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/messages/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Messages</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/configuration/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Configuration</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

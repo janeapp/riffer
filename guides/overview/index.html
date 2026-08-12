@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Overview — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/" class="active" aria-current="page"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Start here · 01</span></p>
+          <h1>Overview</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#core-concepts">Core Concepts</a></li>
+              <li><a href="#architecture">Architecture</a></li>
+              <li><a href="#next-steps">Next Steps</a></li>
+            </ul>
+          </nav>
+          
+<p>Riffer is a Ruby framework for building AI-powered applications and agents. It provides a complete toolkit for integrating Large Language Models (LLMs) into your Ruby projects.</p>
+
+<h2 id="core-concepts">Core Concepts</h2>
+
+<h3 id="agent">Agent</h3>
+
+<p>The Agent is the central orchestrator for AI interactions. It manages messages, calls the LLM provider, and handles tool execution.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="s1">'You are a helpful assistant.'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/agents/">Agents</a> for details.</p>
+
+<h3 id="tool">Tool</h3>
+
+<p>Tools are callable functions that agents can invoke to interact with external systems. They have structured parameter definitions and automatic validation.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Gets the weather for a city"</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:)</span>
+    <span class="n">text</span><span class="p">(</span><span class="no">WeatherAPI</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">city</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/tools/">Tools</a> for details.</p>
+
+<h3 id="structured-output">Structured Output</h3>
+
+<p>Agents can return structured JSON responses that conform to a schema. The response is automatically parsed and validated. Schemas support nested objects (<code>Hash</code>), typed arrays (<code>Array, of:</code>), and arrays of objects (<code>Array</code> with block):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SentimentAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">structured_output</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span>
+    <span class="n">required</span> <span class="ss">:score</span><span class="p">,</span> <span class="no">Float</span>
+    <span class="n">required</span> <span class="ss">:entities</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Named entities"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span>
+      <span class="n">required</span> <span class="ss">:type</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"person"</span><span class="p">,</span> <span class="s2">"place"</span><span class="p">,</span> <span class="s2">"org"</span><span class="p">]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">SentimentAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Analyze: "I love this!"'</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">structured_output</span>  <span class="c1"># =&gt; {sentiment: "positive", score: 0.95, entities: [...]}</span>
+</code></pre></div></div>
+
+<p>See the <a href="/guides/agents/#structured_output">structured output section in Agents</a> for details.</p>
+
+<h3 id="provider">Provider</h3>
+
+<p>Providers are adapters that connect to LLM services. Riffer supports:</p>
+
+<ul>
+  <li><strong>OpenAI</strong> - GPT models via the OpenAI API</li>
+  <li><strong>Azure OpenAI</strong> - GPT models via Azure</li>
+  <li><strong>Amazon Bedrock</strong> - Claude and other models via AWS Bedrock</li>
+  <li><strong>Anthropic</strong> - Claude models via the Anthropic API</li>
+  <li><strong>Mock</strong> - Mock provider for testing</li>
+</ul>
+
+<p>See <a href="/guides/providers/overview/">Providers</a> for details.</p>
+
+<h3 id="messages">Messages</h3>
+
+<p>Messages represent the conversation between user and assistant. Riffer uses strongly-typed message objects:</p>
+
+<ul>
+  <li><code>Riffer::Messages::System</code> - System instructions</li>
+  <li><code>Riffer::Messages::User</code> - User input</li>
+  <li><code>Riffer::Messages::Assistant</code> - LLM responses</li>
+  <li><code>Riffer::Messages::Tool</code> - Tool execution results</li>
+</ul>
+
+<p>See <a href="/guides/messages/">Messages</a> for details.</p>
+
+<h3 id="stream-events">Stream Events</h3>
+
+<p>When streaming responses, Riffer emits typed events:</p>
+
+<ul>
+  <li><code>TextDelta</code> - Incremental text chunks</li>
+  <li><code>TextDone</code> - Complete text</li>
+  <li><code>ToolCallDelta</code> - Incremental tool call arguments</li>
+  <li><code>ToolCallDone</code> - Complete tool call</li>
+  <li><code>WebSearchStatus</code> - Web search progress updates</li>
+  <li><code>WebSearchDone</code> - Web search completion with sources</li>
+</ul>
+
+<p>See <a href="/guides/stream-events/">Stream Events</a> for details.</p>
+
+<h2 id="architecture">Architecture</h2>
+
+<pre><code>User Request
+     |
+     v
++------------+
+|   Agent    |  &lt;-- Manages conversation flow
++------------+
+     |
+     v
++------------+
+|  Provider  |  &lt;-- Calls LLM API
++------------+
+     |
+     v
++------------+
+|    LLM     |  &lt;-- Returns response
++------------+
+     |
+     v
++------------+
+|   Tool?    |  &lt;-- Execute if tool call present
++------------+
+     |
+     v
+Response
+</code></pre>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+  <li><a href="/guides/getting-started/">Getting Started</a> - Quick start guide</li>
+  <li><a href="/guides/agents/">Agents</a> - Agent configuration and usage</li>
+  <li><a href="/guides/tools/">Tools</a> - Creating tools</li>
+  <li><a href="/guides/configuration/">Configuration</a> - Global configuration</li>
+  <li><a href="/guides/tracing/">Tracing</a> - OpenTelemetry span contract and host wiring</li>
+  <li><a href="/guides/evals/">Evals</a> - Evaluating agent quality</li>
+  <li><a href="/guides/guardrails/">Guardrails</a> - Input/output validation</li>
+  <li><a href="/guides/skills/">Skills</a> - Packaged agent capabilities</li>
+  <li><a href="/guides/serialization/">Serialization</a> - Persisting and transferring agent definitions</li>
+</ul>
+
+        </article>
+
+        <nav class="pager">
+          <span></span>
+          <a class="doc next" href="/guides/getting-started/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Getting Started</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

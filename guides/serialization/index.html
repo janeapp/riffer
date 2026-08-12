@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Serialization — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/" class="active" aria-current="page"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 15</span></p>
+          <h1>Serialization</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#what-the-hash-carries">What the hash carries</a></li>
+              <li><a href="#reconstructing-tools">Reconstructing tools</a></li>
+              <li><a href="#max_steps">max_steps</a></li>
+              <li><a href="#versioning">Versioning</a></li>
+              <li><a href="#secrets">Secrets</a></li>
+              <li><a href="#what-does-not-transfer">What does not transfer</a></li>
+              <li><a href="#next-steps">Next Steps</a></li>
+            </ul>
+          </nav>
+          
+<p><code>Riffer::Agent::Serializer</code> turns a <strong>resolved agent</strong> into a self-contained, provider-neutral data hash (<code>to_h</code>) and reconstructs a <strong>runnable agent</strong> from that hash (<code>from_h</code>). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.</p>
+
+<p>You normally reach it through the delegators on <code>Riffer::Agent</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span>    <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">to_h</span>          <span class="c1"># snapshot</span>
+<span class="n">rebuilt</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">from_h</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># reconstruct</span>
+</code></pre></div></div>
+
+<p>The hash is plain data — symbol-keyed, JSON-safe. For the wire, use the JSON helpers, which handle generating and parsing for you:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">json</span>    <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">to_json</span>       <span class="c1"># or Riffer::Agent::Serializer.to_json(agent:)</span>
+<span class="n">rebuilt</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">from_json</span><span class="p">(</span><span class="n">json</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The hash forms (<code>to_h</code> / <code>from_h</code>) are public too, if you want to embed the hash in a larger payload. <code>from_h</code> expects symbol keys, so parse with <code>JSON.parse(str, symbolize_names: true)</code> — or just use <code>from_json</code>, which does that for you.</p>
+
+<h3 id="runtime-context">Runtime context</h3>
+
+<p><code>from_h</code> / <code>from_json</code> accept an optional <code>context:</code> — the rebuilt agent’s <strong>runtime</strong> context, exactly the value you’d pass to <code>Agent.new(context:)</code>. It is <strong>not</strong> used to re-resolve the serialized definition (that’s already resolved); it’s threaded into tool dispatch and read by tools/runtimes at call time. Pass it when a tool or a remote runtime needs per-call data — e.g. <code>context: { tenant: "acme" }</code> for multi-tenant dispatch, or Maestro passing <code>context: { agent: self }</code> so its runtime can call back. Omit it (defaults to empty) when nothing downstream reads context.</p>
+
+<h3 id="seeding-conversation-history">Seeding conversation history</h3>
+
+<p>The hash carries the agent <strong>definition</strong>, not its conversation history (see <a href="#what-does-not-transfer">What does not transfer</a>). To resume a persisted conversation, pass a <code>session:</code> — exactly the value you’d pass to <code>Agent.new(session:)</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rebuilt</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">from_h</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="ss">session: </span><span class="n">persisted_session</span><span class="p">)</span>
+<span class="n">rebuilt</span><span class="p">.</span><span class="nf">generate</span> <span class="c1"># continues from the seeded history</span>
+</code></pre></div></div>
+
+<p>The session is used <strong>as-is</strong>: the rebuilt agent does not prepend anything to it, so the caller owns its full contents — <strong>including the system instruction message</strong>. Omit <code>session:</code> and the rebuilt agent builds a fresh session, seeded with the hash’s <code>instructions</code> and an empty history. Because a supplied session is authoritative, the hash’s <code>instructions</code> are not re-injected into it — make sure your persisted session already contains the system message.</p>
+
+<h2 id="what-the-hash-carries">What the hash carries</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="ss">schema_version:    </span><span class="mi">1</span><span class="p">,</span>                       <span class="c1"># wire format version</span>
+  <span class="ss">riffer_version:    </span><span class="s2">"0.29.1"</span><span class="p">,</span>                <span class="c1"># diagnostic only</span>
+  <span class="ss">identifier:        </span><span class="s2">"support_agent"</span><span class="p">,</span>
+  <span class="ss">model:             </span><span class="s2">"openai/gpt-4o"</span><span class="p">,</span>         <span class="c1"># resolved "provider/model" string</span>
+  <span class="ss">instructions:      </span><span class="s2">"You are…"</span><span class="p">,</span>              <span class="c1"># resolved system prompt</span>
+  <span class="ss">model_options:     </span><span class="p">{</span> <span class="ss">temperature: </span><span class="mf">0.2</span> <span class="p">},</span>
+  <span class="ss">provider_options:  </span><span class="p">{</span> <span class="err">…</span> <span class="p">},</span>                   <span class="c1"># see the secrets warning below</span>
+  <span class="ss">max_steps:         </span><span class="mi">8</span><span class="p">,</span>                        <span class="c1"># integer; -1 = unlimited (see below)</span>
+  <span class="ss">structured_output: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"object"</span><span class="p">,</span> <span class="err">…</span> <span class="p">},</span>   <span class="c1"># JSON Schema, or null</span>
+  <span class="ss">tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="resolved-snapshot">Resolved snapshot</h3>
+
+<p><code>to_h</code> reads the agent’s <strong>resolved</strong> state, not its raw configuration. By the time you call it, <code>Agent.new</code> has already evaluated any <code>Proc</code>-based <code>model</code>, <code>instructions</code>, or <code>uses_tools</code> against the agent’s own context — so the hash carries plain strings and data, never Procs. The receiver’s <code>context:</code> drives runtime behavior (tool dispatch); it does <strong>not</strong> re-evaluate baked-in fields.</p>
+
+<h3 id="structured-output">Structured output</h3>
+
+<p>Structured output crosses as <strong>provider-neutral JSON Schema</strong> (<code>Riffer::Params#to_json_schema</code>), never a provider-rendered schema. <code>from_h</code> rebuilds a validating <code>Riffer::Params</code> via <code>Riffer::Params.from_json_schema</code>, so the rebuilt agent both constrains the model and can <code>parse_and_validate</code> responses — rendering provider-correct bytes at call time, the same way an in-code agent does.</p>
+
+<h2 id="reconstructing-tools">Reconstructing tools</h2>
+
+<p>Tools cross as <code>{name, description, parameters_schema, timeout}</code> descriptors — never code. How a descriptor becomes a runnable tool is controlled by the <code>tool_resolver:</code> you pass to <code>from_h</code>. The two common shapes:</p>
+
+<h3 id="in-process-registry-lookup">In-process (registry lookup)</h3>
+
+<p>When the rebuilt agent runs in the <strong>same</strong> codebase that defined the tools (e.g. persisting an agent definition and rehydrating it later), resolve each descriptor back to its real class:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rebuilt</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">from_h</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+  <span class="ss">tool_resolver: </span><span class="o">-&gt;</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span> <span class="p">{</span> <span class="no">MyToolRegistry</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">descriptor</span><span class="p">[</span><span class="ss">:name</span><span class="p">])</span> <span class="p">})</span>
+</code></pre></div></div>
+
+<p>The real classes carry their <code>#call</code> bodies, so the agent runs on the default <code>Inline</code> runtime — no further wiring.</p>
+
+<h3 id="distributed-body-less-shells">Distributed (body-less shells)</h3>
+
+<p>When the receiver holds <strong>only the Riffer gem</strong>, the default <code>tool_resolver</code> synthesizes body-less <strong>tool shells</strong>. A shell advertises the tool’s schema to the LLM but has no <code>#call</code> — invoking it in-process raises. Pair the default resolver with a remote <code>Riffer::Tools::Runtime</code> that forwards each call back to the origin:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rebuilt</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">from_h</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+  <span class="ss">tool_runtime: </span><span class="no">MyRemoteToolRuntime</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">client: </span><span class="n">rpc_client</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Implement the remote runtime by subclassing <code>Riffer::Tools::Runtime</code> and overriding <code>#dispatch_tool_call</code> to forward the call over your transport, mapping any failure to <code>Tools::Response.error</code>. See <a href="/guides/advanced-tools/">Advanced Tools</a> for the runtime API.</p>
+
+<p>You own what a resolved tool does: a resolver may return real in-process classes, shells, or classes that themselves make network calls. Riffer does not require a runtime — it only ships shells by default.</p>
+
+<h2 id="max_steps"><code>max_steps</code></h2>
+
+<p>Unlimited steps are <code>nil</code> at the agent level — set it with <code>max_steps nil</code>. On the wire, the serializer encodes that as <strong><code>-1</code></strong> (and decodes <code>-1</code> back to <code>nil</code>), so the hash stays portable across transports where JSON <code>null</code> is awkward — proto3, for one, can’t distinguish <code>null</code> from an absent field. The <code>-1</code> is purely a wire detail: the DSL and your code only ever see <code>nil</code>, and the encode/decode handles the translation at the boundary.</p>
+
+<ul>
+  <li><strong>DSL</strong> — integer = bounded, <code>nil</code> = unlimited, omitted = <code>Config</code>’s default (16).</li>
+  <li><strong>Wire</strong> — integer = bounded, <code>-1</code> = unlimited, omitted = default (16).</li>
+</ul>
+
+<p>A finite integer round-trips as-is; a hash missing the key falls back to the default rather than running unbounded.</p>
+
+<h2 id="versioning">Versioning</h2>
+
+<p><code>schema_version</code> is an integer (<code>Riffer::Agent::Serializer::SCHEMA_VERSION</code>). <code>from_h</code> refuses any version it doesn’t recognize with <code>Riffer::Agent::Serializer::VersionError</code> (a <code>Riffer::ArgumentError</code>). A future incompatible change bumps the integer and adds a backwards-compatible decoder, giving distributed consumers a window to upgrade before the old format is dropped.</p>
+
+<h2 id="secrets">Secrets</h2>
+
+<p><code>provider_options</code> and <code>model_options</code> <strong>ride on the wire as plain data</strong> — they are part of the hash and <em>will</em> transfer. Prefer configuring API keys via environment/global provider configuration rather than <code>provider_options</code>. <strong>Never serialize an agent whose options carry sensitive values</strong> — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).</p>
+
+<h2 id="what-does-not-transfer">What does <strong>not</strong> transfer</h2>
+
+<ul>
+  <li><strong>Guardrails and skills</strong> are <strong>not supported yet</strong> — neither is serialized, so a rebuilt agent enforces no guardrails and has no skills catalog. (As a stopgap, a skills-enabled agent’s <code>skill_activate</code> tool still crosses as an ordinary tool descriptor.) Both are expected to be revisited.</li>
+</ul>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul>
+  <li><a href="/guides/tools/">Tools</a> - Creating tools</li>
+  <li><a href="/guides/advanced-tools/">Advanced Tools</a> - Tool runtime and dispatch</li>
+  <li><a href="/guides/configuration/">Configuration</a> - Global configuration</li>
+</ul>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/mcp/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">MCP</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/tracing/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Tracing</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

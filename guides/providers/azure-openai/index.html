@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Azure OpenAI Provider — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/" class="active" aria-current="page"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 05</span></p>
+          <h1>Azure OpenAI Provider</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#installation">Installation</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#supported-models">Supported Models</a></li>
+              <li><a href="#model-options">Model Options</a></li>
+              <li><a href="#example">Example</a></li>
+              <li><a href="#streaming">Streaming</a></li>
+              <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
+            </ul>
+          </nav>
+          
+<p>The Azure OpenAI provider connects to OpenAI models hosted on Azure. It is a thin subclass of the OpenAI provider that configures the Azure-specific endpoint and API key — all request building, streaming, and extraction logic is inherited.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add the OpenAI gem to your Gemfile (same gem as the OpenAI provider):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'openai'</span>
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Credentials are resolved in order:</p>
+
+<ol>
+  <li>Keyword arguments (<code>api_key</code>, <code>base_url</code>)</li>
+  <li>Global config (<code>Riffer.config.azure_openai.api_key</code> / <code>.endpoint</code>)</li>
+  <li>Environment variables (<code>AZURE_OPENAI_API_KEY</code> / <code>AZURE_OPENAI_ENDPOINT</code>)</li>
+</ol>
+
+<h3 id="global-config">Global config</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">azure_openai</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_API_KEY'</span><span class="p">]</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">azure_openai</span><span class="p">.</span><span class="nf">endpoint</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="per-agent">Per-agent</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_API_KEY'</span><span class="p">],</span>
+                   <span class="ss">base_url: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="environment-variables-only">Environment variables only</h3>
+
+<p>If <code>AZURE_OPENAI_API_KEY</code> and <code>AZURE_OPENAI_ENDPOINT</code> are set, no explicit configuration is needed:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="supported-models">Supported Models</h2>
+
+<p>Use any model deployed to your Azure OpenAI resource in the <code>azure_openai/model</code> format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="s1">'azure_openai/gpt-5.4'</span>
+<span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>
+</code></pre></div></div>
+
+<h2 id="model-options">Model Options</h2>
+
+<p>All model options from the OpenAI provider are supported:</p>
+
+<h3 id="temperature">temperature</h3>
+
+<p>Controls randomness (0.0-2.0):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span>
+</code></pre></div></div>
+
+<h3 id="max_tokens">max_tokens</h3>
+
+<p>Maximum tokens in response:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
+</code></pre></div></div>
+
+<h3 id="reasoning">reasoning</h3>
+
+<p>Enables extended thinking (for supported models):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span>  <span class="c1"># 'low', 'medium', or 'high'</span>
+</code></pre></div></div>
+
+<h3 id="structured_output">structured_output</h3>
+
+<p>Structured JSON output works identically to the OpenAI provider.</p>
+
+<h2 id="example">Example</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">azure_openai</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_API_KEY'</span><span class="p">]</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">azure_openai</span><span class="p">.</span><span class="nf">endpoint</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">]</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">SummaryAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="s1">'You are a summarization assistant. Be concise.'</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.3</span>
+<span class="k">end</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">SummaryAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">puts</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Summarize the Ruby programming language in one paragraph."</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="streaming">Streaming</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Explain Ruby blocks"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="tool-calling">Tool Calling</h2>
+
+<p>Tool calling works identically to the OpenAI provider:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CalculatorTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Performs basic math operations"</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:operation</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"add"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"multiply"</span><span class="p">,</span> <span class="s2">"divide"</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:a</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"First number"</span>
+    <span class="n">required</span> <span class="ss">:b</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Second number"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">operation</span><span class="p">:,</span> <span class="n">a</span><span class="p">:,</span> <span class="n">b</span><span class="p">:)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">case</span> <span class="n">operation</span>
+    <span class="k">when</span> <span class="s2">"add"</span> <span class="k">then</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">when</span> <span class="s2">"subtract"</span> <span class="k">then</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+    <span class="k">when</span> <span class="s2">"multiply"</span> <span class="k">then</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+    <span class="k">when</span> <span class="s2">"divide"</span> <span class="k">then</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+    <span class="k">end</span>
+    <span class="n">text</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="nf">to_s</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MathAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">CalculatorTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="direct-provider-usage">Direct Provider Usage</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AzureOpenAI</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_API_KEY'</span><span class="p">],</span>
+  <span class="ss">base_url: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span><span class="p">,</span>
+  <span class="ss">temperature: </span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/openai/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">OpenAI Provider</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/gemini/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Gemini Provider</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

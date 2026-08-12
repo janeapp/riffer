@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Lifecycle — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/" class="active" aria-current="page"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 04</span></p>
+          <h1>Agent Lifecycle</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#construction">Construction</a></li>
+              <li><a href="#instance-methods">Instance Methods</a></li>
+              <li><a href="#interrupting-the-agent-loop">Interrupting the Agent Loop</a></li>
+              <li><a href="#response-attributes">Response Attributes</a></li>
+              <li><a href="#class-methods">Class Methods</a></li>
+            </ul>
+          </nav>
+          
+<h2 id="construction">Construction</h2>
+
+<h3 id="agentnew">Agent.new</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Agent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="kp">nil</span><span class="p">,</span> <span class="ss">context: </span><span class="kp">nil</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong><code>session:</code></strong> — an existing <code>Riffer::Agent::Session</code>. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. With <code>Riffer.config.experimental_history_healing</code> on, a provided session is healed at construction time so the <code>tool_use</code> ↔ <code>tool_result</code> invariant holds before the next inference call.</li>
+  <li><strong><code>context:</code></strong> — a <code>Hash</code> carried for the lifetime of the agent. Used to evaluate Proc-based <code>instructions</code>, <code>model</code>, <code>uses_tools</code>, and skill activation at construction time, and threaded through tool execution and guardrails on every <code>generate</code>/<code>stream</code> call.</li>
+</ul>
+
+<p>When <code>session:</code> is omitted, the agent constructs a fresh session and seeds it with <code>[instruction_message, skills_message].compact</code> eagerly. To swap context, construct a new agent — context is fixed for the lifetime of an agent instance.</p>
+
+<h2 id="instance-methods">Instance Methods</h2>
+
+<h3 id="generate">generate</h3>
+
+<p>Generates a response synchronously. Returns a <code>Riffer::Agent::Response</code> object.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="n">prompt</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="ss">files: </span><span class="kp">nil</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong><code>prompt</code></strong> — when given, a new <code>Riffer::Messages::User</code> is silently appended to the session (no <code>on_message</code> callbacks fire for user inputs) and the inference loop runs.</li>
+  <li><strong><code>prompt</code> omitted</strong> — the loop runs against the current session. Useful when the seeded session’s last turn is already a user message, or when picking up pending tool calls from a prior interrupt.</li>
+  <li><strong><code>files:</code></strong> — requires <code>prompt</code>. Attached to the new user message.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># New conversation (class method — recommended for simple calls)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>       <span class="c1"># Access the response text</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">blocked?</span>      <span class="c1"># Check if guardrail blocked (always false without guardrails)</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">interrupted?</span>  <span class="c1"># Check if a callback interrupted the loop</span>
+
+<span class="c1"># New conversation (instance method — when you need message history or callbacks)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="p">{</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="n">log</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">)</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span>  <span class="c1"># Access message history</span>
+
+<span class="c1"># Multi-turn conversation</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">)</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Tell me more'</span><span class="p">)</span>   <span class="c1"># continues with full history</span>
+
+<span class="c1"># Resume from persisted messages (cross-process)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">Session</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">messages: </span><span class="n">persisted_messages</span><span class="p">)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="n">session</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span>  <span class="c1"># no prompt — session already has the last user message</span>
+
+<span class="c1"># With files</span>
+<span class="n">response</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'What is in this image?'</span><span class="p">,</span> <span class="ss">files: </span><span class="p">[</span>
+  <span class="p">{</span><span class="ss">data: </span><span class="n">base64_data</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s1">'image/jpeg'</span><span class="p">}</span>
+<span class="p">])</span>
+</code></pre></div></div>
+
+<h3 id="stream">stream</h3>
+
+<p>Streams a response as an Enumerator. Same prompt/files semantics as <code>generate</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># New conversation (class method — recommended for simple calls)</span>
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Tell me a story'</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span>
+    <span class="nb">puts</span> <span class="s2">"[Tool: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># New conversation (instance method — when you need message history or callbacks)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="p">{</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="n">persist_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Tell me a story'</span><span class="p">).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span> <span class="n">handle</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span>  <span class="c1"># Access message history</span>
+
+<span class="c1"># Multi-turn conversation</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span> <span class="n">handle</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Tell me more'</span><span class="p">).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span> <span class="n">handle</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="c1"># With files</span>
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'What is in this image?'</span><span class="p">,</span> <span class="ss">files: </span><span class="p">[{</span><span class="ss">data: </span><span class="n">base64_data</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s1">'image/jpeg'</span><span class="p">}]).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span> <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="session">session</h3>
+
+<p>Conversation state lives on <code>agent.session</code> — a <code>Riffer::Agent::Session</code> instance that owns the message array, the <code>on_message</code> callback list, and the <code>tool_use</code> ↔ <code>tool_result</code> invariant. The methods below are all on the session, not on the agent itself.</p>
+
+<p>Access the message history after a generate/stream call:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">)</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">role</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>Riffer::Agent::Session</code> includes <code>Enumerable</code>, so <code>find</code>, <code>select</code>, <code>count</code>, <code>reverse_each</code> all work directly on the session:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">id</span> <span class="o">==</span> <span class="s1">'a_1'</span> <span class="p">}</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">count</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="on_message">on_message</h3>
+
+<p>Registers a callback to receive messages as they’re added during generation:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="k">do</span> <span class="o">|</span><span class="n">message</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">message</span><span class="p">.</span><span class="nf">role</span>
+  <span class="k">when</span> <span class="ss">:assistant</span>
+    <span class="nb">puts</span> <span class="s2">"[Assistant] </span><span class="si">#{</span><span class="n">message</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="ss">:tool</span>
+    <span class="nb">puts</span> <span class="s2">"[Tool:</span><span class="si">#{</span><span class="n">message</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">message</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Multiple callbacks can be registered. Returns <code>self</code> for method chaining:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">session</span>
+  <span class="p">.</span><span class="nf">on_message</span> <span class="p">{</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="n">persist_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
+  <span class="p">.</span><span class="nf">on_message</span> <span class="p">{</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="n">log_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Works with both <code>generate</code> and <code>stream</code>. Only emits agent-generated messages (Assistant, Tool), not inputs (System, User).</p>
+
+<h2 id="interrupting-the-agent-loop">Interrupting the Agent Loop</h2>
+
+<p>Callbacks can interrupt the agent loop. This is useful for human-in-the-loop approval, cost limits, or content filtering.</p>
+
+<p>Use <code>agent.interrupt!</code> (or the lower-level <code>throw :riffer_interrupt</code>) to stop the loop. The response will have <code>interrupted?</code> set to <code>true</code> and contain the accumulated content up to the point of interruption.</p>
+
+<p>An optional reason can be passed to <code>interrupt!</code>. It is available via <code>interrupt_reason</code> on the response (generate) or <code>reason</code> on the <code>Interrupt</code> event (stream):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+  <span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span><span class="p">)</span>
+    <span class="n">agent</span><span class="p">.</span><span class="nf">interrupt!</span><span class="p">(</span><span class="s2">"needs human approval"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Call the tool'</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">interrupted?</span>      <span class="c1"># =&gt; true</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">interrupt_reason</span>  <span class="c1"># =&gt; "needs human approval"</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">content</span>           <span class="c1"># =&gt; last assistant content before interrupt</span>
+</code></pre></div></div>
+
+<p><strong>Streaming</strong> — interrupts emit an <code>Interrupt</code> event:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="p">{</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="kp">throw</span> <span class="ss">:riffer_interrupt</span><span class="p">,</span> <span class="s2">"budget exceeded"</span> <span class="p">}</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">Interrupt</span>
+    <span class="nb">puts</span> <span class="s2">"Loop was interrupted: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">reason</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><strong>Partial tool execution</strong> — tool calls are executed one at a time. When an interrupt fires during tool execution, only the completed tool results remain in the message history. For example, if an assistant message requests two tool calls and the callback interrupts after the first tool result, only that first result will be in the message history.</p>
+
+<h3 id="resuming-an-interrupted-loop">Resuming an Interrupted Loop</h3>
+
+<p>There are two ways to resume after an interrupt, depending on whether the agent is still in memory or you’re restoring from persisted data.</p>
+
+<p><strong>In-memory resume</strong> — call <code>generate</code> (or <code>stream</code>) again. With a prompt, the new user message is appended and the loop runs. Without a prompt, the loop runs against the current session — useful for picking up pending tool calls after the user has approved.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="p">{</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span> <span class="kp">throw</span> <span class="ss">:riffer_interrupt</span> <span class="k">if</span> <span class="n">needs_approval?</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Do something risky'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="p">.</span><span class="nf">interrupted?</span>
+  <span class="n">approve_action</span><span class="p">(</span><span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">)</span>
+  <span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Approved, go ahead'</span><span class="p">)</span>  <span class="c1"># executes pending tools, then calls the LLM</span>
+  <span class="c1"># or: agent.generate                              # resume without a new turn</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><strong>Cross-process resume</strong> — when the agent is gone (process restart, async approval, etc.), construct a <code>Riffer::Agent::Session</code> from the persisted messages and pass it to a new agent. The agent uses the session as-is (no system messages added). Pending tool calls on the resume boundary are executed on the next <code>generate</code>/<code>stream</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># During generation, persist each new message via on_message</span>
+<span class="c1"># Later, in a new process:</span>
+<span class="n">session</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">Session</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">messages: </span><span class="n">persisted_messages</span><span class="p">)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="n">session</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span>  <span class="c1"># session already has the last user turn</span>
+
+<span class="c1"># Or resume in streaming mode:</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="n">session</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">})</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="c1"># handle stream events</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="reading-system-messages-for-persistence">Reading System Messages for Persistence</h3>
+
+<p>Read the agent’s instruction and skills system messages from <code>agent.instruction_message</code> and <code>agent.skills_message</code>. Both are built once at <code>Agent.new</code> time using the constructor <code>context:</code> and cached — they reflect the agent’s configured <code>instructions</code> and <code>skills</code> DSL output. Useful for database persistence workflows where you need to store and later reconstruct message histories.</p>
+
+<p>Both return <code>Riffer::Messages::System</code> or <code>nil</code> (when unconfigured / empty).</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">sys</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">instruction_message</span>     <span class="c1"># =&gt; Riffer::Messages::System or nil</span>
+<span class="n">skills</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">skills_message</span>       <span class="c1"># =&gt; Riffer::Messages::System or nil</span>
+
+<span class="c1"># Store in DB, then later resume in a new process:</span>
+<span class="n">session</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">Session</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">messages: </span><span class="p">[</span><span class="n">sys</span><span class="p">,</span> <span class="n">skills</span><span class="p">,</span> <span class="n">user_msg</span><span class="p">].</span><span class="nf">compact</span><span class="p">)</span>
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="n">session</span><span class="p">,</span> <span class="ss">context: </span><span class="n">ctx</span><span class="p">).</span><span class="nf">generate</span>
+</code></pre></div></div>
+
+<h3 id="interrupt">interrupt!</h3>
+
+<p>Interrupts the agent loop from an <code>on_message</code> callback. Equivalent to <code>throw :riffer_interrupt, reason</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+  <span class="n">agent</span><span class="p">.</span><span class="nf">interrupt!</span><span class="p">(</span><span class="ss">:needs_approval</span><span class="p">)</span> <span class="k">if</span> <span class="n">requires_approval?</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="healing-pending-tool-results-on-interrupt-experimental">Healing pending tool results on interrupt (experimental)</h4>
+
+<p>When an interrupt fires while the assistant has a <code>tool_use</code> block that hasn’t been answered yet, the LLM will reject the next request unless every <code>tool_use</code> has a matching <code>tool_result</code>. By default, the next <code>generate</code> call re-executes those pending tools (see “Resuming an Interrupted Loop” above).</p>
+
+<p>When the interrupt represents a course-change rather than a pause — e.g. a voice barge-in where the user has moved on — re-execution is the wrong behavior. Opt into history healing to have riffer fill any orphan <code>tool_use</code> with a placeholder <code>Riffer::Messages::Tool</code> carrying <code>error_type: :interrupted</code>, leaving history valid for the next turn:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="p">.</span><span class="nf">experimental_history_healing</span> <span class="o">=</span> <span class="kp">true</span> <span class="p">}</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+  <span class="n">agent</span><span class="p">.</span><span class="nf">interrupt!</span><span class="p">(</span><span class="ss">:user_interrupt</span><span class="p">)</span> <span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">barge_in?</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Tell me a story"</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">healed_tool_call_ids</span>  <span class="c1"># =&gt; ["call_abc123", ...]</span>
+</code></pre></div></div>
+
+<p>The placeholder content is fixed: <code>"Tool call interrupted before completion."</code> with <code>error_type: :interrupted</code>. Each placeholder is inserted immediately after its parent assistant message. The list of filled <code>call_id</code>s is exposed on <code>response.healed_tool_call_ids</code> (and on <code>Riffer::StreamEvents::Interrupt#healed_tool_call_ids</code> when streaming).</p>
+
+<p>Healing covers all interrupts uniformly — caller-issued <code>interrupt!</code> and the built-in <code>INTERRUPT_MAX_STEPS</code> ceiling alike. When the flag is off (the default), orphans remain in history and <code>execute_pending_tool_calls</code> re-runs them on the next <code>generate</code> call.</p>
+
+<p>If you need finer control over placeholder content (per-call shape, structured metadata, etc.), use the <code>update</code> mutator below to upgrade a placeholder after the interrupt returns.</p>
+
+<h3 id="mutating-history">Mutating history</h3>
+
+<p>The session exposes a small set of in-place mutators that enforce the <code>tool_use</code> ↔ <code>tool_result</code> invariant on every operation. Use these to align history with external state (persisted transcript, partial output that wasn’t actually delivered, etc.) without rebuilding the agent.</p>
+
+<ul>
+  <li><strong><code>agent.session.update(id:, **attrs)</code></strong> — In-place partial update. Looks up by message <code>id:</code>; builds a replacement of the same type with <code>attrs</code> overlaid on the existing fields. Use this to edit assistant content (<code>update(id:, content:)</code>), restate a system message, etc. When the target is an assistant and the update drops entries from <code>tool_calls</code>, matching <code>Tool</code> children are removed atomically.</li>
+  <li><strong><code>agent.session.update(tool_call_id:, **attrs)</code></strong> — Same as above but looks up the tool result by <code>tool_call_id:</code>. Preserves <code>name</code> and <code>id</code>. Use this to upgrade an interrupt-time placeholder once the real result is available (<code>update(tool_call_id:, content:, error: nil, error_type: nil)</code>).</li>
+  <li><strong><code>agent.session.remove(id:)</code></strong> — Removes a message; cascades to its <code>Tool</code> children when the target carries <code>tool_calls</code>. Raises if called on a <code>Tool</code> message (use <code>update(tool_call_id:, ...)</code> to rewrite a tool result instead).</li>
+</ul>
+
+<p>Bulk filling of orphan <code>tool_use</code> blocks is handled by <code>Riffer.config.experimental_history_healing</code> (see “Healing pending tool results on interrupt” above) — there is no public synthesizer hook.</p>
+
+<p>Lookup patterns that pair with the mutators (via <code>Enumerable</code>):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">id</span> <span class="o">==</span> <span class="nb">id</span> <span class="p">}</span>                                           <span class="c1"># message by id</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">reverse_each</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">m</span><span class="p">.</span><span class="nf">tool_call_id</span> <span class="o">==</span> <span class="n">call_id</span> <span class="p">}</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">reverse_each</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">)</span> <span class="p">}</span>    <span class="c1"># last assistant</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">orphaned_tool_call_ids</span>                                            <span class="c1"># Array[String], zero-cost validation</span>
+</code></pre></div></div>
+
+<p>Mutating history while a <code>stream</code> enumerator is being consumed is undefined; mutators are intended for use between turns.</p>
+
+<p>Mutators do <strong>not</strong> fire <code>on_message</code> — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Healing placeholders bypass <code>on_message</code> for the same reason; consumers learn that healing happened via <code>Response#healed_tool_call_ids</code> (and <code>StreamEvents::Interrupt#healed_tool_call_ids</code>).</p>
+
+<h3 id="context">context</h3>
+
+<p>The mutable runtime context. A <code>Hash</code> threaded into every Proc-based DSL setting, guardrail, tool runtime, and skills resolution, and shared with every <code>Riffer::Agent::Run</code> this agent executes. Carries:</p>
+
+<ul>
+  <li><code>context[:skills]</code> — the resolved <code>Riffer::Skills::Context</code> when skills are configured.</li>
+  <li><code>context[:token_usage]</code> — the cumulative <code>Riffer::Providers::TokenUsage</code>, mutated by each Run as the loop progresses. Per-run totals are on <code>response.token_usage</code>.</li>
+  <li>any caller-provided keys passed via <code>Agent.new(context: ...)</code>.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">)</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">context</span><span class="p">[</span><span class="ss">:token_usage</span><span class="p">]</span>   <span class="c1"># cumulative TokenUsage across all calls</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">context</span><span class="p">[</span><span class="ss">:skills</span><span class="p">]</span>        <span class="c1"># the Skills::Context, if skills configured</span>
+</code></pre></div></div>
+
+<h2 id="response-attributes">Response Attributes</h2>
+
+<p><code>Riffer::Agent::Response</code> is returned by <code>generate</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>content</code></td>
+      <td><code>String</code></td>
+      <td>The response text</td>
+    </tr>
+    <tr>
+      <td><code>structured_output</code></td>
+      <td><code>Hash</code> / <code>nil</code></td>
+      <td>Parsed and validated structured output (see below)</td>
+    </tr>
+    <tr>
+      <td><code>blocked?</code></td>
+      <td><code>Boolean</code></td>
+      <td><code>true</code> if a guardrail tripwire fired</td>
+    </tr>
+    <tr>
+      <td><code>tripwire</code></td>
+      <td><code>Tripwire</code> / <code>nil</code></td>
+      <td>The guardrail tripwire that blocked the request</td>
+    </tr>
+    <tr>
+      <td><code>modified?</code></td>
+      <td><code>Boolean</code></td>
+      <td><code>true</code> if a guardrail modified the content</td>
+    </tr>
+    <tr>
+      <td><code>modifications</code></td>
+      <td><code>Array</code></td>
+      <td>List of guardrail modifications applied</td>
+    </tr>
+    <tr>
+      <td><code>interrupted?</code></td>
+      <td><code>Boolean</code></td>
+      <td><code>true</code> if the loop was interrupted</td>
+    </tr>
+    <tr>
+      <td><code>interrupt_reason</code></td>
+      <td><code>String</code> / <code>Symbol</code> / <code>nil</code></td>
+      <td>The reason passed to <code>throw :riffer_interrupt</code></td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td><code>Array</code></td>
+      <td>Full message history from the conversation</td>
+    </tr>
+    <tr>
+      <td><code>healed_tool_call_ids</code></td>
+      <td><code>Array[String]</code></td>
+      <td><code>tool_call</code> ids filled with placeholder results during interrupt healing (else <code>[]</code>)</td>
+    </tr>
+    <tr>
+      <td><code>token_usage</code></td>
+      <td><code>TokenUsage</code> / <code>nil</code></td>
+      <td>Aggregate <code>Riffer::Providers::TokenUsage</code> across this run’s LLM calls (<code>nil</code> when none reported)</td>
+    </tr>
+    <tr>
+      <td><code>steps</code></td>
+      <td><code>Integer</code></td>
+      <td>LLM calls made during this run (<code>0</code> when a before-guardrail blocks first); not the session’s cumulative count</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="responsestructured_output">response.structured_output</h3>
+
+<p>When structured output is configured, the LLM response is parsed as JSON and validated against the schema. The validated result is available as <code>response.structured_output</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="no">SentimentAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Analyze: "I love this!"'</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">content</span>            <span class="c1"># =&gt; raw JSON string from the LLM</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">structured_output</span>  <span class="c1"># =&gt; {sentiment: "positive", score: 0.95}</span>
+</code></pre></div></div>
+
+<p>Returns <code>nil</code> when structured output is not configured or when validation fails.</p>
+
+<p>The assistant message in the message history stores the parsed hash, so you can access structured output directly from persisted messages:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">SentimentAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Analyze: "I love this!"'</span><span class="p">)</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">.</span><span class="nf">last</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">structured_output?</span>    <span class="c1"># =&gt; true</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">structured_output</span>     <span class="c1"># =&gt; {sentiment: "positive", score: 0.95}</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/messages/#structured-output-on-messages">Messages — Structured Output on Messages</a> for details.</p>
+
+<h2 id="class-methods">Class Methods</h2>
+
+<h3 id="find">find</h3>
+
+<p>Find an agent class by identifier:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent_class</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'my_agent'</span><span class="p">)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">agent_class</span><span class="p">.</span><span class="nf">new</span>
+</code></pre></div></div>
+
+<h3 id="all">all</h3>
+
+<p>List all agent subclasses:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">agent_class</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">agent_class</span><span class="p">.</span><span class="nf">identifier</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/agents/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Agents</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/agent-loop/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Agent Loop</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Anthropic Provider — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/" class="active" aria-current="page"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 03</span></p>
+          <h1>Anthropic Provider</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#installation">Installation</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#supported-models">Supported Models</a></li>
+              <li><a href="#model-options">Model Options</a></li>
+              <li><a href="#example">Example</a></li>
+              <li><a href="#streaming">Streaming</a></li>
+              <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#extended-thinking">Extended Thinking</a></li>
+              <li><a href="#web-search">Web Search</a></li>
+              <li><a href="#message-format">Message Format</a></li>
+              <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
+            </ul>
+          </nav>
+          
+<p>The Anthropic provider connects to Claude models via the Anthropic API.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add the Anthropic gem to your Gemfile:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'anthropic'</span>
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Configure your Anthropic API key:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Or per-agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="supported-models">Supported Models</h2>
+
+<p>Use Anthropic model IDs in the <code>anthropic/model</code> format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+<span class="n">model</span> <span class="s1">'anthropic/claude-sonnet-4-5-20250929'</span>
+<span class="n">model</span> <span class="s1">'anthropic/claude-opus-4-5-20251101'</span>
+</code></pre></div></div>
+
+<h2 id="model-options">Model Options</h2>
+
+<h3 id="temperature">temperature</h3>
+
+<p>Controls randomness:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span>
+</code></pre></div></div>
+
+<h3 id="max_tokens">max_tokens</h3>
+
+<p>Maximum tokens in response:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
+</code></pre></div></div>
+
+<h3 id="top_p">top_p</h3>
+
+<p>Nucleus sampling parameter:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">top_p: </span><span class="mf">0.95</span>
+</code></pre></div></div>
+
+<h3 id="top_k">top_k</h3>
+
+<p>Top-k sampling parameter:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">top_k: </span><span class="mi">250</span>
+</code></pre></div></div>
+
+<h3 id="thinking">thinking</h3>
+
+<p>Enable extended thinking (reasoning) for supported models. Pass the thinking configuration hash directly as Anthropic expects:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Enable with budget tokens</span>
+<span class="n">model_options</span> <span class="ss">thinking: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"enabled"</span><span class="p">,</span> <span class="ss">budget_tokens: </span><span class="mi">10000</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="web_search">web_search</h3>
+
+<p>Enable server-side web search using Anthropic’s <code>web_search_20250305</code> tool. Pass <code>true</code> to use defaults or a hash to merge with the tool definition:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Enable with defaults</span>
+<span class="n">model_options</span> <span class="ss">web_search: </span><span class="kp">true</span>
+
+<span class="c1"># With custom configuration</span>
+<span class="n">model_options</span> <span class="ss">web_search: </span><span class="p">{</span><span class="ss">max_uses: </span><span class="mi">3</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="example">Example</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">AssistantAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">instructions</span> <span class="s1">'You are a helpful assistant.'</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
+<span class="k">end</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">AssistantAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">puts</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Explain quantum computing"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="streaming">Streaming</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Tell me about Claude models"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Complete]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span>
+    <span class="nb">print</span> <span class="s2">"[Thinking] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Thinking Complete]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span>
+    <span class="nb">puts</span> <span class="s2">"[Tool: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="tool-calling">Tool Calling</h2>
+
+<p>Anthropic provider converts tools to the Anthropic tool format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Gets the current weather for a location"</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
+    <span class="n">optional</span> <span class="ss">:unit</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Temperature unit (celsius or fahrenheit)"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:,</span> <span class="ss">unit: </span><span class="s2">"celsius"</span><span class="p">)</span>
+    <span class="c1"># Implementation</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"It's 22 degrees </span><span class="si">#{</span><span class="n">unit</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">city</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">WeatherAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="extended-thinking">Extended Thinking</h2>
+
+<p>Extended thinking enables Claude to reason through complex problems before responding. This is available on supported models (Claude 3.7+).</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ReasoningAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">model_options</span> <span class="ss">thinking: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"enabled"</span><span class="p">,</span> <span class="ss">budget_tokens: </span><span class="mi">10000</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When streaming with extended thinking enabled, you’ll receive <code>ReasoningDelta</code> events containing the model’s thought process, followed by a <code>ReasoningDone</code> event when thinking completes:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Solve this complex math problem"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span>
+    <span class="c1"># Model's internal reasoning</span>
+    <span class="nb">print</span> <span class="s2">"[Thinking] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Thinking complete]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="c1"># Final response</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="web-search">Web Search</h2>
+
+<p>Web search allows Claude to search the web for up-to-date information. When enabled, the provider injects the <code>web_search_20250305</code> server tool into the request.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SearchAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">model_options</span> <span class="ss">web_search: </span><span class="kp">true</span>
+<span class="k">end</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">SearchAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"What happened in tech news today?"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span>
+    <span class="nb">puts</span> <span class="s2">"[search: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">status</span><span class="si">}</span><span class="s2">]"</span>
+    <span class="nb">puts</span> <span class="s2">"  query: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="nf">query</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchDone</span>
+    <span class="nb">puts</span> <span class="s2">"[search complete: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">query</span><span class="si">}</span><span class="s2">]"</span>
+    <span class="n">event</span><span class="p">.</span><span class="nf">sources</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"  - </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:title</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">s</span><span class="p">[</span><span class="ss">:url</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Anthropic emits sources with <code>title</code> and <code>url</code> on the <code>WebSearchDone</code> event.</p>
+
+<h2 id="message-format">Message Format</h2>
+
+<p>The provider converts Riffer messages to Anthropic format:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Riffer Message</th>
+      <th>Anthropic Format</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>System</code></td>
+      <td>Added to <code>system</code> array as <code>{type: "text", text: ...}</code></td>
+    </tr>
+    <tr>
+      <td><code>User</code></td>
+      <td><code>{role: "user", content: "..."}</code></td>
+    </tr>
+    <tr>
+      <td><code>Assistant</code></td>
+      <td><code>{role: "assistant", content: [...]}</code> with text/tool_use blocks</td>
+    </tr>
+    <tr>
+      <td><code>Tool</code></td>
+      <td><code>{role: "user", content: [{type: "tool_result", ...}]}</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="direct-provider-usage">Direct Provider Usage</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Anthropic</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"claude-haiku-4-5-20251001"</span><span class="p">,</span>
+  <span class="ss">temperature: </span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+</code></pre></div></div>
+
+<h3 id="with-extended-thinking">With extended thinking:</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Explain step by step how to solve a Rubik's cube"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"claude-haiku-4-5-20251001"</span><span class="p">,</span>
+  <span class="ss">thinking: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"enabled"</span><span class="p">,</span> <span class="ss">budget_tokens: </span><span class="mi">10000</span> <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/amazon-bedrock/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Amazon Bedrock Provider</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/openai/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">OpenAI Provider</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

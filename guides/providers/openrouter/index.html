@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenRouter Provider — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/" class="active" aria-current="page"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 07</span></p>
+          <h1>OpenRouter Provider</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#installation">Installation</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#supported-models">Supported Models</a></li>
+              <li><a href="#model-options">Model Options</a></li>
+              <li><a href="#example">Example</a></li>
+              <li><a href="#streaming">Streaming</a></li>
+              <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#reasoning-models">Reasoning Models</a></li>
+              <li><a href="#routing--fallbacks">Routing &amp; Fallbacks</a></li>
+              <li><a href="#message-format">Message Format</a></li>
+              <li><a href="#limitations-v1">Limitations (v1)</a></li>
+              <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
+            </ul>
+          </nav>
+          
+<p>The OpenRouter provider connects Riffer to <a href="https://openrouter.ai">OpenRouter</a> — a unified gateway that exposes hundreds of LLMs from many vendors (Anthropic, OpenAI, Meta, Mistral, DeepSeek, Google, Grok, Qwen, and more) behind a single OpenAI-compatible Chat Completions endpoint.</p>
+
+<p>OpenRouter is useful when you want one credential, one model-string format, and access to models Riffer doesn’t have a direct provider for. It also offers built-in routing, fallback, and prompt transforms.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> OpenRouter exposes only the OpenAI <strong>Chat Completions</strong> API, not the Responses API. That’s why this provider does not subclass <code>Riffer::Providers::OpenAI</code> (which uses Responses). It implements the five hook methods independently against Chat Completions while still sharing the <code>openai</code> Ruby gem.</p>
+</blockquote>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add the OpenAI gem to your Gemfile — OpenRouter reuses it:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'openai'</span>
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Set your API key globally:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openrouter</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENROUTER_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Or per-agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openrouter/anthropic/claude-sonnet-4.6'</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'MY_OR_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The <code>api_key</code> resolves in order: keyword arg → <code>Riffer.config.openrouter.api_key</code> → <code>ENV['OPENROUTER_API_KEY']</code>.</p>
+
+<h2 id="supported-models">Supported Models</h2>
+
+<p>Use any OpenRouter model in the <code>openrouter/&lt;openrouter-model-id&gt;</code> format. The OpenRouter model ID is everything after the first slash:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="s1">'openrouter/anthropic/claude-sonnet-4.6'</span>
+<span class="n">model</span> <span class="s1">'openrouter/openai/gpt-4o-mini'</span>
+<span class="n">model</span> <span class="s1">'openrouter/meta-llama/llama-3.1-70b-instruct'</span>
+<span class="n">model</span> <span class="s1">'openrouter/deepseek/deepseek-r1'</span>
+<span class="n">model</span> <span class="s1">'openrouter/mistralai/mixtral-8x22b-instruct'</span>
+</code></pre></div></div>
+
+<p>See OpenRouter’s <a href="https://openrouter.ai/models">model catalog</a> for the full list.</p>
+
+<h2 id="model-options">Model Options</h2>
+
+<h3 id="temperature-max_tokens-top_p-etc">temperature, max_tokens, top_p, etc.</h3>
+
+<p>Standard sampling options pass through to the underlying model:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.5</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">2048</span>
+</code></pre></div></div>
+
+<h3 id="reasoning">reasoning</h3>
+
+<p>For reasoning models (DeepSeek R1, OpenAI o-series via OpenRouter, etc.):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'high'</span>  <span class="c1"># 'low' | 'medium' | 'high'</span>
+</code></pre></div></div>
+
+<p>Pass a hash for finer control:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">reasoning: </span><span class="p">{</span><span class="ss">effort: </span><span class="s1">'medium'</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">5000</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>Streaming yields <code>Riffer::StreamEvents::ReasoningDelta</code> and <code>ReasoningDone</code> events when the model returns reasoning content.</p>
+
+<h3 id="provider-routing-preferences">provider (routing preferences)</h3>
+
+<p>Pin which upstream provider OpenRouter should use, set allow/deny lists, or prefer a sort order:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">provider: </span><span class="p">{</span>
+  <span class="ss">order: </span><span class="p">[</span><span class="s1">'anthropic'</span><span class="p">,</span> <span class="s1">'openai'</span><span class="p">],</span>
+  <span class="ss">allow_fallbacks: </span><span class="kp">false</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>See OpenRouter’s <a href="https://openrouter.ai/docs/provider-routing">provider routing docs</a> for the full schema.</p>
+
+<h3 id="models-fallback-chain">models (fallback chain)</h3>
+
+<p>If the primary model is unavailable, OpenRouter will try the next one in the list:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">models: </span><span class="p">[</span><span class="s1">'openai/gpt-4o'</span><span class="p">,</span> <span class="s1">'anthropic/claude-sonnet-4.6'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="transforms">transforms</h3>
+
+<p>Prompt transforms applied by OpenRouter (e.g. middle-out auto-truncation):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">transforms: </span><span class="p">[</span><span class="s1">'middle-out'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="example">Example</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openrouter</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENROUTER_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">TranslateAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openrouter/anthropic/claude-sonnet-4.6'</span>
+  <span class="n">instructions</span> <span class="s1">'You translate English to French.'</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="no">TranslateAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello, world!'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="streaming">Streaming</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Explain Ruby blocks'</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span>
+    <span class="nb">print</span> <span class="s2">"[thinking] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TokenUsageDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[tokens: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">total_tokens</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The provider opts into <code>stream_options: {include_usage: true}</code> automatically so <code>TokenUsageDone</code> fires reliably.</p>
+
+<h2 id="tool-calling">Tool Calling</h2>
+
+<p>Tools are converted to OpenAI Chat Completions function format. The provider handles tool name encoding/decoding (slashes in tool names are wire-encoded with <code>__</code>) just like the OpenAI and Anthropic providers.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CalculatorTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s1">'Performs basic math'</span>
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:operation</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'subtract'</span><span class="p">,</span> <span class="s1">'multiply'</span><span class="p">,</span> <span class="s1">'divide'</span><span class="p">]</span>
+    <span class="n">required</span> <span class="ss">:a</span><span class="p">,</span> <span class="no">Float</span>
+    <span class="n">required</span> <span class="ss">:b</span><span class="p">,</span> <span class="no">Float</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">operation</span><span class="p">:,</span> <span class="n">a</span><span class="p">:,</span> <span class="n">b</span><span class="p">:)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">case</span> <span class="n">operation</span>
+    <span class="k">when</span> <span class="s1">'add'</span> <span class="k">then</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">when</span> <span class="s1">'subtract'</span> <span class="k">then</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+    <span class="k">when</span> <span class="s1">'multiply'</span> <span class="k">then</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+    <span class="k">when</span> <span class="s1">'divide'</span> <span class="k">then</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+    <span class="k">end</span>
+    <span class="n">text</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="nf">to_s</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MathAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openrouter/openai/gpt-4o-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">CalculatorTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="reasoning-models">Reasoning Models</h2>
+
+<p>Reasoning models surface their thought process via OpenRouter’s normalised <code>reasoning</code> field. Enable it with the <code>reasoning</code> option:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ThinkAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openrouter/deepseek/deepseek-r1'</span>
+  <span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span>
+<span class="k">end</span>
+
+<span class="no">ThinkAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'What is 2+2? Think step by step.'</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span>
+    <span class="nb">print</span> <span class="s2">"[reasoning] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="routing--fallbacks">Routing &amp; Fallbacks</h2>
+
+<p>Survive an upstream outage by chaining models:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ResilientAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openrouter/openai/gpt-4o-mini'</span>
+  <span class="n">model_options</span> <span class="ss">models: </span><span class="p">[</span>
+    <span class="s1">'openai/gpt-4o-mini'</span><span class="p">,</span>
+    <span class="s1">'anthropic/claude-haiku-4.5'</span><span class="p">,</span>
+    <span class="s1">'google/gemini-flash-1.5'</span>
+  <span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Pin to a specific upstream when consistency matters:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">provider: </span><span class="p">{</span><span class="ss">order: </span><span class="p">[</span><span class="s1">'anthropic'</span><span class="p">],</span> <span class="ss">allow_fallbacks: </span><span class="kp">false</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="message-format">Message Format</h2>
+
+<p>Riffer messages convert to Chat Completions roles:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Riffer Message</th>
+      <th>Chat Completions Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>System</code></td>
+      <td><code>system</code></td>
+    </tr>
+    <tr>
+      <td><code>User</code></td>
+      <td><code>user</code></td>
+    </tr>
+    <tr>
+      <td><code>Assistant</code></td>
+      <td><code>assistant</code></td>
+    </tr>
+    <tr>
+      <td><code>Tool</code></td>
+      <td><code>tool</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>User messages with files become multi-part content (<code>image_url</code> for images, <code>file</code> for documents). Assistant tool calls go into a nested <code>tool_calls</code> array on the assistant message.</p>
+
+<h2 id="limitations-v1">Limitations (v1)</h2>
+
+<ul>
+  <li><strong>No unified web search.</strong> OpenRouter doesn’t expose a cross-vendor web-search tool — capability varies per upstream model.</li>
+  <li><strong>Audio and image generation models</strong> are not supported.</li>
+  <li><strong>Responses API features</strong> (e.g. OpenAI’s <code>response.id</code> for continuation) are unavailable — OpenRouter implements only Chat Completions.</li>
+</ul>
+
+<h2 id="direct-provider-usage">Direct Provider Usage</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">OpenRouter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENROUTER_API_KEY'</span><span class="p">])</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s1">'Hello!'</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s1">'anthropic/claude-sonnet-4.6'</span><span class="p">,</span>
+  <span class="ss">temperature: </span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">total_tokens</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/gemini/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Gemini Provider</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/mock/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Mock Provider</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

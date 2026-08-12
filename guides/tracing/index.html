@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tracing — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/" class="active" aria-current="page"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 16</span></p>
+          <h1>Tracing</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#enabling-tracing">Enabling tracing</a></li>
+              <li><a href="#routing-to-a-non-opentelemetry-backend">Routing to a non-OpenTelemetry backend</a></li>
+              <li><a href="#spans">Spans</a></li>
+              <li><a href="#invoke_agent-agent--the-run-span">invoke_agent {agent} — the run span</a></li>
+              <li><a href="#chat-model--the-llm-call-span">chat {model} — the LLM call span</a></li>
+              <li><a href="#execute_tool-tool--the-tool-call-span">execute_tool {tool} — the tool call span</a></li>
+              <li><a href="#execute_guardrail-name--the-guardrail-span">execute_guardrail {name} — the guardrail span</a></li>
+              <li><a href="#example-trace">Example trace</a></li>
+              <li><a href="#token-usage-and-cost">Token usage and cost</a></li>
+              <li><a href="#message-content-capture">Message content capture</a></li>
+              <li><a href="#provider-names">Provider names</a></li>
+              <li><a href="#stability">Stability</a></li>
+              <li><a href="#avoid-double-instrumentation">Avoid double instrumentation</a></li>
+            </ul>
+          </nav>
+          
+<p>Riffer instruments its agent loop with <a href="https://opentelemetry.io/">OpenTelemetry</a> spans, following the <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">GenAI semantic conventions</a>. The emitted span shape — names, attributes, and hierarchy — is a public, versioned contract you can build dashboards, alerts, and cost reporting against. This page is the reference for that contract.</p>
+
+<p>Riffer only <em>emits</em> spans, and only through a backend you assign to <code>config.tracing.backend</code> — OpenTelemetry is the built-in option you opt into (the host application owns the SDK, exporter, sampling, and service naming — the standard OTEL split), but never a default. With no backend assigned, every span is a silent no-op and Riffer carries no OpenTelemetry gem dependency.</p>
+
+<h2 id="enabling-tracing">Enabling tracing</h2>
+
+<p>Riffer emits spans only through a backend you assign to <code>config.tracing.backend</code> — it does <strong>not</strong> auto-detect OpenTelemetry. To use OTEL, add the SDK, configure an exporter, and assign Riffer’s built-in OTEL backend with <code>Riffer::Tracing::Otel.build</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gemfile</span>
+<span class="n">gem</span> <span class="s2">"opentelemetry-sdk"</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s2">"opentelemetry/sdk"</span>
+
+<span class="no">OpenTelemetry</span><span class="o">::</span><span class="no">SDK</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">service_name</span> <span class="o">=</span> <span class="s2">"my-agent-host"</span>
+<span class="k">end</span>
+
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">tracing</span><span class="p">.</span><span class="nf">backend</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tracing</span><span class="o">::</span><span class="no">Otel</span><span class="p">.</span><span class="nf">build</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>Riffer::Tracing::Otel.build</code> wraps the global <code>OpenTelemetry.tracer_provider</code> by default; pass <code>provider:</code> to wrap a specific one (an in-memory provider in tests, say). It returns <code>nil</code> — leaving tracing a no-op rather than raising — when the <code>opentelemetry-api</code> gem is absent or outside the supported range (&gt;= 1.1, &lt; 2), so the same configuration is safe on a host that doesn’t bundle OTEL.</p>
+
+<p>To see Riffer’s spans on stdout while developing locally, wire in the console exporter:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s2">"opentelemetry/sdk"</span>
+
+<span class="no">OpenTelemetry</span><span class="o">::</span><span class="no">SDK</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">service_name</span> <span class="o">=</span> <span class="s2">"my-agent-host"</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">add_span_processor</span><span class="p">(</span>
+    <span class="no">OpenTelemetry</span><span class="o">::</span><span class="no">SDK</span><span class="o">::</span><span class="no">Trace</span><span class="o">::</span><span class="no">Export</span><span class="o">::</span><span class="no">SimpleSpanProcessor</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="no">OpenTelemetry</span><span class="o">::</span><span class="no">SDK</span><span class="o">::</span><span class="no">Trace</span><span class="o">::</span><span class="no">Export</span><span class="o">::</span><span class="no">ConsoleSpanExporter</span><span class="p">.</span><span class="nf">new</span>
+    <span class="p">)</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Any backend that implements the OpenTelemetry Traces API then ingests Riffer’s spans with no second pipeline. For real exporter and collector setup (OTLP, sampling, resource attributes), see the <a href="https://opentelemetry.io/docs/languages/ruby/">OpenTelemetry Ruby docs</a>. A host on a non-OTEL stack (e.g. Datadog APM) assigns its own backend instead — see <a href="#routing-to-a-non-opentelemetry-backend">Routing to a non-OpenTelemetry backend</a>.</p>
+
+<p>The tracing knobs — the <code>enabled</code> kill switch, opt-in message-content capture, and the <code>backend</code> itself — live in <a href="/guides/configuration/#tracing">Configuration — Tracing</a>.</p>
+
+<p>Spans are emitted under the instrumentation scope named <code>riffer</code>, versioned with the Riffer gem version. That scope version is the runtime signal for which release produced a span; see <a href="#stability">Stability</a>.</p>
+
+<h2 id="routing-to-a-non-opentelemetry-backend">Routing to a non-OpenTelemetry backend</h2>
+
+<p>OpenTelemetry is one backend, not the only one. A host already invested in another stack — Datadog APM, say — can route Riffer’s spans into it with <strong>no <code>opentelemetry-*</code> gem installed</strong> by assigning its own backend to <code>config.tracing.backend</code> in place of <code>Riffer::Tracing::Otel.build</code>. Whatever you assign is the backend; there is no fallback and no auto-detection — an unset backend is a no-op.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">tracing</span><span class="p">.</span><span class="nf">backend</span> <span class="o">=</span> <span class="no">MyDatadogTracingBackend</span><span class="p">.</span><span class="nf">new</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The backend is duck-typed — any object satisfying the contract works, and the setter validates only that it responds to <code>in_span</code> (otherwise it raises <code>Riffer::ArgumentError</code>). It must respond to:</p>
+
+<ul>
+  <li><code>in_span(name, attributes:, kind:) { |span| … }</code> — open a span around the block, yield a span object, and return the block’s value.</li>
+  <li><code>current_context</code> — return the active trace context (for re-attaching across fiber/thread boundaries), or <code>nil</code> when there is none.</li>
+  <li><code>with_context(context) { … }</code> — run the block with the given context active; a <code>nil</code> context passes straight through, so a span re-attached while tracing was dark stays harmless.</li>
+</ul>
+
+<p>The yielded span must respond to <code>set_attribute(key, value)</code>, <code>add_event(name, attributes:)</code>, <code>record_exception(exception)</code>, <code>error!(description)</code>, and <code>recording?</code> — the same surface the OTEL span exposes. <code>Riffer::Tracing::NoOp</code> is the reference shape for both the backend and the span contract. The <code>enabled</code> kill switch is still honoured ahead of the backend: with <code>config.tracing.enabled = false</code>, spans short-circuit to the no-op without ever reaching a custom backend.</p>
+
+<h2 id="spans">Spans</h2>
+
+<p>Riffer emits four span types. A single agent run produces one <code>invoke_agent</code> span wrapping one <code>chat</code> span per model call, one <code>execute_tool</code> span per tool call, and one <code>execute_guardrail</code> span per guardrail execution, interleaved in execution order:</p>
+
+<pre><code>invoke_agent {agent}             INTERNAL
+├─ execute_guardrail {name}      INTERNAL   (one per before-phase guardrail)
+├─ chat {model}                  CLIENT     (one per LLM call)
+├─ execute_tool {tool}           INTERNAL   (one per tool call)
+│   └─ (host spans nest here via around_tool_call / tool internals)
+├─ execute_guardrail {name}      INTERNAL   (one per after-phase guardrail, after each response)
+├─ chat {model}
+└─ …
+</code></pre>
+
+<p>The <code>execute_tool</code> span opens <em>outside</em> Riffer’s <code>around_tool_call</code> hook, so any spans a host emits from that hook — or from inside the tool itself — nest beneath it. See <a href="/guides/advanced-tools/">Advanced Tools</a> for the hook.</p>
+
+<h3 id="reading-the-attribute-tables">Reading the attribute tables</h3>
+
+<p>Every attribute a span can carry is listed below, including the conditional ones — you can’t query a key you don’t know exists. The <strong>Present</strong> column tells you when to expect each:</p>
+
+<ul>
+  <li><strong><code>Always</code></strong> — emitted on every span of that type.</li>
+  <li><strong><code>On &lt;something happened&gt;</code></strong> (e.g. <code>On a tripwire</code>, <code>On failure</code>) — <em>path-conditional</em>: presence is itself a signal. If <code>riffer.tripwire.phase</code> is set, a guardrail tripped. Filter on these with confidence.</li>
+  <li><strong><code>When the provider reports it</code></strong> / <strong><code>When the caller set it</code></strong> — <em>best-effort</em>: may be absent even on a perfectly healthy span, because it depends on what the upstream provider returned or what options the caller passed. Guard or coalesce these in queries.</li>
+</ul>
+
+<p>The contract promise is: <strong>when present</strong>, a key carries the documented meaning and type. It is <em>not</em> a promise that every key appears on every span.</p>
+
+<h3 id="per-call-tags-riffertag">Per-call tags (<code>riffer.tag.*</code>)</h3>
+
+<p>Any tags passed to <code>#generate</code> / <code>#stream</code> via <code>tags:</code> are stamped on <strong>all four</strong> span types as <code>riffer.tag.&lt;key&gt;</code> (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: <code>tags: {team: "growth"}</code> adds <code>riffer.tag.team</code> → <code>"growth"</code> to the <code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, and <code>execute_guardrail</code> spans. See <a href="/guides/agents/#per-call-tags">Per-Call Tags</a> for the full surface and the per-provider request-metadata mapping.</p>
+
+<h2 id="invoke_agent-agent--the-run-span"><code>invoke_agent {agent}</code> — the run span</h2>
+
+<p><code>INTERNAL</code>. One per call to <code>Agent#generate</code> or <code>Agent#stream</code>. The span name suffix is the agent’s identifier (e.g. <code>invoke_agent weather-agent</code>).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Type</th>
+      <th>Present</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>gen_ai.operation.name</code></td>
+      <td>string</td>
+      <td>Always (<code>"invoke_agent"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.agent.name</code></td>
+      <td>string</td>
+      <td>Always — the agent’s identifier</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.provider.name</code></td>
+      <td>string</td>
+      <td>Always — see <a href="#provider-names">provider names</a></td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.model</code></td>
+      <td>string</td>
+      <td>Always — the agent’s configured model</td>
+    </tr>
+    <tr>
+      <td><code>riffer.steps</code></td>
+      <td>int</td>
+      <td>Always — number of LLM calls in the run</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.input_tokens</code></td>
+      <td>int</td>
+      <td>When the run made an LLM call that reported usage</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.output_tokens</code></td>
+      <td>int</td>
+      <td>When the run made an LLM call that reported usage</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.cache_read.input_tokens</code></td>
+      <td>int</td>
+      <td>When the provider reported cache reads</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.cache_creation.input_tokens</code></td>
+      <td>int</td>
+      <td>When the provider reported cache writes</td>
+    </tr>
+    <tr>
+      <td><code>riffer.cost</code></td>
+      <td>float</td>
+      <td>When every call in the run was priced</td>
+    </tr>
+    <tr>
+      <td><code>riffer.interrupt.reason</code></td>
+      <td>string</td>
+      <td>On interrupt (e.g. approval needed, max steps)</td>
+    </tr>
+    <tr>
+      <td><code>riffer.tripwire.guardrail</code></td>
+      <td>string</td>
+      <td>On a guardrail tripwire, when the guardrail is named</td>
+    </tr>
+    <tr>
+      <td><code>riffer.tripwire.reason</code></td>
+      <td>string</td>
+      <td>On a guardrail tripwire</td>
+    </tr>
+    <tr>
+      <td><code>riffer.tripwire.phase</code></td>
+      <td>string</td>
+      <td>On a guardrail tripwire (<code>"before"</code> / <code>"after"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>error.type</code></td>
+      <td>string</td>
+      <td>On an unhandled exception</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The <code>riffer.tripwire.*</code> attributes are the run-level summary of the guardrail that halted the run; <code>riffer.tripwire.guardrail</code> carries the same name value as the blocking <a href="#execute_guardrail-name--the-guardrail-span"><code>execute_guardrail</code></a> span’s <code>riffer.guardrail.name</code>, so the two join on a single key.</p>
+
+<p>Usage on this span is the run total, aggregated across every step. See <a href="#token-usage-and-cost">Token usage</a> for the trap this creates.</p>
+
+<h2 id="chat-model--the-llm-call-span"><code>chat {model}</code> — the LLM call span</h2>
+
+<p><code>CLIENT</code>. One per model call, in both <code>generate</code> and <code>stream</code>. The span name suffix is the model (e.g. <code>chat gpt-4</code>), or just <code>chat</code> when no model is set.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Type</th>
+      <th>Present</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>gen_ai.operation.name</code></td>
+      <td>string</td>
+      <td>Always (<code>"chat"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.provider.name</code></td>
+      <td>string</td>
+      <td>Always — see <a href="#provider-names">provider names</a></td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.model</code></td>
+      <td>string</td>
+      <td>When a model is set</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.temperature</code></td>
+      <td>float</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.max_tokens</code></td>
+      <td>int</td>
+      <td>When the caller set <code>max_tokens</code> or <code>max_output_tokens</code></td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.top_p</code></td>
+      <td>float</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.top_k</code></td>
+      <td>int</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.frequency_penalty</code></td>
+      <td>float</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.presence_penalty</code></td>
+      <td>float</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.seed</code></td>
+      <td>int</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.request.stop_sequences</code></td>
+      <td>string[]</td>
+      <td>When the caller set it</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.input_tokens</code></td>
+      <td>int</td>
+      <td>When the provider reported usage</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.output_tokens</code></td>
+      <td>int</td>
+      <td>When the provider reported usage</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.cache_read.input_tokens</code></td>
+      <td>int</td>
+      <td>When the provider reported cache reads</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.usage.cache_creation.input_tokens</code></td>
+      <td>int</td>
+      <td>When the provider reported cache writes</td>
+    </tr>
+    <tr>
+      <td><code>riffer.cost</code></td>
+      <td>float</td>
+      <td>When the call’s model was priced</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.response.finish_reasons</code></td>
+      <td>string[]</td>
+      <td>When the provider reported a finish reason</td>
+    </tr>
+    <tr>
+      <td><code>riffer.finish_reason.raw</code></td>
+      <td>string</td>
+      <td>When the raw value differs from the normalized one</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.response.time_to_first_chunk</code></td>
+      <td>float</td>
+      <td>Streaming only — seconds from request issuance to the first stream event</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.input.messages</code></td>
+      <td>string</td>
+      <td>When <code>capture_messages</code> is on (JSON; see <a href="#message-content-capture">capture</a>)</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.system_instructions</code></td>
+      <td>string</td>
+      <td>When <code>capture_messages</code> is on and a system prompt exists</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.output.messages</code></td>
+      <td>string</td>
+      <td>When <code>capture_messages</code> is on (JSON)</td>
+    </tr>
+    <tr>
+      <td><code>error.type</code></td>
+      <td>string</td>
+      <td>On an unhandled exception</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>gen_ai.response.finish_reasons</code> is an array of exactly one normalized value, from the fixed vocabulary <code>stop</code>, <code>length</code>, <code>tool_calls</code>, <code>content_filter</code>, <code>error</code>, <code>other</code>. When the provider’s raw wire value carries more nuance than the normalized one, the raw string is preserved on <code>riffer.finish_reason.raw</code>.</p>
+
+<h2 id="execute_tool-tool--the-tool-call-span"><code>execute_tool {tool}</code> — the tool call span</h2>
+
+<p><code>INTERNAL</code>. One per tool call dispatched by the runtime. The span name suffix is the tool’s name (e.g. <code>execute_tool get_weather</code>).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Type</th>
+      <th>Present</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>gen_ai.operation.name</code></td>
+      <td>string</td>
+      <td>Always (<code>"execute_tool"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.tool.name</code></td>
+      <td>string</td>
+      <td>Always</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.tool.call.id</code></td>
+      <td>string</td>
+      <td>Always — the originating tool-call id</td>
+    </tr>
+    <tr>
+      <td><code>error.type</code></td>
+      <td>string</td>
+      <td>On a tool error (see below)</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.tool.call.arguments</code></td>
+      <td>string</td>
+      <td>When <code>capture_messages</code> is on (see <a href="#message-content-capture">capture</a>)</td>
+    </tr>
+    <tr>
+      <td><code>gen_ai.tool.call.result</code></td>
+      <td>string</td>
+      <td>When <code>capture_messages</code> is on</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A tool failure comes in two shapes, distinguished by span status:</p>
+
+<ul>
+  <li><strong>Handled error</strong> — the tool returned an error response. <code>error.type</code> carries the category and the <strong>span status stays unset</strong> (the run continues). The framework’s categories are <code>unknown_tool</code>, <code>validation_error</code>, <code>timeout_error</code>, and <code>execution_error</code>; a custom tool may set its own via <code>Riffer::Tools::Response.error(type:)</code>.</li>
+  <li><strong>Unhandled exception</strong> — the dispatch raised. <code>error.type</code> is the exception class name and the <strong>span status is <code>ERROR</code></strong>, with the exception recorded.</li>
+</ul>
+
+<p>This status convention is the same on <code>chat</code> and <code>invoke_agent</code>: an unhandled exception sets <code>error.type</code> to the class name and marks the span <code>ERROR</code>; everything else leaves the status unset.</p>
+
+<h2 id="execute_guardrail-name--the-guardrail-span"><code>execute_guardrail {name}</code> — the guardrail span</h2>
+
+<p><code>INTERNAL</code>. One per guardrail execution; a guardrail registered for both phases runs — and emits a span — once in each. The span name suffix is the guardrail’s name (e.g. <code>execute_guardrail profanity_filter</code>), from <code>Riffer::Guardrail#name</code> — the converted class name by default, overridable to relabel the span. This is the one Riffer span with <strong>no <code>gen_ai.operation.name</code></strong>. A guardrail is not a GenAI semantic-convention operation, so the span stays entirely in Riffer’s own namespace rather than squat an invented value on the standardized key.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Type</th>
+      <th>Present</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>riffer.guardrail.name</code></td>
+      <td>string</td>
+      <td>Always — the guardrail’s name</td>
+    </tr>
+    <tr>
+      <td><code>riffer.guardrail.phase</code></td>
+      <td>string</td>
+      <td>Always (<code>"before"</code> / <code>"after"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>riffer.guardrail.action</code></td>
+      <td>string</td>
+      <td>On a returned result (<code>"pass"</code> / <code>"transform"</code> / <code>"block"</code>)</td>
+    </tr>
+    <tr>
+      <td><code>riffer.tripwire.reason</code></td>
+      <td>string</td>
+      <td>On a block — the block reason</td>
+    </tr>
+    <tr>
+      <td><code>error.type</code></td>
+      <td>string</td>
+      <td>On an unhandled exception</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>riffer.guardrail.*</code> holds the facts true of any execution — name, phase, action. A reason exists only on a block, so it reuses the run-level <code>riffer.tripwire.reason</code> key: one query finds the reason on both the per-guardrail span and the enclosing <code>invoke_agent</code> summary.</p>
+
+<p>A block is a <strong>handled outcome</strong>: <code>riffer.guardrail.action</code> is <code>block</code> and the <strong>span status stays unset</strong> — the same convention <code>execute_tool</code> uses for a returned error response. Only a guardrail that <strong>raises</strong> sets <code>error.type</code> to the exception class name and marks the <strong>span status <code>ERROR</code></strong> (with the exception recorded); on a raise no result is produced, so <code>riffer.guardrail.action</code> is absent.</p>
+
+<h2 id="example-trace">Example trace</h2>
+
+<p>A <code>generate</code> run where the model calls one tool, then answers — with one <code>before</code> guardrail and one <code>after</code> guardrail, using the OpenAI provider with <code>gpt-4</code>. The <code>after</code> guardrail runs once per model response, so it appears after each <code>chat</code>:</p>
+
+<pre><code>invoke_agent weather-agent          INTERNAL
+  gen_ai.agent.name      = weather-agent
+  gen_ai.provider.name   = openai
+  gen_ai.request.model   = gpt-4
+  riffer.steps           = 2
+  gen_ai.usage.input_tokens  = 1240
+  gen_ai.usage.output_tokens = 86
+  riffer.cost                = 0.0423
+├─ execute_guardrail input_filter   INTERNAL
+│    riffer.guardrail.name   = input_filter
+│    riffer.guardrail.phase  = before
+│    riffer.guardrail.action = pass
+├─ chat gpt-4                       CLIENT
+│    gen_ai.request.model            = gpt-4
+│    gen_ai.response.finish_reasons  = ["tool_calls"]
+│    gen_ai.usage.input_tokens       = 612
+│    gen_ai.usage.output_tokens      = 48
+│    riffer.cost                     = 0.0212
+├─ execute_guardrail output_filter  INTERNAL
+│    riffer.guardrail.name   = output_filter
+│    riffer.guardrail.phase  = after
+│    riffer.guardrail.action = pass
+├─ execute_tool get_weather         INTERNAL
+│    gen_ai.tool.name     = get_weather
+│    gen_ai.tool.call.id  = tc_42
+├─ chat gpt-4                       CLIENT
+│    gen_ai.request.model            = gpt-4
+│    gen_ai.response.finish_reasons  = ["stop"]
+│    gen_ai.usage.input_tokens       = 628
+│    gen_ai.usage.output_tokens      = 38
+│    riffer.cost                     = 0.0211
+└─ execute_guardrail output_filter  INTERNAL
+     riffer.guardrail.name   = output_filter
+     riffer.guardrail.phase  = after
+     riffer.guardrail.action = pass
+</code></pre>
+
+<h2 id="token-usage-and-cost">Token usage and cost</h2>
+
+<p><code>gen_ai.usage.input_tokens</code> is the <strong>total</strong> prompt tokens for the call, <strong>cache-inclusive</strong>, per the GenAI semantic conventions. <code>gen_ai.usage.cache_read.input_tokens</code> and <code>gen_ai.usage.cache_creation.input_tokens</code> are <strong>subsets of that total</strong> — the portion served from, or written to, the provider’s prompt cache. They are <em>not</em> additional tokens; do not add them on top of <code>input_tokens</code>.</p>
+
+<pre><code>input_tokens                 = 1000
+cache_read.input_tokens      =  800   → 800 of the 1000 were cache hits
+                                        (≈ 200 billed as new input)
+</code></pre>
+
+<p>Riffer normalizes this across providers, so the number may differ from a provider’s native API field. Anthropic’s raw <code>input_tokens</code> <em>excludes</em> the cache buckets — Riffer folds them in. OpenAI’s already includes them. Either way the span value means the same thing.</p>
+
+<p><strong>Don’t double-count across spans.</strong> Usage on a <code>chat</code> span is per-call; usage on the enclosing <code>invoke_agent</code> span is the run total already summed across every <code>chat</code>. Aggregate one level or the other, never both.</p>
+
+<h3 id="cost">Cost</h3>
+
+<p><code>riffer.cost</code> is the modeled cost of one call (on a <code>chat</code> span) or a whole run (on the <code>invoke_agent</code> span). It lives in Riffer’s own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats <code>gen_ai.*</code> for it. The attribute appears only when you have configured pricing for the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no <code>riffer.cost</code>. See <a href="/guides/configuration/#pricing">Configuration — Pricing</a> for the rates.</p>
+
+<p>The value is <strong>unitless on the wire</strong> — Riffer attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a <code>riffer.cost</code> of <code>0.0123</code> means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.</p>
+
+<p><strong>Run cost is all-or-nothing.</strong> The <code>riffer.cost</code> on an <code>invoke_agent</code> span is the sum of its per-call costs, present only when <strong>every</strong> call in the run was priced. A single unpriced call makes the run-level <code>riffer.cost</code> absent — costs sum with nil as absorbing, so Riffer reports no run total rather than a partial one that silently under-reports spend. The priced <code>chat</code> spans still each carry their own <code>riffer.cost</code>; sum those yourself if a partial is what you want.</p>
+
+<h2 id="message-content-capture">Message content capture</h2>
+
+<p>The prompt and completion content attributes — <code>gen_ai.input.messages</code>, <code>gen_ai.output.messages</code>, <code>gen_ai.system_instructions</code> on <code>chat</code>, and <code>gen_ai.tool.call.arguments</code> / <code>gen_ai.tool.call.result</code> on <code>execute_tool</code> — are <strong>off by default</strong> and gated behind <code>config.tracing.capture_messages</code>. Message content routinely carries sensitive data (including PHI); leave capture off unless your trace backend is an appropriate destination for it.</p>
+
+<p>When enabled, content is serialized as GenAI-semconv JSON strings. File attachments serialize as metadata-only stubs (media type and name, never bytes). Riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK’s attribute length limits. See <a href="/guides/configuration/#tracing">Configuration — Tracing</a> for the knob.</p>
+
+<h2 id="provider-names">Provider names</h2>
+
+<p><code>gen_ai.provider.name</code> carries a GenAI-semconv well-known value where one exists: <code>openai</code>, <code>anthropic</code>, <code>aws.bedrock</code>, <code>azure.ai.openai</code>, <code>gcp.gemini</code>, <code>openrouter</code>. A custom provider that doesn’t override the value defaults to the snake_cased form of its class name, so enabling tracing never breaks an otherwise-working provider.</p>
+
+<h2 id="stability">Stability</h2>
+
+<p>The span and attribute shape is a public, versioned contract, in two tiers:</p>
+
+<ul>
+  <li><strong><code>gen_ai.*</code></strong> tracks the OpenTelemetry GenAI semantic conventions, pinned to schema version <code>1.37.0</code>. That convention is still “Development” status upstream and its attribute names may change; Riffer absorbs such renames deliberately in a release, never silently, with a CHANGELOG entry.</li>
+  <li><strong><code>riffer.*</code></strong> is Riffer-owned (<code>riffer.steps</code>, <code>riffer.cost</code>, <code>riffer.interrupt.reason</code>, <code>riffer.tripwire.*</code>, <code>riffer.guardrail.*</code>, <code>riffer.finish_reason.raw</code>) and changes only through a normal version bump and CHANGELOG entry.</li>
+</ul>
+
+<p>The semantic-convention schema version is a documented pin rather than a span attribute — the OpenTelemetry Ruby API can’t attach a schema URL to a tracer. The runtime version signal is the instrumentation scope: every span carries scope name <code>riffer</code> at the gem version that emitted it. Pin the Riffer version your dashboards depend on, and watch the CHANGELOG for tracing entries before upgrading.</p>
+
+<h2 id="avoid-double-instrumentation">Avoid double instrumentation</h2>
+
+<p>Riffer instruments the agent loop natively. Running a provider-level GenAI instrumentation gem (for example an OpenTelemetry contrib instrumentation for the underlying Anthropic or OpenAI client) <em>alongside</em> Riffer duplicates the <code>chat</code> spans and double-counts token usage. Run one or the other, not both — disable the provider-level instrumentation when Riffer’s loop spans are active.</p>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/serialization/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Serialization</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/overview/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Providers Overview</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

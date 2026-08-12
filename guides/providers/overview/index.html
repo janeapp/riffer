@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Providers Overview — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/" class="active" aria-current="page"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 01</span></p>
+          <h1>Providers Overview</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#available-providers">Available Providers</a></li>
+              <li><a href="#model-string-format">Model String Format</a></li>
+              <li><a href="#provider-interface">Provider Interface</a></li>
+              <li><a href="#method-parameters">Method Parameters</a></li>
+              <li><a href="#using-providers-directly">Using Providers Directly</a></li>
+              <li><a href="#tool-support">Tool Support</a></li>
+              <li><a href="#provider-registry">Provider Registry</a></li>
+              <li><a href="#provider-specific-guides">Provider-Specific Guides</a></li>
+            </ul>
+          </nav>
+          
+<p>Providers are adapters that connect Riffer to LLM services. They implement a common interface for text generation and streaming.</p>
+
+<h2 id="available-providers">Available Providers</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th>Identifier</th>
+      <th>Gem Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenAI</td>
+      <td><code>openai</code></td>
+      <td><code>openai</code></td>
+    </tr>
+    <tr>
+      <td>Azure OpenAI</td>
+      <td><code>azure_openai</code></td>
+      <td><code>openai</code></td>
+    </tr>
+    <tr>
+      <td>Amazon Bedrock</td>
+      <td><code>amazon_bedrock</code></td>
+      <td><code>aws-sdk-bedrockruntime</code></td>
+    </tr>
+    <tr>
+      <td>Anthropic</td>
+      <td><code>anthropic</code></td>
+      <td><code>anthropic</code></td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td><code>gemini</code></td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>OpenRouter</td>
+      <td><code>openrouter</code></td>
+      <td><code>openai</code></td>
+    </tr>
+    <tr>
+      <td>Mock</td>
+      <td><code>mock</code></td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="model-string-format">Model String Format</h2>
+
+<p>Agents specify providers using the <code>provider/model</code> format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>                                           <span class="c1"># OpenAI</span>
+  <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>                                     <span class="c1"># Azure OpenAI</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>  <span class="c1"># Bedrock</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>                         <span class="c1"># Anthropic</span>
+  <span class="n">model</span> <span class="s1">'gemini/gemini-2.5-flash-lite'</span>                                <span class="c1"># Gemini</span>
+  <span class="n">model</span> <span class="s1">'openrouter/anthropic/claude-sonnet-4.6'</span>                      <span class="c1"># OpenRouter</span>
+  <span class="n">model</span> <span class="s1">'mock/any'</span>                                                    <span class="c1"># Mock provider</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="provider-interface">Provider Interface</h2>
+
+<p>All providers inherit from <code>Riffer::Providers::Base</code> and implement:</p>
+
+<h3 id="generate_text">generate_text</h3>
+
+<p>Generates a response synchronously:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">OpenAI</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="s2">"..."</span><span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span>
+<span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Messages::Assistant</span>
+
+<span class="c1"># Or with messages</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">messages: </span><span class="p">[</span><span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">)],</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="stream_text">stream_text</h3>
+
+<p>Streams a response as an Enumerator:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stream_text</span><span class="p">(</span><span class="ss">prompt: </span><span class="s2">"Tell me a story"</span><span class="p">,</span> <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="method-parameters">Method Parameters</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>prompt</code></td>
+      <td>String prompt (required if <code>messages</code> not provided)</td>
+    </tr>
+    <tr>
+      <td><code>system</code></td>
+      <td>Optional system message string</td>
+    </tr>
+    <tr>
+      <td><code>messages</code></td>
+      <td>Array of message objects/hashes (alternative to <code>prompt</code>)</td>
+    </tr>
+    <tr>
+      <td><code>model</code></td>
+      <td>Model name string</td>
+    </tr>
+    <tr>
+      <td><code>tools</code></td>
+      <td>Array of Tool classes</td>
+    </tr>
+    <tr>
+      <td><code>**options</code></td>
+      <td>Provider-specific options (including <code>web_search</code> if supported by provider)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>You must provide either <code>prompt</code> or <code>messages</code>, but not both.</p>
+
+<h2 id="using-providers-directly">Using Providers Directly</h2>
+
+<p>While agents abstract provider usage, you can use providers directly:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'riffer'</span>
+
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENAI_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">OpenAI</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="c1"># Simple prompt</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"What is Ruby?"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span>
+<span class="p">)</span>
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+
+<span class="c1"># With system message</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Explain recursion"</span><span class="p">,</span>
+  <span class="ss">system: </span><span class="s2">"You are a programming tutor. Use simple language."</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span>
+<span class="p">)</span>
+
+<span class="c1"># With message history</span>
+<span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">System</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"You are helpful."</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hi!"</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"How are you?"</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">messages: </span><span class="n">messages</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="tool-support">Tool Support</h2>
+
+<p>Providers convert tools to their native format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Gets weather"</span>
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:)</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"Sunny in </span><span class="si">#{</span><span class="n">city</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"What's the weather in Tokyo?"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"gpt-5-mini"</span><span class="p">,</span>
+  <span class="ss">tools: </span><span class="p">[</span><span class="no">WeatherTool</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="p">.</span><span class="nf">tool_calls</span><span class="p">.</span><span class="nf">any?</span>
+  <span class="c1"># Handle tool calls</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="provider-registry">Provider Registry</h2>
+
+<p>Riffer uses a registry to find providers by identifier:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:openai</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::OpenAI</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:azure_openai</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::AzureOpenAI</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:amazon_bedrock</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::AmazonBedrock</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:anthropic</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::Anthropic</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:gemini</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::Gemini</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:openrouter</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::OpenRouter</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:mock</span><span class="p">)</span>
+<span class="c1"># =&gt; Riffer::Providers::Mock</span>
+</code></pre></div></div>
+
+<h2 id="provider-specific-guides">Provider-Specific Guides</h2>
+
+<ul>
+  <li><a href="/guides/providers/amazon-bedrock/">Amazon Bedrock</a> - Claude and other models via AWS</li>
+  <li><a href="/guides/providers/anthropic/">Anthropic</a> - Claude models via Anthropic API</li>
+  <li><a href="/guides/providers/openai/">OpenAI</a> - GPT models</li>
+  <li><a href="/guides/providers/azure-openai/">Azure OpenAI</a> - GPT models via Azure</li>
+  <li><a href="/guides/providers/mock/">Mock</a> - Mock provider for testing</li>
+  <li><a href="/guides/providers/custom/">Custom Providers</a> - Creating your own provider</li>
+  <li><a href="/guides/providers/gemini/">Gemini</a> - Gemini models via Google GenAI API</li>
+  <li><a href="/guides/providers/openrouter/">OpenRouter</a> - Unified gateway across many vendors</li>
+</ul>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/tracing/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Tracing</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/amazon-bedrock/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Amazon Bedrock Provider</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

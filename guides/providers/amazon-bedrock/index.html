@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Amazon Bedrock Provider — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/" class="active" aria-current="page"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Providers · 02</span></p>
+          <h1>Amazon Bedrock Provider</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#installation">Installation</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#supported-models">Supported Models</a></li>
+              <li><a href="#model-options">Model Options</a></li>
+              <li><a href="#example">Example</a></li>
+              <li><a href="#streaming">Streaming</a></li>
+              <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#message-format">Message Format</a></li>
+              <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
+              <li><a href="#aws-iam-permissions">AWS IAM Permissions</a></li>
+            </ul>
+          </nav>
+          
+<p>The Amazon Bedrock provider connects to AWS Bedrock for Claude and other foundation models.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add the AWS SDK gem to your Gemfile:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'aws-sdk-bedrockruntime'</span>
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<h3 id="iam-authentication-recommended">IAM Authentication (Recommended)</h3>
+
+<p>Configure your AWS credentials using standard AWS methods (environment variables, IAM roles, etc.):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span> <span class="o">=</span> <span class="s1">'us-east-1'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="bearer-token-authentication">Bearer Token Authentication</h3>
+
+<p>For API token authentication:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span> <span class="o">=</span> <span class="s1">'us-east-1'</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">api_token</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Or per-agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
+  <span class="n">provider_options</span> <span class="ss">region: </span><span class="s1">'us-west-2'</span><span class="p">,</span> <span class="ss">api_token: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="supported-models">Supported Models</h2>
+
+<p>Use Bedrock model IDs in the <code>amazon_bedrock/model</code> format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Claude models</span>
+<span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
+<span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'</span>
+<span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-opus-4-5-20251101-v1:0'</span>
+
+<span class="c1"># Other foundation models available in Bedrock</span>
+<span class="n">model</span> <span class="s1">'amazon_bedrock/amazon.titan-text-express-v1'</span>
+</code></pre></div></div>
+
+<h2 id="model-options">Model Options</h2>
+
+<p>Options are passed through to the <a href="https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#converse-instance_method">Bedrock Converse API</a>. Use the nested structures the API expects.</p>
+
+<h3 id="inference_config">inference_config</h3>
+
+<p>Controls generation parameters:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">inference_config: </span><span class="p">{</span>
+  <span class="ss">max_tokens: </span><span class="mi">4096</span><span class="p">,</span>
+  <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span>
+  <span class="ss">top_p: </span><span class="mf">0.95</span><span class="p">,</span>
+  <span class="ss">stop_sequences: </span><span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">Human:"</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="additional_model_request_fields">additional_model_request_fields</h3>
+
+<p>Model-specific parameters (e.g., <code>top_k</code> for Claude):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">additional_model_request_fields: </span><span class="p">{</span>
+  <span class="ss">top_k: </span><span class="mi">250</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="cache_control">cache_control</h3>
+
+<p>Enable prompt caching for models that support it (Claude, Nova). Riffer appends a single Converse <code>cachePoint</code> to the stable prefix — after the system array, or after the tools when there is no system prompt — so system instructions and tool definitions are reused across the calls in an agent loop and across conversation turns. The volatile message tail is never cached.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 5-minute TTL (default)</span>
+<span class="n">model_options</span> <span class="ss">cache_control: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"ephemeral"</span><span class="p">}</span>
+
+<span class="c1"># 1-hour TTL (model-dependent; Bedrock validates support)</span>
+<span class="n">model_options</span> <span class="ss">cache_control: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"ephemeral"</span><span class="p">,</span> <span class="ss">ttl: </span><span class="s2">"1h"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>Caching is opt-in: omit <code>cache_control</code> and no cachePoint is sent. The breakpoint is only honored once the prefix clears the model’s minimum token count; on models that don’t support <code>cachePoint</code>, the Converse request errors. Verify hits via <code>response.token_usage.cache_read_tokens</code>.</p>
+
+<h2 id="example">Example</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span> <span class="o">=</span> <span class="s1">'us-east-1'</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">AssistantAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
+  <span class="n">instructions</span> <span class="s1">'You are a helpful assistant.'</span>
+  <span class="n">model_options</span> <span class="ss">inference_config: </span><span class="p">{</span><span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">4096</span><span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">AssistantAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">puts</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Explain cloud computing"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="streaming">Streaming</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"Tell me about AWS services"</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDone</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">[Complete]"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ToolCallDone</span>
+    <span class="nb">puts</span> <span class="s2">"[Tool: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">]"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="tool-calling">Tool Calling</h2>
+
+<p>Bedrock provider converts tools to the Bedrock tool_config format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">S3ListTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Lists objects in an S3 bucket"</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:bucket</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The S3 bucket name"</span>
+    <span class="n">optional</span> <span class="ss">:prefix</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Object prefix filter"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">bucket</span><span class="p">:,</span> <span class="ss">prefix: </span><span class="kp">nil</span><span class="p">)</span>
+    <span class="c1"># Implementation</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"Found 10 objects in </span><span class="si">#{</span><span class="n">bucket</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">AWSAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">S3ListTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="message-format">Message Format</h2>
+
+<p>The provider converts Riffer messages to Bedrock format:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Riffer Message</th>
+      <th>Bedrock Format</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>System</code></td>
+      <td>Added to <code>system</code> array as <code>{text: ...}</code></td>
+    </tr>
+    <tr>
+      <td><code>User</code></td>
+      <td><code>{role: "user", content: [{text: ...}]}</code></td>
+    </tr>
+    <tr>
+      <td><code>Assistant</code></td>
+      <td><code>{role: "assistant", content: [...]}</code></td>
+    </tr>
+    <tr>
+      <td><code>Tool</code></td>
+      <td><code>{role: "user", content: [{tool_result: ...}]}</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="direct-provider-usage">Direct Provider Usage</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AmazonBedrock</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">region: </span><span class="s1">'us-east-1'</span><span class="p">,</span>
+  <span class="ss">api_token: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>  <span class="c1"># Optional</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"us.anthropic.claude-haiku-4-5-20251001-v1:0"</span><span class="p">,</span>
+  <span class="ss">temperature: </span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="nb">puts</span> <span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+</code></pre></div></div>
+
+<h2 id="aws-iam-permissions">AWS IAM Permissions</h2>
+
+<p>Ensure your IAM role/user has the following permissions:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"bedrock:InvokeModel"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"bedrock:InvokeModelWithResponseStream"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:bedrock:*::foundation-model/*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/providers/overview/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Providers Overview</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/providers/anthropic/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Anthropic Provider</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

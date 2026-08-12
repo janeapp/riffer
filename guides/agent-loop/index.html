@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Loop — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/" class="active" aria-current="page"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 05</span></p>
+          <h1>Agent Loop</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#tool-execution-flow">Tool Execution Flow</a></li>
+              <li><a href="#error-handling">Error Handling</a></li>
+              <li><a href="#ways-the-agent-loop-can-stop">Ways the Agent Loop Can Stop</a></li>
+            </ul>
+          </nav>
+          
+<h2 id="tool-execution-flow">Tool Execution Flow</h2>
+
+<p>When an agent receives a response with tool calls:</p>
+
+<ol>
+  <li>Agent detects <code>tool_calls</code> in the assistant message</li>
+  <li>The configured tool runtime executes the tool calls (sequentially by default, or concurrently with <code>Riffer::Tools::Runtime::Threaded</code>):
+    <ul>
+      <li>Finds the matching tool class</li>
+      <li>Validates arguments against the tool’s parameter schema</li>
+      <li>Calls the tool’s <code>call</code> method with <code>context</code> and arguments</li>
+      <li>Creates a Tool message with the result</li>
+    </ul>
+  </li>
+  <li>Sends the updated message history back to the LLM</li>
+  <li>Repeats until no more tool calls</li>
+</ol>
+
+<h2 id="error-handling">Error Handling</h2>
+
+<p>Tool execution errors are captured and sent back to the LLM:</p>
+
+<ul>
+  <li><code>unknown_tool</code> - Tool not found in registered tools</li>
+  <li><code>validation_error</code> - Arguments failed validation</li>
+  <li><code>execution_error</code> - Tool raised an exception</li>
+</ul>
+
+<p>The LLM can use this information to retry or respond appropriately.</p>
+
+<h2 id="ways-the-agent-loop-can-stop">Ways the Agent Loop Can Stop</h2>
+
+<p>The agent loop normally runs until the LLM produces a response with no tool calls. There are four mechanisms that can stop it early, each designed for a different use case:</p>
+
+<h3 id="guardrail-tripwire-declarative-internal">Guardrail Tripwire (declarative, internal)</h3>
+
+<p>Guardrails are registered at class definition time and run automatically on every request. When a guardrail calls <code>block</code>, it sets a <strong>tripwire</strong> that stops the loop immediately. The LLM is never called (for <code>:before</code> guardrails) or its response is discarded (for <code>:after</code> guardrails).</p>
+
+<ul>
+  <li><strong>When to use:</strong> Policy enforcement that should always apply — content filtering, input validation, length limits.</li>
+  <li><strong>Response:</strong> <code>response.blocked?</code> returns <code>true</code>, <code>response.tripwire</code> contains the reason and metadata.</li>
+  <li><strong>Streaming:</strong> Yields a <code>GuardrailTripwire</code> event.</li>
+  <li><strong>Resumable:</strong> No. A tripwire is a hard stop. The caller must change the input and start a new <code>generate</code>/<code>stream</code> call.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">guardrail</span> <span class="ss">:before</span><span class="p">,</span> <span class="ss">with: </span><span class="no">ContentPolicy</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'blocked input'</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">blocked?</span>          <span class="c1"># =&gt; true</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">tripwire</span><span class="p">.</span><span class="nf">reason</span>   <span class="c1"># =&gt; "Content policy violation"</span>
+</code></pre></div></div>
+
+<h3 id="callback-interrupt-imperative-external">Callback Interrupt (imperative, external)</h3>
+
+<p>Callbacks registered with <code>on_message</code> can call <code>agent.interrupt!</code> (or <code>throw :riffer_interrupt</code>) to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.</p>
+
+<ul>
+  <li><strong>When to use:</strong> Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.</li>
+  <li><strong>Response:</strong> <code>response.interrupted?</code> returns <code>true</code>, <code>response.interrupt_reason</code> contains the optional reason.</li>
+  <li><strong>Streaming:</strong> Yields an <code>Interrupt</code> event with a <code>reason</code> attribute.</li>
+  <li><strong>Resumable:</strong> Yes. Call <code>generate('Continue')</code> or <code>stream('Continue')</code> on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">on_message</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+  <span class="n">agent</span><span class="p">.</span><span class="nf">interrupt!</span><span class="p">(</span><span class="s2">"approval needed"</span><span class="p">)</span> <span class="k">if</span> <span class="n">requires_approval?</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Do something risky'</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">interrupted?</span>      <span class="c1"># =&gt; true</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">interrupt_reason</span>  <span class="c1"># =&gt; "approval needed"</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Approved, continue'</span><span class="p">)</span>  <span class="c1"># continues where it left off</span>
+</code></pre></div></div>
+
+<h3 id="max-steps-limit">Max Steps Limit</h3>
+
+<p>The <code>max_steps</code> class method caps the number of LLM call steps in the tool-use loop. When the step count reaches the limit, the loop interrupts automatically with reason <code>:max_steps</code>.</p>
+
+<ul>
+  <li><strong>When to use:</strong> Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.</li>
+  <li><strong>Response:</strong> <code>response.interrupted?</code> returns <code>true</code>, <code>response.interrupt_reason</code> is <code>:max_steps</code>.</li>
+  <li><strong>Streaming:</strong> Yields an <code>Interrupt</code> event with <code>reason: :max_steps</code>.</li>
+  <li><strong>Resumable:</strong> Yes. Call <code>generate('Continue')</code> or <code>stream('Continue')</code> on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">max_steps</span> <span class="mi">8</span>
+<span class="k">end</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Do a complex task'</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">interrupted?</span>      <span class="c1"># =&gt; true (if 8 steps were reached)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">interrupt_reason</span>  <span class="c1"># =&gt; :max_steps</span>
+</code></pre></div></div>
+
+<h3 id="unhandled-exceptions">Unhandled Exceptions</h3>
+
+<p>If a guardrail, provider call, or other internal code raises an exception, it propagates to the caller. Tool execution exceptions are the one exception — they are caught and sent back to the LLM as error messages (see <a href="#error-handling">Error Handling</a> above).</p>
+
+<h3 id="comparison">Comparison</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Guardrail Tripwire</th>
+      <th>Callback Interrupt</th>
+      <th>Max Steps Limit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Defined</td>
+      <td>At class level (<code>guardrail :before</code>)</td>
+      <td>At instance level (<code>on_message</code>)</td>
+      <td>At class level (<code>max_steps 8</code>)</td>
+    </tr>
+    <tr>
+      <td>Fires</td>
+      <td>Automatically on every request</td>
+      <td>When callback logic decides</td>
+      <td>When step count reaches limit</td>
+    </tr>
+    <tr>
+      <td>Resumable</td>
+      <td>No</td>
+      <td>Yes (call <code>generate</code>/<code>stream</code> again)</td>
+      <td>Yes (call <code>generate</code>/<code>stream</code> again)</td>
+    </tr>
+    <tr>
+      <td>Response flag</td>
+      <td><code>blocked?</code></td>
+      <td><code>interrupted?</code></td>
+      <td><code>interrupted?</code></td>
+    </tr>
+    <tr>
+      <td>Stream event</td>
+      <td><code>GuardrailTripwire</code></td>
+      <td><code>Interrupt</code></td>
+      <td><code>Interrupt</code></td>
+    </tr>
+    <tr>
+      <td>Purpose</td>
+      <td>Policy enforcement</td>
+      <td>Flow control</td>
+      <td>Runaway loop prevention</td>
+    </tr>
+  </tbody>
+</table>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/agent-lifecycle/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Agent Lifecycle</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/tools/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Tools</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

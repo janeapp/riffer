@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Messages — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/" class="active" aria-current="page"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 08</span></p>
+          <h1>Messages</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#message-types">Message Types</a></li>
+              <li><a href="#file-parts">File Parts</a></li>
+              <li><a href="#using-messages-with-agents">Using Messages with Agents</a></li>
+              <li><a href="#tool-call-structure">Tool Call Structure</a></li>
+              <li><a href="#message-emission">Message Emission</a></li>
+              <li><a href="#consecutive-message-merging">Consecutive Message Merging</a></li>
+              <li><a href="#ids">IDs</a></li>
+              <li><a href="#base-class">Base Class</a></li>
+              <li><a href="#editing-history-after-the-fact">Editing history after the fact</a></li>
+            </ul>
+          </nav>
+          
+<p>Messages represent the conversation between users and the assistant. Riffer uses strongly-typed message objects to ensure consistency and type safety.</p>
+
+<h2 id="message-types">Message Types</h2>
+
+<h3 id="system">System</h3>
+
+<p>System messages provide instructions to the LLM:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">System</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"You are a helpful assistant."</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :system</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "You are a helpful assistant."</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :system, content: "You are a helpful assistant."}</span>
+</code></pre></div></div>
+
+<p>System messages are typically set via agent <code>instructions</code> and automatically prepended to conversations.</p>
+
+<h3 id="user">User</h3>
+
+<p>User messages represent input from the user:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hello, how are you?"</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :user</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "Hello, how are you?"</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">files</span>    <span class="c1"># =&gt; []</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :user, content: "Hello, how are you?"}</span>
+</code></pre></div></div>
+
+<p>User messages can include file attachments:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_path</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Describe this image"</span><span class="p">,</span> <span class="ss">files: </span><span class="p">[</span><span class="n">file</span><span class="p">])</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">files</span>    <span class="c1"># =&gt; [#&lt;Riffer::Messages::FilePart ...&gt;]</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :user, content: "Describe this image", files: [{...}]}</span>
+</code></pre></div></div>
+
+<h3 id="assistant">Assistant</h3>
+
+<p>Assistant messages represent LLM responses, potentially including tool calls, token usage data, and the reason the model finished:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Text-only response</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"I'm doing well, thank you!"</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">role</span>           <span class="c1"># =&gt; :assistant</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">content</span>        <span class="c1"># =&gt; "I'm doing well, thank you!"</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">tool_calls</span>     <span class="c1"># =&gt; []</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span>    <span class="c1"># =&gt; nil or Riffer::Providers::TokenUsage</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">finish_reason</span>  <span class="c1"># =&gt; nil or a normalized Symbol (see below)</span>
+
+<span class="c1"># Response with tool calls</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="p">[</span>
+  <span class="p">{</span><span class="ss">id: </span><span class="s2">"call_123"</span><span class="p">,</span> <span class="ss">call_id: </span><span class="s2">"call_123"</span><span class="p">,</span> <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span> <span class="ss">arguments: </span><span class="s1">'{"city":"Tokyo"}'</span><span class="p">}</span>
+<span class="p">])</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">tool_calls</span>  <span class="c1"># =&gt; [{id: "call_123", ...}]</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>        <span class="c1"># =&gt; {role: "assistant", content: "", tool_calls: [...]}</span>
+
+<span class="c1"># Accessing token usage data (when available from provider)</span>
+<span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span>
+  <span class="nb">puts</span> <span class="s2">"Input tokens: </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">input_tokens</span><span class="si">}</span><span class="s2">"</span>
+  <span class="nb">puts</span> <span class="s2">"Output tokens: </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">output_tokens</span><span class="si">}</span><span class="s2">"</span>
+  <span class="nb">puts</span> <span class="s2">"Total tokens: </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">total_tokens</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="token-usage-semantics">Token Usage Semantics</h4>
+
+<p><code>TokenUsage</code> buckets carry the same meaning for every provider, regardless of how the provider reports its raw usage:</p>
+
+<ul>
+  <li><code>input_tokens</code> — every token entering the context window, including cache reads and writes.</li>
+  <li><code>output_tokens</code> — every token the model generated, including reasoning/thinking tokens.</li>
+  <li><code>cache_read_tokens</code> — the subset of <code>input_tokens</code> read from the provider’s prompt cache; <code>nil</code> when the provider doesn’t report it.</li>
+  <li><code>cache_write_tokens</code> — the subset of <code>input_tokens</code> written to the provider’s prompt cache; <code>nil</code> when the provider doesn’t report it.</li>
+</ul>
+
+<p>The cache buckets are subsets of <code>input_tokens</code>, never additions to it — summing <code>input_tokens + cache_read_tokens</code> double-counts. <code>total_tokens</code> (input + output) matches the totals providers report on their dashboards.</p>
+
+<ul>
+  <li><code>cost</code> — the computed cost of the call, set when pricing is configured for the model in use (see <a href="/guides/configuration/#pricing">Configuration → Pricing</a>); <code>nil</code> when the model is unpriced. It’s for observability, not billing. Run-level usage sums per-call costs through <code>TokenUsage#+</code>, so <code>response.token_usage.cost</code> is the total spend across the run — but the sum is <code>nil</code> if any call in the run used an unpriced model, rather than silently under-reporting.</li>
+</ul>
+
+<h4 id="finish-reasons">Finish Reasons</h4>
+
+<p><code>finish_reason</code> carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic’s <code>end_turn</code>, OpenAI’s response status, Gemini’s <code>STOP</code>, …) into a normalized vocabulary:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:stop</code></td>
+      <td>The model finished its turn naturally (or hit a stop sequence).</td>
+    </tr>
+    <tr>
+      <td><code>:length</code></td>
+      <td>Output was truncated at the max-token limit.</td>
+    </tr>
+    <tr>
+      <td><code>:tool_calls</code></td>
+      <td>The model stopped to call tools.</td>
+    </tr>
+    <tr>
+      <td><code>:content_filter</code></td>
+      <td>A provider safety system blocked or cut the response.</td>
+    </tr>
+    <tr>
+      <td><code>:error</code></td>
+      <td>The provider reported an error finish.</td>
+    </tr>
+    <tr>
+      <td><code>:other</code></td>
+      <td>A provider-specific value with no normalized equivalent.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>finish_reason</code> is <code>nil</code> when the provider doesn’t report one. Use it to detect truncation without parsing provider responses:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Summarize this document"</span><span class="p">)</span>
+<span class="n">retry_with_higher_limit</span> <span class="k">if</span> <span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">.</span><span class="nf">last</span><span class="p">.</span><span class="nf">finish_reason</span> <span class="o">==</span> <span class="ss">:length</span>
+</code></pre></div></div>
+
+<h4 id="structured-output-on-messages">Structured Output on Messages</h4>
+
+<p>When an agent has <code>structured_output</code> configured, the final assistant message stores the parsed hash directly. The <code>structured_output?</code> predicate checks for a non-nil value:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'{"sentiment":"positive"}'</span><span class="p">,</span> <span class="ss">structured_output: </span><span class="p">{</span><span class="ss">sentiment: </span><span class="s2">"positive"</span><span class="p">})</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">structured_output?</span>    <span class="c1"># =&gt; true</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">structured_output</span>     <span class="c1"># =&gt; {sentiment: "positive"}</span>
+
+<span class="c1"># When not provided, structured_output returns nil</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'{"sentiment":"positive"}'</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">structured_output?</span>    <span class="c1"># =&gt; false</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">structured_output</span>     <span class="c1"># =&gt; nil</span>
+</code></pre></div></div>
+
+<p>The <code>to_h</code> representation includes <code>structured_output</code> only when present:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'{"sentiment":"positive"}'</span><span class="p">,</span> <span class="ss">structured_output: </span><span class="p">{</span><span class="ss">sentiment: </span><span class="s2">"positive"</span><span class="p">})</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :assistant, content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}}</span>
+</code></pre></div></div>
+
+<h3 id="tool">Tool</h3>
+
+<p>Tool messages contain the results of tool executions:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="s2">"The weather in Tokyo is 22C and sunny."</span><span class="p">,</span>
+  <span class="ss">tool_call_id: </span><span class="s2">"call_123"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"weather_tool"</span>
+<span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">role</span>          <span class="c1"># =&gt; :tool</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">content</span>       <span class="c1"># =&gt; "The weather in Tokyo is 22C and sunny."</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">tool_call_id</span>  <span class="c1"># =&gt; "call_123"</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">name</span>          <span class="c1"># =&gt; "weather_tool"</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">error?</span>        <span class="c1"># =&gt; false</span>
+
+<span class="c1"># Error result</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="s2">"API rate limit exceeded"</span><span class="p">,</span>
+  <span class="ss">tool_call_id: </span><span class="s2">"call_123"</span><span class="p">,</span>
+  <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span>
+  <span class="ss">error: </span><span class="s2">"API rate limit exceeded"</span><span class="p">,</span>
+  <span class="ss">error_type: :execution_error</span>
+<span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">error?</span>      <span class="c1"># =&gt; true</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">error</span>       <span class="c1"># =&gt; "API rate limit exceeded"</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">error_type</span>  <span class="c1"># =&gt; :execution_error</span>
+</code></pre></div></div>
+
+<h2 id="file-parts">File Parts</h2>
+
+<p><code>Riffer::Messages::FilePart</code> represents a file attachment (image or document) that can be included with user messages.</p>
+
+<h3 id="supported-media-types">Supported Media Types</h3>
+
+<p><strong>Images</strong>: <code>image/jpeg</code>, <code>image/png</code>, <code>image/gif</code>, <code>image/webp</code></p>
+
+<p><strong>Documents</strong>: <code>application/pdf</code>, <code>text/plain</code>, <code>text/csv</code>, <code>text/html</code></p>
+
+<h3 id="creating-file-parts">Creating File Parts</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># From a file path (reads eagerly, detects media type from extension)</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_path</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">media_type</span>  <span class="c1"># =&gt; "image/jpeg"</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">filename</span>    <span class="c1"># =&gt; "photo.jpg"</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">image?</span>      <span class="c1"># =&gt; true</span>
+
+<span class="c1"># From a URL (stored directly, resolved lazily if provider needs bytes)</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">"https://example.com/doc.pdf"</span><span class="p">)</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">url?</span>        <span class="c1"># =&gt; true</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">document?</span>   <span class="c1"># =&gt; true</span>
+
+<span class="c1"># From raw base64 data</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="hash-shorthand">Hash Shorthand</h3>
+
+<p>When passing files to agents or messages, hashes are automatically converted:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Path shorthand</span>
+<span class="p">{</span><span class="ss">path: </span><span class="s2">"photo.jpg"</span><span class="p">}</span>
+
+<span class="c1"># URL shorthand (media_type auto-detected from extension, or provide explicitly)</span>
+<span class="p">{</span><span class="ss">url: </span><span class="s2">"https://example.com/photo.jpg"</span><span class="p">}</span>
+<span class="p">{</span><span class="ss">url: </span><span class="s2">"https://example.com/file"</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">}</span>
+
+<span class="c1"># Data shorthand</span>
+<span class="p">{</span><span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="predicates">Predicates</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span><span class="p">.</span><span class="nf">image?</span>     <span class="c1"># true for image/* media types</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">document?</span>  <span class="c1"># true for non-image media types</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">url?</span>       <span class="c1"># true when source was a URL</span>
+</code></pre></div></div>
+
+<h2 id="using-messages-with-agents">Using Messages with Agents</h2>
+
+<h3 id="string-prompts">String Prompts</h3>
+
+<p>The simplest way to interact with an agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This creates a <code>User</code> message internally.</p>
+
+<h3 id="message-arrays">Message Arrays</h3>
+
+<p>For multi-turn conversations restored from persisted state, construct a <code>Riffer::Agent::Session</code> with the message history and hand it to a new agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">Session</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">messages: </span><span class="p">[</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"What's the weather?"</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"I'll check that for you."</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Thanks, I meant in Tokyo specifically."</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="n">session</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span>   <span class="c1"># session already carries the last user turn</span>
+</code></pre></div></div>
+
+<p><code>Riffer::Agent::Session.new(messages:)</code> accepts <code>Riffer::Messages::Base</code> objects. If your persistence layer hands back hashes, normalize them first via <code>Riffer::Messages::Base.from_hash</code> or your own adapter.</p>
+
+<h3 id="accessing-message-history">Accessing Message History</h3>
+
+<p>Conversation state lives on <code>agent.session</code> — a <code>Riffer::Agent::Session</code> instance. After calling <code>generate</code> or <code>stream</code>, access the full conversation:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Hello!"</span><span class="p">)</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">msg</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">role</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="c1"># [system] You are a helpful assistant.</span>
+<span class="c1"># [user] Hello!</span>
+<span class="c1"># [assistant] Hi there! How can I help you today?</span>
+</code></pre></div></div>
+
+<p><code>Riffer::Agent::Session</code> includes <code>Enumerable</code>, so <code>find</code>, <code>select</code>, <code>count</code>, <code>reverse_each</code> etc. work directly on the session without going through <code>.messages</code>.</p>
+
+<h2 id="tool-call-structure">Tool Call Structure</h2>
+
+<p>Tool calls in assistant messages have this structure:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="ss">id: </span><span class="s2">"item_123"</span><span class="p">,</span>       <span class="c1"># Item identifier</span>
+  <span class="ss">call_id: </span><span class="s2">"call_456"</span><span class="p">,</span>  <span class="c1"># Call identifier for response matching</span>
+  <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span> <span class="c1"># Tool name</span>
+  <span class="ss">arguments: </span><span class="s1">'{"city":"Tokyo"}'</span>  <span class="c1"># JSON string of arguments</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>When creating tool result messages, use the <code>id</code> as <code>tool_call_id</code>.</p>
+
+<h2 id="message-emission">Message Emission</h2>
+
+<p>Agents can emit messages as they’re added during generation via the <code>on_message</code> callback. This is useful for persistence or real-time logging. Only agent-generated messages (Assistant, Tool) are emitted—not inputs (System, User).</p>
+
+<p>See <a href="/guides/agent-lifecycle/#on_message">Agent Lifecycle - on_message</a> for details.</p>
+
+<h2 id="consecutive-message-merging">Consecutive Message Merging</h2>
+
+<p>Before messages reach a provider adapter, Riffer merges consecutive messages that share the same role into a single message. This guarantees every provider receives an identical message list, regardless of how it handles consecutive same-role messages internally.</p>
+
+<p>Without this step, the same model can receive different input depending on the provider. Anthropic’s API silently merges consecutive user messages server-side, while Bedrock and Gemini reject them outright. Normalizing at the Riffer level removes that divergence.</p>
+
+<h3 id="merge-rules">Merge rules</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Message type</th>
+      <th>Content</th>
+      <th>Auxiliary data</th>
+      <th>Merged?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>System</code></td>
+      <td>Joined with <code>"\n\n"</code></td>
+      <td>—</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><code>User</code></td>
+      <td>Joined with <code>"\n\n"</code></td>
+      <td><code>files</code> arrays concatenated</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><code>Assistant</code></td>
+      <td>Joined with <code>"\n\n"</code></td>
+      <td><code>tool_calls</code> arrays concatenated</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><code>Tool</code></td>
+      <td>—</td>
+      <td>—</td>
+      <td>Never (each has a unique <code>tool_call_id</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="example">Example</h3>
+
+<p>When a context message is injected before the user’s turn, two consecutive user messages are merged into one:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">Session</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">messages: </span><span class="p">[</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">System</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"You are a code reviewer."</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"The repository uses RSpec for testing."</span><span class="p">),</span>
+  <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Review this pull request."</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">session: </span><span class="n">session</span><span class="p">).</span><span class="nf">generate</span>
+<span class="c1"># The provider receives two messages:</span>
+<span class="c1">#   1. System  — "You are a code reviewer."</span>
+<span class="c1">#   2. User    — "The repository uses RSpec for testing.\n\nReview this pull request."</span>
+</code></pre></div></div>
+
+<p>Merging happens at serialization time only. The session’s <code>messages</code> array still contains the original separate messages for logging, evals, and debugging.</p>
+
+<h2 id="ids">IDs</h2>
+
+<p>Every message carries an optional <code>id</code> attribute. By default ids are disabled (<code>message.id</code> returns <code>nil</code> and <code>:id</code> is omitted from <code>to_h</code>). Enable them globally by setting <code>Riffer.config.message_id_strategy</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="p">.</span><span class="nf">message_id_strategy</span> <span class="o">=</span> <span class="ss">:uuidv7</span> <span class="p">}</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">id</span>     <span class="c1"># =&gt; "0195a2e1-..." (auto-generated UUIDv7)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>   <span class="c1"># =&gt; {role: :user, content: "Hello", id: "0195a2e1-..."}</span>
+</code></pre></div></div>
+
+<p>Supported strategies: <code>:none</code> (default), <code>:uuid</code>, <code>:uuidv7</code>. See <a href="/guides/configuration/#message-id-strategy">Configuration — Message ID Strategy</a> for the full reference.</p>
+
+<p>Ids pass through to subclass constructors via an <code>id:</code> kwarg and are preserved when set explicitly:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Done."</span><span class="p">,</span> <span class="ss">id: </span><span class="s2">"reply-42"</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">id</span>  <span class="c1"># =&gt; "reply-42"</span>
+</code></pre></div></div>
+
+<p>When seeding an agent with existing conversation history and the strategy is enabled, every seeded message must include an id — Riffer raises <code>Riffer::ArgumentError</code> on missing ids rather than fabricating them.</p>
+
+<h2 id="base-class">Base Class</h2>
+
+<p>All messages inherit from <code>Riffer::Messages::Base</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Riffer::Messages::Base</span>
+  <span class="nb">attr_reader</span> <span class="ss">:content</span><span class="p">,</span> <span class="ss">:id</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="ss">id: </span><span class="kp">nil</span><span class="p">)</span>
+    <span class="vi">@content</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="vi">@id</span> <span class="o">=</span> <span class="nb">id</span> <span class="o">||</span> <span class="n">generate_id</span>  <span class="c1"># uses Riffer.config.message_id_strategy</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">role</span>
+    <span class="k">raise</span> <span class="no">NotImplementedError</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">to_h</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="p">{</span><span class="ss">role: </span><span class="n">role</span><span class="p">,</span> <span class="ss">content: </span><span class="n">content</span><span class="p">}</span>
+    <span class="nb">hash</span><span class="p">[</span><span class="ss">:id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span> <span class="k">unless</span> <span class="nb">id</span><span class="p">.</span><span class="nf">nil?</span>
+    <span class="nb">hash</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Subclasses implement <code>role</code> and optionally extend <code>to_h</code> with additional fields.</p>
+
+<h2 id="editing-history-after-the-fact">Editing history after the fact</h2>
+
+<p>The session’s <code>messages</code> array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, rewrite a tool result, fill an orphan <code>tool_use</code> — use the mutators on <code>agent.session</code> (<code>update</code>, <code>remove</code>). Each one enforces the <code>tool_use</code> ↔ <code>tool_result</code> invariant. See <a href="/guides/agent-lifecycle/#mutating-history">Mutating history</a> for the full list.</p>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/advanced-tools/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Advanced Tool Configuration</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/stream-events/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Stream Events</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evals — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/" class="active" aria-current="page"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 11</span></p>
+          <h1>Evals</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#when-to-use-evals">When to Use Evals</a></li>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#quick-start">Quick Start</a></li>
+              <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#example-evaluators">Example Evaluators</a></li>
+              <li><a href="#running-evals">Running Evals</a></li>
+              <li><a href="#defining-custom-evaluators">Defining Custom Evaluators</a></li>
+              <li><a href="#example-ci-integration">Example: CI Integration</a></li>
+            </ul>
+          </nav>
+          
+<p>Evals let you measure the quality of agent outputs using LLM-as-judge evaluations.</p>
+
+<h2 id="when-to-use-evals">When to Use Evals</h2>
+
+<p>Use evals when you need to measure agent quality objectively — after changing instructions, switching models, or before deploying to production. Evals catch regressions that manual testing misses because LLM outputs are non-deterministic.</p>
+
+<blockquote>
+  <p><strong>Tip:</strong> See <a href="https://github.com/janeapp/riffer/tree/main/examples/evaluators"><code>examples/evaluators/</code></a> for ready-to-use reference implementations you can copy into your project.</p>
+</blockquote>
+
+<h2 id="overview">Overview</h2>
+
+<p>Riffer Evals provides a framework for evaluating agent responses against configurable quality evaluators. It uses an LLM-as-judge approach where a separate model evaluates the outputs of your agents.</p>
+
+<p>Key concepts:</p>
+
+<ul>
+  <li><strong>Evaluators</strong> - Classes that evaluate input/output pairs and return scores</li>
+  <li><strong>Scenarios</strong> - Input/ground-truth pairs that define what to test</li>
+  <li><strong>EvaluatorRunner</strong> - Orchestrates running evaluators across scenarios</li>
+  <li><strong>Results</strong> - Per-scenario and aggregate evaluation scores</li>
+</ul>
+
+<h2 id="quick-start">Quick Start</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 1. Configure the judge model</span>
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">evals</span><span class="p">.</span><span class="nf">judge_model</span> <span class="o">=</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
+
+<span class="c1"># 2. Define your agent</span>
+<span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"anthropic/claude-haiku-4-5-20251001"</span>
+  <span class="n">instructions</span> <span class="s2">"You are a helpful assistant."</span>
+<span class="k">end</span>
+
+<span class="c1"># 3. Run evals</span>
+<span class="n">result</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">EvaluatorRunner</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span>
+  <span class="ss">agent: </span><span class="no">MyAgent</span><span class="p">,</span>
+  <span class="ss">scenarios: </span><span class="p">[</span>
+    <span class="p">{</span> <span class="ss">input: </span><span class="s2">"What is Ruby?"</span><span class="p">,</span> <span class="ss">ground_truth: </span><span class="s2">"A programming language"</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="ss">input: </span><span class="s2">"What is Python?"</span> <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="ss">evaluators: </span><span class="p">[</span><span class="no">AnswerRelevancyEvaluator</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">result</span><span class="p">.</span><span class="nf">scores</span>   <span class="c1"># =&gt; { AnswerRelevancyEvaluator =&gt; 0.85 }</span>
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Before using evals, configure the judge model:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">evals</span><span class="p">.</span><span class="nf">judge_model</span> <span class="o">=</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
+</code></pre></div></div>
+
+<p>The judge model is the LLM that evaluates agent outputs. You can use any configured provider.</p>
+
+<h2 id="example-evaluators">Example Evaluators</h2>
+
+<p>Ready-to-use evaluator implementations are available in <a href="https://github.com/janeapp/riffer/tree/main/examples/evaluators"><code>examples/evaluators/</code></a>. Copy them into your project and customize as needed.</p>
+
+<h3 id="answerrelevancy">AnswerRelevancy</h3>
+
+<p>Evaluates how well a response addresses the input question.</p>
+
+<ul>
+  <li><strong>higher_is_better</strong>: true</li>
+  <li><strong>Score range</strong>: 0.0 to 1.0</li>
+  <li><strong>1.0</strong>: Perfectly relevant, directly addresses the question</li>
+  <li><strong>0.7-0.9</strong>: Mostly relevant with minor tangents</li>
+  <li><strong>0.4-0.6</strong>: Partially relevant, some off-topic content</li>
+  <li><strong>0.1-0.3</strong>: Mostly irrelevant</li>
+  <li><strong>0.0</strong>: Completely irrelevant</li>
+</ul>
+
+<h2 id="running-evals">Running Evals</h2>
+
+<p>Use <code>EvaluatorRunner.run</code> with an agent class, scenarios, and evaluator classes:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">EvaluatorRunner</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span>
+  <span class="ss">agent: </span><span class="no">MyAgent</span><span class="p">,</span>
+  <span class="ss">scenarios: </span><span class="p">[</span>
+    <span class="p">{</span> <span class="ss">input: </span><span class="s2">"What is the capital of France?"</span><span class="p">,</span> <span class="ss">ground_truth: </span><span class="s2">"Paris"</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="ss">input: </span><span class="s2">"Explain Ruby blocks."</span> <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="ss">evaluators: </span><span class="p">[</span><span class="no">AnswerRelevancyEvaluator</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="context">Context</h3>
+
+<p>Pass <code>context:</code> to provide context that agents use for dynamic model selection, tool resolution, or tool execution:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">EvaluatorRunner</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span>
+  <span class="ss">agent: </span><span class="no">MyAgent</span><span class="p">,</span>
+  <span class="ss">scenarios: </span><span class="p">[</span>
+    <span class="p">{</span> <span class="ss">input: </span><span class="s2">"What is Ruby?"</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="ss">input: </span><span class="s2">"Premium question"</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span> <span class="ss">premium: </span><span class="kp">true</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="ss">evaluators: </span><span class="p">[</span><span class="no">AnswerRelevancyEvaluator</span><span class="p">],</span>
+  <span class="ss">context: </span><span class="p">{</span> <span class="ss">premium: </span><span class="kp">false</span> <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Per-scenario <code>context</code> overrides the top-level value. Scenarios without their own <code>context</code> inherit the top-level value.</p>
+
+<h3 id="runresult">RunResult</h3>
+
+<p>The runner returns a <code>Riffer::Evals::RunResult</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span><span class="p">.</span><span class="nf">scores</span>                  <span class="c1"># =&gt; { EvaluatorClass =&gt; avg_score } across all scenarios</span>
+<span class="n">result</span><span class="p">.</span><span class="nf">scenario_results</span>        <span class="c1"># =&gt; Array of ScenarioResult objects</span>
+<span class="n">result</span><span class="p">.</span><span class="nf">token_usage</span>             <span class="c1"># =&gt; TokenUsage the agent under test spent, summed across scenarios (nil if none reported)</span>
+<span class="n">result</span><span class="p">.</span><span class="nf">evaluator_token_usage</span>   <span class="c1"># =&gt; TokenUsage the judges spent, summed across scenarios (nil if no judge ran)</span>
+<span class="n">result</span><span class="p">.</span><span class="nf">to_h</span>                    <span class="c1"># =&gt; Hash representation</span>
+</code></pre></div></div>
+
+<h3 id="scenarioresult">ScenarioResult</h3>
+
+<p>Each scenario produces a <code>Riffer::Evals::ScenarioResult</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scenario</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="nf">scenario_results</span><span class="p">.</span><span class="nf">first</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">input</span>                  <span class="c1"># =&gt; "What is the capital of France?"</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">output</span>                 <span class="c1"># =&gt; "The capital of France is Paris."</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">ground_truth</span>           <span class="c1"># =&gt; "Paris"</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">scores</span>                 <span class="c1"># =&gt; { EvaluatorClass =&gt; score } for this scenario</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">results</span>                <span class="c1"># =&gt; Array of Result objects</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">messages</span>               <span class="c1"># =&gt; Array of Message objects (system, user, assistant, tool)</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">token_usage</span>            <span class="c1"># =&gt; TokenUsage the agent under test spent on this scenario (nil if not reported)</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">evaluator_token_usage</span>  <span class="c1"># =&gt; TokenUsage the judges spent on this scenario (nil if no judge ran)</span>
+<span class="n">scenario</span><span class="p">.</span><span class="nf">to_h</span>                   <span class="c1"># =&gt; Hash representation</span>
+</code></pre></div></div>
+
+<h3 id="result">Result</h3>
+
+<p>Individual evaluation results:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">r</span> <span class="o">=</span> <span class="n">scenario</span><span class="p">.</span><span class="nf">results</span><span class="p">.</span><span class="nf">first</span>
+<span class="n">r</span><span class="p">.</span><span class="nf">evaluator</span>        <span class="c1"># =&gt; AnswerRelevancyEvaluator</span>
+<span class="n">r</span><span class="p">.</span><span class="nf">score</span>            <span class="c1"># =&gt; 0.92</span>
+<span class="n">r</span><span class="p">.</span><span class="nf">reason</span>           <span class="c1"># =&gt; "The response directly addresses..."</span>
+<span class="n">r</span><span class="p">.</span><span class="nf">higher_is_better</span> <span class="c1"># =&gt; true</span>
+<span class="n">r</span><span class="p">.</span><span class="nf">token_usage</span>      <span class="c1"># =&gt; TokenUsage for the judge call (nil for rule-based evaluators)</span>
+</code></pre></div></div>
+
+<p><code>token_usage</code> is a <code>Riffer::Providers::TokenUsage</code>, the same type the agent exposes on <code>Agent::Response</code>, so eval usage accumulates with the <code>+</code> operator just like agent usage. On a <code>Result</code> it’s populated for LLM-as-judge evaluators and <code>nil</code> for rule-based ones that never call an LLM.</p>
+
+<p><code>ScenarioResult</code> and <code>RunResult</code> keep the two sources separate rather than exposing a single total: <code>token_usage</code> is what the agent under test spent generating the output, and <code>evaluator_token_usage</code> is what the judges spent scoring it. Add them yourself if you want a combined figure.</p>
+
+<h2 id="defining-custom-evaluators">Defining Custom Evaluators</h2>
+
+<p>Create evaluators by subclassing <code>Riffer::Evals::Evaluator</code>. The simplest approach uses the <code>instructions</code> DSL — the base class handles calling the judge automatically:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MedicalAccuracyEvaluator</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">Evaluator</span>
+  <span class="n">higher_is_better</span> <span class="kp">true</span>
+  <span class="n">judge_model</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>  <span class="c1"># Optional override</span>
+
+  <span class="n">instructions</span> <span class="o">&lt;&lt;~</span><span class="no">TEXT</span><span class="sh">
+    Assess the medical accuracy of the response.
+
+    Score between 0.0 and 1.0 where:
+      - 1.0 = Medically accurate and complete
+      - 0.7-0.9 = Mostly accurate with minor omissions
+      - 0.4-0.6 = Partially accurate
+      - 0.1-0.3 = Mostly inaccurate
+      - 0.0 = Completely inaccurate
+
+    When ground truth is provided, compare the response against it.
+</span><span class="no">  TEXT</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The judge receives <code>input</code>, <code>output</code>, and optionally <code>ground_truth</code> alongside your instructions. No manual prompt composition needed.</p>
+
+<h3 id="using-custom-evaluators">Using Custom Evaluators</h3>
+
+<p>Pass your custom evaluator class to the runner:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">EvaluatorRunner</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span>
+  <span class="ss">agent: </span><span class="no">MyAgent</span><span class="p">,</span>
+  <span class="ss">scenarios: </span><span class="p">[{</span> <span class="ss">input: </span><span class="s2">"What are symptoms of flu?"</span> <span class="p">}],</span>
+  <span class="ss">evaluators: </span><span class="p">[</span><span class="no">MedicalAccuracyEvaluator</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="evaluator-dsl">Evaluator DSL</h3>
+
+<p>Class methods:</p>
+
+<ul>
+  <li><code>instructions(value)</code> - Evaluation criteria and scoring rubric (enables default <code>evaluate</code>)</li>
+  <li><code>higher_is_better(value)</code> - Whether higher scores are better (default: true)</li>
+  <li><code>judge_model(value)</code> - Override the global judge model</li>
+</ul>
+
+<p>Instance methods:</p>
+
+<ul>
+  <li><code>evaluate(input:, output:, ground_truth:, messages:)</code> - Override for custom logic; default calls judge with <code>instructions</code></li>
+  <li><code>judge</code> - Returns a Judge instance for LLM-as-judge calls</li>
+  <li><code>result(score:, reason:, metadata:, token_usage:)</code> - Helper to build Result objects</li>
+</ul>
+
+<h3 id="advanced-custom-evaluate-override">Advanced: Custom Evaluate Override</h3>
+
+<p>For evaluators that need full control over the evaluation logic, override <code>evaluate</code> directly:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CustomEvaluator</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">Evaluator</span>
+  <span class="n">higher_is_better</span> <span class="kp">true</span>
+  <span class="n">judge_model</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
+
+  <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">input</span><span class="p">:,</span> <span class="n">output</span><span class="p">:,</span> <span class="ss">ground_truth: </span><span class="kp">nil</span><span class="p">,</span> <span class="ss">messages: </span><span class="p">[])</span>
+    <span class="n">evaluation</span> <span class="o">=</span> <span class="n">judge</span><span class="p">.</span><span class="nf">evaluate</span><span class="p">(</span>
+      <span class="ss">instructions: </span><span class="s2">"Custom evaluation criteria..."</span><span class="p">,</span>
+      <span class="ss">input: </span><span class="n">input</span><span class="p">,</span>
+      <span class="ss">output: </span><span class="n">output</span><span class="p">,</span>
+      <span class="ss">ground_truth: </span><span class="n">ground_truth</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span><span class="p">(</span><span class="ss">score: </span><span class="n">evaluation</span><span class="p">[</span><span class="ss">:score</span><span class="p">],</span> <span class="ss">reason: </span><span class="n">evaluation</span><span class="p">[</span><span class="ss">:reason</span><span class="p">])</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="rule-based-evaluators">Rule-Based Evaluators</h3>
+
+<p>Evaluators don’t have to use LLM-as-judge:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LengthEvaluator</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">Evaluator</span>
+  <span class="n">higher_is_better</span> <span class="kp">true</span>
+
+  <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">input</span><span class="p">:,</span> <span class="n">output</span><span class="p">:,</span> <span class="ss">ground_truth: </span><span class="kp">nil</span><span class="p">,</span> <span class="ss">messages: </span><span class="p">[])</span>
+    <span class="n">min_length</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">max_length</span> <span class="o">=</span> <span class="mi">500</span>
+
+    <span class="n">length</span> <span class="o">=</span> <span class="n">output</span><span class="p">.</span><span class="nf">length</span>
+
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="n">min_length</span>
+      <span class="n">score</span> <span class="o">=</span> <span class="n">length</span><span class="p">.</span><span class="nf">to_f</span> <span class="o">/</span> <span class="n">min_length</span>
+      <span class="n">reason</span> <span class="o">=</span> <span class="s2">"Response too short (</span><span class="si">#{</span><span class="n">length</span><span class="si">}</span><span class="s2"> &lt; </span><span class="si">#{</span><span class="n">min_length</span><span class="si">}</span><span class="s2">)"</span>
+    <span class="k">elsif</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="n">max_length</span>
+      <span class="n">score</span> <span class="o">=</span> <span class="n">max_length</span><span class="p">.</span><span class="nf">to_f</span> <span class="o">/</span> <span class="n">length</span>
+      <span class="n">reason</span> <span class="o">=</span> <span class="s2">"Response too long (</span><span class="si">#{</span><span class="n">length</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">#{</span><span class="n">max_length</span><span class="si">}</span><span class="s2">)"</span>
+    <span class="k">else</span>
+      <span class="n">score</span> <span class="o">=</span> <span class="mf">1.0</span>
+      <span class="n">reason</span> <span class="o">=</span> <span class="s2">"Response length is appropriate"</span>
+    <span class="k">end</span>
+
+    <span class="n">result</span><span class="p">(</span><span class="ss">score: </span><span class="n">score</span><span class="p">,</span> <span class="ss">reason: </span><span class="n">reason</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="example-ci-integration">Example: CI Integration</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/initializers/riffer.rb</span>
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s2">"ANTHROPIC_API_KEY"</span><span class="p">]</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">evals</span><span class="p">.</span><span class="nf">judge_model</span> <span class="o">=</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
+<span class="k">end</span>
+
+<span class="c1"># app/agents/support_agent.rb</span>
+<span class="k">class</span> <span class="nc">SupportAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
+  <span class="n">instructions</span> <span class="s2">"You are a helpful customer support agent."</span>
+<span class="k">end</span>
+
+<span class="c1"># test/evals/support_agent_eval_test.rb</span>
+<span class="k">class</span> <span class="nc">SupportAgentEvalTest</span> <span class="o">&lt;</span> <span class="no">Minitest</span><span class="o">::</span><span class="no">Test</span>
+  <span class="k">def</span> <span class="nf">test_response_quality</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Evals</span><span class="o">::</span><span class="no">EvaluatorRunner</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span>
+      <span class="ss">agent: </span><span class="no">SupportAgent</span><span class="p">,</span>
+      <span class="ss">scenarios: </span><span class="p">[</span>
+        <span class="p">{</span> <span class="ss">input: </span><span class="s2">"How do I reset my password?"</span><span class="p">,</span> <span class="ss">ground_truth: </span><span class="s2">"Navigate to Settings &gt; Security &gt; Reset Password"</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">input: </span><span class="s2">"What are your business hours?"</span> <span class="p">}</span>
+      <span class="p">],</span>
+      <span class="ss">evaluators: </span><span class="p">[</span><span class="no">AnswerRelevancyEvaluator</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span><span class="p">.</span><span class="nf">scores</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">score</span><span class="o">|</span>
+      <span class="n">assert</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mf">0.85</span><span class="p">,</span> <span class="s2">"</span><span class="si">#{</span><span class="n">evaluator</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2"> scored </span><span class="si">#{</span><span class="n">score</span><span class="si">}</span><span class="s2">, expected &gt;= 0.85"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/configuration/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Configuration</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/guardrails/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Guardrails</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

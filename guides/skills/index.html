@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skills — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/" class="active" aria-current="page"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 13</span></p>
+          <h1>Skills</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#creating-a-skill">Creating a Skill</a></li>
+              <li><a href="#configuring-an-agent">Configuring an Agent</a></li>
+              <li><a href="#how-it-works">How It Works</a></li>
+              <li><a href="#user-triggered-activation">User-Triggered Activation</a></li>
+              <li><a href="#custom-backends">Custom Backends</a></li>
+              <li><a href="#custom-adapters">Custom Adapters</a></li>
+              <li><a href="#custom-activation-tool">Custom Activation Tool</a></li>
+              <li><a href="#accessing-skills-in-tools">Accessing Skills in Tools</a></li>
+            </ul>
+          </nav>
+          
+<p>Skills are packaged AI agent capabilities per the <a href="https://agentskills.io/">Agent Skills spec</a>. Each skill is a directory containing a <code>SKILL.md</code> file with YAML frontmatter and Markdown instructions. The framework discovers skills through a pluggable backend, injects a compact catalog into the system prompt (~50 tokens/skill), and supports both activation channels the spec describes: the LLM activates skills on demand through a tool, and your application injects skills the user asked for as conversation content (see <a href="#user-triggered-activation">User-Triggered Activation</a>).</p>
+
+<h2 id="creating-a-skill">Creating a Skill</h2>
+
+<p>Create a directory with a <code>SKILL.md</code> file:</p>
+
+<pre><code>.skills/
+  code-review/
+    SKILL.md
+  data-analysis/
+    SKILL.md
+</code></pre>
+
+<p>Each <code>SKILL.md</code> has YAML frontmatter and a Markdown body:</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">code-review</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s">Reviews code for quality, style, and potential issues.</span>
+<span class="nn">---</span>
+
+You are a code review assistant.
+
+Review the code for:
+<span class="p">
+-</span> Style issues
+<span class="p">-</span> Potential bugs
+<span class="p">-</span> Performance problems
+</code></pre></div></div>
+
+<p><strong>Required frontmatter fields:</strong></p>
+
+<ul>
+  <li><code>name</code> — lowercase alphanumeric with hyphens, 1-64 chars (must match directory name)</li>
+  <li><code>description</code> — 1-1024 chars, helps the LLM decide when to activate</li>
+</ul>
+
+<p><strong>Optional frontmatter fields:</strong></p>
+
+<ul>
+  <li><code>disable-model-invocation</code> — when <code>true</code>, the skill is hidden from the catalog and the LLM cannot activate it via the <code>skill_activate</code> tool. It stays reachable through the programmatic <code>activate</code> config (see <a href="#activated-skills">Activated Skills</a>) and through <code>activation_prompt</code> (see <a href="#user-triggered-activation">User-Triggered Activation</a>), so you can inject it under your own logic instead of the model’s. Only the literal value <code>true</code> disables invocation; any other value (or its absence) leaves the skill model-invocable.</li>
+</ul>
+
+<p>Any other frontmatter keys are passed through as metadata.</p>
+
+<h2 id="configuring-an-agent">Configuring an Agent</h2>
+
+<p>Use the <code>skills</code> block DSL to configure skills:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s2">"openai/gpt-5-mini"</span>
+  <span class="n">instructions</span> <span class="s2">"You are a helpful assistant."</span>
+  <span class="n">skills</span> <span class="k">do</span>
+    <span class="n">backend</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Multiple directories can be scanned (first-path-wins for duplicates):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">skills</span> <span class="k">do</span>
+  <span class="n">backend</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">,</span> <span class="s2">"~/.riffer/skills"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="dynamic-backend-via-proc">Dynamic Backend via Proc</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">skills</span> <span class="k">do</span>
+  <span class="n">backend</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span> <span class="n">tenant_backend</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="ss">:tenant_id</span><span class="p">])</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="custom-adapter">Custom Adapter</h3>
+
+<p>The adapter controls how the skill catalog is rendered in the system prompt and which tool the LLM calls to activate a skill. The adapter is auto-selected by provider, with model-aware fallback for proxy providers — Markdown for most providers, XML for Anthropic, and XML for Anthropic models routed through Amazon Bedrock (e.g. <code>us.anthropic.claude-sonnet-4-6</code>). Override with:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">skills</span> <span class="k">do</span>
+  <span class="n">backend</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">)</span>
+  <span class="n">adapter</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">XmlAdapter</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="activated-skills">Activated Skills</h3>
+
+<p>Load skill instructions into the system prompt at startup (no tool call needed). Use this for skills that should govern the whole session — for skills the user requests mid-conversation, prefer <a href="#user-triggered-activation">User-Triggered Activation</a>, which keeps the system prompt (and its provider-side cache) stable:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">skills</span> <span class="k">do</span>
+  <span class="n">backend</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">)</span>
+  <span class="n">activate</span> <span class="p">[</span><span class="s2">"code-review"</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Accepts a Proc for dynamic resolution:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">skills</span> <span class="k">do</span>
+  <span class="n">backend</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">)</span>
+  <span class="n">activate</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span> <span class="n">context</span><span class="p">[</span><span class="ss">:active_skills</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="how-it-works">How It Works</h2>
+
+<ol>
+  <li><strong>Discovery</strong> — At the start of <code>generate</code>/<code>stream</code>, the backend’s <code>list_skills</code> returns frontmatter for all available skills.</li>
+  <li><strong>Catalog injection</strong> — The adapter formats the catalog and appends it to the system prompt.</li>
+  <li><strong>Activation</strong> — When the LLM matches a task to a skill, it calls the <code>skill_activate</code> tool with the skill name. The tool returns the full SKILL.md body wrapped in <code>&lt;skill_content name="..."&gt;</code> tags.</li>
+  <li><strong>Execution</strong> — The LLM follows the skill’s instructions to complete the task.</li>
+  <li><strong>Deduplication</strong> — Re-activating an already-active skill returns a short pointer (“already active”) instead of the body again, so repeated activations don’t fill the context with duplicate instructions. This applies whichever channel activated the skill first — tool call, <code>activation_prompt</code>, or the <code>activate</code> config.</li>
+</ol>
+
+<p>Activation state lives in memory on the <code>Riffer::Skills::Context</code>, not in the session. When you rebuild an agent from a persisted session, the first re-activation of each skill returns the full body again (the conversation history still carries the earlier copy); deduplication resumes from there. If you prune skill content out of a session yourself, call <code>deactivate(name)</code> so the next activation returns the body instead of a pointer to content that no longer exists.</p>
+
+<h2 id="user-triggered-activation">User-Triggered Activation</h2>
+
+<p>When a user explicitly invokes a skill (a slash command, a button, a mention), don’t wait for the model to discover it — inject the skill body into the conversation as a user message. <code>activation_prompt</code> returns the body wrapped for injection and records the activation, so a later model-side <code>skill_activate</code> call for the same skill gets the pointer instead of a duplicate body:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">skills</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">context</span><span class="p">.</span><span class="nf">skills</span>
+
+<span class="c1"># User typed: /code-review focus on security</span>
+<span class="k">if</span> <span class="n">skills</span><span class="p">.</span><span class="nf">activated?</span><span class="p">(</span><span class="s2">"code-review"</span><span class="p">)</span>
+  <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"The code-review skill was invoked again — its instructions are above. focus on security"</span><span class="p">)</span>
+<span class="k">else</span>
+  <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">skills</span><span class="p">.</span><span class="nf">activation_prompt</span><span class="p">(</span><span class="s2">"code-review"</span><span class="p">)</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">focus on security"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>activation_prompt("code-review")</code> returns:</p>
+
+<pre><code>&lt;skill_content name="code-review"&gt;
+You are a code review assistant.
+...
+&lt;/skill_content&gt;
+</code></pre>
+
+<p>How a repeat invocation behaves is your choice — re-inject the full body (<code>activation_prompt</code> always returns it), or send a short reference as above. The check via <code>activated?</code> covers both channels, so a skill the model already activated through the tool counts too.</p>
+
+<p>For reading a skill body <strong>without</strong> recording an activation — a UI preview, or delegating the skill to a subagent whose context is separate — use <code>read</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">body</span> <span class="o">=</span> <span class="n">skills</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">"code-review"</span><span class="p">)</span> <span class="c1"># no activation recorded</span>
+</code></pre></div></div>
+
+<h2 id="custom-backends">Custom Backends</h2>
+
+<p>Implement <code>Riffer::Skills::Backend</code> for non-filesystem storage:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DatabaseBackend</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">Backend</span>
+  <span class="k">def</span> <span class="nf">list_skills</span>
+    <span class="c1"># Return Array[Riffer::Skills::Frontmatter]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">read_skill</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+    <span class="c1"># Return String (skill body)</span>
+    <span class="c1"># Raise Riffer::ArgumentError if not found</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="custom-adapters">Custom Adapters</h2>
+
+<p>Subclass <code>Riffer::Skills::Adapter</code> to customize how the skill catalog is rendered in the system prompt:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CustomAdapter</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">Adapter</span>
+  <span class="k">def</span> <span class="nf">render_catalog</span><span class="p">(</span><span class="n">skills</span><span class="p">)</span>
+    <span class="c1"># Return String (skill catalog for the system prompt)</span>
+    <span class="c1"># Use `skill_activate_tool.name` to reference the activation tool the LLM should call</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The activation tool is set on the adapter at construction (<code>Riffer::Skills::Adapter.new(skill_activate_tool: ...)</code>) and exposed via the <code>skill_activate_tool</code> reader. The agent wires this up automatically — custom adapters that override <code>initialize</code> must call <code>super</code>.</p>
+
+<p>The built-in adapters are <code>Riffer::Skills::MarkdownAdapter</code> (default) and <code>Riffer::Skills::XmlAdapter</code> (used by Anthropic).</p>
+
+<h2 id="custom-activation-tool">Custom Activation Tool</h2>
+
+<p>The activation tool is global. Set it once via <code>Riffer.config.skills.default_activate_tool</code> to apply across all agents, or override per-agent inside the <code>skills</code> block.</p>
+
+<p>The recommended approach is to subclass <code>Riffer::Skills::ActivateTool</code> so the identifier, description, params, and timeout are inherited — you only override the behavior you need to change:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Wrap the default behavior with telemetry</span>
+<span class="k">class</span> <span class="nc">InstrumentedActivateTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">ActivateTool</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="nb">name</span><span class="p">:)</span>
+    <span class="no">Telemetry</span><span class="p">.</span><span class="nf">measure</span><span class="p">(</span><span class="s2">"skill_activate"</span><span class="p">,</span> <span class="ss">skill: </span><span class="nb">name</span><span class="p">)</span> <span class="p">{</span> <span class="k">super</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Change what a re-activation returns (default: a short "already active" pointer)</span>
+<span class="k">class</span> <span class="nc">CustomPointerActivateTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">ActivateTool</span>
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">already_active_message</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+    <span class="s2">"'</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">' is loaded — scroll up for its instructions."</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Return the full body on every activation (no deduplication)</span>
+<span class="k">class</span> <span class="nc">AlwaysFullBodyActivateTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">ActivateTool</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="nb">name</span><span class="p">:)</span>
+    <span class="n">skills_context</span> <span class="o">=</span> <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">skills</span>
+    <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="s2">"Skills not configured"</span><span class="p">)</span> <span class="k">unless</span> <span class="n">skills_context</span>
+    <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="s2">"Unknown skill: '</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span> <span class="k">unless</span> <span class="n">skills_context</span><span class="p">.</span><span class="nf">model_invocable?</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+
+    <span class="n">text</span><span class="p">(</span><span class="n">skills_context</span><span class="p">.</span><span class="nf">activation_prompt</span><span class="p">(</span><span class="nb">name</span><span class="p">))</span>
+  <span class="k">rescue</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">ArgumentError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Global default</span>
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">skills</span><span class="p">.</span><span class="nf">default_activate_tool</span> <span class="o">=</span> <span class="no">InstrumentedActivateTool</span>
+
+<span class="c1"># Per-agent override</span>
+<span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">skills</span> <span class="k">do</span>
+    <span class="n">backend</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">)</span>
+    <span class="n">activate_tool</span> <span class="no">InstrumentedActivateTool</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>If you need a different parameter shape entirely, subclass <code>Riffer::Tool</code> directly and provide your own <code>identifier</code>, <code>description</code>, <code>params</code>, and <code>call</code>.</p>
+
+<h2 id="accessing-skills-in-tools">Accessing Skills in Tools</h2>
+
+<p>The skills context (<code>Riffer::Skills::Context</code>) is available via <code>context[:skills]</code> during execution:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SkillSearchTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">identifier</span> <span class="s2">"skill_search"</span>
+  <span class="n">description</span> <span class="s2">"Searches available skills."</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:query</span><span class="p">,</span> <span class="no">String</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">query</span><span class="p">:)</span>
+    <span class="n">skills_context</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="ss">:skills</span><span class="p">]</span>  <span class="c1"># Riffer::Skills::Context</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">skills_context</span><span class="p">.</span><span class="nf">skills</span><span class="p">.</span><span class="nf">values</span><span class="p">.</span><span class="nf">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="n">s</span><span class="p">.</span><span class="nf">description</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">json</span><span class="p">(</span><span class="n">matches</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="p">{</span><span class="ss">name: </span><span class="n">s</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span> <span class="ss">description: </span><span class="n">s</span><span class="p">.</span><span class="nf">description</span><span class="p">}</span> <span class="p">})</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/guardrails/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Guardrails</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/mcp/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">MCP</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

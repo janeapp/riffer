@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agents — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/" class="active" aria-current="page"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 03</span></p>
+          <h1>Agents</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#when-to-use-agents">When to Use Agents</a></li>
+              <li><a href="#defining-an-agent">Defining an Agent</a></li>
+              <li><a href="#configuration-methods">Configuration Methods</a></li>
+              <li><a href="#configuration-object">Configuration Object</a></li>
+              <li><a href="#per-call-tags">Per-Call Tags</a></li>
+              <li><a href="#expand-your-agent">Expand Your Agent</a></li>
+            </ul>
+          </nav>
+          
+<p>Agents are the central orchestrator in Riffer. They manage the conversation flow, call LLM providers, and handle tool execution.</p>
+
+<h2 id="when-to-use-agents">When to Use Agents</h2>
+
+<p>Use an agent when the task is open-ended and the LLM needs to reason, iterate, or call tools to produce a result. If your task follows a fixed sequence of steps with no LLM decision-making, consider a simpler pipeline instead.</p>
+
+<h2 id="defining-an-agent">Defining an Agent</h2>
+
+<p>Create an agent by subclassing <code>Riffer::Agent</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="s1">'You are a helpful assistant.'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="configuration-methods">Configuration Methods</h2>
+
+<h3 id="model">model</h3>
+
+<p>Sets the provider and model in <code>provider/model</code> format:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>           <span class="c1"># OpenAI</span>
+  <span class="c1"># or</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>  <span class="c1"># Bedrock</span>
+  <span class="c1"># or</span>
+  <span class="n">model</span> <span class="s1">'mock/any'</span>                <span class="c1"># Mock provider</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Models can also be resolved dynamically with a lambda:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="s2">"anthropic/claude-haiku-4-5-20251001"</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When the lambda accepts a parameter, it receives the <code>context</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:premium</span><span class="p">)</span> <span class="p">?</span> <span class="s2">"anthropic/claude-sonnet-4-5-20250929"</span> <span class="p">:</span> <span class="s2">"anthropic/claude-haiku-4-5-20251001"</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The lambda is re-evaluated on each <code>generate</code> or <code>stream</code> call, so the model can change between calls based on runtime context.</p>
+
+<h3 id="instructions">instructions</h3>
+
+<p>Sets system instructions for the agent:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="s1">'You are an expert Ruby programmer. Provide concise answers.'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Instructions can also be resolved dynamically with a lambda:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="s2">"Today is </span><span class="si">#{</span><span class="no">Date</span><span class="p">.</span><span class="nf">today</span><span class="si">}</span><span class="s2">. You are a helpful assistant."</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When the lambda accepts a parameter, it receives the <code>context</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"You are assisting </span><span class="si">#{</span><span class="n">ctx</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello!'</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span> <span class="ss">name: </span><span class="s1">'Jane'</span> <span class="p">})</span>
+</code></pre></div></div>
+
+<p>The lambda is evaluated once at <code>Agent.new</code> time using the context passed to the constructor. To change instructions for a new context, construct a new agent.</p>
+
+<h3 id="identifier">identifier</h3>
+
+<p>Sets a custom identifier (defaults to snake_case class name):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">identifier</span> <span class="s1">'custom_agent_name'</span>
+<span class="k">end</span>
+
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">identifier</span>  <span class="c1"># =&gt; "custom_agent_name"</span>
+</code></pre></div></div>
+
+<h3 id="uses_tools">uses_tools</h3>
+
+<p>Registers tools the agent can use:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">TimeTool</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Tools can also be resolved dynamically with a lambda:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+
+  <span class="n">uses_tools</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="no">PublicTool</span><span class="p">]</span>
+    <span class="n">tools</span> <span class="o">&lt;&lt;</span> <span class="no">AdminTool</span> <span class="k">if</span> <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">admin?</span>
+    <span class="n">tools</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="use_mcp">use_mcp</h3>
+
+<p>Loads tools from registered <a href="/guides/mcp/">MCP</a> servers by tag. Like <code>uses_tools</code>, <strong><code>use_mcp</code> is not inherited</strong>—add it on each subclass that should include MCP tools.</p>
+
+<h3 id="provider_options">provider_options</h3>
+
+<p>Passes options to the provider client:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'CUSTOM_OPENAI_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="model_options">model_options</h3>
+
+<p>Passes options to each LLM request:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span><span class="p">,</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">web_search: </span><span class="kp">true</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="max_steps">max_steps</h3>
+
+<p>Sets the maximum number of LLM call steps in the tool-use loop. When the limit is reached, the loop interrupts with reason <code>:max_steps</code>. Defaults to <code>16</code>. Set to <code>nil</code> (<code>max_steps nil</code>) for unlimited steps:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">max_steps</span> <span class="mi">8</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="structured_output">structured_output</h3>
+
+<p>Configures the agent to return structured JSON responses conforming to a schema. Accepts a <code>Riffer::Params</code> instance or a block DSL:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SentimentAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">instructions</span> <span class="s1">'Analyze the sentiment of the given text.'</span>
+  <span class="n">structured_output</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:sentiment</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"positive, negative, or neutral"</span>
+    <span class="n">required</span> <span class="ss">:score</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Confidence score between 0 and 1"</span>
+    <span class="n">optional</span> <span class="ss">:explanation</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Brief explanation"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The LLM response is automatically parsed and validated against the schema. Access the result via <code>response.structured_output</code>.</p>
+
+<h4 id="nested-objects">Nested Objects</h4>
+
+<p>Use <code>Hash</code> with a block to define nested object schemas:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Person name"</span>
+  <span class="n">required</span> <span class="ss">:address</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Mailing address"</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Street address"</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"City"</span>
+    <span class="n">optional</span> <span class="ss">:postal_code</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Postal or zip code"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Validation errors use dot-path notation: <code>address.city is required</code>.</p>
+
+<h4 id="typed-arrays">Typed Arrays</h4>
+
+<p>Use <code>Array</code> with the <code>of:</code> keyword for arrays of primitive types:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:tags</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Tags"</span>
+  <span class="n">required</span> <span class="ss">:scores</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">of: </span><span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Scores"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Only primitive types are allowed with <code>of:</code>: <code>String</code>, <code>Integer</code>, <code>Float</code>, <code>TrueClass</code>, <code>FalseClass</code>.</p>
+
+<h4 id="arrays-of-objects">Arrays of Objects</h4>
+
+<p>Use <code>Array</code> with a block to define arrays of objects:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:items</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Line items"</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Product name"</span>
+    <span class="n">required</span> <span class="ss">:price</span><span class="p">,</span> <span class="no">Float</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Price"</span>
+    <span class="n">optional</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Quantity"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Validation errors include the array index: <code>items[1].price is required</code>.</p>
+
+<h4 id="deep-nesting">Deep Nesting</h4>
+
+<p>Blocks can be nested arbitrarily deep:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">structured_output</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:orders</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Orders"</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:id</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Order ID"</span>
+    <span class="n">required</span> <span class="ss">:shipping</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Shipping info"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:address</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Address"</span> <span class="k">do</span>
+        <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span>
+        <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="limitations">Limitations</h4>
+
+<p>Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code>) also raises <code>Riffer::ArgumentError</code>.</p>
+
+<p>Structured output is not compatible with streaming — calling <code>stream</code> on an agent with structured output configured raises <code>Riffer::ArgumentError</code>.</p>
+
+<h3 id="tool_runtime-experimental">tool_runtime (Experimental)</h3>
+
+<blockquote>
+  <p><strong>Warning:</strong> This feature is experimental and may be removed or changed without warning in a future release.</p>
+</blockquote>
+
+<p>Configures how tool calls are executed. Defaults to sequential (inline) execution:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">uses_tools</span> <span class="p">[</span><span class="no">WeatherTool</span><span class="p">,</span> <span class="no">SearchTool</span><span class="p">]</span>
+  <span class="n">tool_runtime</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Threaded</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Accepts a <code>Riffer::Tools::Runtime</code> subclass, a <code>Riffer::Tools::Runtime</code> instance, or a <code>Proc</code>. When unset, defaults to <code>Riffer.config.tool_runtime</code> (captured at agent class definition time). See <a href="/guides/advanced-tools/#tool-runtime-experimental">Tools — Tool Runtime</a> for details.</p>
+
+<h3 id="guardrail">guardrail</h3>
+
+<p>Registers guardrails for pre/post processing of messages. Pass the guardrail class and any options:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+
+  <span class="c1"># Input-only guardrail</span>
+  <span class="n">guardrail</span> <span class="ss">:before</span><span class="p">,</span> <span class="ss">with: </span><span class="no">InputValidator</span>
+
+  <span class="c1"># Output-only guardrail</span>
+  <span class="n">guardrail</span> <span class="ss">:after</span><span class="p">,</span> <span class="ss">with: </span><span class="no">ResponseFilter</span>
+
+  <span class="c1"># Both input and output, with options</span>
+  <span class="n">guardrail</span> <span class="ss">:around</span><span class="p">,</span> <span class="ss">with: </span><span class="no">MaxLengthGuardrail</span><span class="p">,</span> <span class="ss">max: </span><span class="mi">1000</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/guardrails/">Guardrails</a> for detailed documentation.</p>
+
+<h2 id="configuration-object">Configuration Object</h2>
+
+<p>Every DSL setting above is stored on a <code>Riffer::Agent::Config</code> instance accessible via the class. Each subclass has its own:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">max_steps</span> <span class="mi">8</span>
+<span class="k">end</span>
+
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">config</span>            <span class="c1"># =&gt; #&lt;Riffer::Agent::Config ...&gt;</span>
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">max_steps</span>  <span class="c1"># =&gt; 8</span>
+</code></pre></div></div>
+
+<p>The DSL methods read and mutate this Config in place.</p>
+
+<p>For advanced composition or testing, build a Config directly and pass it via <code>config:</code> to bypass class-level DSL entirely:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="o">::</span><span class="no">Config</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">model: </span><span class="s1">'openai/gpt-5-mini'</span><span class="p">,</span>
+  <span class="ss">instructions: </span><span class="s1">'You are a helpful assistant.'</span><span class="p">,</span>
+  <span class="ss">max_steps: </span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">config: </span><span class="n">config</span><span class="p">)</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'Hello'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>When <code>config:</code> is supplied, the class-level configuration is ignored for that instance.</p>
+
+<h2 id="per-call-tags">Per-Call Tags</h2>
+
+<p><code>#generate</code> and <code>#stream</code> accept an optional <code>tags:</code> hash — a flat map of attribution labels scoped to that single call (for cost/usage attribution, filtering audit logs, slicing telemetry). It is <strong>per-call only</strong>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Summarize this ticket."</span><span class="p">,</span>
+  <span class="ss">tags: </span><span class="p">{</span><span class="ss">team: </span><span class="s2">"growth"</span><span class="p">,</span> <span class="ss">feature: </span><span class="s2">"summarizer"</span><span class="p">,</span> <span class="ss">user_id: </span><span class="s2">"u_abc123"</span><span class="p">})</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"..."</span><span class="p">,</span> <span class="ss">tags: </span><span class="p">{</span><span class="ss">team: </span><span class="s2">"growth"</span><span class="p">,</span> <span class="ss">environment: </span><span class="s2">"production"</span><span class="p">})</span>
+</code></pre></div></div>
+
+<p>Keys and values may be <code>String</code> or <code>Symbol</code>; both are stringified, and entries with a <code>nil</code> value are dropped. Passing a non-<code>Hash</code> raises <code>Riffer::ArgumentError</code>. An omitted or empty <code>tags:</code> is a complete no-op.</p>
+
+<p>Tags propagate to <strong>two</strong> places:</p>
+
+<ol>
+  <li>The provider’s native per-request metadata field (see the mapping below).</li>
+  <li>Observability — stamped as <code>riffer.tag.&lt;key&gt;</code> on <strong>every</strong> span the call emits (<code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, <code>execute_guardrail</code>). See <a href="/guides/tracing/">Tracing</a>.</li>
+</ol>
+
+<h3 id="reserved-key-user_id">Reserved key: <code>user_id</code></h3>
+
+<p><code>user_id</code> is a reserved tag. Beyond appearing like any other tag, it maps to the provider’s native end-user identifier where one exists (see the table).</p>
+
+<h3 id="provider-mapping">Provider mapping</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th>Native request field</th>
+      <th><code>user_id</code> handling</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Amazon Bedrock</td>
+      <td><code>request_metadata</code> (all tags)</td>
+      <td>Ordinary entry; no dedicated user field</td>
+    </tr>
+    <tr>
+      <td>OpenAI / Azure OpenAI</td>
+      <td><code>metadata</code> (all tags)</td>
+      <td>Also mapped to <code>safety_identifier</code></td>
+    </tr>
+    <tr>
+      <td>OpenRouter</td>
+      <td><code>metadata</code> (all tags)</td>
+      <td>Also mapped to <code>user</code></td>
+    </tr>
+    <tr>
+      <td>Anthropic</td>
+      <td><code>metadata.user_id</code> <strong>only</strong></td>
+      <td>The only tag forwarded</td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td><em>(none — observability only)</em></td>
+      <td>Tag only; no request field</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Anthropic silently drops non-<code>user_id</code> tags.</strong> The Messages API has no free-form request-metadata field — only <code>metadata.user_id</code>. So for Anthropic, <code>user_id</code> is forwarded as <code>metadata: {user_id: …}</code> and <strong>every other tag is dropped from the request</strong> (it still appears on spans). This is intentional.</p>
+
+<p><strong>Gemini is observability-only.</strong> Riffer’s Gemini adapter targets the Gemini Developer API (<code>generativelanguage.googleapis.com</code>), whose <code>generateContent</code> request has <strong>no</strong> <code>labels</code> field — sending unknown fields is rejected. So tags are <strong>not</strong> added to the Gemini request; they propagate to spans only. Native request labels (<code>labels</code>, lowercase <code>[a-z0-9_-]</code>, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.</p>
+
+<h3 id="provider-limits-not-enforced">Provider limits (not enforced)</h3>
+
+<p>Riffer does not validate tag count, key/value length, or charset — it forwards what you give it and lets the provider reject anything out of bounds. Known limits: Bedrock <code>requestMetadata</code> ≤16 entries, key/value ≤256 chars; OpenAI / OpenRouter <code>metadata</code> ≤16 pairs (OpenRouter: 64-char keys, 512-char values).</p>
+
+<h2 id="expand-your-agent">Expand Your Agent</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Goal</th>
+      <th>Feature</th>
+      <th>Guide</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Call APIs or run functions</td>
+      <td>Tools</td>
+      <td><a href="/guides/tools/">Tools</a></td>
+    </tr>
+    <tr>
+      <td>Return structured JSON</td>
+      <td>Structured Output</td>
+      <td><a href="#structured_output">structured_output</a></td>
+    </tr>
+    <tr>
+      <td>Validate or filter content</td>
+      <td>Guardrails</td>
+      <td><a href="/guides/guardrails/">Guardrails</a></td>
+    </tr>
+    <tr>
+      <td>Measure output quality</td>
+      <td>Evals</td>
+      <td><a href="/guides/evals/">Evals</a></td>
+    </tr>
+    <tr>
+      <td>Add packaged capabilities</td>
+      <td>Skills</td>
+      <td><a href="/guides/skills/">Skills</a></td>
+    </tr>
+    <tr>
+      <td>Control the tool-use loop</td>
+      <td>Agent Loop</td>
+      <td><a href="/guides/agent-loop/">Agent Loop</a></td>
+    </tr>
+    <tr>
+      <td>Human-in-the-loop approval</td>
+      <td>Interrupts</td>
+      <td><a href="/guides/agent-lifecycle/#interrupting-the-agent-loop">Agent Lifecycle</a></td>
+    </tr>
+    <tr>
+      <td>Run tools concurrently</td>
+      <td>Tool Runtime</td>
+      <td><a href="/guides/advanced-tools/#tool-runtime-experimental">Advanced Tools</a></td>
+    </tr>
+    <tr>
+      <td>Stream responses in real time</td>
+      <td>Streaming</td>
+      <td><a href="/guides/agent-lifecycle/#stream">Agent Lifecycle</a></td>
+    </tr>
+  </tbody>
+</table>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/getting-started/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Getting Started</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/agent-lifecycle/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Agent Lifecycle</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

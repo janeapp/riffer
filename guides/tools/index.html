@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tools — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/" class="active" aria-current="page"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">The fundamentals · 06</span></p>
+          <h1>Tools</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#when-to-use-tools">When to Use Tools</a></li>
+              <li><a href="#defining-a-tool">Defining a Tool</a></li>
+              <li><a href="#configuration-methods">Configuration Methods</a></li>
+              <li><a href="#parameter-dsl">Parameter DSL</a></li>
+              <li><a href="#the-call-method">The call Method</a></li>
+              <li><a href="#response-objects">Response Objects</a></li>
+            </ul>
+          </nav>
+          
+<p>Tools are callable functions that agents can invoke to interact with external systems, fetch data, or perform actions.</p>
+
+<h2 id="when-to-use-tools">When to Use Tools</h2>
+
+<p>Use tools when your agent needs to fetch external data, call APIs, query databases, or perform side effects. If the agent only needs to generate text from its training data, you do not need tools.</p>
+
+<h2 id="defining-a-tool">Defining a Tool</h2>
+
+<p>Create a tool by subclassing <code>Riffer::Tool</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">WeatherTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Gets the current weather for a city"</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The city name"</span>
+    <span class="n">optional</span> <span class="ss">:units</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"celsius"</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"celsius"</span><span class="p">,</span> <span class="s2">"fahrenheit"</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">city</span><span class="p">:,</span> <span class="ss">units: </span><span class="kp">nil</span><span class="p">)</span>
+    <span class="n">weather</span> <span class="o">=</span> <span class="no">WeatherAPI</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">city</span><span class="p">,</span> <span class="ss">units: </span><span class="n">units</span> <span class="o">||</span> <span class="s2">"celsius"</span><span class="p">)</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"The weather in </span><span class="si">#{</span><span class="n">city</span><span class="si">}</span><span class="s2"> is </span><span class="si">#{</span><span class="n">weather</span><span class="p">.</span><span class="nf">temperature</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">units</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="configuration-methods">Configuration Methods</h2>
+
+<h3 id="description">description</h3>
+
+<p>Sets a description that helps the LLM understand when to use the tool:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SearchTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Searches the knowledge base for relevant information"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="identifier--name">identifier / name</h3>
+
+<p>Sets a custom identifier (defaults to snake_case class name):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SearchTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">identifier</span> <span class="s1">'kb_search'</span>
+<span class="k">end</span>
+
+<span class="no">SearchTool</span><span class="p">.</span><span class="nf">identifier</span>  <span class="c1"># =&gt; "kb_search"</span>
+<span class="no">SearchTool</span><span class="p">.</span><span class="nf">name</span>        <span class="c1"># =&gt; "kb_search" (alias)</span>
+</code></pre></div></div>
+
+<h3 id="params">params</h3>
+
+<p>Defines the tool’s parameters using a DSL:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateOrderTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:product_id</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The product ID"</span>
+    <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Number of items"</span>
+    <span class="n">optional</span> <span class="ss">:notes</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Order notes"</span>
+    <span class="n">optional</span> <span class="ss">:priority</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"normal"</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"low"</span><span class="p">,</span> <span class="s2">"normal"</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="parameter-dsl">Parameter DSL</h2>
+
+<h3 id="required">required</h3>
+
+<p>Defines a required parameter:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="k">do</span>
+  <span class="n">required</span> <span class="ss">:name</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The user's name"</span>
+  <span class="n">required</span> <span class="ss">:age</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"The user's age"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Options:</p>
+
+<ul>
+  <li><code>description</code> - Human-readable description for the LLM</li>
+  <li><code>enum</code> - Array of allowed values</li>
+</ul>
+
+<h3 id="optional">optional</h3>
+
+<p>Defines an optional parameter:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="k">do</span>
+  <span class="n">optional</span> <span class="ss">:limit</span><span class="p">,</span> <span class="no">Integer</span><span class="p">,</span> <span class="ss">default: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Max results"</span>
+  <span class="n">optional</span> <span class="ss">:format</span><span class="p">,</span> <span class="no">String</span><span class="p">,</span> <span class="ss">enum: </span><span class="p">[</span><span class="s2">"json"</span><span class="p">,</span> <span class="s2">"xml"</span><span class="p">],</span> <span class="ss">description: </span><span class="s2">"Output format"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Options:</p>
+
+<ul>
+  <li><code>description</code> - Human-readable description</li>
+  <li><code>default</code> - Default value when not provided</li>
+  <li><code>enum</code> - Array of allowed values</li>
+</ul>
+
+<h3 id="supported-types">Supported Types</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ruby Type</th>
+      <th>JSON Schema Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>String</code></td>
+      <td><code>string</code></td>
+    </tr>
+    <tr>
+      <td><code>Integer</code></td>
+      <td><code>integer</code></td>
+    </tr>
+    <tr>
+      <td><code>Float</code></td>
+      <td><code>number</code></td>
+    </tr>
+    <tr>
+      <td><code>Riffer::Params::Boolean</code></td>
+      <td><code>boolean</code></td>
+    </tr>
+    <tr>
+      <td><code>TrueClass</code> / <code>FalseClass</code></td>
+      <td><code>boolean</code></td>
+    </tr>
+    <tr>
+      <td><code>Array</code></td>
+      <td><code>array</code></td>
+    </tr>
+    <tr>
+      <td><code>Hash</code></td>
+      <td><code>object</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code>Riffer::Params::Boolean</code> is the preferred way to declare boolean parameters. <code>TrueClass</code> and <code>FalseClass</code> continue to work for backwards compatibility.</p>
+
+<h3 id="nested-parameters">Nested Parameters</h3>
+
+<p>Tool params support the same nested DSL as structured output — nested objects (<code>Hash</code> with block), typed arrays (<code>Array, of:</code>), and arrays of objects (<code>Array</code> with block). See the <a href="/guides/agents/#nested-objects">structured output section in Agents</a> for full syntax.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CreateOrderTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Creates an order"</span>
+
+  <span class="n">params</span> <span class="k">do</span>
+    <span class="n">required</span> <span class="ss">:items</span><span class="p">,</span> <span class="no">Array</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Line items"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:product_id</span><span class="p">,</span> <span class="no">Integer</span>
+      <span class="n">required</span> <span class="ss">:quantity</span><span class="p">,</span> <span class="no">Integer</span>
+      <span class="n">optional</span> <span class="ss">:notes</span><span class="p">,</span> <span class="no">String</span>
+    <span class="k">end</span>
+    <span class="n">required</span> <span class="ss">:shipping</span><span class="p">,</span> <span class="no">Hash</span><span class="p">,</span> <span class="ss">description: </span><span class="s2">"Shipping address"</span> <span class="k">do</span>
+      <span class="n">required</span> <span class="ss">:street</span><span class="p">,</span> <span class="no">String</span>
+      <span class="n">required</span> <span class="ss">:city</span><span class="p">,</span> <span class="no">String</span>
+      <span class="n">optional</span> <span class="ss">:zip</span><span class="p">,</span> <span class="no">String</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">items</span><span class="p">:,</span> <span class="n">shipping</span><span class="p">:)</span>
+    <span class="c1"># items is an Array of Hashes with symbolized keys</span>
+    <span class="c1"># shipping is a Hash with symbolized keys</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="the-call-method">The call Method</h2>
+
+<p>Every tool must implement the <code>call</code> method and return a <code>Riffer::Tools::Response</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="c1"># context - The context passed to agent.generate()</span>
+  <span class="c1"># kwargs  - Validated parameters</span>
+  <span class="c1">#</span>
+  <span class="c1"># Must return a Riffer::Tools::Response</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="accessing-context">Accessing Context</h3>
+
+<p>The <code>context</code> argument is a <code>Riffer::Agent::Context</code> — a typed value object wrapping the Hash passed as <code>context:</code> to <code>Agent.new</code>. Caller-provided keys are read with <code>context[:key]</code> or <code>context&amp;.dig(:key)</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UserOrdersTool</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span>
+  <span class="n">description</span> <span class="s2">"Gets the current user's orders"</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">context</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:user_id</span><span class="p">)</span>
+    <span class="k">unless</span> <span class="n">user_id</span>
+      <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="s2">"No user ID provided"</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">orders</span> <span class="o">=</span> <span class="no">Order</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">user_id: </span><span class="n">user_id</span><span class="p">)</span>
+    <span class="n">text</span><span class="p">(</span><span class="n">orders</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_s</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Usage</span>
+<span class="no">MyAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">context: </span><span class="p">{</span><span class="ss">user_id: </span><span class="mi">123</span><span class="p">}).</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Show my orders"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Two keys are framework-managed and exposed as typed accessors:</p>
+
+<ul>
+  <li><code>context.skills</code> — the resolved <code>Riffer::Skills::Context</code> when the agent has skills configured, otherwise <code>nil</code>.</li>
+  <li><code>context.token_usage</code> — the cumulative <code>Riffer::Providers::TokenUsage</code> across every run on the agent, or <code>nil</code> before the first response.</li>
+</ul>
+
+<h2 id="response-objects">Response Objects</h2>
+
+<p>All tools must return a <code>Riffer::Tools::Response</code> object from their <code>call</code> method. Riffer::Tool provides shorthand methods for creating responses.</p>
+
+<h3 id="success-responses">Success Responses</h3>
+
+<p>Use <code>text</code> for string responses and <code>json</code> for structured data:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">query</span><span class="p">:)</span>
+  <span class="n">results</span> <span class="o">=</span> <span class="no">Database</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">results</span><span class="p">.</span><span class="nf">empty?</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"No results found for '</span><span class="si">#{</span><span class="n">query</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">text</span><span class="p">(</span><span class="n">results</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">r</span><span class="o">|</span> <span class="s2">"- </span><span class="si">#{</span><span class="n">r</span><span class="p">.</span><span class="nf">title</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">r</span><span class="p">.</span><span class="nf">summary</span><span class="si">}</span><span class="s2">"</span> <span class="p">}.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="text">text</h4>
+
+<p>Converts the result to a string via <code>to_s</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">text</span><span class="p">(</span><span class="s2">"Hello, world!"</span><span class="p">)</span>
+<span class="c1"># =&gt; content: "Hello, world!"</span>
+
+<span class="n">text</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="c1"># =&gt; content: "42"</span>
+</code></pre></div></div>
+
+<h4 id="json">json</h4>
+
+<p>Converts the result to JSON via <code>to_json</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">json</span><span class="p">({</span><span class="ss">name: </span><span class="s2">"Alice"</span><span class="p">,</span> <span class="ss">age: </span><span class="mi">30</span><span class="p">})</span>
+<span class="c1"># =&gt; content: '{"name":"Alice","age":30}'</span>
+
+<span class="n">json</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="c1"># =&gt; content: '[1,2,3]'</span>
+</code></pre></div></div>
+
+<h3 id="error-responses">Error Responses</h3>
+
+<p>Use <code>error(message, type:)</code> for errors:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="n">user_id</span><span class="p">:)</span>
+  <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">id: </span><span class="n">user_id</span><span class="p">)</span>
+
+  <span class="k">unless</span> <span class="n">user</span>
+    <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="s2">"User not found"</span><span class="p">,</span> <span class="ss">type: :not_found</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">text</span><span class="p">(</span><span class="s2">"User: </span><span class="si">#{</span><span class="n">user</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The error type is any symbol that describes the error category:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">error</span><span class="p">(</span><span class="s2">"Invalid input"</span><span class="p">,</span> <span class="ss">type: :validation_error</span><span class="p">)</span>
+<span class="n">error</span><span class="p">(</span><span class="s2">"Service unavailable"</span><span class="p">,</span> <span class="ss">type: :service_error</span><span class="p">)</span>
+<span class="n">error</span><span class="p">(</span><span class="s2">"Rate limit exceeded"</span><span class="p">,</span> <span class="ss">type: :rate_limit</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>If no type is specified, it defaults to <code>:execution_error</code>.</p>
+
+<h3 id="using-riffertoolsresponse-directly">Using Riffer::Tools::Response Directly</h3>
+
+<p>The shorthand methods delegate to <code>Riffer::Tools::Response</code>. You can also use the class directly if preferred:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">text</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">json</span><span class="p">({</span><span class="ss">data: </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="s2">"Failed"</span><span class="p">,</span> <span class="ss">type: :custom_error</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="response-methods">Response Methods</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">text</span><span class="p">(</span><span class="s2">"result"</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">content</span>        <span class="c1"># =&gt; "result"</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">success?</span>       <span class="c1"># =&gt; true</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">error?</span>         <span class="c1"># =&gt; false</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">error_message</span>  <span class="c1"># =&gt; nil</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">error_type</span>     <span class="c1"># =&gt; nil</span>
+
+<span class="n">error_response</span> <span class="o">=</span> <span class="n">error</span><span class="p">(</span><span class="s2">"failed"</span><span class="p">,</span> <span class="ss">type: :not_found</span><span class="p">)</span>
+<span class="n">error_response</span><span class="p">.</span><span class="nf">content</span>        <span class="c1"># =&gt; "failed"</span>
+<span class="n">error_response</span><span class="p">.</span><span class="nf">success?</span>       <span class="c1"># =&gt; false</span>
+<span class="n">error_response</span><span class="p">.</span><span class="nf">error?</span>         <span class="c1"># =&gt; true</span>
+<span class="n">error_response</span><span class="p">.</span><span class="nf">error_message</span>  <span class="c1"># =&gt; "failed"</span>
+<span class="n">error_response</span><span class="p">.</span><span class="nf">error_type</span>     <span class="c1"># =&gt; :not_found</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/agent-loop/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Agent Loop</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/advanced-tools/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Advanced Tool Configuration</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

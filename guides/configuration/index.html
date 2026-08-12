@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Configuration — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.40.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/" class="active" aria-current="page"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">12</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">13</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">14</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">15</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">16</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 10</span></p>
+          <h1>Configuration</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#global-configuration">Global Configuration</a></li>
+              <li><a href="#accessing-configuration">Accessing Configuration</a></li>
+              <li><a href="#provider-specific-configuration">Provider-Specific Configuration</a></li>
+              <li><a href="#agent-level-configuration">Agent-Level Configuration</a></li>
+              <li><a href="#common-model-options">Common Model Options</a></li>
+              <li><a href="#environment-variables">Environment Variables</a></li>
+              <li><a href="#multiple-configurations">Multiple Configurations</a></li>
+            </ul>
+          </nav>
+          
+<p>Riffer uses a centralized configuration system for provider credentials and settings.</p>
+
+<h2 id="global-configuration">Global Configuration</h2>
+
+<p>Use <code>Riffer.configure</code> to set up provider credentials:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENAI_API_KEY'</span><span class="p">]</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span> <span class="o">=</span> <span class="s1">'us-east-1'</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">api_token</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="accessing-configuration">Accessing Configuration</h2>
+
+<p>Access the current configuration via <code>Riffer.config</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">api_key</span>
+<span class="c1"># =&gt; "sk-..."</span>
+
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span>
+<span class="c1"># =&gt; "us-east-1"</span>
+
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">api_key</span>
+<span class="c1"># =&gt; "sk-ant-..."</span>
+</code></pre></div></div>
+
+<h2 id="provider-specific-configuration">Provider-Specific Configuration</h2>
+
+<p>For provider credentials and setup, see the individual <a href="/guides/providers/overview/">Provider guides</a>.</p>
+
+<h3 id="mcp-model-context-protocol">MCP (Model Context Protocol)</h3>
+
+<p>Optional settings for <a href="/guides/mcp/">MCP server integrations</a>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>credentials</code></td>
+      <td>Optional <code>Proc</code> for per-run <code>tools/call</code> HTTP headers: <code>-&gt;(manifest:, matched_tags:, context:) { Hash or nil }</code></td>
+    </tr>
+    <tr>
+      <td><code>discovery_runner</code></td>
+      <td><code>Riffer::Runner</code> instance for tool discovery (default <code>Runner::Sequential.new</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">mcp</span><span class="p">.</span><span class="nf">credentials</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">manifest</span><span class="p">:,</span> <span class="n">matched_tags</span><span class="p">:,</span> <span class="n">context</span><span class="ss">:|</span>
+    <span class="p">{</span><span class="s2">"Authorization"</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">token_for</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>See <a href="/guides/mcp/">MCP</a> for registration, tags, and agent <code>use_mcp</code>.</p>
+
+<h3 id="tool-runtime-experimental">Tool Runtime (Experimental)</h3>
+
+<blockquote>
+  <p><strong>Warning:</strong> This feature is experimental and may be removed or changed without warning in a future release.</p>
+</blockquote>
+
+<p>Configure the default tool runtime for all agents:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">tool_runtime</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">Threaded</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Riffer::Tools::Runtime</code> subclass</td>
+      <td>Instantiated automatically (e.g., <code>Riffer::Tools::Runtime::Inline</code>, <code>Riffer::Tools::Runtime::Threaded</code>)</td>
+    </tr>
+    <tr>
+      <td><code>Riffer::Tools::Runtime</code> instance</td>
+      <td>Custom runtime with specific options</td>
+    </tr>
+    <tr>
+      <td><code>Proc</code></td>
+      <td>Dynamic resolution</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Per-agent configuration overrides this global default. See <a href="/guides/advanced-tools/#tool-runtime-experimental">Advanced Tool Configuration — Tool Runtime</a> for details.</p>
+
+<h3 id="skills">Skills</h3>
+
+<p>Skills-related global configuration lives under <code>config.skills</code>.</p>
+
+<h4 id="default-activation-tool">Default activation tool</h4>
+
+<p>Override the tool the LLM calls to activate a skill. Defaults to <code>Riffer::Skills::ActivateTool</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">skills</span><span class="p">.</span><span class="nf">default_activate_tool</span> <span class="o">=</span> <span class="no">MyCustomActivateTool</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Per-agent override is available inside the <code>skills</code> block via <code>activate_tool MyCustomActivateTool</code>. See <a href="/guides/skills/#custom-activation-tool">Skills — Custom Activation Tool</a>.</p>
+
+<h4 id="default-backend">Default backend</h4>
+
+<p>Set an app-wide default skills backend. Used by any agent that declares a <code>skills</code> block without specifying its own <code>backend</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">skills</span><span class="p">.</span><span class="nf">default_backend</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Skills</span><span class="o">::</span><span class="no">FilesystemBackend</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">".skills"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Accepts a <code>Riffer::Skills::Backend</code> instance or a <code>Proc</code> that receives <code>context</code> and returns a backend. Defaults to <code>nil</code> — agents that don’t set their own backend get no skills, matching pre-existing behavior. Per-agent backends override this default.</p>
+
+<h3 id="tracing">Tracing</h3>
+
+<p>Tracing-related global configuration lives under <code>config.tracing</code>. Riffer emits spans only through the backend you assign to <code>config.tracing.backend</code> — there is <strong>no auto-detection</strong>. OpenTelemetry is a built-in backend you opt into explicitly with <code>Riffer::Tracing::Otel.build</code>; with no backend set every span is a silent no-op, and riffer carries no OTEL gem dependency either way.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">tracing</span><span class="p">.</span><span class="nf">enabled</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s2">"RIFFER_TRACING_ENABLED"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
+  <span class="c1"># Opt into OpenTelemetry (uses the global tracer provider):</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">tracing</span><span class="p">.</span><span class="nf">backend</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Tracing</span><span class="o">::</span><span class="no">Otel</span><span class="p">.</span><span class="nf">build</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td>The kill switch, consulted on every span — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or <code>'true'</code>/<code>'false'</code>/<code>'1'</code>/<code>'0'</code>. Defaults to <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>capture_messages</code></td>
+      <td>Opt-in capture of full message content on LLM-call spans (<code>gen_ai.input.messages</code>, <code>gen_ai.output.messages</code>, <code>gen_ai.system_instructions</code>) as GenAI-semconv JSON. Defaults to <code>false</code> — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.</td>
+    </tr>
+    <tr>
+      <td><code>backend</code></td>
+      <td>The backend riffer routes spans through. Assign <code>Riffer::Tracing::Otel.build</code> (pass <code>provider:</code> to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (<code>in_span</code> / <code>current_context</code> / <code>with_context</code>) to route into a non-OTEL system (e.g. Datadog APM). Defaults to <code>nil</code> — a no-op. Raises <code>Riffer::ArgumentError</code> unless the value is <code>nil</code> or responds to <code>in_span</code>. See <a href="/guides/tracing/#routing-to-a-non-opentelemetry-backend">Tracing → Routing to a non-OpenTelemetry backend</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="pricing">Pricing</h3>
+
+<p>Configure per-model token prices and riffer computes the cost of each LLM call onto its <a href="/guides/messages/#token-usage-semantics"><code>TokenUsage</code></a>. Riffer ships <strong>no</strong> price table — so an unconfigured model simply carries no cost (<code>token_usage.cost</code> is <code>nil</code>).</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="c1"># Rates are per million tokens, keyed by the same "provider/model" id you give the agent.</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"anthropic/claude-sonnet-4-6"</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">3.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">15.0</span><span class="p">,</span> <span class="ss">cache_read: </span><span class="mf">0.30</span><span class="p">,</span> <span class="ss">cache_write: </span><span class="mf">3.75</span><span class="p">)</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"openai/gpt-4"</span><span class="p">,</span> <span class="ss">input: </span><span class="mf">30.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">60.0</span><span class="p">)</span>
+
+  <span class="c1"># Pass an array to share one set of rates across a model family:</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">pricing</span><span class="p">.</span><span class="nf">set</span><span class="p">([</span><span class="s2">"openai/gpt-4"</span><span class="p">,</span> <span class="s2">"openai/gpt-4-0613"</span><span class="p">],</span> <span class="ss">input: </span><span class="mf">30.0</span><span class="p">,</span> <span class="ss">output: </span><span class="mf">60.0</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Argument</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>models</code></td>
+      <td>A <code>provider/model</code> id (e.g. <code>"openai/gpt-4"</code>) — the same string you pass to <code>model</code> — or an array of ids that share one set of rates. No alias matching; raises on a malformed id.</td>
+    </tr>
+    <tr>
+      <td><code>input:</code></td>
+      <td>Price per <strong>million</strong> input tokens. Required. Applies to the uncached portion of <code>input_tokens</code>.</td>
+    </tr>
+    <tr>
+      <td><code>output:</code></td>
+      <td>Price per <strong>million</strong> output tokens. Required.</td>
+    </tr>
+    <tr>
+      <td><code>cache_read:</code></td>
+      <td>Price per million cache-read tokens. Optional — when omitted, cache reads bill at the <code>input:</code> rate.</td>
+    </tr>
+    <tr>
+      <td><code>cache_write:</code></td>
+      <td>Price per million cache-write tokens. Optional — when omitted, cache writes bill at the <code>input:</code> rate.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Because the cache buckets are subsets of <code>input_tokens</code>, the cost formula subtracts them before applying the input rate:</p>
+
+<pre><code class="language-text">cost = (input − cache_read − cache_write) × input_rate
+     + cache_read  × cache_read_rate
+     + cache_write × cache_write_rate
+     + output      × output_rate
+</code></pre>
+
+<p>(all rates ÷ 1,000,000; an unset cache rate falls back to <code>input_rate</code>.) Cost is for observability, not billing — it’s a <code>Float</code>, and sub-cent rounding can accumulate over a long run. See <a href="/guides/messages/#token-usage-semantics">Messages → Token Usage Semantics</a> for how cost surfaces and aggregates.</p>
+
+<h3 id="message-id-strategy">Message ID Strategy</h3>
+
+<p>Opt in to stable identifiers on every message for logging, persistence, or replay:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">message_id_strategy</span> <span class="o">=</span> <span class="ss">:uuidv7</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:none</code> (default)</td>
+      <td>No id is generated; <code>message.id</code> returns <code>nil</code> and <code>:id</code> is omitted from <code>to_h</code>.</td>
+    </tr>
+    <tr>
+      <td><code>:uuid</code></td>
+      <td>UUIDv4 via <code>SecureRandom.uuid</code>.</td>
+    </tr>
+    <tr>
+      <td><code>:uuidv7</code></td>
+      <td>Time-ordered UUIDv7 via <code>SecureRandom.uuid_v7</code> (Ruby 3.3+).</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>When the strategy is not <code>:none</code>, every <code>Riffer::Messages::Base</code> instance — user prompts, system instructions, assistant responses, and tool results — gets an auto-generated <code>id</code> at construction time. IDs are included in <code>message.to_h</code> when present and omitted when <code>nil</code>. Provider API payloads are unaffected; the <code>id</code> stays on the Ruby side.</p>
+
+<p>When constructing a <code>Riffer::Agent::Session</code> from persisted history with the strategy enabled, supply ids on every seeded message yourself — Riffer never fabricates identifiers for pre-existing history. Messages built via the <code>Riffer::Messages::*</code> constructors auto-generate ids per the strategy, so as long as those constructors are used at message-creation time, ids flow through.</p>
+
+<p>See <a href="/guides/messages/#ids">Messages — IDs</a> for more details.</p>
+
+<h3 id="experimental-history-healing">Experimental: History Healing</h3>
+
+<blockquote>
+  <p><strong>Warning:</strong> This feature is experimental and may change without notice.</p>
+</blockquote>
+
+<p>Opts the agent into keeping the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact on its own:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">experimental_history_healing</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When enabled, two repairs run automatically:</p>
+
+<ol>
+  <li><strong>Seeded session.</strong> Passing a pre-populated <code>Riffer::Agent::Session</code> to <code>Agent.new(session: ...)</code> silently drops orphaned <code>tool_use</code> exchanges (assistant <code>tool_call</code> with no matching <code>Tool</code> result) and parentless <code>Tool</code> messages before the next inference call. Pending tool calls on the <strong>resume boundary</strong> — the last assistant whose tail is purely <code>Tool</code> results (or none) — are preserved; <code>execute_pending_tool_calls</code> runs them on the next LLM call.</li>
+  <li><strong>Interrupts.</strong> Any orphan <code>tool_use</code> left when the loop is interrupted (caller-issued <code>interrupt!</code> or the built-in <code>INTERRUPT_MAX_STEPS</code> ceiling) is filled with a placeholder <code>Riffer::Messages::Tool</code> carrying <code>error_type: :interrupted</code> and the content <code>"Tool call interrupted before completion."</code>. Filled <code>call_id</code>s are exposed on <code>Riffer::Agent::Response#healed_tool_call_ids</code> (and <code>Riffer::StreamEvents::Interrupt#healed_tool_call_ids</code> when streaming).</li>
+</ol>
+
+<p>Defaults to <code>false</code> — pre-healing behavior. Seeded sessions pass through untouched, and orphan <code>tool_use</code> left by an interrupt remain in history for <code>execute_pending_tool_calls</code> to re-run on the next call.</p>
+
+<p>There is no per-call override and no customizable placeholder. Callers needing finer control can call <code>agent.session.update(tool_call_id:, ...)</code> after the interrupt returns to upgrade a placeholder in place. See <a href="/guides/agent-lifecycle/#healing-pending-tool-results-on-interrupt-experimental">Agent Lifecycle — Healing pending tool results on interrupt</a>.</p>
+
+<h2 id="agent-level-configuration">Agent-Level Configuration</h2>
+
+<p>Override global configuration at the agent level:</p>
+
+<h3 id="provider_options">provider_options</h3>
+
+<p>Pass options directly to the provider client:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+
+  <span class="c1"># Override API key for this agent only</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'CUSTOM_OPENAI_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="model_options">model_options</h3>
+
+<p>Pass options to each LLM request:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+
+  <span class="c1"># These options are sent with every generate/stream call</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="common-model-options">Common Model Options</h2>
+
+<h3 id="openai">OpenAI</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>temperature</code></td>
+      <td>Sampling temperature (0.0-2.0)</td>
+    </tr>
+    <tr>
+      <td><code>max_tokens</code></td>
+      <td>Maximum tokens in response</td>
+    </tr>
+    <tr>
+      <td><code>top_p</code></td>
+      <td>Nucleus sampling parameter</td>
+    </tr>
+    <tr>
+      <td><code>reasoning</code></td>
+      <td>Reasoning effort level (<code>low</code>, <code>medium</code>, <code>high</code>)</td>
+    </tr>
+    <tr>
+      <td><code>web_search</code></td>
+      <td>Enable web search (<code>true</code> or config hash)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="amazon-bedrock">Amazon Bedrock</h3>
+
+<p>Options are passed through to the <a href="https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#converse-instance_method">Bedrock Converse API</a>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>inference_config</code></td>
+      <td>Hash with <code>max_tokens</code>, <code>temperature</code>, <code>top_p</code>, <code>stop_sequences</code></td>
+    </tr>
+    <tr>
+      <td><code>additional_model_request_fields</code></td>
+      <td>Hash for model-specific params (e.g., <code>top_k</code> for Claude)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
+  <span class="n">model_options</span> <span class="ss">inference_config: </span><span class="p">{</span><span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">4096</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="anthropic">Anthropic</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>temperature</code></td>
+      <td>Sampling temperature</td>
+    </tr>
+    <tr>
+      <td><code>max_tokens</code></td>
+      <td>Maximum tokens in response</td>
+    </tr>
+    <tr>
+      <td><code>top_p</code></td>
+      <td>Nucleus sampling parameter</td>
+    </tr>
+    <tr>
+      <td><code>top_k</code></td>
+      <td>Top-k sampling parameter</td>
+    </tr>
+    <tr>
+      <td><code>thinking</code></td>
+      <td>Extended thinking config hash (Claude 3.7+)</td>
+    </tr>
+    <tr>
+      <td><code>web_search</code></td>
+      <td>Enable web search (<code>true</code> or config hash)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.7</span><span class="p">,</span> <span class="ss">max_tokens: </span><span class="mi">4096</span>
+<span class="k">end</span>
+
+<span class="c1"># With extended thinking (Claude 3.7+)</span>
+<span class="k">class</span> <span class="nc">ReasoningAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'anthropic/claude-haiku-4-5-20251001'</span>
+  <span class="n">model_options</span> <span class="ss">thinking: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"enabled"</span><span class="p">,</span> <span class="ss">budget_tokens: </span><span class="mi">10000</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="environment-variables">Environment Variables</h2>
+
+<p>Recommended pattern for managing credentials:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/initializers/riffer.rb (Rails)</span>
+<span class="c1"># or at application startup</span>
+
+<span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s1">'OPENAI_API_KEY'</span><span class="p">)</span> <span class="p">{</span> <span class="k">raise</span> <span class="s1">'OPENAI_API_KEY not set'</span> <span class="p">}</span>
+
+  <span class="k">if</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_REGION'</span><span class="p">]</span>
+    <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_REGION'</span><span class="p">]</span>
+    <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">api_token</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="multiple-configurations">Multiple Configurations</h2>
+
+<p>For different environments or use cases, use agent-level overrides:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ProductionAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'PRODUCTION_OPENAI_KEY'</span><span class="p">]</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">DevelopmentAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'DEV_OPENAI_KEY'</span><span class="p">]</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.0</span>  <span class="c1"># Deterministic for testing</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/stream-events/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Stream Events</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/evals/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Evals</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>
