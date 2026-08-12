@@ -15,7 +15,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-See [Agents](03_AGENTS.md) for details.
+See [Agents](AGENTS.md) for details.
 
 ### Tool
 
@@ -35,7 +35,7 @@ class WeatherTool < Riffer::Tool
 end
 ```
 
-See [Tools](06_TOOLS.md) for details.
+See [Tools](TOOLS.md) for details.
 
 ### Structured Output
 
@@ -58,7 +58,7 @@ response = SentimentAgent.generate('Analyze: "I love this!"')
 response.structured_output  # => {sentiment: "positive", score: 0.95, entities: [...]}
 ```
 
-See the [structured output section in Agents](03_AGENTS.md#structured_output) for details.
+See the [structured output section in Agents](AGENTS.md#structured_output) for details.
 
 ### Provider
 
@@ -70,7 +70,7 @@ Providers are adapters that connect to LLM services. Riffer supports:
 - **Anthropic** - Claude models via the Anthropic API
 - **Mock** - Mock provider for testing
 
-See [Providers](providers/01_PROVIDERS.md) for details.
+See [Providers](providers/PROVIDERS.md) for details.
 
 ### Messages
 
@@ -81,7 +81,7 @@ Messages represent the conversation between user and assistant. Riffer uses stro
 - `Riffer::Messages::Assistant` - LLM responses
 - `Riffer::Messages::Tool` - Tool execution results
 
-See [Messages](08_MESSAGES.md) for details.
+See [Messages](MESSAGES.md) for details.
 
 ### Stream Events
 
@@ -94,7 +94,7 @@ When streaming responses, Riffer emits typed events:
 - `WebSearchStatus` - Web search progress updates
 - `WebSearchDone` - Web search completion with sources
 
-See [Stream Events](09_STREAM_EVENTS.md) for details.
+See [Stream Events](STREAM_EVENTS.md) for details.
 
 ## Architecture
 
@@ -127,12 +127,12 @@ Response
 
 ## Next Steps
 
-- [Getting Started](02_GETTING_STARTED.md) - Quick start guide
-- [Agents](03_AGENTS.md) - Agent configuration and usage
-- [Tools](06_TOOLS.md) - Creating tools
-- [Configuration](10_CONFIGURATION.md) - Global configuration
-- [Tracing](16_TRACING.md) - OpenTelemetry span contract and host wiring
-- [Evals](11_EVALS.md) - Evaluating agent quality
-- [Guardrails](12_GUARDRAILS.md) - Input/output validation
-- [Skills](13_SKILLS.md) - Packaged agent capabilities
-- [Serialization](15_SERIALIZATION.md) - Persisting and transferring agent definitions
+- [Getting Started](GETTING_STARTED.md) - Quick start guide
+- [Agents](AGENTS.md) - Agent configuration and usage
+- [Tools](TOOLS.md) - Creating tools
+- [Configuration](CONFIGURATION.md) - Global configuration
+- [Tracing](TRACING.md) - OpenTelemetry span contract and host wiring
+- [Evals](EVALS.md) - Evaluating agent quality
+- [Guardrails](GUARDRAILS.md) - Input/output validation
+- [Skills](SKILLS.md) - Packaged agent capabilities
+- [Serialization](SERIALIZATION.md) - Persisting and transferring agent definitions

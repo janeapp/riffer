@@ -6,10 +6,10 @@ groups:
   - label: Start here
     tone: jane
     pages:
-      - source: 01_OVERVIEW.md
+      - source: OVERVIEW.md
         slug: overview
         description: Core concepts and architecture
-      - source: 02_GETTING_STARTED.md
+      - source: GETTING_STARTED.md
         slug: getting-started
         featured: true
         description: Install the gem and ship your first agent
@@ -17,80 +17,80 @@ groups:
   - label: The fundamentals
     tone: rose
     pages:
-      - source: 03_AGENTS.md
+      - source: AGENTS.md
         slug: agents
         description: Defining and configuring agents
-      - source: 04_AGENT_LIFECYCLE.md
+      - source: AGENT_LIFECYCLE.md
         slug: agent-lifecycle
         description: Generate, stream, and responses
-      - source: 05_AGENT_LOOP.md
+      - source: AGENT_LOOP.md
         slug: agent-loop
         description: Tool execution flow and stopping
-      - source: 06_TOOLS.md
+      - source: TOOLS.md
         slug: tools
         description: Creating tools for agents
-      - source: 07_TOOL_ADVANCED.md
+      - source: TOOL_ADVANCED.md
         slug: advanced-tools
         description: Timeouts, runtime, registration
-      - source: 08_MESSAGES.md
+      - source: MESSAGES.md
         slug: messages
         description: Message types and formats
-      - source: 09_STREAM_EVENTS.md
+      - source: STREAM_EVENTS.md
         slug: stream-events
         description: Streaming responses
 
   - label: Going further
     tone: gold
     pages:
-      - source: 10_CONFIGURATION.md
+      - source: CONFIGURATION.md
         slug: configuration
         description: Framework configuration
-      - source: 11_EVALS.md
+      - source: EVALS.md
         slug: evals
         description: Evaluating agent quality
-      - source: 12_GUARDRAILS.md
+      - source: GUARDRAILS.md
         slug: guardrails
         description: Input/output validation
-      - source: 13_SKILLS.md
+      - source: SKILLS.md
         slug: skills
         description: Packaged agent capabilities
-      - source: 14_MCP.md
+      - source: MCP.md
         slug: mcp
         description: Third-party MCP servers
-      - source: 15_SERIALIZATION.md
+      - source: SERIALIZATION.md
         slug: serialization
         description: Persisting agent definitions
-      - source: 16_TRACING.md
+      - source: TRACING.md
         slug: tracing
         description: OpenTelemetry spans
 
   - label: Providers
     tone: jane
     pages:
-      - source: providers/01_PROVIDERS.md
+      - source: providers/PROVIDERS.md
         slug: providers/overview
         description: Adapters, model strings, and setup
-      - source: providers/02_AMAZON_BEDROCK.md
+      - source: providers/AMAZON_BEDROCK.md
         slug: providers/amazon-bedrock
         description: Claude and more via AWS
-      - source: providers/03_ANTHROPIC.md
+      - source: providers/ANTHROPIC.md
         slug: providers/anthropic
         description: Claude via the Anthropic API
-      - source: providers/04_OPENAI.md
+      - source: providers/OPENAI.md
         slug: providers/openai
         description: GPT models via the OpenAI API
-      - source: providers/05_AZURE_OPENAI.md
+      - source: providers/AZURE_OPENAI.md
         slug: providers/azure-openai
         description: OpenAI models on Azure
-      - source: providers/08_GEMINI.md
+      - source: providers/GEMINI.md
         slug: providers/gemini
         description: Google Gemini models
-      - source: providers/09_OPENROUTER.md
+      - source: providers/OPENROUTER.md
         slug: providers/openrouter
         description: Hundreds of models, one API
-      - source: providers/06_MOCK_PROVIDER.md
+      - source: providers/MOCK_PROVIDER.md
         slug: providers/mock
         description: Deterministic responses for tests
-      - source: providers/07_CUSTOM_PROVIDERS.md
+      - source: providers/CUSTOM_PROVIDERS.md
         slug: providers/custom
         description: Build your own provider adapter

@@ -91,7 +91,7 @@ Tool names must be unique across `uses_tools` and all included MCP servers; dupl
 
 ### Subclassing
 
-Like [`uses_tools`](03_AGENTS.md#uses_tools), **`use_mcp` is not inherited** from the superclass. Declare `use_mcp` on each agent class that should load MCP tools.
+Like [`uses_tools`](AGENTS.md#uses_tools), **`use_mcp` is not inherited** from the superclass. Declare `use_mcp` on each agent class that should load MCP tools.
 
 ## Progressive Tool Discovery
 

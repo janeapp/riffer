@@ -176,11 +176,11 @@ Riffer::Providers::Repository.find(:mock)
 
 ## Provider-Specific Guides
 
-- [Amazon Bedrock](02_AMAZON_BEDROCK.md) - Claude and other models via AWS
-- [Anthropic](03_ANTHROPIC.md) - Claude models via Anthropic API
-- [OpenAI](04_OPENAI.md) - GPT models
-- [Azure OpenAI](05_AZURE_OPENAI.md) - GPT models via Azure
-- [Mock](06_MOCK_PROVIDER.md) - Mock provider for testing
-- [Custom Providers](07_CUSTOM_PROVIDERS.md) - Creating your own provider
-- [Gemini](08_GEMINI.md) - Gemini models via Google GenAI API
-- [OpenRouter](09_OPENROUTER.md) - Unified gateway across many vendors
+- [Amazon Bedrock](AMAZON_BEDROCK.md) - Claude and other models via AWS
+- [Anthropic](ANTHROPIC.md) - Claude models via Anthropic API
+- [OpenAI](OPENAI.md) - GPT models
+- [Azure OpenAI](AZURE_OPENAI.md) - GPT models via Azure
+- [Mock](MOCK_PROVIDER.md) - Mock provider for testing
+- [Custom Providers](CUSTOM_PROVIDERS.md) - Creating your own provider
+- [Gemini](GEMINI.md) - Gemini models via Google GenAI API
+- [OpenRouter](OPENROUTER.md) - Unified gateway across many vendors

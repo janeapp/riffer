@@ -126,7 +126,7 @@ end
 
 ### use_mcp
 
-Loads tools from registered [MCP](14_MCP.md) servers by tag. Like `uses_tools`, **`use_mcp` is not inherited**—add it on each subclass that should include MCP tools.
+Loads tools from registered [MCP](MCP.md) servers by tag. Like `uses_tools`, **`use_mcp` is not inherited**—add it on each subclass that should include MCP tools.
 
 ### provider_options
 
@@ -263,7 +263,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](07_TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ### guardrail
 
@@ -284,7 +284,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-See [Guardrails](12_GUARDRAILS.md) for detailed documentation.
+See [Guardrails](GUARDRAILS.md) for detailed documentation.
 
 ## Configuration Object
 
@@ -333,7 +333,7 @@ Keys and values may be `String` or `Symbol`; both are stringified, and entries w
 Tags propagate to **two** places:
 
 1. The provider's native per-request metadata field (see the mapping below).
-2. Observability — stamped as `riffer.tag.<key>` on **every** span the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`). See [Tracing](16_TRACING.md).
+2. Observability — stamped as `riffer.tag.<key>` on **every** span the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`). See [Tracing](TRACING.md).
 
 ### Reserved key: `user_id`
 
@@ -361,12 +361,12 @@ Riffer does not validate tag count, key/value length, or charset — it forwards
 
 | Goal                          | Feature           | Guide                                                                |
 | ----------------------------- | ----------------- | -------------------------------------------------------------------- |
-| Call APIs or run functions    | Tools             | [Tools](06_TOOLS.md)                                                 |
+| Call APIs or run functions    | Tools             | [Tools](TOOLS.md)                                                 |
 | Return structured JSON        | Structured Output | [structured_output](#structured_output)                              |
-| Validate or filter content    | Guardrails        | [Guardrails](12_GUARDRAILS.md)                                       |
-| Measure output quality        | Evals             | [Evals](11_EVALS.md)                                                 |
-| Add packaged capabilities     | Skills            | [Skills](13_SKILLS.md)                                               |
-| Control the tool-use loop     | Agent Loop        | [Agent Loop](05_AGENT_LOOP.md)                                       |
-| Human-in-the-loop approval    | Interrupts        | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
-| Run tools concurrently        | Tool Runtime      | [Advanced Tools](07_TOOL_ADVANCED.md#tool-runtime-experimental)      |
-| Stream responses in real time | Streaming         | [Agent Lifecycle](04_AGENT_LIFECYCLE.md#stream)                      |
+| Validate or filter content    | Guardrails        | [Guardrails](GUARDRAILS.md)                                       |
+| Measure output quality        | Evals             | [Evals](EVALS.md)                                                 |
+| Add packaged capabilities     | Skills            | [Skills](SKILLS.md)                                               |
+| Control the tool-use loop     | Agent Loop        | [Agent Loop](AGENT_LOOP.md)                                       |
+| Human-in-the-loop approval    | Interrupts        | [Agent Lifecycle](AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
+| Run tools concurrently        | Tool Runtime      | [Advanced Tools](TOOL_ADVANCED.md#tool-runtime-experimental)      |
+| Stream responses in real time | Streaming         | [Agent Lifecycle](AGENT_LIFECYCLE.md#stream)                      |

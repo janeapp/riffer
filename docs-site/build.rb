@@ -79,22 +79,35 @@ def validate_manifest!(manifest)
 end
 
 def build_groups(manifest)
+  numbers = chapter_numbers(manifest)
   manifest.map do |group|
     Group.new(
       label: group[:label],
       tone: group[:tone],
-      pages: group[:pages].map { |entry| build_page(entry, group[:label]) },
+      pages: group[:pages].map { |entry| build_page(entry, group[:label], numbers.fetch(entry[:source])) },
     )
   end
 end
 
-def build_page(entry, label)
+# Numbering restarts per docs/ subdirectory, so the providers pages read as
+# their own sequence rather than continuing the main chapters.
+def chapter_numbers(manifest)
+  manifest.
+    flat_map { |group| group[:pages] }.
+    map { |entry| entry[:source] }.
+    group_by { |source| File.dirname(source) }.
+    values.
+    flat_map { |sources| sources.each_with_index.map { |source, index| [source, format("%02d", index + 1)] } }.
+    to_h
+end
+
+def build_page(entry, label, num)
   source = DOCS.join(entry[:source]).read
   Page.new(
     source: entry[:source],
     slug: entry[:slug],
     title: source[/^# (.+)$/, 1],
-    num: File.basename(entry[:source])[/\d+/],
+    num: num,
     description: entry[:description],
     featured: entry.fetch(:featured, false),
     group_label: label,

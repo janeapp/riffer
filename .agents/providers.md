@@ -3,7 +3,7 @@
 ## Steps
 
 1. Create `lib/riffer/providers/your_provider.rb` extending `Riffer::Providers::Base`
-2. Implement the required hook methods (see [Custom Providers](../docs/providers/07_CUSTOM_PROVIDERS.md) for the full API)
+2. Implement the required hook methods (see [Custom Providers](../docs/providers/CUSTOM_PROVIDERS.md) for the full API)
 3. Register in `Riffer::Providers::Repository::REPO`
 4. Add provider config to `Riffer::Config` if needed
 5. Create tests in `test/riffer/providers/your_provider_test.rb`
@@ -42,4 +42,4 @@ Use `depends_on` helper for runtime dependency checking if your provider require
 
 ## Reference
 
-For hook method signatures, structured output handling, file handling, and complete examples, see [Custom Providers](../docs/providers/07_CUSTOM_PROVIDERS.md).
+For hook method signatures, structured output handling, file handling, and complete examples, see [Custom Providers](../docs/providers/CUSTOM_PROVIDERS.md).

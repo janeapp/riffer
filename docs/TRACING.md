@@ -44,7 +44,7 @@ end
 
 Any backend that implements the OpenTelemetry Traces API then ingests Riffer's spans with no second pipeline. For real exporter and collector setup (OTLP, sampling, resource attributes), see the [OpenTelemetry Ruby docs](https://opentelemetry.io/docs/languages/ruby/). A host on a non-OTEL stack (e.g. Datadog APM) assigns its own backend instead — see [Routing to a non-OpenTelemetry backend](#routing-to-a-non-opentelemetry-backend).
 
-The tracing knobs — the `enabled` kill switch, opt-in message-content capture, and the `backend` itself — live in [Configuration — Tracing](10_CONFIGURATION.md#tracing).
+The tracing knobs — the `enabled` kill switch, opt-in message-content capture, and the `backend` itself — live in [Configuration — Tracing](CONFIGURATION.md#tracing).
 
 Spans are emitted under the instrumentation scope named `riffer`, versioned with the Riffer gem version. That scope version is the runtime signal for which release produced a span; see [Stability](#stability).
 
@@ -81,7 +81,7 @@ invoke_agent {agent}             INTERNAL
 └─ …
 ```
 
-The `execute_tool` span opens _outside_ Riffer's `around_tool_call` hook, so any spans a host emits from that hook — or from inside the tool itself — nest beneath it. See [Advanced Tools](07_TOOL_ADVANCED.md) for the hook.
+The `execute_tool` span opens _outside_ Riffer's `around_tool_call` hook, so any spans a host emits from that hook — or from inside the tool itself — nest beneath it. See [Advanced Tools](TOOL_ADVANCED.md) for the hook.
 
 ### Reading the attribute tables
 
@@ -95,7 +95,7 @@ The contract promise is: **when present**, a key carries the documented meaning 
 
 ### Per-call tags (`riffer.tag.*`)
 
-Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, and `execute_guardrail` spans. See [Per-Call Tags](03_AGENTS.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
+Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four** span types as `riffer.tag.<key>` (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: `tags: {team: "growth"}` adds `riffer.tag.team` → `"growth"` to the `invoke_agent`, `chat`, `execute_tool`, and `execute_guardrail` spans. See [Per-Call Tags](AGENTS.md#per-call-tags) for the full surface and the per-provider request-metadata mapping.
 
 ## `invoke_agent {agent}` — the run span
 
@@ -249,7 +249,7 @@ Riffer normalizes this across providers, so the number may differ from a provide
 
 ### Cost
 
-`riffer.cost` is the modeled cost of one call (on a `chat` span) or a whole run (on the `invoke_agent` span). It lives in Riffer's own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats `gen_ai.*` for it. The attribute appears only when you have configured pricing for the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no `riffer.cost`. See [Configuration — Pricing](10_CONFIGURATION.md#pricing) for the rates.
+`riffer.cost` is the modeled cost of one call (on a `chat` span) or a whole run (on the `invoke_agent` span). It lives in Riffer's own namespace because the GenAI semantic conventions define no cost attribute by design — Riffer never squats `gen_ai.*` for it. The attribute appears only when you have configured pricing for the model in use: Riffer ships no price table and never guesses, so an unpriced model simply carries no `riffer.cost`. See [Configuration — Pricing](CONFIGURATION.md#pricing) for the rates.
 
 The value is **unitless on the wire** — Riffer attaches no currency. It is the sum of the per-token rates you configured, in whatever currency you expressed them, so a `riffer.cost` of `0.0123` means 0.0123 of that unit. The raw float is emitted unrounded; round for display in your backend, not before.
 
@@ -259,7 +259,7 @@ The value is **unitless on the wire** — Riffer attaches no currency. It is the
 
 The prompt and completion content attributes — `gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions` on `chat`, and `gen_ai.tool.call.arguments` / `gen_ai.tool.call.result` on `execute_tool` — are **off by default** and gated behind `config.tracing.capture_messages`. Message content routinely carries sensitive data (including PHI); leave capture off unless your trace backend is an appropriate destination for it.
 
-When enabled, content is serialized as GenAI-semconv JSON strings. File attachments serialize as metadata-only stubs (media type and name, never bytes). Riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK's attribute length limits. See [Configuration — Tracing](10_CONFIGURATION.md#tracing) for the knob.
+When enabled, content is serialized as GenAI-semconv JSON strings. File attachments serialize as metadata-only stubs (media type and name, never bytes). Riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK's attribute length limits. See [Configuration — Tracing](CONFIGURATION.md#tracing) for the knob.
 
 ## Provider names
 

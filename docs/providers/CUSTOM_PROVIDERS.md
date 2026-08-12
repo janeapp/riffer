@@ -234,11 +234,11 @@ Riffer::StreamEvents::FinishReasonDone.new(
 
 ## Token Usage Semantics
 
-`Riffer::Providers::TokenUsage` is a normalized contract — map your provider's raw usage into the bucket meanings defined in [Messages — Token Usage Semantics](../08_MESSAGES.md#token-usage-semantics) rather than passing fields through untouched.
+`Riffer::Providers::TokenUsage` is a normalized contract — map your provider's raw usage into the bucket meanings defined in [Messages — Token Usage Semantics](../MESSAGES.md#token-usage-semantics) rather than passing fields through untouched.
 
 ## Finish Reasons
 
-`Riffer::Providers::FinishReason` is the same kind of normalized contract — map your provider's raw finish/stop value into the vocabulary defined in [Messages — Finish Reasons](../08_MESSAGES.md#finish-reasons) (`:stop`, `:length`, `:tool_calls`, `:content_filter`, `:error`, `:other`), keeping the raw wire value alongside:
+`Riffer::Providers::FinishReason` is the same kind of normalized contract — map your provider's raw finish/stop value into the vocabulary defined in [Messages — Finish Reasons](../MESSAGES.md#finish-reasons) (`:stop`, `:length`, `:tool_calls`, `:content_filter`, `:error`, `:other`), keeping the raw wire value alongside:
 
 ```ruby
 def extract_finish_reason(response)

@@ -341,7 +341,7 @@ msg.structured_output?    # => true
 msg.structured_output     # => {sentiment: "positive", score: 0.95}
 ```
 
-See [Messages — Structured Output on Messages](08_MESSAGES.md#structured-output-on-messages) for details.
+See [Messages — Structured Output on Messages](MESSAGES.md#structured-output-on-messages) for details.
 
 ## Class Methods
 

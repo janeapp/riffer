@@ -136,7 +136,7 @@ Context flow: `Agent#execute_tool_calls` → `Tools::Runtime#execute(tool_calls,
 
 ### MCP Integration (`lib/riffer/mcp/`)
 
-Register third-party MCP servers globally; agents opt-in by tag via `use_mcp`. Tags are application-defined (manifests may list several; any overlap with `use_mcp` opts in—see `docs/14_MCP.md`).
+Register third-party MCP servers globally; agents opt-in by tag via `use_mcp`. Tags are application-defined (manifests may list several; any overlap with `use_mcp` opts in—see `docs/MCP.md`).
 
 ```ruby
 Riffer::Mcp.register(
@@ -146,7 +146,7 @@ Riffer::Mcp.register(
   discovery_headers: -> { {"Authorization" => "Bearer #{ENV['GITHUB_TOKEN']}"} }
 )
 
-# Optional: per-run tools/call headers (see docs/14_MCP.md)
+# Optional: per-run tools/call headers (see docs/MCP.md)
 Riffer.configure { |c| c.mcp.credentials = ->(manifest:, matched_tags:, context:) { ... } }
 
 class ResearchAgent < Riffer::Agent

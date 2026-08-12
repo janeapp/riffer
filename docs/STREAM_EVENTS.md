@@ -167,7 +167,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-See [Guardrails](12_GUARDRAILS.md) for more information.
+See [Guardrails](GUARDRAILS.md) for more information.
 
 ### GuardrailModification
 
@@ -184,7 +184,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-See [Guardrails](12_GUARDRAILS.md) for more information.
+See [Guardrails](GUARDRAILS.md) for more information.
 
 ### SkillActivation
 
@@ -206,7 +206,7 @@ event.name  # => "code-review"
 event.to_h  # => {role: :system, name: "code-review"}
 ```
 
-See [Skills](13_SKILLS.md) for more information.
+See [Skills](SKILLS.md) for more information.
 
 ### Interrupt
 
@@ -240,7 +240,7 @@ agent.stream("Hello").each do |event|
 end
 ```
 
-After an interrupt, call `stream` again with a string to continue the loop. See [Agent Lifecycle — Resuming an Interrupted Loop](04_AGENT_LIFECYCLE.md#resuming-an-interrupted-loop) for details.
+After an interrupt, call `stream` again with a string to continue the loop. See [Agent Lifecycle — Resuming an Interrupted Loop](AGENT_LIFECYCLE.md#resuming-an-interrupted-loop) for details.
 
 ### TokenUsageDone
 

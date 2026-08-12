@@ -24,7 +24,7 @@ gem install riffer
 
 ## Provider Setup
 
-Riffer requires an LLM provider. See [Providers](providers/01_PROVIDERS.md) for setup instructions for each supported provider.
+Riffer requires an LLM provider. See [Providers](providers/PROVIDERS.md) for setup instructions for each supported provider.
 
 ## Creating Your First Agent
 
@@ -91,8 +91,8 @@ puts agent.generate("What time is it?")
 
 ## Next Steps
 
-- [Agents](03_AGENTS.md) - Agent configuration options
-- [Tools](06_TOOLS.md) - Creating tools with parameters
-- [Messages](08_MESSAGES.md) - Message types and history
-- [Stream Events](09_STREAM_EVENTS.md) - Streaming event types
-- [Providers](providers/01_PROVIDERS.md) - Provider-specific guides
+- [Agents](AGENTS.md) - Agent configuration options
+- [Tools](TOOLS.md) - Creating tools with parameters
+- [Messages](MESSAGES.md) - Message types and history
+- [Stream Events](STREAM_EVENTS.md) - Streaming event types
+- [Providers](providers/PROVIDERS.md) - Provider-specific guides
