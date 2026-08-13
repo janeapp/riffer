@@ -5,8 +5,36 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    groups:
+      # Provider SDKs and their transport stack — these can break the
+      # adapters, so they get their own PR separate from dev tooling.
+      providers:
+        patterns:
+          - anthropic
+          - openai
+          - aws-sdk-bedrockruntime
+          - mcp
+          - faraday
+          - async
+          - io-event
+          - opentelemetry-*
+        update-types:
+          - minor
+          - patch
+      # Everything else (linting, typing, testing, docs, misc dev tools).
+      dev-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    # Major bumps stay as individual PRs (not matched by any group above).
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    groups:
+      github-actions:
+        patterns:
+          - "*"
