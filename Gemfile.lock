@@ -184,7 +184,8 @@ GEM
     reline (0.6.3)
       io-console (~> 0.5)
     rexml (3.4.4)
-    rouge (4.7.0)
+    rouge (5.1.0)
+      strscan (~> 3.1)
     rubocop (1.89.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -281,7 +282,7 @@ DEPENDENCIES
   rake (~> 13.0)
   rbs-inline (~> 0.12)
   riffer!
-  rouge (~> 4.6)
+  rouge (~> 5.1)
   rubocop
   rubocop-minitest
   rubocop-performance

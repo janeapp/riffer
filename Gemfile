@@ -29,7 +29,7 @@ gem "webmock", "~> 3.0"
 # because kramdown's rouge integration trips deprecation warnings on rouge 5.
 gem "kramdown"
 gem "kramdown-parser-gfm"
-gem "rouge", "~> 4.6"
+gem "rouge", "~> 5.1"
 gem "webrick"
 
 # Tracing tests assert real spans via the SDK's in-memory exporter. Lives in a
