@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ BREAKING CHANGES
 
-* provider constructors reject SDK passthrough options; Gemini's open_timeout/read_timeout kwargs and config members are replaced by Riffer::Providers::Gemini::Client.
+* Inference providers no longer support extra configuration parameters (e.g. timeouts). Instead, a provider client object can be defined in the riffer config directly. Credential and endpoint parameters are still supported.
 
 ### Features
 
