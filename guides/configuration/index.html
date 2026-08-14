@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -200,11 +200,14 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENAI_API_KEY'</span><span class="p">]</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">base_url</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENAI_BASE_URL'</span><span class="p">]</span> <span class="c1"># Optional — gateways, proxies</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">region</span> <span class="o">=</span> <span class="s1">'us-east-1'</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">api_token</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>
   <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">api_key</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'ANTHROPIC_API_KEY'</span><span class="p">]</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>Providers take no constructor arguments — these settings are the only way to give a provider its credentials.</p>
 
 <h2 id="accessing-configuration">Accessing Configuration</h2>
 
@@ -223,6 +226,99 @@
 <h2 id="provider-specific-configuration">Provider-Specific Configuration</h2>
 
 <p>For provider credentials and setup, see the individual <a href="/guides/providers/overview/">Provider guides</a>.</p>
+
+<h3 id="provider-clients">Provider Clients</h3>
+
+<p>Out of the box, each provider builds a default SDK client from its configured credentials. For anything beyond credentials — timeouts, retries, proxies, gateways — assign your own client to <code>config.&lt;provider&gt;.client</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">OpenAI</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'OPENAI_API_KEY'</span><span class="p">],</span>
+    <span class="ss">timeout: </span><span class="mi">30</span><span class="p">,</span>
+    <span class="ss">max_retries: </span><span class="mi">4</span>
+  <span class="p">)</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">gemini</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Gemini</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GEMINI_API_KEY'</span><span class="p">],</span>
+    <span class="ss">read_timeout: </span><span class="mi">120</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Every provider accepts a client instance or a <code>Proc</code> returning one:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th>Setting</th>
+      <th>Default client built from credentials</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenAI</td>
+      <td><code>config.openai.client</code></td>
+      <td><code>OpenAI::Client</code></td>
+    </tr>
+    <tr>
+      <td>Azure OpenAI</td>
+      <td><code>config.azure_openai.client</code></td>
+      <td><code>OpenAI::Client</code> (with the Azure endpoint as <code>base_url</code>)</td>
+    </tr>
+    <tr>
+      <td>Anthropic</td>
+      <td><code>config.anthropic.client</code></td>
+      <td><code>Anthropic::Client</code></td>
+    </tr>
+    <tr>
+      <td>Amazon Bedrock</td>
+      <td><code>config.amazon_bedrock.client</code></td>
+      <td><code>Aws::BedrockRuntime::Client</code></td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td><code>config.gemini.client</code></td>
+      <td><code>Riffer::Providers::Gemini::Client</code> (riffer-owned, see below)</td>
+    </tr>
+    <tr>
+      <td>OpenRouter</td>
+      <td><code>config.openrouter.client</code></td>
+      <td><code>OpenAI::Client</code> (pinned to the OpenRouter endpoint)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A <code>Proc</code> takes <strong>no arguments</strong> and is resolved on <strong>every LLM call</strong>, never cached by riffer — memoize inside the Proc when construction is expensive. This makes the Proc the right tool for:</p>
+
+<ul>
+  <li><strong>Fork safety</strong> (Puma clustered, Sidekiq swarm): a client built at boot holds sockets that break across <code>fork</code>; build (and cache) per process instead.</li>
+  <li><strong>Expiring credentials</strong> (Azure AD tokens, STS-vended keys): re-resolve before they go stale.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="c1"># Fork-safe shared client: one per process, built on first use after fork.</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">anthropic</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="no">ClientRegistry</span><span class="p">.</span><span class="nf">anthropic_for</span><span class="p">(</span><span class="no">Process</span><span class="p">.</span><span class="nf">pid</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="c1"># Re-resolved before the token goes stale.</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">azure_openai</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="no">OpenAI</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">AzureAd</span><span class="p">.</span><span class="nf">current_token</span><span class="p">,</span> <span class="ss">base_url: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">])</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see <a href="#multiple-configurations">Multiple Configurations</a>).</p>
+
+<p>A configured client always wins over configured credentials: once <code>config.&lt;provider&gt;.client</code> is set, the credential members are unused, since riffer no longer builds the client.</p>
+
+<h3 id="falling-through-to-the-sdk">Falling through to the SDK</h3>
+
+<p>A credential you leave unset in riffer is omitted from the default client rather than passed as <code>nil</code>, so each vendor SDK still applies its own resolution. <code>OPENAI_API_KEY</code> / <code>OPENAI_BASE_URL</code>, <code>ANTHROPIC_API_KEY</code>, and the AWS chains — region from <code>AWS_REGION</code> / <code>AWS_DEFAULT_REGION</code> / shared config, credentials from the environment, the shared credentials file, or an instance/task IAM role — all work with no riffer configuration at all.</p>
+
+<p>Two providers deliberately opt out: <code>OpenRouter</code> and <code>AzureOpenAI</code> borrow <code>OpenAI::Client</code> to reach a <strong>different</strong> vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up <code>OPENAI_API_KEY</code> / <code>OPENAI_BASE_URL</code> and send an OpenAI credential to <code>openrouter.ai</code> or your Azure endpoint. With nothing configured they raise instead — set <code>config.openrouter.api_key</code> / <code>OPENROUTER_API_KEY</code>, or <code>config.azure_openai.api_key</code> and <code>.endpoint</code> / <code>AZURE_OPENAI_API_KEY</code> and <code>AZURE_OPENAI_ENDPOINT</code>.</p>
+
+<p>The Gemini provider has no vendor SDK, so riffer ships its own transport: <code>Riffer::Providers::Gemini::Client</code> exposes <code>base_url</code>, <code>open_timeout</code>, <code>read_timeout</code>, <code>write_timeout</code>, and <code>proxy_address</code>/<code>proxy_port</code>. Anything implementing its two-method contract (<code>post</code>, <code>post_stream</code>) can be assigned to <code>config.gemini.client</code> — see <a href="/guides/providers/gemini/">Gemini</a>.</p>
 
 <h3 id="mcp-model-context-protocol">MCP (Model Context Protocol)</h3>
 
@@ -475,18 +571,6 @@
 
 <p>Override global configuration at the agent level:</p>
 
-<h3 id="provider_options">provider_options</h3>
-
-<p>Pass options directly to the provider client:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
-  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
-
-  <span class="c1"># Override API key for this agent only</span>
-  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'CUSTOM_OPENAI_KEY'</span><span class="p">]</span>
-<span class="k">end</span>
-</code></pre></div></div>
-
 <h3 id="model_options">model_options</h3>
 
 <p>Pass options to each LLM request:</p>
@@ -637,17 +721,49 @@
 
 <h2 id="multiple-configurations">Multiple Configurations</h2>
 
-<p>For different environments or use cases, use agent-level overrides:</p>
+<p>Provider credentials and clients are <strong>global</strong>, resolved per process. For different environments, branch at boot:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">openai</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="k">if</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">.</span><span class="nf">production?</span>
+    <span class="no">OpenAI</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'PRODUCTION_OPENAI_KEY'</span><span class="p">],</span> <span class="ss">max_retries: </span><span class="mi">4</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="no">OpenAI</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'DEV_OPENAI_KEY'</span><span class="p">],</span> <span class="ss">timeout: </span><span class="mi">10</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When a single process has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">InternalOpenAI</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">OpenAI</span>
+  <span class="no">InternalConfig</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:api_key</span><span class="p">,</span> <span class="ss">:base_url</span><span class="p">,</span> <span class="ss">:client</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">config</span>
+    <span class="vi">@config</span> <span class="o">||=</span> <span class="no">InternalConfig</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">ENV</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s1">'INTERNAL_OPENAI_KEY'</span><span class="p">),</span> <span class="no">ENV</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s1">'INTERNAL_GATEWAY'</span><span class="p">))</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">global_client</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">client</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">build_client</span>
+    <span class="o">::</span><span class="no">OpenAI</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">api_key</span><span class="p">,</span> <span class="ss">base_url: </span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">base_url</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Repository</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="ss">:internal_openai</span><span class="p">)</span> <span class="p">{</span> <span class="no">InternalOpenAI</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Agents then select it by model prefix (<code>model 'internal_openai/gpt-5-mini'</code>), and the two accounts never interfere. What <em>can</em> vary per agent is the model and the generation parameters:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ProductionAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
   <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
-  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'PRODUCTION_OPENAI_KEY'</span><span class="p">]</span>
 <span class="k">end</span>
 
 <span class="k">class</span> <span class="nc">DevelopmentAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
   <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
-  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'DEV_OPENAI_KEY'</span><span class="p">]</span>
-  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.0</span>  <span class="c1"># Deterministic for testing</span>
+  <span class="n">model_options</span> <span class="ss">temperature: </span><span class="mf">0.0</span> <span class="c1"># Deterministic for testing</span>
 <span class="k">end</span>
 </code></pre></div></div>
 

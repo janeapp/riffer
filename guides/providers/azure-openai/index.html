@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -207,7 +207,6 @@
 <p>Credentials are resolved in order:</p>
 
 <ol>
-  <li>Keyword arguments (<code>api_key</code>, <code>base_url</code>)</li>
   <li>Global config (<code>Riffer.config.azure_openai.api_key</code> / <code>.endpoint</code>)</li>
   <li>Environment variables (<code>AZURE_OPENAI_API_KEY</code> / <code>AZURE_OPENAI_ENDPOINT</code>)</li>
 </ol>
@@ -220,14 +219,18 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<h3 id="per-agent">Per-agent</h3>
+<h3 id="custom-client">Custom client</h3>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
-  <span class="n">model</span> <span class="s1">'azure_openai/gpt-5-mini'</span>
-  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_API_KEY'</span><span class="p">],</span>
-                   <span class="ss">base_url: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">]</span>
+<p>Azure AD token auth, timeouts, and retries are configured on your own <code>OpenAI::Client</code>. A <code>Proc</code> is the right shape for expiring AD tokens — it is resolved on every LLM call:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">azure_openai</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="no">OpenAI</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">AzureAd</span><span class="p">.</span><span class="nf">current_token</span><span class="p">,</span> <span class="ss">base_url: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">])</span>
+  <span class="p">}</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>See <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
 
 <h3 id="environment-variables-only">Environment variables only</h3>
 
@@ -334,10 +337,7 @@
 
 <h2 id="direct-provider-usage">Direct Provider Usage</h2>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AzureOpenAI</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
-  <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_API_KEY'</span><span class="p">],</span>
-  <span class="ss">base_url: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'AZURE_OPENAI_ENDPOINT'</span><span class="p">]</span>
-<span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AzureOpenAI</span><span class="p">.</span><span class="nf">new</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>

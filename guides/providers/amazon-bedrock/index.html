@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -215,6 +215,8 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
+<p><code>region</code> resolves in order: <code>Riffer.config.amazon_bedrock.region</code> → the AWS SDK’s own resolution (<code>AWS_REGION</code>, <code>AWS_DEFAULT_REGION</code>, shared config). Leaving it unset in riffer defers to the SDK rather than failing.</p>
+
 <h3 id="bearer-token-authentication">Bearer Token Authentication</h3>
 
 <p>For API token authentication:</p>
@@ -225,13 +227,20 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Or per-agent:</p>
+<h3 id="custom-client">Custom client</h3>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
-  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
-  <span class="n">provider_options</span> <span class="ss">region: </span><span class="s1">'us-west-2'</span><span class="p">,</span> <span class="ss">api_token: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>
+<p>AWS auth beyond the bearer token or default credential chain (profiles, STS, IRSA), plus retries, timeouts, and endpoints, is configured on your own <code>Aws::BedrockRuntime::Client</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">amazon_bedrock</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Aws</span><span class="o">::</span><span class="no">BedrockRuntime</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">region: </span><span class="s1">'us-east-1'</span><span class="p">,</span>
+    <span class="ss">credentials: </span><span class="no">Aws</span><span class="o">::</span><span class="no">AssumeRoleCredentials</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">role_arn: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_ROLE_ARN'</span><span class="p">],</span> <span class="ss">role_session_name: </span><span class="s1">'riffer'</span><span class="p">),</span>
+    <span class="ss">retry_limit: </span><span class="mi">5</span>
+  <span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>The setting accepts a client instance or a no-argument <code>Proc</code>, resolved on every LLM call — see <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
 
 <h2 id="supported-models">Supported Models</h2>
 
@@ -371,10 +380,7 @@
 
 <h2 id="direct-provider-usage">Direct Provider Usage</h2>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AmazonBedrock</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
-  <span class="ss">region: </span><span class="s1">'us-east-1'</span><span class="p">,</span>
-  <span class="ss">api_token: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'BEDROCK_API_TOKEN'</span><span class="p">]</span>  <span class="c1"># Optional</span>
-<span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">AmazonBedrock</span><span class="p">.</span><span class="nf">new</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>

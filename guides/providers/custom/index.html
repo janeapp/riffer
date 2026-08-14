@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -183,6 +183,7 @@
             <span class="toc-label">On this page</span>
             <ul>
               <li><a href="#basic-structure">Basic Structure</a></li>
+              <li><a href="#client-resolution">Client resolution</a></li>
               <li><a href="#using-depends_on">Using depends_on</a></li>
               <li><a href="#registering-your-provider">Registering Your Provider</a></li>
               <li><a href="#using-your-provider">Using Your Provider</a></li>
@@ -203,13 +204,13 @@
 <p>Extend <code>Riffer::Providers::Base</code> and implement the five required hook methods:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Riffer::Providers::MyProvider</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
-    <span class="c1"># Initialize your client</span>
-    <span class="vi">@api_key</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:api_key</span><span class="p">]</span> <span class="o">||</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'MY_PROVIDER_API_KEY'</span><span class="p">]</span>
-    <span class="vi">@client</span> <span class="o">=</span> <span class="no">MyProviderClient</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="vi">@api_key</span><span class="p">)</span>
-  <span class="k">end</span>
-
   <span class="kp">private</span>
+
+  <span class="c1"># Client hook — see "Client resolution" below.</span>
+
+  <span class="k">def</span> <span class="nf">build_client</span>
+    <span class="no">MyProviderClient</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'MY_PROVIDER_API_KEY'</span><span class="p">])</span>
+  <span class="k">end</span>
 
   <span class="c1"># Hook methods (matching base.rb order)</span>
 
@@ -230,11 +231,11 @@
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">execute_generate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="vi">@client</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">client</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">execute_stream</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">yielder</span><span class="p">)</span>
-    <span class="vi">@client</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">chunk</span><span class="o">|</span>
+    <span class="n">client</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">chunk</span><span class="o">|</span>
       <span class="k">case</span> <span class="n">chunk</span><span class="p">.</span><span class="nf">type</span>
       <span class="k">when</span> <span class="ss">:text</span>
         <span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">chunk</span><span class="p">.</span><span class="nf">content</span><span class="p">)</span>
@@ -316,15 +317,31 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
+<h2 id="client-resolution">Client resolution</h2>
+
+<p>Riffer constructs providers with <code>provider_class.new</code>, so <code>initialize</code> takes no arguments; read credentials from configuration inside <code>build_client</code>. <code>Riffer::Providers::Base</code> provides a private <code>client</code> method for your <code>execute_generate</code>/<code>execute_stream</code> to call. It resolves, in order:</p>
+
+<ol>
+  <li><strong>A configured client</strong> — whatever <code>global_client</code> returns: a client instance, or a no-argument <code>Proc</code> resolved on <strong>every</strong> call. Override that hook to read the client off your own configuration; it defaults to <code>nil</code>.</li>
+  <li><strong>A memoized client</strong> from <code>build_client</code> — implement this hook to build your SDK client from configured credentials.</li>
+</ol>
+
+<p>This gives your provider the same “works out of the box, bring your own client in production” behavior as the built-ins. See <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
+
 <h2 id="using-depends_on">Using depends_on</h2>
 
 <p>For lazy loading of external gems:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Riffer::Providers::MyProvider</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="k">super</span>
     <span class="n">depends_on</span> <span class="s2">"my_provider_gem"</span>  <span class="c1"># Only loaded when provider is used</span>
+  <span class="k">end</span>
 
-    <span class="vi">@client</span> <span class="o">=</span> <span class="o">::</span><span class="no">MyProviderGem</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">build_client</span>
+    <span class="o">::</span><span class="no">MyProviderGem</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s2">"MY_PROVIDER_API_KEY"</span><span class="p">])</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -476,16 +493,18 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/riffer/providers/my_provider.rb</span>
 
 <span class="k">class</span> <span class="nc">Riffer::Providers::MyProvider</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="k">super</span>
     <span class="n">depends_on</span> <span class="s2">"my_provider_gem"</span>
-
-    <span class="n">api_key</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:api_key</span><span class="p">]</span> <span class="o">||</span> <span class="no">ENV</span><span class="p">[</span><span class="s2">"MY_PROVIDER_API_KEY"</span><span class="p">]</span>
-    <span class="vi">@client</span> <span class="o">=</span> <span class="o">::</span><span class="no">MyProviderGem</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="n">api_key</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="kp">private</span>
 
   <span class="c1"># Hook methods</span>
+
+  <span class="k">def</span> <span class="nf">build_client</span>
+    <span class="o">::</span><span class="no">MyProviderGem</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s2">"MY_PROVIDER_API_KEY"</span><span class="p">])</span>
+  <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">build_request_params</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
     <span class="n">system_message</span> <span class="o">=</span> <span class="n">extract_system</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
@@ -508,13 +527,13 @@
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">execute_generate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="vi">@client</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">client</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">execute_stream</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">yielder</span><span class="p">)</span>
     <span class="n">accumulated_text</span> <span class="o">=</span> <span class="s2">""</span>
 
-    <span class="vi">@client</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+    <span class="n">client</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
       <span class="k">case</span> <span class="n">event</span><span class="p">.</span><span class="nf">type</span>
       <span class="k">when</span> <span class="ss">:text_delta</span>
         <span class="n">accumulated_text</span> <span class="o">+=</span> <span class="n">event</span><span class="p">.</span><span class="nf">text</span>

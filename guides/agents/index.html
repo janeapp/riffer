@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -308,16 +308,6 @@
 <h3 id="use_mcp">use_mcp</h3>
 
 <p>Loads tools from registered <a href="/guides/mcp/">MCP</a> servers by tag. Like <code>uses_tools</code>, <strong><code>use_mcp</code> is not inherited</strong>—add it on each subclass that should include MCP tools.</p>
-
-<h3 id="provider_options">provider_options</h3>
-
-<p>Passes options to the provider client:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
-  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
-  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'CUSTOM_OPENAI_KEY'</span><span class="p">]</span>
-<span class="k">end</span>
-</code></pre></div></div>
 
 <h3 id="model_options">model_options</h3>
 

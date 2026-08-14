@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -184,6 +184,7 @@
             <ul>
               <li><a href="#available-providers">Available Providers</a></li>
               <li><a href="#model-string-format">Model String Format</a></li>
+              <li><a href="#credentials-and-clients">Credentials and Clients</a></li>
               <li><a href="#provider-interface">Provider Interface</a></li>
               <li><a href="#method-parameters">Method Parameters</a></li>
               <li><a href="#using-providers-directly">Using Providers Directly</a></li>
@@ -259,6 +260,47 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
+<h2 id="credentials-and-clients">Credentials and Clients</h2>
+
+<p>Every credential comes from configuration: <code>Riffer::Providers::OpenAI.new</code> takes no arguments.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th>Configured credentials</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenAI</td>
+      <td><code>config.openai.api_key</code>, <code>config.openai.base_url</code></td>
+    </tr>
+    <tr>
+      <td>Azure OpenAI</td>
+      <td><code>config.azure_openai.api_key</code>, <code>config.azure_openai.endpoint</code></td>
+    </tr>
+    <tr>
+      <td>Anthropic</td>
+      <td><code>config.anthropic.api_key</code></td>
+    </tr>
+    <tr>
+      <td>Amazon Bedrock</td>
+      <td><code>config.amazon_bedrock.api_token</code>, <code>config.amazon_bedrock.region</code></td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td><code>config.gemini.api_key</code></td>
+    </tr>
+    <tr>
+      <td>OpenRouter</td>
+      <td><code>config.openrouter.api_key</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a <code>Proc</code> resolved on every LLM call) to <code>Riffer.config.&lt;provider&gt;.client</code>. See <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
+
 <h2 id="provider-interface">Provider Interface</h2>
 
 <p>All providers inherit from <code>Riffer::Providers::Base</code> and implement:</p>
@@ -267,7 +309,7 @@
 
 <p>Generates a response synchronously:</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">OpenAI</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="s2">"..."</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">OpenAI</span><span class="p">.</span><span class="nf">new</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>

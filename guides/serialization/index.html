@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -192,7 +192,7 @@
             </ul>
           </nav>
           
-<p><code>Riffer::Agent::Serializer</code> turns a <strong>resolved agent</strong> into a self-contained, provider-neutral data hash (<code>to_h</code>) and reconstructs a <strong>runnable agent</strong> from that hash (<code>from_h</code>). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.</p>
+<p><code>Riffer::Agent::Serializer</code> turns a <strong>resolved agent</strong> into a provider-neutral data hash (<code>to_h</code>) and rebuilds an agent from that hash (<code>from_h</code>). The hash carries the agent <strong>definition</strong> — not the credentials or client it needs to reach a provider (see <a href="#secrets">Secrets</a>). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.</p>
 
 <p>You normally reach it through the delegators on <code>Riffer::Agent</code>:</p>
 
@@ -231,7 +231,6 @@
   <span class="ss">model:             </span><span class="s2">"openai/gpt-4o"</span><span class="p">,</span>         <span class="c1"># resolved "provider/model" string</span>
   <span class="ss">instructions:      </span><span class="s2">"You are…"</span><span class="p">,</span>              <span class="c1"># resolved system prompt</span>
   <span class="ss">model_options:     </span><span class="p">{</span> <span class="ss">temperature: </span><span class="mf">0.2</span> <span class="p">},</span>
-  <span class="ss">provider_options:  </span><span class="p">{</span> <span class="err">…</span> <span class="p">},</span>                   <span class="c1"># see the secrets warning below</span>
   <span class="ss">max_steps:         </span><span class="mi">8</span><span class="p">,</span>                        <span class="c1"># integer; -1 = unlimited (see below)</span>
   <span class="ss">structured_output: </span><span class="p">{</span> <span class="ss">type: </span><span class="s2">"object"</span><span class="p">,</span> <span class="err">…</span> <span class="p">},</span>   <span class="c1"># JSON Schema, or null</span>
   <span class="ss">tools: </span><span class="p">[</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">description</span><span class="p">:,</span> <span class="n">parameters_schema</span><span class="p">:,</span> <span class="ss">timeout: </span><span class="p">},</span> <span class="err">…</span> <span class="p">]</span>
@@ -289,7 +288,9 @@
 
 <h2 id="secrets">Secrets</h2>
 
-<p><code>provider_options</code> and <code>model_options</code> <strong>ride on the wire as plain data</strong> — they are part of the hash and <em>will</em> transfer. Prefer configuring API keys via environment/global provider configuration rather than <code>provider_options</code>. <strong>Never serialize an agent whose options carry sensitive values</strong> — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).</p>
+<p><code>model_options</code> <strong>rides on the wire as plain data</strong> — it is part of the hash and <em>will</em> transfer. Keep sensitive values out of it; credentials live in global provider configuration and never serialize.</p>
+
+<p>The hash describes the agent, not how to authenticate as one. The destination process configures the provider itself — <code>config.&lt;provider&gt;.client</code>, or the credentials riffer builds a default client from. Clients resolve lazily on the first LLM call, so <code>from_h</code> succeeds in a process with no provider configuration; the <code>generate</code> is what fails. See <a href="/guides/configuration/">Configuration</a>.</p>
 
 <h2 id="what-does-not-transfer">What does <strong>not</strong> transfer</h2>
 

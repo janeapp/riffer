@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.40.0</span>
+            <span class="version">v0.41.0</span>
           </div>
         </nav>
       </div>
@@ -183,6 +183,7 @@
             <span class="toc-label">On this page</span>
             <ul>
               <li><a href="#configuration">Configuration</a></li>
+              <li><a href="#http-client">HTTP Client</a></li>
               <li><a href="#supported-models">Supported Models</a></li>
               <li><a href="#model-options">Model Options</a></li>
               <li><a href="#usage">Usage</a></li>
@@ -201,13 +202,87 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Or per-agent:</p>
+<h2 id="http-client">HTTP Client</h2>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
-  <span class="n">model</span> <span class="s1">'gemini/gemini-2.5-flash-lite'</span>
-  <span class="n">provider_options</span> <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GEMINI_API_KEY'</span><span class="p">]</span>
+<p>Gemini has no vendor SDK, so riffer ships its own transport: <code>Riffer::Providers::Gemini::Client</code>. The provider builds one from the configured <code>api_key</code> by default; construct your own to tune the HTTP knobs and assign it to <code>config.gemini.client</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">gemini</span><span class="p">.</span><span class="nf">client</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Gemini</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+    <span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GEMINI_API_KEY'</span><span class="p">],</span>
+    <span class="ss">read_timeout: </span><span class="mi">120</span>
+  <span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>api_key</code></td>
+      <td><code>nil</code></td>
+      <td>Sent as the <code>x-goog-api-key</code> header</td>
+    </tr>
+    <tr>
+      <td><code>base_url</code></td>
+      <td><code>https://generativelanguage.googleapis.com</code></td>
+      <td>API origin (proxies, regional mirrors)</td>
+    </tr>
+    <tr>
+      <td><code>open_timeout</code></td>
+      <td><code>10</code></td>
+      <td>Connection-open timeout in seconds</td>
+    </tr>
+    <tr>
+      <td><code>read_timeout</code></td>
+      <td><code>60</code></td>
+      <td>Read timeout in seconds</td>
+    </tr>
+    <tr>
+      <td><code>write_timeout</code></td>
+      <td><code>nil</code></td>
+      <td>Write timeout in seconds</td>
+    </tr>
+    <tr>
+      <td><code>proxy_address</code></td>
+      <td><code>nil</code></td>
+      <td>HTTP proxy host</td>
+    </tr>
+    <tr>
+      <td><code>proxy_port</code></td>
+      <td><code>nil</code></td>
+      <td>HTTP proxy port</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The setting accepts a client instance or a no-argument <code>Proc</code>, resolved on every LLM call — see <a href="/guides/configuration/#provider-clients">Configuration → Provider Clients</a>.</p>
+
+<p>The class is a default implementation, not a required base: any object implementing the two-method contract works, e.g. a Faraday-based or instrumented transport.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Contract</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>post(path, body)</code></td>
+      <td>POST <code>body</code> as JSON to <code>path</code>; return the parsed response <code>Hash</code> (symbol keys); raise <code>Riffer::Error</code> on a non-success status</td>
+    </tr>
+    <tr>
+      <td><code>post_stream(path, body) { \|chunk\| }</code></td>
+      <td>POST <code>body</code> as JSON to <code>path</code>; yield raw response body chunks; raise <code>Riffer::Error</code> on a non-success status</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2 id="supported-models">Supported Models</h2>
 
@@ -245,7 +320,7 @@
 
 <h3 id="basic-generation">Basic Generation</h3>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Gemini</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">api_key: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'GEMINI_API_KEY'</span><span class="p">])</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Providers</span><span class="o">::</span><span class="no">Gemini</span><span class="p">.</span><span class="nf">new</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Hello!"</span><span class="p">,</span>
