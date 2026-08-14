@@ -49,10 +49,12 @@ class Riffer::Config
   class OpenAI < Struct[untyped]
     attr_accessor api_key(): untyped
 
+    attr_accessor base_url(): untyped
+
     attr_accessor client(): untyped
 
-    def self.new: (?untyped api_key, ?untyped client) -> instance
-                | (?api_key: untyped, ?client: untyped) -> instance
+    def self.new: (?untyped api_key, ?untyped base_url, ?untyped client) -> instance
+                | (?api_key: untyped, ?base_url: untyped, ?client: untyped) -> instance
   end
 
   class OpenRouter < Struct[untyped]

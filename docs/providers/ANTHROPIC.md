@@ -228,9 +228,7 @@ The provider converts Riffer messages to Anthropic format:
 ## Direct Provider Usage
 
 ```ruby
-provider = Riffer::Providers::Anthropic.new(
-  api_key: ENV['ANTHROPIC_API_KEY']
-)
+provider = Riffer::Providers::Anthropic.new
 
 response = provider.generate_text(
   prompt: "Hello!",

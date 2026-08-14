@@ -6,9 +6,6 @@ require "base64"
 # Amazon Bedrock provider for Claude and other foundation models. Requires the
 # +aws-sdk-bedrockruntime+ gem.
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
-  # @rbs @api_token: String?
-  # @rbs @region: String?
-
   # Matches Anthropic models on Bedrock — bare (+anthropic.claude-...+) and
   # cross-region (+us.anthropic.claude-...+) ids.
   ANTHROPIC_MODEL_PATTERN = /(?:^|\.)anthropic\./ #: Regexp
@@ -40,14 +37,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_token: String?, ?region: String?) -> void
-  def initialize(api_token: nil, region: nil)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "aws-sdk-bedrockruntime"
-
-    @api_token = api_token
-    @region = region
-    @explicit_credentials = !!(api_token || region)
   end
 
   private
@@ -63,9 +56,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # +Aws::Errors::MissingRegionError+ on an explicit nil.
   #--
   #: () -> untyped
-  def build_default_client
-    api_token = @api_token || Riffer.config.amazon_bedrock.api_token
-    region = @region || Riffer.config.amazon_bedrock.region
+  def build_client
+    api_token = Riffer.config.amazon_bedrock.api_token
+    region = Riffer.config.amazon_bedrock.region
 
     if api_token && !api_token.empty?
       Aws::BedrockRuntime::Client.new(**{

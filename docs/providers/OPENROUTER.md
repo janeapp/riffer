@@ -24,7 +24,7 @@ Riffer.configure do |config|
 end
 ```
 
-The `api_key` resolves in order: constructor keyword arg → `Riffer.config.openrouter.api_key` → `ENV['OPENROUTER_API_KEY']`.
+The `api_key` resolves in order: `Riffer.config.openrouter.api_key` → `ENV['OPENROUTER_API_KEY']`.
 
 For anything beyond the API key — timeouts, retries, proxies — supply your own `OpenAI::Client` pinned to the OpenRouter endpoint:
 
@@ -234,7 +234,7 @@ User messages with files become multi-part content (`image_url` for images, `fil
 ## Direct Provider Usage
 
 ```ruby
-provider = Riffer::Providers::OpenRouter.new(api_key: ENV['OPENROUTER_API_KEY'])
+provider = Riffer::Providers::OpenRouter.new
 
 response = provider.generate_text(
   prompt: 'Hello!',

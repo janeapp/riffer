@@ -9,11 +9,14 @@ Use `Riffer.configure` to set up provider credentials:
 ```ruby
 Riffer.configure do |config|
   config.openai.api_key = ENV['OPENAI_API_KEY']
+  config.openai.base_url = ENV['OPENAI_BASE_URL'] # Optional — gateways, proxies
   config.amazon_bedrock.region = 'us-east-1'
   config.amazon_bedrock.api_token = ENV['BEDROCK_API_TOKEN']
   config.anthropic.api_key = ENV['ANTHROPIC_API_KEY']
 end
 ```
+
+Providers take no constructor arguments — these settings are the only way to give a provider its credentials.
 
 ## Accessing Configuration
 
@@ -82,9 +85,9 @@ Riffer.configure do |config|
 end
 ```
 
-Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, give each its own credentials at construction (see below).
+Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see [Multiple Configurations](#multiple-configurations)).
 
-An agent (or standalone provider) constructed with explicit credentials — e.g. `Riffer::Providers::OpenAI.new(api_key: "...")` — always builds its own default client from them and ignores the configured client, so explicit credentials are never silently overridden by a shared client.
+A configured client always wins over configured credentials: once `config.<provider>.client` is set, the credential members are unused, since riffer no longer builds the client.
 
 ### Falling through to the SDK
 
@@ -364,14 +367,31 @@ Riffer.configure do |config|
 end
 ```
 
-Agents do not take per-agent credentials — `Riffer::Agent` always builds its provider from global configuration. When a single process genuinely has to reach two different accounts or endpoints, skip the agent layer and use a provider directly:
+Agents do not take per-agent credentials, and neither do providers — `Riffer::Providers::OpenAI.new` takes no arguments and reads everything from `config.openai`. When a single process genuinely has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:
 
 ```ruby
-internal = Riffer::Providers::OpenAI.new(api_key: ENV['INTERNAL_OPENAI_KEY'], base_url: ENV['INTERNAL_GATEWAY'])
-internal.generate_text(prompt: 'Hello', model: 'gpt-5-mini')
+class InternalOpenAI < Riffer::Providers::OpenAI
+  InternalConfig = Struct.new(:api_key, :base_url, :client)
+
+  def self.config
+    @config ||= InternalConfig.new(ENV['INTERNAL_OPENAI_KEY'], ENV['INTERNAL_GATEWAY'])
+  end
+
+  private
+
+  def provider_config
+    self.class.config
+  end
+
+  def build_client
+    ::OpenAI::Client.new(api_key: provider_config.api_key, base_url: provider_config.base_url)
+  end
+end
+
+Riffer::Providers::Repository.register(:internal_openai) { InternalOpenAI }
 ```
 
-A provider constructed with explicit credentials always builds its own client and ignores `config.<provider>.client`, so the two never interfere. What _can_ vary per agent is the model and the generation parameters:
+Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere. What _can_ vary per agent is the model and the generation parameters:
 
 ```ruby
 class ProductionAgent < Riffer::Agent

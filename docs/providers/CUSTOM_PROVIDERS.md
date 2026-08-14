@@ -8,18 +8,12 @@ Extend `Riffer::Providers::Base` and implement the five required hook methods:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(api_key: nil)
-    super()
-    @api_key = api_key
-    @explicit_credentials = !!api_key
-  end
-
   private
 
   # Client hook — see "Client resolution" below.
 
-  def build_default_client
-    MyProviderClient.new(api_key: @api_key || ENV['MY_PROVIDER_API_KEY'])
+  def build_client
+    MyProviderClient.new(api_key: ENV['MY_PROVIDER_API_KEY'])
   end
 
   # Hook methods (matching base.rb order)
@@ -129,11 +123,10 @@ end
 
 ## Client resolution
 
-Agents construct providers with **no arguments** (`provider_class.new`), so a custom provider's constructor must be callable bare — take only optional keywords. `Riffer::Providers::Base` provides a private `client` method your `execute_generate`/`execute_stream` should call instead of holding a client ivar. It resolves, in order:
+Providers take **no constructor arguments** — agents construct them bare (`provider_class.new`), and every credential is read from configuration inside `build_client`. `Riffer::Providers::Base` provides a private `client` method your `execute_generate`/`execute_stream` should call instead of holding a client ivar. It resolves, in order:
 
-1. **Constructor credentials** — when `@explicit_credentials` is true (set it in your constructor when a caller passed credentials directly), a memoized `build_default_client` wins unconditionally.
-2. **A configured client** — whatever `provider_config&.client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override the `provider_config` hook to return your config object (any object with a `client` method); it defaults to `nil`.
-3. **A memoized default** from `build_default_client` — implement this hook to build your SDK client from credentials.
+1. **A configured client** — whatever `provider_config&.client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override the `provider_config` hook to return your config object (any object with a `client` method); it defaults to `nil`.
+2. **A memoized client** from `build_client` — implement this hook to build your SDK client from configured credentials.
 
 This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins. See [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
 
@@ -143,18 +136,15 @@ For lazy loading of external gems:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(api_key: nil)
-    super()
+  def initialize
+    super
     depends_on "my_provider_gem"  # Only loaded when provider is used
-
-    @api_key = api_key
-    @explicit_credentials = !!api_key
   end
 
   private
 
-  def build_default_client
-    ::MyProviderGem::Client.new(api_key: @api_key || ENV["MY_PROVIDER_API_KEY"])
+  def build_client
+    ::MyProviderGem::Client.new(api_key: ENV["MY_PROVIDER_API_KEY"])
   end
 end
 ```
@@ -315,20 +305,17 @@ end
 # lib/riffer/providers/my_provider.rb
 
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(api_key: nil)
-    super()
+  def initialize
+    super
     depends_on "my_provider_gem"
-
-    @api_key = api_key
-    @explicit_credentials = !!api_key
   end
 
   private
 
   # Hook methods
 
-  def build_default_client
-    ::MyProviderGem::Client.new(api_key: @api_key || ENV["MY_PROVIDER_API_KEY"])
+  def build_client
+    ::MyProviderGem::Client.new(api_key: ENV["MY_PROVIDER_API_KEY"])
   end
 
   def build_request_params(messages, model, options)

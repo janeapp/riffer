@@ -14,9 +14,8 @@ gem 'openai'
 
 Credentials are resolved in order:
 
-1. Constructor keyword arguments (`api_key`, `endpoint`)
-2. Global config (`Riffer.config.azure_openai.api_key` / `.endpoint`)
-3. Environment variables (`AZURE_OPENAI_API_KEY` / `AZURE_OPENAI_ENDPOINT`)
+1. Global config (`Riffer.config.azure_openai.api_key` / `.endpoint`)
+2. Environment variables (`AZURE_OPENAI_API_KEY` / `AZURE_OPENAI_ENDPOINT`)
 
 ### Global config
 
@@ -155,10 +154,7 @@ end
 ## Direct Provider Usage
 
 ```ruby
-provider = Riffer::Providers::AzureOpenAI.new(
-  api_key: ENV['AZURE_OPENAI_API_KEY'],
-  base_url: ENV['AZURE_OPENAI_ENDPOINT']
-)
+provider = Riffer::Providers::AzureOpenAI.new
 
 response = provider.generate_text(
   prompt: "Hello!",

@@ -4,8 +4,6 @@
 # Anthropic provider for Claude models via the Anthropic API. Requires the
 # +anthropic+ gem.
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
-  # @rbs @api_key: String?
-
   WEB_SEARCH_TOOL_TYPE = "web_search_20250305" #: String
 
   FINISH_REASONS = {
@@ -32,13 +30,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?) -> void
-  def initialize(api_key: nil)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "anthropic"
-
-    @api_key = api_key
-    @explicit_credentials = !!api_key
   end
 
   private
@@ -54,8 +49,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # reachable regardless of how that SDK distinguishes nil from absent.
   #--
   #: () -> untyped
-  def build_default_client
-    ::Anthropic::Client.new(**{ api_key: @api_key || Riffer.config.anthropic.api_key }.compact)
+  def build_client
+    ::Anthropic::Client.new(**{ api_key: Riffer.config.anthropic.api_key }.compact)
   end
 
   #--

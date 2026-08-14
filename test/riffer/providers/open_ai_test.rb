@@ -5,6 +5,16 @@ require "test_helper"
 describe Riffer::Providers::OpenAI do
   let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 
+  # Credentials now reach the provider only through config, so every test that
+  # builds a client needs one configured.
+  before { Riffer.config.openai.api_key = api_key }
+
+  after do
+    Riffer.config.openai.api_key = nil
+    Riffer.config.openai.base_url = nil
+    Riffer.config.openai.client = nil
+  end
+
   describe ".semconv_provider_name" do
     it "returns the semconv well-known value" do
       expect(Riffer::Providers::OpenAI.semconv_provider_name).must_equal "openai"
@@ -12,7 +22,7 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "finish reasons" do
-    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenAI.new }
 
     it "derives stop from a completed response without tool calls" do
       response = Struct.new(:status, :output).new(:completed, [])
@@ -90,16 +100,14 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "#initialize" do
-    it "creates the provider with an api_key" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+    it "creates the provider" do
+      provider = Riffer::Providers::OpenAI.new
 
       expect(provider).must_be_instance_of Riffer::Providers::OpenAI
     end
 
-    it "accepts a base_url" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key, base_url: "http://localhost:4000/v1")
-
-      expect(provider).must_be_instance_of Riffer::Providers::OpenAI
+    it "takes no arguments" do
+      expect { Riffer::Providers::OpenAI.new(api_key: api_key) }.must_raise ArgumentError
     end
 
     it "raises on unknown constructor options" do
@@ -108,8 +116,6 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "client resolution" do
-    after { Riffer.config.openai.client = nil }
-
     it "uses the configured client" do
       configured = Object.new
       Riffer.config.openai.client = configured
@@ -128,37 +134,42 @@ describe Riffer::Providers::OpenAI do
       expect(calls).must_equal 2
     end
 
-    it "prefers constructor credentials over the configured client" do
-      Riffer.config.openai.client = Object.new
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+    it "memoizes the client it builds" do
+      provider = Riffer::Providers::OpenAI.new
 
-      expect(provider.send(:client)).must_be_instance_of OpenAI::Client
+      expect(provider.send(:client)).must_be_same_as provider.send(:client)
     end
 
-    it "lets the default client pick up OPENAI_BASE_URL" do
+    it "prefers a configured client over configured credentials" do
+      configured = Object.new
+      Riffer.config.openai.client = configured
+
+      expect(Riffer::Providers::OpenAI.new.send(:client)).must_be_same_as configured
+    end
+
+    it "lets the built client pick up OPENAI_BASE_URL" do
       original = ENV.fetch("OPENAI_BASE_URL", nil)
       ENV["OPENAI_BASE_URL"] = "https://gateway.example/v1"
-      Riffer.config.openai.api_key = api_key
 
       expect(Riffer::Providers::OpenAI.new.send(:client).base_url.to_s).must_equal "https://gateway.example/v1"
     ensure
       ENV["OPENAI_BASE_URL"] = original
-      Riffer.config.openai.api_key = nil
     end
 
-    it "prefers an explicit base_url over OPENAI_BASE_URL" do
+    it "prefers a configured base_url over OPENAI_BASE_URL" do
       original = ENV.fetch("OPENAI_BASE_URL", nil)
       ENV["OPENAI_BASE_URL"] = "https://gateway.example/v1"
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key, base_url: "https://localhost:4000/v1")
+      Riffer.config.openai.base_url = "https://localhost:4000/v1"
 
-      expect(provider.send(:client).base_url.to_s).must_equal "https://localhost:4000/v1"
+      expect(Riffer::Providers::OpenAI.new.send(:client).base_url.to_s).must_equal "https://localhost:4000/v1"
     ensure
       ENV["OPENAI_BASE_URL"] = original
     end
 
-    it "lets the default client pick up OPENAI_API_KEY" do
+    it "lets the built client pick up OPENAI_API_KEY" do
       original = ENV.fetch("OPENAI_API_KEY", nil)
       ENV["OPENAI_API_KEY"] = "sk-from-env"
+      Riffer.config.openai.api_key = nil
 
       expect(Riffer::Providers::OpenAI.new.send(:client).api_key).must_equal "sk-from-env"
     ensure
@@ -183,7 +194,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -196,7 +207,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           params = { system: "Be concise", prompt: "Say hello", model: "gpt-5-mini" }
           result = provider.generate_text(**params)
 
@@ -210,7 +221,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           messages = [
             { role: "system", content: "Be concise" },
             { role: "user", content: "Say hello" },
@@ -225,7 +236,7 @@ describe Riffer::Providers::OpenAI do
     describe "with a User message" do
       it "returns an Assistant" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/with_a_User_message/returns_an_Assistant") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           messages = [Riffer::Messages::User.new("Say hello")]
           result = provider.generate_text(messages: messages, model: "gpt-5-mini")
 
@@ -237,7 +248,7 @@ describe Riffer::Providers::OpenAI do
     describe "with a System message" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/with_a_System_message/returns_an_Assistant_message") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           messages = [
             Riffer::Messages::System.new("Be concise"),
             Riffer::Messages::User.new("Say hello"),
@@ -254,7 +265,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           messages = [
             Riffer::Messages::User.new("Say hello"),
             Riffer::Messages::Assistant.new("Hello!"),
@@ -272,7 +283,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/with_reasoning_parameter/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -283,7 +294,7 @@ describe Riffer::Providers::OpenAI do
     describe "structured output" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -300,7 +311,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns non-empty content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -317,7 +328,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns valid JSON content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -333,7 +344,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes sentiment key" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -351,7 +362,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes score key" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -387,7 +398,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/structured_output_nested_object/returns_nested_json",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: nested_object_prompt,
             model: "gpt-5-mini",
@@ -425,7 +436,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/structured_output_null_optionals/returns_null_for_optional_fields",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: null_optional_prompt,
             model: "gpt-5-mini",
@@ -454,7 +465,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns an enum value when present" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_optional_enum/returns_enum_value") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "Classify the session: yoga class, in-person format. Return session_type from the enum.",
             model: "gpt-5-mini",
@@ -469,7 +480,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns null when the enum value is unknown" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_optional_enum/returns_null") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "Classify the session: yoga class, underwater format. The session_type enum does not " \
                     "cover this, return null for session_type.",
@@ -496,7 +507,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns valid JSON with typed array content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/structured_output_typed_array/returns_typed_arrays") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: typed_array_prompt,
             model: "gpt-5-mini",
@@ -530,7 +541,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: array_of_objects_prompt,
             model: "gpt-5-mini",
@@ -553,7 +564,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_generate_text/without_reasoning_parameter/does_not_include_reasoning",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -563,7 +574,7 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "tags" do
-    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenAI.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
 
     # Tags arrive already normalized from Run, so these pass clean String maps.
@@ -598,7 +609,7 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "per-call tags (end-to-end)" do
-    let(:provider) { Riffer::Providers::OpenAI.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenAI.new }
 
     it "forwards per-call tags to the request" do
       VCR.use_cassette("Riffer_Providers_OpenAI/tags/forwards_metadata_and_safety_identifier") do
@@ -617,7 +628,7 @@ describe Riffer::Providers::OpenAI do
     describe "when prompt is provided" do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini")
 
           expect(result).must_be_instance_of Enumerator
@@ -626,7 +637,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
 
           expect(events).wont_be_empty
@@ -635,7 +646,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields TextDelta events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
           deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
@@ -645,7 +656,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
@@ -657,7 +668,7 @@ describe Riffer::Providers::OpenAI do
     describe "when messages are provided" do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
             model: "gpt-5-mini",
@@ -669,7 +680,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
             model: "gpt-5-mini",
@@ -685,7 +696,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDelta_events",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
           reasoning_deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
 
@@ -695,7 +706,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields ReasoningDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDone_event") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
           reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
 
@@ -707,7 +718,7 @@ describe Riffer::Providers::OpenAI do
         VCR.use_cassette(
           "Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_reasoning_before_text",
         ) do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
           first_reasoning_index = events.index { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
           first_text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
@@ -722,7 +733,7 @@ describe Riffer::Providers::OpenAI do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do
         VCR.use_cassette("Riffer_Providers_OpenAI/usage/_generate_text/includes_usage") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
 
           expect(result.token_usage).wont_be_nil
@@ -737,7 +748,7 @@ describe Riffer::Providers::OpenAI do
     describe "#stream_text yields TokenUsageDone" do
       it "yields TokenUsageDone event with correct token counts" do
         VCR.use_cassette("Riffer_Providers_OpenAI/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
           usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 
@@ -750,7 +761,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields TokenUsageDone after TextDone" do
         VCR.use_cassette("Riffer_Providers_OpenAI/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(prompt: "Say hello", model: "gpt-5-mini").to_a
           text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
           usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
@@ -763,7 +774,7 @@ describe Riffer::Providers::OpenAI do
 
   describe "structured output" do
     it "includes text.format in request params" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       params.required(:score, Float)
@@ -776,7 +787,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "sets schema name to response" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
@@ -788,7 +799,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "sets strict to true" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
@@ -800,7 +811,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "includes json_schema in format" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
@@ -812,7 +823,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "does not include text.format when not configured" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       messages = [Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, "gpt-5-mini", {})
@@ -821,7 +832,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "does not pass structured_output through to API params" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
@@ -833,7 +844,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "puts all properties in required for strict mode" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
       p.required(:name, String)
       p.optional(:age, Integer)
@@ -847,7 +858,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "makes optional properties nullable for strict mode" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
       p.required(:name, String)
       p.optional(:age, Integer)
@@ -862,7 +873,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "makes nested optional properties nullable for strict mode" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
       p.required(:address, Hash) do
         required :city, String
@@ -880,7 +891,7 @@ describe Riffer::Providers::OpenAI do
     end
 
     it "makes optional properties in array items nullable for strict mode" do
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       p = Riffer::Params.new
       p.required(:items, Array) do
         required :sku, String
@@ -923,7 +934,7 @@ describe Riffer::Providers::OpenAI do
     describe "#generate_text with web_search" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_generate_text/returns_an_Assistant_message") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -936,7 +947,7 @@ describe Riffer::Providers::OpenAI do
 
       it "accepts hash web_search options" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_generate_text/accepts_hash_web_search_options") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -951,7 +962,7 @@ describe Riffer::Providers::OpenAI do
     describe "#stream_text with web_search" do
       it "yields WebSearchStatus events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_status") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -965,7 +976,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields WebSearchDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -979,7 +990,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes query in WebSearchDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -993,7 +1004,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes sources array in WebSearchDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_result") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -1007,7 +1018,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields web search events before text events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/web_search/_stream_text/yields_web_search_before_text") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the latest Ruby version?",
             model: "gpt-5-mini",
@@ -1031,7 +1042,7 @@ describe Riffer::Providers::OpenAI do
     describe "#generate_text with image" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file])
 
@@ -1041,7 +1052,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file])
 
@@ -1053,7 +1064,7 @@ describe Riffer::Providers::OpenAI do
     describe "#generate_text with document" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           pdf_data = Base64.strict_encode64(
             "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
             "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
@@ -1070,7 +1081,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           pdf_data = Base64.strict_encode64(
             "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
             "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
@@ -1089,7 +1100,7 @@ describe Riffer::Providers::OpenAI do
     describe "#stream_text with document" do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           pdf_data = Base64.strict_encode64(
             "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
             "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
@@ -1106,7 +1117,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_document") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           pdf_data = Base64.strict_encode64(
             "%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" \
             "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" \
@@ -1126,7 +1137,7 @@ describe Riffer::Providers::OpenAI do
     describe "#stream_text with image" do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file]).to_a
 
@@ -1136,7 +1147,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_image") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
@@ -1158,7 +1169,7 @@ describe Riffer::Providers::OpenAI do
         end
       end
 
-      provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+      provider = Riffer::Providers::OpenAI.new
       format = provider.send(:convert_tool_to_openai_format, tool)
       schema = format[:parameters]
 
@@ -1181,7 +1192,7 @@ describe Riffer::Providers::OpenAI do
     describe "#generate_text with tools" do
       it "returns Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1194,7 +1205,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns tool_calls" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1207,7 +1218,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns correct tool name" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1220,7 +1231,7 @@ describe Riffer::Providers::OpenAI do
 
       it "parses tool call arguments correctly" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/parses_arguments") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1234,7 +1245,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes tool call id" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1247,7 +1258,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes tool call call_id" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1262,7 +1273,7 @@ describe Riffer::Providers::OpenAI do
     describe "#generate_text with Tool message in history" do
       it "returns Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new(
@@ -1293,7 +1304,7 @@ describe Riffer::Providers::OpenAI do
 
       it "returns response with content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new(
@@ -1326,7 +1337,7 @@ describe Riffer::Providers::OpenAI do
     describe "#stream_text with tools" do
       it "yields ToolCallDelta events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/yields_tool_call_delta") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1340,7 +1351,7 @@ describe Riffer::Providers::OpenAI do
 
       it "yields ToolCallDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/yields_tool_call_done") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1354,7 +1365,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes tool name in ToolCallDone" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/tool_call_done_has_name") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1368,7 +1379,7 @@ describe Riffer::Providers::OpenAI do
 
       it "includes arguments in ToolCallDone" do
         VCR.use_cassette("Riffer_Providers_OpenAI/tool_calling/_stream_text/tool_call_done_has_arguments") do
-          provider = Riffer::Providers::OpenAI.new(api_key: api_key)
+          provider = Riffer::Providers::OpenAI.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gpt-5-mini",
@@ -1384,14 +1395,14 @@ describe Riffer::Providers::OpenAI do
   end
 
   describe "#stream_text resource cleanup" do
-    let(:provider) { Riffer::Providers::OpenAI.new(api_key: "test") }
+    let(:provider) { Riffer::Providers::OpenAI.new }
 
     def install_stream_double(provider, stream_double)
       responses_double = Object.new
       responses_double.define_singleton_method(:stream) { |_params| stream_double }
       client_double = Object.new
       client_double.define_singleton_method(:responses) { responses_double }
-      provider.instance_variable_set(:@default_client, client_double)
+      provider.instance_variable_set(:@client, client_double)
     end
 
     it "calls stream.close when iteration raises mid-stream" do

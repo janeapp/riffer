@@ -5,11 +5,9 @@ require "json"
 
 # OpenRouter provider (https://openrouter.ai). Requires the +openai+ gem —
 # OpenRouter exposes an OpenAI-compatible endpoint, so this reuses the OpenAI
-# SDK with a +base_url+ override. +api_key+ falls back to config, then
+# SDK with a +base_url+ override. +api_key+ resolves from config, then
 # +OPENROUTER_API_KEY+.
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
-  # @rbs @api_key: String?
-
   BASE_URL = "https://openrouter.ai/api/v1" #: String
 
   FINISH_REASONS = {
@@ -29,13 +27,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?) -> void
-  def initialize(api_key: nil)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "openai"
-
-    @api_key = api_key
-    @explicit_credentials = !!api_key
   end
 
   private
@@ -49,11 +44,12 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
   # different vendor, so omitting an unset +api_key+ would let the SDK fall
   # back to +OPENAI_API_KEY+ and send an OpenAI credential to OpenRouter.
-  # Passing nil raises in the SDK instead.
+  # Passing nil raises in the SDK instead. +OPENROUTER_API_KEY+ is read here
+  # rather than left to the SDK for the same reason.
   #--
   #: () -> untyped
-  def build_default_client
-    api_key = @api_key || Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
+  def build_client
+    api_key = Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
     ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL)
   end
 

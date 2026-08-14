@@ -85,7 +85,7 @@ model_options topP: 0.9
 ### Basic Generation
 
 ```ruby
-provider = Riffer::Providers::Gemini.new(api_key: ENV['GEMINI_API_KEY'])
+provider = Riffer::Providers::Gemini.new
 
 response = provider.generate_text(
   prompt: "Hello!",

@@ -10,8 +10,7 @@ require "json"
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
-  # @rbs @explicit_credentials: bool
-  # @rbs @default_client: untyped
+  # @rbs @client: untyped
 
   WIRE_SEPARATOR = "__" #: String
 
@@ -107,24 +106,17 @@ class Riffer::Providers::Base
     Riffer::Helpers::Dependencies.depends_on(gem_name)
   end
 
-  # Returns the client for the current LLM call. Constructor credentials pin a
-  # provider-built default (so an explicitly credentialed provider never rides
-  # a shared configured client); otherwise a configured client wins, resolved
-  # on every call so a Proc can vary the client by process or credential
-  # lifetime.
+  # Returns the client for the current LLM call. A configured client wins,
+  # resolved on every call so a Proc can vary the client by process or
+  # credential lifetime; otherwise the provider builds one from the configured
+  # credentials, memoized for the life of the provider.
   #--
   #: () -> untyped
   def client
-    return default_client if @explicit_credentials
-
     configured = provider_config&.client
-    configured ? Riffer::Helpers::CallOrValue.resolve(configured) : default_client
-  end
+    return Riffer::Helpers::CallOrValue.resolve(configured) if configured
 
-  #--
-  #: () -> untyped
-  def default_client
-    @default_client ||= build_default_client
+    @client ||= build_client
   end
 
   # Returns the provider's global config struct (the +client+ / credential
@@ -137,8 +129,8 @@ class Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def build_default_client
-    raise NotImplementedError, "Subclasses must implement #build_default_client"
+  def build_client
+    raise NotImplementedError, "Subclasses must implement #build_client"
   end
 
   #--

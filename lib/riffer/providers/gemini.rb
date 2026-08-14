@@ -6,8 +6,6 @@ require "securerandom"
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
-  # @rbs @api_key: String?
-
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
 
   FINISH_REASONS = {
@@ -29,14 +27,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "gcp.gemini"
   end
 
-  #--
-  #: (?api_key: String?) -> void
-  def initialize(api_key: nil)
-    super()
-    @api_key = api_key
-    @explicit_credentials = !!api_key
-  end
-
   private
 
   #--
@@ -47,8 +37,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def build_default_client
-    Riffer::Providers::Gemini::Client.new(**{ api_key: @api_key || Riffer.config.gemini.api_key }.compact)
+  def build_client
+    Riffer::Providers::Gemini::Client.new(**{ api_key: Riffer.config.gemini.api_key }.compact)
   end
 
   #--

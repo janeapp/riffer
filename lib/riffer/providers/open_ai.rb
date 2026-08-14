@@ -3,9 +3,6 @@
 
 # OpenAI provider for GPT models. Requires the +openai+ gem.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
-  # @rbs @api_key: String?
-  # @rbs @base_url: String?
-
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
   # The GenAI semconv well-known provider name.
@@ -16,14 +13,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, ?base_url: String?) -> void
-  def initialize(api_key: nil, base_url: nil)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "openai"
-
-    @api_key = api_key
-    @base_url = base_url
-    @explicit_credentials = !!(api_key || base_url)
   end
 
   private
@@ -39,10 +32,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # suppress that fallback.
   #--
   #: () -> untyped
-  def build_default_client
+  def build_client
     ::OpenAI::Client.new(**{
-      api_key: @api_key || Riffer.config.openai.api_key,
-      base_url: @base_url,
+      api_key: Riffer.config.openai.api_key,
+      base_url: Riffer.config.openai.base_url,
     }.compact)
   end
 

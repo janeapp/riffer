@@ -22,7 +22,7 @@ Riffer.configure do |config|
 end
 ```
 
-`region` resolves in order: constructor keyword arg → `Riffer.config.amazon_bedrock.region` → the AWS SDK's own resolution (`AWS_REGION`, `AWS_DEFAULT_REGION`, shared config). Leaving it unset in riffer defers to the SDK rather than failing.
+`region` resolves in order: `Riffer.config.amazon_bedrock.region` → the AWS SDK's own resolution (`AWS_REGION`, `AWS_DEFAULT_REGION`, shared config). Leaving it unset in riffer defers to the SDK rather than failing.
 
 ### Bearer Token Authentication
 
@@ -177,10 +177,7 @@ The provider converts Riffer messages to Bedrock format:
 ## Direct Provider Usage
 
 ```ruby
-provider = Riffer::Providers::AmazonBedrock.new(
-  region: 'us-east-1',
-  api_token: ENV['BEDROCK_API_TOKEN']  # Optional
-)
+provider = Riffer::Providers::AmazonBedrock.new
 
 response = provider.generate_text(
   prompt: "Hello!",
