@@ -1,6 +1,6 @@
 # Serialization
 
-`Riffer::Agent::Serializer` turns a **resolved agent** into a self-contained, provider-neutral data hash (`to_h`) and reconstructs a **runnable agent** from that hash (`from_h`). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.
+`Riffer::Agent::Serializer` turns a **resolved agent** into a provider-neutral data hash (`to_h`) and rebuilds an agent from that hash (`from_h`). The hash carries the agent **definition** — not the credentials or client it needs to reach a provider (see [Secrets](#secrets)). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.
 
 You normally reach it through the delegators on `Riffer::Agent`:
 
@@ -101,6 +101,8 @@ A finite integer round-trips as-is; a hash missing the key falls back to the def
 ## Secrets
 
 `model_options` **rides on the wire as plain data** — it is part of the hash and _will_ transfer. Keep sensitive values out of it; credentials live in global provider configuration and never serialize.
+
+That is also where the hash stops: it describes the agent, not how to authenticate as one. The destination process has to configure the provider itself — `config.<provider>.client`, or the credentials riffer builds a default client from — before the rebuilt agent can make a call. Clients resolve lazily on the first LLM call, so `from_h` succeeds in a process with no provider configuration at all; the `generate` is what fails. See [Configuration](CONFIGURATION.md).
 
 ## What does **not** transfer
 
