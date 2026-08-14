@@ -13,16 +13,31 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (**untyped) -> void
-  def initialize(**options)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "openai"
-
-    api_key = options.fetch(:api_key, Riffer.config.openai.api_key)
-    @client = ::OpenAI::Client.new(api_key: api_key, **options.except(:api_key))
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.openai.client
+  end
+
+  # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /
+  # +OPENAI_BASE_URL+ only for a missing argument, and an explicit nil would
+  # suppress that fallback.
+  #--
+  #: () -> untyped
+  def build_client
+    ::OpenAI::Client.new(**{
+      api_key: Riffer.config.openai.api_key,
+      base_url: Riffer.config.openai.base_url,
+    }.compact)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -81,7 +96,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.responses.create(params)
+    client.responses.create(params)
   end
 
   #--
@@ -190,7 +205,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       tool_info: {},
     } #: Hash[Symbol, untyped]
 
-    stream = @client.responses.stream(params)
+    stream = client.responses.stream(params)
     begin
       stream.each do |event|
         case event.type

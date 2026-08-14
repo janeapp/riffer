@@ -14,9 +14,8 @@ gem 'openai'
 
 Credentials are resolved in order:
 
-1. Keyword arguments (`api_key`, `base_url`)
-2. Global config (`Riffer.config.azure_openai.api_key` / `.endpoint`)
-3. Environment variables (`AZURE_OPENAI_API_KEY` / `AZURE_OPENAI_ENDPOINT`)
+1. Global config (`Riffer.config.azure_openai.api_key` / `.endpoint`)
+2. Environment variables (`AZURE_OPENAI_API_KEY` / `AZURE_OPENAI_ENDPOINT`)
 
 ### Global config
 
@@ -27,15 +26,19 @@ Riffer.configure do |config|
 end
 ```
 
-### Per-agent
+### Custom client
+
+Azure AD token auth, timeouts, and retries are configured on your own `OpenAI::Client`. A `Proc` is the right shape for expiring AD tokens — it is resolved on every LLM call:
 
 ```ruby
-class MyAgent < Riffer::Agent
-  model 'azure_openai/gpt-5-mini'
-  provider_options api_key: ENV['AZURE_OPENAI_API_KEY'],
-                   base_url: ENV['AZURE_OPENAI_ENDPOINT']
+Riffer.configure do |config|
+  config.azure_openai.client = -> {
+    OpenAI::Client.new(api_key: AzureAd.current_token, base_url: ENV['AZURE_OPENAI_ENDPOINT'])
+  }
 end
 ```
+
+See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
 ### Environment variables only
 
@@ -151,10 +154,7 @@ end
 ## Direct Provider Usage
 
 ```ruby
-provider = Riffer::Providers::AzureOpenAI.new(
-  api_key: ENV['AZURE_OPENAI_API_KEY'],
-  base_url: ENV['AZURE_OPENAI_ENDPOINT']
-)
+provider = Riffer::Providers::AzureOpenAI.new
 
 response = provider.generate_text(
   prompt: "Hello!",

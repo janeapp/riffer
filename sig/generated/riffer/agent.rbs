@@ -45,12 +45,6 @@ class Riffer::Agent
   # : (?(String | Proc)?) -> (String | Proc)?
   def self.instructions: (?(String | Proc)?) -> (String | Proc)?
 
-  # Gets or sets provider options passed to the provider client.
-  #
-  # --
-  # : (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
-  def self.provider_options: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
-
   # Gets or sets model options passed to generate_text/stream_text.
   #
   # --

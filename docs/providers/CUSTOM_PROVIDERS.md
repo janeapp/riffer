@@ -8,13 +8,13 @@ Extend `Riffer::Providers::Base` and implement the five required hook methods:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(**options)
-    # Initialize your client
-    @api_key = options[:api_key] || ENV['MY_PROVIDER_API_KEY']
-    @client = MyProviderClient.new(api_key: @api_key)
-  end
-
   private
+
+  # Client hook — see "Client resolution" below.
+
+  def build_client
+    MyProviderClient.new(api_key: ENV['MY_PROVIDER_API_KEY'])
+  end
 
   # Hook methods (matching base.rb order)
 
@@ -35,11 +35,11 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
   end
 
   def execute_generate(params)
-    @client.generate(**params)
+    client.generate(**params)
   end
 
   def execute_stream(params, yielder)
-    @client.stream(**params) do |chunk|
+    client.stream(**params) do |chunk|
       case chunk.type
       when :text
         yielder << Riffer::StreamEvents::TextDelta.new(chunk.content)
@@ -121,16 +121,30 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
 end
 ```
 
+## Client resolution
+
+Riffer constructs providers with `provider_class.new`, so `initialize` takes no arguments; read credentials from configuration inside `build_client`. `Riffer::Providers::Base` provides a private `client` method for your `execute_generate`/`execute_stream` to call. It resolves, in order:
+
+1. **A configured client** — whatever `global_client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override that hook to read the client off your own configuration; it defaults to `nil`.
+2. **A memoized client** from `build_client` — implement this hook to build your SDK client from configured credentials.
+
+This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
+
 ## Using depends_on
 
 For lazy loading of external gems:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(**options)
+  def initialize
+    super
     depends_on "my_provider_gem"  # Only loaded when provider is used
+  end
 
-    @client = ::MyProviderGem::Client.new(**options)
+  private
+
+  def build_client
+    ::MyProviderGem::Client.new(api_key: ENV["MY_PROVIDER_API_KEY"])
   end
 end
 ```
@@ -291,16 +305,18 @@ end
 # lib/riffer/providers/my_provider.rb
 
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize(**options)
+  def initialize
+    super
     depends_on "my_provider_gem"
-
-    api_key = options[:api_key] || ENV["MY_PROVIDER_API_KEY"]
-    @client = ::MyProviderGem::Client.new(api_key: api_key)
   end
 
   private
 
   # Hook methods
+
+  def build_client
+    ::MyProviderGem::Client.new(api_key: ENV["MY_PROVIDER_API_KEY"])
+  end
 
   def build_request_params(messages, model, options)
     system_message = extract_system(messages)
@@ -323,13 +339,13 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
   end
 
   def execute_generate(params)
-    @client.create(**params)
+    client.create(**params)
   end
 
   def execute_stream(params, yielder)
     accumulated_text = ""
 
-    @client.stream(**params) do |event|
+    client.stream(**params) do |event|
       case event.type
       when :text_delta
         accumulated_text += event.text

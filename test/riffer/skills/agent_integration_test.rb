@@ -105,7 +105,6 @@ describe "Agent skills integration" do
     it "selects XmlAdapter for amazon_bedrock with an Anthropic model id" do
       agent_class = Class.new(Riffer::Agent) do
         model "amazon_bedrock/us.anthropic.claude-sonnet-4-6"
-        provider_options region: "us-west-2"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
         end
@@ -122,7 +121,6 @@ describe "Agent skills integration" do
     it "selects MarkdownAdapter for amazon_bedrock with a non-Anthropic model id" do
       agent_class = Class.new(Riffer::Agent) do
         model "amazon_bedrock/us.amazon.nova-lite-v1:0"
-        provider_options region: "us-west-2"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
         end

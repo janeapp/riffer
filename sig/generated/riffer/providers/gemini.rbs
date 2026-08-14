@@ -2,19 +2,7 @@
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
-  @read_timeout: Integer
-
-  @open_timeout: Integer
-
-  @api_key: String?
-
-  BASE_URI: URI::Generic
-
   VALID_MODEL_PATTERN: Regexp
-
-  DEFAULT_OPEN_TIMEOUT: Integer
-
-  DEFAULT_READ_TIMEOUT: Integer
 
   FINISH_REASONS: Hash[String, Symbol]
 
@@ -23,11 +11,15 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : () -> String
   def self.semconv_provider_name: () -> String
 
-  # --
-  # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-  def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-
   private
+
+  # --
+  # : () -> untyped
+  def global_client: () -> untyped
+
+  # --
+  # : () -> untyped
+  def build_client: () -> untyped
 
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -90,10 +82,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def encode_tool_arguments: (untyped) -> String
 
   # --
-  # : (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
-  def post_request: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
-
-  # --
   # : (String, String) -> String
   def api_path: (String, String) -> String
 
@@ -104,8 +92,4 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def strip_additional_properties: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
-
-  # --
-  # : (Net::HTTPResponse) -> void
-  def handle_api_error!: (Net::HTTPResponse) -> void
 end

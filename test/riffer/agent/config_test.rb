@@ -18,10 +18,6 @@ describe Riffer::Agent::Config do
       expect(config.instructions).must_be_nil
     end
 
-    it "starts with provider_options as empty hash" do
-      expect(config.provider_options).must_equal({})
-    end
-
     it "starts with model_options as empty hash" do
       expect(config.model_options).must_equal({})
     end

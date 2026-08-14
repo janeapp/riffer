@@ -1,6 +1,6 @@
 # Serialization
 
-`Riffer::Agent::Serializer` turns a **resolved agent** into a self-contained, provider-neutral data hash (`to_h`) and reconstructs a **runnable agent** from that hash (`from_h`). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.
+`Riffer::Agent::Serializer` turns a **resolved agent** into a provider-neutral data hash (`to_h`) and rebuilds an agent from that hash (`from_h`). The hash carries the agent **definition** — not the credentials or client it needs to reach a provider (see [Secrets](#secrets)). Use it to persist agent definitions outside of code, or to transfer them across a process/service boundary.
 
 You normally reach it through the delegators on `Riffer::Agent`:
 
@@ -43,7 +43,6 @@ The session is used **as-is**: the rebuilt agent does not prepend anything to it
   model:             "openai/gpt-4o",         # resolved "provider/model" string
   instructions:      "You are…",              # resolved system prompt
   model_options:     { temperature: 0.2 },
-  provider_options:  { … },                   # see the secrets warning below
   max_steps:         8,                        # integer; -1 = unlimited (see below)
   structured_output: { type: "object", … },   # JSON Schema, or null
   tools: [ { name:, description:, parameters_schema:, timeout: }, … ]
@@ -101,7 +100,9 @@ A finite integer round-trips as-is; a hash missing the key falls back to the def
 
 ## Secrets
 
-`provider_options` and `model_options` **ride on the wire as plain data** — they are part of the hash and _will_ transfer. Prefer configuring API keys via environment/global provider configuration rather than `provider_options`. **Never serialize an agent whose options carry sensitive values** — and if a serialized definition ever does, handle it as a secret (encrypt it, keep it out of logs).
+`model_options` **rides on the wire as plain data** — it is part of the hash and _will_ transfer. Keep sensitive values out of it; credentials live in global provider configuration and never serialize.
+
+The hash describes the agent, not how to authenticate as one. The destination process configures the provider itself — `config.<provider>.client`, or the credentials riffer builds a default client from. Clients resolve lazily on the first LLM call, so `from_h` succeeds in a process with no provider configuration; the `generate` is what fails. See [Configuration](CONFIGURATION.md).
 
 ## What does **not** transfer
 

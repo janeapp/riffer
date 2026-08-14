@@ -30,6 +30,21 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+## Credentials and Clients
+
+Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes no arguments.
+
+| Provider       | Configured credentials                                            |
+| -------------- | ----------------------------------------------------------------- |
+| OpenAI         | `config.openai.api_key`, `config.openai.base_url`                 |
+| Azure OpenAI   | `config.azure_openai.api_key`, `config.azure_openai.endpoint`     |
+| Anthropic      | `config.anthropic.api_key`                                        |
+| Amazon Bedrock | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
+| Gemini         | `config.gemini.api_key`                                           |
+| OpenRouter     | `config.openrouter.api_key`                                       |
+
+Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
+
 ## Provider Interface
 
 All providers inherit from `Riffer::Providers::Base` and implement:
@@ -39,7 +54,7 @@ All providers inherit from `Riffer::Providers::Base` and implement:
 Generates a response synchronously:
 
 ```ruby
-provider = Riffer::Providers::OpenAI.new(api_key: "...")
+provider = Riffer::Providers::OpenAI.new
 
 response = provider.generate_text(
   prompt: "Hello!",

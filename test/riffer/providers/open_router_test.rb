@@ -5,6 +5,15 @@ require "test_helper"
 describe Riffer::Providers::OpenRouter do
   let(:api_key) { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
 
+  # Credentials now reach the provider only through config, so every test that
+  # builds a client needs one configured.
+  before { Riffer.config.openrouter.api_key = api_key }
+
+  after do
+    Riffer.config.openrouter.api_key = nil
+    Riffer.config.openrouter.client = nil
+  end
+
   describe ".semconv_provider_name" do
     it "returns the semconv well-known value" do
       expect(Riffer::Providers::OpenRouter.semconv_provider_name).must_equal "openrouter"
@@ -12,7 +21,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "finish reasons" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     it "normalizes stop" do
       expect(provider.send(:build_finish_reason, :stop).reason).must_equal :stop
@@ -65,30 +74,75 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "#initialize" do
-    it "creates a provider with an api_key kwarg" do
-      provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
-
-      expect(provider).must_be_instance_of Riffer::Providers::OpenRouter
-    end
-
-    it "falls back to config.openrouter.api_key when no kwarg given" do
-      Riffer.config.openrouter.api_key = "config-key"
+    it "creates the provider" do
       provider = Riffer::Providers::OpenRouter.new
 
       expect(provider).must_be_instance_of Riffer::Providers::OpenRouter
-    ensure
-      Riffer.config.openrouter.api_key = nil
     end
 
-    it "accepts additional client options" do
-      provider = Riffer::Providers::OpenRouter.new(api_key: api_key, timeout: 60)
+    it "takes no arguments" do
+      expect { Riffer::Providers::OpenRouter.new(api_key: api_key) }.must_raise ArgumentError
+    end
 
-      expect(provider).must_be_instance_of Riffer::Providers::OpenRouter
+    it "raises on unknown constructor options" do
+      expect { Riffer::Providers::OpenRouter.new(timeout: 60) }.must_raise ArgumentError
+    end
+  end
+
+  describe "client resolution" do
+    it "builds a client from the configured api_key" do
+      expect(Riffer::Providers::OpenRouter.new.send(:client).api_key).must_equal api_key
+    end
+
+    it "uses the configured client" do
+      configured = Object.new
+      Riffer.config.openrouter.client = configured
+
+      expect(Riffer::Providers::OpenRouter.new.send(:client)).must_be_same_as configured
+    end
+
+    it "resolves a configured client Proc on every call" do
+      calls = 0
+      Riffer.config.openrouter.client = -> { calls += 1 }
+      provider = Riffer::Providers::OpenRouter.new
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
+    end
+
+    it "memoizes the client it builds" do
+      provider = Riffer::Providers::OpenRouter.new
+
+      expect(provider.send(:client)).must_be_same_as provider.send(:client)
+    end
+
+    it "prefers a configured client over configured credentials" do
+      configured = Object.new
+      Riffer.config.openrouter.client = configured
+
+      expect(Riffer::Providers::OpenRouter.new.send(:client)).must_be_same_as configured
+    end
+
+    # Guards the deliberate non-compacting in build_client: borrowing the
+    # OpenAI SDK must never send an OpenAI credential to OpenRouter.
+    it "never falls back to OPENAI_API_KEY" do
+      original_openai = ENV.fetch("OPENAI_API_KEY", nil)
+      original_openrouter = ENV.fetch("OPENROUTER_API_KEY", nil)
+      ENV["OPENAI_API_KEY"] = "sk-openai-secret"
+      ENV["OPENROUTER_API_KEY"] = nil
+      Riffer.config.openrouter.api_key = nil
+
+      expect { Riffer::Providers::OpenRouter.new.send(:client) }.must_raise ArgumentError
+    ensure
+      ENV["OPENAI_API_KEY"] = original_openai
+      ENV["OPENROUTER_API_KEY"] = original_openrouter
     end
   end
 
   describe "#build_request_params" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:user_message) { Riffer::Messages::User.new("Hello") }
 
     it "includes model and messages" do
@@ -202,7 +256,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "tags" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
 
     # Tags arrive already normalized from Run, so these pass clean String maps.
@@ -237,7 +291,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "per-call tags (end-to-end)" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     # The cassette records the request body OpenRouter receives when tags are
     # passed (all tags as metadata, user_id also as the user field). VCR's :body
@@ -256,7 +310,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "tool conversion" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     let(:weather_tool) do
       Class.new(Riffer::Tool) do
@@ -291,7 +345,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "message conversion" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     it "maps System messages to role: system" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hi")]
@@ -357,7 +411,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "file conversion" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     it "encodes base64 images as a data URL" do
       file = Riffer::Messages::FilePart.new(data: "xyz", media_type: "image/jpeg")
@@ -384,7 +438,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "extract_token_usage" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     # These cases build OpenAI::Models::* objects directly, but the openai gem
     # is only required when the provider is constructed (depends_on "openai").
@@ -414,7 +468,7 @@ describe Riffer::Providers::OpenRouter do
         VCR.use_cassette(
           "Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -425,7 +479,7 @@ describe Riffer::Providers::OpenRouter do
         VCR.use_cassette(
           "Riffer_Providers_OpenRouter/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
           expect(result.content).wont_be_empty
@@ -438,7 +492,7 @@ describe Riffer::Providers::OpenRouter do
     describe "when prompt is provided" do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.stream_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
           expect(result).must_be_instance_of Enumerator
@@ -447,7 +501,7 @@ describe Riffer::Providers::OpenRouter do
 
       it "yields TextDelta events" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5").to_a
           deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
@@ -457,7 +511,7 @@ describe Riffer::Providers::OpenRouter do
 
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5").to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
@@ -469,7 +523,7 @@ describe Riffer::Providers::OpenRouter do
     describe "when messages are provided" do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
             model: "anthropic/claude-haiku-4.5",
@@ -491,7 +545,7 @@ describe Riffer::Providers::OpenRouter do
 
     it "returns valid JSON content" do
       VCR.use_cassette("Riffer_Providers_OpenRouter/_generate_text/structured_output/returns_structured_json") do
-        provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+        provider = Riffer::Providers::OpenRouter.new
         result = provider.generate_text(
           prompt: "Analyze the sentiment of: 'I love this product, it is amazing!'",
           model: "openai/gpt-4o-mini",
@@ -503,7 +557,7 @@ describe Riffer::Providers::OpenRouter do
 
     it "includes sentiment and score keys" do
       VCR.use_cassette("Riffer_Providers_OpenRouter/_generate_text/structured_output/returns_structured_json") do
-        provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+        provider = Riffer::Providers::OpenRouter.new
         result = provider.generate_text(
           prompt: "Analyze the sentiment of: 'I love this product, it is amazing!'",
           model: "openai/gpt-4o-mini",
@@ -531,7 +585,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#generate_text with tools" do
       it "returns tool_calls" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "anthropic/claude-haiku-4.5",
@@ -544,7 +598,7 @@ describe Riffer::Providers::OpenRouter do
 
       it "returns correct tool name" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "anthropic/claude-haiku-4.5",
@@ -557,7 +611,7 @@ describe Riffer::Providers::OpenRouter do
 
       it "parses tool call arguments correctly" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "anthropic/claude-haiku-4.5",
@@ -571,7 +625,7 @@ describe Riffer::Providers::OpenRouter do
 
       it "includes tool call id" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "anthropic/claude-haiku-4.5",
@@ -586,7 +640,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#generate_text with Tool message in history" do
       it "returns Assistant message with content" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new(
@@ -619,7 +673,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#stream_text with tools" do
       it "yields ToolCallDone event with correct name and arguments" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/tool_calling/_stream_text/yields_tool_call_done") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "anthropic/claude-haiku-4.5",
@@ -646,7 +700,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#generate_text with image" do
       it "returns an Assistant message with content" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image briefly",
@@ -665,7 +719,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#stream_text with reasoning enabled" do
       it "yields ReasoningDelta events" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/reasoning/_stream_text/yields_reasoning_delta") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(
             prompt: "What is 7 times 8? Think step by step.",
             model: "deepseek/deepseek-r1",
@@ -679,7 +733,7 @@ describe Riffer::Providers::OpenRouter do
 
       it "yields ReasoningDone event" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/reasoning/_stream_text/yields_reasoning_delta") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(
             prompt: "What is 7 times 8? Think step by step.",
             model: "deepseek/deepseek-r1",
@@ -697,7 +751,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#generate_text" do
       it "includes token usage in the response" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/usage/_generate_text/includes_usage") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           result = provider.generate_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5")
 
           expect(result.token_usage).wont_be_nil
@@ -710,7 +764,7 @@ describe Riffer::Providers::OpenRouter do
     describe "#stream_text" do
       it "yields TokenUsageDone event" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+          provider = Riffer::Providers::OpenRouter.new
           events = provider.stream_text(prompt: "Say hello", model: "anthropic/claude-haiku-4.5").to_a
           usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 
@@ -723,7 +777,7 @@ describe Riffer::Providers::OpenRouter do
 
     describe "cache read tokens" do
       it "surfaces cached_tokens from prompt_tokens_details" do
-        provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+        provider = Riffer::Providers::OpenRouter.new
         response = OpenAI::Models::Chat::ChatCompletion.new(
           usage: OpenAI::Models::CompletionUsage.new(
             prompt_tokens: 580,
@@ -738,7 +792,7 @@ describe Riffer::Providers::OpenRouter do
       end
 
       it "leaves cache_read_tokens nil when details are absent" do
-        provider = Riffer::Providers::OpenRouter.new(api_key: api_key)
+        provider = Riffer::Providers::OpenRouter.new
         response = OpenAI::Models::Chat::ChatCompletion.new(
           usage: OpenAI::Models::CompletionUsage.new(prompt_tokens: 580, completion_tokens: 54, total_tokens: 634),
         )
@@ -750,7 +804,7 @@ describe Riffer::Providers::OpenRouter do
   end
 
   describe "#stream_text resource cleanup" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: "test") }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
 
     def install_stream_double(provider, stream_double)
       completions_double = Object.new
@@ -793,7 +847,7 @@ describe Riffer::Providers::OpenRouter do
   # +delta[:reasoning]+ returns nil (rather than raising NameError) for
   # non-reasoning chunks. Defined once in the describe blocks below.
   describe "#stream_text tool-call edge cases" do
-    let(:provider) { Riffer::Providers::OpenRouter.new(api_key: "test") }
+    let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:fn_struct) { Struct.new(:name, :arguments) }
     let(:tc_struct) { Struct.new(:index, :id, :function) }
     let(:delta_struct) { Struct.new(:content, :reasoning, :tool_calls) }
@@ -856,7 +910,7 @@ describe Riffer::Providers::OpenRouter do
 
   describe "stream_options merging" do
     it "preserves caller-supplied stream_options while still opting into usage" do
-      provider = Riffer::Providers::OpenRouter.new(api_key: "test")
+      provider = Riffer::Providers::OpenRouter.new
 
       captured = {}
       stream_double = Object.new

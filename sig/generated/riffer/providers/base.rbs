@@ -5,6 +5,8 @@
 # +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
 # class orchestrates them.
 class Riffer::Providers::Base
+  @client: untyped
+
   @current_model: String?
 
   @current_tools: Array[singleton(Riffer::Tool)]
@@ -41,6 +43,24 @@ class Riffer::Providers::Base
 
   # : (String) -> true
   def depends_on: (String) -> true
+
+  # Returns the client for the current LLM call. A configured client wins,
+  # resolved on every call so a Proc can vary the client by process or
+  # credential lifetime; otherwise the provider builds one from the configured
+  # credentials, memoized for the life of the provider.
+  # --
+  # : () -> untyped
+  def client: () -> untyped
+
+  # Returns the consumer-configured client for this provider; nil when none is
+  # configured, and for providers that take no configuration at all.
+  # --
+  # : () -> untyped
+  def global_client: () -> untyped
+
+  # --
+  # : () -> untyped
+  def build_client: () -> untyped
 
   # --
   # : (String) -> String

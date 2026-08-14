@@ -3,12 +3,12 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
-  AmazonBedrock = Struct.new(:api_token, :region)
-  Anthropic = Struct.new(:api_key)
-  AzureOpenAI = Struct.new(:api_key, :endpoint)
-  Gemini = Struct.new(:api_key, :open_timeout, :read_timeout)
-  OpenAI = Struct.new(:api_key)
-  OpenRouter = Struct.new(:api_key)
+  AmazonBedrock = Struct.new(:api_token, :region, :client)
+  Anthropic = Struct.new(:api_key, :client)
+  AzureOpenAI = Struct.new(:api_key, :endpoint, :client)
+  Gemini = Struct.new(:api_key, :client)
+  OpenAI = Struct.new(:api_key, :base_url, :client)
+  OpenRouter = Struct.new(:api_key, :client)
   Evals = Struct.new(:judge_model)
   Mcp = Struct.new(:credentials, :discovery_runner)
 

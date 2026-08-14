@@ -20,12 +20,28 @@ Riffer.configure do |config|
 end
 ```
 
-Or per-agent:
+Both `api_key` and `base_url` resolve in order: `Riffer.config.openai.*` → the OpenAI SDK's own `OPENAI_API_KEY` / `OPENAI_BASE_URL` lookup. Leaving one unset in riffer means the SDK resolves it, so an `OPENAI_BASE_URL` gateway is honored without any riffer configuration.
+
+For anything beyond the API key — timeouts, retries, proxies — supply your own `OpenAI::Client`:
 
 ```ruby
-class MyAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-  provider_options api_key: ENV['CUSTOM_API_KEY']
+Riffer.configure do |config|
+  config.openai.client = OpenAI::Client.new(
+    api_key: ENV['OPENAI_API_KEY'],
+    timeout: 30,
+    max_retries: 4
+  )
+end
+```
+
+The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
+
+For OpenAI-compatible servers (LiteLLM, vLLM, corporate gateways), configure a `base_url`:
+
+```ruby
+Riffer.configure do |config|
+  config.openai.api_key = ENV['GATEWAY_KEY']
+  config.openai.base_url = 'http://localhost:4000/v1'
 end
 ```
 
@@ -185,7 +201,7 @@ The provider converts Riffer messages to OpenAI format:
 ## Direct Provider Usage
 
 ```ruby
-provider = Riffer::Providers::OpenAI.new(api_key: ENV['OPENAI_API_KEY'])
+provider = Riffer::Providers::OpenAI.new
 
 response = provider.generate_text(
   prompt: "Hello!",

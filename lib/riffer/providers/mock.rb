@@ -28,7 +28,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   attr_reader :calls #: Array[Hash[Symbol, untyped]]
 
   # +responses:+ pre-configures canned responses (same shape as
-  # +#stub_response+), typically set via +provider_options responses: [...]+.
+  # +#stub_response+) for standalone use; agent tests queue responses on
+  # <tt>agent.provider</tt> via +#stub_response+ instead.
   #
   #   Riffer::Providers::Mock.new(responses: [
   #     {content: "", tool_calls: [{name: "tool_a", arguments: "{}"}]},
@@ -36,10 +37,10 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #   ])
   #
   #--
-  #: (**untyped) -> void
-  def initialize(**options)
+  #: (?responses: Array[Hash[Symbol, untyped]]) -> void
+  def initialize(responses: [])
     super()
-    @responses = (options[:responses] || []).map { |r| normalize_response(r) }
+    @responses = responses.map { |r| normalize_response(r) }
     @current_index = 0
     @calls = []
     @stubbed_responses = []

@@ -9,11 +9,14 @@ Use `Riffer.configure` to set up provider credentials:
 ```ruby
 Riffer.configure do |config|
   config.openai.api_key = ENV['OPENAI_API_KEY']
+  config.openai.base_url = ENV['OPENAI_BASE_URL'] # Optional — gateways, proxies
   config.amazon_bedrock.region = 'us-east-1'
   config.amazon_bedrock.api_token = ENV['BEDROCK_API_TOKEN']
   config.anthropic.api_key = ENV['ANTHROPIC_API_KEY']
 end
 ```
+
+Providers take no constructor arguments — these settings are the only way to give a provider its credentials.
 
 ## Accessing Configuration
 
@@ -33,6 +36,66 @@ Riffer.config.anthropic.api_key
 ## Provider-Specific Configuration
 
 For provider credentials and setup, see the individual [Provider guides](providers/PROVIDERS.md).
+
+### Provider Clients
+
+Out of the box, each provider builds a default SDK client from its configured credentials. For anything beyond credentials — timeouts, retries, proxies, gateways — assign your own client to `config.<provider>.client`:
+
+```ruby
+Riffer.configure do |config|
+  config.openai.client = OpenAI::Client.new(
+    api_key: ENV['OPENAI_API_KEY'],
+    timeout: 30,
+    max_retries: 4
+  )
+  config.gemini.client = Riffer::Providers::Gemini::Client.new(
+    api_key: ENV['GEMINI_API_KEY'],
+    read_timeout: 120
+  )
+end
+```
+
+Every provider accepts a client instance or a `Proc` returning one:
+
+| Provider       | Setting                        | Default client built from credentials                         |
+| -------------- | ------------------------------ | ------------------------------------------------------------- |
+| OpenAI         | `config.openai.client`         | `OpenAI::Client`                                              |
+| Azure OpenAI   | `config.azure_openai.client`   | `OpenAI::Client` (with the Azure endpoint as `base_url`)      |
+| Anthropic      | `config.anthropic.client`      | `Anthropic::Client`                                           |
+| Amazon Bedrock | `config.amazon_bedrock.client` | `Aws::BedrockRuntime::Client`                                 |
+| Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below) |
+| OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)          |
+
+A `Proc` takes **no arguments** and is resolved on **every LLM call**, never cached by riffer — memoize inside the Proc when construction is expensive. This makes the Proc the right tool for:
+
+- **Fork safety** (Puma clustered, Sidekiq swarm): a client built at boot holds sockets that break across `fork`; build (and cache) per process instead.
+- **Expiring credentials** (Azure AD tokens, STS-vended keys): re-resolve before they go stale.
+
+```ruby
+Riffer.configure do |config|
+  # Fork-safe shared client: one per process, built on first use after fork.
+  config.anthropic.client = -> {
+    ClientRegistry.anthropic_for(Process.pid)
+  }
+
+  # Re-resolved before the token goes stale.
+  config.azure_openai.client = -> {
+    OpenAI::Client.new(api_key: AzureAd.current_token, base_url: ENV['AZURE_OPENAI_ENDPOINT'])
+  }
+end
+```
+
+Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see [Multiple Configurations](#multiple-configurations)).
+
+A configured client always wins over configured credentials: once `config.<provider>.client` is set, the credential members are unused, since riffer no longer builds the client.
+
+### Falling through to the SDK
+
+A credential you leave unset in riffer is omitted from the default client rather than passed as `nil`, so each vendor SDK still applies its own resolution. `OPENAI_API_KEY` / `OPENAI_BASE_URL`, `ANTHROPIC_API_KEY`, and the AWS chains — region from `AWS_REGION` / `AWS_DEFAULT_REGION` / shared config, credentials from the environment, the shared credentials file, or an instance/task IAM role — all work with no riffer configuration at all.
+
+Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
+
+The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 
 ### MCP (Model Context Protocol)
 
@@ -113,10 +176,10 @@ Riffer.configure do |config|
 end
 ```
 
-| Option             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `enabled`          | The kill switch, consulted on every span — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                                                                                                                                                                                                                              |
-| `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                                  |
+| Option             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enabled`          | The kill switch, consulted on every span — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                                                                                                                                                                                                                           |
+| `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                               |
 | `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `in_span`. See [Tracing → Routing to a non-OpenTelemetry backend](TRACING.md#routing-to-a-non-opentelemetry-backend). |
 
 ### Pricing
@@ -199,19 +262,6 @@ There is no per-call override and no customizable placeholder. Callers needing f
 ## Agent-Level Configuration
 
 Override global configuration at the agent level:
-
-### provider_options
-
-Pass options directly to the provider client:
-
-```ruby
-class MyAgent < Riffer::Agent
-  model 'openai/gpt-5-mini'
-
-  # Override API key for this agent only
-  provider_options api_key: ENV['CUSTOM_OPENAI_KEY']
-end
-```
 
 ### model_options
 
@@ -305,17 +355,51 @@ end
 
 ## Multiple Configurations
 
-For different environments or use cases, use agent-level overrides:
+Provider credentials and clients are **global**, resolved per process. For different environments, branch at boot:
+
+```ruby
+Riffer.configure do |config|
+  config.openai.client = if Rails.env.production?
+    OpenAI::Client.new(api_key: ENV['PRODUCTION_OPENAI_KEY'], max_retries: 4)
+  else
+    OpenAI::Client.new(api_key: ENV['DEV_OPENAI_KEY'], timeout: 10)
+  end
+end
+```
+
+When a single process has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:
+
+```ruby
+class InternalOpenAI < Riffer::Providers::OpenAI
+  InternalConfig = Struct.new(:api_key, :base_url, :client)
+
+  def self.config
+    @config ||= InternalConfig.new(ENV.fetch('INTERNAL_OPENAI_KEY'), ENV.fetch('INTERNAL_GATEWAY'))
+  end
+
+  private
+
+  def global_client
+    self.class.config.client
+  end
+
+  def build_client
+    ::OpenAI::Client.new(api_key: self.class.config.api_key, base_url: self.class.config.base_url)
+  end
+end
+
+Riffer::Providers::Repository.register(:internal_openai) { InternalOpenAI }
+```
+
+Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere. What _can_ vary per agent is the model and the generation parameters:
 
 ```ruby
 class ProductionAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
-  provider_options api_key: ENV['PRODUCTION_OPENAI_KEY']
 end
 
 class DevelopmentAgent < Riffer::Agent
   model 'openai/gpt-5-mini'
-  provider_options api_key: ENV['DEV_OPENAI_KEY']
-  model_options temperature: 0.0  # Deterministic for testing
+  model_options temperature: 0.0 # Deterministic for testing
 end
 ```

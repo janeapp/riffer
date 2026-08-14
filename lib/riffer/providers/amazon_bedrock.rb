@@ -37,27 +37,39 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_token: String?, ?region: String?, **untyped) -> void
-  def initialize(api_token: nil, region: nil, **)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "aws-sdk-bedrockruntime"
-
-    api_token ||= Riffer.config.amazon_bedrock.api_token
-    region ||= Riffer.config.amazon_bedrock.region
-
-    @client = if api_token && !api_token.empty?
-                Aws::BedrockRuntime::Client.new(
-                  region: region,
-                  token_provider: Aws::StaticTokenProvider.new(api_token),
-                  auth_scheme_preference: ["httpBearerAuth"],
-                  **,
-                )
-              else
-                Aws::BedrockRuntime::Client.new(region: region, **)
-              end
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.amazon_bedrock.client
+  end
+
+  # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+
+  # and the shared config only for a missing argument, and raises
+  # +Aws::Errors::MissingRegionError+ on an explicit nil.
+  #--
+  #: () -> untyped
+  def build_client
+    api_token = Riffer.config.amazon_bedrock.api_token
+    region = Riffer.config.amazon_bedrock.region
+
+    if api_token && !api_token.empty?
+      Aws::BedrockRuntime::Client.new(**{
+        region: region,
+        token_provider: Aws::StaticTokenProvider.new(api_token),
+        auth_scheme_preference: ["httpBearerAuth"],
+      }.compact)
+    else
+      Aws::BedrockRuntime::Client.new(**{ region: region }.compact)
+    end
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -137,7 +149,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.converse(**params)
+    client.converse(**params)
   end
 
   #--
@@ -227,7 +239,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       tool_call: nil,
     } #: Hash[Symbol, untyped]
 
-    @client.converse_stream(**params) do |stream|
+    client.converse_stream(**params) do |stream|
       stream.on_event do |event|
         case event
         when Aws::BedrockRuntime::Types::ContentBlockStartEvent

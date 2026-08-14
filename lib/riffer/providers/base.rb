@@ -10,6 +10,7 @@ require "json"
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
+  # @rbs @client: untyped
 
   WIRE_SEPARATOR = "__" #: String
 
@@ -103,6 +104,33 @@ class Riffer::Providers::Base
   #: (String) -> true
   def depends_on(gem_name)
     Riffer::Helpers::Dependencies.depends_on(gem_name)
+  end
+
+  # Returns the client for the current LLM call. A configured client wins,
+  # resolved on every call so a Proc can vary the client by process or
+  # credential lifetime; otherwise the provider builds one from the configured
+  # credentials, memoized for the life of the provider.
+  #--
+  #: () -> untyped
+  def client
+    configured = global_client
+    return Riffer::Helpers::CallOrValue.resolve(configured) if configured
+
+    @client ||= build_client
+  end
+
+  # Returns the consumer-configured client for this provider; nil when none is
+  # configured, and for providers that take no configuration at all.
+  #--
+  #: () -> untyped
+  def global_client
+    nil
+  end
+
+  #--
+  #: () -> untyped
+  def build_client
+    raise NotImplementedError, "Subclasses must implement #build_client"
   end
 
   #--

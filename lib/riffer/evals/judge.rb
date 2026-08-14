@@ -6,7 +6,6 @@ require "json"
 # Executes LLM-as-judge evaluations, using tool calling internally to get
 # structured output from the judge model.
 class Riffer::Evals::Judge
-  # @rbs @provider_options: Hash[Symbol, untyped]
   # @rbs @provider_instance: Riffer::Providers::Base?
   # @rbs @provider_name: String?
   # @rbs @model_name: String?
@@ -33,15 +32,14 @@ class Riffer::Evals::Judge
 
   # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   #--
-  #: (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
-  def initialize(model:, provider_options: {})
+  #: (model: String) -> void
+  def initialize(model:)
     provider_name, model_name = model.split("/", 2)
     unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
       raise Riffer::ArgumentError, "Invalid model string: #{model}"
     end
 
     @model = model
-    @provider_options = provider_options
   end
 
   # Evaluates an input/output pair using the configured LLM.
@@ -92,7 +90,7 @@ class Riffer::Evals::Judge
       provider_class = Riffer::Providers::Repository.find(provider_name)
       raise Riffer::ArgumentError, "Provider not found: #{provider_name}" unless provider_class
 
-      provider_class.new(**@provider_options)
+      provider_class.new
     end
   end
 

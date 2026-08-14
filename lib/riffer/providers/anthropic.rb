@@ -30,17 +30,28 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "anthropic"
-
-    api_key ||= Riffer.config.anthropic.api_key
-
-    @client = ::Anthropic::Client.new(api_key: api_key, **)
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.anthropic.client
+  end
+
+  # Compacted for the same reason as the other providers: never hand an SDK an
+  # explicit nil credential, so its own +ANTHROPIC_API_KEY+ resolution stays
+  # reachable regardless of how that SDK distinguishes nil from absent.
+  #--
+  #: () -> untyped
+  def build_client
+    ::Anthropic::Client.new(**{ api_key: Riffer.config.anthropic.api_key }.compact)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -97,7 +108,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.messages.create(**params)
+    client.messages.create(**params)
   end
 
   #--
@@ -193,7 +204,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
-    stream = @client.messages.stream(
+    stream = client.messages.stream(
       **params,
       request_options: { extra_headers: { "accept-encoding" => "identity" } },
     )

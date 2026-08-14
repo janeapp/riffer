@@ -5,6 +5,15 @@ require "test_helper"
 describe Riffer::Providers::Gemini do
   let(:api_key) { ENV.fetch("GEMINI_API_KEY", "test_api_key") }
 
+  # Credentials now reach the provider only through config, so every test that
+  # builds a client needs one configured.
+  before { Riffer.config.gemini.api_key = api_key }
+
+  after do
+    Riffer.config.gemini.api_key = nil
+    Riffer.config.gemini.client = nil
+  end
+
   describe ".semconv_provider_name" do
     it "returns the semconv well-known value" do
       expect(Riffer::Providers::Gemini.semconv_provider_name).must_equal "gcp.gemini"
@@ -12,7 +21,7 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "finish reasons" do
-    let(:provider) { Riffer::Providers::Gemini.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::Gemini.new }
 
     it "normalizes STOP to stop" do
       expect(provider.send(:build_finish_reason, "STOP", tool_calls: false).reason).must_equal :stop
@@ -63,30 +72,61 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "#initialize" do
-    it "creates Gemini client with an api_key" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+    it "creates the provider" do
+      provider = Riffer::Providers::Gemini.new
 
       expect(provider).must_be_instance_of Riffer::Providers::Gemini
     end
 
-    it "uses default timeouts" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
-
-      expect(provider.instance_variable_get(:@open_timeout)).must_equal 10
-      expect(provider.instance_variable_get(:@read_timeout)).must_equal 60
+    it "takes no arguments" do
+      expect { Riffer::Providers::Gemini.new(api_key: api_key) }.must_raise ArgumentError
     end
 
-    it "allows custom timeouts" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key, open_timeout: 5, read_timeout: 30)
+    it "raises on unknown constructor options" do
+      expect { Riffer::Providers::Gemini.new(open_timeout: 5) }.must_raise ArgumentError
+    end
+  end
 
-      expect(provider.instance_variable_get(:@open_timeout)).must_equal 5
-      expect(provider.instance_variable_get(:@read_timeout)).must_equal 30
+  describe "client resolution" do
+    it "builds a Gemini::Client from the configured api_key" do
+      expect(Riffer::Providers::Gemini.new.send(:client)).must_be_instance_of Riffer::Providers::Gemini::Client
+    end
+
+    it "uses the configured client" do
+      configured = Object.new
+      Riffer.config.gemini.client = configured
+
+      expect(Riffer::Providers::Gemini.new.send(:client)).must_be_same_as configured
+    end
+
+    it "resolves a configured client Proc on every call" do
+      calls = 0
+      Riffer.config.gemini.client = -> { calls += 1 }
+      provider = Riffer::Providers::Gemini.new
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
+    end
+
+    it "memoizes the client it builds" do
+      provider = Riffer::Providers::Gemini.new
+
+      expect(provider.send(:client)).must_be_same_as provider.send(:client)
+    end
+
+    it "prefers a configured client over configured credentials" do
+      configured = Object.new
+      Riffer.config.gemini.client = configured
+
+      expect(Riffer::Providers::Gemini.new.send(:client)).must_be_same_as configured
     end
   end
 
   describe "model validation" do
     it "raises ArgumentError for model with slashes" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
 
       expect do
         provider.generate_text(prompt: "Hello", model: "../admin")
@@ -94,7 +134,7 @@ describe Riffer::Providers::Gemini do
     end
 
     it "raises ArgumentError for model with spaces" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
 
       expect do
         provider.generate_text(prompt: "Hello", model: "gemini 2.5")
@@ -102,7 +142,7 @@ describe Riffer::Providers::Gemini do
     end
 
     it "accepts valid model names" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
       path = provider.send(:api_path, "gemini-2.5-flash-lite", "generateContent")
 
       expect(path).must_include "v1beta/models/gemini-2.5-flash-lite:generateContent"
@@ -115,7 +155,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette(
           "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -128,7 +168,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette(
           "Riffer_Providers_Gemini/_generate_text/when_system_and_prompt_are_provided/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           params = { system: "Be concise", prompt: "Say hello", model: "gemini-2.5-flash-lite" }
           result = provider.generate_text(**params)
 
@@ -142,7 +182,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette(
           "Riffer_Providers_Gemini/_generate_text/with_a_hash_messages_array/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           messages = [
             { role: "system", content: "Be concise" },
             { role: "user", content: "Say hello" },
@@ -157,7 +197,7 @@ describe Riffer::Providers::Gemini do
     describe "with a User message" do
       it "returns an Assistant" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_a_User_message/returns_an_Assistant") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           messages = [Riffer::Messages::User.new("Say hello")]
           result = provider.generate_text(messages: messages, model: "gemini-2.5-flash-lite")
 
@@ -169,7 +209,7 @@ describe Riffer::Providers::Gemini do
     describe "with a System message" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/with_a_System_message/returns_an_Assistant_message") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           messages = [
             Riffer::Messages::System.new("Be concise"),
             Riffer::Messages::User.new("Say hello"),
@@ -186,7 +226,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette(
           "Riffer_Providers_Gemini/_generate_text/with_an_Assistant_message/returns_an_Assistant_message",
         ) do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           messages = [
             Riffer::Messages::User.new("Say hello"),
             Riffer::Messages::Assistant.new("Hello!"),
@@ -202,7 +242,7 @@ describe Riffer::Providers::Gemini do
     describe "structured output" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -219,7 +259,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns non-empty content" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -236,7 +276,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns valid JSON content" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -252,7 +292,7 @@ describe Riffer::Providers::Gemini do
 
       it "includes sentiment key" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -270,7 +310,7 @@ describe Riffer::Providers::Gemini do
 
       it "includes score key" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output/returns_structured_json") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           params = Riffer::Params.new
           params.required(:sentiment, String)
           params.required(:score, Float)
@@ -306,7 +346,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette(
           "Riffer_Providers_Gemini/_generate_text/structured_output_nested_object/returns_nested_json",
         ) do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: nested_object_prompt,
             model: "gemini-2.5-flash-lite",
@@ -334,7 +374,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns valid JSON with typed array content" do
         VCR.use_cassette("Riffer_Providers_Gemini/_generate_text/structured_output_typed_array/returns_typed_arrays") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: typed_array_prompt,
             model: "gemini-2.5-flash-lite",
@@ -368,7 +408,7 @@ describe Riffer::Providers::Gemini do
         VCR.use_cassette(
           "Riffer_Providers_Gemini/_generate_text/structured_output_array_of_objects/returns_array_of_objects",
         ) do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: array_of_objects_prompt,
             model: "gemini-2.5-flash-lite",
@@ -391,7 +431,7 @@ describe Riffer::Providers::Gemini do
     describe "when prompt is provided" do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
 
           expect(result).must_be_instance_of Enumerator
@@ -400,7 +440,7 @@ describe Riffer::Providers::Gemini do
 
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
 
           expect(events).wont_be_empty
@@ -409,7 +449,7 @@ describe Riffer::Providers::Gemini do
 
       it "yields TextDelta events" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDelta_events") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
           deltas = events.grep(Riffer::StreamEvents::TextDelta)
 
@@ -419,7 +459,7 @@ describe Riffer::Providers::Gemini do
 
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_prompt_is_provided/yields_TextDone_event") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
@@ -431,7 +471,7 @@ describe Riffer::Providers::Gemini do
     describe "when messages are provided" do
       it "returns an Enumerator" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
             model: "gemini-2.5-flash-lite",
@@ -443,7 +483,7 @@ describe Riffer::Providers::Gemini do
 
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_Gemini/_stream_text/when_messages_are_provided/yields_stream_events") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             messages: [{ role: "user", content: "Say hello" }],
             model: "gemini-2.5-flash-lite",
@@ -457,7 +497,7 @@ describe Riffer::Providers::Gemini do
 
   describe "structured output" do
     it "includes responseMimeType in generationConfig" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       params.required(:score, Float)
@@ -475,7 +515,7 @@ describe Riffer::Providers::Gemini do
     end
 
     it "includes responseSchema in generationConfig" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
@@ -492,7 +532,7 @@ describe Riffer::Providers::Gemini do
     end
 
     it "does not include generationConfig when not configured" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
       messages = [Riffer::Messages::User.new("Hello")]
 
       result = provider.send(:build_request_params, messages, "gemini-2.5-flash-lite", {})
@@ -501,7 +541,7 @@ describe Riffer::Providers::Gemini do
     end
 
     it "does not pass structured_output through to API params" do
-      provider = Riffer::Providers::Gemini.new(api_key: api_key)
+      provider = Riffer::Providers::Gemini.new
       params = Riffer::Params.new
       params.required(:sentiment, String)
       structured_output = Riffer::Agent::StructuredOutput.new(params)
@@ -519,7 +559,7 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "tags" do
-    let(:provider) { Riffer::Providers::Gemini.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::Gemini.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
 
     it "does not add a labels field (the Developer API has none)" do
@@ -547,7 +587,7 @@ describe Riffer::Providers::Gemini do
   end
 
   describe "per-call tags (end-to-end)" do
-    let(:provider) { Riffer::Providers::Gemini.new(api_key: api_key) }
+    let(:provider) { Riffer::Providers::Gemini.new }
 
     # Gemini drops tags, so a tagged call must reproduce the untagged request
     # body. Replaying the existing untagged cassette with record: :none means
@@ -583,7 +623,7 @@ describe Riffer::Providers::Gemini do
     describe "#generate_text with tools" do
       it "returns Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -596,7 +636,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns tool_calls" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -609,7 +649,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns correct tool name" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/returns_tool_calls") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -622,7 +662,7 @@ describe Riffer::Providers::Gemini do
 
       it "parses tool call arguments correctly" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/parses_arguments") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -636,7 +676,7 @@ describe Riffer::Providers::Gemini do
 
       it "includes tool call id" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/includes_ids") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -651,7 +691,7 @@ describe Riffer::Providers::Gemini do
     describe "#generate_text with Tool message in history" do
       it "returns Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new(
@@ -682,7 +722,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns response with content" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_generate_text/with_tool_message") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           messages = [
             Riffer::Messages::User.new("What is the weather in Toronto?"),
             Riffer::Messages::Assistant.new(
@@ -715,7 +755,7 @@ describe Riffer::Providers::Gemini do
     describe "#stream_text with tools" do
       it "yields ToolCallDone event" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_stream_text/yields_tool_call_done") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -729,7 +769,7 @@ describe Riffer::Providers::Gemini do
 
       it "includes tool name in ToolCallDone" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_stream_text/tool_call_done_has_name") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -743,7 +783,7 @@ describe Riffer::Providers::Gemini do
 
       it "includes arguments in ToolCallDone" do
         VCR.use_cassette("Riffer_Providers_Gemini/tool_calling/_stream_text/tool_call_done_has_arguments") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(
             prompt: "What is the weather in Toronto?",
             model: "gemini-2.5-flash-lite",
@@ -762,7 +802,7 @@ describe Riffer::Providers::Gemini do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do
         VCR.use_cassette("Riffer_Providers_Gemini/usage/_generate_text/includes_usage") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           result = provider.generate_text(prompt: "Say hello", model: "gemini-2.5-flash-lite")
 
           expect(result.token_usage).wont_be_nil
@@ -773,7 +813,7 @@ describe Riffer::Providers::Gemini do
     describe "#stream_text yields TokenUsageDone" do
       it "yields TokenUsageDone event" do
         VCR.use_cassette("Riffer_Providers_Gemini/usage/_stream_text/yields_usage_done") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           events = provider.stream_text(prompt: "Say hello", model: "gemini-2.5-flash-lite").to_a
           usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 
@@ -784,7 +824,7 @@ describe Riffer::Providers::Gemini do
 
     describe "cache read tokens" do
       it "surfaces cachedContentTokenCount when present" do
-        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        provider = Riffer::Providers::Gemini.new
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20, cachedContentTokenCount: 80 } },
@@ -794,7 +834,7 @@ describe Riffer::Providers::Gemini do
       end
 
       it "leaves cache_read_tokens nil when absent" do
-        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        provider = Riffer::Providers::Gemini.new
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } },
@@ -806,7 +846,7 @@ describe Riffer::Providers::Gemini do
 
     describe "thinking tokens" do
       it "folds thoughtsTokenCount into output_tokens" do
-        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        provider = Riffer::Providers::Gemini.new
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20, thoughtsTokenCount: 30 } },
@@ -816,7 +856,7 @@ describe Riffer::Providers::Gemini do
       end
 
       it "keeps output_tokens as candidatesTokenCount when absent" do
-        provider = Riffer::Providers::Gemini.new(api_key: api_key)
+        provider = Riffer::Providers::Gemini.new
         usage = provider.send(
           :extract_token_usage,
           { usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 20 } },
@@ -837,7 +877,7 @@ describe Riffer::Providers::Gemini do
     describe "#generate_text with image" do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
 
@@ -847,7 +887,7 @@ describe Riffer::Providers::Gemini do
 
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
-          provider = Riffer::Providers::Gemini.new(api_key: api_key)
+          provider = Riffer::Providers::Gemini.new
           file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
 

@@ -3,8 +3,6 @@
 # Executes LLM-as-judge evaluations, using tool calling internally to get
 # structured output from the judge model.
 class Riffer::Evals::Judge
-  @provider_options: Hash[Symbol, untyped]
-
   @provider_instance: Riffer::Providers::Base?
 
   @provider_name: String?
@@ -23,8 +21,8 @@ class Riffer::Evals::Judge
 
   # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   # --
-  # : (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
-  def initialize: (model: String, ?provider_options: Hash[Symbol, untyped]) -> void
+  # : (model: String) -> void
+  def initialize: (model: String) -> void
 
   # Evaluates an input/output pair using the configured LLM.
   # --

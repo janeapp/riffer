@@ -33,14 +33,6 @@ describe Riffer::Agent do
     end
   end
 
-  describe ".provider_options" do
-    it "sets the provider options" do
-      agent_class.provider_options(api_key: "test-key")
-
-      expect(agent_class.provider_options).must_equal({ api_key: "test-key" })
-    end
-  end
-
   describe ".model_options" do
     it "sets the model options" do
       agent_class.model_options(reasoning: "medium")

@@ -5,7 +5,7 @@ require "json"
 
 # OpenRouter provider (https://openrouter.ai). Requires the +openai+ gem —
 # OpenRouter exposes an OpenAI-compatible endpoint, so this reuses the OpenAI
-# SDK with a +base_url+ override. +api_key+ falls back to config, then
+# SDK with a +base_url+ override. +api_key+ resolves from config, then
 # +OPENROUTER_API_KEY+.
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL = "https://openrouter.ai/api/v1" #: String
@@ -27,17 +27,31 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **)
-    super()
+  #: () -> void
+  def initialize
+    super
     depends_on "openai"
-
-    api_key ||= Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
-
-    @client = ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL, **)
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.openrouter.client
+  end
+
+  # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
+  # different vendor, so omitting an unset +api_key+ would let the SDK fall
+  # back to +OPENAI_API_KEY+ and send an OpenAI credential to OpenRouter.
+  # Passing nil raises in the SDK instead. +OPENROUTER_API_KEY+ is read here
+  # rather than left to the SDK for the same reason.
+  #--
+  #: () -> untyped
+  def build_client
+    api_key = Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
+    ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -84,7 +98,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.chat.completions.create(**params)
+    client.chat.completions.create(**params)
   end
 
   #--
@@ -174,7 +188,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     # events. We want raw ChatCompletionChunk objects with
     # +choices.first.delta+ so we can map deltas to Riffer::StreamEvents
     # ourselves.
-    stream = @client.chat.completions.stream_raw(**stream_params)
+    stream = client.chat.completions.stream_raw(**stream_params)
     begin
       stream.each do |chunk|
         handle_stream_chunk(chunk, state: state, yielder: yielder)
