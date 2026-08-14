@@ -15,7 +15,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   # --
   # : () -> untyped
-  def provider_config: () -> untyped
+  def global_client: () -> untyped
 
   # --
   # : () -> untyped

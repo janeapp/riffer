@@ -113,17 +113,17 @@ class Riffer::Providers::Base
   #--
   #: () -> untyped
   def client
-    configured = provider_config&.client
+    configured = global_client
     return Riffer::Helpers::CallOrValue.resolve(configured) if configured
 
     @client ||= build_client
   end
 
-  # Returns the provider's global config struct (the +client+ / credential
-  # holder); nil for providers without one.
+  # Returns the consumer-configured client for this provider; nil when none is
+  # configured, and for providers that take no configuration at all.
   #--
   #: () -> untyped
-  def provider_config
+  def global_client
     nil
   end
 

@@ -3,10 +3,6 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
-  # Each provider struct's +client+ member optionally carries a consumer-owned
-  # client replacing the default one riffer builds from the credential members —
-  # either a client instance or a no-argument Proc returning one, resolved on
-  # every LLM call.
   AmazonBedrock = Struct.new(:api_token, :region, :client)
   Anthropic = Struct.new(:api_key, :client)
   AzureOpenAI = Struct.new(:api_key, :endpoint, :client)

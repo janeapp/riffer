@@ -22,7 +22,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
   # --
   # : () -> untyped
-  def provider_config: () -> untyped
+  def global_client: () -> untyped
 
   # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
   # different vendor, so omitting an unset +api_key+ would let the SDK fall

@@ -1,0 +1,6 @@
+# `client` is typed against the SDK, so this narrowing stays in _private (never ships)
+class Riffer::Providers::AmazonBedrock
+  private
+
+  def client: () -> ::Aws::BedrockRuntime::Client
+end

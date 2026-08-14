@@ -16,8 +16,8 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
 
   #--
   #: () -> untyped
-  def provider_config
-    Riffer.config.azure_openai
+  def global_client
+    Riffer.config.azure_openai.client
   end
 
   # Deliberately not compacted: this borrows the OpenAI SDK to talk to Azure, so

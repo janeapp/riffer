@@ -13,7 +13,7 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
 
   # --
   # : () -> untyped
-  def provider_config: () -> untyped
+  def global_client: () -> untyped
 
   # Deliberately not compacted: this borrows the OpenAI SDK to talk to Azure, so
   # omitting an unset argument would let the SDK fall back to +OPENAI_API_KEY+

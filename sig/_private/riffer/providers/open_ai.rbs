@@ -1,0 +1,6 @@
+# `client` is typed against the SDK, so this narrowing stays in _private (never ships)
+class Riffer::Providers::OpenAI
+  private
+
+  def client: () -> ::OpenAI::Client
+end

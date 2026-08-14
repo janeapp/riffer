@@ -23,8 +23,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def provider_config
-    Riffer.config.openai
+  def global_client
+    Riffer.config.openai.client
   end
 
   # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /

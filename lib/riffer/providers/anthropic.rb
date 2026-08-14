@@ -40,8 +40,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def provider_config
-    Riffer.config.anthropic
+  def global_client
+    Riffer.config.anthropic.client
   end
 
   # Compacted for the same reason as the other providers: never hand an SDK an

@@ -32,7 +32,7 @@ end
 
 ## Credentials and Clients
 
-Provider constructors take **no arguments** — every credential comes from configuration, so `Riffer::Providers::OpenAI.new` is the only valid form. Passing anything raises `ArgumentError`.
+Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes no arguments.
 
 | Provider       | Configured credentials                                            |
 | -------------- | ----------------------------------------------------------------- |

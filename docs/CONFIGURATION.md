@@ -355,7 +355,7 @@ end
 
 ## Multiple Configurations
 
-Provider credentials and clients are **global**, resolved per process rather than per agent. For different environments, branch at boot:
+Provider credentials and clients are **global**, resolved per process. For different environments, branch at boot:
 
 ```ruby
 Riffer.configure do |config|
@@ -367,7 +367,7 @@ Riffer.configure do |config|
 end
 ```
 
-Agents do not take per-agent credentials, and neither do providers — `Riffer::Providers::OpenAI.new` takes no arguments and reads everything from `config.openai`. When a single process genuinely has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:
+When a single process has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:
 
 ```ruby
 class InternalOpenAI < Riffer::Providers::OpenAI
@@ -379,12 +379,12 @@ class InternalOpenAI < Riffer::Providers::OpenAI
 
   private
 
-  def provider_config
-    self.class.config
+  def global_client
+    self.class.config.client
   end
 
   def build_client
-    ::OpenAI::Client.new(api_key: provider_config.api_key, base_url: provider_config.base_url)
+    ::OpenAI::Client.new(api_key: self.class.config.api_key, base_url: self.class.config.base_url)
   end
 end
 

@@ -123,9 +123,9 @@ end
 
 ## Client resolution
 
-Providers take **no constructor arguments** — agents construct them bare (`provider_class.new`), and every credential is read from configuration inside `build_client`. `Riffer::Providers::Base` provides a private `client` method your `execute_generate`/`execute_stream` should call instead of holding a client ivar. It resolves, in order:
+Riffer constructs providers with `provider_class.new`, so `initialize` takes no arguments; read credentials from configuration inside `build_client`. `Riffer::Providers::Base` provides a private `client` method for your `execute_generate`/`execute_stream` to call. It resolves, in order:
 
-1. **A configured client** — whatever `provider_config&.client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override the `provider_config` hook to return your config object (any object with a `client` method); it defaults to `nil`.
+1. **A configured client** — whatever `global_client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override that hook to read the client off your own configuration; it defaults to `nil`.
 2. **A memoized client** from `build_client` — implement this hook to build your SDK client from configured credentials.
 
 This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).

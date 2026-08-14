@@ -47,8 +47,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def provider_config
-    Riffer.config.amazon_bedrock
+  def global_client
+    Riffer.config.amazon_bedrock.client
   end
 
   # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+

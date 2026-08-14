@@ -31,8 +31,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def provider_config
-    Riffer.config.gemini
+  def global_client
+    Riffer.config.gemini.client
   end
 
   #--

@@ -28,7 +28,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   # --
   # : () -> untyped
-  def provider_config: () -> untyped
+  def global_client: () -> untyped
 
   # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+
   # and the shared config only for a missing argument, and raises

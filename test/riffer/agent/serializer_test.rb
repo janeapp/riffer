@@ -54,12 +54,6 @@ describe Riffer::Agent::Serializer do
       expect(dict[:model_options]).must_equal({ temperature: 0.2 })
     end
 
-    it "carries no provider options" do
-      dict = build_agent_class.new.to_h
-
-      expect(dict.key?(:provider_options)).must_equal false
-    end
-
     it "carries structured output as JSON Schema" do
       klass = build_agent_class do
         structured_output do
@@ -138,8 +132,8 @@ describe Riffer::Agent::Serializer do
       expect(result.object).must_equal({ answer: "yes", score: 0.0 })
     end
 
-    it "ignores a legacy provider_options key" do
-      dict = build_agent_class.new.to_h.merge(provider_options: { api_key: "legacy" })
+    it "ignores unrecognized keys" do
+      dict = build_agent_class.new.to_h.merge(unknown_key: { foo: "bar" })
       agent = Riffer::Agent.from_h(dict, context: nil)
 
       expect(agent).must_be_instance_of Riffer::Agent

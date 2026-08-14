@@ -37,8 +37,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
   #--
   #: () -> untyped
-  def provider_config
-    Riffer.config.openrouter
+  def global_client
+    Riffer.config.openrouter.client
   end
 
   # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
