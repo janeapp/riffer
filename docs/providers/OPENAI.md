@@ -34,7 +34,7 @@ Riffer.configure do |config|
 end
 ```
 
-The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
+The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
 For OpenAI-compatible servers (LiteLLM, vLLM, corporate gateways), configure a `base_url`:
 

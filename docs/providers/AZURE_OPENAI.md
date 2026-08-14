@@ -38,7 +38,7 @@ Riffer.configure do |config|
 end
 ```
 
-See [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
+See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
 ### Environment variables only
 

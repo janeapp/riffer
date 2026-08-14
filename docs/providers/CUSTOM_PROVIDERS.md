@@ -128,7 +128,7 @@ Providers take **no constructor arguments** — agents construct them bare (`pro
 1. **A configured client** — whatever `provider_config&.client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override the `provider_config` hook to return your config object (any object with a `client` method); it defaults to `nil`.
 2. **A memoized client** from `build_client` — implement this hook to build your SDK client from configured credentials.
 
-This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins. See [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
+This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
 ## Using depends_on
 

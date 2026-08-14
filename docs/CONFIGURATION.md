@@ -95,7 +95,7 @@ A credential you leave unset in riffer is omitted from the default client rather
 
 Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
 
-The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/08_GEMINI.md).
+The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
 
 ### MCP (Model Context Protocol)
 

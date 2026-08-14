@@ -43,7 +43,7 @@ Provider constructors take **no arguments** — every credential comes from conf
 | Gemini         | `config.gemini.api_key`                                           |
 | OpenRouter     | `config.openrouter.api_key`                                       |
 
-Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../10_CONFIGURATION.md#provider-clients).
+Out of the box, each provider builds an SDK client from these credentials. Everything else — timeouts, retries, proxies, custom auth — is configured by assigning your own client (an instance, or a `Proc` resolved on every LLM call) to `Riffer.config.<provider>.client`. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
 ## Provider Interface
 
