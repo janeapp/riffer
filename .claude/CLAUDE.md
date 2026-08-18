@@ -10,14 +10,6 @@ Ruby gem framework for building AI-powered agents with LLM provider adapters.
 - **Model format**: `provider/model` (e.g., `openai/gpt-4`)
 - **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/CONFIGURATION.md`, `docs/MESSAGES.md`). Adding a NEW page under `docs/` also requires a `docs-site/manifest.yml` entry — the site build fails without one. RDoc ≠ user docs.
 
-## Topic Guides
-
-- [Architecture](.agents/architecture.md) - Core components and project structure
-- [Testing](.agents/testing.md) - Minitest spec DSL and VCR cassettes
-- [Code Style](.agents/code-style.md) - RuboCop, comment, and RDoc conventions
-- [Providers](.agents/providers.md) - Adding new LLM provider adapters
-- [RBS Inline](.agents/rbs-inline.md) - Type annotations with rbs-inline
-
 ## Commands
 
 All wrappers `exec bundle exec …` under the hood.
