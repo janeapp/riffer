@@ -24,6 +24,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (?api_token: String?, ?region: String?, **untyped) -> void
   def initialize: (?api_token: String?, ?region: String?, **untyped) -> void
 
+  # --
+  # : (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+
   private
 
   # --

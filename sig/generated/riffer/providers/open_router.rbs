@@ -18,6 +18,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # : (?api_key: String?, **untyped) -> void
   def initialize: (?api_key: String?, **untyped) -> void
 
+  # --
+  # : (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+
   private
 
   # --

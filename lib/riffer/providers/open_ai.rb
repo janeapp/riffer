@@ -21,6 +21,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     @client = ::OpenAI::Client.new(api_key: api_key, **options.except(:api_key))
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    file.image? ? :url : :data
+  end
+
   private
 
   #--

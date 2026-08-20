@@ -1,0 +1,16 @@
+# Generated from lib/riffer/files/downloader.rb with RBS::Inline
+
+class Riffer::Files::Downloader
+  MAX_REDIRECTS: Integer
+
+  # : (String, max_bytes: Integer, timeout: Integer) -> String
+  def call: (String, max_bytes: Integer, timeout: Integer) -> String
+
+  private
+
+  # : (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
+  def fetch: (String, max_bytes: Integer, timeout: Integer, redirects_remaining: Integer) -> String
+
+  # : (Net::HTTPResponse, max_bytes: Integer) -> String
+  def read_capped: (Net::HTTPResponse, max_bytes: Integer) -> String
+end

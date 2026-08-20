@@ -375,5 +375,22 @@ describe Riffer::Config do
       config = Riffer::Config.new
       expect { config.files.runner = Object.new }.must_raise Riffer::ArgumentError
     end
+
+    it "initializes downloader to a Downloader instance" do
+      config = Riffer::Config.new
+      expect(config.files.downloader).must_be_instance_of Riffer::Files::Downloader
+    end
+
+    it "allows setting downloader to any object responding to #call" do
+      config = Riffer::Config.new
+      downloader = ->(url, max_bytes:, timeout:) { "" }
+      config.files.downloader = downloader
+      expect(config.files.downloader).must_be_same_as downloader
+    end
+
+    it "raises for a downloader that doesn't respond to #call" do
+      config = Riffer::Config.new
+      expect { config.files.downloader = Object.new }.must_raise Riffer::ArgumentError
+    end
   end
 end

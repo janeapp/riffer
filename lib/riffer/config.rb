@@ -106,9 +106,9 @@ class Riffer::Config
     end
   end
 
-  # File-download policy for +Riffer::Messages::FilePart+ URL sources
+  # File-attachment-download policy for +Riffer::Messages::FilePart+ URL sources
   class Files
-    # Allow files to be downloaded to send to providers.
+    # Allow file attachments to be downloaded to send to providers.
     attr_reader :allow_downloads #: bool
     # Maximum file size to download before failing.
     attr_reader :max_bytes #: Integer
@@ -118,6 +118,8 @@ class Riffer::Config
     attr_reader :max_per_message #: Integer?
     # Execution pattern for downloading files.
     attr_reader :runner #: Riffer::Runner
+    # The object used to fetch a URL source's bytes
+    attr_reader :downloader #: untyped
 
     #--
     #: () -> void
@@ -127,6 +129,7 @@ class Riffer::Config
       @timeout = 60
       @max_per_message = nil
       @runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
+      @downloader = Riffer::Files::Downloader.new
     end
 
     # Sets the allow_downloads flag, coercing boolean-ish values so an env-var
@@ -178,6 +181,15 @@ class Riffer::Config
       valid = value.is_a?(Riffer::Runner)
       raise Riffer::ArgumentError, "runner must be a Riffer::Runner instance" unless valid
       @runner = value
+    end
+
+    # Sets the object used to download bytes from a URL.
+    # Raises Riffer::ArgumentError if value does not respond to +#call+.
+    #--
+    #: (untyped) -> void
+    def downloader=(value)
+      raise Riffer::ArgumentError, "downloader must respond to #call" unless value.respond_to?(:call)
+      @downloader = value
     end
   end
 

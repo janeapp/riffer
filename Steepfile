@@ -12,6 +12,7 @@ target :lib do
   library "aws-sdk-core"
   library "base64"
   library "cgi"
+  library "digest"
   library "json"
   library "logger"
   library "net-http"

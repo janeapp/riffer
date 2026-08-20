@@ -23,6 +23,34 @@ module Riffer
   class ToolExecutionError < Error
   end
 
+  # Base error for a file attachment that can't be resolved for the provider.
+  class FileError < Error
+  end
+
+  # Raised when the provider can't accept the file at all.
+  class FileUnsupportedError < FileError
+  end
+
+  # Raised when a download is required but Riffer.config.files.allow_downloads is false.
+  class FileDownloadsDisabledError < FileError
+  end
+
+  # Raised when a message carries more files than Riffer.config.files.max_per_message allows.
+  class TooManyFilesError < FileError
+  end
+
+  # Raised when there's an issue downloading a file
+  class FileDownloadError < FileError
+  end
+
+  # Raised when a file size exceeds Riffer.config.files.max_bytes
+  class FileTooLargeError < FileError
+  end
+
+  # Raised when a downloaded or inline file's sha256 doesn't match.
+  class FileChecksumMismatchError < FileError
+  end
+
   # Returns the Riffer configuration.
   #
   # --

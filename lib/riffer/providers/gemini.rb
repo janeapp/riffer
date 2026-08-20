@@ -45,6 +45,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     @read_timeout = read_timeout || Riffer.config.gemini.read_timeout || DEFAULT_READ_TIMEOUT
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    :data
+  end
+
   private
 
   #--

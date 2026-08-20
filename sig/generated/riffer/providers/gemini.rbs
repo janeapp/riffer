@@ -27,6 +27,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
   def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
 
+  # --
+  # : (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+
   private
 
   # --

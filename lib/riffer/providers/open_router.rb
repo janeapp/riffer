@@ -36,6 +36,12 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     @client = ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL, **options)
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    file.image? ? :url : :data
+  end
+
   private
 
   #--

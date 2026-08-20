@@ -98,6 +98,12 @@ class Riffer::Providers::Base
     end
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    :url
+  end
+
   private
 
   #: (String) -> true
