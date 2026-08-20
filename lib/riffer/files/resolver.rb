@@ -19,12 +19,14 @@ class Riffer::Files::Resolver
   # resolved
   #: (Array[Riffer::Messages::Base]) -> void
   def resolve!(messages)
-    # TODO switch to use runner
-    messages.each do |message|
-      next unless message.is_a?(Riffer::Messages::User)
+    files = messages.flat_map do |message|
+      next [] unless message.is_a?(Riffer::Messages::User)
+
       check_file_count!(message)
-      message.files.each { |file| resolve_file!(file) }
+      message.files
     end
+
+    @config.runner.map(files, context: nil) { |file| resolve_file!(file) }
   end
 
   private

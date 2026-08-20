@@ -18,6 +18,7 @@ describe Riffer::Files::Resolver do
     @original_allow_downloads = Riffer.config.files.allow_downloads
     @original_max_per_message = Riffer.config.files.max_per_message
     @original_downloader = Riffer.config.files.downloader
+    @original_runner = Riffer.config.files.runner
     Riffer.config.files.allow_downloads = true
     Riffer.config.files.downloader = fake_downloader
   end
@@ -26,6 +27,7 @@ describe Riffer::Files::Resolver do
     Riffer.config.files.allow_downloads = @original_allow_downloads
     Riffer.config.files.max_per_message = @original_max_per_message
     Riffer.config.files.downloader = @original_downloader
+    Riffer.config.files.runner = @original_runner
   end
 
   def resolver_for(delivery)
@@ -131,6 +133,47 @@ describe Riffer::Files::Resolver do
         ]
         message = Riffer::Messages::User.new("hi", files: files)
         expect { resolver_for(:url).resolve!([message]) }.must_raise Riffer::TooManyFilesError
+      end
+    end
+
+    describe "download concurrency" do
+      let(:sleepy_downloader) do
+        intervals = downloaded_calls
+        mutex = Mutex.new
+        lambda do |url, max_bytes:, timeout:|
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          sleep 0.05
+          finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          mutex.synchronize { intervals << [start, finish] }
+          Base64.strict_encode64("content")
+        end
+      end
+
+      let(:files) do
+        [
+          Riffer::Messages::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
+          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf")
+        ]
+      end
+
+      before { Riffer.config.files.downloader = sleepy_downloader }
+
+      it "overlaps downloads under the default Threaded runner" do
+        message = Riffer::Messages::User.new("hi", files: files)
+        resolver_for(:data).resolve!([message])
+
+        a, b = downloaded_calls
+        overlap = a[0] < b[1] && b[0] < a[1]
+        expect(overlap).must_equal true
+      end
+
+      it "does not overlap downloads when configured with Riffer::Runner::Sequential" do
+        Riffer.config.files.runner = Riffer::Runner::Sequential.new
+        message = Riffer::Messages::User.new("hi", files: files)
+        resolver_for(:data).resolve!([message])
+
+        a, b = downloaded_calls
+        expect(b[0] >= a[1]).must_equal true
       end
     end
   end
