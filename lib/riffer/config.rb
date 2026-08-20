@@ -128,7 +128,7 @@ class Riffer::Config
       @max_bytes = 3_500_000
       @timeout = 60
       @max_per_message = nil
-      @runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
+      @runner = Riffer::Runner::Sequential.new
       @downloader = Riffer::Files::Downloader.new
     end
 

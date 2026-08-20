@@ -158,7 +158,8 @@ describe Riffer::Files::Resolver do
 
       before { Riffer.config.files.downloader = sleepy_downloader }
 
-      it "overlaps downloads under the default Threaded runner" do
+      it "overlaps downloads when configured with Riffer::Runner::Threaded" do
+        Riffer.config.files.runner = Riffer::Runner::Threaded.new(max_concurrency: 3)
         message = Riffer::Messages::User.new("hi", files: files)
         resolver_for(:data).resolve!([message])
 
@@ -167,7 +168,7 @@ describe Riffer::Files::Resolver do
         expect(overlap).must_equal true
       end
 
-      it "does not overlap downloads when configured with Riffer::Runner::Sequential" do
+      it "does not overlap downloads when configured with Riffer::Runner::Sequential (the default)" do
         Riffer.config.files.runner = Riffer::Runner::Sequential.new
         message = Riffer::Messages::User.new("hi", files: files)
         resolver_for(:data).resolve!([message])

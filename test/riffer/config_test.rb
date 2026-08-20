@@ -359,9 +359,9 @@ describe Riffer::Config do
       expect { config.files.max_per_message = "2" }.must_raise Riffer::ArgumentError
     end
 
-    it "initializes runner to a Threaded instance" do
+    it "initializes runner to a Sequential instance" do
       config = Riffer::Config.new
-      expect(config.files.runner).must_be_instance_of Riffer::Runner::Threaded
+      expect(config.files.runner).must_be_instance_of Riffer::Runner::Sequential
     end
 
     it "allows setting runner to a Riffer::Runner instance" do
