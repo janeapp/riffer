@@ -250,4 +250,130 @@ describe Riffer::Config do
       expect { config.tracing.backend = backend }.must_raise Riffer::ArgumentError
     end
   end
+
+  describe "files namespace" do
+    it "initializes allow_downloads to false" do
+      config = Riffer::Config.new
+      expect(config.files.allow_downloads).must_equal false
+    end
+
+    it "coerces a 'true' string for allow_downloads" do
+      config = Riffer::Config.new
+      config.files.allow_downloads = "true"
+      expect(config.files.allow_downloads).must_equal true
+    end
+
+    it "coerces a 'false' string for allow_downloads" do
+      config = Riffer::Config.new
+      config.files.allow_downloads = "false"
+      expect(config.files.allow_downloads).must_equal false
+    end
+
+    it "raises for an unrecognized allow_downloads value" do
+      config = Riffer::Config.new
+      expect { config.files.allow_downloads = "yes" }.must_raise Riffer::ArgumentError
+    end
+
+    it "initializes max_bytes to 3_500_000" do
+      config = Riffer::Config.new
+      expect(config.files.max_bytes).must_equal 3_500_000
+    end
+
+    it "allows setting max_bytes to a positive integer" do
+      config = Riffer::Config.new
+      config.files.max_bytes = 1_000
+      expect(config.files.max_bytes).must_equal 1_000
+    end
+
+    it "raises for a zero max_bytes" do
+      config = Riffer::Config.new
+      expect { config.files.max_bytes = 0 }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a negative max_bytes" do
+      config = Riffer::Config.new
+      expect { config.files.max_bytes = -1 }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a non-integer max_bytes" do
+      config = Riffer::Config.new
+      expect { config.files.max_bytes = "1000" }.must_raise Riffer::ArgumentError
+    end
+
+    it "initializes timeout to 60" do
+      config = Riffer::Config.new
+      expect(config.files.timeout).must_equal 60
+    end
+
+    it "allows setting timeout to a positive integer" do
+      config = Riffer::Config.new
+      config.files.timeout = 30
+      expect(config.files.timeout).must_equal 30
+    end
+
+    it "raises for a zero timeout" do
+      config = Riffer::Config.new
+      expect { config.files.timeout = 0 }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a negative timeout" do
+      config = Riffer::Config.new
+      expect { config.files.timeout = -1 }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a non-integer timeout" do
+      config = Riffer::Config.new
+      expect { config.files.timeout = "30" }.must_raise Riffer::ArgumentError
+    end
+
+    it "initializes max_per_message to nil" do
+      config = Riffer::Config.new
+      expect(config.files.max_per_message).must_be_nil
+    end
+
+    it "allows setting max_per_message to a positive integer" do
+      config = Riffer::Config.new
+      config.files.max_per_message = 2
+      expect(config.files.max_per_message).must_equal 2
+    end
+
+    it "allows clearing max_per_message with nil" do
+      config = Riffer::Config.new
+      config.files.max_per_message = 2
+      config.files.max_per_message = nil
+      expect(config.files.max_per_message).must_be_nil
+    end
+
+    it "raises for a zero max_per_message" do
+      config = Riffer::Config.new
+      expect { config.files.max_per_message = 0 }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a negative max_per_message" do
+      config = Riffer::Config.new
+      expect { config.files.max_per_message = -1 }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises for a non-integer max_per_message" do
+      config = Riffer::Config.new
+      expect { config.files.max_per_message = "2" }.must_raise Riffer::ArgumentError
+    end
+
+    it "initializes runner to a Threaded instance" do
+      config = Riffer::Config.new
+      expect(config.files.runner).must_be_instance_of Riffer::Runner::Threaded
+    end
+
+    it "allows setting runner to a Riffer::Runner instance" do
+      config = Riffer::Config.new
+      runner = Riffer::Runner::Sequential.new
+      config.files.runner = runner
+      expect(config.files.runner).must_be_same_as runner
+    end
+
+    it "raises for a runner that isn't a Riffer::Runner instance" do
+      config = Riffer::Config.new
+      expect { config.files.runner = Object.new }.must_raise Riffer::ArgumentError
+    end
+  end
 end
