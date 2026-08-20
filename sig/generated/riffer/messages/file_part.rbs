@@ -3,11 +3,17 @@
 # Represents a file attachment (image or document) — from a URL (+from_url+) or
 # raw base64 data (+new+).
 class Riffer::Messages::FilePart
+  @downloaded_data: String?
+
+  @data: String?
+
   @url_string: String?
 
   MEDIA_TYPES: Hash[String, String]
 
   SUPPORTED_MEDIA_TYPES: Array[String]
+
+  SHA256_PATTERN: Regexp
 
   # The MIME type of the file.
   attr_reader media_type: String
@@ -15,17 +21,20 @@ class Riffer::Messages::FilePart
   # The filename, if available.
   attr_reader filename: String?
 
+  # The expected SHA-256 of the file contents, if the caller supplied one.
+  attr_reader sha256: String?
+
   # Raises Riffer::ArgumentError unless +data+ or +url+ is given and
   # +media_type+ is supported.
   # --
-  # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
-  def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?) -> void
+  # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
+  def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
 
   # Creates a FilePart from a URL, detecting +media_type+ from the path
   # extension when omitted. Raises Riffer::ArgumentError if it can't be detected.
   # --
-  # : (String, ?media_type: String?) -> Riffer::Messages::FilePart
-  def self.from_url: (String, ?media_type: String?) -> Riffer::Messages::FilePart
+  # : (String, ?media_type: String?, ?sha256: String?) -> Riffer::Messages::FilePart
+  def self.from_url: (String, ?media_type: String?, ?sha256: String?) -> Riffer::Messages::FilePart
 
   # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
   # or returns +file+ unchanged when it is already a FilePart. Raises
@@ -34,8 +43,18 @@ class Riffer::Messages::FilePart
   # : ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::FilePart) -> Riffer::Messages::FilePart
 
-  # Returns the base64-encoded data, or nil for URL-only sources.
-  attr_reader data: String?
+  # The base64-encoded contents - caller-supplied, or filled in by the file
+  # resolver after a download.  Nil for a URL source riffer hasn't fetched.
+  # --
+  # : () -> String?
+  def data: () -> String?
+
+  # Caches bytes fetched for a URL source.  Deliberately absent from +to_h+:
+  # the agent loop re-sends history on every turn, so the cache saves refreshing
+  # the same file, while persisted history stays free of megabytes of base64
+  # --
+  # : (String) -> void
+  def cache_downloaded_data: (String) -> void
 
   # Returns the URL if the source was a URL, nil otherwise.
   #

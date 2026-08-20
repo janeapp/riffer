@@ -392,8 +392,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def convert_file_part_to_bedrock_format(file)
     format = bedrock_format(file.media_type)
 
-    source = if file.data
-      {bytes: Base64.decode64(file.data)}
+    data = file.data
+    source = if data
+      {bytes: Base64.decode64(data)}
     elsif file.url&.start_with?("s3://")
       {s3_location: {uri: file.url}}
     else
