@@ -41,6 +41,51 @@ describe Riffer::Tools::Toolable do
 
       expect(klass.identifier).must_equal "custom_id"
     end
+
+    it "derives a snake_case identifier from the class name" do
+      klass = Class.new { extend Riffer::Tools::Toolable }
+      Object.const_set(:ToolableTestDerivedTool, klass)
+
+      expect(klass.identifier).must_equal "toolable_test_derived_tool"
+    ensure
+      Object.send(:remove_const, :ToolableTestDerivedTool)
+    end
+
+    it "derives the identifier once and reuses it" do
+      klass = Class.new { extend Riffer::Tools::Toolable }
+      Object.const_set(:ToolableTestMemoizedTool, klass)
+
+      expect(klass.identifier).must_equal "toolable_test_memoized_tool"
+
+      with_class_name_converter_returning("re-derived") do
+        expect(klass.identifier).must_equal "toolable_test_memoized_tool"
+      end
+    ensure
+      Object.send(:remove_const, :ToolableTestMemoizedTool)
+    end
+
+    it "does not cache an identifier derived before the class is named" do
+      klass = Class.new { extend Riffer::Tools::Toolable }
+
+      expect(klass.identifier).must_equal ""
+
+      Object.const_set(:ToolableTestLateNamedTool, klass)
+
+      expect(klass.identifier).must_equal "toolable_test_late_named_tool"
+    ensure
+      Object.send(:remove_const, :ToolableTestLateNamedTool)
+    end
+
+    it "prefers an explicit identifier over a cached derived one" do
+      klass = Class.new { extend Riffer::Tools::Toolable }
+      Object.const_set(:ToolableTestExplicitTool, klass)
+      klass.identifier
+      klass.identifier("custom_id")
+
+      expect(klass.identifier).must_equal "custom_id"
+    ensure
+      Object.send(:remove_const, :ToolableTestExplicitTool)
+    end
   end
 
   describe "#name" do

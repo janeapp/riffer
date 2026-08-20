@@ -11,6 +11,8 @@
 #   agent = MyAgent.new
 #   agent.generate('Hello!')
 class Riffer::Agent
+  extend Riffer::Helpers::DerivedIdentifier
+
   self.@config: Riffer::Agent::Config?
 
   INTERRUPT_MAX_STEPS: Symbol

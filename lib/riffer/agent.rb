@@ -15,6 +15,8 @@ require "json"
 #   agent.generate('Hello!')
 #
 class Riffer::Agent
+  extend Riffer::Helpers::DerivedIdentifier
+
   # @rbs self.@config: Riffer::Agent::Config?
 
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
@@ -31,7 +33,9 @@ class Riffer::Agent
   #--
   #: (?String?) -> String
   def self.identifier(value = nil)
-    value.nil? ? (config.identifier || Riffer::Helpers::ClassNameConverter.convert(name)) : (config.identifier = value)
+    return config.identifier = value if value
+
+    config.identifier || derived_identifier
   end
 
   # Gets or sets the model string (e.g., "openai/gpt-4o").

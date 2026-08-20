@@ -14,6 +14,8 @@
 #     end
 #   end
 module Riffer::Tools::Toolable
+  include Riffer::Helpers::DerivedIdentifier
+
   @kind: Symbol?
 
   @params_builder: Riffer::Params?

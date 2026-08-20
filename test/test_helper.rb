@@ -56,6 +56,15 @@ end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
 
+# Shadows ClassNameConverter.convert for the block's duration so a test can
+# prove a memoized identifier is reused rather than re-derived.
+def with_class_name_converter_returning(result)
+  Riffer::Helpers::ClassNameConverter.define_singleton_method(:convert) { |*, **| result }
+  yield
+ensure
+  Riffer::Helpers::ClassNameConverter.singleton_class.remove_method(:convert)
+end
+
 # Clears the MCP registry between tests, retiring any in-flight discovery threads.
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }

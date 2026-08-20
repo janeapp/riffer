@@ -15,6 +15,15 @@
 #     end
 #   end
 class Riffer::Guardrail
+  extend Riffer::Helpers::DerivedIdentifier
+
+  # Returns the snake_case identifier derived from the class name.
+  #--
+  #: () -> String
+  def self.identifier
+    derived_identifier
+  end
+
   # Processes input messages before they're sent to the LLM; override in
   # subclasses.
   #--
@@ -36,7 +45,7 @@ class Riffer::Guardrail
   #--
   #: () -> String
   def name
-    Riffer::Helpers::ClassNameConverter.convert(self.class.name)
+    self.class.identifier
   end
 
   protected

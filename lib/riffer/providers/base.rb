@@ -8,6 +8,7 @@ require "json"
 # +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
 # class orchestrates them.
 class Riffer::Providers::Base
+  # @rbs self.@semconv_provider_name: String?
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
   # @rbs @client: untyped
@@ -29,10 +30,15 @@ class Riffer::Providers::Base
   #--
   #: () -> String
   def self.semconv_provider_name
+    memoized = @semconv_provider_name
+    return memoized if memoized
+
+    # An anonymous class gets its real name once assigned to a constant, so the
+    # "unknown" fallback is never cached.
     class_name = name
     return "unknown" unless class_name
 
-    Riffer::Helpers::ClassNameConverter.convert(class_name.split("::").last.to_s)
+    @semconv_provider_name = Riffer::Helpers::ClassNameConverter.convert(class_name.split("::").last.to_s)
   end
 
   # Generates text using the provider.

@@ -19,6 +19,42 @@ describe Riffer::Agent do
     it "defaults to snake_case class name when not set" do
       expect(Riffer::Agent.identifier).must_equal "riffer/agent"
     end
+
+    it "derives the identifier once and reuses it" do
+      klass = Class.new(Riffer::Agent)
+      Object.const_set(:AgentTestMemoizedAgent, klass)
+
+      expect(klass.identifier).must_equal "agent_test_memoized_agent"
+
+      with_class_name_converter_returning("re-derived") do
+        expect(klass.identifier).must_equal "agent_test_memoized_agent"
+      end
+    ensure
+      Object.send(:remove_const, :AgentTestMemoizedAgent)
+    end
+
+    it "does not cache an identifier derived before the class is named" do
+      klass = Class.new(Riffer::Agent)
+
+      expect(klass.identifier).must_equal ""
+
+      Object.const_set(:AgentTestLateNamedAgent, klass)
+
+      expect(klass.identifier).must_equal "agent_test_late_named_agent"
+    ensure
+      Object.send(:remove_const, :AgentTestLateNamedAgent)
+    end
+
+    it "prefers an explicit identifier over a cached derived one" do
+      klass = Class.new(Riffer::Agent)
+      Object.const_set(:AgentTestExplicitAgent, klass)
+      klass.identifier
+      klass.identifier("explicit-agent")
+
+      expect(klass.identifier).must_equal "explicit-agent"
+    ensure
+      Object.send(:remove_const, :AgentTestExplicitAgent)
+    end
   end
 
   describe ".model" do

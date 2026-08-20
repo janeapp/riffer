@@ -46,6 +46,31 @@ describe Riffer::Providers::Base do
     it "falls back to unknown for anonymous classes" do
       expect(Class.new(Riffer::Providers::Base).semconv_provider_name).must_equal "unknown"
     end
+
+    it "derives the name once and reuses it" do
+      klass = Class.new(Riffer::Providers::Base)
+      Object.const_set(:BaseTestMemoizedProvider, klass)
+
+      expect(klass.semconv_provider_name).must_equal "base_test_memoized_provider"
+
+      with_class_name_converter_returning("re-derived") do
+        expect(klass.semconv_provider_name).must_equal "base_test_memoized_provider"
+      end
+    ensure
+      Object.send(:remove_const, :BaseTestMemoizedProvider)
+    end
+
+    it "does not cache unknown for a class named later" do
+      klass = Class.new(Riffer::Providers::Base)
+
+      expect(klass.semconv_provider_name).must_equal "unknown"
+
+      Object.const_set(:BaseTestLateNamedProvider, klass)
+
+      expect(klass.semconv_provider_name).must_equal "base_test_late_named_provider"
+    ensure
+      Object.send(:remove_const, :BaseTestLateNamedProvider)
+    end
   end
 
   describe "#generate_text" do

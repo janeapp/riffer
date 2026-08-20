@@ -11,6 +11,8 @@ class Riffer::Providers::Base
 
   @current_tools: Array[singleton(Riffer::Tool)]
 
+  self.@semconv_provider_name: String?
+
   WIRE_SEPARATOR: String
 
   # Returns the preferred skill adapter for this provider; override in

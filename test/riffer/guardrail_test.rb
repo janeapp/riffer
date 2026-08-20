@@ -3,6 +3,43 @@
 require "test_helper"
 
 describe Riffer::Guardrail do
+  describe ".identifier" do
+    it "derives the snake_case identifier from the class name" do
+      expect(Riffer::Guardrail.identifier).must_equal "riffer/guardrail"
+    end
+
+    it "derives the identifier once and reuses it" do
+      klass = Class.new(Riffer::Guardrail)
+      Object.const_set(:GuardrailTestMemoizedGuardrail, klass)
+
+      expect(klass.identifier).must_equal "guardrail_test_memoized_guardrail"
+
+      with_class_name_converter_returning("re-derived") do
+        expect(klass.identifier).must_equal "guardrail_test_memoized_guardrail"
+      end
+    ensure
+      Object.send(:remove_const, :GuardrailTestMemoizedGuardrail)
+    end
+
+    it "does not cache an identifier derived before the class is named" do
+      klass = Class.new(Riffer::Guardrail)
+
+      expect(klass.identifier).must_equal ""
+
+      Object.const_set(:GuardrailTestLateNamedGuardrail, klass)
+
+      expect(klass.identifier).must_equal "guardrail_test_late_named_guardrail"
+    ensure
+      Object.send(:remove_const, :GuardrailTestLateNamedGuardrail)
+    end
+  end
+
+  describe "#name" do
+    it "returns the class-level identifier" do
+      expect(Riffer::Guardrail.new.name).must_equal "riffer/guardrail"
+    end
+  end
+
   describe "#process_input" do
     it "returns pass by default" do
       guardrail = Riffer::Guardrail.new
