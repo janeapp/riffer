@@ -44,6 +44,7 @@ class Riffer::Providers::Base
     @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
 
@@ -80,6 +81,7 @@ class Riffer::Providers::Base
     @current_model = model
     messages = normalize_messages(prompt: prompt, system: system, messages: messages, files: files)
     validate_normalized_messages!(messages)
+    Riffer::Files::Resolver.new(provider: self).resolve!(messages)
     messages = merge_consecutive_messages(messages)
     params = build_request_params(messages, model, options)
 

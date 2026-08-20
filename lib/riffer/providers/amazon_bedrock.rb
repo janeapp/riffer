@@ -399,13 +399,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     format = bedrock_format(file.media_type)
 
     data = file.data
-    source = if data
-      {bytes: Base64.decode64(data)}
-    elsif file.url&.start_with?("s3://")
-      {s3_location: {uri: file.url}}
-    else
-      raise Riffer::ArgumentError, "Amazon Bedrock only supports S3 URI or base64 data file sources"
-    end
+    source = data ? {bytes: Base64.decode64(data)} : {s3_location: {uri: file.url}}
 
     if file.image?
       {image: {format: format, source: source}}
