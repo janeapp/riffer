@@ -15,13 +15,15 @@
 #     end
 #   end
 class Riffer::Guardrail
-  extend Riffer::Helpers::DerivedIdentifier
+  # @rbs self.@derived_identifier: String?
 
   # Returns the snake_case identifier derived from the class name.
   #--
   #: () -> String
   def self.identifier
-    derived_identifier
+    # The "" fallback stays outside the memo write so a nil (anonymous class) derivation is never cached.
+    derived = @derived_identifier ||= Riffer::Helpers::ClassNameConverter.convert(name)
+    derived || ""
   end
 
   # Processes input messages before they're sent to the LLM; override in

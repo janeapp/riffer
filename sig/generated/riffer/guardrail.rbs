@@ -14,7 +14,7 @@
 #     end
 #   end
 class Riffer::Guardrail
-  extend Riffer::Helpers::DerivedIdentifier
+  self.@derived_identifier: String?
 
   # Returns the snake_case identifier derived from the class name.
   # --

@@ -16,13 +16,10 @@
 #   end
 #
 module Riffer::Tools::Toolable
-  # Instance methods here surface as class methods on classes that extend
-  # Toolable, so an include (not extend) shares derived_identifier.
-  include Riffer::Helpers::DerivedIdentifier
-
   # @rbs self.@extenders: Array[Module]?
   # @rbs @description: String?
   # @rbs @identifier: String?
+  # @rbs @derived_identifier: String?
   # @rbs @timeout: (Integer | Float)?
   # @rbs @params_builder: Riffer::Params?
   # @rbs @kind: Symbol?
@@ -63,7 +60,15 @@ module Riffer::Tools::Toolable
   def identifier(value = nil)
     return (@identifier = value.to_s) if value
 
-    @identifier || derived_identifier
+    explicit_identifier = @identifier
+    return explicit_identifier if explicit_identifier
+
+    # Module#name is bound explicitly because Toolable's +name+ DSL method
+    # delegates to +identifier+, so a plain +name+ call would recurse.
+    derived = @derived_identifier ||=
+      Riffer::Helpers::ClassNameConverter.convert(Module.instance_method(:name).bind_call(self))
+    # The "" fallback stays outside the memo write so a nil (anonymous class) derivation is never cached.
+    derived || ""
   end
 
   # Alias for identifier — used by providers.

@@ -11,7 +11,7 @@
 #   agent = MyAgent.new
 #   agent.generate('Hello!')
 class Riffer::Agent
-  extend Riffer::Helpers::DerivedIdentifier
+  self.@derived_identifier: String?
 
   self.@config: Riffer::Agent::Config?
 

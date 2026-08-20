@@ -14,13 +14,13 @@
 #     end
 #   end
 module Riffer::Tools::Toolable
-  include Riffer::Helpers::DerivedIdentifier
-
   @kind: Symbol?
 
   @params_builder: Riffer::Params?
 
   @timeout: (Integer | Float)?
+
+  @derived_identifier: String?
 
   @identifier: String?
 

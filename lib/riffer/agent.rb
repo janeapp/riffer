@@ -15,9 +15,8 @@ require "json"
 #   agent.generate('Hello!')
 #
 class Riffer::Agent
-  extend Riffer::Helpers::DerivedIdentifier
-
   # @rbs self.@config: Riffer::Agent::Config?
+  # @rbs self.@derived_identifier: String?
 
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
@@ -35,7 +34,9 @@ class Riffer::Agent
   def self.identifier(value = nil)
     return config.identifier = value if value
 
-    config.identifier || derived_identifier
+    # The "" fallback stays outside the memo write so a nil (anonymous class) derivation is never cached.
+    derived = @derived_identifier ||= Riffer::Helpers::ClassNameConverter.convert(name)
+    config.identifier || derived || ""
   end
 
   # Gets or sets the model string (e.g., "openai/gpt-4o").

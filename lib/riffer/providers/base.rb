@@ -30,15 +30,9 @@ class Riffer::Providers::Base
   #--
   #: () -> String
   def self.semconv_provider_name
-    memoized = @semconv_provider_name
-    return memoized if memoized
-
-    # An anonymous class gets its real name once assigned to a constant, so the
-    # "unknown" fallback is never cached.
-    class_name = name
-    return "unknown" unless class_name
-
-    @semconv_provider_name = Riffer::Helpers::ClassNameConverter.convert(class_name.split("::").last.to_s)
+    # The "unknown" fallback stays outside the memo write so a nil (anonymous class) derivation is never cached.
+    derived = @semconv_provider_name ||= Riffer::Helpers::ClassNameConverter.convert(name&.split("::")&.last)
+    derived || "unknown"
   end
 
   # Generates text using the provider.

@@ -36,6 +36,10 @@ describe Riffer::Helpers::ClassNameConverter do
       assert_equal "https_connection", result
     end
 
+    it "returns nil for nil so memoizing callers never cache a still-anonymous class" do
+      assert_nil converter_class.convert(nil)
+    end
+
     it "handles symbols" do
       result = converter_class.convert(:"Riffer::Agent")
 
