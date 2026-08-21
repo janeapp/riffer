@@ -308,7 +308,7 @@ When `config:` is supplied, the class-level configuration is ignored for that in
 
 ## Looking Up Agents
 
-Look up an agent by identifier with `Riffer::Agent.find`, or list every agent with `Riffer::Agent.all`. Lookups are O(1) no matter how many agents are defined:
+Look up an agent by identifier with `Riffer::Agent.find`, or list every agent with `Riffer::Agent.all`:
 
 ```ruby
 class SupportAgent < Riffer::Agent
@@ -369,10 +369,10 @@ Riffer does not validate tag count, key/value length, or charset — it forwards
 
 ## Expand Your Agent
 
-| Goal                          | Feature           | Guide                                                                |
-| ----------------------------- | ----------------- | -------------------------------------------------------------------- |
+| Goal                          | Feature           | Guide                                                             |
+| ----------------------------- | ----------------- | ----------------------------------------------------------------- |
 | Call APIs or run functions    | Tools             | [Tools](TOOLS.md)                                                 |
-| Return structured JSON        | Structured Output | [structured_output](#structured_output)                              |
+| Return structured JSON        | Structured Output | [structured_output](#structured_output)                           |
 | Validate or filter content    | Guardrails        | [Guardrails](GUARDRAILS.md)                                       |
 | Measure output quality        | Evals             | [Evals](EVALS.md)                                                 |
 | Add packaged capabilities     | Skills            | [Skills](SKILLS.md)                                               |

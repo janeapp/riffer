@@ -108,7 +108,7 @@ Options:
 | `String`                   | `string`         |
 | `Integer`                  | `integer`        |
 | `Float`                    | `number`         |
-| `Riffer::Params::Boolean`          | `boolean`        |
+| `Riffer::Params::Boolean`  | `boolean`        |
 | `TrueClass` / `FalseClass` | `boolean`        |
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
@@ -145,7 +145,7 @@ end
 
 ## Looking Up Tools
 
-Look up a tool by identifier with `Riffer::Tool.find`, or list every tool with `Riffer::Tool.all`. Lookups are O(1) no matter how many tools are defined:
+Look up a tool by identifier with `Riffer::Tool.find`, or list every tool with `Riffer::Tool.all`:
 
 ```ruby
 Riffer::Tool.find('kb_search')   # => SearchTool
