@@ -87,12 +87,12 @@ describe Riffer::Files::Resolver do
         expect(downloaded_calls).must_be_empty
       end
 
-      it "downloads and verifies when a sha256 is given" do
+      it "downloads and verifies when a sha256 is given, without caching the bytes" do
         sha256 = Digest::SHA256.hexdigest(downloaded_content)
         file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf", sha256: sha256)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:url).resolve!([message])
-        expect(file.data).must_equal Base64.strict_encode64(downloaded_content)
+        expect(file.data).must_be_nil
         expect(downloaded_calls.size).must_equal 1
       end
 

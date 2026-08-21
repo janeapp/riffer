@@ -45,9 +45,8 @@ class Riffer::Files::Downloader
         case response
         when Net::HTTPRedirection
           raise Riffer::FileDownloadError, "Too many redirects" if redirects_remaining.zero?
-          location = response["location"]
-          raise Riffer::FileDownloadError, "Redirect missing Location header" if location.nil?
-          redirect_location = location
+          redirect_location = response["location"]
+          raise Riffer::FileDownloadError, "Redirect missing Location header" if redirect_location.nil?
         when Net::HTTPSuccess
           content = read_capped(response, max_bytes: max_bytes)
         else

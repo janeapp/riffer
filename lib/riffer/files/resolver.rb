@@ -46,9 +46,9 @@ class Riffer::Files::Resolver
     when :unsupported
       raise Riffer::FileUnsupportedError.new("Provider does not support user message file attachments")
     when :url
-      download!(file) if file.sha256
+      download!(file, cache: false) if file.sha256
     when :data
-      download!(file)
+      download!(file, cache: true)
     end
   end
 
@@ -58,13 +58,16 @@ class Riffer::Files::Resolver
     verify_encoded!(file.data, file.sha256)
   end
 
-  #: (Riffer::Messages::FilePart) -> void
-  def download!(file)
+  # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
+  # request still sends the URL, never the downloaded bytes, so caching them
+  # would hold memory nothing reads and let later turns skip re-verifying.
+  #: (Riffer::Messages::FilePart, cache: bool) -> void
+  def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError.new("File attachments are disabled") unless @config.allow_downloads
 
     encoded = @config.downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
     verify_encoded!(encoded, file.sha256) if file.sha256
-    file.cache_downloaded_data(encoded)
+    file.cache_downloaded_data(encoded) if cache
   end
 
   def verify_encoded!(encoded, sha256)
