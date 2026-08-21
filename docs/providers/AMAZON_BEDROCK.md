@@ -176,7 +176,7 @@ response = provider.generate_text(
 )
 ```
 
-Any other URL scheme (e.g. `https://`) isn't something Bedrock accepts as a reference, so riffer downloads the file itself and sends it as base64 — see [File Downloads](../10_CONFIGURATION.md#file-downloads) for the `allow_downloads` policy this requires.
+Any other URL scheme (e.g. `https://`) isn't something Bedrock accepts as a reference, so riffer downloads the file itself and sends it as base64 — see [File Downloads](../CONFIGURATION.md#file-downloads) for the `allow_downloads` policy this requires.
 
 **A `sha256:` on an `s3://` `FilePart` is a combination that always fails with the default setup.** Setting `sha256:` forces riffer to download and verify the file itself before Bedrock ever sees it, regardless of the URL scheme — but riffer's default downloader only fetches `https://` URLs, so an `s3://` source can never be verified out of the box. Either configure a custom `Riffer.config.files.downloader` that can reach S3, or omit `sha256:` and let the `s3://` URI pass straight through to Bedrock unverified.
 

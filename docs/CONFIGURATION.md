@@ -184,7 +184,7 @@ end
 
 ### File Downloads
 
-File-attachment-download policy lives under `config.files`. Before an LLM call, riffer resolves every `Riffer::Messages::FilePart` attached to a user message against the provider's own capability — some providers accept a URL as-is, some need the bytes inline, and some can't take an attachment at all. See [Messages — File Parts](08_MESSAGES.md#file-parts) for `FilePart` itself and its `sha256:` field.
+File-attachment-download policy lives under `config.files`. Before an LLM call, riffer resolves every `Riffer::Messages::FilePart` attached to a user message against the provider's own capability — some providers accept a URL as-is, some need the bytes inline, and some can't take an attachment at all. See [Messages — File Parts](MESSAGES.md#file-parts) for `FilePart` itself and its `sha256:` field.
 
 ```ruby
 Riffer.configure do |config|
