@@ -34,18 +34,33 @@ class Riffer::Files::Downloader
     http.open_timeout = timeout
     http.read_timeout = timeout
 
-    response = http.start { http.request_get(uri.request_uri) }
-    case response
-    when Net::HTTPRedirection
-      raise Riffer::FileDownloadError, "Too many redirects" if redirects_remaining.zero?
-      location = response["location"]
-      raise Riffer::FileDownloadError, "Redirect missing Location header" if location.nil?
-      fetch(location, max_bytes: max_bytes, timeout: timeout, redirects_remaining: redirects_remaining - 1)
-    when Net::HTTPSuccess
-      read_capped(response, max_bytes: max_bytes)
-    else
-      raise Riffer::FileDownloadError, "File download failed, status: #{response.code}"
+    # request_get without a block reads (and discards our chance to cap) the
+    # whole body before returning; the cap/read has to happen inside the
+    # block it yields to, where the body hasn't been consumed yet.
+    redirect_location = nil #: String?
+    content = nil #: String?
+
+    http.start do
+      http.request_get(uri.request_uri) do |response|
+        case response
+        when Net::HTTPRedirection
+          raise Riffer::FileDownloadError, "Too many redirects" if redirects_remaining.zero?
+          location = response["location"]
+          raise Riffer::FileDownloadError, "Redirect missing Location header" if location.nil?
+          redirect_location = location
+        when Net::HTTPSuccess
+          content = read_capped(response, max_bytes: max_bytes)
+        else
+          raise Riffer::FileDownloadError, "File download failed, status: #{response.code}"
+        end
+      end
     end
+
+    if redirect_location
+      return fetch(redirect_location, max_bytes: max_bytes, timeout: timeout, redirects_remaining: redirects_remaining - 1)
+    end
+
+    content #: String
   end
 
   #: (Net::HTTPResponse, max_bytes: Integer) -> String
