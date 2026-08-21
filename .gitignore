@@ -3,9 +3,10 @@ _yardoc
 !.bundle/config
 .env
 .vscode
-.yardo
+.yardoc
+_site
 coverage
-doc
+doc/
 pkg
 test/reports
 tmp

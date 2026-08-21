@@ -21,7 +21,7 @@ class Riffer::Messages::FilePart
     ".txt" => "text/plain",
     ".md" => "text/plain",
     ".csv" => "text/csv",
-    ".html" => "text/html"
+    ".html" => "text/html",
   }.freeze #: Hash[String, String]
 
   SUPPORTED_MEDIA_TYPES = MEDIA_TYPES.values.uniq.freeze #: Array[String]
@@ -42,7 +42,10 @@ class Riffer::Messages::FilePart
   #: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
   def initialize(media_type:, data: nil, filename: nil, url: nil, sha256: nil)
     raise Riffer::ArgumentError, "Either data or url must be provided" if data.nil? && url.nil?
-    raise Riffer::ArgumentError, "Unsupported media type: #{media_type}" unless SUPPORTED_MEDIA_TYPES.include?(media_type)
+    unless SUPPORTED_MEDIA_TYPES.include?(media_type)
+      raise Riffer::ArgumentError,
+            "Unsupported media type: #{media_type}"
+    end
     raise Riffer::ArgumentError, "Invalid sha256: #{sha256}" unless sha256.nil? || sha256.match?(SHA256_PATTERN)
 
     @sha256 = sha256&.downcase
@@ -74,9 +77,7 @@ class Riffer::Messages::FilePart
   def self.from_hash(file)
     return file if file.is_a?(Riffer::Messages::FilePart)
 
-    unless file.is_a?(Hash)
-      raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}"
-    end
+    raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}" unless file.is_a?(Hash)
 
     url = file[:url]
     data = file[:data]
@@ -147,7 +148,7 @@ class Riffer::Messages::FilePart
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    hash = {media_type: media_type} #: Hash[Symbol, untyped]
+    hash = { media_type: media_type } #: Hash[Symbol, untyped]
     hash[:data] = @data if @data
     hash[:url] = @url_string if @url_string
     hash[:filename] = filename if filename

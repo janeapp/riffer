@@ -39,7 +39,7 @@ class Riffer::Mcp::SearchTool < Riffer::Tool
     names = matches.map(&:name).join(", ")
     Result.new(
       "Found #{matches.length} tool(s): #{names}. They are now available — call them directly.",
-      matches
+      matches,
     )
   end
 

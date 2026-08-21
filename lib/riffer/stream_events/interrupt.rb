@@ -23,7 +23,7 @@ class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    h = {role: @role, interrupt: true} #: Hash[Symbol, untyped]
+    h = { role: @role, interrupt: true } #: Hash[Symbol, untyped]
     h[:reason] = @reason if @reason
     h[:healed_tool_call_ids] = @healed_tool_call_ids unless @healed_tool_call_ids.empty?
     h

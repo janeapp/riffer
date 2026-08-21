@@ -10,6 +10,7 @@ require "json"
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
+  # @rbs @client: untyped
 
   WIRE_SEPARATOR = "__" #: String
 
@@ -17,7 +18,7 @@ class Riffer::Providers::Base
   # subclasses (optionally introspecting +model+) for provider-specific formats.
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
-  def self.skills_adapter(model = nil)
+  def self.skills_adapter(_model = nil)
     Riffer::Skills::MarkdownAdapter
   end
 
@@ -66,7 +67,7 @@ class Riffer::Providers::Base
         tool_calls: tool_calls,
         token_usage: token_usage,
         structured_output: structured_output,
-        finish_reason: finish_reason&.reason
+        finish_reason: finish_reason&.reason,
       )
     end
   end
@@ -111,6 +112,33 @@ class Riffer::Providers::Base
   #: (String) -> true
   def depends_on(gem_name)
     Riffer::Helpers::Dependencies.depends_on(gem_name)
+  end
+
+  # Returns the client for the current LLM call. A configured client wins,
+  # resolved on every call so a Proc can vary the client by process or
+  # credential lifetime; otherwise the provider builds one from the configured
+  # credentials, memoized for the life of the provider.
+  #--
+  #: () -> untyped
+  def client
+    configured = global_client
+    return Riffer::Helpers::CallOrValue.resolve(configured) if configured
+
+    @client ||= build_client
+  end
+
+  # Returns the consumer-configured client for this provider; nil when none is
+  # configured, and for providers that take no configuration at all.
+  #--
+  #: () -> untyped
+  def global_client
+    nil
+  end
+
+  #--
+  #: () -> untyped
+  def build_client
+    raise NotImplementedError, "Subclasses must implement #build_client"
   end
 
   #--
@@ -159,14 +187,14 @@ class Riffer::Providers::Base
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_read_tokens: usage.cache_read_tokens,
-      cache_write_tokens: usage.cache_write_tokens
+      cache_write_tokens: usage.cache_write_tokens,
     )
     Riffer::Providers::TokenUsage.new(
       input_tokens: usage.input_tokens,
       output_tokens: usage.output_tokens,
       cache_write_tokens: usage.cache_write_tokens,
       cache_read_tokens: usage.cache_read_tokens,
-      cost: cost
+      cost: cost,
     )
   end
 
@@ -189,7 +217,7 @@ class Riffer::Providers::Base
   # providers that don't report one stay valid.
   #--
   #: (untyped) -> Riffer::Providers::FinishReason?
-  def extract_finish_reason(response)
+  def extract_finish_reason(_response)
     nil
   end
 
@@ -215,19 +243,24 @@ class Riffer::Providers::Base
     frequency_penalty: "gen_ai.request.frequency_penalty",
     presence_penalty: "gen_ai.request.presence_penalty",
     seed: "gen_ai.request.seed",
-    stop_sequences: "gen_ai.request.stop_sequences"
+    stop_sequences: "gen_ai.request.stop_sequences",
   }.freeze #: Hash[Symbol, String]
+  private_constant :REQUEST_PARAM_ATTRIBUTES
 
   #--
   #: [R] (String?, Array[Riffer::Messages::Base], Hash[Symbol, untyped]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_chat_span(model, messages, options)
-    Riffer::Tracing.in_span(model ? "chat #{model}" : "chat", attributes: chat_span_attributes(model, options), kind: :client) do |span|
+    Riffer::Tracing.in_span(
+      model ? "chat #{model}" : "chat",
+      attributes: chat_span_attributes(model, options),
+      kind: :client,
+    ) do |span|
       capture_input(span, messages)
       yield span
-    rescue => error
+    rescue StandardError => e
       # The backend records the exception and error status on the re-raise;
       # error.type is the one semconv attribute it doesn't set.
-      span.set_attribute("error.type", error.class.name)
+      span.set_attribute("error.type", e.class.name)
       raise
     end
   end
@@ -237,13 +270,13 @@ class Riffer::Providers::Base
   def chat_span_attributes(model, options)
     attributes = {
       "gen_ai.operation.name" => "chat",
-      "gen_ai.provider.name" => self.class.semconv_provider_name
+      "gen_ai.provider.name" => self.class.semconv_provider_name,
     } #: Hash[String, untyped]
     attributes["gen_ai.request.model"] = model if model
 
     REQUEST_PARAM_ATTRIBUTES.each do |key, attribute|
       value = options[key]
-      attributes[attribute] = value unless value.nil?
+      attributes[attribute] = value if value
     end
 
     attributes.merge(tag_attributes(options[:tags] || {}))
@@ -271,7 +304,14 @@ class Riffer::Providers::Base
   def record_stream_outcome(span, recorder)
     Riffer::Tracing.record_usage(span, recorder.token_usage)
     record_finish_reason(span, recorder.finish_reason, recorder.raw_finish_reason)
-    capture_output(span, content: recorder.content, tool_calls: recorder.tool_calls, finish_reason: recorder.finish_reason)
+    time_to_first_chunk = recorder.time_to_first_chunk
+    span.set_attribute("gen_ai.response.time_to_first_chunk", time_to_first_chunk) if time_to_first_chunk
+    capture_output(
+      span,
+      content: recorder.content,
+      tool_calls: recorder.tool_calls,
+      finish_reason: recorder.finish_reason,
+    )
   end
 
   #--
@@ -289,7 +329,14 @@ class Riffer::Providers::Base
   def capture_output(span, content:, tool_calls:, finish_reason:)
     return unless capture_messages?(span)
 
-    span.set_attribute("gen_ai.output.messages", Riffer::Tracing::Capture.output_messages(content: content, tool_calls: tool_calls, finish_reason: finish_reason))
+    span.set_attribute(
+      "gen_ai.output.messages",
+      Riffer::Tracing::Capture.output_messages(
+        content: content,
+        tool_calls: tool_calls,
+        finish_reason: finish_reason,
+      ),
+    )
   end
 
   #--
@@ -303,7 +350,10 @@ class Riffer::Providers::Base
   def yield_finish_reason(yielder, finish_reason)
     return unless finish_reason
 
-    yielder << Riffer::StreamEvents::FinishReasonDone.new(finish_reason: finish_reason.reason, raw_finish_reason: finish_reason.raw)
+    yielder << Riffer::StreamEvents::FinishReasonDone.new(
+      finish_reason: finish_reason.reason,
+      raw_finish_reason: finish_reason.raw,
+    )
   end
 
   #--
@@ -318,13 +368,14 @@ class Riffer::Providers::Base
   #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
   def parse_tool_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
+
     arguments.is_a?(String) ? JSON.parse(arguments) : arguments
   end
 
   #--
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def merge_consecutive_messages(messages)
-    messages.chunk { |msg| msg.role }.flat_map do |role, group|
+    messages.chunk(&:role).flat_map do |role, group|
       next group if role == :tool || group.size == 1
 
       group.inject { |merged, msg| merged + msg }
@@ -337,8 +388,8 @@ class Riffer::Providers::Base
     if messages.nil?
       raise Riffer::ArgumentError, "prompt is required when messages is not provided" if prompt.nil?
     else
-      raise Riffer::ArgumentError, "cannot provide both prompt and messages" unless prompt.nil?
-      raise Riffer::ArgumentError, "cannot provide both system and messages" unless system.nil?
+      raise Riffer::ArgumentError, "cannot provide both prompt and messages" if prompt
+      raise Riffer::ArgumentError, "cannot provide both system and messages" if system
     end
   end
 
@@ -349,9 +400,7 @@ class Riffer::Providers::Base
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
     end
 
-    if messages
-      return messages.map { |msg| Riffer::Messages::Base.from_hash(msg) }
-    end
+    return messages.map { |msg| Riffer::Messages::Base.from_hash(msg) } if messages
 
     result = [] #: Array[Riffer::Messages::Base]
     result << Riffer::Messages::System.new(system) if system
@@ -364,7 +413,7 @@ class Riffer::Providers::Base
   #--
   #: (Array[Riffer::Messages::Base]) -> void
   def validate_normalized_messages!(messages)
-    has_user = messages.any? { |msg| msg.is_a?(Riffer::Messages::User) }
+    has_user = messages.any?(Riffer::Messages::User)
     raise Riffer::ArgumentError, "messages must include at least one user message" unless has_user
   end
 end

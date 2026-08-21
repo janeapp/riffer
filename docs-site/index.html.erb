@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riffer — Ruby framework for AI agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="stylesheet" href="/landing.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="<%= pages.first.url %>">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v<%= version %></span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <h1>
+            From prompt<br /><span class="jane">to production.</span><br /><span
+              class="accent"
+              >One gem.</span
+            >
+          </h1>
+          <span class="sub">Agents are just classes now.</span>
+          <p class="lede">
+            Riffer is the all-in-one Ruby framework for AI agents — typed
+            tools, structured output, streaming, and adapters for all major
+            providers.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/guides/getting-started/">Get started</a>
+            <a class="btn" href="/api/">API reference</a>
+          </div>
+          <p class="install"><code>gem install riffer</code></p>
+        </div>
+        <div class="hero-code">
+          <div class="gem-sticker" aria-hidden="true">
+            <span class="sparkle">✦</span>
+            <svg viewBox="-6 -6 212 192">
+              <polygon points="50,20 150,20 120,70 80,70" fill="#6ddfe6" />
+              <polygon points="150,20 190,70 120,70" fill="#027989" />
+              <polygon points="50,20 80,70 10,70" fill="#db97c1" />
+              <polygon points="10,70 80,70 100,170" fill="#a03873" />
+              <polygon points="190,70 120,70 100,170" fill="#013646" />
+              <polygon points="80,70 120,70 100,170" fill="#6b2450" />
+              <g
+                fill="none"
+                stroke="#0e2b33"
+                stroke-width="6"
+                stroke-linejoin="round"
+              >
+                <polygon points="50,20 150,20 190,70 100,170 10,70" />
+                <line x1="80" y1="70" x2="120" y2="70" />
+                <line x1="50" y1="20" x2="80" y2="70" />
+                <line x1="150" y1="20" x2="120" y2="70" />
+                <line x1="10" y1="70" x2="80" y2="70" />
+                <line x1="190" y1="70" x2="120" y2="70" />
+                <line x1="80" y1="70" x2="100" y2="170" />
+                <line x1="120" y1="70" x2="100" y2="170" />
+              </g>
+            </svg>
+          </div>
+          <div class="code-card">
+            <div class="bar">weather_agent.rb</div>
+            <pre><code><span class="k">class</span> <span class="c">WeatherTool</span> &lt; <span class="c">Riffer::Tool</span>
+  description <span class="s">'Current weather for a city'</span>
+
+  params <span class="k">do</span>
+    required :city, <span class="c">String</span>, description: <span class="s">'City name'</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> call(context:, city:)
+    text <span class="c">WeatherAPI</span>.fetch(city).summary
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="c">WeatherAgent</span> &lt; <span class="c">Riffer::Agent</span>
+  model <span class="s">'openai/gpt-5-mini'</span>
+  uses_tools [<span class="c">WeatherTool</span>]
+<span class="k">end</span>
+
+puts <span class="c">WeatherAgent</span>.generate(<span class="s">'Raining in Vancouver?'</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>Everything an agent needs</h2>
+        <p class="sec-sub">
+          One gem covers the full lifecycle — from defining agents and tools to
+          evaluating, guarding, and tracing them in production.
+        </p>
+        <div class="feats">
+          <div class="sticker">
+            <span class="tag">Core</span>
+            <h3>Agents</h3>
+            <p>
+              Declarative classes carry the model, instructions, tools, and
+              output schema.
+            </p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Core</span>
+            <h3>Tools</h3>
+            <p>Typed params with automatic validation before your code runs.</p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Core</span>
+            <h3>Structured output</h3>
+            <p>
+              Schema-validated JSON responses, parsed into Ruby data for you.
+            </p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Runtime</span>
+            <h3>Providers</h3>
+            <p>
+              OpenAI, Azure OpenAI, Amazon Bedrock, Anthropic — plus a mock for
+              tests.
+            </p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Runtime</span>
+            <h3>Streaming</h3>
+            <p>Typed stream events from text deltas to web-search progress.</p>
+          </div>
+          <div class="sticker">
+            <span class="tag">Production</span>
+            <h3>Evals &amp; guardrails</h3>
+            <p>
+              Measure agent quality and validate input and output at the
+              boundary.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="docs">
+      <div class="wrap">
+        <h2>The guides</h2>
+        <p class="sec-sub">
+          Read them in order, or jump straight to your topic.
+        </p>
+        <%- groups.each do |group| -%>
+
+        <span class="group-label <%= group.tone %>"><%= group.label %></span>
+        <div class="doc-grid">
+          <%- group.pages.each do |page| -%>
+          <a class="doc<%= " featured" if page.featured %>" href="<%= page.url %>"
+            ><span class="num"><%= page.num %></span
+            ><span
+              ><span class="name"><%= page.title %></span
+              ><span class="desc"><%= page.description %></span></span
+            ><span class="go">→</span></a
+          >
+          <%- end -%>
+        </div>
+        <%- end -%>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span
+          ><a href="https://github.com/janeapp/riffer"
+            >github.com/janeapp/riffer</a
+          ></span
+        >
+      </div>
+    </footer>
+  </body>
+</html>

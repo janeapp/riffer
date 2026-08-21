@@ -1,4 +1,6 @@
-# `@client` is typed against the SDK, so this ivar stub stays in _private (never ships)
+# `client` is typed against the SDK, so this narrowing stays in _private (never ships)
 class Riffer::Providers::OpenAI
-  @client: ::OpenAI::Client
+  private
+
+  def client: () -> ::OpenAI::Client
 end

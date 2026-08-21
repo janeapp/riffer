@@ -10,11 +10,13 @@ describe Riffer::Helpers::Boolean do
 
     it "coerces truthy strings and integers" do
       coerced = ["true", "1", 1].map { |value| Riffer::Helpers::Boolean.coerce(value, attribute: "flag") }
+
       expect(coerced).must_equal [true, true, true]
     end
 
     it "coerces falsy strings, integers, and nil" do
       coerced = ["false", "0", 0, nil].map { |value| Riffer::Helpers::Boolean.coerce(value, attribute: "flag") }
+
       expect(coerced).must_equal [false, false, false, false]
     end
 

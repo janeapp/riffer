@@ -37,7 +37,7 @@ class MaxLengthGuardrail < Riffer::Guardrail
       if msg.content.length > max
         return block(
           "Message exceeds maximum length of #{max} characters",
-          metadata: {length: msg.content.length, max: max}
+          metadata: { length: msg.content.length, max: max },
         )
       end
     end
@@ -51,7 +51,7 @@ class MaxLengthGuardrail < Riffer::Guardrail
     if response.content.length > max
       block(
         "Response exceeds maximum length of #{max} characters",
-        metadata: {length: response.content.length, max: max}
+        metadata: { length: response.content.length, max: max },
       )
     else
       pass(response)

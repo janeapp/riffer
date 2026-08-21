@@ -9,14 +9,20 @@ end
 class ChatTracingExplodingProvider < Riffer::Providers::Mock
   private
 
-  def execute_generate(params)
+  def execute_generate(_params)
     raise Riffer::Error, "generate boom"
   end
 
-  def execute_stream(params, yielder)
+  def execute_stream(_params, yielder)
     yielder << Riffer::StreamEvents::TextDelta.new("partial")
     raise Riffer::Error, "stream boom"
   end
+end
+
+class ChatTracingSilentStreamProvider < Riffer::Providers::Mock
+  private
+
+  def execute_stream(params, yielder); end
 end
 
 describe Riffer::Providers::Base do
@@ -55,21 +61,21 @@ describe Riffer::Providers::Base do
 
     it "raises ArgumentError when both prompt and messages provided" do
       error = expect do
-        provider.generate_text(prompt: "Hello", messages: [{role: "user", content: "Hi"}])
+        provider.generate_text(prompt: "Hello", messages: [{ role: "user", content: "Hi" }])
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "cannot provide both prompt and messages"
     end
 
     it "raises ArgumentError when both system and messages provided" do
       error = expect do
-        provider.generate_text(system: "You are helpful", messages: [{role: "user", content: "Hi"}])
+        provider.generate_text(system: "You are helpful", messages: [{ role: "user", content: "Hi" }])
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "cannot provide both system and messages"
     end
 
     it "raises ArgumentError when messages has no user message" do
       error = expect do
-        provider.generate_text(messages: [{role: "system", content: "You are helpful"}])
+        provider.generate_text(messages: [{ role: "system", content: "You are helpful" }])
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_equal "messages must include at least one user message"
     end
@@ -128,24 +134,27 @@ describe Riffer::Providers::Base do
   describe "#normalize_messages" do
     it "converts prompt to User message" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: nil, messages: nil)
-      expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
+
+      expect(result.all?(Riffer::Messages::Base)).must_equal true
     end
 
     it "converts system and prompt to System and User messages" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: "Be helpful", messages: nil)
-      expect(result.all? { |msg| msg.is_a?(Riffer::Messages::Base) }).must_equal true
+
+      expect(result.all?(Riffer::Messages::Base)).must_equal true
     end
 
     describe "with message objects" do
       let(:messages) do
         [
           Riffer::Messages::User.new("Hello"),
-          Riffer::Messages::Assistant.new("Hi there")
+          Riffer::Messages::Assistant.new("Hi there"),
         ]
       end
 
       it "preserves message objects when provided" do
         result = provider.send(:normalize_messages, prompt: nil, system: nil, messages: messages)
+
         expect(result).must_equal messages
       end
     end
@@ -156,7 +165,7 @@ describe Riffer::Providers::Base do
       messages = [
         Riffer::Messages::User.new("Hello"),
         Riffer::Messages::Assistant.new("Hi"),
-        Riffer::Messages::User.new("How are you?")
+        Riffer::Messages::User.new("How are you?"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -176,7 +185,7 @@ describe Riffer::Providers::Base do
     it "merges consecutive user messages" do
       messages = [
         Riffer::Messages::User.new("First"),
-        Riffer::Messages::User.new("Second")
+        Riffer::Messages::User.new("Second"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -191,7 +200,7 @@ describe Riffer::Providers::Base do
       file_b = Riffer::Messages::FilePart.new(data: "def", media_type: "image/jpeg")
       messages = [
         Riffer::Messages::User.new("With image", files: [file_a]),
-        Riffer::Messages::User.new("Another image", files: [file_b])
+        Riffer::Messages::User.new("Another image", files: [file_b]),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -203,7 +212,7 @@ describe Riffer::Providers::Base do
     it "merges consecutive system messages" do
       messages = [
         Riffer::Messages::System.new("Rule one"),
-        Riffer::Messages::System.new("Rule two")
+        Riffer::Messages::System.new("Rule two"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -217,7 +226,7 @@ describe Riffer::Providers::Base do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "1", name: "foo", arguments: "{}")
       messages = [
         Riffer::Messages::Assistant.new("Part one", tool_calls: [tc]),
-        Riffer::Messages::Assistant.new("Part two")
+        Riffer::Messages::Assistant.new("Part two"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -231,7 +240,7 @@ describe Riffer::Providers::Base do
     it "does not merge consecutive tool messages" do
       messages = [
         Riffer::Messages::Tool.new("Result A", tool_call_id: "1", name: "foo"),
-        Riffer::Messages::Tool.new("Result B", tool_call_id: "2", name: "bar")
+        Riffer::Messages::Tool.new("Result B", tool_call_id: "2", name: "bar"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -246,7 +255,7 @@ describe Riffer::Providers::Base do
         Riffer::Messages::User.new("Question"),
         Riffer::Messages::Assistant.new("Answer"),
         Riffer::Messages::Tool.new("Result", tool_call_id: "1", name: "t"),
-        Riffer::Messages::Tool.new("Result 2", tool_call_id: "2", name: "t2")
+        Riffer::Messages::Tool.new("Result 2", tool_call_id: "2", name: "t2"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -264,7 +273,7 @@ describe Riffer::Providers::Base do
       messages = [
         Riffer::Messages::System.new("You are helpful"),
         Riffer::Messages::User.new("Here is some context about the project"),
-        Riffer::Messages::User.new("What does this code do?")
+        Riffer::Messages::User.new("What does this code do?"),
       ]
 
       result = provider.send(:merge_consecutive_messages, messages)
@@ -304,91 +313,128 @@ describe Riffer::Providers::Base do
 
     it "names the span chat with the model" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.name).must_equal "chat riffer-1"
     end
 
     it "names the span chat when no model is given" do
       provider.generate_text(prompt: "Hello")
+
       expect(chat_span.name).must_equal "chat"
     end
 
     it "marks the generate_text span as a client span" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.kind).must_equal :client
     end
 
     it "sets the request attributes" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
       attributes = chat_span.attributes.slice("gen_ai.operation.name", "gen_ai.provider.name", "gen_ai.request.model")
-      expect(attributes).must_equal({
-        "gen_ai.operation.name" => "chat",
-        "gen_ai.provider.name" => "mock",
-        "gen_ai.request.model" => "riffer-1"
-      })
+
+      expect(attributes).must_equal(
+        {
+          "gen_ai.operation.name" => "chat",
+          "gen_ai.provider.name" => "mock",
+          "gen_ai.request.model" => "riffer-1",
+        },
+      )
     end
 
     it "records token usage when reported" do
-      provider.stub_response("Hi!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cache_read_tokens: 30))
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cache_read_tokens: 30,
+        ),
+      )
       provider.generate_text(prompt: "Hello", model: "riffer-1")
-      usage = chat_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens", "gen_ai.usage.cache_read.input_tokens")
-      expect(usage).must_equal({
-        "gen_ai.usage.input_tokens" => 100,
-        "gen_ai.usage.output_tokens" => 50,
-        "gen_ai.usage.cache_read.input_tokens" => 30
-      })
+      usage = chat_span.attributes.slice(
+        "gen_ai.usage.input_tokens",
+        "gen_ai.usage.output_tokens",
+        "gen_ai.usage.cache_read.input_tokens",
+      )
+
+      expect(usage).must_equal(
+        {
+          "gen_ai.usage.input_tokens" => 100,
+          "gen_ai.usage.output_tokens" => 50,
+          "gen_ai.usage.cache_read.input_tokens" => 30,
+        },
+      )
     end
 
     it "omits usage attributes when not reported" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.attributes).wont_include "gen_ai.usage.input_tokens"
     end
 
     it "stamps the cost when the call carries one" do
-      provider.stub_response("Hi!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.0021))
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cost: 0.0021,
+        ),
+      )
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.attributes["riffer.cost"]).must_equal 0.0021
     end
 
     it "records the normalized finish reason" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.attributes["gen_ai.response.finish_reasons"]).must_equal ["stop"]
     end
 
     it "records tool_calls as the finish reason when tool calls are present" do
-      provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.attributes["gen_ai.response.finish_reasons"]).must_equal ["tool_calls"]
     end
 
     it "omits the raw finish reason when the provider reports none" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.attributes).wont_include "riffer.finish_reason.raw"
     end
 
     it "stamps whitelisted request params" do
       provider.generate_text(prompt: "Hello", model: "riffer-1", temperature: 0.5, max_output_tokens: 128)
       params = chat_span.attributes.slice("gen_ai.request.temperature", "gen_ai.request.max_tokens")
-      expect(params).must_equal({"gen_ai.request.temperature" => 0.5, "gen_ai.request.max_tokens" => 128})
+
+      expect(params).must_equal({ "gen_ai.request.temperature" => 0.5, "gen_ai.request.max_tokens" => 128 })
     end
 
     it "keeps unknown options off the span" do
       provider.generate_text(prompt: "Hello", model: "riffer-1", custom_option: "secret")
+
       expect(chat_span.attributes.keys.grep(/custom_option/)).must_be_empty
     end
 
     it "keeps message content off the span by default" do
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(chat_span.attributes).wont_include "gen_ai.input.messages"
     end
 
     it "stamps error.type when the provider raises" do
       exploding = ChatTracingExplodingProvider.new
+
       expect { exploding.generate_text(prompt: "Hello", model: "riffer-1") }.must_raise(Riffer::Error)
       expect(chat_span.attributes["error.type"]).must_equal "Riffer::Error"
     end
 
     it "marks the span status as error when the provider raises" do
       exploding = ChatTracingExplodingProvider.new
+
       expect { exploding.generate_text(prompt: "Hello", model: "riffer-1") }.must_raise(Riffer::Error)
       expect(chat_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
@@ -399,54 +445,93 @@ describe Riffer::Providers::Base do
       it "captures input messages as semconv JSON" do
         provider.generate_text(prompt: "Hi", model: "riffer-1")
         messages = JSON.parse(chat_span.attributes["gen_ai.input.messages"])
-        expect(messages).must_equal [{"role" => "user", "parts" => [{"type" => "text", "content" => "Hi"}]}]
+
+        expect(messages).must_equal [{ "role" => "user", "parts" => [{ "type" => "text", "content" => "Hi" }] }]
       end
 
       it "captures system instructions separately from input messages" do
         provider.generate_text(system: "Be brief", prompt: "Hi", model: "riffer-1")
         instructions = JSON.parse(chat_span.attributes["gen_ai.system_instructions"])
-        expect(instructions).must_equal [{"type" => "text", "content" => "Be brief"}]
+
+        expect(instructions).must_equal [{ "type" => "text", "content" => "Be brief" }]
       end
 
       it "captures the output message with its finish reason" do
         provider.stub_response("Hello!")
         provider.generate_text(prompt: "Hi", model: "riffer-1")
         output = JSON.parse(chat_span.attributes["gen_ai.output.messages"])
-        expect(output).must_equal [{"role" => "assistant", "parts" => [{"type" => "text", "content" => "Hello!"}], "finish_reason" => "stop"}]
+
+        expect(output).must_equal [{ "role" => "assistant", "parts" => [{ "type" => "text", "content" => "Hello!" }],
+                                     "finish_reason" => "stop", }]
       end
     end
 
     it "emits no span before the enumerator is consumed" do
       provider.stream_text(prompt: "Hello", model: "riffer-1")
+
       expect(@exporter.finished_spans).must_be_empty
     end
 
     it "emits the chat span when the stream drains" do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
       expect(chat_span.name).must_equal "chat riffer-1"
     end
 
     it "marks the stream_text span as a client span" do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
       expect(chat_span.kind).must_equal :client
     end
 
     it "records token usage from the stream" do
-      provider.stub_response("Hi!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50),
+      )
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
       usage = chat_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens")
-      expect(usage).must_equal({"gen_ai.usage.input_tokens" => 100, "gen_ai.usage.output_tokens" => 50})
+
+      expect(usage).must_equal({ "gen_ai.usage.input_tokens" => 100, "gen_ai.usage.output_tokens" => 50 })
     end
 
     it "stamps the cost from the stream" do
-      provider.stub_response("Hi!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.0021))
+      provider.stub_response(
+        "Hi!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cost: 0.0021,
+        ),
+      )
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
       expect(chat_span.attributes["riffer.cost"]).must_equal 0.0021
     end
 
     it "records the finish reason from the stream" do
       provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
       expect(chat_span.attributes["gen_ai.response.finish_reasons"]).must_equal ["stop"]
+    end
+
+    it "stamps the time to first chunk on the streamed span" do
+      provider.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
+      expect(chat_span.attributes["gen_ai.response.time_to_first_chunk"]).must_be :>, 0
+    end
+
+    it "omits the time to first chunk when the stream yields no events" do
+      silent = ChatTracingSilentStreamProvider.new
+      silent.stream_text(prompt: "Hello", model: "riffer-1").each { |_| }
+
+      expect(chat_span.attributes).wont_include "gen_ai.response.time_to_first_chunk"
+    end
+
+    it "keeps the time to first chunk off the generate_text span" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(chat_span.attributes).wont_include "gen_ai.response.time_to_first_chunk"
     end
 
     it "parents the chat span to the trace active at the call" do
@@ -454,6 +539,7 @@ describe Riffer::Providers::Base do
       Riffer::Tracing.in_span("host") { enumerator = provider.stream_text(prompt: "Hello", model: "riffer-1") }
       enumerator.each { |_| }
       host = @exporter.finished_spans.find { |span| span.name == "host" }
+
       expect(chat_span.parent_span_id).must_equal host.span_id
     end
 
@@ -462,11 +548,13 @@ describe Riffer::Providers::Base do
       provider.stub_response("Hello there.")
       provider.stream_text(prompt: "Hi", model: "riffer-1").each { |_| }
       output = JSON.parse(chat_span.attributes["gen_ai.output.messages"])
-      expect(output.dig(0, "parts", 0)).must_equal({"type" => "text", "content" => "Hello there."})
+
+      expect(output.dig(0, "parts", 0)).must_equal({ "type" => "text", "content" => "Hello there." })
     end
 
     it "stamps error.type when the stream raises mid-flight" do
       exploding = ChatTracingExplodingProvider.new
+
       expect { exploding.stream_text(prompt: "Hello", model: "riffer-1").each { |_| } }.must_raise(Riffer::Error)
       expect(chat_span.attributes["error.type"]).must_equal "Riffer::Error"
     end
@@ -474,18 +562,21 @@ describe Riffer::Providers::Base do
     it "nests the chat span under the run span" do
       agent_class.new.generate("Hello")
       run_span = @exporter.finished_spans.find { |span| span.name.start_with?("invoke_agent") }
+
       expect(chat_span.parent_span_id).must_equal run_span.span_id
     end
 
     it "nests the streamed chat span under the run span" do
       agent_class.new.stream("Hello").each { |_| }
       run_span = @exporter.finished_spans.find { |span| span.name.start_with?("invoke_agent") }
+
       expect(chat_span.parent_span_id).must_equal run_span.span_id
     end
 
     it "emits no spans" do
       Riffer.config.tracing.enabled = false
       provider.generate_text(prompt: "Hello", model: "riffer-1")
+
       expect(@exporter.finished_spans).must_be_empty
     end
   end

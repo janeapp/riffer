@@ -18,10 +18,6 @@ describe Riffer::Agent::Config do
       expect(config.instructions).must_be_nil
     end
 
-    it "starts with provider_options as empty hash" do
-      expect(config.provider_options).must_equal({})
-    end
-
     it "starts with model_options as empty hash" do
       expect(config.model_options).must_equal({})
     end
@@ -59,12 +55,14 @@ describe Riffer::Agent::Config do
     it "coerces a non-String to a String" do
       config = Riffer::Agent::Config.new
       config.identifier = :test_agent
+
       expect(config.identifier).must_equal "test_agent"
     end
 
     it "passes nil through unchanged" do
       config = Riffer::Agent::Config.new(identifier: "set")
       config.identifier = nil
+
       expect(config.identifier).must_be_nil
     end
   end
@@ -74,18 +72,20 @@ describe Riffer::Agent::Config do
       params = Riffer::Params.new
       config = Riffer::Agent::Config.new
       config.structured_output = params
+
       expect(config.structured_output).must_be_same_as params
     end
 
     it "accepts nil" do
       config = Riffer::Agent::Config.new
       config.structured_output = nil
+
       expect(config.structured_output).must_be_nil
     end
 
     it "raises on a non-Params, non-nil value" do
       config = Riffer::Agent::Config.new
-      error = expect { config.structured_output = {sentiment: String} }.must_raise(Riffer::ArgumentError)
+      error = expect { config.structured_output = { sentiment: String } }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/structured_output must be a Riffer::Params/)
     end
   end
@@ -94,6 +94,7 @@ describe Riffer::Agent::Config do
     it "accepts a non-empty String" do
       config = Riffer::Agent::Config.new
       config.model = "mock/riffer-1"
+
       expect(config.model).must_equal "mock/riffer-1"
     end
 
@@ -101,6 +102,7 @@ describe Riffer::Agent::Config do
       proc_value = -> { "mock/riffer-1" }
       config = Riffer::Agent::Config.new
       config.model = proc_value
+
       expect(config.model).must_be_same_as proc_value
     end
 
@@ -121,6 +123,7 @@ describe Riffer::Agent::Config do
     it "accepts a non-empty String" do
       config = Riffer::Agent::Config.new
       config.instructions = "Be helpful."
+
       expect(config.instructions).must_equal "Be helpful."
     end
 
@@ -128,6 +131,7 @@ describe Riffer::Agent::Config do
       proc_value = -> { "Be helpful." }
       config = Riffer::Agent::Config.new
       config.instructions = proc_value
+
       expect(config.instructions).must_be_same_as proc_value
     end
 
@@ -160,6 +164,7 @@ describe Riffer::Agent::Config do
     it "stores a ToolRuntime subclass as-is" do
       config = Riffer::Agent::Config.new
       config.tool_runtime = Riffer::Tools::Runtime::Threaded
+
       expect(config.tool_runtime).must_equal Riffer::Tools::Runtime::Threaded
     end
 
@@ -167,6 +172,7 @@ describe Riffer::Agent::Config do
       runtime = Riffer::Tools::Runtime::Threaded.new
       config = Riffer::Agent::Config.new
       config.tool_runtime = runtime
+
       expect(config.tool_runtime).must_be_same_as runtime
     end
 
@@ -174,6 +180,7 @@ describe Riffer::Agent::Config do
       proc_value = ->(_) { Riffer::Tools::Runtime::Inline.new }
       config = Riffer::Agent::Config.new
       config.tool_runtime = proc_value
+
       expect(config.tool_runtime).must_be_same_as proc_value
     end
 
@@ -188,6 +195,7 @@ describe Riffer::Agent::Config do
     it "uses the explicit value when passed" do
       runtime = Riffer::Tools::Runtime::Threaded.new
       config = Riffer::Agent::Config.new(tool_runtime: runtime)
+
       expect(config.tool_runtime).must_be_same_as runtime
     end
 
@@ -196,6 +204,7 @@ describe Riffer::Agent::Config do
       begin
         threaded = Riffer::Tools::Runtime::Threaded.new
         Riffer.config.tool_runtime = threaded
+
         expect(Riffer::Agent::Config.new.tool_runtime).must_be_same_as threaded
       ensure
         Riffer.config.tool_runtime = original
@@ -207,28 +216,32 @@ describe Riffer::Agent::Config do
     it "appends a tag entry with the tag symbolized" do
       config = Riffer::Agent::Config.new
       config.add_mcp("weather")
-      expect(config.mcp_configs).must_equal [{tags: [:weather], progressive: true}]
+
+      expect(config.mcp_configs).must_equal [{ tags: [:weather], progressive: true }]
     end
 
     it "accumulates additively across calls" do
       config = Riffer::Agent::Config.new
       config.add_mcp(:a)
       config.add_mcp(:b)
-      expect(config.mcp_configs).must_equal [{tags: [:a], progressive: true}, {tags: [:b], progressive: true}]
+
+      expect(config.mcp_configs).must_equal [{ tags: [:a], progressive: true }, { tags: [:b], progressive: true }]
     end
 
     it "stores progressive flag for mixed progressive and non-progressive servers" do
       config = Riffer::Agent::Config.new
       config.add_mcp(:github)
       config.add_mcp(:jira, progressive: false)
+
       expect(config.mcp_configs).must_equal [
-        {tags: [:github], progressive: true},
-        {tags: [:jira], progressive: false}
+        { tags: [:github], progressive: true },
+        { tags: [:jira], progressive: false },
       ]
     end
 
     it "raises ArgumentError for non-boolean progressive values" do
       config = Riffer::Agent::Config.new
+
       expect { config.add_mcp(:x, progressive: "false") }.must_raise Riffer::ArgumentError
     end
   end
@@ -239,6 +252,7 @@ describe Riffer::Agent::Config do
     it ":before appends to guardrails[:before] only" do
       config = Riffer::Agent::Config.new
       config.add_guardrail(:before, klass: guardrail_class)
+
       expect(config.guardrails_for(:before).length).must_equal 1
       expect(config.guardrails_for(:after)).must_equal []
     end
@@ -246,6 +260,7 @@ describe Riffer::Agent::Config do
     it ":after appends to guardrails[:after] only" do
       config = Riffer::Agent::Config.new
       config.add_guardrail(:after, klass: guardrail_class)
+
       expect(config.guardrails_for(:before)).must_equal []
       expect(config.guardrails_for(:after).length).must_equal 1
     end
@@ -253,14 +268,16 @@ describe Riffer::Agent::Config do
     it ":around appends to both" do
       config = Riffer::Agent::Config.new
       config.add_guardrail(:around, klass: guardrail_class)
+
       expect(config.guardrails_for(:before).length).must_equal 1
       expect(config.guardrails_for(:after).length).must_equal 1
     end
 
     it "carries options through" do
       config = Riffer::Agent::Config.new
-      config.add_guardrail(:before, klass: guardrail_class, options: {threshold: 0.5})
-      expect(config.guardrails_for(:before).first).must_equal(class: guardrail_class, options: {threshold: 0.5})
+      config.add_guardrail(:before, klass: guardrail_class, options: { threshold: 0.5 })
+
+      expect(config.guardrails_for(:before).first).must_equal(class: guardrail_class, options: { threshold: 0.5 })
     end
 
     it "raises on an invalid phase" do

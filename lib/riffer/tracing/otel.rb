@@ -61,7 +61,8 @@ class Riffer::Tracing::Otel # :nodoc: all
       return nil unless version
 
       unless supported?(version)
-        Kernel.warn "riffer: opentelemetry-api #{version} is outside the supported range (#{SUPPORTED_API_VERSIONS}); tracing is disabled"
+        Kernel.warn "riffer: opentelemetry-api #{version} is outside the supported range " \
+                    "(#{SUPPORTED_API_VERSIONS}); tracing is disabled"
         return nil
       end
 
@@ -73,7 +74,9 @@ class Riffer::Tracing::Otel # :nodoc: all
     #: () -> bool
     def available?
       version = api_version
-      !version.nil? && supported?(version)
+      return false unless version
+
+      supported?(version)
     end
 
     # Whether the given opentelemetry-api version is one riffer codes
@@ -125,8 +128,9 @@ class Riffer::Tracing::Otel # :nodoc: all
   # Runs the block with the given OTEL context active.
   #--
   #: [R] (untyped) { () -> R } -> R
-  def with_context(context)
+  def with_context(context, &)
     return yield if context.nil?
-    ::OpenTelemetry::Context.with_current(context) { yield }
+
+    ::OpenTelemetry::Context.with_current(context, &)
   end
 end

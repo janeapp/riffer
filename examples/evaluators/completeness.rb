@@ -12,7 +12,8 @@
 #   result = Riffer::Evals::EvaluatorRunner.run(
 #     agent: MyAgent,
 #     scenarios: [
-#       { input: "What are the three primary colors?", ground_truth: "Red, blue, and yellow are the primary colors in traditional color theory." }
+#       { input: "What are the three primary colors?",
+#         ground_truth: "Red, blue, and yellow are the primary colors in traditional color theory." }
 #     ],
 #     evals: [CompletenessEvaluator]
 #   )

@@ -21,14 +21,25 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : (?api_token: String?, ?region: String?, **untyped) -> void
-  def initialize: (?api_token: String?, ?region: String?, **untyped) -> void
+  # : () -> void
+  def initialize: () -> void
 
   # --
   # : (Riffer::Messages::FilePart) -> Symbol
   def file_delivery: (Riffer::Messages::FilePart) -> Symbol
 
   private
+
+  # --
+  # : () -> untyped
+  def global_client: () -> untyped
+
+  # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+
+  # and the shared config only for a missing argument, and raises
+  # +Aws::Errors::MissingRegionError+ on an explicit nil.
+  # --
+  # : () -> untyped
+  def build_client: () -> untyped
 
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

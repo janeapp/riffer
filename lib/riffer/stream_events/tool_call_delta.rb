@@ -25,6 +25,6 @@ class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, item_id: @item_id, name: @name, arguments_delta: @arguments_delta}.compact
+    { role: @role, item_id: @item_id, name: @name, arguments_delta: @arguments_delta }.compact
   end
 end

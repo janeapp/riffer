@@ -15,6 +15,20 @@ class Riffer::Evals::RunResult
   # : () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
 
+  # Returns the summed token usage the agents under test spent across every
+  # scenario, or nil when none reported usage.
+  #
+  # --
+  # : () -> Riffer::Providers::TokenUsage?
+  def token_usage: () -> Riffer::Providers::TokenUsage?
+
+  # Returns the summed token usage across every scenario's LLM-as-judge
+  # evaluators, or nil when none reported usage.
+  #
+  # --
+  # : () -> Riffer::Providers::TokenUsage?
+  def evaluator_token_usage: () -> Riffer::Providers::TokenUsage?
+
   # Returns a hash representation of the run result.
   #
   # --

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    riffer (0.37.1)
+    riffer (0.41.0)
       zeitwerk (~> 2.6, >= 2.6.0)
 
 GEM
@@ -9,23 +9,22 @@ GEM
   specs:
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.55.0)
-      cgi
-      connection_pool
-      standardwebhooks
+    anthropic (1.61.0)
+      base64 (~> 0.1)
+      cgi (~> 0.1)
+      connection_pool (>= 2, < 4)
+      standardwebhooks (~> 1.0)
     ast (2.4.3)
-    async (2.42.0)
+    async (2.44.1)
       console (~> 1.29)
       fiber-annotation
       io-event (~> 1.11)
-      metrics (~> 0.12)
-      traces (~> 0.18)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1268.0)
-    aws-sdk-bedrockruntime (1.82.0)
+    aws-partitions (1.1279.0)
+    aws-sdk-bedrockruntime (1.83.0)
       aws-sdk-core (~> 3, >= 3.254.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.254.0)
+    aws-sdk-core (3.254.1)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -41,7 +40,7 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
-    console (1.36.0)
+    console (1.37.0)
       fiber-annotation
       fiber-local (~> 1.1)
       json
@@ -77,7 +76,7 @@ GEM
     fileutils (1.8.0)
     formatador (1.2.3)
       reline
-    guard (2.20.1)
+    guard (2.20.2)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
       logger (~> 1.6)
@@ -94,20 +93,24 @@ GEM
     hana (1.3.7)
     hashdiff (1.2.1)
     io-console (0.8.2)
-    io-event (1.19.1)
+    io-event (1.19.4)
     irb (1.18.0)
       pp (>= 0.6.0)
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.20.0)
+    json (2.21.2)
     json_schemer (2.5.0)
       bigdecimal
       hana (~> 1.3)
       regexp_parser (~> 2.0)
       simpleidn (~> 0.2)
-    language_server-protocol (3.17.0.5)
+    kramdown (2.5.2)
+      rexml (>= 3.4.4)
+    kramdown-parser-gfm (1.1.0)
+      kramdown (~> 2.0)
+    language_server-protocol (3.17.0.6)
     lint_roller (1.1.0)
     listen (3.10.0)
       logger
@@ -115,10 +118,9 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
     lumberjack (1.4.2)
-    mcp (0.24.0)
+    mcp (1.1.0)
       json_schemer (>= 2.4)
     method_source (1.1.0)
-    metrics (0.15.0)
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
@@ -128,17 +130,17 @@ GEM
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    openai (0.69.0)
+    openai (0.78.0)
       base64
       cgi
-      connection_pool
-    opentelemetry-api (1.10.1)
+      connection_pool (>= 2.2.3)
+    opentelemetry-api (1.11.0)
       logger
     opentelemetry-common (0.25.1)
       opentelemetry-api (~> 1.0)
-    opentelemetry-registry (0.6.1)
+    opentelemetry-registry (0.6.3)
       opentelemetry-api (~> 1.1)
-    opentelemetry-sdk (1.12.1)
+    opentelemetry-sdk (1.13.0)
       logger
       opentelemetry-api (~> 1.1)
       opentelemetry-common (~> 0.20)
@@ -147,7 +149,7 @@ GEM
     opentelemetry-semantic_conventions (1.43.0)
       opentelemetry-api (~> 1.0)
     parallel (2.1.0)
-    parser (3.3.11.1)
+    parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
     pp (0.6.3)
@@ -183,7 +185,8 @@ GEM
     reline (0.6.3)
       io-console (~> 0.5)
     rexml (3.4.4)
-    rubocop (1.87.0)
+    rouge (4.7.0)
+    rubocop (1.89.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -194,29 +197,24 @@ GEM
       rubocop-ast (>= 1.49.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.49.1)
+    rubocop-ast (1.50.0)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
+    rubocop-minitest (0.40.0)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.38.0, < 2.0)
     rubocop-performance (1.26.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.47.1, < 2.0)
+    rubocop-rake (0.7.1)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.72.1)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
     shellany (0.0.1)
     simpleidn (0.2.3)
-    standard (1.55.0)
-      language_server-protocol (~> 3.17.0.2)
-      lint_roller (~> 1.0)
-      rubocop (~> 1.87.0)
-      standard-custom (~> 1.0.0)
-      standard-performance (~> 1.8)
-    standard-custom (1.0.2)
-      lint_roller (~> 1.0)
-      rubocop (~> 1.50)
-    standard-performance (1.9.0)
-      lint_roller (~> 1.1)
-      rubocop-performance (~> 1.26.0)
     standardwebhooks (1.1.0)
     steep (2.0.0)
       concurrent-ruby (>= 1.1.10)
@@ -239,7 +237,6 @@ GEM
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.5.0)
-    traces (0.18.2)
     tsort (0.2.0)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
@@ -250,7 +247,8 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    zeitwerk (2.8.2)
+    webrick (1.9.2)
+    zeitwerk (2.8.3)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -266,8 +264,8 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.55.0)
-  async (~> 2.25, < 2.43)
+  anthropic (~> 1.61.0)
+  async (~> 2.25, < 2.45)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
   faraday (>= 1.0)
@@ -275,17 +273,24 @@ DEPENDENCIES
   guard-shell
   io-event (< 1.20)
   irb
-  mcp (~> 0.8)
+  kramdown
+  kramdown-parser-gfm
+  mcp (~> 1.0)
   minitest (~> 6.0)
-  openai (~> 0.69.0)
-  opentelemetry-sdk (~> 1.12)
+  openai (~> 0.78.0)
+  opentelemetry-sdk (~> 1.13)
   rake (~> 13.0)
   rbs-inline (~> 0.12)
   riffer!
-  standard (~> 1.3)
+  rouge (~> 4.6)
+  rubocop
+  rubocop-minitest
+  rubocop-performance
+  rubocop-rake
   steep (~> 2.0)
   vcr (~> 6.0)
   webmock (~> 3.0)
+  webrick
 
 BUNDLED WITH
   4.0.10

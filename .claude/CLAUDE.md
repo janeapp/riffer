@@ -1,0 +1,30 @@
+# Riffer
+
+Ruby gem framework for building AI-powered agents with LLM provider adapters.
+
+## Quick Reference
+
+- **Ruby**: 3.3.0+ (CI: 3.3, 3.4, 4.0)
+- **Lint + Test**: `bin/rake` (runs the default task: test + rubocop + steep:check)
+- **Autoloading**: Zeitwerk (file paths must match module/class names)
+- **Model format**: `provider/model` (e.g., `openai/gpt-4`)
+- **Docs**: when adding a public config option or message attribute, update the matching page in `docs/` (e.g., `docs/CONFIGURATION.md`, `docs/MESSAGES.md`). Adding a NEW page under `docs/` also requires a `docs-site/manifest.yml` entry — the site build fails without one. RDoc ≠ user docs.
+
+## Commands
+
+All wrappers `exec bundle exec …` under the hood.
+
+| Command         | Description                                  |
+| --------------- | -------------------------------------------- |
+| `bin/rake`      | Default task: test + rubocop + steep:check   |
+| `bin/test`      | Run tests                                    |
+| `bin/lint`      | Check code style (pass `-a` to auto-fix)     |
+| `bin/typecheck` | Run Steep type checker                       |
+| `bin/rbs`       | Generate RBS type signatures                 |
+| `bin/rbs-watch` | Watch and regenerate RBS files               |
+| `bin/docs`      | Build the docs site + API reference          |
+| `bin/build`     | Build the gem package                        |
+| `bin/console`   | Interactive console                          |
+| `bin/setup`     | Install dependencies                         |
+
+`bin/rake <task>` is the escape hatch for any rake task without a named wrapper.

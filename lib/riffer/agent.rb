@@ -57,14 +57,6 @@ class Riffer::Agent
     value.nil? ? config.instructions : (config.instructions = value)
   end
 
-  # Gets or sets provider options passed to the provider client.
-  #
-  #--
-  #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
-  def self.provider_options(options = nil)
-    options.nil? ? config.provider_options : (config.provider_options = options)
-  end
-
   # Gets or sets model options passed to generate_text/stream_text.
   #
   #--
@@ -97,6 +89,7 @@ class Riffer::Agent
   #: (*Numeric?) -> Numeric?
   def self.max_steps(*value)
     return config.max_steps if value.empty?
+
     config.max_steps = value.first
   end
 
@@ -184,15 +177,39 @@ class Riffer::Agent
   # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
   #--
   #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_h(hash, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    Riffer::Agent::Serializer.from_h(hash, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  def self.from_h(
+    hash,
+    context: nil,
+    session: nil,
+    tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER,
+    tool_runtime: nil
+  )
+    Riffer::Agent::Serializer.from_h(
+      hash,
+      context: context,
+      session: session,
+      tool_resolver: tool_resolver,
+      tool_runtime: tool_runtime,
+    )
   end
 
   # Reconstructs a runnable agent from a JSON string produced by +#to_json+.
   #--
   #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
-  def self.from_json(json, context: nil, session: nil, tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    Riffer::Agent::Serializer.from_json(json, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
+  def self.from_json(
+    json,
+    context: nil,
+    session: nil,
+    tool_resolver: Riffer::Agent::Serializer::DEFAULT_TOOL_RESOLVER,
+    tool_runtime: nil
+  )
+    Riffer::Agent::Serializer.from_json(
+      json,
+      context: context,
+      session: session,
+      tool_resolver: tool_resolver,
+      tool_runtime: tool_runtime,
+    )
   end
 
   # Registers a guardrail for input, output, or both phases. Raises
@@ -291,7 +308,7 @@ class Riffer::Agent
   # +tags:+ is an optional flat hash of attribution tags applied to this single
   # call: they propagate to the provider's native request-metadata field, and
   # are stamped as +riffer.tag.*+ on every span the call emits. See
-  # +docs/03_AGENTS.md+ for the per-provider mapping. The reserved key
+  # +docs/AGENTS.md+ for the per-provider mapping. The reserved key
   # +user_id+ also maps to the provider's native user identifier where one
   # exists.
   #
@@ -309,7 +326,11 @@ class Riffer::Agent
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream(prompt = nil, files: nil, tags: {})
-    raise Riffer::ArgumentError, "Structured output is not supported with streaming. Use #generate instead." if @structured_output
+    if @structured_output
+      raise Riffer::ArgumentError,
+            "Structured output is not supported with streaming. Use #generate instead."
+    end
+
     Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
@@ -344,6 +365,7 @@ class Riffer::Agent
   def build_instruction_message
     content = Riffer::Helpers::CallOrValue.resolve(@config.instructions, context: @context)
     return nil if content.nil? || content.empty?
+
     Riffer::Messages::System.new(content)
   end
 
@@ -352,6 +374,7 @@ class Riffer::Agent
   def build_skills_message
     content = @context.skills&.system_prompt
     return nil if content.nil? || content.empty?
+
     Riffer::Messages::System.new(content)
   end
 
@@ -363,7 +386,8 @@ class Riffer::Agent
 
     provider_name, model_name = model_string.split("/", 2)
 
-    unless provider_name.is_a?(String) && !provider_name.strip.empty? && model_name.is_a?(String) && !model_name.strip.empty?
+    unless provider_name.is_a?(String) && !provider_name.strip.empty? &&
+           model_name.is_a?(String) && !model_name.strip.empty?
       raise Riffer::ArgumentError, "Invalid model string: #{model_string}"
     end
 
@@ -375,7 +399,8 @@ class Riffer::Agent
   def build_provider
     provider_class = Riffer::Providers::Repository.find(@provider_name)
     raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
-    provider_class.new(**@config.provider_options)
+
+    provider_class.new
   end
 
   #--
@@ -397,7 +422,7 @@ class Riffer::Agent
     skills_context = Riffer::Skills::Context.new(
       backend: backend,
       skills: skills,
-      adapter: adapter_class.new(skill_activate_tool: skill_activate_tool_class)
+      adapter: adapter_class.new(skill_activate_tool: skill_activate_tool_class),
     )
 
     if skills_config.activate
@@ -456,8 +481,12 @@ class Riffer::Agent
 
     regular_reg_tags, progressive_reg_tags = gather_mcp_registrations_with_tags(configs)
 
-    regular_tools = regular_reg_tags.flat_map { |reg, tag_accum| mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx) }
-    progressive_tools = progressive_reg_tags.flat_map { |reg, tag_accum| mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx) }
+    regular_tools = regular_reg_tags.flat_map do |reg, tag_accum|
+      mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx)
+    end
+    progressive_tools = progressive_reg_tags.flat_map do |reg, tag_accum|
+      mcp_tools_for_registration(reg, tag_accum.uniq, cred, ctx)
+    end
 
     if progressive_tools.any?
       @context.mcp_progressive_tools = progressive_tools.freeze
@@ -486,6 +515,7 @@ class Riffer::Agent
   def mcp_tools_for_registration(reg, matched_tags, cred, ctx)
     return reg.tools unless cred
     return [] if cred.call(manifest: reg.manifest, matched_tags: matched_tags, context: ctx).nil?
+
     Riffer::Mcp::AuthenticatedTool.wrap_all(reg.tools, reg.manifest, matched_tags)
   end
 
@@ -497,6 +527,6 @@ class Riffer::Agent
     dupes = tally.filter_map { |name, n| name if n > 1 }
     return if dupes.empty?
 
-    raise Riffer::ArgumentError, "Duplicate tool names: #{dupes.sort.join(", ")}"
+    raise Riffer::ArgumentError, "Duplicate tool names: #{dupes.sort.join(', ')}"
   end
 end

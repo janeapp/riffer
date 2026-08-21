@@ -16,6 +16,6 @@ class Riffer::StreamEvents::TextDone < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, content: @content}
+    { role: @role, content: @content }
   end
 end

@@ -12,6 +12,7 @@ class Riffer::Runner::Threaded < Riffer::Runner
   #--
   #: (?max_concurrency: Integer) -> void
   def initialize(max_concurrency: DEFAULT_MAX_CONCURRENCY)
+    super()
     @max_concurrency = max_concurrency
   end
 
@@ -25,7 +26,7 @@ class Riffer::Runner::Threaded < Riffer::Runner
     queue = Queue.new
     items.each_with_index { |item, i| queue << [item, i] }
 
-    workers = [items.size, @max_concurrency].min.times.map do
+    workers = Array.new([items.size, @max_concurrency].min) do
       Thread.new do
         loop do
           pair = begin
@@ -35,8 +36,8 @@ class Riffer::Runner::Threaded < Riffer::Runner
           end
           item, index = pair
           begin
-            results[index] = block.call(item)
-          rescue => e
+            results[index] = yield(item)
+          rescue StandardError => e
             errors[index] = e
           end
         end

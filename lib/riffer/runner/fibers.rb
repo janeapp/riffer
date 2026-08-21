@@ -11,6 +11,7 @@ class Riffer::Runner::Fibers < Riffer::Runner
   #--
   #: (?max_concurrency: Integer?) -> void
   def initialize(max_concurrency: nil)
+    super()
     depends_on "async"
     depends_on "async/semaphore" if max_concurrency
     @max_concurrency = max_concurrency
@@ -28,15 +29,15 @@ class Riffer::Runner::Fibers < Riffer::Runner
       barrier = Async::Barrier.new
       max = @max_concurrency
       parent = if max
-        Async::Semaphore.new(max, parent: barrier)
-      else
-        barrier
-      end
+                 Async::Semaphore.new(max, parent: barrier)
+               else
+                 barrier
+               end
 
       items.each_with_index do |item, index|
         parent.async do
-          results[index] = block.call(item)
-        rescue => e
+          results[index] = yield(item)
+        rescue StandardError => e
           errors[index] = e
         end
       end

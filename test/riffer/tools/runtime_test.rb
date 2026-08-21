@@ -38,7 +38,7 @@ describe Riffer::Tools::Runtime do
     Riffer::Messages::Assistant::ToolCall.new(
       call_id: call_id,
       name: name,
-      arguments: arguments
+      arguments: arguments,
     )
   end
 
@@ -49,9 +49,9 @@ describe Riffer::Tools::Runtime do
 
   describe "#initialize" do
     it "raises NotImplementedError when instantiated directly" do
-      expect {
+      expect do
         Riffer::Tools::Runtime.new(runner: Riffer::Runner::Sequential.new)
-      }.must_raise NotImplementedError
+      end.must_raise NotImplementedError
     end
   end
 
@@ -151,9 +151,9 @@ describe Riffer::Tools::Runtime do
       runtime = Riffer::Tools::Runtime::Inline.new
       tool_call = make_tool_call(name: "buggy_tool", arguments: "{}")
 
-      expect {
+      expect do
         runtime.execute([tool_call], tools: [buggy_tool], context: context)
-      }.must_raise NoMethodError
+      end.must_raise NoMethodError
     end
 
     it "returns [tool_call, response] pairs in order" do
@@ -201,7 +201,7 @@ describe Riffer::Tools::Runtime do
     it "is inherited by subclasses" do
       log = []
       parent = Class.new(Riffer::Tools::Runtime::Inline) do
-        define_method(:around_tool_call) do |tool_call, **, &block|
+        define_method(:around_tool_call) do |_tool_call, **, &block|
           log << "parent"
           block.call
         end
@@ -322,11 +322,12 @@ describe Riffer::Tools::Runtime do
 
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "integration_tool"
         description "Traced tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("integration_tool") }
+      end
     end
 
     let(:agent_class_with_tools) do
@@ -347,7 +348,9 @@ describe Riffer::Tools::Runtime do
     end
 
     def assert_parents_under_host(runtime)
-      tool_calls = 3.times.map { |i| make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}', call_id: "cid_#{i}") }
+      tool_calls = Array.new(3) do |i|
+        make_tool_call(name: "weather_tool", arguments: '{"city":"Toronto"}', call_id: "cid_#{i}")
+      end
 
       Riffer::Tracing.in_span("host") do
         runtime.execute(tool_calls, tools: [weather_tool_class], context: nil)
@@ -355,6 +358,7 @@ describe Riffer::Tools::Runtime do
 
       host = @exporter.finished_spans.find { |span| span.name == "host" }
       spans = tool_spans
+
       expect(spans.length).must_equal 3
       spans.each do |span|
         expect(span.parent_span_id).must_equal host.span_id
@@ -379,11 +383,14 @@ describe Riffer::Tools::Runtime do
 
       it "sets the tool attributes" do
         attributes = tool_span.attributes.slice("gen_ai.operation.name", "gen_ai.tool.name", "gen_ai.tool.call.id")
-        expect(attributes).must_equal({
-          "gen_ai.operation.name" => "execute_tool",
-          "gen_ai.tool.name" => "weather_tool",
-          "gen_ai.tool.call.id" => "tc_42"
-        })
+
+        expect(attributes).must_equal(
+          {
+            "gen_ai.operation.name" => "execute_tool",
+            "gen_ai.tool.name" => "weather_tool",
+            "gen_ai.tool.call.id" => "tc_42",
+          },
+        )
       end
 
       it "leaves the span status unset on success" do
@@ -415,6 +422,7 @@ describe Riffer::Tools::Runtime do
         begin
           runtime.execute([tool_call], tools: [buggy_tool_class], context: nil)
         rescue NoMethodError
+          # swallow the raise — the recorded span is the subject under test
         end
       end
 
@@ -429,6 +437,7 @@ describe Riffer::Tools::Runtime do
 
     it "omits arguments and result by default" do
       Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
+
       expect(tool_span.attributes).wont_include "gen_ai.tool.call.arguments"
       expect(tool_span.attributes).wont_include "gen_ai.tool.call.result"
     end
@@ -436,6 +445,7 @@ describe Riffer::Tools::Runtime do
     it "captures the raw arguments and result when enabled" do
       Riffer.config.tracing.capture_messages = true
       Riffer::Tools::Runtime::Inline.new.execute([tool_call], tools: [weather_tool_class], context: nil)
+
       expect(tool_span.attributes["gen_ai.tool.call.arguments"]).must_equal '{"city":"Toronto"}'
       expect(tool_span.attributes["gen_ai.tool.call.result"]).must_equal "Weather in Toronto: 20 degrees"
     end
@@ -479,11 +489,12 @@ describe Riffer::Tools::Runtime do
 
     it "parents the execute_tool span to the invoke_agent span" do
       agent = agent_class_with_tools.new
-      agent.provider.stub_response("", tool_calls: [{name: "integration_tool", arguments: "{}"}])
+      agent.provider.stub_response("", tool_calls: [{ name: "integration_tool", arguments: "{}" }])
       agent.provider.stub_response("Done!")
       agent.generate("Call the tool")
 
       run_span = @exporter.finished_spans.find { |span| span.name.start_with?("invoke_agent") }
+
       expect(tool_span.name).must_equal "execute_tool integration_tool"
       expect(tool_span.parent_span_id).must_equal run_span.span_id
     end
@@ -493,6 +504,7 @@ end
 describe Riffer::Tools::Runtime::Inline do
   it "behaves identically to base" do
     runtime = Riffer::Tools::Runtime::Inline.new
+
     expect(runtime).must_be_kind_of Riffer::Tools::Runtime
   end
 
@@ -512,7 +524,7 @@ describe Riffer::Tools::Runtime::Inline do
 
     runtime = Riffer::Tools::Runtime::Inline.new
     tool_call = Riffer::Messages::Assistant::ToolCall.new(
-      call_id: "cid_1", name: "weather_tool", arguments: '{"city":"Toronto"}'
+      call_id: "cid_1", name: "weather_tool", arguments: '{"city":"Toronto"}',
     )
 
     results = runtime.execute([tool_call], tools: [weather_tool], context: nil)
@@ -538,9 +550,9 @@ describe Riffer::Tools::Runtime::Fibers do
     end
 
     runtime = Riffer::Tools::Runtime::Fibers.new
-    tool_calls = 3.times.map do |i|
+    tool_calls = Array.new(3) do |i|
       Riffer::Messages::Assistant::ToolCall.new(
-        call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
+        call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}",
       )
     end
 
@@ -568,9 +580,9 @@ describe Riffer::Tools::Runtime::Threaded do
     end
 
     runtime = Riffer::Tools::Runtime::Threaded.new(max_concurrency: 3)
-    tool_calls = 3.times.map do |i|
+    tool_calls = Array.new(3) do |i|
       Riffer::Messages::Assistant::ToolCall.new(
-        call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}"
+        call_id: "cid_#{i}", name: "tracking_tool", arguments: "{}",
       )
     end
 

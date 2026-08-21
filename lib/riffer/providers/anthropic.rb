@@ -11,14 +11,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     "stop_sequence" => :stop,
     "max_tokens" => :length,
     "tool_use" => :tool_calls,
-    "refusal" => :content_filter
+    "refusal" => :content_filter,
   }.freeze #: Hash[String, Symbol]
 
   # Returns the XML skill adapter for Anthropic/Claude.
   #
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
-  def self.skills_adapter(model = nil)
+  def self.skills_adapter(_model = nil)
     Riffer::Skills::XmlAdapter
   end
 
@@ -30,16 +30,28 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **options)
+  #: () -> void
+  def initialize
+    super
     depends_on "anthropic"
-
-    api_key ||= Riffer.config.anthropic.api_key
-
-    @client = ::Anthropic::Client.new(api_key: api_key, **options)
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.anthropic.client
+  end
+
+  # Compacted for the same reason as the other providers: never hand an SDK an
+  # explicit nil credential, so its own +ANTHROPIC_API_KEY+ resolution stays
+  # reachable regardless of how that SDK distinguishes nil from absent.
+  #--
+  #: () -> untyped
+  def build_client
+    ::Anthropic::Client.new(**{ api_key: Riffer.config.anthropic.api_key }.compact)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -56,7 +68,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       model: model,
       messages: partitioned_messages[:conversation],
       max_tokens: max_tokens,
-      **options.except(:tools, :max_tokens, :structured_output, :web_search, :tags)
+      **options.except(:tools, :max_tokens, :structured_output, :web_search, :tags),
     } #: Hash[Symbol, untyped]
 
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
@@ -65,13 +77,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     # PII). It carries the reserved user_id tag; all other tags are dropped
     # here and survive only on spans.
     user_id = tags["user_id"]
-    params[:metadata] = {user_id: user_id} if user_id
+    params[:metadata] = { user_id: user_id } if user_id
 
     anthropic_tools = [] #: Array[Hash[Symbol, untyped]]
     anthropic_tools.concat(tools.map { |t| convert_tool_to_anthropic_format(t) }) if tools && !tools.empty?
 
     if web_search
-      web_search_tool = {type: WEB_SEARCH_TOOL_TYPE, name: "web_search"}
+      web_search_tool = { type: WEB_SEARCH_TOOL_TYPE, name: "web_search" }
       web_search_tool.merge!(web_search) if web_search.is_a?(Hash)
       anthropic_tools << web_search_tool
     end
@@ -83,8 +95,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       params[:output_config] = {
         format: {
           type: "json_schema",
-          schema: structured_output.json_schema(strict: true)
-        }
+          schema: structured_output.json_schema(strict: true),
+        },
       }
     end
 
@@ -96,7 +108,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.messages.create(**params)
+    client.messages.create(**params)
   end
 
   #--
@@ -130,12 +142,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     cache_write = usage.cache_creation_input_tokens
     cache_read = usage.cache_read_input_tokens
 
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
-      output_tokens: usage.output_tokens,
-      cache_write_tokens: cache_write,
-      cache_read_tokens: cache_read
-    ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
+        output_tokens: usage.output_tokens,
+        cache_write_tokens: cache_write,
+        cache_read_tokens: cache_read,
+      ),
+    )
   end
 
   #--
@@ -164,13 +178,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
     content_blocks.each do |block|
-      if block.is_a?(::Anthropic::Models::ToolUseBlock)
-        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          call_id: block.id,
-          name: decode_tool_name(block.name, tools: @current_tools),
-          arguments: block.input.to_json
-        )
-      end
+      next unless block.is_a?(::Anthropic::Models::ToolUseBlock)
+
+      tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+        call_id: block.id,
+        name: decode_tool_name(block.name, tools: @current_tools),
+        arguments: block.input.to_json,
+      )
     end
 
     tool_calls
@@ -185,14 +199,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       tool_call: nil,
       web_search_index: nil,
       web_search_json: nil,
-      web_search_query: nil
+      web_search_query: nil,
     } #: Hash[Symbol, untyped]
 
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
-    stream = @client.messages.stream(
+    stream = client.messages.stream(
       **params,
-      request_options: {extra_headers: {"accept-encoding" => "identity"}}
+      request_options: { extra_headers: { "accept-encoding" => "identity" } },
     )
 
     begin
@@ -209,12 +223,20 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::InputJsonEvent
           handle_input_json_event(event, state: current_state, yielder: yielder)
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
-          block = event.content_block
-          handle_content_block_stop_text(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::TextBlock) && current_state[:text]
-          handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::ToolUseBlock)
-          handle_content_block_stop_thinking(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::ThinkingBlock) && current_state[:reasoning]
-          handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::ServerToolUseBlock)
-          handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder) if block.is_a?(::Anthropic::Models::WebSearchToolResultBlock)
+          case event.content_block
+          when ::Anthropic::Models::TextBlock
+            handle_content_block_stop_text(event, state: current_state, yielder: yielder) if current_state[:text]
+          when ::Anthropic::Models::ToolUseBlock
+            handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
+          when ::Anthropic::Models::ThinkingBlock
+            if current_state[:reasoning]
+              handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
+            end
+          when ::Anthropic::Models::ServerToolUseBlock
+            handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder)
+          when ::Anthropic::Models::WebSearchToolResultBlock
+            handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder)
+          end
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
           handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
@@ -231,10 +253,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped]) -> void
   def handle_raw_content_block_start(event, state:)
     content_block = event.content_block
-    if content_block.type.to_s == "server_tool_use" && content_block.name.to_s == "web_search"
-      state[:web_search_index] = event.index
-      state[:web_search_json] = ""
-    end
+    return unless content_block.type.to_s == "server_tool_use" && content_block.name.to_s == "web_search"
+
+    state[:web_search_index] = event.index
+    state[:web_search_json] = +""
   end
 
   #--
@@ -243,36 +265,39 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     return unless state[:web_search_index] == event.index
 
     delta = event.delta
-    state[:web_search_json] += delta.partial_json if delta.respond_to?(:partial_json)
+    state[:web_search_json] << delta.partial_json if delta.respond_to?(:partial_json)
   end
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_text_event(event, state:, yielder:)
-    state[:text] ||= ""
-    state[:text] += event.text
+    # Mutating append instead of += to avoid reallocating and copying the whole
+    # accumulated buffer on every delta (O(n^2) per content block). The buffer
+    # is handed to TextDone and cleared on block stop, so no reader observes the
+    # pre-append string. Seed with an unfrozen String so << is legal under
+    # frozen_string_literal.
+    state[:text] ||= +""
+    state[:text] << event.text
     yielder << Riffer::StreamEvents::TextDelta.new(event.text)
   end
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_thinking_event(event, state:, yielder:)
-    state[:reasoning] ||= ""
-    state[:reasoning] += event.thinking
+    state[:reasoning] ||= +""
+    state[:reasoning] << event.thinking
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
   end
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_input_json_event(event, state:, yielder:)
-    if state[:tool_call].nil?
-      state[:tool_call] = {id: nil, name: nil, arguments: ""}
-    end
-    state[:tool_call][:arguments] += event.partial_json
+    state[:tool_call] = { id: nil, name: nil, arguments: +"" } if state[:tool_call].nil?
+    state[:tool_call][:arguments] << event.partial_json
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
       item_id: state[:tool_call][:id] || "pending",
       name: state[:tool_call][:name],
-      arguments_delta: event.partial_json
+      arguments_delta: event.partial_json,
     )
   end
 
@@ -285,7 +310,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       item_id: content_block.id,
       call_id: content_block.id,
       name: decode_tool_name(content_block.name, tools: @current_tools),
-      arguments: arguments
+      arguments: arguments,
     )
     state[:tool_call] = nil
   end
@@ -322,7 +347,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     content_block = event.content_block
     sources = (content_block.content || []).filter_map do |item|
       next unless item.type.to_s == "web_search_result"
-      {title: item.title, url: item.url}
+
+      { title: item.title, url: item.url }
     end
 
     yielder << Riffer::StreamEvents::WebSearchDone.new(state[:web_search_query] || "", sources: sources)
@@ -350,14 +376,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     messages.each do |message|
       case message
       when Riffer::Messages::System
-        system_prompts << {type: "text", text: message.content}
+        system_prompts << { type: "text", text: message.content }
       when Riffer::Messages::User
         if message.files.empty?
-          conversation_messages << {role: "user", content: message.content}
+          conversation_messages << { role: "user", content: message.content }
         else
-          content = [{type: "text", text: message.content}]
+          content = [{ type: "text", text: message.content }]
           message.files.each { |file| content << convert_file_part_to_anthropic_format(file) }
-          conversation_messages << {role: "user", content: content}
+          conversation_messages << { role: "user", content: content }
         end
       when Riffer::Messages::Assistant
         conversation_messages << convert_assistant_to_anthropic_format(message)
@@ -367,15 +393,15 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           content: [{
             type: "tool_result",
             tool_use_id: message.tool_call_id,
-            content: message.content
-          }]
+            content: message.content,
+          }],
         }
       end
     end
 
     {
       system: system_prompts.empty? ? nil : system_prompts,
-      conversation: conversation_messages
+      conversation: conversation_messages,
     }
   end
 
@@ -383,18 +409,18 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
     content = [] #: Array[Hash[Symbol, untyped]]
-    content << {type: "text", text: message.content} if message.content && !message.content.empty?
+    content << { type: "text", text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
       content << {
         type: "tool_use",
         id: tc.call_id,
         name: encode_tool_name(tc.name),
-        input: parse_tool_arguments(tc.arguments)
+        input: parse_tool_arguments(tc.arguments),
       }
     end
 
-    {role: "assistant", content: content}
+    { role: "assistant", content: content }
   end
 
   #--
@@ -403,12 +429,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     type = file.image? ? "image" : "document"
 
     source = if file.url?
-      {type: "url", url: file.url}
-    else
-      {type: "base64", media_type: file.media_type, data: file.data}
-    end
+               { type: "url", url: file.url }
+             else
+               { type: "base64", media_type: file.media_type, data: file.data }
+             end
 
-    {type: type, source: source}
+    { type: type, source: source }
   end
 
   #--
@@ -417,7 +443,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     {
       name: encode_tool_name(tool.name),
       description: tool.description,
-      input_schema: tool.parameters_schema(strict: true)
+      input_schema: tool.parameters_schema(strict: true),
     }
   end
 end

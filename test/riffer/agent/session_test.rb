@@ -31,6 +31,7 @@ describe Riffer::Agent::Session do
 
     it "returns self for chaining" do
       s = Riffer::Agent::Session.new
+
       expect(s.on_message { |_| }).must_be_same_as s
     end
 
@@ -40,6 +41,7 @@ describe Riffer::Agent::Session do
       s.on_message { |m| calls << [1, m] }
       s.on_message { |m| calls << [2, m] }
       s.add(user)
+
       expect(calls).must_equal [[1, user], [2, user]]
     end
 
@@ -48,6 +50,7 @@ describe Riffer::Agent::Session do
       s = Riffer::Agent::Session.new
       s.on_message { |m| fired << m }
       s.set([user, plain_assistant])
+
       expect(fired).must_equal []
     end
 
@@ -56,6 +59,7 @@ describe Riffer::Agent::Session do
       s = Riffer::Agent::Session.new(messages: [plain_assistant])
       s.on_message { |m| fired << m }
       s.unset
+
       expect(fired).must_equal []
     end
 
@@ -65,6 +69,7 @@ describe Riffer::Agent::Session do
       s.on_message { |m| fired << m }
       s.set([user])
       s.add(plain_assistant)
+
       expect(fired).must_equal [plain_assistant]
     end
 
@@ -73,6 +78,7 @@ describe Riffer::Agent::Session do
       s = Riffer::Agent::Session.new(messages: [plain_assistant])
       s.on_message { |m| fired << m }
       s.update(id: "a_1", content: "new")
+
       expect(fired).must_equal []
     end
 
@@ -81,6 +87,7 @@ describe Riffer::Agent::Session do
       s = Riffer::Agent::Session.new(messages: [plain_assistant])
       s.on_message { |m| fired << m }
       s.remove(id: "a_1")
+
       expect(fired).must_equal []
     end
 
@@ -89,6 +96,7 @@ describe Riffer::Agent::Session do
       s = Riffer::Agent::Session.new
       s.on_message { |m| fired << m }
       s.add(user, silent: true)
+
       expect(fired).must_equal []
     end
   end
@@ -97,17 +105,20 @@ describe Riffer::Agent::Session do
     it "appends the message to #messages" do
       s = Riffer::Agent::Session.new
       s.add(user)
+
       expect(s.messages).must_equal [user]
     end
 
     it "returns the appended message" do
       s = Riffer::Agent::Session.new
+
       expect(s.add(user)).must_be_same_as user
     end
 
     it "still appends to #messages when silent: true" do
       s = Riffer::Agent::Session.new
       s.add(user, silent: true)
+
       expect(s.messages).must_equal [user]
     end
   end
@@ -116,11 +127,13 @@ describe Riffer::Agent::Session do
     it "replaces the messages array with the given array" do
       s = Riffer::Agent::Session.new(messages: [user])
       s.set([plain_assistant])
+
       expect(s.messages).must_equal [plain_assistant]
     end
 
     it "returns self for chaining" do
       s = Riffer::Agent::Session.new
+
       expect(s.set([user])).must_be_same_as s
     end
   end
@@ -129,11 +142,13 @@ describe Riffer::Agent::Session do
     it "clears the session" do
       s = Riffer::Agent::Session.new(messages: [user, plain_assistant])
       s.unset
+
       expect(s.messages).must_equal []
     end
 
     it "returns self for chaining" do
       s = Riffer::Agent::Session.new(messages: [user])
+
       expect(s.unset).must_be_same_as s
     end
   end
@@ -141,12 +156,14 @@ describe Riffer::Agent::Session do
   describe "#remove" do
     it "removes a plain assistant message and returns it" do
       result = session.remove(id: "a_1")
+
       expect(result).must_equal plain_assistant
       expect(session.find { |m| m.id == "a_1" }).must_be_nil
     end
 
     it "cascades to Tool children when the target carries tool_calls" do
       session.remove(id: "a_2")
+
       expect(session.find { |m| m.id == "a_2" }).must_be_nil
       expect(session.find { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_1" }).must_be_nil
     end
@@ -155,8 +172,10 @@ describe Riffer::Agent::Session do
       sys_msg = Riffer::Messages::System.new("hi", id: "s_1")
       s = Riffer::Agent::Session.new(messages: [sys_msg, user])
       s.remove(id: "u_1")
+
       expect(s.find { |m| m.id == "u_1" }).must_be_nil
       s.remove(id: "s_1")
+
       expect(s.find { |m| m.id == "s_1" }).must_be_nil
     end
 
@@ -175,6 +194,7 @@ describe Riffer::Agent::Session do
       a = Riffer::Messages::Assistant.new("old", id: "a_x", tool_calls: [tc], token_usage: usage)
       s = Riffer::Agent::Session.new(messages: [a])
       result = s.update(id: "a_x", content: "new")
+
       expect(result.content).must_equal "new"
       expect(result.id).must_equal "a_x"
       expect(result.tool_calls).must_equal [tc]
@@ -186,6 +206,7 @@ describe Riffer::Agent::Session do
       u = Riffer::Messages::User.new("old", id: "u_x", files: [file])
       s = Riffer::Agent::Session.new(messages: [u])
       result = s.update(id: "u_x", content: "new")
+
       expect(result.content).must_equal "new"
       expect(result.files).must_equal [file]
     end
@@ -194,6 +215,7 @@ describe Riffer::Agent::Session do
       sys = Riffer::Messages::System.new("old", id: "s_x")
       s = Riffer::Agent::Session.new(messages: [sys])
       result = s.update(id: "s_x", content: "new")
+
       expect(result.content).must_equal "new"
       expect(result.id).must_equal "s_x"
     end
@@ -212,6 +234,7 @@ describe Riffer::Agent::Session do
 
     it "cascades to Tool children when tool_calls is cleared" do
       session.update(id: "a_2", tool_calls: [])
+
       expect(session.find { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_1" }).must_be_nil
     end
 
@@ -223,6 +246,7 @@ describe Riffer::Agent::Session do
       tool_b = Riffer::Messages::Tool.new("b", id: "t_b", tool_call_id: "c_b", name: "t")
       s = Riffer::Agent::Session.new(messages: [asst, tool_a, tool_b])
       s.update(id: "a_x", tool_calls: [tc_a])
+
       expect(s.find { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_a" }).must_equal tool_a
       expect(s.find { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_b" }).must_be_nil
     end
@@ -231,6 +255,7 @@ describe Riffer::Agent::Session do
   describe "#update with tool_call_id:" do
     it "replaces tool result content preserving name and id" do
       result = session.update(tool_call_id: "c_1", content: "rainy")
+
       expect(result.content).must_equal "rainy"
       expect(result.tool_call_id).must_equal "c_1"
       expect(result.name).must_equal "weather"
@@ -239,6 +264,7 @@ describe Riffer::Agent::Session do
 
     it "plumbs error and error_type" do
       result = session.update(tool_call_id: "c_1", content: "boom", error: "failed", error_type: :execution_error)
+
       expect(result.error).must_equal "failed"
       expect(result.error_type).must_equal :execution_error
       expect(result.error?).must_equal true
@@ -260,6 +286,7 @@ describe Riffer::Agent::Session do
       asst = Riffer::Messages::Assistant.new("", id: "a_x", tool_calls: [tc1, tc2])
       result = Riffer::Messages::Tool.new("ok", id: "t_x", tool_call_id: "c_a", name: "t")
       s = Riffer::Agent::Session.new(messages: [asst, result])
+
       expect(s.orphaned_tool_call_ids).must_equal ["c_b"]
     end
 
@@ -276,12 +303,14 @@ describe Riffer::Agent::Session do
     it "returns [assistant, []] when the last assistant has no tool_calls" do
       s = Riffer::Agent::Session.new(messages: [plain_assistant])
       assistant, pending = s.pending_tool_calls
+
       expect(assistant).must_equal plain_assistant
       expect(pending).must_equal []
     end
 
     it "returns [assistant, []] when every tool_call has a matching result" do
       assistant, pending = session.pending_tool_calls
+
       expect(assistant).must_equal tool_assistant
       expect(pending).must_equal []
     end
@@ -293,6 +322,7 @@ describe Riffer::Agent::Session do
       result = Riffer::Messages::Tool.new("ok", id: "t_x", tool_call_id: "c_a", name: "t")
       s = Riffer::Agent::Session.new(messages: [asst, result])
       assistant, pending = s.pending_tool_calls
+
       expect(assistant).must_equal asst
       expect(pending.map(&:call_id)).must_equal ["c_b"]
     end
@@ -300,8 +330,8 @@ describe Riffer::Agent::Session do
 
   describe "Enumerable" do
     it "yields each message via #each" do
-      collected = []
-      session.each { |m| collected << m }
+      collected = session.to_a
+
       expect(collected).must_equal [user, plain_assistant, tool_assistant, tool_msg]
     end
 
@@ -315,9 +345,8 @@ describe Riffer::Agent::Session do
 
     it "supports #reverse_each" do
       # TODO: Replace with rfind when minimum Ruby is 4.0+
-      # rubocop:disable Style/ReverseFind
       first_assistant_from_end = session.reverse_each.find { |m| m.is_a?(Riffer::Messages::Assistant) }
-      # rubocop:enable Style/ReverseFind
+
       expect(first_assistant_from_end).must_equal tool_assistant
     end
 
@@ -329,11 +358,13 @@ describe Riffer::Agent::Session do
   describe "#steps" do
     it "is zero when there are no assistant messages" do
       s = Riffer::Agent::Session.new(messages: [user])
+
       expect(s.steps).must_equal 0
     end
 
     it "counts assistant messages only" do
       s = Riffer::Agent::Session.new(messages: [user, plain_assistant, tool_msg, tool_assistant])
+
       expect(s.steps).must_equal 2
     end
   end
@@ -341,16 +372,19 @@ describe Riffer::Agent::Session do
   describe "#final_assistant_message" do
     it "returns nil when there are no assistant messages" do
       s = Riffer::Agent::Session.new(messages: [user])
+
       expect(s.final_assistant_message).must_be_nil
     end
 
     it "returns the most recent assistant message" do
       s = Riffer::Agent::Session.new(messages: [user, plain_assistant, user, tool_assistant])
+
       expect(s.final_assistant_message).must_equal tool_assistant
     end
 
     it "ignores trailing non-assistant messages" do
       s = Riffer::Agent::Session.new(messages: [user, plain_assistant, tool_msg])
+
       expect(s.final_assistant_message).must_equal plain_assistant
     end
   end

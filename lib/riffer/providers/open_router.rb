@@ -5,7 +5,7 @@ require "json"
 
 # OpenRouter provider (https://openrouter.ai). Requires the +openai+ gem —
 # OpenRouter exposes an OpenAI-compatible endpoint, so this reuses the OpenAI
-# SDK with a +base_url+ override. +api_key+ falls back to config, then
+# SDK with a +base_url+ override. +api_key+ resolves from config, then
 # +OPENROUTER_API_KEY+.
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL = "https://openrouter.ai/api/v1" #: String
@@ -16,7 +16,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     "tool_calls" => :tool_calls,
     "function_call" => :tool_calls,
     "content_filter" => :content_filter,
-    "error" => :error
+    "error" => :error,
   }.freeze #: Hash[String, Symbol]
 
   # The GenAI semconv well-known provider name.
@@ -27,13 +27,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_key: String?, **untyped) -> void
-  def initialize(api_key: nil, **options)
+  #: () -> void
+  def initialize
+    super
     depends_on "openai"
-
-    api_key ||= Riffer.config.openrouter.api_key || ENV["OPENROUTER_API_KEY"]
-
-    @client = ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL, **options)
   end
 
   #--
@@ -43,6 +40,24 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   private
+
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.openrouter.client
+  end
+
+  # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
+  # different vendor, so omitting an unset +api_key+ would let the SDK fall
+  # back to +OPENAI_API_KEY+ and send an OpenAI credential to OpenRouter.
+  # Passing nil raises in the SDK instead. +OPENROUTER_API_KEY+ is read here
+  # rather than left to the SDK for the same reason.
+  #--
+  #: () -> untyped
+  def build_client
+    api_key = Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
+    ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL)
+  end
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
@@ -55,7 +70,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     params = {
       model: model,
       messages: convert_messages_to_chat_completions_format(messages),
-      **options.except(:reasoning, :tools, :structured_output, :tags)
+      **options.except(:reasoning, :tools, :structured_output, :tags),
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
@@ -67,12 +82,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     end
 
     if reasoning
-      params[:reasoning] = reasoning.is_a?(String) ? {effort: reasoning} : reasoning
+      params[:reasoning] = reasoning.is_a?(String) ? { effort: reasoning } : reasoning
     end
 
-    if tools && !tools.empty?
-      params[:tools] = tools.map { |t| convert_tool_to_chat_completions_format(t) }
-    end
+    params[:tools] = tools.map { |t| convert_tool_to_chat_completions_format(t) } if tools && !tools.empty?
 
     if structured_output
       params[:response_format] = {
@@ -80,8 +93,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
         json_schema: {
           name: "response",
           schema: structured_output.json_schema(strict: true),
-          strict: true
-        }
+          strict: true,
+        },
       }
     end
 
@@ -91,7 +104,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.chat.completions.create(**params)
+    client.chat.completions.create(**params)
   end
 
   #--
@@ -107,11 +120,13 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.prompt_tokens,
-      output_tokens: usage.completion_tokens,
-      cache_read_tokens: usage.prompt_tokens_details&.cached_tokens
-    ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.prompt_tokens,
+        output_tokens: usage.completion_tokens,
+        cache_read_tokens: usage.prompt_tokens_details&.cached_tokens,
+      ),
+    )
   end
 
   #--
@@ -155,7 +170,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: tc.id,
         name: decode_tool_name(tc.function.name, tools: @current_tools),
-        arguments: tc.function.arguments
+        arguments: tc.function.arguments,
       )
     end
   end
@@ -171,7 +186,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       text: +"",
       reasoning: +"",
       tool_calls: {},
-      finish_reason: nil
+      finish_reason: nil,
     } #: Hash[Symbol, untyped]
 
     # Use stream_raw (not stream) — the latter yields a higher-level
@@ -179,7 +194,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     # events. We want raw ChatCompletionChunk objects with
     # +choices.first.delta+ so we can map deltas to Riffer::StreamEvents
     # ourselves.
-    stream = @client.chat.completions.stream_raw(**stream_params)
+    stream = client.chat.completions.stream_raw(**stream_params)
     begin
       stream.each do |chunk|
         handle_stream_chunk(chunk, state: state, yielder: yielder)
@@ -214,9 +229,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     state[:finish_reason] = choice.finish_reason if choice&.finish_reason
 
-    if choice && finish_reason_is_tool_calls?(choice)
-      emit_tool_call_done_events(state: state, yielder: yielder)
-    end
+    emit_tool_call_done_events(state: state, yielder: yielder) if choice && finish_reason_is_tool_calls?(choice)
 
     return unless typed_chunk.usage
 
@@ -255,7 +268,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     return if tool_calls.nil? || tool_calls.empty?
 
     tool_calls.each do |tc|
-      entry = state[:tool_calls][tc.index] ||= {id: nil, name: nil, arguments: +""}
+      entry = state[:tool_calls][tc.index] ||= { id: nil, name: nil, arguments: +"" }
       entry[:id] = tc.id if tc.id
 
       fn = tc.function
@@ -270,7 +283,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       yielder << Riffer::StreamEvents::ToolCallDelta.new(
         item_id: entry[:id] || "tool_#{tc.index}",
         name: entry[:name],
-        arguments_delta: args_delta
+        arguments_delta: args_delta,
       )
     end
   end
@@ -284,7 +297,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
         item_id: entry[:id] || fallback,
         call_id: entry[:id] || fallback,
         name: entry[:name],
-        arguments: entry[:arguments]
+        arguments: entry[:arguments],
       )
     end
     state[:tool_calls] = {}
@@ -303,19 +316,19 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     messages.flat_map do |message|
       case message
       when Riffer::Messages::System
-        {role: "system", content: message.content}
+        { role: "system", content: message.content }
       when Riffer::Messages::User
         if message.files.empty?
-          {role: "user", content: message.content}
+          { role: "user", content: message.content }
         else
-          content = [{type: "text", text: message.content}]
+          content = [{ type: "text", text: message.content }]
           message.files.each { |file| content << convert_file_part_to_chat_completions_format(file) }
-          {role: "user", content: content}
+          { role: "user", content: content }
         end
       when Riffer::Messages::Assistant
         convert_assistant_to_chat_completions_format(message)
       when Riffer::Messages::Tool
-        {role: "tool", tool_call_id: message.tool_call_id, content: message.content}
+        { role: "tool", tool_call_id: message.tool_call_id, content: message.content }
       else
         raise Riffer::ArgumentError, "unsupported message type: #{message.class}"
       end
@@ -325,7 +338,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_chat_completions_format(message)
-    msg = {role: "assistant"} #: Hash[Symbol, untyped]
+    msg = { role: "assistant" } #: Hash[Symbol, untyped]
     msg[:content] = message.content if message.content && !message.content.empty?
 
     unless message.tool_calls.empty?
@@ -335,8 +348,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
           type: "function",
           function: {
             name: encode_tool_name(tc.name),
-            arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json
-          }
+            arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
+          },
         }
       end
     end
@@ -349,10 +362,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   def convert_file_part_to_chat_completions_format(file)
     if file.image?
       image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"
-      {type: "image_url", image_url: {url: image_url}}
+      { type: "image_url", image_url: { url: image_url } }
     else
       data_uri = "data:#{file.media_type};base64,#{file.data}"
-      block = {type: "file", file: {file_data: data_uri}} #: Hash[Symbol, untyped]
+      block = { type: "file", file: { file_data: data_uri } } #: Hash[Symbol, untyped]
       block[:file][:filename] = file.filename if file.filename
       block
     end
@@ -367,8 +380,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
         name: encode_tool_name(tool.name),
         description: tool.description,
         parameters: tool.parameters_schema(strict: true),
-        strict: true
-      }
+        strict: true,
+      },
     }
   end
 end

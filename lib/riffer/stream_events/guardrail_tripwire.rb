@@ -44,7 +44,7 @@ class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
   def to_h
     {
       role: @role,
-      tripwire: tripwire.to_h
+      tripwire: tripwire.to_h,
     }
   end
 end

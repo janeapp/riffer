@@ -17,6 +17,7 @@ describe Riffer do
     it "returns the same instance on multiple calls" do
       config1 = Riffer.config
       config2 = Riffer.config
+
       expect(config1.object_id).must_equal config2.object_id
     end
   end
@@ -27,6 +28,7 @@ describe Riffer do
       Riffer.configure do |config|
         yielded = config
       end
+
       expect(yielded).must_be_instance_of Riffer::Config
     end
 
@@ -35,6 +37,7 @@ describe Riffer do
       Riffer.configure do |config|
         config.openai.api_key = "new-test-key"
       end
+
       expect(Riffer.config.openai.api_key).must_equal "new-test-key"
       Riffer.config.openai.api_key = original_api_key
     end

@@ -36,7 +36,7 @@ VCR.configure do |config|
   config.hook_into :webmock
   config.default_cassette_options = {
     record: :new_episodes,
-    match_requests_on: [:method, :uri, :body]
+    match_requests_on: %i[method uri body],
   }
 
   config.filter_sensitive_data("<ANTHROPIC_API_KEY>") { ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") }
@@ -46,8 +46,12 @@ VCR.configure do |config|
   config.filter_sensitive_data("<AZURE_OPENAI_ENDPOINT>") { ENV.fetch("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com/") }
   config.filter_sensitive_data("<GEMINI_API_KEY>") { ENV.fetch("GEMINI_API_KEY", "test_api_key") }
   config.filter_sensitive_data("<OPENROUTER_API_KEY>") { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
-  config.filter_sensitive_data("<AWS_TEST_IMAGE_S3_URI>") { ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png") }
-  config.filter_sensitive_data("<AWS_TEST_DOCUMENT_S3_URI>") { ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://riffer-test-bucket/super-secret-document.pdf") }
+  config.filter_sensitive_data("<AWS_TEST_IMAGE_S3_URI>") do
+    ENV.fetch("AWS_TEST_IMAGE_S3_URI", "s3://riffer-test-bucket/super-secret-image.png")
+  end
+  config.filter_sensitive_data("<AWS_TEST_DOCUMENT_S3_URI>") do
+    ENV.fetch("AWS_TEST_DOCUMENT_S3_URI", "s3://riffer-test-bucket/super-secret-document.pdf")
+  end
 end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)

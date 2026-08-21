@@ -12,7 +12,8 @@
 #   result = Riffer::Evals::EvaluatorRunner.run(
 #     agent: MyAgent,
 #     scenarios: [
-#       { input: "Summarize this article about Ruby.", ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness." }
+#       { input: "Summarize this article about Ruby.",
+#         ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness." }
 #     ],
 #     evals: [HallucinationEvaluator]
 #   )

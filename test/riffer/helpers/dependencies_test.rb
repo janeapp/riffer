@@ -13,6 +13,7 @@ describe Riffer::Helpers::Dependencies do
     describe "when the gem is installed" do
       it "returns true" do
         result = instance.depends_on("rake")
+
         expect(result).must_equal true
       end
     end
@@ -43,7 +44,7 @@ describe Riffer::Helpers::Dependencies do
 
     describe "error classes" do
       it "defines LoadError as a subclass of ::LoadError" do
-        expect(Riffer::Helpers::Dependencies::LoadError < ::LoadError).must_equal true
+        expect(Riffer::Helpers::Dependencies::LoadError < LoadError).must_equal true
       end
     end
   end

@@ -50,4 +50,4 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@65b5dfd4f5bcd3a7403bbc2959c144256167464e
         with:
           branch: gh-pages
-          folder: ./doc
+          folder: ./_site

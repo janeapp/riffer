@@ -17,7 +17,7 @@ module Riffer::Providers::Repository
     gemini: -> { Riffer::Providers::Gemini },
     openai: -> { Riffer::Providers::OpenAI },
     openrouter: -> { Riffer::Providers::OpenRouter },
-    mock: -> { Riffer::Providers::Mock }
+    mock: -> { Riffer::Providers::Mock },
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   @registrations = {} #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]

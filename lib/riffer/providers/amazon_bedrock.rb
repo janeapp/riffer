@@ -16,7 +16,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "max_tokens" => :length,
     "tool_use" => :tool_calls,
     "guardrail_intervened" => :content_filter,
-    "content_filtered" => :content_filter
+    "content_filtered" => :content_filter,
   }.freeze #: Hash[String, Symbol]
 
   # Returns the skill adapter for the Bedrock model — XML for Anthropic models
@@ -25,6 +25,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(model = nil)
     return Riffer::Skills::XmlAdapter if model && ANTHROPIC_MODEL_PATTERN.match?(model)
+
     Riffer::Skills::MarkdownAdapter
   end
 
@@ -36,22 +37,37 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (?api_token: String?, ?region: String?, **untyped) -> void
-  def initialize(api_token: nil, region: nil, **options)
+  #: () -> void
+  def initialize
+    super
     depends_on "aws-sdk-bedrockruntime"
+  end
 
-    api_token ||= Riffer.config.amazon_bedrock.api_token
-    region ||= Riffer.config.amazon_bedrock.region
+  private
 
-    @client = if api_token && !api_token.empty?
-      Aws::BedrockRuntime::Client.new(
+  #--
+  #: () -> untyped
+  def global_client
+    Riffer.config.amazon_bedrock.client
+  end
+
+  # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+
+  # and the shared config only for a missing argument, and raises
+  # +Aws::Errors::MissingRegionError+ on an explicit nil.
+  #--
+  #: () -> untyped
+  def build_client
+    api_token = Riffer.config.amazon_bedrock.api_token
+    region = Riffer.config.amazon_bedrock.region
+
+    if api_token && !api_token.empty?
+      Aws::BedrockRuntime::Client.new(**{
         region: region,
         token_provider: Aws::StaticTokenProvider.new(api_token),
         auth_scheme_preference: ["httpBearerAuth"],
-        **options
-      )
+      }.compact)
     else
-      Aws::BedrockRuntime::Client.new(region: region, **options)
+      Aws::BedrockRuntime::Client.new(**{ region: region }.compact)
     end
   end
 
@@ -76,7 +92,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       model_id: model,
       system: partitioned_messages[:system],
       messages: partitioned_messages[:conversation],
-      **options.except(:tools, :structured_output, :cache_control, :tags)
+      **options.except(:tools, :structured_output, :cache_control, :tags),
     } #: Hash[Symbol, untyped]
 
     # requestMetadata is a flat String=>String map used to filter invocation
@@ -86,7 +102,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
     if tools && !tools.empty?
       params[:tool_config] = {
-        tools: tools.map { |t| convert_tool_to_bedrock_format(t) }
+        tools: tools.map { |t| convert_tool_to_bedrock_format(t) },
       }
     end
 
@@ -100,10 +116,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
           structure: {
             json_schema: {
               schema: structured_output.json_schema(strict: true).to_json,
-              name: "response"
-            }
-          }
-        }
+              name: "response",
+            },
+          },
+        },
       }
     end
 
@@ -118,7 +134,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped], untyped) -> void
   def apply_cache_point(params, cache_control)
-    cache_point = {cache_point: build_cache_point(cache_control)}
+    cache_point = { cache_point: build_cache_point(cache_control) }
     system = params[:system]
     tools = params.dig(:tool_config, :tools)
 
@@ -132,7 +148,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (untyped) -> Hash[Symbol, untyped]
   def build_cache_point(cache_control)
-    point = {type: "default"} #: Hash[Symbol, untyped]
+    point = { type: "default" } #: Hash[Symbol, untyped]
     ttl = cache_control.is_a?(Hash) ? cache_control[:ttl] : nil
     point[:ttl] = ttl if ttl
     point
@@ -141,7 +157,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    @client.converse(**params)
+    client.converse(**params)
   end
 
   #--
@@ -159,12 +175,14 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     cache_write = usage.cache_write_input_tokens
     cache_read = usage.cache_read_input_tokens
 
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-      input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
-      output_tokens: usage.output_tokens,
-      cache_write_tokens: cache_write,
-      cache_read_tokens: cache_read
-    ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
+        output_tokens: usage.output_tokens,
+        cache_write_tokens: cache_write,
+        cache_read_tokens: cache_read,
+      ),
+    )
   end
 
   #--
@@ -209,13 +227,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
 
     content_blocks.each do |block|
-      if block.respond_to?(:tool_use) && block.tool_use
-        tool_calls << Riffer::Messages::Assistant::ToolCall.new(
-          call_id: block.tool_use.tool_use_id,
-          name: decode_tool_name(block.tool_use.name, tools: @current_tools),
-          arguments: block.tool_use.input.to_json
-        )
-      end
+      next unless block.respond_to?(:tool_use) && block.tool_use
+
+      tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+        call_id: block.tool_use.tool_use_id,
+        name: decode_tool_name(block.tool_use.name, tools: @current_tools),
+        arguments: block.tool_use.input.to_json,
+      )
     end
 
     tool_calls
@@ -226,10 +244,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
-      tool_call: nil
+      tool_call: nil,
     } #: Hash[Symbol, untyped]
 
-    @client.converse_stream(**params) do |stream|
+    client.converse_stream(**params) do |stream|
       stream.on_event do |event|
         case event
         when Aws::BedrockRuntime::Types::ContentBlockStartEvent
@@ -273,7 +291,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     state[:tool_call] = {
       id: typed_event.start.tool_use.tool_use_id,
       name: decode_tool_name(typed_event.start.tool_use.name, tools: @current_tools),
-      arguments: ""
+      arguments: +"",
     }
   end
 
@@ -282,8 +300,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     delta_text = typed_event.delta.text
-    state[:text] ||= ""
-    state[:text] += delta_text
+    # Mutating append: += would reallocate and copy the whole accumulated
+    # buffer on every delta (O(n^2) per content block). state[:text] is handed
+    # off to TextDone and then cleared on block stop, so nothing reads the
+    # pre-append string, making in-place mutation safe. Seed with an unfrozen
+    # String (+"") so << does not raise under frozen_string_literal.
+    state[:text] ||= +""
+    state[:text] << delta_text
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
   end
 
@@ -293,12 +316,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     input_delta = typed_event.delta.tool_use.input
 
-    state[:tool_call][:arguments] += input_delta
+    state[:tool_call][:arguments] << input_delta
 
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
       item_id: state[:tool_call][:id],
       name: state[:tool_call][:name],
-      arguments_delta: input_delta
+      arguments_delta: input_delta,
     )
   end
 
@@ -317,7 +340,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       item_id: tool_call[:id],
       call_id: tool_call[:id],
       name: tool_call[:name],
-      arguments: tool_call[:arguments]
+      arguments: tool_call[:arguments],
     )
     state[:tool_call] = nil
   end
@@ -338,11 +361,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     messages.each do |message|
       case message
       when Riffer::Messages::System
-        system_prompts << {text: message.content}
+        system_prompts << { text: message.content }
       when Riffer::Messages::User
-        content = [{text: message.content}]
+        content = [{ text: message.content }]
         message.files.each { |file| content << convert_file_part_to_bedrock_format(file) }
-        conversation_messages << {role: "user", content: content}
+        conversation_messages << { role: "user", content: content }
       when Riffer::Messages::Assistant
         conversation_messages << convert_assistant_to_bedrock_format(message)
       when Riffer::Messages::Tool
@@ -352,7 +375,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
     {
       system: system_prompts,
-      conversation: conversation_messages
+      conversation: conversation_messages,
     }
   end
 
@@ -360,19 +383,19 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = [] #: Array[Hash[Symbol, untyped]]
-    content << {text: message.content} if message.content && !message.content.empty?
+    content << { text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
       content << {
         tool_use: {
           tool_use_id: tc.call_id,
           name: encode_tool_name(tc.name),
-          input: parse_tool_arguments(tc.arguments)
-        }
+          input: parse_tool_arguments(tc.arguments),
+        },
       }
     end
 
-    {role: "assistant", content: content}
+    { role: "assistant", content: content }
   end
 
   #--
@@ -381,15 +404,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     tool_result = {
       tool_result: {
         tool_use_id: message.tool_call_id,
-        content: [{text: message.content}]
-      }
+        content: [{ text: message.content }],
+      },
     }
 
     prev = conversation_messages.last
     if prev && prev[:role] == "user" && prev[:content]&.first&.key?(:tool_result)
       prev[:content] << tool_result
     else
-      conversation_messages << {role: "user", content: [tool_result]}
+      conversation_messages << { role: "user", content: [tool_result] }
     end
   end
 
@@ -399,12 +422,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     format = bedrock_format(file.media_type)
 
     data = file.data
-    source = data ? {bytes: Base64.decode64(data)} : {s3_location: {uri: file.url}}
+    source = data ? { bytes: Base64.decode64(data) } : { s3_location: { uri: file.url } }
 
     if file.image?
-      {image: {format: format, source: source}}
+      { image: { format: format, source: source } }
     else
-      {document: {format: format, name: file.filename, source: source}}
+      { document: { format: format, name: file.filename, source: source } }
     end
   end
 
@@ -416,8 +439,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "application/pdf" => "pdf",
     "text/plain" => "txt",
     "text/csv" => "csv",
-    "text/html" => "html"
+    "text/html" => "html",
   }.freeze #: Hash[String, String]
+  private_constant :BEDROCK_FORMAT_MAP
 
   #--
   #: (String) -> String
@@ -433,9 +457,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         name: encode_tool_name(tool.name),
         description: tool.description,
         input_schema: {
-          json: tool.parameters_schema(strict: true)
-        }
-      }
+          json: tool.parameters_schema(strict: true),
+        },
+      },
     }
   end
 end

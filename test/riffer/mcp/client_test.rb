@@ -15,13 +15,14 @@ describe Riffer::Mcp::Client do
       inner = Object.new
       inner.define_singleton_method(:tools) { [] }
       client = Riffer::Mcp::Client.new(endpoint: "https://x.com", client: inner)
+
       assert_equal [], client.tools_list
     end
   end
 
   describe "#tools_list" do
     it "returns an array of hashes with :name, :description, :input_schema" do
-      schema = {type: "object", properties: {}, required: [], additionalProperties: false}
+      schema = { type: "object", properties: {}, required: [], additionalProperties: false }
       tool = MCP::Client::Tool.new(name: "search", description: "Search the web", input_schema: schema)
       inner = Object.new
       inner.define_singleton_method(:tools) { [tool] }
@@ -37,6 +38,7 @@ describe Riffer::Mcp::Client do
     it "returns an empty array when the server has no tools" do
       inner = Object.new
       inner.define_singleton_method(:tools) { [] }
+
       assert_empty build_client(inner).tools_list
     end
   end
@@ -45,24 +47,28 @@ describe Riffer::Mcp::Client do
     it "joins and returns text content from the response" do
       inner = Object.new
       inner.define_singleton_method(:call_tool) do |tool:, arguments:|
-        {"result" => {"content" => [{"type" => "text", "text" => "Hello"}, {"type" => "text", "text" => " world"}]}}
+        { "result" => { "content" => [{ "type" => "text", "text" => "Hello" },
+                                      { "type" => "text", "text" => " world" },] } }
       end
 
-      result = build_client(inner).tools_call("greet", {name: "Alice"})
+      result = build_client(inner).tools_call("greet", { name: "Alice" })
+
       assert_equal "Hello world", result
     end
 
     it "returns empty string when content array is empty" do
       inner = Object.new
-      inner.define_singleton_method(:call_tool) { |**| {"result" => {"content" => []}} }
+      inner.define_singleton_method(:call_tool) { |**| { "result" => { "content" => [] } } }
+
       assert_equal "", build_client(inner).tools_call("noop")
     end
 
     it "skips non-text content items" do
       inner = Object.new
       inner.define_singleton_method(:call_tool) do |**|
-        {"result" => {"content" => [{"type" => "image", "data" => "..."}, {"type" => "text", "text" => "ok"}]}}
+        { "result" => { "content" => [{ "type" => "image", "data" => "..." }, { "type" => "text", "text" => "ok" }] } }
       end
+
       assert_equal "ok", build_client(inner).tools_call("img_tool")
     end
 
@@ -73,18 +79,18 @@ describe Riffer::Mcp::Client do
       inner.define_singleton_method(:call_tool) do |tool:, arguments:|
         received_name = tool.name
         received_args = arguments
-        {"result" => {"content" => []}}
+        { "result" => { "content" => [] } }
       end
 
-      build_client(inner).tools_call("do_thing", {param: "val"})
+      build_client(inner).tools_call("do_thing", { param: "val" })
 
       assert_equal "do_thing", received_name
-      assert_equal({param: "val"}, received_args)
+      assert_equal({ param: "val" }, received_args)
     end
 
     it "raises Riffer::Error when the inner client returns a JSON-RPC error (string keys)" do
       inner = Object.new
-      inner.define_singleton_method(:call_tool) { |**| {"error" => {"message" => "bad request"}} }
+      inner.define_singleton_method(:call_tool) { |**| { "error" => { "message" => "bad request" } } }
 
       err = assert_raises(Riffer::Error) { build_client(inner).tools_call("x") }
       assert_equal "bad request", err.message
@@ -93,7 +99,7 @@ describe Riffer::Mcp::Client do
     it "raises Riffer::Error when result.isError is true (string keys)" do
       inner = Object.new
       inner.define_singleton_method(:call_tool) do |**|
-        {"result" => {"isError" => true, "content" => [{"type" => "text", "text" => "oops"}]}}
+        { "result" => { "isError" => true, "content" => [{ "type" => "text", "text" => "oops" }] } }
       end
 
       err = assert_raises(Riffer::Error) { build_client(inner).tools_call("x") }

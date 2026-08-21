@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.41.0](https://github.com/janeapp/riffer/compare/riffer/v0.40.0...riffer/v0.41.0) (2026-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Inference providers no longer support extra configuration parameters (e.g. timeouts). Instead, a provider client object can be defined in the riffer config directly. Credential and endpoint parameters are still supported.
+
+### Features
+
+* config-injected provider clients, retire provider_options ([#391](https://github.com/janeapp/riffer/issues/391)) ([72fa0e3](https://github.com/janeapp/riffer/commit/72fa0e32ff6cfeee29bae9e2618d001cbc387d99))
+
+## [0.40.0](https://github.com/janeapp/riffer/compare/riffer/v0.39.0...riffer/v0.40.0) (2026-08-12)
+
+
+### Features
+
+* replace RDoc guide pages with a static docs site ([#390](https://github.com/janeapp/riffer/issues/390)) ([eef94e1](https://github.com/janeapp/riffer/commit/eef94e140b618ae55a0dea2e0e94cf91462ae169))
+
+## [0.39.0](https://github.com/janeapp/riffer/compare/riffer/v0.38.1...riffer/v0.39.0) (2026-07-29)
+
+
+### Features
+
+* **evals:** expose token usage on evaluation results ([#380](https://github.com/janeapp/riffer/issues/380)) ([32d576e](https://github.com/janeapp/riffer/commit/32d576e492809845c36f44ebf37de3af3b6785b0))
+
+## [0.38.1](https://github.com/janeapp/riffer/compare/riffer/v0.38.0...riffer/v0.38.1) (2026-07-29)
+
+
+### Performance Improvements
+
+* avoid O(n^2) text accumulation in streaming providers ([#378](https://github.com/janeapp/riffer/issues/378)) ([d344fa7](https://github.com/janeapp/riffer/commit/d344fa7122492d14ee1c91c0be3a88501170e255))
+
+## [0.38.0](https://github.com/janeapp/riffer/compare/riffer/v0.37.1...riffer/v0.38.0) (2026-07-21)
+
+
+### Features
+
+* record time to first chunk on streaming chat spans ([#369](https://github.com/janeapp/riffer/issues/369)) ([133b019](https://github.com/janeapp/riffer/commit/133b0197dd358ae1cd37adbeb7b5df7446b0cbde))
+
 ## [0.37.1](https://github.com/janeapp/riffer/compare/riffer/v0.37.0...riffer/v0.37.1) (2026-07-13)
 
 

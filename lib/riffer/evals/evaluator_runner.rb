@@ -48,7 +48,8 @@ module Riffer::Evals::EvaluatorRunner
     evaluators.each do |evaluator_class|
       next if evaluator_class.is_a?(Class) && evaluator_class < Riffer::Evals::Evaluator
 
-      raise Riffer::ArgumentError, "each evaluator must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}"
+      raise Riffer::ArgumentError,
+            "each evaluator must be a subclass of Riffer::Evals::Evaluator, got #{evaluator_class.inspect}"
     end
   end
 
@@ -62,6 +63,7 @@ module Riffer::Evals::EvaluatorRunner
     response = agent.generate(input, context: resolved_context)
     output = response.content
     messages = response.messages
+    token_usage = response.token_usage
 
     results = evaluators.map do |evaluator_class|
       evaluator_class.new.evaluate(input: input, output: output, ground_truth: ground_truth, messages: messages)
@@ -72,7 +74,8 @@ module Riffer::Evals::EvaluatorRunner
       output: output,
       ground_truth: ground_truth,
       results: results,
-      messages: messages
+      messages: messages,
+      token_usage: token_usage,
     )
   end
 end

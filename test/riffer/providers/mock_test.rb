@@ -40,55 +40,73 @@ describe Riffer::Providers::Mock do
 
     describe "with responses: kwarg" do
       it "serves the first response" do
-        provider = Riffer::Providers::Mock.new(responses: [
-          {content: "First"},
-          {content: "Second"}
-        ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "First" },
+            { content: "Second" },
+          ],
+        )
+
         expect(provider.generate_text(prompt: "x").content).must_equal "First"
       end
 
       it "serves the second response on the second call" do
-        provider = Riffer::Providers::Mock.new(responses: [
-          {content: "First"},
-          {content: "Second"}
-        ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "First" },
+            { content: "Second" },
+          ],
+        )
         provider.generate_text(prompt: "x")
+
         expect(provider.generate_text(prompt: "y").content).must_equal "Second"
       end
 
       it "normalises raw tool_calls hashes into ToolCall instances" do
-        provider = Riffer::Providers::Mock.new(responses: [
-          {content: "", tool_calls: [{name: "weather", arguments: '{"city":"Toronto"}'}]}
-        ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "", tool_calls: [{ name: "weather", arguments: '{"city":"Toronto"}' }] },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
+
         expect(result.tool_calls.first).must_be_instance_of Riffer::Messages::Assistant::ToolCall
         expect(result.tool_calls.first.name).must_equal "weather"
         expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
       end
 
       it "generates a default call_id when omitted" do
-        provider = Riffer::Providers::Mock.new(responses: [
-          {content: "", tool_calls: [{name: "t", arguments: "{}"}]}
-        ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "", tool_calls: [{ name: "t", arguments: "{}" }] },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
+
         expect(result.tool_calls.first.call_id).must_equal "mock_call_0"
       end
 
       it "passes through pre-built ToolCall instances unchanged" do
         tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "custom_id", name: "t", arguments: "{}")
-        provider = Riffer::Providers::Mock.new(responses: [
-          {content: "", tool_calls: [tool_call]}
-        ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "", tool_calls: [tool_call] },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
+
         expect(result.tool_calls.first.call_id).must_equal "custom_id"
       end
 
       it "preserves token_usage on a queued response" do
         usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
-        provider = Riffer::Providers::Mock.new(responses: [
-          {content: "Hello", token_usage: usage}
-        ])
+        provider = Riffer::Providers::Mock.new(
+          responses: [
+            { content: "Hello", token_usage: usage },
+          ],
+        )
         result = provider.generate_text(prompt: "x")
+
         expect(result.token_usage).must_equal usage
       end
     end
@@ -98,18 +116,21 @@ describe Riffer::Providers::Mock do
     it "sets a stubbed response with content" do
       provider.stub_response("Hello from the machine!")
       result = provider.generate_text(prompt: "Hi")
+
       expect(result).must_be_instance_of Riffer::Messages::Assistant
     end
 
     it "sets the content of the stubbed response" do
       provider.stub_response("Hello from the machine!")
       result = provider.generate_text(prompt: "Hi")
+
       expect(result.content).must_equal "Hello from the machine!"
     end
 
     it "overrides the inferred finish_reason" do
       provider.stub_response("Truncated...", finish_reason: :length)
       result = provider.generate_text(prompt: "Hi")
+
       expect(result.finish_reason).must_equal :length
     end
   end
@@ -117,45 +138,53 @@ describe Riffer::Providers::Mock do
   describe "#generate_text" do
     it "returns an Assistant message when no stubbed response" do
       result = provider.generate_text(prompt: "Hello")
+
       expect(result).must_be_instance_of Riffer::Messages::Assistant
     end
 
     it "returns default content when no stubbed response" do
       result = provider.generate_text(prompt: "Hello")
+
       expect(result.content).must_equal "Mock response"
     end
 
     it "stores normalized messages in calls" do
       provider.generate_text(prompt: "Hello")
-      expect(provider.calls.last[:messages]).must_equal [{role: :user, content: "Hello"}]
+
+      expect(provider.calls.last[:messages]).must_equal [{ role: :user, content: "Hello" }]
     end
 
     it "stores system and user messages in calls when both provided" do
       provider.generate_text(prompt: "Hello", system: "You are helpful")
+
       expect(provider.calls.last[:messages]).must_equal [
-        {role: :system, content: "You are helpful"},
-        {role: :user, content: "Hello"}
+        { role: :system, content: "You are helpful" },
+        { role: :user, content: "Hello" },
       ]
     end
 
     it "stores model parameter in calls" do
       provider.generate_text(prompt: "Hello", model: "test-model")
+
       expect(provider.calls.last[:model]).must_equal "test-model"
     end
 
     it "stores reasoning parameter in calls" do
       provider.generate_text(prompt: "Hello", reasoning: "high")
+
       expect(provider.calls.last[:reasoning]).must_equal "high"
     end
 
     it "defaults the finish_reason to stop" do
       result = provider.generate_text(prompt: "Hello")
+
       expect(result.finish_reason).must_equal :stop
     end
 
     it "defaults the finish_reason to tool_calls when tool calls are present" do
-      provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
       result = provider.generate_text(prompt: "Hello")
+
       expect(result.finish_reason).must_equal :tool_calls
     end
   end
@@ -163,29 +192,34 @@ describe Riffer::Providers::Mock do
   describe "#stream_text" do
     it "returns an enumerator" do
       result = provider.stream_text(prompt: "Hello")
+
       expect(result).must_be_instance_of Enumerator
     end
 
     it "emits TextDelta events" do
       events = provider.stream_text(prompt: "Question").to_a
-      text_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_deltas = events.grep(Riffer::StreamEvents::TextDelta)
+
       expect(text_deltas.size).must_be :>, 0
     end
 
     it "emits TextDone event" do
       events = provider.stream_text(prompt: "Question").to_a
       text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
       expect(text_done).wont_be_nil
     end
 
     it "stores options in calls" do
       provider.stream_text(prompt: "Hello", reasoning: "high").to_a
+
       expect(provider.calls.last[:reasoning]).must_equal "high"
     end
 
     it "emits a FinishReasonDone event" do
       events = provider.stream_text(prompt: "Question").to_a
       done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+
       expect(done.finish_reason).must_equal :stop
     end
   end
@@ -193,67 +227,85 @@ describe Riffer::Providers::Mock do
   describe "tool calling" do
     describe "#stub_response with tool_calls" do
       it "formats tool_calls with generated call_id" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"key":"value"}' }])
         result = provider.generate_text(prompt: "Call a tool")
+
         expect(result.tool_calls.first.call_id).must_equal "mock_call_0"
       end
 
       it "preserves the tool name" do
-        provider.stub_response("", tool_calls: [{name: "weather_lookup", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "weather_lookup", arguments: "{}" }])
         result = provider.generate_text(prompt: "Call a tool")
+
         expect(result.tool_calls.first.name).must_equal "weather_lookup"
       end
 
       it "preserves string arguments" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"city":"Toronto"}'}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"city":"Toronto"}' }])
         result = provider.generate_text(prompt: "Call a tool")
+
         expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
       end
 
       it "converts hash arguments to JSON" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: {city: "Toronto"}}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: { city: "Toronto" } }])
         result = provider.generate_text(prompt: "Call a tool")
+
         expect(result.tool_calls.first.arguments).must_equal '{"city":"Toronto"}'
       end
 
       it "handles multiple tool calls count" do
-        provider.stub_response("", tool_calls: [
-          {name: "tool_a", arguments: "{}"},
-          {name: "tool_b", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         result = provider.generate_text(prompt: "Call tools")
+
         expect(result.tool_calls.length).must_equal 2
       end
 
       it "handles multiple tool calls first name" do
-        provider.stub_response("", tool_calls: [
-          {name: "tool_a", arguments: "{}"},
-          {name: "tool_b", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         result = provider.generate_text(prompt: "Call tools")
+
         expect(result.tool_calls[0].name).must_equal "tool_a"
       end
 
       it "handles multiple tool calls second name" do
-        provider.stub_response("", tool_calls: [
-          {name: "tool_a", arguments: "{}"},
-          {name: "tool_b", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         result = provider.generate_text(prompt: "Call tools")
+
         expect(result.tool_calls[1].name).must_equal "tool_b"
       end
     end
 
     describe "#generate_text with tool_calls" do
       it "returns Assistant message" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
         result = provider.generate_text(prompt: "Call a tool")
+
         expect(result).must_be_instance_of Riffer::Messages::Assistant
       end
 
       it "returns message with tool_calls" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
         result = provider.generate_text(prompt: "Call a tool")
+
         expect(result.tool_calls).wont_be_empty
       end
 
@@ -263,46 +315,55 @@ describe Riffer::Providers::Mock do
           description "A test tool"
         end
         provider.generate_text(prompt: "Hello", tools: [tool_class])
+
         expect(provider.calls.last[:tools]).must_equal [tool_class]
       end
     end
 
     describe "#stream_text with tool_calls" do
       it "emits ToolCallDelta events" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"key":"value"}' }])
         events = provider.stream_text(prompt: "Call a tool").to_a
-        tool_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+        tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
+
         expect(tool_deltas).wont_be_empty
       end
 
       it "emits ToolCallDone events" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"key":"value"}' }])
         events = provider.stream_text(prompt: "Call a tool").to_a
-        tool_done = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        tool_done = events.grep(Riffer::StreamEvents::ToolCallDone)
+
         expect(tool_done).wont_be_empty
       end
 
       it "includes tool name in ToolCallDelta" do
-        provider.stub_response("", tool_calls: [{name: "weather_lookup", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "weather_lookup", arguments: "{}" }])
         events = provider.stream_text(prompt: "Call a tool").to_a
         tool_delta = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDelta) }
+
         expect(tool_delta.name).must_equal "weather_lookup"
       end
 
       it "includes complete arguments in ToolCallDone" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"city":"Toronto"}'}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: '{"city":"Toronto"}' }])
         events = provider.stream_text(prompt: "Call a tool").to_a
         tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+
         expect(tool_done.arguments).must_equal '{"city":"Toronto"}'
       end
 
       it "emits events for multiple tool calls" do
-        provider.stub_response("", tool_calls: [
-          {name: "tool_a", arguments: "{}"},
-          {name: "tool_b", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "tool_a", arguments: "{}" },
+            { name: "tool_b", arguments: "{}" },
+          ],
+        )
         events = provider.stream_text(prompt: "Call tools").to_a
-        tool_done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        tool_done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
+
         expect(tool_done_events.length).must_equal 2
       end
     end
@@ -313,6 +374,7 @@ describe Riffer::Providers::Mock do
         provider.stub_response("Second response")
 
         result = provider.generate_text(prompt: "First")
+
         expect(result.content).must_equal "First response"
       end
 
@@ -322,6 +384,7 @@ describe Riffer::Providers::Mock do
 
         provider.generate_text(prompt: "First")
         result = provider.generate_text(prompt: "Second")
+
         expect(result.content).must_equal "Second response"
       end
 
@@ -329,32 +392,36 @@ describe Riffer::Providers::Mock do
         provider.stub_response("Only response")
         provider.generate_text(prompt: "First")
         result = provider.generate_text(prompt: "Second")
+
         expect(result.content).must_equal "Mock response"
       end
 
       it "first response has tool calls" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
         provider.stub_response("Final answer")
 
         result = provider.generate_text(prompt: "Call tool")
+
         expect(result.tool_calls).wont_be_empty
       end
 
       it "second response has no tool calls" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
         provider.stub_response("Final answer")
 
         provider.generate_text(prompt: "Call tool")
         result = provider.generate_text(prompt: "After tool")
+
         expect(result.tool_calls).must_be_empty
       end
 
       it "second response has text content" do
-        provider.stub_response("", tool_calls: [{name: "my_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "my_tool", arguments: "{}" }])
         provider.stub_response("Final answer")
 
         provider.generate_text(prompt: "Call tool")
         result = provider.generate_text(prompt: "After tool")
+
         expect(result.content).must_equal "Final answer"
       end
 
@@ -362,6 +429,7 @@ describe Riffer::Providers::Mock do
         provider.stub_response("Stubbed")
         provider.clear_stubs
         result = provider.generate_text(prompt: "Hello")
+
         expect(result.content).must_equal "Mock response"
       end
     end
@@ -374,12 +442,14 @@ describe Riffer::Providers::Mock do
       it "returns usage in generate_text response" do
         provider.stub_response("Hello", token_usage: usage)
         result = provider.generate_text(prompt: "Hi")
+
         expect(result.token_usage).must_equal usage
       end
 
       it "returns nil usage when not provided" do
         provider.stub_response("Hello")
         result = provider.generate_text(prompt: "Hi")
+
         expect(result.token_usage).must_be_nil
       end
     end
@@ -389,6 +459,7 @@ describe Riffer::Providers::Mock do
         provider.stub_response("Hello", token_usage: usage)
         events = provider.stream_text(prompt: "Hi").to_a
         usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
         expect(usage_done).wont_be_nil
       end
 
@@ -396,6 +467,7 @@ describe Riffer::Providers::Mock do
         provider.stub_response("Hello", token_usage: usage)
         events = provider.stream_text(prompt: "Hi").to_a
         usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
         expect(usage_done.token_usage).must_equal usage
       end
 
@@ -403,6 +475,7 @@ describe Riffer::Providers::Mock do
         provider.stub_response("Hello")
         events = provider.stream_text(prompt: "Hi").to_a
         usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
         expect(usage_done).must_be_nil
       end
 
@@ -411,6 +484,7 @@ describe Riffer::Providers::Mock do
         events = provider.stream_text(prompt: "Hi").to_a
         text_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
         usage_done_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
         expect(usage_done_index).must_be :>, text_done_index
       end
     end
@@ -423,24 +497,45 @@ describe Riffer::Providers::Mock do
     it "attaches cost to token usage when the model is priced" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
       provider = Riffer::Providers::Mock.new
-      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      provider.stub_response(
+        "hi",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 1_000_000,
+          output_tokens: 1_000_000,
+        ),
+      )
       message = provider.generate_text(prompt: "x", model: "riffer-1")
+
       expect(message.token_usage.cost).must_equal 18.0
     end
 
     it "leaves cost nil when the model is unpriced" do
       provider = Riffer::Providers::Mock.new
-      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      provider.stub_response(
+        "hi",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 1_000_000,
+          output_tokens: 1_000_000,
+        ),
+      )
       message = provider.generate_text(prompt: "x", model: "riffer-1")
+
       expect(message.token_usage.cost).must_be_nil
     end
 
     it "carries cost on the streamed TokenUsageDone event" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
       provider = Riffer::Providers::Mock.new
-      provider.stub_response("hi", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000))
+      provider.stub_response(
+        "hi",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 1_000_000,
+          output_tokens: 1_000_000,
+        ),
+      )
       events = provider.stream_text(prompt: "x", model: "riffer-1").to_a
       usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
       expect(usage_done.token_usage.cost).must_equal 18.0
     end
   end

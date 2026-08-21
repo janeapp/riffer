@@ -2,20 +2,11 @@
 # rbs_inline: enabled
 
 require "json"
-require "net/http"
 require "securerandom"
-require "uri"
 
 # Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
-  # @rbs @api_key: String?
-  # @rbs @open_timeout: Integer
-  # @rbs @read_timeout: Integer
-
-  BASE_URI = URI("https://generativelanguage.googleapis.com") #: URI::Generic
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
-  DEFAULT_OPEN_TIMEOUT = 10 #: Integer
-  DEFAULT_READ_TIMEOUT = 60 #: Integer
 
   FINISH_REASONS = {
     "STOP" => :stop,
@@ -26,7 +17,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "PROHIBITED_CONTENT" => :content_filter,
     "SPII" => :content_filter,
     "IMAGE_SAFETY" => :content_filter,
-    "MALFORMED_FUNCTION_CALL" => :error
+    "MALFORMED_FUNCTION_CALL" => :error,
   }.freeze #: Hash[String, Symbol]
 
   # The GenAI semconv well-known provider name.
@@ -36,13 +27,18 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "gcp.gemini"
   end
 
+  private
+
   #--
-  #: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-  def initialize(api_key: nil, open_timeout: nil, read_timeout: nil, **options)
-    api_key ||= Riffer.config.gemini.api_key
-    @api_key = api_key
-    @open_timeout = open_timeout || Riffer.config.gemini.open_timeout || DEFAULT_OPEN_TIMEOUT
-    @read_timeout = read_timeout || Riffer.config.gemini.read_timeout || DEFAULT_READ_TIMEOUT
+  #: () -> untyped
+  def global_client
+    Riffer.config.gemini.client
+  end
+
+  #--
+  #: () -> untyped
+  def build_client
+    Riffer::Providers::Gemini::Client.new(**{ api_key: Riffer.config.gemini.api_key }.compact)
   end
 
   #--
@@ -62,21 +58,21 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     params = {
       model: model,
-      contents: partitioned[:contents]
+      contents: partitioned[:contents],
     } #: Hash[Symbol, untyped]
 
     params[:systemInstruction] = partitioned[:system_instruction] if partitioned[:system_instruction]
 
     if tools && !tools.empty?
       params[:tools] = [{
-        functionDeclarations: tools.map { |t| convert_tool_to_gemini_format(t) }
+        functionDeclarations: tools.map { |t| convert_tool_to_gemini_format(t) },
       }]
     end
 
     # tags propagate to observability only: the Gemini Developer API has no
     # request labels field (unknown body fields are rejected), so :tags is
     # stripped here rather than mapped. Native labels would arrive with a Vertex
-    # adapter. See docs/10_CONFIGURATION.md.
+    # adapter. See docs/CONFIGURATION.md.
     generation_config = options.except(:tools, :structured_output, :tags)
 
     if structured_output
@@ -94,9 +90,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def execute_generate(params)
     model = params[:model]
     body = params.except(:model)
-    response = post_request(api_path(model, "generateContent"), body)
-    handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
-    JSON.parse(response.body, symbolize_names: true)
+    client.post(api_path(model, "generateContent"), body)
   end
 
   #--
@@ -121,7 +115,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       Riffer::Messages::Assistant::ToolCall.new(
         call_id: "gemini_call_#{SecureRandom.hex(12)}",
         name: fc[:name],
-        arguments: encode_tool_arguments(fc[:args])
+        arguments: encode_tool_arguments(fc[:args]),
       )
     end
   end
@@ -139,7 +133,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(response)
     parts = response.dig(:candidates, 0, :content, :parts)
-    has_function_call = !!parts&.any? { |part| part[:functionCall] }
+    has_function_call = parts&.any? { |part| part[:functionCall] } || false
     build_finish_reason(response.dig(:candidates, 0, :finishReason), tool_calls: has_function_call)
   end
 
@@ -161,11 +155,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
-    apply_pricing(Riffer::Providers::TokenUsage.new(
-      input_tokens: usage[:promptTokenCount] || 0,
-      output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
-      cache_read_tokens: usage[:cachedContentTokenCount]
-    ))
+    apply_pricing(
+      Riffer::Providers::TokenUsage.new(
+        input_tokens: usage[:promptTokenCount] || 0,
+        output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
+        cache_read_tokens: usage[:cachedContentTokenCount],
+      ),
+    )
   end
 
   #--
@@ -173,13 +169,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def execute_stream(params, yielder)
     model = params[:model]
     body = params.except(:model)
-
-    uri = URI("#{BASE_URI}/#{api_path(model, "streamGenerateContent")}?alt=sse")
-    host = uri.hostname #: String
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["x-goog-api-key"] = @api_key
-    request.body = body.to_json
 
     full_text = +""
     buffer = +""
@@ -213,7 +202,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
               item_id: call_id,
               call_id: call_id,
               name: fc[:name],
-              arguments: arguments
+              arguments: arguments,
             )
           end
         end
@@ -227,17 +216,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    Net::HTTP.start(host, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) do |http|
-      http.request(request) do |response|
-        handle_api_error!(response) unless response.is_a?(Net::HTTPSuccess)
-
-        begin
-          response.read_body { |chunk| process_chunk.call(chunk) }
-        rescue IOError
-          process_chunk.call(response.body)
-        end
-      end
-    end
+    path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
+    client.post_stream(path, body) { |chunk| process_chunk.call(chunk) }
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
@@ -252,14 +232,14 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     messages.each do |message|
       case message
       when Riffer::Messages::System
-        system_parts << {text: message.content}
+        system_parts << { text: message.content }
       when Riffer::Messages::User
         if message.files.empty?
-          contents << {role: "user", parts: [{text: message.content}]}
+          contents << { role: "user", parts: [{ text: message.content }] }
         else
-          parts = [{text: message.content}]
+          parts = [{ text: message.content }]
           message.files.each { |file| parts << convert_file_part_to_gemini_format(file) }
-          contents << {role: "user", parts: parts}
+          contents << { role: "user", parts: parts }
         end
       when Riffer::Messages::Assistant
         contents << convert_assistant_to_gemini_format(message)
@@ -269,15 +249,15 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
           parts: [{
             functionResponse: {
               name: message.name,
-              response: {result: message.content}
-            }
-          }]
+              response: { result: message.content },
+            },
+          }],
         }
       end
     end
 
-    result = {contents: contents} #: Hash[Symbol, untyped]
-    result[:system_instruction] = {parts: system_parts} unless system_parts.empty?
+    result = { contents: contents } #: Hash[Symbol, untyped]
+    result[:system_instruction] = { parts: system_parts } unless system_parts.empty?
     result
   end
 
@@ -285,24 +265,24 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
     parts = [] #: Array[Hash[Symbol, untyped]]
-    parts << {text: message.content} if message.content && !message.content.empty?
+    parts << { text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
       parts << {
         functionCall: {
           name: tc.name,
-          args: parse_tool_arguments(tc.arguments)
-        }
+          args: parse_tool_arguments(tc.arguments),
+        },
       }
     end
 
-    {role: "model", parts: parts}
+    { role: "model", parts: parts }
   end
 
   #--
   #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_gemini_format(file)
-    {inlineData: {mimeType: file.media_type, data: file.data}}
+    { inlineData: { mimeType: file.media_type, data: file.data } }
   end
 
   #--
@@ -311,7 +291,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     {
       name: tool.name,
       description: tool.description,
-      parameters: strip_additional_properties(tool.parameters_schema)
+      parameters: strip_additional_properties(tool.parameters_schema),
     }
   end
 
@@ -321,18 +301,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     return "{}" unless args
 
     args.is_a?(String) ? args : args.to_json
-  end
-
-  #--
-  #: (String, Hash[Symbol, untyped]) -> Net::HTTPResponse
-  def post_request(path, body)
-    uri = URI("#{BASE_URI}/#{path}")
-    host = uri.hostname #: String
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["x-goog-api-key"] = @api_key
-    request.body = body.to_json
-    Net::HTTP.start(host, uri.port, use_ssl: true, open_timeout: @open_timeout, read_timeout: @read_timeout) { |http| http.request(request) }
   end
 
   #--
@@ -347,7 +315,9 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def validate_model!(model)
     return if model.match?(VALID_MODEL_PATTERN)
 
-    raise Riffer::ArgumentError, "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, hyphens, dots, and underscores."
+    raise Riffer::ArgumentError,
+          "Invalid model name: #{model.inspect}. Model must contain only alphanumeric characters, " \
+          "hyphens, dots, and underscores."
   end
 
   #--
@@ -362,22 +332,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       end
     end
 
-    if schema[:items].is_a?(Hash)
-      schema[:items] = strip_additional_properties(schema[:items])
-    end
+    schema[:items] = strip_additional_properties(schema[:items]) if schema[:items].is_a?(Hash)
 
     schema
-  end
-
-  #--
-  #: (Net::HTTPResponse) -> void
-  def handle_api_error!(response)
-    body = begin
-      JSON.parse(response.body, symbolize_names: true)
-    rescue JSON::ParserError
-      {message: response.body}
-    end
-    error_message = body.dig(:error, :message) || body[:message] || response.body
-    raise Riffer::Error, "Gemini API error (#{response.code}): #{error_message}"
   end
 end

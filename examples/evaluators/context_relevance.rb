@@ -12,7 +12,8 @@
 #   result = Riffer::Evals::EvaluatorRunner.run(
 #     agent: MyAgent,
 #     scenarios: [
-#       { input: "What are the health benefits of green tea?", ground_truth: "Green tea is rich in catechins and may lower cholesterol." }
+#       { input: "What are the health benefits of green tea?",
+#         ground_truth: "Green tea is rich in catechins and may lower cholesterol." }
 #     ],
 #     evals: [ContextRelevanceEvaluator]
 #   )

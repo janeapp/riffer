@@ -11,6 +11,7 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   #--
   #: (*String) -> void
   def initialize(*paths)
+    super()
     @paths = paths.flatten.map { |p| File.expand_path(p) }
     @skills_cache = nil #: Hash[String, String]?
   end
@@ -65,6 +66,7 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   #: (String, String) -> void
   def validate_dirname_matches_name!(dirname, name)
     return if dirname == name
+
     raise Riffer::ArgumentError, "Skill directory '#{dirname}' does not match name '#{name}'"
   end
 end

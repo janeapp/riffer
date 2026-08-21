@@ -29,7 +29,7 @@ class Riffer::Mcp::Client
       {
         name: tool.name,
         description: tool.description,
-        input_schema: tool.input_schema
+        input_schema: tool.input_schema,
       }
     end
   end
@@ -42,9 +42,7 @@ class Riffer::Mcp::Client
     tool = MCP::Client::Tool.new(name: name, description: nil, input_schema: nil)
     response = @client.call_tool(tool: tool, arguments: arguments)
 
-    if response["error"]
-      raise Riffer::Error, response.dig("error", "message") || "MCP tool call failed"
-    end
+    raise Riffer::Error, response.dig("error", "message") || "MCP tool call failed" if response["error"]
 
     if response.dig("result", "isError")
       message = (response.dig("result", "content") || []).filter_map { |item| item["text"] }.join

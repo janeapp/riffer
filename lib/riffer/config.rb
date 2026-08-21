@@ -3,12 +3,12 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
-  AmazonBedrock = Struct.new(:api_token, :region)
-  Anthropic = Struct.new(:api_key)
-  AzureOpenAI = Struct.new(:api_key, :endpoint)
-  Gemini = Struct.new(:api_key, :open_timeout, :read_timeout)
-  OpenAI = Struct.new(:api_key)
-  OpenRouter = Struct.new(:api_key)
+  AmazonBedrock = Struct.new(:api_token, :region, :client)
+  Anthropic = Struct.new(:api_key, :client)
+  AzureOpenAI = Struct.new(:api_key, :endpoint, :client)
+  Gemini = Struct.new(:api_key, :client)
+  OpenAI = Struct.new(:api_key, :base_url, :client)
+  OpenRouter = Struct.new(:api_key, :client)
   Evals = Struct.new(:judge_model)
   Mcp = Struct.new(:credentials, :discovery_runner)
 
@@ -34,7 +34,11 @@ class Riffer::Config
     #--
     #: (singleton(Riffer::Tool)) -> void
     def default_activate_tool=(value)
-      raise Riffer::ArgumentError, "default_activate_tool must be a Riffer::Tool subclass" unless value.is_a?(Class) && value < Riffer::Tool
+      unless value.is_a?(Class) && value < Riffer::Tool
+        raise Riffer::ArgumentError,
+              "default_activate_tool must be a Riffer::Tool subclass"
+      end
+
       @default_activate_tool = value
     end
 
@@ -44,7 +48,11 @@ class Riffer::Config
     #: ((Riffer::Skills::Backend | Proc)?) -> void
     def default_backend=(value)
       valid = value.nil? || value.is_a?(Riffer::Skills::Backend) || value.is_a?(Proc)
-      raise Riffer::ArgumentError, "default_backend must be a Riffer::Skills::Backend instance, Proc, or nil" unless valid
+      unless valid
+        raise Riffer::ArgumentError,
+              "default_backend must be a Riffer::Skills::Backend instance, Proc, or nil"
+      end
+
       @default_backend = value
     end
   end
@@ -101,6 +109,7 @@ class Riffer::Config
       unless value.nil? || contract.all? { |method| value.respond_to?(method) }
         raise Riffer::ArgumentError, "tracing backend must respond to #in_span, #current_context, and #with_context"
       end
+
       @backend = value
       Riffer::Tracing.reset!
     end
@@ -231,10 +240,10 @@ class Riffer::Config
         uncached = input_tokens - read - write
         uncached = 0 if uncached.negative?
 
-        per_million = uncached * input +
-          read * (cache_read || input) +
-          write * (cache_write || input) +
-          output_tokens * output
+        per_million = (uncached * input) +
+                      (read * (cache_read || input)) +
+                      (write * (cache_write || input)) +
+                      (output_tokens * output)
         per_million / 1_000_000.0
       end
     end
@@ -252,13 +261,14 @@ class Riffer::Config
     def set(models, input:, output:, cache_read: nil, cache_write: nil)
       ids = models.is_a?(Array) ? models : [models]
       raise Riffer::ArgumentError, "at least one model id is required" if ids.empty?
+
       ids.each { |id| validate_model!(id) }
 
       rates = Rates.new(
         input: coerce_rate(input, "input"),
         output: coerce_rate(output, "output"),
         cache_read: coerce_optional_rate(cache_read, "cache_read"),
-        cache_write: coerce_optional_rate(cache_write, "cache_write")
+        cache_write: coerce_optional_rate(cache_write, "cache_write"),
       )
       ids.each { |id| @rates[id] = rates }
     end
@@ -284,7 +294,10 @@ class Riffer::Config
     def validate_model!(model)
       segments = model.to_s.split("/", 2)
       valid = segments.length == 2 && segments.none? { |segment| segment.strip.empty? }
-      raise Riffer::ArgumentError, "pricing model id must be in \"provider/model\" form, got #{model.inspect}" unless valid
+      return if valid
+
+      raise Riffer::ArgumentError,
+            "pricing model id must be in \"provider/model\" form, got #{model.inspect}"
     end
 
     #--
@@ -292,7 +305,11 @@ class Riffer::Config
     def coerce_rate(value, attribute)
       number = value
       float = value.is_a?(Numeric) ? number.to_f : nil #: Float?
-      raise Riffer::ArgumentError, "#{attribute} rate must be a non-negative number, got #{value.inspect}" unless float&.finite? && float >= 0
+      unless float&.finite? && float >= 0
+        raise Riffer::ArgumentError,
+              "#{attribute} rate must be a non-negative number, got #{value.inspect}"
+      end
+
       float
     end
 
@@ -300,6 +317,7 @@ class Riffer::Config
     #: (untyped, String) -> Float?
     def coerce_optional_rate(value, attribute)
       return nil if value.nil?
+
       coerce_rate(value, attribute)
     end
   end
@@ -341,8 +359,13 @@ class Riffer::Config
   #--
   #: ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> void
   def tool_runtime=(value)
-    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) || value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
-    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc" unless valid
+    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) ||
+            value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
+    unless valid
+      raise Riffer::ArgumentError,
+            "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc"
+    end
+
     @tool_runtime = value
   end
 
@@ -369,7 +392,7 @@ class Riffer::Config
   def message_id_strategy=(value)
     unless VALID_MESSAGE_ID_STRATEGIES.include?(value)
       raise Riffer::ArgumentError,
-        "message_id_strategy must be one of #{VALID_MESSAGE_ID_STRATEGIES.inspect}, got #{value.inspect}"
+            "message_id_strategy must be one of #{VALID_MESSAGE_ID_STRATEGIES.inspect}, got #{value.inspect}"
     end
     @message_id_strategy = value
   end

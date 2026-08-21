@@ -16,9 +16,6 @@ class Riffer::Agent::Config
   # The configured instructions.
   attr_reader :instructions #: (String | Proc)?
 
-  # Options passed to the provider client.
-  attr_accessor :provider_options #: Hash[Symbol, untyped]
-
   # Options passed to generate_text/stream_text.
   attr_accessor :model_options #: Hash[Symbol, untyped]
 
@@ -46,12 +43,23 @@ class Riffer::Agent::Config
   # Builds a new Config. Raises Riffer::ArgumentError if +model+ or
   # +instructions+ is invalid (e.g. an empty string).
   #--
-  #: (?identifier: String?, ?model: (String | Proc)?, ?instructions: (String | Proc)?, ?provider_options: Hash[Symbol, untyped], ?model_options: Hash[Symbol, untyped], ?structured_output: Riffer::Params?, ?max_steps: Numeric?, ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?, ?mcp_configs: Array[Hash[Symbol, untyped]], ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc), ?skills_config: Riffer::Skills::Config?, ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]) -> void
+  #: (
+  #    ?identifier: String?,
+  #    ?model: (String | Proc)?,
+  #    ?instructions: (String | Proc)?,
+  #    ?model_options: Hash[Symbol, untyped],
+  #    ?structured_output: Riffer::Params?,
+  #    ?max_steps: Numeric?,
+  #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
+  #    ?mcp_configs: Array[Hash[Symbol, untyped]],
+  #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc),
+  #    ?skills_config: Riffer::Skills::Config?,
+  #    ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
+  #  ) -> void
   def initialize(
     identifier: nil,
     model: nil,
     instructions: nil,
-    provider_options: {},
     model_options: {},
     structured_output: nil,
     max_steps: DEFAULT_MAX_STEPS,
@@ -59,9 +67,8 @@ class Riffer::Agent::Config
     mcp_configs: [],
     tool_runtime: Riffer.config.tool_runtime,
     skills_config: nil,
-    guardrails: {before: [], after: []}
+    guardrails: { before: [], after: [] }
   )
-    @provider_options = provider_options
     @model_options = model_options
     @max_steps = max_steps
     @tools_config = tools_config
@@ -86,7 +93,10 @@ class Riffer::Agent::Config
   #--
   #: (Riffer::Params?) -> Riffer::Params?
   def structured_output=(value)
-    raise Riffer::ArgumentError, "structured_output must be a Riffer::Params" unless value.nil? || value.is_a?(Riffer::Params)
+    unless value.nil? || value.is_a?(Riffer::Params)
+      raise Riffer::ArgumentError, "structured_output must be a Riffer::Params"
+    end
+
     @structured_output = value
   end
 
@@ -94,8 +104,13 @@ class Riffer::Agent::Config
   #--
   #: ((singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def tool_runtime=(value)
-    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) || value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
-    raise Riffer::ArgumentError, "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc" unless valid
+    valid = (value.is_a?(Class) && value < Riffer::Tools::Runtime) ||
+            value.is_a?(Riffer::Tools::Runtime) || value.is_a?(Proc)
+    unless valid
+      raise Riffer::ArgumentError,
+            "tool_runtime must be a Riffer::Tools::Runtime subclass, instance, or a Proc"
+    end
+
     @tool_runtime = value
   end
 
@@ -122,8 +137,9 @@ class Riffer::Agent::Config
   #--
   #: (String | Symbol, ?progressive: bool) -> Array[Hash[Symbol, untyped]]
   def add_mcp(tag, progressive: true)
-    raise Riffer::ArgumentError, "progressive must be a boolean" unless progressive == true || progressive == false
-    @mcp_configs << {tags: [tag.to_sym], progressive: progressive}
+    raise Riffer::ArgumentError, "progressive must be a boolean" unless [true, false].include?(progressive)
+
+    @mcp_configs << { tags: [tag.to_sym], progressive: progressive }
   end
 
   # Appends a guardrail entry to +guardrails+ for the given phase; +:around+
@@ -134,9 +150,12 @@ class Riffer::Agent::Config
   def add_guardrail(phase, klass:, options: {})
     valid_phases = [*Riffer::Guardrails::PHASES, :around]
     raise Riffer::ArgumentError, "Invalid guardrail phase: #{phase}" unless valid_phases.include?(phase)
-    raise Riffer::ArgumentError, "Guardrail must be a Riffer::Guardrail subclass" unless klass.is_a?(Class) && klass <= Riffer::Guardrail
+    unless klass.is_a?(Class) && klass <= Riffer::Guardrail
+      raise Riffer::ArgumentError,
+            "Guardrail must be a Riffer::Guardrail subclass"
+    end
 
-    cfg = {class: klass, options: options}
+    cfg = { class: klass, options: options }
     case phase
     when :before
       @guardrails[:before] << cfg

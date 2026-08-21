@@ -16,7 +16,7 @@ module Riffer::Helpers::Boolean
     when false, "false", 0, "0", nil then false
     else
       raise Riffer::ArgumentError,
-        "#{attribute} must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
+            "#{attribute} must be a boolean (or 'true'/'false'/'1'/'0'/1/0), got #{value.inspect}"
     end
   end
 end

@@ -5,8 +5,12 @@
 # forwarding every event downstream untouched.
 class Riffer::Tracing::StreamRecorder # :nodoc: all
   # @rbs @yielder: Enumerator::Yielder
+  # @rbs @clock: ^() -> Float
+  # @rbs @started_at: Float
 
   attr_reader :token_usage #: Riffer::Providers::TokenUsage?
+
+  attr_reader :time_to_first_chunk #: Float?
 
   attr_reader :finish_reason #: Symbol?
 
@@ -17,15 +21,18 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
 
   #--
-  #: (Enumerator::Yielder) -> void
-  def initialize(yielder)
+  #: (Enumerator::Yielder, ?clock: ^() -> Float) -> void
+  def initialize(yielder, clock: -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) })
     @yielder = yielder
+    @clock = clock
+    @started_at = clock.call
     @tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
   end
 
   #--
   #: (Riffer::StreamEvents::Base) -> self
   def <<(event)
+    @time_to_first_chunk ||= @clock.call - @started_at
     record(event)
     @yielder << event
     self
@@ -40,7 +47,11 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
     when Riffer::StreamEvents::TextDone
       @content = event.content
     when Riffer::StreamEvents::ToolCallDone
-      @tool_calls << Riffer::Messages::Assistant::ToolCall.new(call_id: event.call_id, name: event.name, arguments: event.arguments)
+      @tool_calls << Riffer::Messages::Assistant::ToolCall.new(
+        call_id: event.call_id,
+        name: event.name,
+        arguments: event.arguments,
+      )
     when Riffer::StreamEvents::TokenUsageDone
       @token_usage = event.token_usage
     when Riffer::StreamEvents::FinishReasonDone

@@ -25,7 +25,7 @@ class Riffer::StreamEvents::WebSearchStatus < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    h = {role: @role, status: @status} #: Hash[Symbol, untyped]
+    h = { role: @role, status: @status } #: Hash[Symbol, untyped]
     h[:url] = @url if @url
     h[:query] = @query if @query
     h

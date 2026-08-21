@@ -17,6 +17,6 @@ class Riffer::StreamEvents::SkillActivation < Riffer::StreamEvents::Base
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    {role: @role, name: @name}
+    { role: @role, name: @name }
   end
 end

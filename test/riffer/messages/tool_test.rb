@@ -6,6 +6,7 @@ describe Riffer::Messages::Tool do
   describe "#role" do
     it "returns tool" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
+
       expect(message.role).must_equal :tool
     end
   end
@@ -13,7 +14,8 @@ describe Riffer::Messages::Tool do
   describe "#to_h" do
     it "returns hash with role, content, tool_call_id, and name" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
-      expected = {role: :tool, content: "Result", tool_call_id: "123", name: "my_tool"}
+      expected = { role: :tool, content: "Result", tool_call_id: "123", name: "my_tool" }
+
       expect(message.to_h).must_equal expected
     end
 
@@ -23,7 +25,7 @@ describe Riffer::Messages::Tool do
         tool_call_id: "123",
         name: "foo",
         error: "Unknown tool 'foo'",
-        error_type: :unknown_tool
+        error_type: :unknown_tool,
       )
       expected = {
         role: :tool,
@@ -31,13 +33,15 @@ describe Riffer::Messages::Tool do
         tool_call_id: "123",
         name: "foo",
         error: "Unknown tool 'foo'",
-        error_type: :unknown_tool
+        error_type: :unknown_tool,
       }
+
       expect(message.to_h).must_equal expected
     end
 
     it "excludes error fields when not present" do
       message = Riffer::Messages::Tool.new("Success", tool_call_id: "123", name: "my_tool")
+
       expect(message.to_h.key?(:error)).must_equal false
       expect(message.to_h.key?(:error_type)).must_equal false
     end
@@ -46,6 +50,7 @@ describe Riffer::Messages::Tool do
   describe "#error?" do
     it "returns false when no error" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
+
       expect(message.error?).must_equal false
     end
 
@@ -55,8 +60,9 @@ describe Riffer::Messages::Tool do
         tool_call_id: "123",
         name: "my_tool",
         error: "Something went wrong",
-        error_type: :execution_error
+        error_type: :execution_error,
       )
+
       expect(message.error?).must_equal true
     end
   end
@@ -68,8 +74,9 @@ describe Riffer::Messages::Tool do
         tool_call_id: "123",
         name: "foo",
         error: "Unknown tool 'foo'",
-        error_type: :unknown_tool
+        error_type: :unknown_tool,
       )
+
       expect(message.error).must_equal "Unknown tool 'foo'"
     end
 
@@ -79,8 +86,9 @@ describe Riffer::Messages::Tool do
         tool_call_id: "123",
         name: "weather",
         error: "city is required",
-        error_type: :validation_error
+        error_type: :validation_error,
       )
+
       expect(message.error_type).must_equal :validation_error
     end
   end

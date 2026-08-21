@@ -5,7 +5,13 @@
 class Riffer::Tracing::StreamRecorder
   @yielder: Enumerator::Yielder
 
+  @clock: ^() -> Float
+
+  @started_at: Float
+
   attr_reader token_usage: Riffer::Providers::TokenUsage?
+
+  attr_reader time_to_first_chunk: Float?
 
   attr_reader finish_reason: Symbol?
 
@@ -16,8 +22,8 @@ class Riffer::Tracing::StreamRecorder
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
-  # : (Enumerator::Yielder) -> void
-  def initialize: (Enumerator::Yielder) -> void
+  # : (Enumerator::Yielder, ?clock: ^() -> Float) -> void
+  def initialize: (Enumerator::Yielder, ?clock: ^() -> Float) -> void
 
   # --
   # : (Riffer::StreamEvents::Base) -> self

@@ -3,13 +3,13 @@
 require "test_helper"
 
 class RunTracingBlockingInputGuardrail < Riffer::Guardrail
-  def process_input(messages, context:)
+  def process_input(_messages, context:)
     block("Input blocked")
   end
 end
 
 class RunTracingBlockingOutputGuardrail < Riffer::Guardrail
-  def process_output(response, messages:, context:)
+  def process_output(_response, messages:, context:)
     block("Output blocked")
   end
 end
@@ -24,7 +24,7 @@ class RunTracingTransformInputGuardrail < Riffer::Guardrail
 end
 
 class RunTracingRaisingGuardrail < Riffer::Guardrail
-  def process_input(messages, context:)
+  def process_input(_messages, context:)
     raise "guardrail boom"
   end
 end
@@ -42,12 +42,18 @@ describe Riffer::Agent::Run do
     it "returns a Riffer::Agent::Response" do
       agent = agent_class.new
       response = Riffer::Agent::Run.generate(agent: agent, prompt: "hi")
+
       expect(response).must_be_instance_of Riffer::Agent::Response
     end
 
     it "raises when files: is given without a prompt" do
       agent = agent_class.new
-      err = expect { Riffer::Agent::Run.generate(agent: agent, files: [{url: "https://x.com/a.png", media_type: "image/png"}]) }.must_raise Riffer::ArgumentError
+      err = expect do
+        Riffer::Agent::Run.generate(
+          agent: agent,
+          files: [{ url: "https://x.com/a.png", media_type: "image/png" }],
+        )
+      end.must_raise Riffer::ArgumentError
       expect(err.message).must_match(/files: requires a prompt/)
     end
   end
@@ -55,12 +61,14 @@ describe Riffer::Agent::Run do
   describe ".stream" do
     it "returns an Enumerator" do
       agent = agent_class.new
+
       expect(Riffer::Agent::Run.stream(agent: agent, prompt: "hi")).must_be_instance_of Enumerator
     end
 
     it "stamps the streamed finish reason on the accumulated assistant message" do
       agent = agent_class.new
       Riffer::Agent::Run.stream(agent: agent, prompt: "hi").each { |_| }
+
       expect(agent.session.messages.last.finish_reason).must_equal :stop
     end
 
@@ -78,7 +86,7 @@ describe Riffer::Agent::Run do
 
     it "raises when files: is given without a prompt" do
       agent = agent_class.new
-      err = expect { agent.stream(nil, files: [{url: "https://x.com/a.png", media_type: "image/png"}]) }.must_raise Riffer::ArgumentError
+      err = expect { agent.stream(nil, files: [{ url: "https://x.com/a.png", media_type: "image/png" }]) }.must_raise Riffer::ArgumentError
       expect(err.message).must_match(/files: requires a prompt/)
     end
   end
@@ -98,7 +106,8 @@ describe Riffer::Agent::Run do
       provider.stub_response('{"sentiment":"positive","score":0.9}')
 
       result = agent.generate("Analyze sentiment")
-      expect(result.structured_output).must_equal({sentiment: "positive", score: 0.9})
+
+      expect(result.structured_output).must_equal({ sentiment: "positive", score: 0.9 })
     end
 
     it "sets structured_output to nil when LLM returns invalid JSON" do
@@ -114,6 +123,7 @@ describe Riffer::Agent::Run do
       provider.stub_response("This is not JSON")
 
       result = agent.generate("Analyze sentiment")
+
       expect(result.structured_output).must_be_nil
     end
 
@@ -130,6 +140,7 @@ describe Riffer::Agent::Run do
       provider.stub_response("This is not JSON")
 
       result = agent.generate("Analyze sentiment")
+
       expect(result.content).must_equal "This is not JSON"
     end
 
@@ -147,12 +158,14 @@ describe Riffer::Agent::Run do
       provider.stub_response('{"sentiment":"positive"}')
 
       result = agent.generate("Analyze")
-      expect(result.structured_output).must_equal({sentiment: "positive"})
+
+      expect(result.structured_output).must_equal({ sentiment: "positive" })
     end
 
     it "returns nil structured_output when structured_output is not configured" do
       agent = agent_class.new
       result = agent.generate("Hello")
+
       expect(result.structured_output).must_be_nil
     end
 
@@ -170,9 +183,10 @@ describe Riffer::Agent::Run do
 
       agent.generate("Analyze sentiment")
       # TODO: Replace with rfind when minimum Ruby is 4.0+
-      last_assistant = agent.session.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) } # rubocop:disable Style/ReverseFind
+      last_assistant = agent.session.messages.reverse.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+
       expect(last_assistant.structured_output?).must_equal true
-      expect(last_assistant.structured_output).must_equal({sentiment: "positive"})
+      expect(last_assistant.structured_output).must_equal({ sentiment: "positive" })
     end
 
     it "makes structured_output available via on_message callback" do
@@ -192,8 +206,9 @@ describe Riffer::Agent::Run do
         callback_msg = msg if msg.is_a?(Riffer::Messages::Assistant)
       end
       agent.generate("Analyze sentiment")
+
       expect(callback_msg.structured_output?).must_equal true
-      expect(callback_msg.structured_output).must_equal({sentiment: "positive"})
+      expect(callback_msg.structured_output).must_equal({ sentiment: "positive" })
     end
   end
 
@@ -214,6 +229,7 @@ describe Riffer::Agent::Run do
     it "works normally without structured_output" do
       agent = agent_class.new
       result = agent.stream("Hello")
+
       expect(result).must_be_instance_of Enumerator
     end
   end
@@ -222,14 +238,16 @@ describe Riffer::Agent::Run do
     let(:transform_guardrail_class) do
       Class.new(Riffer::Guardrail) do
         def process_input(messages, context:)
-          transform(messages.map { |m|
-            case m
-            when Riffer::Messages::User
-              Riffer::Messages::User.new("[INPUT] #{m.content}")
-            else
-              m
-            end
-          })
+          transform(
+            messages.map do |m|
+              case m
+              when Riffer::Messages::User
+                Riffer::Messages::User.new("[INPUT] #{m.content}")
+              else
+                m
+              end
+            end,
+          )
         end
 
         def process_output(response, messages:, context:)
@@ -240,32 +258,35 @@ describe Riffer::Agent::Run do
 
     let(:block_input_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        def process_input(messages, context:)
-          block("Input blocked", metadata: {reason: "test"})
+        def process_input(_messages, context:)
+          block("Input blocked", metadata: { reason: "test" })
         end
       end
     end
 
     let(:block_output_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        def process_output(response, messages:, context:)
-          block("Output blocked", metadata: {reason: "test"})
+        def process_output(_response, messages:, context:)
+          block("Output blocked", metadata: { reason: "test" })
         end
       end
     end
 
     it "returns Response object" do
       result = agent_class.generate("Hello")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
     it "response is not blocked without guardrails" do
       result = agent_class.generate("Hello")
+
       expect(result.blocked?).must_equal false
     end
 
     it "response content is accessible" do
       result = agent_class.generate("Hello")
+
       expect(result.content).wont_be_empty
     end
 
@@ -281,31 +302,37 @@ describe Riffer::Agent::Run do
 
       it "returns blocked response" do
         result = agent_with_blocking_input.generate("Hello")
+
         expect(result.blocked?).must_equal true
       end
 
       it "has tripwire with reason" do
         result = agent_with_blocking_input.generate("Hello")
+
         expect(result.tripwire.reason).must_equal "Input blocked"
       end
 
       it "has tripwire with phase" do
         result = agent_with_blocking_input.generate("Hello")
+
         expect(result.tripwire.phase).must_equal :before
       end
 
       it "has tripwire with guardrail" do
         result = agent_with_blocking_input.generate("Hello")
+
         expect(result.tripwire.guardrail).must_equal block_input_guardrail_class
       end
 
       it "has tripwire with metadata" do
         result = agent_with_blocking_input.generate("Hello")
-        expect(result.tripwire.metadata).must_equal({reason: "test"})
+
+        expect(result.tripwire.metadata).must_equal({ reason: "test" })
       end
 
       it "has empty content" do
         result = agent_with_blocking_input.generate("Hello")
+
         expect(result.content).must_equal ""
       end
     end
@@ -322,16 +349,19 @@ describe Riffer::Agent::Run do
 
       it "returns blocked response" do
         result = agent_with_blocking_output.generate("Hello")
+
         expect(result.blocked?).must_equal true
       end
 
       it "has tripwire with after phase" do
         result = agent_with_blocking_output.generate("Hello")
+
         expect(result.tripwire.phase).must_equal :after
       end
 
       it "has tripwire with reason" do
         result = agent_with_blocking_output.generate("Hello")
+
         expect(result.tripwire.reason).must_equal "Output blocked"
       end
     end
@@ -350,33 +380,39 @@ describe Riffer::Agent::Run do
         agent = agent_with_transform.new
         agent.generate("Hello")
         user_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::User) }
+
         expect(user_message.content).must_equal "[INPUT] Hello"
       end
 
       it "transforms output response" do
         result = agent_with_transform.generate("Hello")
+
         expect(result.content).must_match(/\[OUTPUT\]/)
       end
 
       it "returns unblocked response" do
         result = agent_with_transform.generate("Hello")
+
         expect(result.blocked?).must_equal false
       end
 
       it "response is modified" do
         result = agent_with_transform.generate("Hello")
+
         expect(result.modified?).must_equal true
       end
 
       it "response has modifications with correct guardrail" do
         result = agent_with_transform.generate("Hello")
         guardrails = result.modifications.map(&:guardrail)
+
         expect(guardrails).must_include transform_guardrail_class
       end
 
       it "after phase modifications have remapped message indices" do
         result = agent_with_transform.generate("Hello")
         after_mods = result.modifications.select { |m| m.phase == :after }
+
         expect(after_mods).wont_be_empty
         after_mods.each { |m| expect(m.message_indices.first).must_be :>, 0 }
       end
@@ -385,11 +421,13 @@ describe Riffer::Agent::Run do
     describe "without guardrails" do
       it "response modifications is empty" do
         result = agent_class.generate("Hello")
+
         expect(result.modifications).must_be_empty
       end
 
       it "response is not modified" do
         result = agent_class.generate("Hello")
+
         expect(result.modified?).must_equal false
       end
     end
@@ -398,7 +436,7 @@ describe Riffer::Agent::Run do
   describe "#stream with guardrails" do
     let(:block_input_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        def process_input(messages, context:)
+        def process_input(_messages, context:)
           block("Input blocked")
         end
       end
@@ -406,7 +444,7 @@ describe Riffer::Agent::Run do
 
     let(:block_output_guardrail_class) do
       Class.new(Riffer::Guardrail) do
-        def process_output(response, messages:, context:)
+        def process_output(_response, messages:, context:)
           block("Output blocked")
         end
       end
@@ -425,18 +463,21 @@ describe Riffer::Agent::Run do
       it "yields tripwire event" do
         events = agent_with_blocking_input.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
+
         expect(tripwire_event).wont_be_nil
       end
 
       it "tripwire event has reason" do
         events = agent_with_blocking_input.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
+
         expect(tripwire_event.reason).must_equal "Input blocked"
       end
 
       it "tripwire event has before phase" do
         events = agent_with_blocking_input.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
+
         expect(tripwire_event.phase).must_equal :before
       end
     end
@@ -454,18 +495,21 @@ describe Riffer::Agent::Run do
       it "yields tripwire event" do
         events = agent_with_blocking_output.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
+
         expect(tripwire_event).wont_be_nil
       end
 
       it "tripwire event has after phase" do
         events = agent_with_blocking_output.stream("Hello").to_a
         tripwire_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailTripwire) }
+
         expect(tripwire_event.phase).must_equal :after
       end
 
       it "still yields text events before blocking" do
         events = agent_with_blocking_output.stream("Hello").to_a
-        text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        text_events = events.grep(Riffer::StreamEvents::TextDelta)
+
         expect(text_events).wont_be_empty
       end
     end
@@ -474,14 +518,16 @@ describe Riffer::Agent::Run do
       let(:transform_guardrail_class) do
         Class.new(Riffer::Guardrail) do
           def process_input(messages, context:)
-            transform(messages.map { |m|
-              case m
-              when Riffer::Messages::User
-                Riffer::Messages::User.new("[INPUT] #{m.content}")
-              else
-                m
-              end
-            })
+            transform(
+              messages.map do |m|
+                case m
+                when Riffer::Messages::User
+                  Riffer::Messages::User.new("[INPUT] #{m.content}")
+                else
+                  m
+                end
+              end,
+            )
           end
         end
       end
@@ -497,13 +543,15 @@ describe Riffer::Agent::Run do
 
       it "emits GuardrailModification events on transforms" do
         events = agent_with_stream_transform.stream("Hello").to_a
-        mod_events = events.select { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
+        mod_events = events.grep(Riffer::StreamEvents::GuardrailModification)
+
         expect(mod_events).wont_be_empty
       end
 
       it "GuardrailModification event has correct guardrail" do
         events = agent_with_stream_transform.stream("Hello").to_a
         mod_event = events.find { |e| e.is_a?(Riffer::StreamEvents::GuardrailModification) }
+
         expect(mod_event.guardrail).must_equal transform_guardrail_class
       end
     end
@@ -517,6 +565,7 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.generate("Hi")
+
       expect(agent.context.token_usage).wont_be_nil
       expect(agent.context.token_usage.input_tokens).must_equal 100
       expect(agent.context.token_usage.output_tokens).must_equal 50
@@ -524,11 +573,12 @@ describe Riffer::Agent::Run do
 
     it "accumulates token usage across tool loops" do
       tool_class = Class.new(Riffer::Tool) do
+        identifier "token_usage_test_tool"
         description "Test tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("token_usage_test_tool") }
+      end
 
       tc = tool_class
       agent_with_tools = Class.new(Riffer::Agent) do
@@ -540,7 +590,11 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       token_usage1 = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
       token_usage2 = Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75)
-      provider.stub_response("", tool_calls: [{name: "token_usage_test_tool", arguments: "{}"}], token_usage: token_usage1)
+      provider.stub_response(
+        "",
+        tool_calls: [{ name: "token_usage_test_tool", arguments: "{}" }],
+        token_usage: token_usage1,
+      )
       provider.stub_response("Done!", token_usage: token_usage2)
 
       agent.generate("Call tool")
@@ -554,6 +608,7 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       provider.stub_response("Hello!")
       agent.generate("Hi")
+
       expect(agent.context.token_usage).must_be_nil
     end
 
@@ -563,6 +618,7 @@ describe Riffer::Agent::Run do
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.generate("Hi")
       assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+
       expect(assistant.token_usage).must_equal token_usage
     end
 
@@ -570,31 +626,43 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.provider.stub_response("Hello!", token_usage: token_usage)
       response = agent.generate("Hi")
-      expect(response.token_usage.to_h).must_equal({input_tokens: 100, output_tokens: 50})
+
+      expect(response.token_usage.to_h).must_equal({ input_tokens: 100, output_tokens: 50 })
     end
 
     it "returns nil response usage when the provider reports none" do
       agent = agent_class.new
       agent.provider.stub_response("Hello!")
       response = agent.generate("Hi")
+
       expect(response.token_usage).must_be_nil
     end
 
     it "scopes response usage to the run while context usage accumulates" do
       agent = agent_class.new
-      agent.provider.stub_response("First", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
-      agent.provider.stub_response("Second", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5))
+      agent.provider.stub_response(
+        "First",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+        ),
+      )
+      agent.provider.stub_response(
+        "Second",
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5),
+      )
       agent.generate("Hi")
       response = agent.generate("Again")
+
       expect([response.token_usage.to_h, agent.context.token_usage.to_h]).must_equal [
-        {input_tokens: 10, output_tokens: 5},
-        {input_tokens: 110, output_tokens: 55}
+        { input_tokens: 10, output_tokens: 5 },
+        { input_tokens: 110, output_tokens: 55 },
       ]
     end
 
     it "carries usage on a response blocked by an after guardrail" do
       gr = Class.new(Riffer::Guardrail) do
-        def process_output(response, messages:, context:)
+        def process_output(_response, messages:, context:)
           block("Output blocked")
         end
       end
@@ -604,12 +672,13 @@ describe Riffer::Agent::Run do
       agent = klass.new
       agent.provider.stub_response("Hello!", token_usage: token_usage)
       response = agent.generate("Hi")
-      expect(response.token_usage.to_h).must_equal({input_tokens: 100, output_tokens: 50})
+
+      expect(response.token_usage.to_h).must_equal({ input_tokens: 100, output_tokens: 50 })
     end
 
     it "returns nil response usage when a before guardrail blocks" do
       gr = Class.new(Riffer::Guardrail) do
-        def process_input(messages, context:)
+        def process_input(_messages, context:)
           block("Input blocked")
         end
       end
@@ -617,6 +686,7 @@ describe Riffer::Agent::Run do
       klass.guardrail(:before, with: gr)
 
       response = klass.new.generate("Hi")
+
       expect(response.token_usage).must_be_nil
     end
   end
@@ -626,16 +696,18 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.provider.stub_response("Hello!")
       response = agent.generate("Hi")
+
       expect(response.steps).must_equal 1
     end
 
     it "accumulates steps across a tool loop" do
       tool_class = Class.new(Riffer::Tool) do
+        identifier "response_steps_tool"
         description "Test tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("response_steps_tool") }
+      end
 
       tc = tool_class
       klass = Class.new(Riffer::Agent) do
@@ -644,15 +716,16 @@ describe Riffer::Agent::Run do
       end
 
       agent = klass.new
-      agent.provider.stub_response("", tool_calls: [{name: "response_steps_tool", arguments: "{}"}])
+      agent.provider.stub_response("", tool_calls: [{ name: "response_steps_tool", arguments: "{}" }])
       agent.provider.stub_response("Done!")
       response = agent.generate("Call the tool")
+
       expect(response.steps).must_equal 2
     end
 
     it "reports zero steps when a before guardrail blocks" do
       gr = Class.new(Riffer::Guardrail) do
-        def process_input(messages, context:)
+        def process_input(_messages, context:)
           block("Input blocked")
         end
       end
@@ -660,6 +733,7 @@ describe Riffer::Agent::Run do
       klass.guardrail(:before, with: gr)
 
       response = klass.new.generate("Hi")
+
       expect(response.steps).must_equal 0
     end
   end
@@ -672,6 +746,7 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.stream("Hi").each { |_| }
+
       expect(agent.context.token_usage).wont_be_nil
       expect(agent.context.token_usage.input_tokens).must_equal 100
       expect(agent.context.token_usage.output_tokens).must_equal 50
@@ -683,6 +758,7 @@ describe Riffer::Agent::Run do
       provider.stub_response("Hello!", token_usage: token_usage)
       events = agent.stream("Hi").to_a
       token_usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
+
       expect(token_usage_done).wont_be_nil
     end
 
@@ -692,16 +768,18 @@ describe Riffer::Agent::Run do
       provider.stub_response("Hello!", token_usage: token_usage)
       agent.stream("Hi").each { |_| }
       assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+
       expect(assistant.token_usage).must_equal token_usage
     end
 
     it "accumulates token usage across tool loops" do
       tool_class = Class.new(Riffer::Tool) do
+        identifier "stream_token_usage_test_tool"
         description "Test tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("stream_token_usage_test_tool") }
+      end
 
       tc = tool_class
       agent_with_tools = Class.new(Riffer::Agent) do
@@ -713,7 +791,11 @@ describe Riffer::Agent::Run do
       provider = agent.provider
       token_usage1 = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
       token_usage2 = Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75)
-      provider.stub_response("", tool_calls: [{name: "stream_token_usage_test_tool", arguments: "{}"}], token_usage: token_usage1)
+      provider.stub_response(
+        "",
+        tool_calls: [{ name: "stream_token_usage_test_tool", arguments: "{}" }],
+        token_usage: token_usage1,
+      )
       provider.stub_response("Done!", token_usage: token_usage2)
 
       agent.stream("Call tool").each { |_| }
@@ -726,11 +808,12 @@ describe Riffer::Agent::Run do
   describe "pending tool calls on fresh generate" do
     it "does not execute pending tool calls" do
       tool_class = Class.new(Riffer::Tool) do
+        identifier "fresh_generate_tool"
         description "Simple tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("fresh_generate_tool") }
+      end
 
       tc = tool_class
       custom_agent_class = Class.new(Riffer::Agent) do
@@ -740,14 +823,19 @@ describe Riffer::Agent::Run do
 
       agent = custom_agent_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [
-        {name: "fresh_generate_tool", arguments: "{}"}
-      ])
+      provider.stub_response(
+        "",
+        tool_calls: [
+          { name: "fresh_generate_tool", arguments: "{}" },
+        ],
+      )
       provider.stub_response("Done!")
 
       result = agent.generate("Call tool")
+
       expect(result.interrupted?).must_equal false
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
       expect(tool_messages.length).must_equal 1
     end
   end
@@ -755,11 +843,12 @@ describe Riffer::Agent::Run do
   describe "pending tool call resume with #stream" do
     it "resumes pending tools in streaming mode" do
       tool_class = Class.new(Riffer::Tool) do
+        identifier "stream_pending_tool"
         description "Simple tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("stream_pending_tool") }
+      end
 
       tc = tool_class
       custom_agent_class = Class.new(Riffer::Agent) do
@@ -769,10 +858,13 @@ describe Riffer::Agent::Run do
 
       agent = custom_agent_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [
-        {name: "stream_pending_tool", arguments: "{}"},
-        {name: "stream_pending_tool", arguments: "{}"}
-      ])
+      provider.stub_response(
+        "",
+        tool_calls: [
+          { name: "stream_pending_tool", arguments: "{}" },
+          { name: "stream_pending_tool", arguments: "{}" },
+        ],
+      )
       provider.stub_response("Done!")
 
       tool_count = 0
@@ -785,14 +877,18 @@ describe Riffer::Agent::Run do
 
       events = agent.stream("Call tools").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
       expect(interrupt_event).wont_be_nil
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
       expect(tool_messages.length).must_equal 1
 
       events = agent.stream("Continue").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
       expect(interrupt_event).must_be_nil
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
       expect(tool_messages.length).must_equal 2
     end
   end
@@ -800,11 +896,12 @@ describe Riffer::Agent::Run do
   describe "interrupt! with experimental_history_healing" do
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "interrupt_heal_tool"
         description "Slow tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("interrupt_heal_tool") }
+      end
     end
 
     before { @original_history_healing = Riffer.config.experimental_history_healing }
@@ -820,10 +917,13 @@ describe Riffer::Agent::Run do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [
-        {name: "interrupt_heal_tool", arguments: "{}"},
-        {name: "interrupt_heal_tool", arguments: "{}"}
-      ])
+      provider.stub_response(
+        "",
+        tool_calls: [
+          { name: "interrupt_heal_tool", arguments: "{}" },
+          { name: "interrupt_heal_tool", arguments: "{}" },
+        ],
+      )
 
       agent.session.on_message do |msg|
         agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
@@ -834,7 +934,8 @@ describe Riffer::Agent::Run do
       expect(result.interrupted?).must_equal true
       expect(result.healed_tool_call_ids.length).must_equal 2
       expect(agent.session.orphaned_tool_call_ids).must_equal []
-      tools = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tools = agent.session.messages.grep(Riffer::Messages::Tool)
+
       expect(tools.length).must_equal 2
       expect(tools.first.error_type).must_equal :interrupted
       expect(tools.first.content).must_equal "Tool call interrupted before completion."
@@ -849,7 +950,7 @@ describe Riffer::Agent::Run do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
 
       agent.session.on_message do |msg|
         agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
@@ -872,7 +973,7 @@ describe Riffer::Agent::Run do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "interrupt_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
 
       seen = []
       agent.session.on_message do |msg|
@@ -892,11 +993,12 @@ describe Riffer::Agent::Run do
   describe "max_steps interrupt with experimental_history_healing" do
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "max_steps_heal_tool"
         description "Loop tool"
         def call(context:)
           text("ok")
         end
-      end.tap { |t| t.identifier("max_steps_heal_tool") }
+      end
     end
 
     before { @original_history_healing = Riffer.config.experimental_history_healing }
@@ -913,8 +1015,8 @@ describe Riffer::Agent::Run do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
 
       result = agent.generate("Loop forever")
 
@@ -923,6 +1025,7 @@ describe Riffer::Agent::Run do
       expect(result.healed_tool_call_ids.length).must_equal 1
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       synth = agent.session.messages.last
+
       expect(synth).must_be_kind_of Riffer::Messages::Tool
       expect(synth.error_type).must_equal :interrupted
     end
@@ -937,8 +1040,8 @@ describe Riffer::Agent::Run do
 
       agent = custom_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
-      provider.stub_response("", tool_calls: [{name: "max_steps_heal_tool", arguments: "{}"}])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
+      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
 
       result = agent.generate("Loop forever")
 
@@ -957,40 +1060,51 @@ describe Riffer::Agent::Run do
 
     it "passes seeded history through untouched when healing is off (default)" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
-      seeded = Riffer::Agent::Session.new(messages: [
-        Riffer::Messages::User.new("hi"),
-        Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
-        Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-        Riffer::Messages::User.new("follow up"),
-        Riffer::Messages::Assistant.new("ok")
-      ])
+      seeded = Riffer::Agent::Session.new(
+        messages: [
+          Riffer::Messages::User.new("hi"),
+          Riffer::Messages::Tool.new(
+            "ghost",
+            tool_call_id: "c_missing",
+            name: "t",
+          ),
+          Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+          Riffer::Messages::User.new("follow up"),
+          Riffer::Messages::Assistant.new("ok"),
+        ],
+      )
       agent = custom_class.new(session: seeded)
       agent.provider.stub_response("Hello!")
       agent.generate
 
-      assistant_with_orphan = agent.session.messages.find { |m|
+      assistant_with_orphan = agent.session.messages.find do |m|
         m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
-      }
+      end
+
       refute_nil assistant_with_orphan
-      parentless = agent.session.messages.find { |m|
+      parentless = agent.session.messages.find do |m|
         m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
-      }
+      end
+
       refute_nil parentless
     end
 
     it "preserves a pending tool_use on the resume boundary even when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
-      seeded = Riffer::Agent::Session.new(messages: [
-        Riffer::Messages::User.new("Call tool"),
-        Riffer::Messages::Assistant.new("", tool_calls: [tc])
-      ])
+      seeded = Riffer::Agent::Session.new(
+        messages: [
+          Riffer::Messages::User.new("Call tool"),
+          Riffer::Messages::Assistant.new("", tool_calls: [tc]),
+        ],
+      )
       tool = Class.new(Riffer::Tool) do
+        identifier "pending_seed_tool"
         description "Pending tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("pending_seed_tool") }
+      end
       with_tools = Class.new(Riffer::Agent) do
         model "mock/riffer-1"
         uses_tools [tool]
@@ -999,6 +1113,7 @@ describe Riffer::Agent::Run do
       agent = with_tools.new(session: seeded)
       agent.provider.stub_response("All done!")
       result = agent.generate
+
       expect(result.interrupted?).must_equal false
     end
   end
@@ -1043,14 +1158,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather in Toronto is nice!")
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 1
       end
 
@@ -1064,14 +1183,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather in Toronto is nice!")
 
         agent.generate("What's the weather in Toronto?")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.first.content).must_equal "Weather in Toronto: 20 degrees"
       end
 
@@ -1085,9 +1208,12 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather in Toronto is nice!")
 
         result = agent.generate("What's the weather in Toronto?")
@@ -1103,16 +1229,20 @@ describe Riffer::Agent::Run do
           uses_tools [tool_class]
         end
 
-        agent = agent_class.new(context: {user_name: "Alice"})
+        agent = agent_class.new(context: { user_name: "Alice" })
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "context_tool", arguments: '{"field":"user_name"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "context_tool", arguments: '{"field":"user_name"}' },
+          ],
+        )
         provider.stub_response("Your name is Alice!")
 
         agent.generate("Get my name")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.first.content).must_equal "Alice"
       end
 
@@ -1124,14 +1254,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "nonexistent_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "nonexistent_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("I couldn't find that tool.")
 
         agent.generate("Call nonexistent tool")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.first.content).must_match(/Unknown tool/)
       end
 
@@ -1143,14 +1277,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "nonexistent_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "nonexistent_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("I couldn't find that tool.")
 
         agent.generate("Call nonexistent tool")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.error?).must_equal true
         expect(tool_message.error).must_equal "Unknown tool 'nonexistent_tool'"
         expect(tool_message.error_type).must_equal :unknown_tool
@@ -1166,14 +1304,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("Sorry, I need a city.")
 
         agent.generate("What's the weather?")
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.first.content).must_match(/city is required/)
       end
 
@@ -1187,14 +1329,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("Sorry, I need a city.")
 
         agent.generate("What's the weather?")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.error?).must_equal true
         expect(tool_message.error_type).must_equal :validation_error
       end
@@ -1209,14 +1355,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather in Toronto is nice!")
 
         agent.generate("What's the weather in Toronto?")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.error?).must_equal false
         expect(tool_message.error).must_be_nil
         expect(tool_message.error_type).must_be_nil
@@ -1264,14 +1414,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather is nice!")
 
         events = agent.stream("What's the weather?").to_a
 
-        tool_call_done_events = events.select { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+        tool_call_done_events = events.grep(Riffer::StreamEvents::ToolCallDone)
+
         expect(tool_call_done_events).wont_be_empty
       end
 
@@ -1285,14 +1439,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather is nice!")
 
         agent.stream("What's the weather?").each { |_| }
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 1
       end
 
@@ -1304,16 +1462,20 @@ describe Riffer::Agent::Run do
           uses_tools [tool_class]
         end
 
-        agent = agent_class.new(context: {user_id: "12345"})
+        agent = agent_class.new(context: { user_id: "12345" })
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "context_tool", arguments: '{"field":"user_id"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "context_tool", arguments: '{"field":"user_id"}' },
+          ],
+        )
         provider.stub_response("Your ID is 12345!")
 
         agent.stream("Get my id").each { |_| }
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.first.content).must_equal "12345"
       end
     end
@@ -1352,14 +1514,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "slow_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "slow_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("The tool timed out.")
 
         agent.generate("Run the slow tool")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.error?).must_equal true
       end
 
@@ -1374,14 +1540,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "slow_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "slow_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("The tool timed out.")
 
         agent.generate("Run the slow tool")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.content).must_match(/timed out/)
         expect(tool_message.error_type).must_equal :timeout_error
       end
@@ -1397,14 +1567,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "slow_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "slow_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("The tool timed out.")
 
         agent.generate("Run the slow tool")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.error?).must_equal true
         expect(tool_message.error).must_match(/0\.01 seconds/)
       end
@@ -1420,14 +1594,18 @@ describe Riffer::Agent::Run do
 
         agent = agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "fast_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "fast_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("The tool ran successfully.")
 
         agent.generate("Run the fast tool")
 
         tool_message = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Tool) }
+
         expect(tool_message.error?).must_equal false
         expect(tool_message.content).must_equal "fast result"
       end
@@ -1441,7 +1619,7 @@ describe Riffer::Agent::Run do
 
         agent_class = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          uses_tools -> {
+          uses_tools lambda {
             call_count += 1
             [tool_class]
           }
@@ -1460,13 +1638,13 @@ describe Riffer::Agent::Run do
 
         agent_class = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          uses_tools ->(context) {
+          uses_tools lambda { |context|
             received_context = context
             [tool_class]
           }
         end
 
-        context = {user_id: 123, admin: true}
+        context = { user_id: 123, admin: true }
         agent = agent_class.new(context: context)
         agent.generate("Hello")
 
@@ -1489,20 +1667,20 @@ describe Riffer::Agent::Run do
 
         agent_class = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          uses_tools ->(context) {
+          uses_tools lambda { |context|
             tools = [basic_tool_class]
             tools << admin_tool_class if context&.dig(:admin)
             tools
           }
         end
 
-        admin_agent = agent_class.new(context: {admin: true})
+        admin_agent = agent_class.new(context: { admin: true })
         provider = admin_agent.provider
         provider.stub_response("Done")
         admin_agent.generate("Hello")
         admin_tools = provider.calls.last[:tools]
 
-        regular_agent = agent_class.new(context: {admin: false})
+        regular_agent = agent_class.new(context: { admin: false })
         provider2 = regular_agent.provider
         provider2.stub_response("Done")
         regular_agent.generate("Hello")
@@ -1519,14 +1697,14 @@ describe Riffer::Agent::Run do
 
         agent_class = Class.new(Riffer::Agent) do
           model "mock/riffer-1"
-          uses_tools ->(context) {
+          uses_tools lambda { |context|
             call_values << context[:call]
             [tool_class]
           }
         end
 
-        agent_class.new(context: {call: 1}).generate("Hello")
-        agent_class.new(context: {call: 2}).generate("Hello again")
+        agent_class.new(context: { call: 1 }).generate("Hello")
+        agent_class.new(context: { call: 2 }).generate("Hello again")
 
         expect(call_values).must_equal [1, 2]
       end
@@ -1548,6 +1726,7 @@ describe Riffer::Agent::Run do
         agent = options_agent_class.new
         provider = agent.provider
         agent.generate("Hello")
+
         expect(provider.calls.last[:reasoning]).must_equal "medium"
       end
 
@@ -1555,6 +1734,7 @@ describe Riffer::Agent::Run do
         agent = options_agent_class.new
         provider = agent.provider
         agent.generate("Hello")
+
         expect(provider.calls.last[:temperature]).must_equal 0.7
       end
     end
@@ -1562,11 +1742,12 @@ describe Riffer::Agent::Run do
     describe "with max_steps" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "max_steps_tool"
           description "Simple tool"
           def call(context:)
             text("done")
           end
-        end.tap { |t| t.identifier("max_steps_tool") }
+        end
       end
 
       it "runs unlimited steps when max_steps is nil" do
@@ -1579,10 +1760,11 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        3.times { provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}]) }
+        3.times { provider.stub_response("", tool_calls: [{ name: "max_steps_tool", arguments: "{}" }]) }
         provider.stub_response("Final answer")
 
         agent.generate("Do stuff")
+
         expect(provider.calls.length).must_equal 4
       end
 
@@ -1596,10 +1778,11 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        3.times { provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}]) }
+        3.times { provider.stub_response("", tool_calls: [{ name: "max_steps_tool", arguments: "{}" }]) }
         provider.stub_response("Final answer")
 
         agent.generate("Do stuff")
+
         expect(provider.calls.length).must_equal 2
       end
 
@@ -1613,9 +1796,10 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("I need a tool", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
+        provider.stub_response("I need a tool", tool_calls: [{ name: "max_steps_tool", arguments: "{}" }])
 
         result = agent.generate("Do stuff")
+
         expect(result.content).must_equal "I need a tool"
       end
 
@@ -1629,9 +1813,10 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "max_steps_tool", arguments: "{}" }])
 
         result = agent.generate("Do stuff")
+
         expect(result.interrupted?).must_equal true
       end
 
@@ -1645,9 +1830,10 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [{name: "max_steps_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "max_steps_tool", arguments: "{}" }])
 
         result = agent.generate("Do stuff")
+
         expect(result.interrupt_reason).must_equal :max_steps
       end
     end
@@ -1656,6 +1842,7 @@ describe Riffer::Agent::Run do
       it "returns a Response object" do
         agent = agent_class.new
         result = agent.generate("What is the weather?")
+
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
@@ -1663,6 +1850,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.generate("Hello")
         system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+
         expect(system_message).wont_be_nil
       end
 
@@ -1670,6 +1858,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.generate("Hello")
         user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
         expect(user_message).wont_be_nil
       end
 
@@ -1677,12 +1866,14 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.generate("Hello")
         assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+
         expect(assistant_message).wont_be_nil
       end
 
       it "returns the content of the final assistant message" do
         agent = agent_class.new
         result = agent.generate("Hello")
+
         expect(result.content).must_be_instance_of String
       end
     end
@@ -1703,6 +1894,7 @@ describe Riffer::Agent::Run do
         agent = options_agent_class.new
         provider = agent.provider
         agent.stream("Hello").each { |_| }
+
         expect(provider.calls.last[:reasoning]).must_equal "high"
       end
 
@@ -1710,6 +1902,7 @@ describe Riffer::Agent::Run do
         agent = options_agent_class.new
         provider = agent.provider
         agent.stream("Hello").each { |_| }
+
         expect(provider.calls.last[:temperature]).must_equal 0.5
       end
     end
@@ -1717,11 +1910,12 @@ describe Riffer::Agent::Run do
     describe "with max_steps" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "stream_max_steps_tool"
           description "Simple tool"
           def call(context:)
             text("done")
           end
-        end.tap { |t| t.identifier("stream_max_steps_tool") }
+        end
       end
 
       it "limits LLM calls when max_steps is set" do
@@ -1734,10 +1928,11 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        3.times { provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}]) }
+        3.times { provider.stub_response("", tool_calls: [{ name: "stream_max_steps_tool", arguments: "{}" }]) }
         provider.stub_response("Final answer")
 
         agent.stream("Do stuff").each { |_| }
+
         expect(provider.calls.length).must_equal 2
       end
 
@@ -1751,10 +1946,11 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "stream_max_steps_tool", arguments: "{}" }])
 
         events = agent.stream("Do stuff").to_a
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
         expect(interrupt_event).wont_be_nil
         expect(interrupt_event.reason).must_equal :max_steps
       end
@@ -1769,11 +1965,12 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [{name: "stream_max_steps_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "stream_max_steps_tool", arguments: "{}" }])
         provider.stub_response("Final answer")
 
         events = agent.stream("Do stuff").to_a
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
         expect(interrupt_event).must_be_nil
       end
     end
@@ -1782,22 +1979,22 @@ describe Riffer::Agent::Run do
       it "returns an enumerator" do
         agent = agent_class.new
         result = agent.stream("What is the weather?")
+
         expect(result).must_be_instance_of Enumerator
       end
 
       it "yields stream events" do
         agent = agent_class.new
-        chunks = []
-        agent.stream("Hello").each do |chunk|
-          chunks << chunk
-        end
+        chunks = agent.stream("Hello").to_a
+
         expect(chunks).wont_be_empty
       end
 
       it "yields TextDelta events" do
         agent = agent_class.new
         events = agent.stream("Hello").to_a
-        text_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        text_deltas = events.grep(Riffer::StreamEvents::TextDelta)
+
         expect(text_deltas).wont_be_empty
       end
 
@@ -1805,6 +2002,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         events = agent.stream("Hello").to_a
         text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
         expect(text_done).wont_be_nil
       end
 
@@ -1812,6 +2010,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
         system_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::System) }
+
         expect(system_message).wont_be_nil
       end
 
@@ -1819,6 +2018,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
         user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
         expect(user_message).wont_be_nil
       end
 
@@ -1826,6 +2026,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
         assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+
         expect(assistant_message).wont_be_nil
       end
 
@@ -1833,6 +2034,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.stream("Hello").each { |_| }
         assistant_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::Assistant) }
+
         expect(assistant_message.content).wont_be_empty
       end
     end
@@ -1844,13 +2046,15 @@ describe Riffer::Agent::Run do
       file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.generate("Describe this", files: [file])
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
       expect(user_message.files.length).must_equal 1
     end
 
     it "converts file hashes to FilePart objects" do
       agent = agent_class.new
-      agent.generate("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}])
+      agent.generate("Describe this", files: [{ data: "aGVsbG8=", media_type: "image/png" }])
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
       expect(user_message.files.first).must_be_instance_of Riffer::Messages::FilePart
     end
 
@@ -1858,14 +2062,15 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
       expect(user_message.files).must_equal []
     end
 
     it "raises when files: is provided without a prompt" do
       agent = agent_class.new
-      error = expect {
-        agent.generate(nil, files: [{data: "aGVsbG8=", media_type: "image/png"}])
-      }.must_raise(Riffer::ArgumentError)
+      error = expect do
+        agent.generate(nil, files: [{ data: "aGVsbG8=", media_type: "image/png" }])
+      end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/files: requires a prompt/)
     end
   end
@@ -1876,13 +2081,15 @@ describe Riffer::Agent::Run do
       file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.stream("Describe this", files: [file]).each { |_| }
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
       expect(user_message.files.length).must_equal 1
     end
 
     it "converts file hashes to FilePart objects" do
       agent = agent_class.new
-      agent.stream("Describe this", files: [{data: "aGVsbG8=", media_type: "image/png"}]).each { |_| }
+      agent.stream("Describe this", files: [{ data: "aGVsbG8=", media_type: "image/png" }]).each { |_| }
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
+
       expect(user_message.files.first).must_be_instance_of Riffer::Messages::FilePart
     end
   end
@@ -1894,6 +2101,7 @@ describe Riffer::Agent::Run do
       end
 
       result = dynamic_agent_class.generate("Hello")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
@@ -1903,6 +2111,7 @@ describe Riffer::Agent::Run do
       end
 
       events = dynamic_agent_class.stream("Hello").to_a
+
       expect(events).wont_be_empty
     end
 
@@ -1914,13 +2123,14 @@ describe Riffer::Agent::Run do
       agent = dynamic_agent_class.new
       provider = agent.provider
       agent.generate("Hello")
+
       expect(provider).must_be_instance_of Riffer::Providers::Mock
     end
 
     it "evaluates the model lambda once per agent instance" do
       call_count = 0
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model -> {
+        model lambda {
           call_count += 1
           "mock/riffer-1"
         }
@@ -1928,21 +2138,23 @@ describe Riffer::Agent::Run do
 
       dynamic_agent_class.new
       dynamic_agent_class.new
+
       expect(call_count).must_equal 2
     end
 
     it "resolves model per agent instance based on context" do
       models_used = []
       dynamic_agent_class = Class.new(Riffer::Agent) do
-        model ->(context) {
+        model lambda { |context|
           model = context&.dig(:premium) ? "mock/riffer-premium" : "mock/riffer-basic"
           models_used << model
           model
         }
       end
 
-      dynamic_agent_class.new(context: {premium: false}).generate("Hello")
-      dynamic_agent_class.new(context: {premium: true}).generate("Hello")
+      dynamic_agent_class.new(context: { premium: false }).generate("Hello")
+      dynamic_agent_class.new(context: { premium: true }).generate("Hello")
+
       expect(models_used).must_equal ["mock/riffer-basic", "mock/riffer-premium"]
     end
 
@@ -1954,6 +2166,7 @@ describe Riffer::Agent::Run do
       agent = dynamic_agent_class.new
       provider = agent.provider
       agent.generate("Hello")
+
       expect(provider.calls.last[:model]).must_equal "my-model"
     end
 
@@ -1982,6 +2195,7 @@ describe Riffer::Agent::Run do
       end
 
       result = static_agent_class.generate("Hello")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
   end
@@ -1998,11 +2212,13 @@ describe Riffer::Agent::Run do
 
       it "emits one message" do
         agent
+
         expect(emitted.length).must_equal 1
       end
 
       it "emits an assistant message" do
         agent
+
         expect(emitted.first).must_be_instance_of Riffer::Messages::Assistant
       end
     end
@@ -2010,6 +2226,7 @@ describe Riffer::Agent::Run do
     describe "during tool use" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "emit_weather_tool"
           description "Gets the weather"
           params do
             required :city, String
@@ -2017,7 +2234,7 @@ describe Riffer::Agent::Run do
           def call(context:, city:)
             text("Weather in #{city}: 20 degrees")
           end
-        end.tap { |t| t.identifier("emit_weather_tool") }
+        end
       end
 
       let(:emitted) { [] }
@@ -2029,9 +2246,12 @@ describe Riffer::Agent::Run do
         end
 
         a = agent_with_tools.new
-        a.provider.stub_response("", tool_calls: [
-          {name: "emit_weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        a.provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "emit_weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         a.provider.stub_response("The weather is nice!")
 
         a.session.on_message { |msg| emitted << msg }
@@ -2041,26 +2261,31 @@ describe Riffer::Agent::Run do
 
       it "emits three messages" do
         agent
+
         expect(emitted.length).must_equal 3
       end
 
       it "emits assistant with tool_calls first" do
         agent
+
         expect(emitted[0]).must_be_instance_of Riffer::Messages::Assistant
       end
 
       it "includes tool_calls in first assistant message" do
         agent
+
         expect(emitted[0].tool_calls).wont_be_empty
       end
 
       it "emits tool message second" do
         agent
+
         expect(emitted[1]).must_be_instance_of Riffer::Messages::Tool
       end
 
       it "emits final assistant message third" do
         agent
+
         expect(emitted[2]).must_be_instance_of Riffer::Messages::Assistant
       end
     end
@@ -2068,6 +2293,7 @@ describe Riffer::Agent::Run do
     describe "when tool fails" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "failing_tool"
           description "A failing tool"
           params do
             required :value, String
@@ -2075,7 +2301,7 @@ describe Riffer::Agent::Run do
           def call(context:, value:)
             raise "Something went wrong"
           end
-        end.tap { |t| t.identifier("failing_tool") }
+        end
       end
 
       let(:emitted) { [] }
@@ -2088,9 +2314,12 @@ describe Riffer::Agent::Run do
 
         agent = agent_with_tools.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "failing_tool", arguments: '{"value":"test"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "failing_tool", arguments: '{"value":"test"}' },
+          ],
+        )
         provider.stub_response("Tool failed.")
 
         agent.session.on_message { |msg| emitted << msg }
@@ -2114,6 +2343,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
+
       expect(result.interrupted?).must_equal true
     end
 
@@ -2121,6 +2351,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
+
       expect(result.content).must_be_instance_of String
     end
 
@@ -2128,6 +2359,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.session.on_message { |_msg| throw :riffer_interrupt, "needs approval" }
       result = agent.generate("Hello")
+
       expect(result.interrupted?).must_equal true
       expect(result.interrupt_reason).must_equal "needs approval"
     end
@@ -2136,17 +2368,19 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
+
       expect(result.interrupt_reason).must_be_nil
     end
 
     describe "throw during tool execution" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "interrupt_partial_tool"
           description "Simple tool"
           def call(context:)
             text("done")
           end
-        end.tap { |t| t.identifier("interrupt_partial_tool") }
+        end
       end
 
       it "stops tool execution on interrupt and resumes pending tools" do
@@ -2158,10 +2392,13 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "interrupt_partial_tool", arguments: "{}"},
-          {name: "interrupt_partial_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "interrupt_partial_tool", arguments: "{}" },
+            { name: "interrupt_partial_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("Done!")
 
         tool_count = 0
@@ -2175,12 +2412,15 @@ describe Riffer::Agent::Run do
         result = agent.generate("Call tools")
 
         expect(result.interrupted?).must_equal true
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 1
 
         result = agent.generate("Continue")
+
         expect(result.interrupted?).must_equal false
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 2
       end
 
@@ -2193,10 +2433,13 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "interrupt_partial_tool", arguments: "{}"},
-          {name: "interrupt_partial_tool", arguments: "{}"}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "interrupt_partial_tool", arguments: "{}" },
+            { name: "interrupt_partial_tool", arguments: "{}" },
+          ],
+        )
         provider.stub_response("Done!")
 
         interrupted_once = false
@@ -2210,12 +2453,15 @@ describe Riffer::Agent::Run do
         result = agent.generate("Call tools")
 
         expect(result.interrupted?).must_equal true
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 0
 
         result = agent.generate("Continue")
+
         expect(result.interrupted?).must_equal false
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 2
       end
     end
@@ -2227,6 +2473,7 @@ describe Riffer::Agent::Run do
         agent.session.on_message { |_msg| first_called = true }
         agent.session.on_message { |_msg| throw :riffer_interrupt }
         agent.generate("Hello")
+
         expect(first_called).must_equal true
       end
     end
@@ -2236,6 +2483,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.session.on_message { |_msg| agent.interrupt! }
         result = agent.generate("Hello")
+
         expect(result.interrupted?).must_equal true
       end
 
@@ -2243,6 +2491,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.session.on_message { |_msg| agent.interrupt!(:needs_approval) }
         result = agent.generate("Hello")
+
         expect(result.interrupt_reason).must_equal :needs_approval
       end
 
@@ -2250,6 +2499,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new
         agent.session.on_message { |_msg| agent.interrupt! }
         result = agent.generate("Hello")
+
         expect(result.interrupt_reason).must_be_nil
       end
     end
@@ -2260,6 +2510,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       result = agent.generate("Continue")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
       expect(result.interrupted?).must_equal false
     end
@@ -2275,6 +2526,7 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       result = agent.generate("Continue")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
     end
 
@@ -2289,6 +2541,7 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       result = agent.generate("Continue")
+
       expect(result.interrupted?).must_equal false
     end
 
@@ -2303,6 +2556,7 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       result = agent.generate("Continue")
+
       expect(result.interrupt_reason).must_be_nil
     end
 
@@ -2318,6 +2572,7 @@ describe Riffer::Agent::Run do
       agent.generate("Hello")
       messages_before = agent.session.messages.length
       agent.generate("Continue")
+
       expect(agent.session.messages.length).must_be :>, messages_before
     end
 
@@ -2332,13 +2587,15 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       agent.generate("Continue")
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
+
       expect(system_messages.length).must_equal 1
     end
 
     describe "with tools" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "resume_weather_tool"
           description "Gets the weather"
           params do
             required :city, String
@@ -2346,7 +2603,7 @@ describe Riffer::Agent::Run do
           def call(context:, city:)
             text("Weather in #{city}: 20 degrees")
           end
-        end.tap { |t| t.identifier("resume_weather_tool") }
+        end
       end
 
       it "completes tool loop after resume" do
@@ -2358,9 +2615,12 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "resume_weather_tool", arguments: '{"city":"Toronto"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "resume_weather_tool", arguments: '{"city":"Toronto"}' },
+          ],
+        )
         provider.stub_response("The weather is nice!")
 
         interrupted_once = false
@@ -2372,9 +2632,11 @@ describe Riffer::Agent::Run do
         end
 
         result = agent.generate("What's the weather?")
+
         expect(result.interrupted?).must_equal true
 
         result = agent.generate("Continue")
+
         expect(result.interrupted?).must_equal false
         expect(result.content).must_equal "The weather is nice!"
       end
@@ -2385,32 +2647,40 @@ describe Riffer::Agent::Run do
         messages = [
           Riffer::Messages::System.new("You are a helpful assistant."),
           Riffer::Messages::User.new("Hello"),
-          Riffer::Messages::Assistant.new("Hi there!")
+          Riffer::Messages::Assistant.new("Hi there!"),
         ]
         agent = agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         result = agent.generate
+
         expect(result).must_be_instance_of Riffer::Agent::Response
       end
 
       it "runs the loop without a prompt when the session already has the last user message" do
         agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
         result = agent.generate
+
         expect(result.interrupted?).must_equal false
       end
 
       it "accepts a new prompt to continue the seeded conversation" do
-        agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [
-          Riffer::Messages::User.new("Hi"),
-          Riffer::Messages::Assistant.new("Hello!")
-        ]))
+        agent = agent_class.new(
+          session: Riffer::Agent::Session.new(
+            messages: [
+              Riffer::Messages::User.new("Hi"),
+              Riffer::Messages::Assistant.new("Hello!"),
+            ],
+          ),
+        )
         agent.generate("How are you?")
-        user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+        user_messages = agent.session.messages.grep(Riffer::Messages::User)
+
         expect(user_messages.length).must_equal 2
         expect(user_messages.last.content).must_equal "How are you?"
       end
 
       it "uses init context for tool execution" do
         context_tool = Class.new(Riffer::Tool) do
+          identifier "resume_context_tool"
           description "Gets user info"
           params do
             required :field, String
@@ -2418,7 +2688,7 @@ describe Riffer::Agent::Run do
           def call(context:, field:)
             text(context[field.to_sym] || "unknown")
           end
-        end.tap { |t| t.identifier("resume_context_tool") }
+        end
 
         tc = context_tool
         custom_agent_class = Class.new(Riffer::Agent) do
@@ -2427,38 +2697,44 @@ describe Riffer::Agent::Run do
         end
 
         session = Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Get my name")])
-        agent = custom_agent_class.new(session: session, context: {user_name: "Alice"})
+        agent = custom_agent_class.new(session: session, context: { user_name: "Alice" })
         provider = agent.provider
-        provider.stub_response("", tool_calls: [
-          {name: "resume_context_tool", arguments: '{"field":"user_name"}'}
-        ])
+        provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "resume_context_tool", arguments: '{"field":"user_name"}' },
+          ],
+        )
         provider.stub_response("Your name is Alice!")
 
         agent.generate
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.first.content).must_equal "Alice"
       end
 
       it "does not prepend the agent's configured instructions" do
         messages = [
           Riffer::Messages::System.new("Custom instructions."),
-          Riffer::Messages::User.new("Hello")
+          Riffer::Messages::User.new("Hello"),
         ]
         agent = agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         agent.generate
-        system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+        system_messages = agent.session.messages.grep(Riffer::Messages::System)
+
         expect(system_messages.length).must_equal 1
         expect(system_messages.first.content).must_equal "Custom instructions."
       end
 
       it "executes pending tool calls left by a prior interrupt" do
         tc = Class.new(Riffer::Tool) do
+          identifier "cross_process_pending_tool"
           description "Simple tool"
           def call(context:)
             text("done")
           end
-        end.tap { |t| t.identifier("cross_process_pending_tool") }
+        end
 
         tool = tc
         custom_agent_class = Class.new(Riffer::Agent) do
@@ -2468,24 +2744,34 @@ describe Riffer::Agent::Run do
 
         messages = [
           Riffer::Messages::User.new("Call tool"),
-          Riffer::Messages::Assistant.new("", tool_calls: [
-            Riffer::Messages::Assistant::ToolCall.new(call_id: "c_1", name: "cross_process_pending_tool", arguments: "{}")
-          ])
+          Riffer::Messages::Assistant.new(
+            "",
+            tool_calls: [
+              Riffer::Messages::Assistant::ToolCall.new(
+                call_id: "c_1",
+                name: "cross_process_pending_tool",
+                arguments: "{}",
+              ),
+            ],
+          ),
         ]
         agent = custom_agent_class.new(session: Riffer::Agent::Session.new(messages: messages))
         provider = agent.provider
         provider.stub_response("All done!")
 
         result = agent.generate
+
         expect(result.interrupted?).must_equal false
 
-        tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+        tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
         expect(tool_messages.length).must_equal 1
         expect(tool_messages.first.content).must_equal "done"
       end
 
       it "defaults context to a Riffer::Agent::Context with nil skills when not provided" do
         agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
+
         expect(agent.context).must_be_instance_of Riffer::Agent::Context
         expect(agent.context.skills).must_be_nil
       end
@@ -2494,11 +2780,12 @@ describe Riffer::Agent::Run do
     describe "auto-derived step offset" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "resume_step_tool"
           description "Simple tool"
           def call(context:)
             text("done")
           end
-        end.tap { |t| t.identifier("resume_step_tool") }
+        end
       end
 
       it "enforces max_steps across sessions" do
@@ -2511,7 +2798,7 @@ describe Riffer::Agent::Run do
 
         agent = custom_agent_class.new
         provider = agent.provider
-        3.times { provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}]) }
+        3.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
 
         # First generate: runs 2 steps then gets interrupted by callback
         interrupted_once = false
@@ -2523,10 +2810,12 @@ describe Riffer::Agent::Run do
         end
 
         result = agent.generate("Do stuff")
+
         expect(result.interrupted?).must_equal true
 
         # Resume via generate with array: step offset is auto-derived from assistant messages
         result = agent.generate("Continue")
+
         expect(result.interrupted?).must_equal true
         expect(result.interrupt_reason).must_equal :max_steps
       end
@@ -2539,19 +2828,22 @@ describe Riffer::Agent::Run do
           uses_tools [tc]
         end
 
-        seeded = Riffer::Agent::Session.new(messages: [
-          Riffer::Messages::User.new("Original prompt"),
-          Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
-          Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
-          Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
-          Riffer::Messages::User.new("Continue")
-        ])
+        seeded = Riffer::Agent::Session.new(
+          messages: [
+            Riffer::Messages::User.new("Original prompt"),
+            Riffer::Messages::Assistant.new("Step 1", tool_calls: []),
+            Riffer::Messages::Assistant.new("Step 2", tool_calls: []),
+            Riffer::Messages::Assistant.new("Step 3", tool_calls: []),
+            Riffer::Messages::User.new("Continue"),
+          ],
+        )
         agent = custom_agent_class.new(session: seeded)
         provider = agent.provider
         # Only 1 more step fits before max_steps (3 prior + 1 = 4)
-        provider.stub_response("", tool_calls: [{name: "resume_step_tool", arguments: "{}"}])
+        provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }])
 
         result = agent.generate
+
         expect(result.interrupted?).must_equal true
         expect(result.interrupt_reason).must_equal :max_steps
       end
@@ -2582,7 +2874,8 @@ describe Riffer::Agent::Run do
 
         provider.stub_response('{"sentiment":"negative"}')
         result = agent.generate("Continue")
-        expect(result.structured_output).must_equal({sentiment: "negative"})
+
+        expect(result.structured_output).must_equal({ sentiment: "negative" })
       end
 
       it "returns parsed structured_output on cross-process resume" do
@@ -2599,7 +2892,8 @@ describe Riffer::Agent::Run do
         provider.stub_response('{"sentiment":"positive"}')
 
         result = agent.generate
-        expect(result.structured_output).must_equal({sentiment: "positive"})
+
+        expect(result.structured_output).must_equal({ sentiment: "positive" })
       end
     end
   end
@@ -2609,7 +2903,8 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       events = agent.stream("Continue").to_a
-      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_events = events.grep(Riffer::StreamEvents::TextDelta)
+
       expect(text_events).wont_be_empty
     end
 
@@ -2624,6 +2919,7 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       result = agent.stream("Continue")
+
       expect(result).must_be_instance_of Enumerator
     end
 
@@ -2638,7 +2934,8 @@ describe Riffer::Agent::Run do
       end
       agent.generate("Hello")
       events = agent.stream("Continue").to_a
-      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_events = events.grep(Riffer::StreamEvents::TextDelta)
+
       expect(text_events).wont_be_empty
     end
 
@@ -2654,18 +2951,22 @@ describe Riffer::Agent::Run do
       agent.generate("Hello")
       events = agent.stream("Continue").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
       expect(interrupt_event).must_be_nil
     end
 
     describe "with a seeded session" do
       it "resumes from a session constructed with persisted messages" do
-        session = Riffer::Agent::Session.new(messages: [
-          Riffer::Messages::System.new("You are a helpful assistant."),
-          Riffer::Messages::User.new("Hello")
-        ])
+        session = Riffer::Agent::Session.new(
+          messages: [
+            Riffer::Messages::System.new("You are a helpful assistant."),
+            Riffer::Messages::User.new("Hello"),
+          ],
+        )
         agent = agent_class.new(session: session)
         events = agent.stream.to_a
-        text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+        text_events = events.grep(Riffer::StreamEvents::TextDelta)
+
         expect(text_events).wont_be_empty
       end
 
@@ -2674,6 +2975,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new(session: session)
         events = agent.stream.to_a
         interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
         expect(interrupt_event).must_be_nil
       end
     end
@@ -2686,6 +2988,7 @@ describe Riffer::Agent::Run do
       messages_before = agent.session.messages.length
 
       result = agent.generate("Follow up")
+
       expect(result).must_be_instance_of Riffer::Agent::Response
       expect(agent.session.messages.length).must_be :>, messages_before
     end
@@ -2694,7 +2997,8 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       agent.generate("Follow up")
-      system_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::System) }
+      system_messages = agent.session.messages.grep(Riffer::Messages::System)
+
       expect(system_messages.length).must_equal 1
     end
 
@@ -2702,7 +3006,8 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.generate("Hello")
       agent.generate("Follow up")
-      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.grep(Riffer::Messages::User)
+
       expect(user_messages.length).must_equal 2
       expect(user_messages.last.content).must_equal "Follow up"
     end
@@ -2718,21 +3023,25 @@ describe Riffer::Agent::Run do
       end
 
       result = agent.generate("Hello")
+
       expect(result.interrupted?).must_equal true
 
       result = agent.generate("Continue please")
+
       expect(result.interrupted?).must_equal false
-      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.grep(Riffer::Messages::User)
+
       expect(user_messages.length).must_equal 2
     end
 
     it "executes pending tool calls on string continuation" do
       tc = Class.new(Riffer::Tool) do
+        identifier "continuation_pending_tool"
         description "Simple tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("continuation_pending_tool") }
+      end
 
       tool = tc
       custom_agent_class = Class.new(Riffer::Agent) do
@@ -2742,10 +3051,13 @@ describe Riffer::Agent::Run do
 
       agent = custom_agent_class.new
       provider = agent.provider
-      provider.stub_response("", tool_calls: [
-        {name: "continuation_pending_tool", arguments: "{}"},
-        {name: "continuation_pending_tool", arguments: "{}"}
-      ])
+      provider.stub_response(
+        "",
+        tool_calls: [
+          { name: "continuation_pending_tool", arguments: "{}" },
+          { name: "continuation_pending_tool", arguments: "{}" },
+        ],
+      )
       provider.stub_response("Done!")
 
       tool_count = 0
@@ -2757,23 +3069,28 @@ describe Riffer::Agent::Run do
       end
 
       result = agent.generate("Call tools")
+
       expect(result.interrupted?).must_equal true
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
       expect(tool_messages.length).must_equal 1
 
       result = agent.generate("Go ahead")
+
       expect(result.interrupted?).must_equal false
-      tool_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::Tool) }
+      tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
+
       expect(tool_messages.length).must_equal 2
     end
 
     it "enforces max_steps across continuations" do
       tc = Class.new(Riffer::Tool) do
+        identifier "continuation_step_tool"
         description "Simple tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("continuation_step_tool") }
+      end
 
       tool = tc
       custom_agent_class = Class.new(Riffer::Agent) do
@@ -2784,7 +3101,7 @@ describe Riffer::Agent::Run do
 
       agent = custom_agent_class.new
       provider = agent.provider
-      3.times { provider.stub_response("", tool_calls: [{name: "continuation_step_tool", arguments: "{}"}]) }
+      3.times { provider.stub_response("", tool_calls: [{ name: "continuation_step_tool", arguments: "{}" }]) }
 
       interrupted_once = false
       agent.session.on_message do |msg|
@@ -2795,9 +3112,11 @@ describe Riffer::Agent::Run do
       end
 
       result = agent.generate("Do stuff")
+
       expect(result.interrupted?).must_equal true
 
       result = agent.generate("Continue")
+
       expect(result.interrupted?).must_equal true
       expect(result.interrupt_reason).must_equal :max_steps
     end
@@ -2807,10 +3126,12 @@ describe Riffer::Agent::Run do
       agent.generate("Hello")
 
       events = agent.stream("Follow up").to_a
-      text_events = events.select { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+      text_events = events.grep(Riffer::StreamEvents::TextDelta)
+
       expect(text_events).wont_be_empty
 
-      user_messages = agent.session.messages.select { |m| m.is_a?(Riffer::Messages::User) }
+      user_messages = agent.session.messages.grep(Riffer::Messages::User)
+
       expect(user_messages.length).must_equal 2
     end
   end
@@ -2821,6 +3142,7 @@ describe Riffer::Agent::Run do
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
       expect(interrupt_event).wont_be_nil
     end
 
@@ -2829,6 +3151,7 @@ describe Riffer::Agent::Run do
       agent.session.on_message { |_msg| throw :riffer_interrupt, "budget exceeded" }
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
       expect(interrupt_event.reason).must_equal "budget exceeded"
     end
 
@@ -2837,6 +3160,7 @@ describe Riffer::Agent::Run do
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       events = agent.stream("Hello").to_a
       interrupt_event = events.find { |e| e.is_a?(Riffer::StreamEvents::Interrupt) }
+
       expect(interrupt_event.reason).must_be_nil
     end
   end
@@ -2853,11 +3177,13 @@ describe Riffer::Agent::Run do
 
       it "emits one message" do
         agent
+
         expect(emitted.length).must_equal 1
       end
 
       it "emits an assistant message" do
         agent
+
         expect(emitted.first).must_be_instance_of Riffer::Messages::Assistant
       end
     end
@@ -2865,6 +3191,7 @@ describe Riffer::Agent::Run do
     describe "during tool calling loop" do
       let(:tool_class) do
         Class.new(Riffer::Tool) do
+          identifier "stream_emit_weather_tool"
           description "Gets the weather"
           params do
             required :city, String
@@ -2872,7 +3199,7 @@ describe Riffer::Agent::Run do
           def call(context:, city:)
             text("Weather in #{city}: 20 degrees")
           end
-        end.tap { |t| t.identifier("stream_emit_weather_tool") }
+        end
       end
 
       let(:emitted) { [] }
@@ -2884,9 +3211,12 @@ describe Riffer::Agent::Run do
         end
 
         a = agent_with_tools.new
-        a.provider.stub_response("", tool_calls: [
-          {name: "stream_emit_weather_tool", arguments: '{"city":"Tokyo"}'}
-        ])
+        a.provider.stub_response(
+          "",
+          tool_calls: [
+            { name: "stream_emit_weather_tool", arguments: '{"city":"Tokyo"}' },
+          ],
+        )
         a.provider.stub_response("The weather is nice!")
 
         a.session.on_message { |msg| emitted << msg }
@@ -2896,21 +3226,25 @@ describe Riffer::Agent::Run do
 
       it "emits three messages" do
         agent
+
         expect(emitted.length).must_equal 3
       end
 
       it "emits assistant message first" do
         agent
+
         expect(emitted[0]).must_be_instance_of Riffer::Messages::Assistant
       end
 
       it "emits tool message second" do
         agent
+
         expect(emitted[1]).must_be_instance_of Riffer::Messages::Tool
       end
 
       it "emits final assistant message third" do
         agent
+
         expect(emitted[2]).must_be_instance_of Riffer::Messages::Assistant
       end
     end
@@ -2937,11 +3271,12 @@ describe Riffer::Agent::Run do
 
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "run_tracing_tool"
         description "Traced tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("run_tracing_tool") }
+      end
     end
 
     let(:agent_class_with_tools) do
@@ -3009,10 +3344,16 @@ describe Riffer::Agent::Run do
     def generate_with_tool_loop(agent)
       agent.provider.stub_response(
         "",
-        tool_calls: [{name: "run_tracing_tool", arguments: "{}"}],
-        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+        tool_calls: [{ name: "run_tracing_tool", arguments: "{}" }],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50),
       )
-      agent.provider.stub_response("Done!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75))
+      agent.provider.stub_response(
+        "Done!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 150,
+          output_tokens: 75,
+        ),
+      )
       agent.generate("Call the tool")
     end
 
@@ -3023,67 +3364,119 @@ describe Riffer::Agent::Run do
 
     it "names the span after the agent identifier" do
       agent_class.new.generate("Hello")
+
       expect(run_span.name).must_equal "invoke_agent traced-agent"
     end
 
     it "marks the span as internal" do
       agent_class.new.generate("Hello")
+
       expect(run_span.kind).must_equal :internal
     end
 
     it "sets the request attributes" do
       agent_class.new.generate("Hello")
-      attributes = run_span.attributes.slice("gen_ai.operation.name", "gen_ai.agent.name", "gen_ai.provider.name", "gen_ai.request.model")
-      expect(attributes).must_equal({
-        "gen_ai.operation.name" => "invoke_agent",
-        "gen_ai.agent.name" => "traced-agent",
-        "gen_ai.provider.name" => "mock",
-        "gen_ai.request.model" => "riffer-1"
-      })
+      attributes = run_span.attributes.slice(
+        "gen_ai.operation.name",
+        "gen_ai.agent.name",
+        "gen_ai.provider.name",
+        "gen_ai.request.model",
+      )
+
+      expect(attributes).must_equal(
+        {
+          "gen_ai.operation.name" => "invoke_agent",
+          "gen_ai.agent.name" => "traced-agent",
+          "gen_ai.provider.name" => "mock",
+          "gen_ai.request.model" => "riffer-1",
+        },
+      )
     end
 
     it "records the per-run step count across tool loops" do
       generate_with_tool_loop(agent_class_with_tools.new)
+
       expect(run_span.attributes["riffer.steps"]).must_equal 2
     end
 
     it "aggregates token usage across steps" do
       generate_with_tool_loop(agent_class_with_tools.new)
       usage = run_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens")
-      expect(usage).must_equal({"gen_ai.usage.input_tokens" => 250, "gen_ai.usage.output_tokens" => 125})
+
+      expect(usage).must_equal({ "gen_ai.usage.input_tokens" => 250, "gen_ai.usage.output_tokens" => 125 })
     end
 
     it "omits usage attributes when no call reports usage" do
       agent_class.new.generate("Hello")
+
       expect(run_span.attributes).wont_include "gen_ai.usage.input_tokens"
     end
 
     it "sums per-call cost onto the run span" do
       agent = agent_class_with_tools.new
-      agent.provider.stub_response("", tool_calls: [{name: "run_tracing_tool", arguments: "{}"}], token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.5))
-      agent.provider.stub_response("Done!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75, cost: 0.25))
+      agent.provider.stub_response(
+        "",
+        tool_calls: [{ name: "run_tracing_tool", arguments: "{}" }],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.5),
+      )
+      agent.provider.stub_response(
+        "Done!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 150,
+          output_tokens: 75,
+          cost: 0.25,
+        ),
+      )
       agent.generate("Call the tool")
+
       expect(run_span.attributes["riffer.cost"]).must_equal 0.75
     end
 
     it "omits run cost when any call carries no cost" do
       agent = agent_class_with_tools.new
-      agent.provider.stub_response("", tool_calls: [{name: "run_tracing_tool", arguments: "{}"}], token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.5))
-      agent.provider.stub_response("Done!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 150, output_tokens: 75))
+      agent.provider.stub_response(
+        "",
+        tool_calls: [{ name: "run_tracing_tool", arguments: "{}" }],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.5),
+      )
+      agent.provider.stub_response(
+        "Done!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 150,
+          output_tokens: 75,
+        ),
+      )
       agent.generate("Call the tool")
+
       expect(run_span.attributes).wont_include "riffer.cost"
     end
 
     it "records cache token attributes when reported" do
       agent = agent_class.new
-      agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cache_read_tokens: 30, cache_write_tokens: 10))
+      agent.provider.stub_response(
+        "Hello!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+          cache_read_tokens: 30,
+          cache_write_tokens: 10,
+        ),
+      )
       agent.generate("Hello")
-      cache = run_span.attributes.slice("gen_ai.usage.cache_read.input_tokens", "gen_ai.usage.cache_creation.input_tokens")
-      expect(cache).must_equal({"gen_ai.usage.cache_read.input_tokens" => 30, "gen_ai.usage.cache_creation.input_tokens" => 10})
+      cache = run_span.attributes.slice(
+        "gen_ai.usage.cache_read.input_tokens",
+        "gen_ai.usage.cache_creation.input_tokens",
+      )
+
+      expect(cache).must_equal(
+        { "gen_ai.usage.cache_read.input_tokens" => 30,
+          "gen_ai.usage.cache_creation.input_tokens" => 10, },
+      )
     end
 
     it "leaves the span status unset on success" do
       agent_class.new.generate("Hello")
+
       expect(run_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
     end
 
@@ -3091,6 +3484,7 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.session.on_message { |msg| agent.interrupt!("approval needed") if msg.is_a?(Riffer::Messages::Assistant) }
       agent.generate("Hello")
+
       expect(run_span.attributes["riffer.interrupt.reason"]).must_equal "approval needed"
     end
 
@@ -3103,6 +3497,7 @@ describe Riffer::Agent::Run do
         max_steps 1
       end
       generate_with_tool_loop(agent_with_max_steps.new)
+
       expect(run_span.attributes["riffer.interrupt.reason"]).must_equal "max_steps"
     end
 
@@ -3110,43 +3505,57 @@ describe Riffer::Agent::Run do
       agent = agent_class.new
       agent.session.on_message { |msg| agent.interrupt!("approval needed") if msg.is_a?(Riffer::Messages::Assistant) }
       agent.generate("Hello")
+
       expect(run_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
     end
 
     it "records the tripwire guardrail" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(run_span.attributes["riffer.tripwire.guardrail"]).must_equal "run_tracing_blocking_input_guardrail"
     end
 
     it "records the tripwire reason" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(run_span.attributes["riffer.tripwire.reason"]).must_equal "Input blocked"
     end
 
     it "records the before phase" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(run_span.attributes["riffer.tripwire.phase"]).must_equal "before"
     end
 
     it "records the after phase" do
       agent_class_with_blocking_output.new.generate("Hello")
+
       expect(run_span.attributes["riffer.tripwire.phase"]).must_equal "after"
     end
 
     it "records zero steps when a before guardrail blocks" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(run_span.attributes["riffer.steps"]).must_equal 0
     end
 
     it "records usage from calls made before an after guardrail blocks" do
       agent = agent_class_with_blocking_output.new
-      agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
+      agent.provider.stub_response(
+        "Hello!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+        ),
+      )
       agent.generate("Hello")
+
       expect(run_span.attributes["gen_ai.usage.input_tokens"]).must_equal 100
     end
 
     it "keeps the span status unset when a tripwire fires" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(run_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
     end
 
@@ -3158,7 +3567,9 @@ describe Riffer::Agent::Run do
       begin
         generate_with_raising_callback(agent_class.new)
       rescue RuntimeError
+        # swallow the raise — the recorded span is the subject under test
       end
+
       expect(run_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
 
@@ -3166,17 +3577,21 @@ describe Riffer::Agent::Run do
       begin
         generate_with_raising_callback(agent_class.new)
       rescue RuntimeError
+        # swallow the raise — the recorded span is the subject under test
       end
+
       expect(run_span.attributes["error.type"]).must_equal "RuntimeError"
     end
 
     it "emits no span before the enumerator is consumed" do
       agent_class.new.stream("Hello")
+
       expect(@exporter.finished_spans).must_be_empty
     end
 
     it "emits the run span when the stream drains" do
       agent_class.new.stream("Hello").each { |_| }
+
       expect(run_span.name).must_equal "invoke_agent traced-agent"
     end
 
@@ -3185,74 +3600,94 @@ describe Riffer::Agent::Run do
       Riffer::Tracing.in_span("host") { enumerator = agent_class.new.stream("Hello") }
       enumerator.each { |_| }
       host = @exporter.finished_spans.find { |span| span.name == "host" }
+
       expect(run_span.parent_span_id).must_equal host.span_id
     end
 
     it "aggregates streamed token usage" do
       agent = agent_class.new
-      agent.provider.stub_response("Hello!", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50))
+      agent.provider.stub_response(
+        "Hello!",
+        token_usage: Riffer::Providers::TokenUsage.new(
+          input_tokens: 100,
+          output_tokens: 50,
+        ),
+      )
       agent.stream("Hello").each { |_| }
       usage = run_span.attributes.slice("gen_ai.usage.input_tokens", "gen_ai.usage.output_tokens")
-      expect(usage).must_equal({"gen_ai.usage.input_tokens" => 100, "gen_ai.usage.output_tokens" => 50})
+
+      expect(usage).must_equal({ "gen_ai.usage.input_tokens" => 100, "gen_ai.usage.output_tokens" => 50 })
     end
 
     it "names the guardrail span after the guardrail" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.name).must_equal "execute_guardrail run_tracing_passing_guardrail"
     end
 
     it "marks the guardrail span as internal" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.kind).must_equal :internal
     end
 
     it "records the guardrail name attribute" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.guardrail.name"]).must_equal "run_tracing_passing_guardrail"
     end
 
     it "records the guardrail phase" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.guardrail.phase"]).must_equal "before"
     end
 
     it "records a pass action" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.guardrail.action"]).must_equal "pass"
     end
 
     it "records a transform action" do
       agent_class_with_transform_guardrail.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.guardrail.action"]).must_equal "transform"
     end
 
     it "records a block action" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.guardrail.action"]).must_equal "block"
     end
 
     it "records the tripwire reason on a block" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.tripwire.reason"]).must_equal "Input blocked"
     end
 
     it "omits the tripwire reason when not blocked" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.attributes).wont_include "riffer.tripwire.reason"
     end
 
     it "leaves the guardrail span status unset on a block" do
       agent_class_with_blocking_input.new.generate("Hello")
+
       expect(guardrail_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
     end
 
     it "records the after phase on an after guardrail span" do
       agent_class_with_blocking_output.new.generate("Hello")
+
       expect(guardrail_span.attributes["riffer.guardrail.phase"]).must_equal "after"
     end
 
     it "nests the guardrail span under the run span" do
       agent_class_with_passing_guardrail.new.generate("Hello")
+
       expect(guardrail_span.parent_span_id).must_equal run_span.span_id
     end
 
@@ -3260,7 +3695,9 @@ describe Riffer::Agent::Run do
       begin
         agent_class_with_raising_guardrail.new.generate("Hello")
       rescue RuntimeError
+        # swallow the raise — the recorded span is the subject under test
       end
+
       expect(guardrail_span.attributes["error.type"]).must_equal "RuntimeError"
     end
 
@@ -3268,7 +3705,9 @@ describe Riffer::Agent::Run do
       begin
         agent_class_with_raising_guardrail.new.generate("Hello")
       rescue RuntimeError
+        # swallow the raise — the recorded span is the subject under test
       end
+
       expect(guardrail_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
@@ -3283,11 +3722,12 @@ describe Riffer::Agent::Run do
 
     let(:tool_class) do
       Class.new(Riffer::Tool) do
+        identifier "run_tags_tool"
         description "Tagged tool"
         def call(context:)
           text("done")
         end
-      end.tap { |t| t.identifier("run_tags_tool") }
+      end
     end
 
     let(:agent_class_with_tools) do
@@ -3302,40 +3742,46 @@ describe Riffer::Agent::Run do
     describe "provider threading" do
       it "passes normalized tags to the provider on generate" do
         agent = agent_class.new
-        agent.generate("Hello", tags: {team: "growth", user_id: "u_1"})
-        expect(agent.provider.calls.last[:tags]).must_equal({"team" => "growth", "user_id" => "u_1"})
+        agent.generate("Hello", tags: { team: "growth", user_id: "u_1" })
+
+        expect(agent.provider.calls.last[:tags]).must_equal({ "team" => "growth", "user_id" => "u_1" })
       end
 
       it "stringifies symbol values and drops nil-valued entries" do
         agent = agent_class.new
-        agent.generate("Hello", tags: {team: :growth, region: nil})
-        expect(agent.provider.calls.last[:tags]).must_equal({"team" => "growth"})
+        agent.generate("Hello", tags: { team: :growth, region: nil })
+
+        expect(agent.provider.calls.last[:tags]).must_equal({ "team" => "growth" })
       end
 
       it "passes tags on every provider call across the tool loop" do
         agent = agent_class_with_tools.new
-        agent.provider.stub_response("", tool_calls: [{name: "run_tags_tool", arguments: "{}"}])
+        agent.provider.stub_response("", tool_calls: [{ name: "run_tags_tool", arguments: "{}" }])
         agent.provider.stub_response("Done!")
-        agent.generate("Call the tool", tags: {team: "growth"})
+        agent.generate("Call the tool", tags: { team: "growth" })
         tags_per_call = agent.provider.calls.map { |c| c[:tags] }
-        expect(tags_per_call).must_equal([{"team" => "growth"}, {"team" => "growth"}])
+
+        expect(tags_per_call).must_equal([{ "team" => "growth" }, { "team" => "growth" }])
       end
 
       it "passes tags to the provider on stream" do
         agent = agent_class.new
-        agent.stream("Hello", tags: {team: "growth"}).each { |_| }
-        expect(agent.provider.calls.last[:tags]).must_equal({"team" => "growth"})
+        agent.stream("Hello", tags: { team: "growth" }).each { |_| }
+
+        expect(agent.provider.calls.last[:tags]).must_equal({ "team" => "growth" })
       end
 
       it "omits the tags option entirely when none are given" do
         agent = agent_class.new
         agent.generate("Hello")
+
         expect(agent.provider.calls.last.key?(:tags)).must_equal false
       end
 
       it "omits the tags option for an empty hash" do
         agent = agent_class.new
         agent.generate("Hello", tags: {})
+
         expect(agent.provider.calls.last.key?(:tags)).must_equal false
       end
 
@@ -3363,25 +3809,29 @@ describe Riffer::Agent::Run do
       end
 
       it "stamps riffer.tag.* on the invoke_agent span" do
-        agent_class.new.generate("Hello", tags: {team: "growth"})
+        agent_class.new.generate("Hello", tags: { team: "growth" })
+
         expect(span_named("invoke_agent").attributes["riffer.tag.team"]).must_equal "growth"
       end
 
       it "stamps riffer.tag.* on the chat span" do
-        agent_class.new.generate("Hello", tags: {team: "growth"})
+        agent_class.new.generate("Hello", tags: { team: "growth" })
+
         expect(span_named("chat").attributes["riffer.tag.team"]).must_equal "growth"
       end
 
       it "stamps riffer.tag.* on the execute_tool span" do
         agent = agent_class_with_tools.new
-        agent.provider.stub_response("", tool_calls: [{name: "run_tags_tool", arguments: "{}"}])
+        agent.provider.stub_response("", tool_calls: [{ name: "run_tags_tool", arguments: "{}" }])
         agent.provider.stub_response("Done!")
-        agent.generate("Call the tool", tags: {team: "growth"})
+        agent.generate("Call the tool", tags: { team: "growth" })
+
         expect(span_named("execute_tool").attributes["riffer.tag.team"]).must_equal "growth"
       end
 
       it "stamps riffer.tag.* on chat spans emitted while streaming" do
-        agent_class.new.stream("Hello", tags: {team: "growth"}).each { |_| }
+        agent_class.new.stream("Hello", tags: { team: "growth" }).each { |_| }
+
         expect(span_named("chat").attributes["riffer.tag.team"]).must_equal "growth"
       end
 
@@ -3391,13 +3841,15 @@ describe Riffer::Agent::Run do
           model "mock/riffer-1"
         end
         klass.guardrail(:before, with: RunTracingPassingGuardrail)
-        klass.new.generate("Hello", tags: {team: "growth"})
+        klass.new.generate("Hello", tags: { team: "growth" })
+
         expect(span_named("execute_guardrail").attributes["riffer.tag.team"]).must_equal "growth"
       end
 
       it "leaves spans untagged when no tags are given" do
         agent_class.new.generate("Hello")
         tag_keys = span_named("invoke_agent").attributes.keys.grep(/\Ariffer\.tag\./)
+
         expect(tag_keys).must_be_empty
       end
     end

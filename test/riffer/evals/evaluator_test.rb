@@ -24,6 +24,7 @@ describe Riffer::Evals::Evaluator do
 
     it "returns nil when not set" do
       anon_class = Class.new(Riffer::Evals::Evaluator)
+
       expect(anon_class.instructions).must_be_nil
     end
   end
@@ -39,6 +40,7 @@ describe Riffer::Evals::Evaluator do
 
     it "defaults to true when not set" do
       anon_class = Class.new(Riffer::Evals::Evaluator)
+
       expect(anon_class.higher_is_better).must_equal true
     end
   end
@@ -48,6 +50,7 @@ describe Riffer::Evals::Evaluator do
       klass = Class.new(Riffer::Evals::Evaluator) do
         judge_model "anthropic/claude-sonnet-4-20250514"
       end
+
       expect(klass.judge_model).must_equal "anthropic/claude-sonnet-4-20250514"
     end
 
@@ -63,6 +66,7 @@ describe Riffer::Evals::Evaluator do
       end
 
       evaluator = anon_class.new
+
       expect { evaluator.evaluate(input: "test", output: "test") }.must_raise(NotImplementedError)
     end
 
@@ -75,7 +79,7 @@ describe Riffer::Evals::Evaluator do
       evaluator = klass.new
       judge = evaluator.send(:judge)
       provider = judge.send(:provider_instance)
-      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.8, reason: "Good"}}])
+      provider.stub_response("", tool_calls: [{ name: "evaluation", arguments: { score: 0.8, reason: "Good" } }])
 
       result = evaluator.evaluate(input: "test input", output: "test output")
 
@@ -92,12 +96,12 @@ describe Riffer::Evals::Evaluator do
       evaluator = klass.new
       judge = evaluator.send(:judge)
       provider = judge.send(:provider_instance)
-      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.8, reason: "Good"}}])
+      provider.stub_response("", tool_calls: [{ name: "evaluation", arguments: { score: 0.8, reason: "Good" } }])
 
       messages = [
-        {role: "user", content: "What is Ruby?"},
-        {role: "assistant", content: "Ruby is a programming language."},
-        {role: "user", content: "Tell me more."}
+        { role: "user", content: "What is Ruby?" },
+        { role: "assistant", content: "Ruby is a programming language." },
+        { role: "user", content: "Tell me more." },
       ]
 
       result = evaluator.evaluate(input: messages, output: "test output")
@@ -114,11 +118,31 @@ describe Riffer::Evals::Evaluator do
       evaluator = klass.new
       judge = evaluator.send(:judge)
       provider = judge.send(:provider_instance)
-      provider.stub_response("", tool_calls: [{name: "evaluation", arguments: {score: 0.95, reason: "Matches"}}])
+      provider.stub_response("", tool_calls: [{ name: "evaluation", arguments: { score: 0.95, reason: "Matches" } }])
 
       result = evaluator.evaluate(input: "question", output: "answer", ground_truth: "expected")
 
       expect(result.score).must_equal 0.95
+    end
+
+    it "captures the judge's token usage on the result" do
+      klass = Class.new(Riffer::Evals::Evaluator) do
+        instructions "Evaluate quality."
+        judge_model "mock/eval-model"
+      end
+
+      evaluator = klass.new
+      judge = evaluator.send(:judge)
+      provider = judge.send(:provider_instance)
+      provider.stub_response(
+        "",
+        tool_calls: [{ name: "evaluation", arguments: { score: 0.8, reason: "Good" } }],
+        token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 30, output_tokens: 12),
+      )
+
+      result = evaluator.evaluate(input: "test input", output: "test output")
+
+      expect(result.token_usage.total_tokens).must_equal 42
     end
   end
 

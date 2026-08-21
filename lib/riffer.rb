@@ -8,7 +8,7 @@ loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect(
   "open_ai" => "OpenAI",
   "azure_open_ai" => "AzureOpenAI",
-  "open_router" => "OpenRouter"
+  "open_router" => "OpenRouter",
 )
 loader.setup
 
@@ -69,7 +69,7 @@ module Riffer
   #
   #--
   #: () ?{ (Riffer::Config) -> void } -> void
-  def configure(&block)
+  def configure(&)
     yield config if block_given?
   end
 

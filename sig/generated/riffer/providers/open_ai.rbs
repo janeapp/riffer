@@ -10,14 +10,25 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : (**untyped) -> void
-  def initialize: (**untyped) -> void
+  # : () -> void
+  def initialize: () -> void
 
   # --
   # : (Riffer::Messages::FilePart) -> Symbol
   def file_delivery: (Riffer::Messages::FilePart) -> Symbol
 
   private
+
+  # --
+  # : () -> untyped
+  def global_client: () -> untyped
+
+  # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /
+  # +OPENAI_BASE_URL+ only for a missing argument, and an explicit nil would
+  # suppress that fallback.
+  # --
+  # : () -> untyped
+  def build_client: () -> untyped
 
   # --
   # : (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
