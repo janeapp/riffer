@@ -35,7 +35,8 @@ class Riffer::Files::Resolver
   def check_file_count!(message)
     max = @config.max_per_message
     return if max.nil? || message.files.size <= max
-    raise Riffer::TooManyFilesError.new("Too many files specified in user message")
+
+    raise Riffer::TooManyFilesError, "Too many files specified in user message"
   end
 
   #: (Riffer::Messages::FilePart) -> void
@@ -44,7 +45,7 @@ class Riffer::Files::Resolver
 
     case @provider.file_delivery(file)
     when :unsupported
-      raise Riffer::FileUnsupportedError.new("Provider does not support user message file attachments")
+      raise Riffer::FileUnsupportedError, "Provider does not support user message file attachments"
     when :url
       download!(file, cache: false) if file.sha256
     when :data
@@ -55,6 +56,7 @@ class Riffer::Files::Resolver
   #: (Riffer::Messages::FilePart) -> void
   def verify_inline!(file)
     return unless file.sha256
+
     verify_encoded!(file.data, file.sha256)
   end
 
@@ -63,7 +65,7 @@ class Riffer::Files::Resolver
   # would hold memory nothing reads and let later turns skip re-verifying.
   #: (Riffer::Messages::FilePart, cache: bool) -> void
   def download!(file, cache:)
-    raise Riffer::FileDownloadsDisabledError.new("File attachments are disabled") unless @config.allow_downloads
+    raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads
 
     encoded = @config.downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
     verify_encoded!(encoded, file.sha256) if file.sha256
@@ -71,6 +73,9 @@ class Riffer::Files::Resolver
   end
 
   def verify_encoded!(encoded, sha256)
-    raise Riffer::FileChecksumMismatchError, "File checksum mismatch" unless Digest::SHA256.hexdigest(Base64.decode64(encoded)) == sha256
+    return if Digest::SHA256.hexdigest(Base64.decode64(encoded)) == sha256
+
+    raise Riffer::FileChecksumMismatchError,
+          "File checksum mismatch"
   end
 end

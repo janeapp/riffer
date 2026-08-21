@@ -13,7 +13,7 @@ class Riffer::Files::Downloader
     Base64.strict_encode64(fetch(url, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS))
   rescue Riffer::Error
     raise
-  rescue => e
+  rescue StandardError => e
     raise Riffer::FileDownloadError, "Error downloading file: #{e.message}"
   end
 
@@ -45,6 +45,7 @@ class Riffer::Files::Downloader
         case response
         when Net::HTTPRedirection
           raise Riffer::FileDownloadError, "Too many redirects" if redirects_remaining.zero?
+
           redirect_location = response["location"]
           raise Riffer::FileDownloadError, "Redirect missing Location header" if redirect_location.nil?
         when Net::HTTPSuccess
@@ -56,7 +57,8 @@ class Riffer::Files::Downloader
     end
 
     if redirect_location
-      return fetch(redirect_location, max_bytes: max_bytes, timeout: timeout, redirects_remaining: redirects_remaining - 1)
+      return fetch(redirect_location, max_bytes: max_bytes, timeout: timeout,
+                                      redirects_remaining: redirects_remaining - 1,)
     end
 
     content #: String

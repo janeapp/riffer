@@ -12,10 +12,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-  def initialize: (?api_key: String?, ?open_timeout: Integer?, ?read_timeout: Integer?, **untyped) -> void
-
-  # --
   # : (Riffer::Messages::FilePart) -> Symbol
   def file_delivery: (Riffer::Messages::FilePart) -> Symbol
 

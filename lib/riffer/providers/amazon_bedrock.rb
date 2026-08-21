@@ -43,6 +43,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     depends_on "aws-sdk-bedrockruntime"
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    file.url&.start_with?("s3://") ? :url : :data
+  end
+
   private
 
   #--
@@ -70,14 +76,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       Aws::BedrockRuntime::Client.new(**{ region: region }.compact)
     end
   end
-
-  #--
-  #: (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery(file)
-    file.url&.start_with?("s3://") ? :url : :data
-  end
-
-  private
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

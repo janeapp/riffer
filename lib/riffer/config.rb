@@ -155,7 +155,8 @@ class Riffer::Config
     #--
     #: (untyped) -> void
     def max_bytes=(value)
-      raise Riffer::ArgumentError, "max_bytes must be a positive integer" unless value.is_a?(Integer) && value > 0
+      raise Riffer::ArgumentError, "max_bytes must be a positive integer" unless value.is_a?(Integer) && value.positive?
+
       @max_bytes = value
     end
 
@@ -164,7 +165,8 @@ class Riffer::Config
     #--
     #: (untyped) -> void
     def timeout=(value)
-      raise Riffer::ArgumentError, "timeout must be a positive integer" unless value.is_a?(Integer) && value > 0
+      raise Riffer::ArgumentError, "timeout must be a positive integer" unless value.is_a?(Integer) && value.positive?
+
       @timeout = value
     end
 
@@ -173,7 +175,7 @@ class Riffer::Config
     #--
     #: (untyped) -> void
     def max_per_message=(value)
-      if value.is_a?(Integer) && value > 0
+      if value.is_a?(Integer) && value.positive?
         @max_per_message = value
       elsif value.nil?
         @max_per_message = nil
@@ -189,6 +191,7 @@ class Riffer::Config
     def runner=(value)
       valid = value.is_a?(Riffer::Runner)
       raise Riffer::ArgumentError, "runner must be a Riffer::Runner instance" unless valid
+
       @runner = value
     end
 
@@ -198,6 +201,7 @@ class Riffer::Config
     #: (untyped) -> void
     def downloader=(value)
       raise Riffer::ArgumentError, "downloader must respond to #call" unless value.respond_to?(:call)
+
       @downloader = value
     end
   end

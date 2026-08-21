@@ -103,7 +103,7 @@ class Riffer::Providers::Base
 
   #--
   #: (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery(file)
+  def file_delivery(_file)
     :url
   end
 

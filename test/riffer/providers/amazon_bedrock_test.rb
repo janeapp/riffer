@@ -1424,7 +1424,7 @@ describe Riffer::Providers::AmazonBedrock do
 
     describe "with unsupported URL source" do
       it "raises FileDownloadsDisabledError for non-S3 URLs when downloads are disabled" do
-        provider = Riffer::Providers::AmazonBedrock.new(api_token: api_token, region: "us-east-1")
+        provider = Riffer::Providers::AmazonBedrock.new
         file = Riffer::Messages::FilePart.from_url("https://example.com/image.png")
 
         expect do

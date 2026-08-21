@@ -120,7 +120,7 @@ describe Riffer::Providers::Base do
       file_b = Riffer::Messages::FilePart.new(media_type: "image/png", data: "Yg==")
       messages = [
         Riffer::Messages::User.new("First", files: [file_a]),
-        Riffer::Messages::User.new("Second", files: [file_b])
+        Riffer::Messages::User.new("Second", files: [file_b]),
       ]
 
       # These two messages would merge into a single 2-file message, which would

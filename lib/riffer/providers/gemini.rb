@@ -27,6 +27,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "gcp.gemini"
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(_file)
+    :data
+  end
+
   private
 
   #--
@@ -40,14 +46,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def build_client
     Riffer::Providers::Gemini::Client.new(**{ api_key: Riffer.config.gemini.api_key }.compact)
   end
-
-  #--
-  #: (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery(file)
-    :data
-  end
-
-  private
 
   #--
   #: (Array[Riffer::Messages::Base], String?, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

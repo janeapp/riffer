@@ -9,7 +9,7 @@ describe Riffer::Files::Resolver do
     calls = downloaded_calls
     content = downloaded_content
     lambda do |url, max_bytes:, timeout:|
-      calls << {url: url, max_bytes: max_bytes, timeout: timeout}
+      calls << { url: url, max_bytes: max_bytes, timeout: timeout }
       Base64.strict_encode64(content)
     end
   end
@@ -40,6 +40,7 @@ describe Riffer::Files::Resolver do
     it "ignores non-user messages" do
       messages = [Riffer::Messages::System.new("be helpful"), Riffer::Messages::Assistant.new("hi")]
       resolver_for(:url).resolve!(messages)
+
       expect(downloaded_calls).must_be_empty
     end
 
@@ -52,6 +53,7 @@ describe Riffer::Files::Resolver do
         file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:unsupported).resolve!([message])
+
         expect(file.data).must_equal data
         expect(downloaded_calls).must_be_empty
       end
@@ -60,12 +62,15 @@ describe Riffer::Files::Resolver do
         file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data, sha256: sha256)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:unsupported).resolve!([message])
+
         expect(file.data).must_equal data
       end
 
       it "raises Riffer::FileChecksumMismatchError when the sha256 doesn't match" do
-        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data, sha256: Digest::SHA256.hexdigest("something else"))
+        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data,
+                                              sha256: Digest::SHA256.hexdigest("something else"),)
         message = Riffer::Messages::User.new("hi", files: [file])
+
         expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
       end
     end
@@ -74,6 +79,7 @@ describe Riffer::Files::Resolver do
       it "raises Riffer::FileUnsupportedError" do
         file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
+
         expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileUnsupportedError
       end
     end
@@ -83,22 +89,29 @@ describe Riffer::Files::Resolver do
         file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:url).resolve!([message])
+
         expect(file.data).must_be_nil
         expect(downloaded_calls).must_be_empty
       end
 
       it "downloads and verifies when a sha256 is given, without caching the bytes" do
         sha256 = Digest::SHA256.hexdigest(downloaded_content)
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf", sha256: sha256)
+        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                                   sha256: sha256,)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:url).resolve!([message])
+
         expect(file.data).must_be_nil
         expect(downloaded_calls.size).must_equal 1
       end
 
       it "raises Riffer::FileChecksumMismatchError when the downloaded content doesn't match" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf", sha256: Digest::SHA256.hexdigest("something else"))
+        sha256 = Digest::SHA256.hexdigest("something else")
+        file = Riffer::Messages::FilePart.from_url(
+          "https://example.com/file.pdf", media_type: "application/pdf", sha256: sha256,
+        )
         message = Riffer::Messages::User.new("hi", files: [file])
+
         expect { resolver_for(:url).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
       end
     end
@@ -108,6 +121,7 @@ describe Riffer::Files::Resolver do
         file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:data).resolve!([message])
+
         expect(file.data).must_equal Base64.strict_encode64(downloaded_content)
       end
     end
@@ -118,6 +132,7 @@ describe Riffer::Files::Resolver do
       it "raises Riffer::FileDownloadsDisabledError instead of downloading" do
         file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
+
         expect { resolver_for(:data).resolve!([message]) }.must_raise Riffer::FileDownloadsDisabledError
         expect(downloaded_calls).must_be_empty
       end
@@ -129,9 +144,10 @@ describe Riffer::Files::Resolver do
       it "raises Riffer::TooManyFilesError" do
         files = [
           Riffer::Messages::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
-          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf")
+          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf"),
         ]
         message = Riffer::Messages::User.new("hi", files: files)
+
         expect { resolver_for(:url).resolve!([message]) }.must_raise Riffer::TooManyFilesError
       end
     end
@@ -140,7 +156,7 @@ describe Riffer::Files::Resolver do
       let(:sleepy_downloader) do
         intervals = downloaded_calls
         mutex = Mutex.new
-        lambda do |url, max_bytes:, timeout:|
+        lambda do |_url, max_bytes:, timeout:|
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           sleep 0.05
           finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -152,7 +168,7 @@ describe Riffer::Files::Resolver do
       let(:files) do
         [
           Riffer::Messages::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
-          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf")
+          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf"),
         ]
       end
 
@@ -165,6 +181,7 @@ describe Riffer::Files::Resolver do
 
         a, b = downloaded_calls
         overlap = a[0] < b[1] && b[0] < a[1]
+
         expect(overlap).must_equal true
       end
 
@@ -174,6 +191,7 @@ describe Riffer::Files::Resolver do
         resolver_for(:data).resolve!([message])
 
         a, b = downloaded_calls
+
         expect(b[0] >= a[1]).must_equal true
       end
     end
