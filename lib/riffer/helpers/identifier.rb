@@ -20,7 +20,8 @@ module Riffer::Helpers::Identifier
 
   # Derives and memoizes the identifier for a class or module. Anonymous
   # classes return "" without caching, so a class named later still derives its
-  # real identifier.
+  # real identifier — a guard that must travel with the cache, so callers never
+  # memoize their own.
   #
   #--
   #: (Module) -> String

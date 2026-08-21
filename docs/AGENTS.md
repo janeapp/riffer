@@ -308,7 +308,7 @@ When `config:` is supplied, the class-level configuration is ignored for that in
 
 ## Looking Up Agents
 
-`Riffer::Agent.find` and `Riffer::Agent.all` are backed by a per-class registry keyed by identifier, so lookups are O(1) regardless of how many agents are defined:
+Look up an agent by identifier with `Riffer::Agent.find`, or list every agent with `Riffer::Agent.all`. Lookups are O(1) no matter how many agents are defined:
 
 ```ruby
 class SupportAgent < Riffer::Agent
@@ -321,11 +321,11 @@ Riffer::Agent.find('missing')         # => nil
 Riffer::Agent.all                     # => [SupportAgent, ...]
 ```
 
-The registry contains **named direct subclasses only**:
+Only **named direct subclasses** are found:
 
 - Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationAgent < Riffer::Agent`), call `find`/`all` on the intermediate class to look up its subclasses.
-- Anonymous classes (`Class.new(Riffer::Agent)`) are never registered, even when they set an explicit `identifier`.
-- Two registered subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
+- Anonymous classes (`Class.new(Riffer::Agent)`) are never findable, even when they set an explicit `identifier`.
+- Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
 
 ## Per-Call Tags
 
