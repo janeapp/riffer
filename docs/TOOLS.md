@@ -143,6 +143,23 @@ class CreateOrderTool < Riffer::Tool
 end
 ```
 
+## Looking Up Tools
+
+`Riffer::Tool.find` and `Riffer::Tool.all` are backed by a per-class registry keyed by identifier, so lookups are O(1) regardless of how many tools are defined:
+
+```ruby
+Riffer::Tool.find('kb_search')   # => SearchTool
+Riffer::Tool.find(:kb_search)    # symbols work too
+Riffer::Tool.find('missing')     # => nil
+Riffer::Tool.all                 # => [SearchTool, ...]
+```
+
+The registry contains **named direct subclasses only**:
+
+- Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationTool < Riffer::Tool`), call `find`/`all` on the intermediate class to look up its subclasses.
+- Anonymous classes (`Class.new(Riffer::Tool)`) are never registered, even when they set an explicit `identifier`.
+- Two registered subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
+
 ## The call Method
 
 Every tool must implement the `call` method and return a `Riffer::Tools::Response`:

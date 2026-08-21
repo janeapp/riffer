@@ -347,7 +347,7 @@ See [Messages — Structured Output on Messages](MESSAGES.md#structured-output-o
 
 ### find
 
-Find an agent class by identifier:
+Find an agent class by identifier (named direct subclasses only — see [Agents — Looking Up Agents](AGENTS.md#looking-up-agents)):
 
 ```ruby
 agent_class = Riffer::Agent.find('my_agent')
@@ -356,7 +356,7 @@ agent = agent_class.new
 
 ### all
 
-List all agent subclasses:
+List all registered agent subclasses (named direct subclasses only):
 
 ```ruby
 Riffer::Agent.all.each do |agent_class|

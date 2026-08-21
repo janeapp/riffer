@@ -306,6 +306,27 @@ agent.generate('Hello')
 
 When `config:` is supplied, the class-level configuration is ignored for that instance.
 
+## Looking Up Agents
+
+`Riffer::Agent.find` and `Riffer::Agent.all` are backed by a per-class registry keyed by identifier, so lookups are O(1) regardless of how many agents are defined:
+
+```ruby
+class SupportAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+end
+
+Riffer::Agent.find('support_agent')   # => SupportAgent
+Riffer::Agent.find(:support_agent)    # symbols work too
+Riffer::Agent.find('missing')         # => nil
+Riffer::Agent.all                     # => [SupportAgent, ...]
+```
+
+The registry contains **named direct subclasses only**:
+
+- Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationAgent < Riffer::Agent`), call `find`/`all` on the intermediate class to look up its subclasses.
+- Anonymous classes (`Class.new(Riffer::Agent)`) are never registered, even when they set an explicit `identifier`.
+- Two registered subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
+
 ## Per-Call Tags
 
 `#generate` and `#stream` accept an optional `tags:` hash — a flat map of attribution labels scoped to that single call (for cost/usage attribution, filtering audit logs, slicing telemetry). It is **per-call only**.

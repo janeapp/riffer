@@ -18,6 +18,8 @@
 class Riffer::Tool
   extend Riffer::Tools::Toolable
 
+  extend Riffer::Registrable
+
   # Executes the tool with the given arguments.
   # --
   # : (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response

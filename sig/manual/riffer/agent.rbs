@@ -1,0 +1,7 @@
+# `Riffer::Agent` extends `Riffer::Registrable`, whose generic signatures return
+# `Class`. Narrow them here so callers get the agent singleton type back.
+class Riffer::Agent
+  def self.find: (String | Symbol) -> singleton(Riffer::Agent)?
+
+  def self.all: () -> Array[singleton(Riffer::Agent)]
+end

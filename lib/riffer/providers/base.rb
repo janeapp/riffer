@@ -32,7 +32,7 @@ class Riffer::Providers::Base
     class_name = name
     return "unknown" unless class_name
 
-    Riffer::Helpers::ClassNameConverter.convert(class_name.split("::").last.to_s)
+    Riffer::Helpers::Identifier.derive(class_name.split("::").last)
   end
 
   # Generates text using the provider.

@@ -32,6 +32,9 @@ module Riffer
   # Raised when a tool encounters an expected execution error.
   class ToolExecutionError < Error; end
 
+  # Raised when two registered subclasses share the same identifier.
+  class DuplicateIdentifierError < Error; end
+
   # Returns the Riffer configuration.
   #
   #--

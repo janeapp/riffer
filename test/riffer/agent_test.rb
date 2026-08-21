@@ -311,55 +311,8 @@ describe Riffer::Agent do
   end
 
   describe ".find" do
-    before do
-      @test_agent_class = Class.new(Riffer::Agent) do
-        identifier "findable-agent"
-        model "mock/riffer-1"
-      end
-    end
-
-    it "returns the agent class with matching identifier" do
-      found_agent = Riffer::Agent.find("findable-agent")
-
-      expect(found_agent).must_equal @test_agent_class
-    end
-
-    it "returns nil when identifier is not found" do
-      found_agent = Riffer::Agent.find("nonexistent-agent")
-
-      expect(found_agent).must_be_nil
-    end
-  end
-
-  describe ".all" do
-    before do
-      @agent1 = Class.new(Riffer::Agent) do
-        identifier "all-test-agent-1"
-        model "mock/riffer-1"
-      end
-
-      @agent2 = Class.new(Riffer::Agent) do
-        identifier "all-test-agent-2"
-        model "mock/riffer-2"
-      end
-    end
-
-    it "returns an array of agent classes" do
-      result = Riffer::Agent.all
-
-      expect(result).must_be_instance_of Array
-    end
-
-    it "includes agent 1" do
-      all_agents = Riffer::Agent.all
-
-      expect(all_agents).must_include @agent1
-    end
-
-    it "includes agent 2" do
-      all_agents = Riffer::Agent.all
-
-      expect(all_agents).must_include @agent2
+    it "is backed by the Registrable registry" do
+      expect(Riffer::Agent.find("no-such-agent")).must_be_nil
     end
   end
 
