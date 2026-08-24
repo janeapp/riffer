@@ -292,6 +292,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_input_json_event(event, state:, yielder:)
+    # server_tool_use (web_search) input streams through the raw-event path
+    # (handle_raw_content_block_delta) and must not surface as tool-call deltas.
+    return if state[:web_search_json]
+
     state[:tool_call] = { id: nil, name: nil, arguments: +"" } if state[:tool_call].nil?
     state[:tool_call][:arguments] << event.partial_json
     yielder << Riffer::StreamEvents::ToolCallDelta.new(
