@@ -53,6 +53,13 @@ describe Riffer::Messages::FilePart do
       expect(file.media_type).must_equal "application/pdf"
     end
 
+    it "accepts an explicit filename" do
+      file = Riffer::Messages::FilePart.from_url("https://example.com/file", media_type: "application/pdf",
+                                                                             filename: "report.pdf",)
+
+      expect(file.filename).must_equal "report.pdf"
+    end
+
     it "raises when media type cannot be detected" do
       error = expect do
         Riffer::Messages::FilePart.from_url("https://example.com/file")
@@ -74,6 +81,14 @@ describe Riffer::Messages::FilePart do
 
       expect(result).must_be_instance_of Riffer::Messages::FilePart
       expect(result.url).must_equal "https://example.com/photo.jpg"
+    end
+
+    it "forwards filename for a url hash" do
+      result = Riffer::Messages::FilePart.from_hash(
+        { url: "https://example.com/file", media_type: "application/pdf", filename: "report.pdf" },
+      )
+
+      expect(result.filename).must_equal "report.pdf"
     end
 
     it "converts data hash" do

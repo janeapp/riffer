@@ -84,6 +84,15 @@ describe Riffer::Files::Resolver do
       end
     end
 
+    describe "a url-only source with a provider returning an unrecognized file_delivery value" do
+      it "raises Riffer::ArgumentError" do
+        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        expect { resolver_for(:something_else).resolve!([message]) }.must_raise Riffer::ArgumentError
+      end
+    end
+
     describe "a url-only source with a provider that passes URLs through" do
       it "leaves the file untouched when no sha256 is given" do
         file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")

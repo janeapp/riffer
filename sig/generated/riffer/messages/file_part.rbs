@@ -33,8 +33,8 @@ class Riffer::Messages::FilePart
   # Creates a FilePart from a URL, detecting +media_type+ from the path
   # extension when omitted. Raises Riffer::ArgumentError if it can't be detected.
   # --
-  # : (String, ?media_type: String?, ?sha256: String?) -> Riffer::Messages::FilePart
-  def self.from_url: (String, ?media_type: String?, ?sha256: String?) -> Riffer::Messages::FilePart
+  # : (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::FilePart
+  def self.from_url: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::FilePart
 
   # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
   # or returns +file+ unchanged when it is already a FilePart. Raises

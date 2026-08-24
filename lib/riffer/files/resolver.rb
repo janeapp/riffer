@@ -43,13 +43,17 @@ class Riffer::Files::Resolver
   def resolve_file!(file)
     return verify_inline!(file) if file.data
 
-    case @provider.file_delivery(file)
+    delivery = @provider.file_delivery(file)
+    case delivery
     when :unsupported
       raise Riffer::FileUnsupportedError, "Provider does not support user message file attachments"
     when :url
       download!(file, cache: false) if file.sha256
     when :data
       download!(file, cache: true)
+    else
+      raise Riffer::ArgumentError,
+            "Unknown file_delivery result #{delivery.inspect} from #{@provider.class}"
     end
   end
 
