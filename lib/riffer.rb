@@ -53,6 +53,9 @@ module Riffer
   # Raised when a downloaded or inline file's sha256 doesn't match.
   class FileChecksumMismatchError < FileError; end
 
+  # Raised when a FilePart's data isn't valid base64
+  class FileEncodingError < FileError; end
+
   # Returns the Riffer configuration.
   #
   #--

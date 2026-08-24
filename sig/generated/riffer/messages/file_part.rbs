@@ -3,6 +3,8 @@
 # Represents a file attachment (image or document) — from a URL (+from_url+) or
 # raw base64 data (+new+).
 class Riffer::Messages::FilePart
+  @data_bytes: String?
+
   @downloaded_data: String?
 
   @data: String?
@@ -48,6 +50,17 @@ class Riffer::Messages::FilePart
   # --
   # : () -> String?
   def data: () -> String?
+
+  # : () -> String?
+  def data_bytes: () -> String?
+
+  # : (String) -> void
+  def cache_data_bytes: (String) -> void
+
+  # Whether data was supplied directly, as opposed to filled in later by the
+  # file resolver after a download
+  # : () -> bool
+  def inline_data?: () -> bool
 
   # Caches bytes fetched for a URL source.  Deliberately absent from +to_h+:
   # the agent loop re-sends history on every turn, so the cache saves refreshing

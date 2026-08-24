@@ -7,11 +7,11 @@ describe Riffer::Files::Downloader do
   let(:url) { "https://example.com/file.pdf" }
 
   describe "#call" do
-    it "returns the base64-encoded response body" do
+    it "returns the raw response body" do
       stub_request(:get, url).to_return(status: 200, body: "hello world")
       result = downloader.call(url, max_bytes: 1_000, timeout: 5)
 
-      expect(result).must_equal Base64.strict_encode64("hello world")
+      expect(result).must_equal "hello world"
     end
 
     it "raises Riffer::FileDownloadError for a non-success status" do
@@ -51,7 +51,7 @@ describe Riffer::Files::Downloader do
 
       result = downloader.call(url, max_bytes: 1_000, timeout: 5)
 
-      expect(result).must_equal Base64.strict_encode64("final content")
+      expect(result).must_equal "final content"
     end
 
     it "raises Riffer::FileDownloadError when redirects exceed the limit" do

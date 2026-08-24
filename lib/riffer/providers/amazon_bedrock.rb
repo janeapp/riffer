@@ -419,8 +419,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def convert_file_part_to_bedrock_format(file)
     format = bedrock_format(file.media_type)
 
-    data = file.data
-    source = data ? { bytes: Base64.decode64(data) } : { s3_location: { uri: file.url } }
+    source = file.data_bytes ? { bytes: file.data_bytes } : { s3_location: { uri: file.url } }
 
     if file.image?
       { image: { format: format, source: source } }

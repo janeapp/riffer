@@ -3,14 +3,13 @@
 
 require "net/http"
 require "uri"
-require "base64"
 
 class Riffer::Files::Downloader
   MAX_REDIRECTS = 3 #: Integer
 
   #: (String, max_bytes: Integer, timeout: Integer) -> String
   def call(url, max_bytes:, timeout:)
-    Base64.strict_encode64(fetch(url, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS))
+    fetch(url, max_bytes: max_bytes, timeout: timeout, redirects_remaining: MAX_REDIRECTS)
   rescue Riffer::Error
     raise
   rescue StandardError => e

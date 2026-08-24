@@ -10,7 +10,7 @@ describe Riffer::Files::Resolver do
     content = downloaded_content
     lambda do |url, max_bytes:, timeout:|
       calls << { url: url, max_bytes: max_bytes, timeout: timeout }
-      Base64.strict_encode64(content)
+      content
     end
   end
 
@@ -52,7 +52,7 @@ describe Riffer::Files::Resolver do
       it "leaves the file untouched when no sha256 is given" do
         file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data)
         message = Riffer::Messages::User.new("hi", files: [file])
-        resolver_for(:unsupported).resolve!([message])
+        resolver_for(:data).resolve!([message])
 
         expect(file.data).must_equal data
         expect(downloaded_calls).must_be_empty
@@ -61,7 +61,7 @@ describe Riffer::Files::Resolver do
       it "passes verification when the sha256 matches" do
         file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data, sha256: sha256)
         message = Riffer::Messages::User.new("hi", files: [file])
-        resolver_for(:unsupported).resolve!([message])
+        resolver_for(:data).resolve!([message])
 
         expect(file.data).must_equal data
       end
@@ -71,7 +71,22 @@ describe Riffer::Files::Resolver do
                                               sha256: Digest::SHA256.hexdigest("something else"),)
         message = Riffer::Messages::User.new("hi", files: [file])
 
-        expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
+        expect { resolver_for(:data).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
+      end
+
+      it "raises Riffer::FileUnsupportedError when the provider doesn't accept files, even with data inline" do
+        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data)
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileUnsupportedError
+      end
+
+      it "rejects data with smuggled content past a padding boundary instead of verifying a truncated prefix" do
+        smuggled = Base64.strict_encode64(body) + Base64.strict_encode64("smuggled payload")
+        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: smuggled, sha256: sha256)
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        expect { resolver_for(:data).resolve!([message]) }.must_raise Riffer::FileEncodingError
       end
     end
 
@@ -133,6 +148,18 @@ describe Riffer::Files::Resolver do
 
         expect(file.data).must_equal Base64.strict_encode64(downloaded_content)
       end
+
+      it "caches raw bytes from the sha256 check without decoding data again" do
+        sha256 = Digest::SHA256.hexdigest(downloaded_content)
+        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                                   sha256: sha256,)
+        message = Riffer::Messages::User.new("hi", files: [file])
+        resolver_for(:data).resolve!([message])
+
+        # data_bytes returning the exact downloader-returned object (not an
+        # equal-but-new one) proves it was cached, not decoded a second time.
+        expect(file.data_bytes).must_be_same_as downloaded_content
+      end
     end
 
     describe "when downloads are disabled" do
@@ -161,6 +188,33 @@ describe Riffer::Files::Resolver do
       end
     end
 
+    describe "resolving the same file again under a different provider" do
+      it "still raises Riffer::FileUnsupportedError even after an earlier :data resolution cached bytes" do
+        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        resolver_for(:data).resolve!([message])
+
+        expect(file.data).wont_be_nil
+
+        expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileUnsupportedError
+      end
+
+      it "re-downloads and re-verifies for :url + sha256 instead of trusting an earlier :data resolution's cache" do
+        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                                   sha256: Digest::SHA256.hexdigest(downloaded_content),)
+        message = Riffer::Messages::User.new("hi", files: [file])
+
+        resolver_for(:data).resolve!([message])
+
+        expect(downloaded_calls.size).must_equal 1
+
+        resolver_for(:url).resolve!([message])
+
+        expect(downloaded_calls.size).must_equal 2
+      end
+    end
+
     describe "download concurrency" do
       let(:sleepy_downloader) do
         intervals = downloaded_calls
@@ -170,7 +224,7 @@ describe Riffer::Files::Resolver do
           sleep 0.05
           finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           mutex.synchronize { intervals << [start, finish] }
-          Base64.strict_encode64("content")
+          "content"
         end
       end
 

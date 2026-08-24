@@ -10,6 +10,7 @@ class Riffer::Messages::FilePart
   # @rbs @url_string: String?
   # @rbs @data: String?
   # @rbs @downloaded_data: String?
+  # @rbs @data_bytes: String?
 
   MEDIA_TYPES = {
     ".jpg" => "image/jpeg",
@@ -46,7 +47,10 @@ class Riffer::Messages::FilePart
       raise Riffer::ArgumentError,
             "Unsupported media type: #{media_type}"
     end
-    raise Riffer::ArgumentError, "Invalid sha256: #{sha256}" unless sha256.nil? || sha256.match?(SHA256_PATTERN)
+    unless sha256.nil? || (sha256.is_a?(String) && sha256.match?(SHA256_PATTERN))
+      raise Riffer::ArgumentError,
+            "Invalid sha256: #{sha256}"
+    end
 
     @sha256 = sha256&.downcase
     @data = data
@@ -100,6 +104,30 @@ class Riffer::Messages::FilePart
   #: () -> String?
   def data
     @data || @downloaded_data
+  end
+
+  #: () -> String?
+  def data_bytes
+    return @data_bytes if @data_bytes
+
+    encoded = data
+    return nil unless encoded
+
+    @data_bytes = Base64.strict_decode64(encoded.gsub(/\s/, ""))
+  rescue ArgumentError
+    raise Riffer::FileEncodingError, "Invalid base64 data"
+  end
+
+  #: (String) -> void
+  def cache_data_bytes(bytes)
+    @data_bytes = bytes
+  end
+
+  # Whether data was supplied directly, as opposed to filled in later by the
+  # file resolver after a download
+  #: () -> bool
+  def inline_data?
+    !@data.nil?
   end
 
   # Caches bytes fetched for a URL source.  Deliberately absent from +to_h+:

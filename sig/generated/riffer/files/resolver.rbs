@@ -32,5 +32,5 @@ class Riffer::Files::Resolver
   # : (Riffer::Messages::FilePart, cache: bool) -> void
   def download!: (Riffer::Messages::FilePart, cache: bool) -> void
 
-  def verify_encoded!: (untyped encoded, untyped sha256) -> untyped
+  def verify_bytes!: (untyped bytes, untyped sha256) -> untyped
 end

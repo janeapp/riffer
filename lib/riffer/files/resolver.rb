@@ -2,6 +2,7 @@
 # rbs_inline: enabled
 
 require "digest"
+require "base64"
 
 class Riffer::Files::Resolver
   # @rbs @provider: Riffer::Providers::Base
@@ -41,16 +42,18 @@ class Riffer::Files::Resolver
 
   #: (Riffer::Messages::FilePart) -> void
   def resolve_file!(file)
-    return verify_inline!(file) if file.data
-
     delivery = @provider.file_delivery(file)
+    if delivery == :unsupported
+      raise Riffer::FileUnsupportedError,
+            "Provider does not support user message file attachments"
+    end
+    return verify_inline!(file) if file.inline_data?
+
     case delivery
-    when :unsupported
-      raise Riffer::FileUnsupportedError, "Provider does not support user message file attachments"
     when :url
       download!(file, cache: false) if file.sha256
     when :data
-      download!(file, cache: true)
+      file.data ? verify_inline!(file) : download!(file, cache: true)
     else
       raise Riffer::ArgumentError,
             "Unknown file_delivery result #{delivery.inspect} from #{@provider.class}"
@@ -61,7 +64,7 @@ class Riffer::Files::Resolver
   def verify_inline!(file)
     return unless file.sha256
 
-    verify_encoded!(file.data, file.sha256)
+    verify_bytes!(file.data_bytes, file.sha256)
   end
 
   # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
@@ -71,15 +74,17 @@ class Riffer::Files::Resolver
   def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads
 
-    encoded = @config.downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
-    verify_encoded!(encoded, file.sha256) if file.sha256
-    file.cache_downloaded_data(encoded) if cache
+    raw = @config.downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
+    verify_bytes!(raw, file.sha256) if file.sha256
+    return unless cache
+
+    file.cache_downloaded_data(Base64.strict_encode64(raw))
+    file.cache_data_bytes(raw)
   end
 
-  def verify_encoded!(encoded, sha256)
-    return if Digest::SHA256.hexdigest(Base64.decode64(encoded)) == sha256
+  def verify_bytes!(bytes, sha256)
+    return if Digest::SHA256.hexdigest(bytes) == sha256
 
-    raise Riffer::FileChecksumMismatchError,
-          "File checksum mismatch"
+    raise Riffer::FileChecksumMismatchError, "File checksum mismatch"
   end
 end

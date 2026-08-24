@@ -51,6 +51,10 @@ module Riffer
   class FileChecksumMismatchError < FileError
   end
 
+  # Raised when a FilePart's data isn't valid base64
+  class FileEncodingError < FileError
+  end
+
   # Returns the Riffer configuration.
   #
   # --
