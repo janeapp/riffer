@@ -52,8 +52,10 @@ class Riffer::Files::Resolver
     case delivery
     when :url
       download!(file, cache: false) if file.sha256
-    when :data
-      file.data ? verify_inline!(file) : download!(file, cache: true)
+    when :base64
+      file.data ? verify_inline!(file) : download!(file, cache: :base64)
+    when :bytes
+      file.data_bytes ? verify_inline!(file) : download!(file, cache: :bytes)
     else
       raise Riffer::ArgumentError,
             "Unknown file_delivery result #{delivery.inspect} from #{@provider.class}"
@@ -70,16 +72,21 @@ class Riffer::Files::Resolver
   # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
   # request still sends the URL, never the downloaded bytes, so caching them
   # would hold memory nothing reads and let later turns skip re-verifying.
-  #: (Riffer::Messages::FilePart, cache: bool) -> void
+  #: (Riffer::Messages::FilePart, cache: (false | Symbol)) -> void
   def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads
 
     raw = @config.downloader.call(file.url, max_bytes: @config.max_bytes, timeout: @config.timeout)
     verify_bytes!(raw, file.sha256) if file.sha256
-    return unless cache
 
-    file.cache_downloaded_data(Base64.strict_encode64(raw))
-    file.cache_data_bytes(raw)
+    case cache
+    when :base64
+      file.cache_downloaded_data(Base64.strict_encode64(raw))
+    when :bytes
+      file.cache_data_bytes(raw)
+    when false
+      nil
+    end
   end
 
   def verify_bytes!(bytes, sha256)

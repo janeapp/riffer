@@ -22,7 +22,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::FilePart) -> Symbol
   def file_delivery(file)
-    file.image? ? :url : :data
+    file.image? ? :url : :base64
   end
 
   private

@@ -46,7 +46,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::FilePart) -> Symbol
   def file_delivery(file)
-    file.url&.start_with?("s3://") ? :url : :data
+    file.url&.start_with?("s3://") ? :url : :bytes
   end
 
   private

@@ -30,7 +30,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::FilePart) -> Symbol
   def file_delivery(_file)
-    :data
+    :base64
   end
 
   private
