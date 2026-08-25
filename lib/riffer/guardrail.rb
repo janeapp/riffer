@@ -36,7 +36,7 @@ class Riffer::Guardrail
   #--
   #: () -> String
   def name
-    Riffer::Helpers::ClassNameConverter.convert(self.class.name)
+    Riffer::Helpers::Identifier.for(self.class)
   end
 
   protected

@@ -108,7 +108,7 @@ Options:
 | `String`                   | `string`         |
 | `Integer`                  | `integer`        |
 | `Float`                    | `number`         |
-| `Riffer::Params::Boolean`          | `boolean`        |
+| `Riffer::Params::Boolean`  | `boolean`        |
 | `TrueClass` / `FalseClass` | `boolean`        |
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
@@ -142,6 +142,23 @@ class CreateOrderTool < Riffer::Tool
   end
 end
 ```
+
+## Looking Up Tools
+
+Look up a tool by identifier with `Riffer::Tool.find`, or list every tool with `Riffer::Tool.all`:
+
+```ruby
+Riffer::Tool.find('kb_search')   # => SearchTool
+Riffer::Tool.find(:kb_search)    # symbols work too
+Riffer::Tool.find('missing')     # => nil
+Riffer::Tool.all                 # => [SearchTool, ...]
+```
+
+Only **named direct subclasses** are found:
+
+- Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationTool < Riffer::Tool`), call `find`/`all` on the intermediate class to look up its subclasses.
+- Anonymous classes (`Class.new(Riffer::Tool)`) are never findable, even when they set an explicit `identifier`.
+- Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
 
 ## The call Method
 

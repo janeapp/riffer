@@ -15,6 +15,8 @@ require "json"
 #   agent.generate('Hello!')
 #
 class Riffer::Agent
+  extend Riffer::Registrable
+
   # @rbs self.@config: Riffer::Agent::Config?
 
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
@@ -31,7 +33,7 @@ class Riffer::Agent
   #--
   #: (?String?) -> String
   def self.identifier(value = nil)
-    value.nil? ? (config.identifier || Riffer::Helpers::ClassNameConverter.convert(name)) : (config.identifier = value)
+    value.nil? ? (config.identifier || Riffer::Helpers::Identifier.for(self)) : (config.identifier = value)
   end
 
   # Gets or sets the model string (e.g., "openai/gpt-4o").
@@ -142,22 +144,6 @@ class Riffer::Agent
       config.skills_config = skills_config
     end
     config.skills_config
-  end
-
-  # Finds an agent class by identifier.
-  #
-  #--
-  #: (String) -> singleton(Riffer::Agent)?
-  def self.find(identifier)
-    all.find { |agent_class| agent_class.identifier == identifier.to_s }
-  end
-
-  # Returns all agent subclasses.
-  #
-  #--
-  #: () -> Array[singleton(Riffer::Agent)]
-  def self.all
-    subclasses #: Array[singleton(Riffer::Agent)]
   end
 
   # Generates a response using a new agent instance.

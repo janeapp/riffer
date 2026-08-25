@@ -15,6 +15,7 @@
 #     end
 #   end
 #
+# @rbs module-self Module
 module Riffer::Tools::Toolable
   # @rbs self.@extenders: Array[Module]?
   # @rbs @description: String?
@@ -57,9 +58,7 @@ module Riffer::Tools::Toolable
   #--
   #: (?String?) -> String
   def identifier(value = nil)
-    if value.nil?
-      return @identifier || Riffer::Helpers::ClassNameConverter.convert(Module.instance_method(:name).bind_call(self))
-    end
+    return @identifier || Riffer::Helpers::Identifier.for(self) if value.nil?
 
     @identifier = value.to_s
   end

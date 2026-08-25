@@ -1,0 +1,7 @@
+# `Riffer::Tool` extends `Riffer::Registrable`, whose generic signatures return
+# `Class`. Narrow them here so callers get the tool singleton type back.
+class Riffer::Tool
+  def self.find: (String | Symbol) -> singleton(Riffer::Tool)?
+
+  def self.all: () -> Array[singleton(Riffer::Tool)]
+end

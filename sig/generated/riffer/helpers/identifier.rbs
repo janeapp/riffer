@@ -1,0 +1,19 @@
+# Generated from lib/riffer/helpers/identifier.rb with RBS::Inline
+
+# Helper module for deriving snake_case identifiers from class names.
+module Riffer::Helpers::Identifier
+  # Derives a snake_case identifier from a class name string.
+  #
+  # --
+  # : (String?) -> String
+  def derive: (String?) -> String
+
+  # Derives and memoizes the identifier for a class or module. Anonymous
+  # classes return "" without caching, so a class named later still derives its
+  # real identifier — a guard that must travel with the cache, so callers never
+  # memoize their own.
+  #
+  # --
+  # : (Module) -> String
+  def for: (Module) -> String
+end

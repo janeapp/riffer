@@ -1,0 +1,51 @@
+# Generated from lib/riffer/registrable.rb with RBS::Inline
+
+# Registry of a class's named direct subclasses, keyed by identifier. Extend it
+# onto a base class to look up subclasses in constant time via +find+ and +all+.
+#
+#   class Riffer::Tool
+#     extend Riffer::Registrable
+#   end
+#
+#   Riffer::Tool.find("weather_tool") # => WeatherTool
+#
+# @rbs module-self Class
+module Riffer::Registrable : Class
+  @identifier_registry: Hash[String, Class]?
+
+  # Finds a registered subclass by identifier, or +nil+ when none matches.
+  # Only *named direct* subclasses are registered: grandchildren are not
+  # visible to a grandparent's +find+ (call +find+ on their direct parent
+  # instead), anonymous classes are never registered, and duplicate identifiers
+  # raise Riffer::DuplicateIdentifierError at first lookup.
+  #
+  # --
+  # : (String | Symbol) -> Class?
+  def find: (String | Symbol) -> Class?
+
+  # Returns all registered subclasses. Only *named direct* subclasses are
+  # registered: grandchildren are not included (call +all+ on their direct
+  # parent instead), anonymous classes are never registered, and duplicate
+  # identifiers raise Riffer::DuplicateIdentifierError at first lookup.
+  #
+  # --
+  # : () -> Array[Class]
+  def all: () -> Array[Class]
+
+  private
+
+  # Ruby invokes +inherited+ with +self+ bound to the direct superclass — the
+  # only registry the new subclass joins — so busting self's memo is exactly
+  # sufficient.
+  # --
+  # : (Class) -> void
+  def inherited: (Class) -> void
+
+  # --
+  # : () -> Hash[String, Class]
+  def identifier_registry: () -> Hash[String, Class]
+
+  # --
+  # : () -> Hash[String, Class]
+  def build_identifier_registry: () -> Hash[String, Class]
+end
