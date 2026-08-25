@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module Riffer::Providers - Riffer API Reference</title>
+<title>module Riffer::Registrable - Riffer API Reference</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,Riffer::Providers"
+    content="ruby,module,Riffer::Registrable"
   >
 
     <meta
       name="description"
-      content="module Riffer::Providers: rbs_inline: enabled"
+      content="module Riffer::Registrable: Registry of a class&#39;s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and "
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module Riffer::Providers - Riffer API Reference">
+<meta property="og:title" content="module Riffer::Registrable - Riffer API Reference">
 
 
 
-    <meta property="og:description" content="rbs_inline: enabled">
+    <meta property="og:description" content="Registry of a class&#39;s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and ">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module Riffer::Providers - Riffer API Reference">
+<meta name="twitter:title" content="module Riffer::Registrable - Riffer API Reference">
 
 
 
-    <meta name="twitter:description" content="rbs_inline: enabled">
+    <meta name="twitter:description" content="Registry of a class&#39;s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and ">
 
 
 
@@ -439,6 +439,27 @@
   
 
 
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-all">all</a></li>
+
+        <li ><a href="#method-i-find">find</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
   <div id="classindex-section" class="nav-section">
   <details class="nav-section-collapsible" open>
@@ -458,7 +479,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-riffer-providers">
+<main role="main" aria-labelledby="module-riffer-registrable">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -471,21 +492,30 @@
       
       <li>
         
-        <span>Providers</span>
+        <span>Registrable</span>
         
       </li>
       
     </ol>
   
 
-  <span id="module-Riffer::Providers" class="legacy-anchor"></span>
-  <h1 id="module-riffer-providers" class="anchor-link module">
-    module Riffer::Providers
+  <span id="module-Riffer::Registrable" class="legacy-anchor"></span>
+  <h1 id="module-riffer-registrable" class="anchor-link module">
+    module Riffer::Registrable
   </h1>
 
   <section class="description">
     
-<p>rbs_inline: enabled</p>
+<p>Registry of a class’s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via <code>find</code> and <code>all</code>.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
+  <span class="ruby-identifier">extend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Registrable</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>.<span class="ruby-identifier">find</span>(<span class="ruby-string">&quot;weather_tool&quot;</span>) <span class="ruby-comment"># =&gt; WeatherTool</span>
+</pre>
+
+<p>@rbs module-self Class</p>
 
   </section>
 
@@ -509,6 +539,98 @@
 
 
 
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-all" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-all" title="Link to this method">
+                <span class="method-name">all</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="all-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all</span>
+  <span class="ruby-identifier">identifier_registry</span>.<span class="ruby-identifier">values</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns all registered subclasses. Only *named direct* subclasses are registered: grandchildren are not included (call <code>all</code> on their direct parent instead), anonymous classes are never registered, and duplicate identifiers raise <a href="DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> at first lookup.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-find" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-find" title="Link to this method">
+                <span class="method-name">find</span>
+                <span class="method-args">(identifier)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="find-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 25</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
+  <span class="ruby-identifier">identifier_registry</span>[<span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span>]
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Finds a registered subclass by identifier, or <code>nil</code> when none matches. Only *named direct* subclasses are registered: grandchildren are not visible to a grandparent’s <code>find</code> (call <code>find</code> on their direct parent instead), anonymous classes are never registered, and duplicate identifiers raise <a href="DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> at first lookup.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
 
 

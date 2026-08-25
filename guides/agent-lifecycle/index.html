@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.41.0</span>
+            <span class="version">v0.42.0</span>
           </div>
         </nav>
       </div>
@@ -583,7 +583,7 @@
 
 <h3 id="find">find</h3>
 
-<p>Find an agent class by identifier:</p>
+<p>Find an agent class by identifier (named direct subclasses only — see <a href="/guides/agents/#looking-up-agents">Agents — Looking Up Agents</a>):</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent_class</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'my_agent'</span><span class="p">)</span>
 <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_class</span><span class="p">.</span><span class="nf">new</span>
@@ -591,7 +591,7 @@
 
 <h3 id="all">all</h3>
 
-<p>List all agent subclasses:</p>
+<p>List all registered agent subclasses (named direct subclasses only):</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">agent_class</span><span class="o">|</span>
   <span class="nb">puts</span> <span class="n">agent_class</span><span class="p">.</span><span class="nf">identifier</span>

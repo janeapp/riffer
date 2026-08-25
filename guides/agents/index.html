@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.41.0</span>
+            <span class="version">v0.42.0</span>
           </div>
         </nav>
       </div>
@@ -186,6 +186,7 @@
               <li><a href="#defining-an-agent">Defining an Agent</a></li>
               <li><a href="#configuration-methods">Configuration Methods</a></li>
               <li><a href="#configuration-object">Configuration Object</a></li>
+              <li><a href="#looking-up-agents">Looking Up Agents</a></li>
               <li><a href="#per-call-tags">Per-Call Tags</a></li>
               <li><a href="#expand-your-agent">Expand Your Agent</a></li>
             </ul>
@@ -477,6 +478,28 @@
 </code></pre></div></div>
 
 <p>When <code>config:</code> is supplied, the class-level configuration is ignored for that instance.</p>
+
+<h2 id="looking-up-agents">Looking Up Agents</h2>
+
+<p>Look up an agent by identifier with <code>Riffer::Agent.find</code>, or list every agent with <code>Riffer::Agent.all</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SupportAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+<span class="k">end</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'support_agent'</span><span class="p">)</span>   <span class="c1"># =&gt; SupportAgent</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:support_agent</span><span class="p">)</span>    <span class="c1"># symbols work too</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'missing'</span><span class="p">)</span>         <span class="c1"># =&gt; nil</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">all</span>                     <span class="c1"># =&gt; [SupportAgent, ...]</span>
+</code></pre></div></div>
+
+<p>Only <strong>named direct subclasses</strong> are found:</p>
+
+<ul>
+  <li>Grandchildren are not visible to a grandparent’s <code>find</code> or <code>all</code>. If your app defines an intermediate base class (<code>class ApplicationAgent &lt; Riffer::Agent</code>), call <code>find</code>/<code>all</code> on the intermediate class to look up its subclasses.</li>
+  <li>Anonymous classes (<code>Class.new(Riffer::Agent)</code>) are never findable, even when they set an explicit <code>identifier</code>.</li>
+  <li>Two subclasses sharing an identifier raise <code>Riffer::DuplicateIdentifierError</code> at the first lookup.</li>
+</ul>
 
 <h2 id="per-call-tags">Per-Call Tags</h2>
 

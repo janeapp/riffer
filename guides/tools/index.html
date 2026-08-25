@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.41.0</span>
+            <span class="version">v0.42.0</span>
           </div>
         </nav>
       </div>
@@ -186,6 +186,7 @@
               <li><a href="#defining-a-tool">Defining a Tool</a></li>
               <li><a href="#configuration-methods">Configuration Methods</a></li>
               <li><a href="#parameter-dsl">Parameter DSL</a></li>
+              <li><a href="#looking-up-tools">Looking Up Tools</a></li>
               <li><a href="#the-call-method">The call Method</a></li>
               <li><a href="#response-objects">Response Objects</a></li>
             </ul>
@@ -359,6 +360,24 @@
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h2 id="looking-up-tools">Looking Up Tools</h2>
+
+<p>Look up a tool by identifier with <code>Riffer::Tool.find</code>, or list every tool with <code>Riffer::Tool.all</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'kb_search'</span><span class="p">)</span>   <span class="c1"># =&gt; SearchTool</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="ss">:kb_search</span><span class="p">)</span>    <span class="c1"># symbols work too</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'missing'</span><span class="p">)</span>     <span class="c1"># =&gt; nil</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Tool</span><span class="p">.</span><span class="nf">all</span>                 <span class="c1"># =&gt; [SearchTool, ...]</span>
+</code></pre></div></div>
+
+<p>Only <strong>named direct subclasses</strong> are found:</p>
+
+<ul>
+  <li>Grandchildren are not visible to a grandparent’s <code>find</code> or <code>all</code>. If your app defines an intermediate base class (<code>class ApplicationTool &lt; Riffer::Tool</code>), call <code>find</code>/<code>all</code> on the intermediate class to look up its subclasses.</li>
+  <li>Anonymous classes (<code>Class.new(Riffer::Tool)</code>) are never findable, even when they set an explicit <code>identifier</code>.</li>
+  <li>Two subclasses sharing an identifier raise <code>Riffer::DuplicateIdentifierError</code> at the first lookup.</li>
+</ul>
 
 <h2 id="the-call-method">The call Method</h2>
 

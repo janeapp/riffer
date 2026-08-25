@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Runner::Sequential - Riffer API Reference</title>
+<title>module Riffer::Helpers::Identifier - Riffer API Reference</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Runner::Sequential"
+    content="ruby,module,Riffer::Helpers::Identifier"
   >
 
     <meta
       name="description"
-      content="class Riffer::Runner::Sequential: Processes items sequentially in the current thread — the default runner."
+      content="module Riffer::Helpers::Identifier: Helper module for deriving snake_case identifiers from class names."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Runner::Sequential - Riffer API Reference">
+<meta property="og:title" content="module Riffer::Helpers::Identifier - Riffer API Reference">
 
 
 
-    <meta property="og:description" content="Processes items sequentially in the current thread — the default runner.">
+    <meta property="og:description" content="Helper module for deriving snake_case identifiers from class names.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Runner::Sequential - Riffer API Reference">
+<meta name="twitter:title" content="module Riffer::Helpers::Identifier - Riffer API Reference">
 
 
 
-    <meta name="twitter:description" content="Processes items sequentially in the current thread — the default runner.">
+    <meta name="twitter:description" content="Helper module for deriving snake_case identifiers from class names.">
 
 
 
@@ -96,7 +96,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="module has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -431,21 +431,6 @@
   
 
   
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li><a href="../Runner.html">Riffer::Runner</a><ul><li>Object</li></ul></li></ul>
-  </details>
-</div>
-
 
   
 
@@ -467,7 +452,9 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-map">map</a></li>
+        <li ><a href="#method-i-derive">derive</a></li>
+
+        <li ><a href="#method-i-for">for</a></li>
 
       </ul>
     </details>
@@ -492,7 +479,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-runner-sequential">
+<main role="main" aria-labelledby="module-riffer-helpers-identifier">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -505,27 +492,27 @@
       
       <li>
         
-        <a href="../../Riffer/Runner.html">Runner</a><span>::</span>
+        <a href="../../Riffer/Helpers.html">Helpers</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Sequential</span>
+        <span>Identifier</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Runner::Sequential" class="legacy-anchor"></span>
-  <h1 id="class-riffer-runner-sequential" class="anchor-link class">
-    class Riffer::Runner::Sequential
+  <span id="module-Riffer::Helpers::Identifier" class="legacy-anchor"></span>
+  <h1 id="module-riffer-helpers-identifier" class="anchor-link module">
+    module Riffer::Helpers::Identifier
   </h1>
 
   <section class="description">
     
-<p>Processes items sequentially in the current thread — the default runner.</p>
+<p>Helper module for deriving snake_case identifiers from class names.</p>
 
   </section>
 
@@ -556,13 +543,13 @@
        </header>
 
 
-      <div id="method-i-map" class="method-detail anchor-link ">
+      <div id="method-i-derive" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-map" title="Link to this method">
-                <span class="method-name">map</span>
-                <span class="method-args">(items, context:, &amp;)</span>
+              <a href="#method-i-derive" title="Link to this method">
+                <span class="method-name">derive</span>
+                <span class="method-args">(class_name)</span>
               </a>
             </div>
 
@@ -574,10 +561,15 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="map-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/runner/sequential.rb, line 8</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">map</span>(<span class="ruby-identifier">items</span>, <span class="ruby-value">context:</span>, <span class="ruby-operator">&amp;</span>)
-  <span class="ruby-identifier">items</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span>)
+          <div class="method-source-code" id="derive-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/helpers/identifier.rb, line 12</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">derive</span>(<span class="ruby-identifier">class_name</span>)
+  <span class="ruby-identifier">class_name</span>.
+    <span class="ruby-identifier">to_s</span>.
+    <span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot;::&quot;</span>, <span class="ruby-string">&quot;/&quot;</span>).
+    <span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/([A-Z]+)([A-Z][a-z])/</span>, <span class="ruby-string">&#39;\1_\2&#39;</span>).
+    <span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/([a-z\d])([A-Z])/</span>, <span class="ruby-string">&#39;\1_\2&#39;</span>).
+    <span class="ruby-identifier">downcase</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -586,7 +578,59 @@
         <div class="method-description">
 
 
-          
+          <p>Derives a snake_case identifier from a class name string.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-for" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-for" title="Link to this method">
+                <span class="method-name">for</span>
+                <span class="method-args">(klass)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="for-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/helpers/identifier.rb, line 28</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">for</span>(<span class="ruby-identifier ruby-title">klass</span>)
+  <span class="ruby-identifier">cached</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@derived_identifier</span>) <span class="ruby-comment">#: String?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">cached</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached</span>
+
+  <span class="ruby-comment"># Tool classes shadow Module#name with the identifier DSL, so the real</span>
+  <span class="ruby-comment"># class-path name must come from Module&#39;s own implementation.</span>
+  <span class="ruby-identifier">real_name</span> = <span class="ruby-constant">Module</span>.<span class="ruby-identifier">instance_method</span>(<span class="ruby-value">:name</span>).<span class="ruby-identifier">bind_call</span>(<span class="ruby-identifier">klass</span>) <span class="ruby-comment">#: String?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">real_name</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">derived</span> = <span class="ruby-identifier">derive</span>(<span class="ruby-identifier">real_name</span>)
+  <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-value">:@derived_identifier</span>, <span class="ruby-identifier">derived</span>)
+  <span class="ruby-identifier">derived</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Derives and memoizes the identifier for a class or module. Anonymous classes return “” without caching, so a class named later still derives its real identifier — a guard that must travel with the cache, so callers never memoize their own.</p>
 
 
         </div>
