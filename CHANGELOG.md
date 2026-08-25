@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.42.0](https://github.com/janeapp/riffer/compare/riffer/v0.41.0...riffer/v0.42.0) (2026-08-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* duplicate identifiers among named direct subclasses of Riffer::Tool or Riffer::Agent now raise Riffer::DuplicateIdentifierError on lookup. Agent.find/.all (and the new Tool.find/.all) cover named direct subclasses only - anonymous classes are excluded even with an explicit identifier. Riffer::Helpers::ClassNameConverter is removed; use Riffer::Helpers::Identifier.derive (the separator: keyword is dropped).
+
+### Features
+
+* one identifier registry pattern for tools and agents ([#406](https://github.com/janeapp/riffer/issues/406)) ([72fa7d6](https://github.com/janeapp/riffer/commit/72fa7d6377f903e4a88f9f5ec0e27e51b46dc293))
+
 ## [0.41.0](https://github.com/janeapp/riffer/compare/riffer/v0.40.0...riffer/v0.41.0) (2026-08-14)
 
 
