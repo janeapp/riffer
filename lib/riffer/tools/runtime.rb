@@ -88,13 +88,20 @@ class Riffer::Tools::Runtime
     tool_instance = tool_class.new
     arguments = parse_arguments(tool_call.arguments)
 
+    unless arguments.is_a?(Hash)
+      return Riffer::Tools::Response.error(
+        "Invalid JSON in tool arguments: expected an object, got #{arguments.class}",
+        type: :validation_error,
+      )
+    end
+
     tool_instance.call_with_validation(context: context, **arguments)
   rescue JSON::ParserError => e
     Riffer::Tools::Response.error("Invalid JSON in tool arguments: #{e.message}", type: :validation_error)
   end
 
   #--
-  #: (String?) -> Hash[Symbol, untyped]
+  #: (String?) -> untyped
   def parse_arguments(arguments)
     return {} if arguments.nil? || arguments.empty?
 

@@ -44,8 +44,8 @@ class Riffer::Tools::Runtime
   def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
 
   # --
-  # : (String?) -> Hash[Symbol, untyped]
-  def parse_arguments: (String?) -> Hash[Symbol, untyped]
+  # : (String?) -> untyped
+  def parse_arguments: (String?) -> untyped
 
   # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
   # --

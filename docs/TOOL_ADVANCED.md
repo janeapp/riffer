@@ -26,7 +26,7 @@ Arguments are automatically validated before `call` is invoked:
 - Types must match the schema
 - Enum values must be in the allowed list
 
-Validation errors are captured and sent back to the LLM as tool results with error type `:validation_error`, as is malformed JSON in the provider's tool-call arguments.
+Validation errors are captured and sent back to the LLM as tool results with error type `:validation_error`, as is malformed or non-object JSON in the provider's tool-call arguments.
 
 ## JSON Schema Generation
 

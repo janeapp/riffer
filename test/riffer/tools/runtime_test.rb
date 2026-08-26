@@ -109,6 +109,17 @@ describe Riffer::Tools::Runtime do
       expect(result.content).must_match(/Invalid JSON in tool arguments/)
     end
 
+    it "returns error response for validation failure on non-object JSON arguments" do
+      runtime = Riffer::Tools::Runtime::Inline.new
+      tool_call = make_tool_call(name: "weather_tool", arguments: "[1,2]")
+
+      result = execute_single(runtime, tool_call, tools: tools, context: context)
+
+      expect(result.error?).must_equal true
+      expect(result.error_type).must_equal :validation_error
+      expect(result.content).must_equal "Invalid JSON in tool arguments: expected an object, got Array"
+    end
+
     it "returns unhandled_error response for RuntimeError" do
       error_tool = Class.new(Riffer::Tool) do
         identifier "error_tool"
