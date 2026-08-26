@@ -269,7 +269,7 @@ error("Service unavailable", type: :service_error)
 error("Rate limit exceeded", type: :rate_limit)
 ```
 
-If no type is specified, it defaults to `:execution_error`. Riffer reserves `:unhandled_error` for exceptions a tool didn't anticipate — don't use it for a deliberate failure.
+If no type is specified, it defaults to `:execution_error`. Riffer reserves `:unhandled_error` for unrescued exceptions — don't set it yourself.
 
 ### Using Riffer::Tools::Response Directly
 
@@ -300,4 +300,4 @@ error_response.error_type     # => :not_found
 error_response.exception      # => nil
 ```
 
-`exception` is set only on the `:unhandled_error` responses Riffer builds when a tool raises something it didn't anticipate. It is excluded from `to_h` and every other serialized form, so the exception never reaches the LLM — see [Error Handling](TOOL_ADVANCED.md#error-handling).
+`exception` holds the rescued exception on the `:unhandled_error` responses Riffer builds. It never appears in serialized output, so it is not visible to the LLM.

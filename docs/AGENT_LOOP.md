@@ -15,15 +15,15 @@ When an agent receives a response with tool calls:
 
 ## Error Handling
 
-Tool execution errors are captured and sent back to the LLM. A tool call is a sub-program, so no failure inside one aborts the loop:
+Tool execution errors never abort the loop — each is captured and sent back to the LLM as a tool result:
 
 - `unknown_tool` - Tool not found in registered tools
-- `validation_error` - Arguments failed validation, or the provider sent malformed argument JSON
+- `validation_error` - Arguments failed validation or were malformed JSON
 - `timeout_error` - Tool exceeded its configured timeout
-- `execution_error` - Tool returned an error, or raised `Riffer::ToolExecutionError`
-- `unhandled_error` - Tool raised an unanticipated exception; the content is `Error executing tool: <ExceptionClass>: <message>`
+- `execution_error` - Tool returned an error or raised `Riffer::ToolExecutionError`
+- `unhandled_error` - Tool raised an unanticipated exception
 
-The LLM can use this information to retry or respond appropriately. See [Error Handling](TOOL_ADVANCED.md#error-handling) for the full contract.
+The LLM can use this information to retry or respond appropriately. See [Error Handling](TOOL_ADVANCED.md#error-handling) for details.
 
 ## Ways the Agent Loop Can Stop
 
