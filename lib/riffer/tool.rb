@@ -56,11 +56,10 @@ class Riffer::Tool
     Riffer::Tools::Response.error(message, type: type)
   end
 
-  # Executes the tool with validation and timeout (used by Agent).
-  #
-  # Raises Riffer::ValidationError if validation fails.
-  # Raises Riffer::TimeoutError if execution exceeds the configured timeout.
-  # Raises Riffer::Error if the tool does not return a Response object.
+  # Executes the tool with validation and timeout, folding every +StandardError+
+  # into an error Response. Anything outside +StandardError+ — an unimplemented
+  # +#call+ above all — still propagates, because a broken tool is a broken
+  # deploy rather than a bad request.
   #
   #--
   #: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
@@ -77,7 +76,20 @@ class Riffer::Tool
     end
 
     result
+  rescue Riffer::ValidationError => e
+    Riffer::Tools::Response.error(e.message, type: :validation_error)
   rescue Timeout::Error
-    raise Riffer::TimeoutError, "Tool execution timed out after #{self.class.timeout} seconds"
+    Riffer::Tools::Response.error(
+      "Tool execution timed out after #{self.class.timeout} seconds",
+      type: :timeout_error,
+    )
+  rescue Riffer::ToolExecutionError => e
+    Riffer::Tools::Response.error(e.message, type: :execution_error)
+  rescue StandardError => e
+    Riffer::Tools::Response.error(
+      "Error executing tool: #{e.class}: #{e.message}",
+      type: :unhandled_error,
+      exception: e,
+    )
   end
 end

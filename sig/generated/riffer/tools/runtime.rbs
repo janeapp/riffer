@@ -62,8 +62,9 @@ class Riffer::Tools::Runtime
   # : (Hash[String, String]) -> Hash[String, String]
   def tag_attributes: (Hash[String, String]) -> Hash[String, String]
 
-  # A returned error Response is a handled outcome, so its status stays unset —
-  # an error span status is reserved for a raised exception.
+  # A deliberate error Response is a handled outcome, so its status stays unset.
+  # An error status is reserved for a Response carrying the exception it was
+  # folded from — the tool failed for a reason nobody anticipated.
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
   def record_tool_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Tools::Response) -> void

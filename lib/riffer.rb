@@ -26,9 +26,6 @@ module Riffer
   # Raised when tool parameter validation fails.
   class ValidationError < Error; end
 
-  # Raised when tool execution times out.
-  class TimeoutError < Error; end
-
   # Raised when a tool encounters an expected execution error.
   class ToolExecutionError < Error; end
 

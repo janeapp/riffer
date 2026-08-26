@@ -98,7 +98,18 @@ describe Riffer::Tools::Runtime do
       expect(result.error_type).must_equal :timeout_error
     end
 
-    it "returns error response for RuntimeError" do
+    it "returns error response for validation failure on malformed JSON arguments" do
+      runtime = Riffer::Tools::Runtime::Inline.new
+      tool_call = make_tool_call(name: "weather_tool", arguments: '{"city":')
+
+      result = execute_single(runtime, tool_call, tools: tools, context: context)
+
+      expect(result.error?).must_equal true
+      expect(result.error_type).must_equal :validation_error
+      expect(result.content).must_match(/Invalid JSON in tool arguments/)
+    end
+
+    it "returns unhandled_error response for RuntimeError" do
       error_tool = Class.new(Riffer::Tool) do
         identifier "error_tool"
         description "Raises an error"
@@ -114,8 +125,8 @@ describe Riffer::Tools::Runtime do
       result = execute_single(runtime, tool_call, tools: [error_tool], context: context)
 
       expect(result.error?).must_equal true
-      expect(result.error_type).must_equal :execution_error
-      expect(result.content).must_match(/Something went wrong/)
+      expect(result.error_type).must_equal :unhandled_error
+      expect(result.content).must_equal "Error executing tool: RuntimeError: Something went wrong"
     end
 
     it "returns error response for ToolExecutionError" do
@@ -138,7 +149,7 @@ describe Riffer::Tools::Runtime do
       expect(result.content).must_equal "Expected failure"
     end
 
-    it "propagates NoMethodError (programming bugs are not swallowed)" do
+    it "returns unhandled_error response for NoMethodError, carrying the exception" do
       buggy_tool = Class.new(Riffer::Tool) do
         identifier "buggy_tool"
         description "Has a bug"
@@ -151,9 +162,10 @@ describe Riffer::Tools::Runtime do
       runtime = Riffer::Tools::Runtime::Inline.new
       tool_call = make_tool_call(name: "buggy_tool", arguments: "{}")
 
-      expect do
-        runtime.execute([tool_call], tools: [buggy_tool], context: context)
-      end.must_raise NoMethodError
+      result = execute_single(runtime, tool_call, tools: [buggy_tool], context: context)
+
+      expect(result.error_type).must_equal :unhandled_error
+      expect(result.exception).must_be_instance_of NoMethodError
     end
 
     it "returns [tool_call, response] pairs in order" do
@@ -415,19 +427,42 @@ describe Riffer::Tools::Runtime do
       end
     end
 
-    describe "raised exceptions" do
+    describe "unhandled error responses" do
       before do
         runtime = Riffer::Tools::Runtime::Inline.new
-        tool_call = make_tool_call(name: "buggy_tool")
+        runtime.execute([make_tool_call(name: "buggy_tool")], tools: [buggy_tool_class], context: nil)
+      end
+
+      it "records error.type from the response error type" do
+        expect(tool_span.attributes["error.type"]).must_equal "unhandled_error"
+      end
+
+      it "marks the span status as error" do
+        expect(tool_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it "records the exception on the span" do
+        event = tool_span.events.find { |e| e.name == "exception" }
+
+        expect(event.attributes["exception.type"]).must_equal "NoMethodError"
+      end
+    end
+
+    describe "host code raising around the tool call" do
+      before do
+        runtime_class = Class.new(Riffer::Tools::Runtime::Inline) do
+          define_method(:around_tool_call) { |_tool_call, **| raise IOError, "hook exploded" }
+        end
+
         begin
-          runtime.execute([tool_call], tools: [buggy_tool_class], context: nil)
-        rescue NoMethodError
-          # swallow the raise — the recorded span is the subject under test
+          runtime_class.new.execute([tool_call], tools: [weather_tool_class], context: nil)
+        rescue IOError
+          # swallow the re-raise — the recorded span is the subject under test
         end
       end
 
       it "records error.type from the exception class" do
-        expect(tool_span.attributes["error.type"]).must_equal "NoMethodError"
+        expect(tool_span.attributes["error.type"]).must_equal "IOError"
       end
 
       it "marks the span status as error" do

@@ -57,16 +57,19 @@ describe Riffer::Tool do
   end
 
   describe "#call_with_validation" do
-    it "raises ValidationError for missing required params" do
+    it "returns a validation_error response for missing required params" do
       tool = weather_tool_class.new
+      response = tool.call_with_validation(context: nil)
 
-      expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::ValidationError)
+      expect(response.error?).must_equal true
+      expect(response.error_type).must_equal :validation_error
     end
 
     it "includes param name in validation error message" do
       tool = weather_tool_class.new
-      error = expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::ValidationError)
-      expect(error.message).must_match(/city is required/)
+      response = tool.call_with_validation(context: nil)
+
+      expect(response.content).must_match(/city is required/)
     end
 
     it "applies defaults for optional params" do
@@ -99,7 +102,7 @@ describe Riffer::Tool do
       expect(result.content).must_equal "Simple result"
     end
 
-    it "raises TimeoutError when execution exceeds timeout" do
+    it "returns a timeout_error response when execution exceeds timeout" do
       slow_tool_class = Class.new(Riffer::Tool) do
         timeout 0.01
 
@@ -109,9 +112,10 @@ describe Riffer::Tool do
         end
       end
 
-      tool = slow_tool_class.new
+      response = slow_tool_class.new.call_with_validation(context: nil)
 
-      expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::TimeoutError)
+      expect(response.error?).must_equal true
+      expect(response.error_type).must_equal :timeout_error
     end
 
     it "includes timeout duration in error message" do
@@ -124,9 +128,9 @@ describe Riffer::Tool do
         end
       end
 
-      tool = slow_tool_class.new
-      error = expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::TimeoutError)
-      expect(error.message).must_match(/0\.01 seconds/)
+      response = slow_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.content).must_match(/0\.01 seconds/)
     end
 
     it "completes successfully when within timeout" do
@@ -144,16 +148,89 @@ describe Riffer::Tool do
       expect(result.content).must_equal "fast result"
     end
 
-    it "raises Error when tool does not return Response" do
+    it "returns an execution_error response for ToolExecutionError" do
+      failing_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise Riffer::ToolExecutionError, "Expected failure"
+        end
+      end
+
+      response = failing_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error?).must_equal true
+      expect(response.error_type).must_equal :execution_error
+      expect(response.content).must_equal "Expected failure"
+    end
+
+    it "carries no exception on a deliberate error response" do
+      failing_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise Riffer::ToolExecutionError, "Expected failure"
+        end
+      end
+
+      response = failing_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.exception).must_be_nil
+    end
+
+    it "folds an arbitrary StandardError into an unhandled_error response" do
+      buggy_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise "Something went wrong"
+        end
+      end
+
+      response = buggy_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error?).must_equal true
+      expect(response.error_type).must_equal :unhandled_error
+      expect(response.content).must_equal "Error executing tool: RuntimeError: Something went wrong"
+    end
+
+    it "folds a programming bug into an unhandled_error response" do
+      buggy_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          nil.nonexistent_method
+        end
+      end
+
+      response = buggy_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error_type).must_equal :unhandled_error
+      expect(response.content).must_match(/\AError executing tool: NoMethodError: /)
+    end
+
+    it "carries the rescued exception on an unhandled_error response" do
+      buggy_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise "Something went wrong"
+        end
+      end
+
+      response = buggy_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.exception).must_be_instance_of RuntimeError
+      expect(response.exception.message).must_equal "Something went wrong"
+    end
+
+    it "returns an unhandled_error response when tool does not return Response" do
       bad_tool_class = Class.new(Riffer::Tool) do
         def call(context:)
           "raw string instead of Response"
         end
       end
 
-      tool = bad_tool_class.new
-      error = expect { tool.call_with_validation(context: nil) }.must_raise(Riffer::Error)
-      expect(error.message).must_match(/must return a Riffer::Tools::Response/)
+      response = bad_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error_type).must_equal :unhandled_error
+      expect(response.content).must_match(/must return a Riffer::Tools::Response/)
+    end
+
+    it "raises NotImplementedError when call is not implemented" do
+      tool_class = Class.new(Riffer::Tool)
+
+      expect { tool_class.new.call_with_validation(context: nil) }.must_raise(NotImplementedError)
     end
   end
 

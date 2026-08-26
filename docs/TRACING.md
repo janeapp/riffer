@@ -170,10 +170,11 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 
 A tool failure comes in two shapes, distinguished by span status:
 
-- **Handled error** — the tool returned an error response. `error.type` carries the category and the **span status stays unset** (the run continues). The framework's categories are `unknown_tool`, `validation_error`, `timeout_error`, and `execution_error`; a custom tool may set its own via `Riffer::Tools::Response.error(type:)`.
-- **Unhandled exception** — the dispatch raised. `error.type` is the exception class name and the **span status is `ERROR`**, with the exception recorded.
+- **Handled error** — the tool returned a deliberate error response. `error.type` carries the category and the **span status stays unset** (the run continues). The framework's categories are `unknown_tool`, `validation_error`, `timeout_error`, and `execution_error`; a custom tool may set its own via `Riffer::Tools::Response.error(type:)`.
+- **Unhandled error** — the tool raised an unanticipated `StandardError`, which `Riffer::Tool#call_with_validation` folds into an `unhandled_error` response carrying the exception. `error.type` is `unhandled_error`, the **span status is `ERROR`**, and the exception itself is recorded on the span (its class and message are on the exception event). The run continues — the LLM receives the error response.
+- Host code raising **around** the tool call (an `around_tool_call` hook, a tracing callback) still propagates out of the run. `error.type` is the exception class name and the span status is `ERROR`.
 
-This status convention is the same on `chat` and `invoke_agent`: an unhandled exception sets `error.type` to the class name and marks the span `ERROR`; everything else leaves the status unset.
+This status convention is the same on `chat` and `invoke_agent`: an unhandled exception marks the span `ERROR` with the exception recorded; a handled outcome leaves the status unset.
 
 ## `execute_guardrail {name}` — the guardrail span
 

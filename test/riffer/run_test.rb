@@ -2332,8 +2332,8 @@ describe Riffer::Agent::Run do
         expect(tool_message.error?).must_equal true
       end
 
-      it "emits tool message with execution_error type" do
-        expect(tool_message.error_type).must_equal :execution_error
+      it "emits tool message with unhandled_error type" do
+        expect(tool_message.error_type).must_equal :unhandled_error
       end
     end
   end

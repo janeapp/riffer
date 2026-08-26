@@ -89,14 +89,8 @@ class Riffer::Tools::Runtime
     arguments = parse_arguments(tool_call.arguments)
 
     tool_instance.call_with_validation(context: context, **arguments)
-  rescue Riffer::TimeoutError => e
-    Riffer::Tools::Response.error(e.message, type: :timeout_error)
-  rescue Riffer::ValidationError => e
-    Riffer::Tools::Response.error(e.message, type: :validation_error)
-  rescue Riffer::ToolExecutionError => e
-    Riffer::Tools::Response.error(e.message, type: :execution_error)
-  rescue RuntimeError => e
-    Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
+  rescue JSON::ParserError => e
+    Riffer::Tools::Response.error("Invalid JSON in tool arguments: #{e.message}", type: :validation_error)
   end
 
   #--
@@ -144,13 +138,21 @@ class Riffer::Tools::Runtime
     tags.transform_keys { |key| "riffer.tag.#{key}" }
   end
 
-  # A returned error Response is a handled outcome, so its status stays unset —
-  # an error span status is reserved for a raised exception.
+  # A deliberate error Response is a handled outcome, so its status stays unset.
+  # An error status is reserved for a Response carrying the exception it was
+  # folded from — the tool failed for a reason nobody anticipated.
   #--
   #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
   def record_tool_outcome(span, result)
     error_type = result.error_type
     span.set_attribute("error.type", error_type.to_s) if error_type
+
+    exception = result.exception
+    if exception
+      span.record_exception(exception)
+      span.error!(exception.message)
+    end
+
     capture_tool_result(span, result)
   end
 
