@@ -144,10 +144,11 @@ describe Riffer::Mcp::SearchTool do
   end
 
   describe "#call_with_validation" do
-    it "raises a validation error when query is nil" do
-      assert_raises(Riffer::ValidationError) do
-        Riffer::Mcp::SearchTool.new.call_with_validation(context: context, query: nil)
-      end
+    it "returns a validation error response when query is nil" do
+      response = Riffer::Mcp::SearchTool.new.call_with_validation(context: context, query: nil)
+
+      assert_predicate response, :error?
+      assert_equal :validation_error, response.error_type
     end
   end
 end
