@@ -1,0 +1,36 @@
+# Generated from lib/riffer/files/resolver.rb with RBS::Inline
+
+class Riffer::Files::Resolver
+  @provider: Riffer::Providers::Base
+
+  @config: Riffer::Config::Files
+
+  # : (provider: Riffer::Providers::Base) -> void
+  def initialize: (provider: Riffer::Providers::Base) -> void
+
+  # Resolves every file in every User message in place - downloading,
+  # verifying, and caching as the provider's capability and each file's
+  # sha256 require.  Raises Riffer::FileError on any file that can't be
+  # resolved
+  # : (Array[Riffer::Messages::Base]) -> void
+  def resolve!: (Array[Riffer::Messages::Base]) -> void
+
+  private
+
+  # : (Riffer::Messages::User) -> void
+  def check_file_count!: (Riffer::Messages::User) -> void
+
+  # : (Riffer::Messages::FilePart) -> void
+  def resolve_file!: (Riffer::Messages::FilePart) -> void
+
+  # : (Riffer::Messages::FilePart) -> void
+  def verify_inline!: (Riffer::Messages::FilePart) -> void
+
+  # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
+  # request still sends the URL, never the downloaded bytes, so caching them
+  # would hold memory nothing reads and let later turns skip re-verifying.
+  # : (Riffer::Messages::FilePart, cache: (false | Symbol)) -> void
+  def download!: (Riffer::Messages::FilePart, cache: false | Symbol) -> void
+
+  def verify_bytes!: (untyped bytes, untyped sha256) -> untyped
+end

@@ -42,6 +42,9 @@ Gem::Specification.new do |spec|
 
   # Runtime dependencies
   spec.add_dependency "zeitwerk", "~> 2.6", ">= 2.6.0"
+  # Ruby 3.4 moved base64 from a default gem to a bundled one, so it's no
+  # longer guaranteed to be on a consumer's load path without this.
+  spec.add_dependency "base64"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

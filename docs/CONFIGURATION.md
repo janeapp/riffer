@@ -182,6 +182,38 @@ end
 | `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                               |
 | `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `in_span`. See [Tracing → Routing to a non-OpenTelemetry backend](TRACING.md#routing-to-a-non-opentelemetry-backend). |
 
+### File Downloads
+
+File-attachment-download policy lives under `config.files`. Before an LLM call, riffer resolves every `Riffer::Messages::FilePart` attached to a user message against the provider's own capability — some providers accept a URL as-is, some need the bytes inline, and some can't take an attachment at all. See [Messages — File Parts](MESSAGES.md#file-parts) for `FilePart` itself and its `sha256:` field.
+
+```ruby
+Riffer.configure do |config|
+  config.files.allow_downloads = true
+  config.files.max_bytes = 5_000_000
+  config.files.max_per_message = 4
+end
+```
+
+Per file, riffer applies this policy, in order:
+
+1. **Already inline data** — nothing to download. If `sha256:` was given, it's verified against the existing bytes regardless of any other setting below.
+2. **Provider can't accept the file at all** — raises `Riffer::FileUnsupportedError`.
+3. **Provider accepts a URL as-is** — passed straight through, untouched, *unless* `sha256:` was given, in which case riffer downloads and verifies anyway (a caller who set `sha256:` is asking for integrity verification, not a passthrough).
+4. **Provider needs the bytes inline** — riffer downloads the file, verifying `sha256:` if given.
+
+Every download in step 3 or 4 is gated by `allow_downloads`; with it `false` (the default), reaching either of those steps raises `Riffer::FileDownloadsDisabledError` instead of fetching anything. This means upgrading to a riffer version with this feature never starts downloading arbitrary URLs on your behalf — you have to opt in.
+
+| Option            | Description                                                                                                                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allow_downloads` | Whether riffer may download a `FilePart`'s URL. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `false`.                                                                                          |
+| `max_bytes`       | Maximum size, in bytes, of a downloaded file; the download is aborted once the streamed body exceeds this, independent of (and regardless of a missing/lying) `content-length` header. Defaults to `3_500_000`. |
+| `timeout`         | Open and read timeout, in seconds, for a single download attempt. Defaults to `60`.                                                                                                                               |
+| `max_per_message` | Maximum number of files allowed on a single user message; checked against each message as originally authored, before consecutive messages are merged. `nil` (default) means uncapped.                          |
+| `runner`          | A `Riffer::Runner` instance that resolves every file across a call's messages. Defaults to `Riffer::Runner::Sequential.new`; assign `Riffer::Runner::Threaded.new` (or `Riffer::Runner::Fibers.new` inside a fiber-based host) to resolve multiple files concurrently. |
+| `downloader`      | The object that fetches a URL's bytes; must respond to `#call(url, max_bytes:, timeout:)` returning the raw (not base64-encoded) file content. Riffer caches it as base64 or raw bytes, whichever the provider actually needs, rather than producing both. Defaults to `Riffer::Files::Downloader.new`, which fetches over HTTPS only, following up to 3 redirects. Assign your own to add logging/metrics, or to fetch from a non-HTTPS store (e.g. `s3://`).                          |
+
+A file that fails resolution raises a `Riffer::FileError` subclass — `Riffer::FileUnsupportedError`, `Riffer::FileDownloadsDisabledError`, `Riffer::TooManyFilesError`, `Riffer::FileChecksumMismatchError`, `Riffer::FileTooLargeError`, `Riffer::FileDownloadError`, or `Riffer::FileEncodingError` — so callers can `rescue Riffer::FileError` for any attachment problem, or a specific subclass to handle one case.
+
 ### Pricing
 
 Configure per-model token prices and riffer computes the cost of each LLM call onto its [`TokenUsage`](MESSAGES.md#token-usage-semantics). Riffer ships **no** price table — so an unconfigured model simply carries no cost (`token_usage.cost` is `nil`).

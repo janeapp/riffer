@@ -88,6 +88,49 @@ describe Riffer::Providers::Base do
     end
   end
 
+  describe "file attachment resolution" do
+    before do
+      @original_allow_downloads = Riffer.config.files.allow_downloads
+      @original_max_per_message = Riffer.config.files.max_per_message
+    end
+
+    after do
+      Riffer.config.files.allow_downloads = @original_allow_downloads
+      Riffer.config.files.max_per_message = @original_max_per_message
+    end
+
+    it "resolves file attachments in #generate_text before building request params" do
+      Riffer.config.files.allow_downloads = false
+      file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", sha256: "a" * 64)
+
+      error = expect { provider.generate_text(prompt: "Hello", files: [file]) }.must_raise(Riffer::FileDownloadsDisabledError)
+      expect(error.message).must_equal "File attachments are disabled"
+    end
+
+    it "resolves file attachments in #stream_text before building request params" do
+      Riffer.config.files.allow_downloads = false
+      file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", sha256: "a" * 64)
+
+      expect { provider.stream_text(prompt: "Hello", files: [file]) }.must_raise(Riffer::FileDownloadsDisabledError)
+    end
+
+    it "checks max_per_message against each original message, not the post-merge total" do
+      Riffer.config.files.max_per_message = 1
+      file_a = Riffer::Messages::FilePart.new(media_type: "image/png", data: "YQ==")
+      file_b = Riffer::Messages::FilePart.new(media_type: "image/png", data: "Yg==")
+      messages = [
+        Riffer::Messages::User.new("First", files: [file_a]),
+        Riffer::Messages::User.new("Second", files: [file_b]),
+      ]
+
+      # These two messages would merge into a single 2-file message, which would
+      # exceed max_per_message if the cap were checked post-merge — reaching
+      # NotImplementedError (not TooManyFilesError) proves it's checked before.
+      error = expect { provider.generate_text(messages: messages) }.must_raise(NotImplementedError)
+      expect(error.message).must_equal "Subclasses must implement #build_request_params"
+    end
+  end
+
   describe "#normalize_messages" do
     it "converts prompt to User message" do
       result = provider.send(:normalize_messages, prompt: "Hello", system: nil, messages: nil)

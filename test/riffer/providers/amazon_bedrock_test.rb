@@ -1423,18 +1423,15 @@ describe Riffer::Providers::AmazonBedrock do
     end
 
     describe "with unsupported URL source" do
-      it "raises ArgumentError for non-S3 URLs" do
+      it "raises FileDownloadsDisabledError for non-S3 URLs when downloads are disabled" do
         provider = Riffer::Providers::AmazonBedrock.new
         file = Riffer::Messages::FilePart.from_url("https://example.com/image.png")
 
         expect do
-          provider.generate_text(
-            prompt: "Describe this",
-            model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-            files: [file],
-          )
+          provider.generate_text(prompt: "Describe this", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                                 files: [file],)
         end.
-          must_raise Riffer::ArgumentError
+          must_raise Riffer::FileDownloadsDisabledError
       end
     end
   end

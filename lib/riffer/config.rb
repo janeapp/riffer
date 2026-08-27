@@ -115,6 +115,97 @@ class Riffer::Config
     end
   end
 
+  # File-attachment-download policy for +Riffer::Messages::FilePart+ URL sources
+  class Files
+    # Allow file attachments to be downloaded to send to providers.
+    attr_reader :allow_downloads #: bool
+    # Maximum file size to download before failing.
+    attr_reader :max_bytes #: Integer
+    # Maximum amount of time to spend downloading a file before failing.
+    attr_reader :timeout #: Integer
+    # Maximum number of files to include in an individual message.
+    attr_reader :max_per_message #: Integer?
+    # Execution pattern for downloading files.
+    attr_reader :runner #: Riffer::Runner
+    # The object used to fetch a URL source's bytes
+    attr_reader :downloader #: untyped
+
+    #--
+    #: () -> void
+    def initialize
+      @allow_downloads = false
+      @max_bytes = 3_500_000
+      @timeout = 60
+      @max_per_message = nil
+      @runner = Riffer::Runner::Sequential.new
+      @downloader = Riffer::Files::Downloader.new
+    end
+
+    # Sets the allow_downloads flag, coercing boolean-ish values so an env-var
+    # +"false"+ (truthy in Ruby) doesn't silently enable downloads.  Raises
+    # Riffer::ArgumentError on an unrecognized value.
+    #--
+    #: (untyped) -> void
+    def allow_downloads=(value)
+      @allow_downloads = Riffer::Helpers::Boolean.coerce(value, attribute: "allow_downloads")
+    end
+
+    # Sets max_bytes, provided value is a positive integer.
+    # Raises Riffer::ArgumentError if value is not an Integer or less than or equal to 0.
+    #--
+    #: (untyped) -> void
+    def max_bytes=(value)
+      raise Riffer::ArgumentError, "max_bytes must be a positive integer" unless value.is_a?(Integer) && value.positive?
+
+      @max_bytes = value
+    end
+
+    # Sets timeout, provided value is a positive integer.
+    # Raises Riffer::ArgumentError if value is not an Integer or is less than or equal to 0.
+    #--
+    #: (untyped) -> void
+    def timeout=(value)
+      raise Riffer::ArgumentError, "timeout must be a positive integer" unless value.is_a?(Integer) && value.positive?
+
+      @timeout = value
+    end
+
+    # Sets max_per_message, provided value is either nil or a positive integer.
+    # Raises Riffer::ArgumentError if value is not an Integer or nil, or is less than or equal to 0.
+    #--
+    #: (untyped) -> void
+    def max_per_message=(value)
+      if value.is_a?(Integer) && value.positive?
+        @max_per_message = value
+      elsif value.nil?
+        @max_per_message = nil
+      else
+        raise Riffer::ArgumentError, "max_per_message must be a positive integer or nil"
+      end
+    end
+
+    # Sets the runner used to process file downloads, provided value is a Riffer::Runner.
+    # Raises Riffer::ArgumentError if value is not a Riffer::Runner.
+    #--
+    #: (untyped) -> void
+    def runner=(value)
+      valid = value.is_a?(Riffer::Runner)
+      raise Riffer::ArgumentError, "runner must be a Riffer::Runner instance" unless valid
+
+      @runner = value
+    end
+
+    # Sets the object used to download bytes from a URL.
+    # Raises Riffer::ArgumentError if value does not respond to +#call+.
+    #--
+    #: (untyped) -> void
+    def downloader=(value)
+      raise Riffer::ArgumentError, "downloader must respond to #call" unless value.respond_to?(:call)
+
+      @downloader = value
+    end
+  end
+
   # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer
   # ships no price table, so an unconfigured model carries no cost.
   class Pricing
@@ -288,6 +379,8 @@ class Riffer::Config
   # Tracing-related global configuration.
   attr_reader :tracing #: Riffer::Config::Tracing
 
+  attr_reader :files #: Riffer::Config::Files
+
   # Consumer-configured per-model token pricing.
   attr_reader :pricing #: Riffer::Config::Pricing
 
@@ -336,6 +429,7 @@ class Riffer::Config
     @tool_runtime = Riffer::Tools::Runtime::Inline.new
     @skills = Skills.new
     @tracing = Tracing.new
+    @files = Files.new
     @pricing = Pricing.new
     @message_id_strategy = :none
     @experimental_history_healing = false

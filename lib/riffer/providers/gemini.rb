@@ -27,6 +27,12 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "gcp.gemini"
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(_file)
+    :base64
+  end
+
   private
 
   #--
@@ -274,11 +280,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_gemini_format(file)
-    if file.url?
-      raise Riffer::ArgumentError,
-            "Gemini provider does not support URL-based file references. Provide base64-encoded data instead."
-    end
-
     { inlineData: { mimeType: file.media_type, data: file.data } }
   end
 

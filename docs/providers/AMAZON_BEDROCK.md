@@ -163,6 +163,23 @@ class AWSAgent < Riffer::Agent
 end
 ```
 
+## File Support
+
+Bedrock accepts file attachments either as raw bytes, or as `s3://` URIs passed straight through to Converse — Bedrock fetches the S3 object itself:
+
+```ruby
+file = Riffer::Messages::FilePart.from_url("s3://my-bucket/document.pdf", media_type: "application/pdf")
+response = provider.generate_text(
+  prompt: "Summarize this document",
+  model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+  files: [file]
+)
+```
+
+Any other URL scheme (e.g. `https://`) isn't something Bedrock accepts as a reference, so riffer downloads the file itself and sends the raw bytes — see [File Downloads](../CONFIGURATION.md#file-downloads) for the `allow_downloads` policy this requires.
+
+**A `sha256:` on an `s3://` `FilePart` is a combination that always fails with the default setup.** Setting `sha256:` forces riffer to download and verify the file itself before Bedrock ever sees it, regardless of the URL scheme — but riffer's default downloader only fetches `https://` URLs, so an `s3://` source can never be verified out of the box. Either configure a custom `Riffer.config.files.downloader` that can reach S3, or omit `sha256:` and let the `s3://` URI pass straight through to Bedrock unverified.
+
 ## Message Format
 
 The provider converts Riffer messages to Bedrock format:

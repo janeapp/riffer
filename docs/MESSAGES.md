@@ -176,7 +176,16 @@ file.document?   # => true
 
 # From raw base64 data
 file = Riffer::Messages::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
+
+# With an expected sha256 checksum of the file's contents
+file = Riffer::Messages::FilePart.from_url(
+  "https://example.com/doc.pdf",
+  sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+)
+file.sha256  # => "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 ```
+
+`sha256:` accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises `Riffer::ArgumentError` on any other format.
 
 ### Hash Shorthand
 
@@ -189,6 +198,7 @@ When passing files to agents or messages, hashes are automatically converted:
 # URL shorthand (media_type auto-detected from extension, or provide explicitly)
 {url: "https://example.com/photo.jpg"}
 {url: "https://example.com/file", media_type: "application/pdf"}
+{url: "https://example.com/file", media_type: "application/pdf", sha256: "e3b0c4..."}
 
 # Data shorthand
 {data: base64_string, media_type: "image/png", filename: "chart.png"}

@@ -43,6 +43,12 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     depends_on "aws-sdk-bedrockruntime"
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    file.url&.start_with?("s3://") ? :url : :bytes
+  end
+
   private
 
   #--
@@ -413,13 +419,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def convert_file_part_to_bedrock_format(file)
     format = bedrock_format(file.media_type)
 
-    source = if file.data
-               { bytes: Base64.decode64(file.data) }
-             elsif file.url&.start_with?("s3://")
-               { s3_location: { uri: file.url } }
-             else
-               raise Riffer::ArgumentError, "Amazon Bedrock only supports S3 URI or base64 data file sources"
-             end
+    source = file.data_bytes ? { bytes: file.data_bytes } : { s3_location: { uri: file.url } }
 
     if file.image?
       { image: { format: format, source: source } }

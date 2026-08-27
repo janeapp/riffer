@@ -145,7 +145,7 @@ response = provider.generate_text(
 
 ### File Support
 
-Gemini supports inline base64-encoded files (images and documents):
+Gemini's API only accepts inline base64-encoded files (images and documents), never a URL reference:
 
 ```ruby
 file = Riffer::Messages::FilePart.new(data: base64_data, media_type: "image/png")
@@ -156,10 +156,9 @@ response = provider.generate_text(
 )
 ```
 
-**Note:** URL-based file references are not supported. Provide base64-encoded data instead.
+A `FilePart.from_url` source works too — riffer downloads and base64-encodes it before sending, subject to the `allow_downloads` policy in [File Downloads](../CONFIGURATION.md#file-downloads).
 
 ## Limitations
 
 - **No web search** - Gemini's standard API does not include a web search tool
-- **No URL files** - Only base64 inline data is supported for file attachments
 - **Tool call IDs** - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side

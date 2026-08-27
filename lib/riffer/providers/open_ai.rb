@@ -19,6 +19,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     depends_on "openai"
   end
 
+  #--
+  #: (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery(file)
+    file.image? ? :url : :base64
+  end
+
   private
 
   #--

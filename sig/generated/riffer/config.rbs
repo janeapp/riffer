@@ -147,6 +147,68 @@ class Riffer::Config
     def backend=: (untyped) -> void
   end
 
+  # File-attachment-download policy for +Riffer::Messages::FilePart+ URL sources
+  class Files
+    # Allow file attachments to be downloaded to send to providers.
+    attr_reader allow_downloads: bool
+
+    # Maximum file size to download before failing.
+    attr_reader max_bytes: Integer
+
+    # Maximum amount of time to spend downloading a file before failing.
+    attr_reader timeout: Integer
+
+    # Maximum number of files to include in an individual message.
+    attr_reader max_per_message: Integer?
+
+    # Execution pattern for downloading files.
+    attr_reader runner: Riffer::Runner
+
+    # The object used to fetch a URL source's bytes
+    attr_reader downloader: untyped
+
+    # --
+    # : () -> void
+    def initialize: () -> void
+
+    # Sets the allow_downloads flag, coercing boolean-ish values so an env-var
+    # +"false"+ (truthy in Ruby) doesn't silently enable downloads.  Raises
+    # Riffer::ArgumentError on an unrecognized value.
+    # --
+    # : (untyped) -> void
+    def allow_downloads=: (untyped) -> void
+
+    # Sets max_bytes, provided value is a positive integer.
+    # Raises Riffer::ArgumentError if value is not an Integer or less than or equal to 0.
+    # --
+    # : (untyped) -> void
+    def max_bytes=: (untyped) -> void
+
+    # Sets timeout, provided value is a positive integer.
+    # Raises Riffer::ArgumentError if value is not an Integer or is less than or equal to 0.
+    # --
+    # : (untyped) -> void
+    def timeout=: (untyped) -> void
+
+    # Sets max_per_message, provided value is either nil or a positive integer.
+    # Raises Riffer::ArgumentError if value is not an Integer or nil, or is less than or equal to 0.
+    # --
+    # : (untyped) -> void
+    def max_per_message=: (untyped) -> void
+
+    # Sets the runner used to process file downloads, provided value is a Riffer::Runner.
+    # Raises Riffer::ArgumentError if value is not a Riffer::Runner.
+    # --
+    # : (untyped) -> void
+    def runner=: (untyped) -> void
+
+    # Sets the object used to download bytes from a URL.
+    # Raises Riffer::ArgumentError if value does not respond to +#call+.
+    # --
+    # : (untyped) -> void
+    def downloader=: (untyped) -> void
+  end
+
   # Consumer-configured token pricing, keyed by +provider/model+ id. Riffer
   # ships no price table, so an unconfigured model carries no cost.
   class Pricing
@@ -255,6 +317,8 @@ class Riffer::Config
 
   # Tracing-related global configuration.
   attr_reader tracing: Riffer::Config::Tracing
+
+  attr_reader files: Riffer::Config::Files
 
   # Consumer-configured per-model token pricing.
   attr_reader pricing: Riffer::Config::Pricing

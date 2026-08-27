@@ -11,6 +11,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : () -> String
   def self.semconv_provider_name: () -> String
 
+  # --
+  # : (Riffer::Messages::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+
   private
 
   # --
