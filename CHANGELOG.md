@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.43.0](https://github.com/janeapp/riffer/compare/riffer/v0.42.0...riffer/v0.43.0) (2026-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* call_with_validation no longer raises Riffer::ValidationError / Riffer::TimeoutError / Riffer::Error — it always returns a Riffer::Tools::Response. Riffer::TimeoutError has been removed; delete any `rescue Riffer::TimeoutError` and check `response.error_type` instead. Custom runtimes overriding dispatch_tool_call no longer inherit rescues from the base class.
+
+### Features
+
+* tools are the error boundary — call_with_validation never raises ([#412](https://github.com/janeapp/riffer/issues/412)) ([b6db9b6](https://github.com/janeapp/riffer/commit/b6db9b6ab2885d170cbba52c7a571c63b83d892e))
+
 ## [0.42.0](https://github.com/janeapp/riffer/compare/riffer/v0.41.0...riffer/v0.42.0) (2026-08-25)
 
 
