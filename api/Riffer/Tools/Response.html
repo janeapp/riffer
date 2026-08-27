@@ -651,6 +651,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-exception" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-exception" title="Link to this attribute">
+            <span class="method-name">exception</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        <p>The exception an unhandled failure was folded from, or <code>nil</code>. Kept out of every serialized form so it never reaches an LLM or a message payload.</p>
+
+        </div>
+      </div>
+
     </section>
 
 
@@ -670,7 +686,7 @@
             <div class="method-heading">
               <a href="#method-c-error" title="Link to this method">
                 <span class="method-name">error</span>
-                <span class="method-args">(message, type: :execution_error)</span>
+                <span class="method-args">(message, type: :execution_error, exception: nil)</span>
               </a>
             </div>
 
@@ -683,9 +699,9 @@
             </details>
           </div>
           <div class="method-source-code" id="error-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 66</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:execution_error</span>)
-  <span class="ruby-identifier">new</span>(<span class="ruby-value">content:</span> <span class="ruby-identifier">message</span>, <span class="ruby-value">success:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">error_message:</span> <span class="ruby-identifier">message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-identifier">type</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">message</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:execution_error</span>, <span class="ruby-value">exception:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">content:</span> <span class="ruby-identifier">message</span>, <span class="ruby-value">success:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">error_message:</span> <span class="ruby-identifier">message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-identifier">type</span>, <span class="ruby-value">exception:</span> <span class="ruby-identifier">exception</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -725,7 +741,7 @@
             </details>
           </div>
           <div class="method-source-code" id="json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">json</span>(<span class="ruby-identifier">result</span>)
   <span class="ruby-identifier">success</span>(<span class="ruby-identifier">result</span>, <span class="ruby-value">format:</span> <span class="ruby-value">:json</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -754,7 +770,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(content:, success:, error_message: nil, error_type: nil)</span>
+                <span class="method-args">(content:, success:, error_message: nil, error_type: nil, exception: nil)</span>
               </a>
             </div>
 
@@ -767,12 +783,13 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 92</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">exception:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
   <span class="ruby-ivar">@success</span> = <span class="ruby-identifier">success</span>
   <span class="ruby-ivar">@error_message</span> = <span class="ruby-identifier">error_message</span>
   <span class="ruby-ivar">@error_type</span> = <span class="ruby-identifier">error_type</span>
+  <span class="ruby-ivar">@exception</span> = <span class="ruby-identifier">exception</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -812,7 +829,7 @@
             </details>
           </div>
           <div class="method-source-code" id="success-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">success</span>(<span class="ruby-identifier">result</span>, <span class="ruby-value">format:</span> <span class="ruby-value">:text</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">VALID_FORMATS</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">format</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid format: #{format}. Must be one of: #{VALID_FORMATS.join(&#39;, &#39;)}&quot;</span>
@@ -861,7 +878,7 @@
             </details>
           </div>
           <div class="method-source-code" id="text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 50</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">text</span>(<span class="ruby-identifier">result</span>)
   <span class="ruby-identifier">success</span>(<span class="ruby-identifier">result</span>, <span class="ruby-value">format:</span> <span class="ruby-value">:text</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -917,7 +934,7 @@
             </details>
           </div>
           <div class="method-source-code" id="error-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 78</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 82</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error?</span> = <span class="ruby-operator">!</span><span class="ruby-ivar">@success</span>
 
   <span class="ruby-comment"># Returns a hash representation of the response.</span>
@@ -931,12 +948,13 @@
   <span class="ruby-identifier">private</span>
 
   <span class="ruby-comment">#--</span>
-  <span class="ruby-comment">#: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -&gt; void</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-comment">#: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -&gt; void</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">exception:</span> <span class="ruby-keyword">nil</span>)
     <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
     <span class="ruby-ivar">@success</span> = <span class="ruby-identifier">success</span>
     <span class="ruby-ivar">@error_message</span> = <span class="ruby-identifier">error_message</span>
     <span class="ruby-ivar">@error_type</span> = <span class="ruby-identifier">error_type</span>
+    <span class="ruby-ivar">@exception</span> = <span class="ruby-identifier">exception</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -977,7 +995,7 @@
             </details>
           </div>
           <div class="method-source-code" id="success-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 73</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">success?</span> = <span class="ruby-ivar">@success</span>
 
 <span class="ruby-comment"># Returns true if the tool execution failed.</span>
@@ -996,12 +1014,13 @@
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-comment">#--</span>
-<span class="ruby-comment">#: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -&gt; void</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>)
+<span class="ruby-comment">#: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -&gt; void</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">content:</span>, <span class="ruby-value">success:</span>, <span class="ruby-value">error_message:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">error_type:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">exception:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@content</span> = <span class="ruby-identifier">content</span>
   <span class="ruby-ivar">@success</span> = <span class="ruby-identifier">success</span>
   <span class="ruby-ivar">@error_message</span> = <span class="ruby-identifier">error_message</span>
   <span class="ruby-ivar">@error_type</span> = <span class="ruby-identifier">error_type</span>
+  <span class="ruby-ivar">@exception</span> = <span class="ruby-identifier">exception</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1041,7 +1060,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 84</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/tools/response.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   { <span class="ruby-value">content:</span> <span class="ruby-ivar">@content</span>, <span class="ruby-value">error:</span> <span class="ruby-ivar">@error_message</span>, <span class="ruby-value">error_type:</span> <span class="ruby-ivar">@error_type</span> }
 <span class="ruby-keyword">end</span></pre>

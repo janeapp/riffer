@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.42.0</span>
+            <span class="version">v0.43.0</span>
           </div>
         </nav>
       </div>
@@ -206,7 +206,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>When a tool times out, the error is reported to the LLM with error type <code>:timeout_error</code>, allowing it to respond appropriately (e.g., suggest retrying or using a different approach).</p>
+<p>When a tool times out, the LLM receives an error response with type <code>:timeout_error</code> and can respond appropriately (e.g., suggest retrying or using a different approach). The timeout raises <code>Riffer::TimeoutError</code> inside <code>call</code>, so a tool can rescue it to release resources before it propagates.</p>
 
 <h2 id="validation">Validation</h2>
 
@@ -218,7 +218,7 @@
   <li>Enum values must be in the allowed list</li>
 </ul>
 
-<p>Validation errors are captured and sent back to the LLM as tool results with error type <code>:validation_error</code>.</p>
+<p>Validation errors are captured and sent back to the LLM as tool results with error type <code>:validation_error</code>, as is malformed or non-object JSON in the provider’s tool-call arguments.</p>
 
 <h2 id="json-schema-generation">JSON Schema Generation</h2>
 
@@ -283,7 +283,45 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Unhandled <code>RuntimeError</code> exceptions are caught by Riffer and converted to error responses with type <code>:execution_error</code>. For expected execution errors, raise <code>Riffer::ToolExecutionError</code> — these are also caught and returned to the LLM. Programming bugs (<code>NoMethodError</code>, <code>NameError</code>, <code>TypeError</code>, etc.) propagate to the caller. It’s recommended to handle expected errors explicitly for better error messages.</p>
+<p>A tool never raises into the agent loop — every <code>StandardError</code> raised during a tool call becomes an error response:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Failure</th>
+      <th>Error type</th>
+      <th>Response content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Invalid arguments</td>
+      <td><code>:validation_error</code></td>
+      <td>the validation message</td>
+    </tr>
+    <tr>
+      <td>Timeout</td>
+      <td><code>:timeout_error</code></td>
+      <td><code>Tool execution timed out after N seconds</code></td>
+    </tr>
+    <tr>
+      <td><code>Riffer::ToolExecutionError</code></td>
+      <td><code>:execution_error</code></td>
+      <td>the exception message</td>
+    </tr>
+    <tr>
+      <td>Any other <code>StandardError</code></td>
+      <td><code>:unhandled_error</code></td>
+      <td><code>Error executing tool: &lt;ExceptionClass&gt;: &lt;message&gt;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>An <code>:unhandled_error</code> response also carries the rescued exception on <code>response.exception</code> — never serialized, so it stays out of the message history — and its <code>execute_tool</code> span records the exception with an <code>ERROR</code> status (see <a href="/guides/tracing/">Tracing</a>).</p>
+
+<p><code>NotImplementedError</code> is not rescued: an unimplemented <code>#call</code> raises out of the run.</p>
+
+<p>For expected failures, return <code>error(...)</code> or raise <code>Riffer::ToolExecutionError</code> — both give the LLM a clean message rather than an <code>:unhandled_error</code>.</p>
 
 <p>The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).</p>
 
@@ -423,13 +461,13 @@
       <span class="ss">arguments: </span><span class="n">tool_call</span><span class="p">.</span><span class="nf">arguments</span>
     <span class="p">})</span>
     <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">text</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">)</span>
-  <span class="k">rescue</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">ToolExecutionError</span> <span class="o">=&gt;</span> <span class="n">e</span>
-    <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="p">,</span> <span class="ss">type: :execution_error</span><span class="p">)</span>
-  <span class="k">rescue</span> <span class="no">RuntimeError</span> <span class="o">=&gt;</span> <span class="n">e</span>
-    <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="s2">"Error executing tool: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="ss">type: :execution_error</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="no">HttpClient</span><span class="o">::</span><span class="no">Error</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Tools</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="s2">"Tool service unavailable: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="ss">type: :execution_error</span><span class="p">)</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>Anything that escapes <code>dispatch_tool_call</code> propagates out of the run — rescue whatever your transport can raise and return an error response. The base class handles only an unknown tool name and malformed argument JSON.</p>
 
 <h3 id="around-call-hook">Around-Call Hook</h3>
 

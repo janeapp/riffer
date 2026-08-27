@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.42.0</span>
+            <span class="version">v0.43.0</span>
           </div>
         </nav>
       </div>
@@ -483,7 +483,7 @@
 <span class="n">error</span><span class="p">(</span><span class="s2">"Rate limit exceeded"</span><span class="p">,</span> <span class="ss">type: :rate_limit</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>If no type is specified, it defaults to <code>:execution_error</code>.</p>
+<p>If no type is specified, it defaults to <code>:execution_error</code>. Riffer reserves <code>:unhandled_error</code> for unrescued exceptions — don’t set it yourself.</p>
 
 <h3 id="using-riffertoolsresponse-directly">Using Riffer::Tools::Response Directly</h3>
 
@@ -509,7 +509,10 @@
 <span class="n">error_response</span><span class="p">.</span><span class="nf">error?</span>         <span class="c1"># =&gt; true</span>
 <span class="n">error_response</span><span class="p">.</span><span class="nf">error_message</span>  <span class="c1"># =&gt; "failed"</span>
 <span class="n">error_response</span><span class="p">.</span><span class="nf">error_type</span>     <span class="c1"># =&gt; :not_found</span>
+<span class="n">error_response</span><span class="p">.</span><span class="nf">exception</span>      <span class="c1"># =&gt; nil</span>
 </code></pre></div></div>
+
+<p><code>exception</code> holds the rescued exception on the <code>:unhandled_error</code> responses Riffer builds. It never appears in serialized output, so it is not visible to the LLM.</p>
 
         </article>
 

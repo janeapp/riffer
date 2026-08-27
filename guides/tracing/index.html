@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.42.0</span>
+            <span class="version">v0.43.0</span>
           </div>
         </nav>
       </div>
@@ -568,14 +568,15 @@
   </tbody>
 </table>
 
-<p>A tool failure comes in two shapes, distinguished by span status:</p>
+<p>A tool failure comes in three shapes, distinguished by span status:</p>
 
 <ul>
-  <li><strong>Handled error</strong> — the tool returned an error response. <code>error.type</code> carries the category and the <strong>span status stays unset</strong> (the run continues). The framework’s categories are <code>unknown_tool</code>, <code>validation_error</code>, <code>timeout_error</code>, and <code>execution_error</code>; a custom tool may set its own via <code>Riffer::Tools::Response.error(type:)</code>.</li>
-  <li><strong>Unhandled exception</strong> — the dispatch raised. <code>error.type</code> is the exception class name and the <strong>span status is <code>ERROR</code></strong>, with the exception recorded.</li>
+  <li><strong>Handled error</strong> — the tool call produced a deliberate error response, from the tool itself or from the runtime (an unknown tool, malformed arguments). <code>error.type</code> carries the category and the <strong>span status stays unset</strong> (the run continues). The framework’s categories are <code>unknown_tool</code>, <code>validation_error</code>, <code>timeout_error</code>, and <code>execution_error</code>; a custom tool may set its own via <code>Riffer::Tools::Response.error(type:)</code>.</li>
+  <li><strong>Unhandled error</strong> — the tool raised an unanticipated <code>StandardError</code>. <code>error.type</code> is <code>unhandled_error</code>, the <strong>span status is <code>ERROR</code></strong>, and the exception is recorded on the span. The run continues — the LLM receives the error response.</li>
+  <li><strong>Host code raising</strong> around the tool call (an <code>around_tool_call</code> hook, a tracing callback) propagates out of the run. <code>error.type</code> is the exception class name and the span status is <code>ERROR</code>.</li>
 </ul>
 
-<p>This status convention is the same on <code>chat</code> and <code>invoke_agent</code>: an unhandled exception sets <code>error.type</code> to the class name and marks the span <code>ERROR</code>; everything else leaves the status unset.</p>
+<p>This status convention is the same on <code>chat</code> and <code>invoke_agent</code>: an unhandled exception marks the span <code>ERROR</code> with the exception recorded; a handled outcome leaves the status unset.</p>
 
 <h2 id="execute_guardrail-name--the-guardrail-span"><code>execute_guardrail {name}</code> — the guardrail span</h2>
 

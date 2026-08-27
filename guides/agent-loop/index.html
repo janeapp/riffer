@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.42.0</span>
+            <span class="version">v0.43.0</span>
           </div>
         </nav>
       </div>
@@ -208,15 +208,17 @@
 
 <h2 id="error-handling">Error Handling</h2>
 
-<p>Tool execution errors are captured and sent back to the LLM:</p>
+<p>Tool execution errors never abort the loop — each is captured and sent back to the LLM as a tool result:</p>
 
 <ul>
   <li><code>unknown_tool</code> - Tool not found in registered tools</li>
-  <li><code>validation_error</code> - Arguments failed validation</li>
-  <li><code>execution_error</code> - Tool raised an exception</li>
+  <li><code>validation_error</code> - Arguments failed validation or were malformed JSON</li>
+  <li><code>timeout_error</code> - Tool exceeded its configured timeout</li>
+  <li><code>execution_error</code> - Tool returned an error or raised <code>Riffer::ToolExecutionError</code></li>
+  <li><code>unhandled_error</code> - Tool raised an unanticipated exception</li>
 </ul>
 
-<p>The LLM can use this information to retry or respond appropriately.</p>
+<p>The LLM can use this information to retry or respond appropriately. See <a href="/guides/advanced-tools/#error-handling">Error Handling</a> for details.</p>
 
 <h2 id="ways-the-agent-loop-can-stop">Ways the Agent Loop Can Stop</h2>
 

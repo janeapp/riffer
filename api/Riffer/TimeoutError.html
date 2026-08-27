@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class Riffer::TimeoutError: Raised when tool execution times out."
+      content="class Riffer::TimeoutError: Raised inside a tool&#39;s +call+ when execution exceeds the configured timeout. timeout_error+ response."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Raised when tool execution times out.">
+    <meta property="og:description" content="Raised inside a tool&#39;s +call+ when execution exceeds the configured timeout. timeout_error+ response.">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Raised when tool execution times out.">
+    <meta name="twitter:description" content="Raised inside a tool&#39;s +call+ when execution exceeds the configured timeout. timeout_error+ response.">
 
 
 
@@ -500,7 +500,7 @@
 
   <section class="description">
     
-<p>Raised when tool execution times out.</p>
+<p>Raised inside a tool’s <code>call</code> when execution exceeds the configured timeout. Rescue it in the tool to clean up; otherwise it becomes a <code>:timeout_error</code> response.</p>
 
   </section>
 
