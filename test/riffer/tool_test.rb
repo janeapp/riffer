@@ -133,6 +133,44 @@ describe Riffer::Tool do
       expect(response.content).must_match(/0\.01 seconds/)
     end
 
+    it "returns an unhandled_error response for a Timeout::Error raised by the tool body" do
+      external_timeout_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise Timeout::Error, "external service timed out"
+        end
+      end
+
+      response = external_timeout_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error_type).must_equal :unhandled_error
+      expect(response.content).must_equal "Error executing tool: Timeout::Error: external service timed out"
+    end
+
+    it "returns a timeout_error response for a Riffer::TimeoutError raised by the tool body" do
+      timeout_raising_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise Riffer::TimeoutError
+        end
+      end
+
+      response = timeout_raising_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error_type).must_equal :timeout_error
+    end
+
+    it "returns an unhandled_error response for a Riffer::ValidationError raised by the tool body" do
+      validation_raising_tool_class = Class.new(Riffer::Tool) do
+        def call(context:)
+          raise Riffer::ValidationError, "nested validation failed"
+        end
+      end
+
+      response = validation_raising_tool_class.new.call_with_validation(context: nil)
+
+      expect(response.error_type).must_equal :unhandled_error
+      expect(response.content).must_equal "Error executing tool: Riffer::ValidationError: nested validation failed"
+    end
+
     it "completes successfully when within timeout" do
       fast_tool_class = Class.new(Riffer::Tool) do
         timeout 1

@@ -65,9 +65,14 @@ class Riffer::Tool
   #: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
   def call_with_validation(context:, **kwargs)
     params_builder = self.class.params
-    validated_args = params_builder ? params_builder.validate(kwargs) : kwargs
 
-    result = Timeout.timeout(self.class.timeout) do
+    begin
+      validated_args = params_builder ? params_builder.validate(kwargs) : kwargs
+    rescue Riffer::ValidationError => e
+      return Riffer::Tools::Response.error(e.message, type: :validation_error)
+    end
+
+    result = Timeout.timeout(self.class.timeout, Riffer::TimeoutError) do
       call(context: context, **validated_args) #: untyped
     end
 
@@ -76,9 +81,7 @@ class Riffer::Tool
     end
 
     result
-  rescue Riffer::ValidationError => e
-    Riffer::Tools::Response.error(e.message, type: :validation_error)
-  rescue Timeout::Error
+  rescue Riffer::TimeoutError
     Riffer::Tools::Response.error(
       "Tool execution timed out after #{self.class.timeout} seconds",
       type: :timeout_error,

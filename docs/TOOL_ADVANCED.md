@@ -16,7 +16,7 @@ class SlowExternalApiTool < Riffer::Tool
 end
 ```
 
-When a tool times out, the LLM receives an error response with type `:timeout_error` and can respond appropriately (e.g., suggest retrying or using a different approach).
+When a tool times out, the LLM receives an error response with type `:timeout_error` and can respond appropriately (e.g., suggest retrying or using a different approach). The timeout raises `Riffer::TimeoutError` inside `call`, so a tool can rescue it to release resources before it propagates.
 
 ## Validation
 
