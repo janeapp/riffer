@@ -24,6 +24,10 @@ class Riffer::Tools::Response
   # The error type, or +nil+ on success.
   attr_reader error_type: Symbol?
 
+  # The exception an unhandled failure was folded from, or +nil+. Kept out of
+  # every serialized form so it never reaches an LLM or a message payload.
+  attr_reader exception: Exception?
+
   # Creates a success response.
   #
   # Raises Riffer::ArgumentError if format is invalid.
@@ -47,8 +51,8 @@ class Riffer::Tools::Response
   # Creates an error response.
   #
   # --
-  # : (String, ?type: Symbol) -> Riffer::Tools::Response
-  def self.error: (String, ?type: Symbol) -> Riffer::Tools::Response
+  # : (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
+  def self.error: (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
 
   # Returns true if the tool execution succeeded.
   # --
@@ -69,6 +73,6 @@ class Riffer::Tools::Response
   private
 
   # --
-  # : (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
-  def initialize: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?) -> void
+  # : (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -> void
+  def initialize: (content: String, success: bool, ?error_message: String?, ?error_type: Symbol?, ?exception: Exception?) -> void
 end

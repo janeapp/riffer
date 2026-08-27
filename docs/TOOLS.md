@@ -108,7 +108,7 @@ Options:
 | `String`                   | `string`         |
 | `Integer`                  | `integer`        |
 | `Float`                    | `number`         |
-| `Riffer::Params::Boolean`          | `boolean`        |
+| `Riffer::Params::Boolean`  | `boolean`        |
 | `TrueClass` / `FalseClass` | `boolean`        |
 | `Array`                    | `array`          |
 | `Hash`                     | `object`         |
@@ -142,6 +142,23 @@ class CreateOrderTool < Riffer::Tool
   end
 end
 ```
+
+## Looking Up Tools
+
+Look up a tool by identifier with `Riffer::Tool.find`, or list every tool with `Riffer::Tool.all`:
+
+```ruby
+Riffer::Tool.find('kb_search')   # => SearchTool
+Riffer::Tool.find(:kb_search)    # symbols work too
+Riffer::Tool.find('missing')     # => nil
+Riffer::Tool.all                 # => [SearchTool, ...]
+```
+
+Only **named direct subclasses** are found:
+
+- Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationTool < Riffer::Tool`), call `find`/`all` on the intermediate class to look up its subclasses.
+- Anonymous classes (`Class.new(Riffer::Tool)`) are never findable, even when they set an explicit `identifier`.
+- Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
 
 ## The call Method
 
@@ -252,7 +269,7 @@ error("Service unavailable", type: :service_error)
 error("Rate limit exceeded", type: :rate_limit)
 ```
 
-If no type is specified, it defaults to `:execution_error`.
+If no type is specified, it defaults to `:execution_error`. Riffer reserves `:unhandled_error` for unrescued exceptions — don't set it yourself.
 
 ### Using Riffer::Tools::Response Directly
 
@@ -280,4 +297,7 @@ error_response.success?       # => false
 error_response.error?         # => true
 error_response.error_message  # => "failed"
 error_response.error_type     # => :not_found
+error_response.exception      # => nil
 ```
+
+`exception` holds the rescued exception on the `:unhandled_error` responses Riffer builds. It never appears in serialized output, so it is not visible to the LLM.

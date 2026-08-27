@@ -465,10 +465,8 @@ module Riffer::Agent::Run
     tripwire = response.tripwire
     return unless tripwire
 
-    class_name = tripwire.guardrail.name
-    if class_name
-      span.set_attribute("riffer.tripwire.guardrail", Riffer::Helpers::ClassNameConverter.convert(class_name))
-    end
+    identifier = Riffer::Helpers::Identifier.for(tripwire.guardrail)
+    span.set_attribute("riffer.tripwire.guardrail", identifier) unless identifier.empty?
     span.set_attribute("riffer.tripwire.reason", tripwire.reason)
     span.set_attribute("riffer.tripwire.phase", tripwire.phase.to_s)
   end

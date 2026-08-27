@@ -11,6 +11,8 @@
 #   agent = MyAgent.new
 #   agent.generate('Hello!')
 class Riffer::Agent
+  extend Riffer::Registrable
+
   self.@config: Riffer::Agent::Config?
 
   INTERRUPT_MAX_STEPS: Symbol
@@ -103,18 +105,6 @@ class Riffer::Agent
   # --
   # : () ?{ (Riffer::Skills::Config) [self: Riffer::Skills::Config] -> void } -> Riffer::Skills::Config?
   def self.skills: () ?{ (Riffer::Skills::Config) [self: Riffer::Skills::Config] -> void } -> Riffer::Skills::Config?
-
-  # Finds an agent class by identifier.
-  #
-  # --
-  # : (String) -> singleton(Riffer::Agent)?
-  def self.find: (String) -> singleton(Riffer::Agent)?
-
-  # Returns all agent subclasses.
-  #
-  # --
-  # : () -> Array[singleton(Riffer::Agent)]
-  def self.all: () -> Array[singleton(Riffer::Agent)]
 
   # Generates a response using a new agent instance.
   # --

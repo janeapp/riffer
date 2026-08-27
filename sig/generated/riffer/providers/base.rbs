@@ -5,6 +5,8 @@
 # +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
 # class orchestrates them.
 class Riffer::Providers::Base
+  self.@semconv_provider_name: String?
+
   @client: untyped
 
   @current_model: String?

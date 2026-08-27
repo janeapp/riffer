@@ -13,7 +13,9 @@
 #       required :input, String
 #     end
 #   end
-module Riffer::Tools::Toolable
+#
+# @rbs module-self Module
+module Riffer::Tools::Toolable : Module
   @kind: Symbol?
 
   @params_builder: Riffer::Params?

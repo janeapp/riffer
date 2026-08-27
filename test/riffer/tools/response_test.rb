@@ -138,6 +138,19 @@ describe Riffer::Tools::Response do
 
       expect(response.error_type).must_equal :custom_error
     end
+
+    it "defaults exception to nil" do
+      response = Riffer::Tools::Response.error("failed")
+
+      expect(response.exception).must_be_nil
+    end
+
+    it "carries a supplied exception" do
+      boom = RuntimeError.new("boom")
+      response = Riffer::Tools::Response.error("failed", exception: boom)
+
+      expect(response.exception).must_be_same_as boom
+    end
   end
 
   describe "#to_h" do
@@ -175,6 +188,12 @@ describe Riffer::Tools::Response do
       response = Riffer::Tools::Response.error("failed", type: :validation_error)
 
       expect(response.to_h[:error_type]).must_equal :validation_error
+    end
+
+    it "omits the exception" do
+      response = Riffer::Tools::Response.error("failed", exception: RuntimeError.new("boom"))
+
+      expect(response.to_h.keys).must_equal %i[content error error_type]
     end
   end
 

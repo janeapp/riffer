@@ -16,7 +16,7 @@ class SlowExternalApiTool < Riffer::Tool
 end
 ```
 
-When a tool times out, the error is reported to the LLM with error type `:timeout_error`, allowing it to respond appropriately (e.g., suggest retrying or using a different approach).
+When a tool times out, the LLM receives an error response with type `:timeout_error` and can respond appropriately (e.g., suggest retrying or using a different approach). The timeout raises `Riffer::TimeoutError` inside `call`, so a tool can rescue it to release resources before it propagates.
 
 ## Validation
 
@@ -26,7 +26,7 @@ Arguments are automatically validated before `call` is invoked:
 - Types must match the schema
 - Enum values must be in the allowed list
 
-Validation errors are captured and sent back to the LLM as tool results with error type `:validation_error`.
+Validation errors are captured and sent back to the LLM as tool results with error type `:validation_error`, as is malformed or non-object JSON in the provider's tool-call arguments.
 
 ## JSON Schema Generation
 
@@ -95,7 +95,20 @@ rescue => e
 end
 ```
 
-Unhandled `RuntimeError` exceptions are caught by Riffer and converted to error responses with type `:execution_error`. For expected execution errors, raise `Riffer::ToolExecutionError` — these are also caught and returned to the LLM. Programming bugs (`NoMethodError`, `NameError`, `TypeError`, etc.) propagate to the caller. It's recommended to handle expected errors explicitly for better error messages.
+A tool never raises into the agent loop — every `StandardError` raised during a tool call becomes an error response:
+
+| Failure                      | Error type          | Response content                                     |
+| ---------------------------- | ------------------- | ---------------------------------------------------- |
+| Invalid arguments            | `:validation_error` | the validation message                               |
+| Timeout                      | `:timeout_error`    | `Tool execution timed out after N seconds`           |
+| `Riffer::ToolExecutionError` | `:execution_error`  | the exception message                                |
+| Any other `StandardError`    | `:unhandled_error`  | `Error executing tool: <ExceptionClass>: <message>` |
+
+An `:unhandled_error` response also carries the rescued exception on `response.exception` — never serialized, so it stays out of the message history — and its `execute_tool` span records the exception with an `ERROR` status (see [Tracing](TRACING.md)).
+
+`NotImplementedError` is not rescued: an unimplemented `#call` raises out of the run.
+
+For expected failures, return `error(...)` or raise `Riffer::ToolExecutionError` — both give the LLM a clean message rather than an `:unhandled_error`.
 
 The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).
 
@@ -222,13 +235,13 @@ class HttpToolRuntime < Riffer::Tools::Runtime
       arguments: tool_call.arguments
     })
     Riffer::Tools::Response.text(response.body)
-  rescue Riffer::ToolExecutionError => e
-    Riffer::Tools::Response.error(e.message, type: :execution_error)
-  rescue RuntimeError => e
-    Riffer::Tools::Response.error("Error executing tool: #{e.message}", type: :execution_error)
+  rescue HttpClient::Error => e
+    Riffer::Tools::Response.error("Tool service unavailable: #{e.message}", type: :execution_error)
   end
 end
 ```
+
+Anything that escapes `dispatch_tool_call` propagates out of the run — rescue whatever your transport can raise and return an error response. The base class handles only an unknown tool name and malformed argument JSON.
 
 ### Around-Call Hook
 

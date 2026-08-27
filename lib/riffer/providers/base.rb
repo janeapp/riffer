@@ -11,6 +11,7 @@ class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
   # @rbs @client: untyped
+  # @rbs self.@semconv_provider_name: String?
 
   WIRE_SEPARATOR = "__" #: String
 
@@ -30,9 +31,11 @@ class Riffer::Providers::Base
   #: () -> String
   def self.semconv_provider_name
     class_name = name
+    # Anonymous classes stay uncached: a class assigned to a constant
+    # later must pick up its real name, not a frozen "unknown".
     return "unknown" unless class_name
 
-    Riffer::Helpers::ClassNameConverter.convert(class_name.split("::").last.to_s)
+    @semconv_provider_name ||= Riffer::Helpers::Identifier.derive(class_name.split("::").last)
   end
 
   # Generates text using the provider.

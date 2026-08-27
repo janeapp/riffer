@@ -306,6 +306,27 @@ agent.generate('Hello')
 
 When `config:` is supplied, the class-level configuration is ignored for that instance.
 
+## Looking Up Agents
+
+Look up an agent by identifier with `Riffer::Agent.find`, or list every agent with `Riffer::Agent.all`:
+
+```ruby
+class SupportAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+end
+
+Riffer::Agent.find('support_agent')   # => SupportAgent
+Riffer::Agent.find(:support_agent)    # symbols work too
+Riffer::Agent.find('missing')         # => nil
+Riffer::Agent.all                     # => [SupportAgent, ...]
+```
+
+Only **named direct subclasses** are found:
+
+- Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationAgent < Riffer::Agent`), call `find`/`all` on the intermediate class to look up its subclasses.
+- Anonymous classes (`Class.new(Riffer::Agent)`) are never findable, even when they set an explicit `identifier`.
+- Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
+
 ## Per-Call Tags
 
 `#generate` and `#stream` accept an optional `tags:` hash — a flat map of attribution labels scoped to that single call (for cost/usage attribution, filtering audit logs, slicing telemetry). It is **per-call only**.
@@ -348,10 +369,10 @@ Riffer does not validate tag count, key/value length, or charset — it forwards
 
 ## Expand Your Agent
 
-| Goal                          | Feature           | Guide                                                                |
-| ----------------------------- | ----------------- | -------------------------------------------------------------------- |
+| Goal                          | Feature           | Guide                                                             |
+| ----------------------------- | ----------------- | ----------------------------------------------------------------- |
 | Call APIs or run functions    | Tools             | [Tools](TOOLS.md)                                                 |
-| Return structured JSON        | Structured Output | [structured_output](#structured_output)                              |
+| Return structured JSON        | Structured Output | [structured_output](#structured_output)                           |
 | Validate or filter content    | Guardrails        | [Guardrails](GUARDRAILS.md)                                       |
 | Measure output quality        | Evals             | [Evals](EVALS.md)                                                 |
 | Add packaged capabilities     | Skills            | [Skills](SKILLS.md)                                               |

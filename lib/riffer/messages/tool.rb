@@ -12,7 +12,8 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   # The error message if the tool execution failed.
   attr_reader :error #: String?
 
-  # The type of error (:unknown_tool, :validation_error, :execution_error, :timeout_error).
+  # The type of error (:unknown_tool, :validation_error, :execution_error,
+  # :timeout_error, :unhandled_error).
   attr_reader :error_type #: Symbol?
 
   #--
