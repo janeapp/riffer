@@ -56,7 +56,7 @@ module Riffer
   # Raised when a FilePart's data isn't valid base64
   class FileEncodingError < FileError
   end
-  
+
   # Raised when two registered subclasses share the same identifier.
   class DuplicateIdentifierError < Error
   end
