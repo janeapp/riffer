@@ -1052,8 +1052,7 @@ describe Riffer::Providers::AmazonBedrock do
   describe "prompt caching" do
     let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
     let(:cache_tool) do
-      Class.new(Riffer::Tool) do
-        identifier "get_weather"
+      stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
           required :city, String, description: "The city name"
@@ -1438,8 +1437,7 @@ describe Riffer::Providers::AmazonBedrock do
 
   describe "tool schema strict mode" do
     it "applies strict_schema to tool parameters" do
-      tool = Class.new(Riffer::Tool) do
-        identifier "test_tool"
+      tool = stub_tool("TestTool") do
         description "A test tool"
         params do
           required :name, String
@@ -1458,8 +1456,7 @@ describe Riffer::Providers::AmazonBedrock do
 
   describe "tool calling" do
     let(:weather_tool) do
-      Class.new(Riffer::Tool) do
-        identifier "get_weather"
+      stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
           required :city, String, description: "The city name"

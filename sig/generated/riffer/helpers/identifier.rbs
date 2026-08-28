@@ -16,4 +16,12 @@ module Riffer::Helpers::Identifier
   # --
   # : (Module) -> String
   def for: (Module) -> String
+
+  # Returns the class-path name of a class or module, or +nil+ when anonymous.
+  # Tool classes shadow Module#name with the identifier DSL, so the real name
+  # must come from Module's own implementation.
+  #
+  # --
+  # : (Module) -> String?
+  def real_name: (Module) -> String?
 end

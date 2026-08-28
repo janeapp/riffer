@@ -4,7 +4,7 @@ require "test_helper"
 
 describe Riffer::Tool do
   let(:weather_tool_class) do
-    Class.new(Riffer::Tool) do
+    stub_tool("WeatherTool") do
       description "Gets the current weather"
 
       params do
@@ -19,7 +19,7 @@ describe Riffer::Tool do
   end
 
   let(:simple_tool_class) do
-    Class.new(Riffer::Tool) do
+    stub_tool("SimpleTool") do
       description "A simple tool"
 
       def call(context:, **_kwargs)
@@ -30,7 +30,7 @@ describe Riffer::Tool do
 
   describe "#call" do
     it "raises NotImplementedError when not implemented" do
-      tool_class = Class.new(Riffer::Tool)
+      tool_class = stub_tool("Tool")
       tool = tool_class.new
 
       expect { tool.call(context: nil) }.must_raise(NotImplementedError)
@@ -44,7 +44,7 @@ describe Riffer::Tool do
     end
 
     it "receives context" do
-      tool_class = Class.new(Riffer::Tool) do
+      tool_class = stub_tool("Tool") do
         def call(context:, **_kwargs)
           text(context[:user_id])
         end
@@ -80,7 +80,7 @@ describe Riffer::Tool do
     end
 
     it "passes context to call" do
-      tool_class = Class.new(Riffer::Tool) do
+      tool_class = stub_tool("Tool") do
         params do
           required :name, String
         end
@@ -103,7 +103,7 @@ describe Riffer::Tool do
     end
 
     it "returns a timeout_error response when execution exceeds timeout" do
-      slow_tool_class = Class.new(Riffer::Tool) do
+      slow_tool_class = stub_tool("SlowTool") do
         timeout 0.01
 
         def call(context:)
@@ -119,7 +119,7 @@ describe Riffer::Tool do
     end
 
     it "includes timeout duration in error message" do
-      slow_tool_class = Class.new(Riffer::Tool) do
+      slow_tool_class = stub_tool("SlowTool") do
         timeout 0.01
 
         def call(context:)
@@ -134,7 +134,7 @@ describe Riffer::Tool do
     end
 
     it "returns an unhandled_error response for a Timeout::Error raised by the tool body" do
-      external_timeout_tool_class = Class.new(Riffer::Tool) do
+      external_timeout_tool_class = stub_tool("ExternalTimeoutTool") do
         def call(context:)
           raise Timeout::Error, "external service timed out"
         end
@@ -147,7 +147,7 @@ describe Riffer::Tool do
     end
 
     it "returns a timeout_error response for a Riffer::TimeoutError raised by the tool body" do
-      timeout_raising_tool_class = Class.new(Riffer::Tool) do
+      timeout_raising_tool_class = stub_tool("TimeoutRaisingTool") do
         def call(context:)
           raise Riffer::TimeoutError
         end
@@ -159,7 +159,7 @@ describe Riffer::Tool do
     end
 
     it "returns an unhandled_error response for a Riffer::ValidationError raised by the tool body" do
-      validation_raising_tool_class = Class.new(Riffer::Tool) do
+      validation_raising_tool_class = stub_tool("ValidationRaisingTool") do
         def call(context:)
           raise Riffer::ValidationError, "nested validation failed"
         end
@@ -172,7 +172,7 @@ describe Riffer::Tool do
     end
 
     it "completes successfully when within timeout" do
-      fast_tool_class = Class.new(Riffer::Tool) do
+      fast_tool_class = stub_tool("FastTool") do
         timeout 1
 
         def call(context:)
@@ -187,7 +187,7 @@ describe Riffer::Tool do
     end
 
     it "returns an execution_error response for ToolExecutionError" do
-      failing_tool_class = Class.new(Riffer::Tool) do
+      failing_tool_class = stub_tool("FailingTool") do
         def call(context:)
           raise Riffer::ToolExecutionError, "Expected failure"
         end
@@ -201,7 +201,7 @@ describe Riffer::Tool do
     end
 
     it "carries no exception on a deliberate error response" do
-      failing_tool_class = Class.new(Riffer::Tool) do
+      failing_tool_class = stub_tool("FailingTool") do
         def call(context:)
           raise Riffer::ToolExecutionError, "Expected failure"
         end
@@ -213,7 +213,7 @@ describe Riffer::Tool do
     end
 
     it "folds an arbitrary StandardError into an unhandled_error response" do
-      buggy_tool_class = Class.new(Riffer::Tool) do
+      buggy_tool_class = stub_tool("BuggyTool") do
         def call(context:)
           raise "Something went wrong"
         end
@@ -227,7 +227,7 @@ describe Riffer::Tool do
     end
 
     it "folds a programming bug into an unhandled_error response" do
-      buggy_tool_class = Class.new(Riffer::Tool) do
+      buggy_tool_class = stub_tool("BuggyTool") do
         def call(context:)
           nil.nonexistent_method
         end
@@ -240,7 +240,7 @@ describe Riffer::Tool do
     end
 
     it "carries the rescued exception on an unhandled_error response" do
-      buggy_tool_class = Class.new(Riffer::Tool) do
+      buggy_tool_class = stub_tool("BuggyTool") do
         def call(context:)
           raise "Something went wrong"
         end
@@ -253,7 +253,7 @@ describe Riffer::Tool do
     end
 
     it "returns an unhandled_error response when tool does not return Response" do
-      bad_tool_class = Class.new(Riffer::Tool) do
+      bad_tool_class = stub_tool("BadTool") do
         def call(context:)
           "raw string instead of Response"
         end
@@ -266,7 +266,7 @@ describe Riffer::Tool do
     end
 
     it "raises NotImplementedError when call is not implemented" do
-      tool_class = Class.new(Riffer::Tool)
+      tool_class = stub_tool("Tool")
 
       expect { tool_class.new.call_with_validation(context: nil) }.must_raise(NotImplementedError)
     end

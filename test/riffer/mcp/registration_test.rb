@@ -33,7 +33,7 @@ describe Riffer::Mcp::Registration do
     end
 
     it "returns tool classes after discovery" do
-      tool_class = Class.new(Riffer::Tool)
+      tool_class = stub_tool("Tool")
       reg = build_stub_registration(manifest, tools: [tool_class])
 
       assert_equal [tool_class], reg.tools

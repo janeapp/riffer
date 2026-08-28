@@ -1,7 +1,11 @@
 # Generated from lib/riffer/registrable.rb with RBS::Inline
 
-# Registry of a class's named direct subclasses, keyed by identifier. Extend it
+# Registry of a class's direct subclasses, keyed by identifier. Extend it
 # onto a base class to look up subclasses in constant time via +find+ and +all+.
+# Subclasses join implicitly by inheriting; +register+ adds one explicitly, for
+# ephemeral classes a test suite builds and tears down. Registration is not
+# synchronized — register during boot or from a single-threaded test, before
+# concurrent lookups begin.
 #
 #   class Riffer::Tool
 #     extend Riffer::Registrable
@@ -13,24 +17,46 @@
 module Riffer::Registrable : Class
   @identifier_registry: Hash[String, Class]?
 
+  @explicit_registrations: Hash[String, Class]?
+
   # Finds a registered subclass by identifier, or +nil+ when none matches.
-  # Only *named direct* subclasses are registered: grandchildren are not
-  # visible to a grandparent's +find+ (call +find+ on their direct parent
-  # instead), anonymous classes are never registered, and duplicate identifiers
-  # raise Riffer::DuplicateIdentifierError at first lookup.
+  # Implicit registration covers only *named direct* subclasses: grandchildren
+  # are not visible to a grandparent's +find+ (call +find+ on their direct
+  # parent instead), anonymous classes are never registered implicitly, and a
+  # subclass whose name no longer resolves back to it is dropped at the next
+  # registry rebuild. Duplicate identifiers raise
+  # Riffer::DuplicateIdentifierError at first lookup.
   #
   # --
   # : (String | Symbol) -> Class?
   def find: (String | Symbol) -> Class?
 
-  # Returns all registered subclasses. Only *named direct* subclasses are
-  # registered: grandchildren are not included (call +all+ on their direct
-  # parent instead), anonymous classes are never registered, and duplicate
-  # identifiers raise Riffer::DuplicateIdentifierError at first lookup.
+  # Returns all registered subclasses, implicit and explicit. Carries the same
+  # registration rules as +find+.
   #
   # --
   # : () -> Array[Class]
   def all: () -> Array[Class]
+
+  # Registers a direct subclass under its +identifier+, whether or not it is
+  # named — unlike implicit registration, it survives a name that no longer
+  # resolves, so an ephemeral class stays findable until +unregister+. Prefer
+  # Riffer::Testing for ordinary test setup, which stubs and cleans up
+  # automatically.
+  #
+  # Raises Riffer::ArgumentError when the identifier is blank or the class is
+  # not a direct subclass, and Riffer::DuplicateIdentifierError when the
+  # identifier is already taken — including by this same class.
+  #
+  # --
+  # : (Class) -> void
+  def register: (Class) -> void
+
+  # Removes an explicit registration of +klass+, leaving implicit registrations
+  # untouched.
+  # --
+  # : (Class) -> void
+  def unregister: (Class) -> void
 
   private
 
@@ -47,5 +73,27 @@ module Riffer::Registrable : Class
 
   # --
   # : () -> Hash[String, Class]
+  def explicit_registrations: () -> Hash[String, Class]
+
+  # --
+  # : () -> Hash[String, Class]
   def build_identifier_registry: () -> Hash[String, Class]
+
+  # Class#subclasses keeps returning superseded generations of a reloaded or
+  # stubbed class, so a subclass counts only while its own name still resolves
+  # back to it. An anonymous class has no name to resolve and is skipped even
+  # with an explicit identifier — the MCP factory and serializer shells
+  # synthesize short-lived anonymous classes whose registration would flake
+  # with GC timing.
+  # --
+  # : (Class) -> bool
+  def live?: (Class) -> bool
+
+  # --
+  # : (Class) -> String
+  def identifier_key: (Class) -> String
+
+  # --
+  # : (String, Class, Class) -> void
+  def raise_duplicate_identifier!: (String, Class, Class) -> void
 end

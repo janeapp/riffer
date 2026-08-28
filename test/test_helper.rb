@@ -6,6 +6,7 @@ require "minitest/autorun"
 require "minitest/spec"
 
 require "riffer"
+require "riffer/testing/minitest"
 
 require "vcr"
 require "webmock/minitest"

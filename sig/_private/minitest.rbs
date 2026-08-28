@@ -1,0 +1,9 @@
+# Minimal signatures for `minitest`, a development-only framework riffer never
+# depends on. Only the surface `lib/riffer/testing/minitest.rb` touches is
+# declared; the file is required by hand from a consumer's test_helper, so this
+# stub keeps Steep aware of the constants without a `library` dependency.
+module Minitest
+  class Test
+    def after_teardown: () -> void
+  end
+end

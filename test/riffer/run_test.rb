@@ -31,7 +31,7 @@ end
 
 describe Riffer::Agent::Run do
   let(:agent_class) do
-    Class.new(Riffer::Agent) do
+    stub_agent do
       identifier "test-agent"
       model "mock/riffer-1"
       instructions "You are a helpful assistant."
@@ -73,7 +73,7 @@ describe Riffer::Agent::Run do
     end
 
     it "raises when structured_output is configured" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -93,7 +93,7 @@ describe Riffer::Agent::Run do
 
   describe "#generate with structured_output" do
     it "returns Response with parsed structured_output from class-level schema" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -111,7 +111,7 @@ describe Riffer::Agent::Run do
     end
 
     it "sets structured_output to nil when LLM returns invalid JSON" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -128,7 +128,7 @@ describe Riffer::Agent::Run do
     end
 
     it "preserves raw content when structured_output parsing fails" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -148,7 +148,7 @@ describe Riffer::Agent::Run do
       params = Riffer::Params.new
       params.required(:sentiment, String)
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output params
       end
@@ -170,7 +170,7 @@ describe Riffer::Agent::Run do
     end
 
     it "stores structured_output hash on the assistant message in agent.session.messages" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -190,7 +190,7 @@ describe Riffer::Agent::Run do
     end
 
     it "makes structured_output available via on_message callback" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -214,7 +214,7 @@ describe Riffer::Agent::Run do
 
   describe "#stream with structured_output" do
     it "raises ArgumentError when class-level structured_output is configured" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String
@@ -293,7 +293,7 @@ describe Riffer::Agent::Run do
     describe "with before guardrail that blocks" do
       let(:agent_with_blocking_input) do
         gr = block_input_guardrail_class
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
         klass.guardrail(:before, with: gr)
@@ -340,7 +340,7 @@ describe Riffer::Agent::Run do
     describe "with after guardrail that blocks" do
       let(:agent_with_blocking_output) do
         gr = block_output_guardrail_class
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
         klass.guardrail(:after, with: gr)
@@ -369,7 +369,7 @@ describe Riffer::Agent::Run do
     describe "with transform guardrails" do
       let(:agent_with_transform) do
         gr = transform_guardrail_class
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
         klass.guardrail(:around, with: gr)
@@ -453,7 +453,7 @@ describe Riffer::Agent::Run do
     describe "with before guardrail that blocks" do
       let(:agent_with_blocking_input) do
         gr = block_input_guardrail_class
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
         klass.guardrail(:before, with: gr)
@@ -485,7 +485,7 @@ describe Riffer::Agent::Run do
     describe "with after guardrail that blocks" do
       let(:agent_with_blocking_output) do
         gr = block_output_guardrail_class
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
         klass.guardrail(:after, with: gr)
@@ -534,7 +534,7 @@ describe Riffer::Agent::Run do
 
       let(:agent_with_stream_transform) do
         gr = transform_guardrail_class
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
         klass.guardrail(:before, with: gr)
@@ -572,8 +572,7 @@ describe Riffer::Agent::Run do
     end
 
     it "accumulates token usage across tool loops" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "token_usage_test_tool"
+      tool_class = stub_tool("TokenUsageTestTool") do
         description "Test tool"
         def call(context:)
           text("done")
@@ -581,7 +580,7 @@ describe Riffer::Agent::Run do
       end
 
       tc = tool_class
-      agent_with_tools = Class.new(Riffer::Agent) do
+      agent_with_tools = stub_agent("AgentWithTools") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -666,7 +665,7 @@ describe Riffer::Agent::Run do
           block("Output blocked")
         end
       end
-      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
       klass.guardrail(:after, with: gr)
 
       agent = klass.new
@@ -682,7 +681,7 @@ describe Riffer::Agent::Run do
           block("Input blocked")
         end
       end
-      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
       klass.guardrail(:before, with: gr)
 
       response = klass.new.generate("Hi")
@@ -701,8 +700,7 @@ describe Riffer::Agent::Run do
     end
 
     it "accumulates steps across a tool loop" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "response_steps_tool"
+      tool_class = stub_tool("ResponseStepsTool") do
         description "Test tool"
         def call(context:)
           text("done")
@@ -710,7 +708,7 @@ describe Riffer::Agent::Run do
       end
 
       tc = tool_class
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -729,7 +727,7 @@ describe Riffer::Agent::Run do
           block("Input blocked")
         end
       end
-      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
       klass.guardrail(:before, with: gr)
 
       response = klass.new.generate("Hi")
@@ -773,8 +771,7 @@ describe Riffer::Agent::Run do
     end
 
     it "accumulates token usage across tool loops" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "stream_token_usage_test_tool"
+      tool_class = stub_tool("StreamTokenUsageTestTool") do
         description "Test tool"
         def call(context:)
           text("done")
@@ -782,7 +779,7 @@ describe Riffer::Agent::Run do
       end
 
       tc = tool_class
-      agent_with_tools = Class.new(Riffer::Agent) do
+      agent_with_tools = stub_agent("AgentWithTools") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -807,8 +804,7 @@ describe Riffer::Agent::Run do
 
   describe "pending tool calls on fresh generate" do
     it "does not execute pending tool calls" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "fresh_generate_tool"
+      tool_class = stub_tool("FreshGenerateTool") do
         description "Simple tool"
         def call(context:)
           text("done")
@@ -816,7 +812,7 @@ describe Riffer::Agent::Run do
       end
 
       tc = tool_class
-      custom_agent_class = Class.new(Riffer::Agent) do
+      custom_agent_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -842,8 +838,7 @@ describe Riffer::Agent::Run do
 
   describe "pending tool call resume with #stream" do
     it "resumes pending tools in streaming mode" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "stream_pending_tool"
+      tool_class = stub_tool("StreamPendingTool") do
         description "Simple tool"
         def call(context:)
           text("done")
@@ -851,7 +846,7 @@ describe Riffer::Agent::Run do
       end
 
       tc = tool_class
-      custom_agent_class = Class.new(Riffer::Agent) do
+      custom_agent_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -895,8 +890,7 @@ describe Riffer::Agent::Run do
 
   describe "interrupt! with experimental_history_healing" do
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "interrupt_heal_tool"
+      stub_tool("InterruptHealTool") do
         description "Slow tool"
         def call(context:)
           text("done")
@@ -910,7 +904,7 @@ describe Riffer::Agent::Run do
     it "fills orphans and exposes healed_tool_call_ids when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -943,7 +937,7 @@ describe Riffer::Agent::Run do
 
     it "leaves orphans in place when healing is off (default)" do
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -966,7 +960,7 @@ describe Riffer::Agent::Run do
     it "does not fire on_message for placeholder tool messages" do
       Riffer.config.experimental_history_healing = true
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -992,8 +986,7 @@ describe Riffer::Agent::Run do
 
   describe "max_steps interrupt with experimental_history_healing" do
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "max_steps_heal_tool"
+      stub_tool("MaxStepsHealTool") do
         description "Loop tool"
         def call(context:)
           text("ok")
@@ -1007,7 +1000,7 @@ describe Riffer::Agent::Run do
     it "fills orphan tool_use with the placeholder when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
         max_steps 1
@@ -1032,7 +1025,7 @@ describe Riffer::Agent::Run do
 
     it "leaves orphan tool_use when healing is off" do
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
         max_steps 1
@@ -1053,7 +1046,7 @@ describe Riffer::Agent::Run do
   end
 
   describe "seeded history with experimental_history_healing" do
-    let(:custom_class) { Class.new(Riffer::Agent) { model "mock/riffer-1" } }
+    let(:custom_class) { stub_agent("CustomAgent") { model "mock/riffer-1" } }
 
     before { @original_history_healing = Riffer.config.experimental_history_healing }
     after { Riffer.config.experimental_history_healing = @original_history_healing }
@@ -1098,14 +1091,13 @@ describe Riffer::Agent::Run do
           Riffer::Messages::Assistant.new("", tool_calls: [tc]),
         ],
       )
-      tool = Class.new(Riffer::Tool) do
-        identifier "pending_seed_tool"
+      tool = stub_tool("PendingSeedTool") do
         description "Pending tool"
         def call(context:)
           text("done")
         end
       end
-      with_tools = Class.new(Riffer::Agent) do
+      with_tools = stub_agent("WithTools") do
         model "mock/riffer-1"
         uses_tools [tool]
       end
@@ -1120,7 +1112,7 @@ describe Riffer::Agent::Run do
 
   describe "tool calling" do
     let(:weather_tool_class) do
-      Class.new(Riffer::Tool) do
+      stub_tool("WeatherTool") do
         description "Gets the weather"
 
         params do
@@ -1134,7 +1126,7 @@ describe Riffer::Agent::Run do
     end
 
     let(:context_tool_class) do
-      Class.new(Riffer::Tool) do
+      stub_tool("ContextTool") do
         description "Gets user info"
 
         params do
@@ -1150,8 +1142,7 @@ describe Riffer::Agent::Run do
     describe "#generate with tools" do
       it "adds tool message after executing tool call" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1175,8 +1166,7 @@ describe Riffer::Agent::Run do
 
       it "includes tool result in tool message content" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1200,8 +1190,7 @@ describe Riffer::Agent::Run do
 
       it "returns final response after tool execution" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1223,8 +1212,7 @@ describe Riffer::Agent::Run do
 
       it "passes context to tools" do
         tool_class = context_tool_class
-        tool_class.identifier("context_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1247,7 +1235,7 @@ describe Riffer::Agent::Run do
       end
 
       it "returns error message for unknown tool" do
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools []
         end
@@ -1270,7 +1258,7 @@ describe Riffer::Agent::Run do
       end
 
       it "sets error attributes for unknown tool" do
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools []
         end
@@ -1296,8 +1284,7 @@ describe Riffer::Agent::Run do
 
       it "handles validation errors gracefully" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1321,8 +1308,7 @@ describe Riffer::Agent::Run do
 
       it "sets error attributes for validation errors" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1347,8 +1333,7 @@ describe Riffer::Agent::Run do
 
       it "does not set error attributes for successful tool calls" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1374,8 +1359,7 @@ describe Riffer::Agent::Run do
 
       it "passes tools to provider" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1389,8 +1373,7 @@ describe Riffer::Agent::Run do
 
       it "passes correct number of tools to provider" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1406,8 +1389,7 @@ describe Riffer::Agent::Run do
     describe "#stream with tools" do
       it "yields tool call events" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1431,8 +1413,7 @@ describe Riffer::Agent::Run do
 
       it "adds tool messages during streaming" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1456,8 +1437,7 @@ describe Riffer::Agent::Run do
 
       it "passes context in streaming mode" do
         tool_class = context_tool_class
-        tool_class.identifier("context_tool")
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1482,7 +1462,7 @@ describe Riffer::Agent::Run do
 
     describe "tool timeouts" do
       let(:slow_tool_class) do
-        Class.new(Riffer::Tool) do
+        stub_tool("SlowTool") do
           description "A slow tool"
           timeout 0.01
 
@@ -1494,7 +1474,7 @@ describe Riffer::Agent::Run do
       end
 
       let(:fast_tool_class) do
-        Class.new(Riffer::Tool) do
+        stub_tool("FastTool") do
           description "A fast tool"
 
           def call(context:)
@@ -1505,9 +1485,8 @@ describe Riffer::Agent::Run do
 
       it "times out slow tools" do
         tool_class = slow_tool_class
-        tool_class.identifier("slow_tool")
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1531,9 +1510,8 @@ describe Riffer::Agent::Run do
 
       it "sets error content and error_type for timeout" do
         tool_class = slow_tool_class
-        tool_class.identifier("slow_tool")
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1558,9 +1536,8 @@ describe Riffer::Agent::Run do
 
       it "uses tool-level timeout in error message" do
         tool_class = slow_tool_class
-        tool_class.identifier("slow_tool")
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1585,9 +1562,8 @@ describe Riffer::Agent::Run do
 
       it "fast tools do not timeout" do
         tool_class = fast_tool_class
-        tool_class.identifier("fast_tool")
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools [tool_class]
         end
@@ -1614,10 +1590,9 @@ describe Riffer::Agent::Run do
     describe "with lambda-based tools" do
       it "evaluates lambda at resolution time" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
         call_count = 0
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools lambda {
             call_count += 1
@@ -1633,10 +1608,9 @@ describe Riffer::Agent::Run do
 
       it "passes context to lambda when it accepts a parameter" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
         received_context = nil
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools lambda { |context|
             received_context = context
@@ -1653,19 +1627,17 @@ describe Riffer::Agent::Run do
       end
 
       it "allows conditional tool resolution based on context" do
-        admin_tool_class = Class.new(Riffer::Tool) do
+        admin_tool_class = stub_tool("AdminTool") do
           description "Admin only tool"
           params {}
           def call(context:)
             text("admin action")
           end
         end
-        admin_tool_class.identifier("admin_tool")
 
         basic_tool_class = weather_tool_class
-        basic_tool_class.identifier("weather_tool")
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools lambda { |context|
             tools = [basic_tool_class]
@@ -1692,10 +1664,9 @@ describe Riffer::Agent::Run do
 
       it "evaluates lambda once per agent instance" do
         tool_class = weather_tool_class
-        tool_class.identifier("weather_tool")
         call_values = []
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           uses_tools lambda { |context|
             call_values << context[:call]
@@ -1714,7 +1685,7 @@ describe Riffer::Agent::Run do
   describe "#generate" do
     describe "with model_options" do
       let(:options_agent_class) do
-        Class.new(Riffer::Agent) do
+        stub_agent do
           identifier "options-agent"
           model "mock/riffer-1"
           instructions "You are a helpful assistant."
@@ -1741,8 +1712,7 @@ describe Riffer::Agent::Run do
 
     describe "with max_steps" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "max_steps_tool"
+        stub_tool("MaxStepsTool") do
           description "Simple tool"
           def call(context:)
             text("done")
@@ -1752,7 +1722,7 @@ describe Riffer::Agent::Run do
 
       it "runs unlimited steps when max_steps is nil" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps nil
           uses_tools [tc]
@@ -1770,7 +1740,7 @@ describe Riffer::Agent::Run do
 
       it "limits LLM calls when max_steps is set" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 2
           uses_tools [tc]
@@ -1788,7 +1758,7 @@ describe Riffer::Agent::Run do
 
       it "returns last assistant response content when limit is reached" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
@@ -1805,7 +1775,7 @@ describe Riffer::Agent::Run do
 
       it "sets interrupted? to true when limit is reached" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
@@ -1822,7 +1792,7 @@ describe Riffer::Agent::Run do
 
       it "sets interrupt_reason to :max_steps when limit is reached" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
@@ -1882,7 +1852,7 @@ describe Riffer::Agent::Run do
   describe "#stream" do
     describe "with model_options" do
       let(:options_agent_class) do
-        Class.new(Riffer::Agent) do
+        stub_agent do
           identifier "options-stream-agent"
           model "mock/riffer-1"
           instructions "You are a helpful assistant."
@@ -1909,8 +1879,7 @@ describe Riffer::Agent::Run do
 
     describe "with max_steps" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "stream_max_steps_tool"
+        stub_tool("StreamMaxStepsTool") do
           description "Simple tool"
           def call(context:)
             text("done")
@@ -1920,7 +1889,7 @@ describe Riffer::Agent::Run do
 
       it "limits LLM calls when max_steps is set" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 2
           uses_tools [tc]
@@ -1938,7 +1907,7 @@ describe Riffer::Agent::Run do
 
       it "emits Interrupt event with :max_steps reason when limit is reached" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 1
           uses_tools [tc]
@@ -1957,7 +1926,7 @@ describe Riffer::Agent::Run do
 
       it "does not emit Interrupt event when limit is not reached" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 10
           uses_tools [tc]
@@ -2096,7 +2065,7 @@ describe Riffer::Agent::Run do
 
   describe "dynamic model selection" do
     it "resolves lambda for generate" do
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model -> { "mock/riffer-1" }
       end
 
@@ -2106,7 +2075,7 @@ describe Riffer::Agent::Run do
     end
 
     it "resolves lambda for stream" do
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model -> { "mock/riffer-1" }
       end
 
@@ -2116,7 +2085,7 @@ describe Riffer::Agent::Run do
     end
 
     it "uses resolved model for provider lookup" do
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model -> { "mock/riffer-1" }
       end
 
@@ -2129,7 +2098,7 @@ describe Riffer::Agent::Run do
 
     it "evaluates the model lambda once per agent instance" do
       call_count = 0
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model lambda {
           call_count += 1
           "mock/riffer-1"
@@ -2144,7 +2113,7 @@ describe Riffer::Agent::Run do
 
     it "resolves model per agent instance based on context" do
       models_used = []
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model lambda { |context|
           model = context&.dig(:premium) ? "mock/riffer-premium" : "mock/riffer-basic"
           models_used << model
@@ -2159,7 +2128,7 @@ describe Riffer::Agent::Run do
     end
 
     it "passes resolved model name to provider" do
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model -> { "mock/my-model" }
       end
 
@@ -2171,7 +2140,7 @@ describe Riffer::Agent::Run do
     end
 
     it "raises on invalid lambda return without slash" do
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model -> { "invalid-format" }
       end
 
@@ -2181,7 +2150,7 @@ describe Riffer::Agent::Run do
 
     it "raises on nil lambda return" do
       value = nil
-      dynamic_agent_class = Class.new(Riffer::Agent) do
+      dynamic_agent_class = stub_agent("DynamicAgent") do
         model -> { value }
       end
 
@@ -2190,7 +2159,7 @@ describe Riffer::Agent::Run do
     end
 
     it "static string still works" do
-      static_agent_class = Class.new(Riffer::Agent) do
+      static_agent_class = stub_agent("StaticAgent") do
         model "mock/riffer-1"
       end
 
@@ -2225,8 +2194,7 @@ describe Riffer::Agent::Run do
 
     describe "during tool use" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "emit_weather_tool"
+        stub_tool("EmitWeatherTool") do
           description "Gets the weather"
           params do
             required :city, String
@@ -2240,7 +2208,7 @@ describe Riffer::Agent::Run do
       let(:emitted) { [] }
       let(:agent) do
         tc = tool_class
-        agent_with_tools = Class.new(Riffer::Agent) do
+        agent_with_tools = stub_agent("AgentWithTools") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -2292,8 +2260,7 @@ describe Riffer::Agent::Run do
 
     describe "when tool fails" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "failing_tool"
+        stub_tool("FailingTool") do
           description "A failing tool"
           params do
             required :value, String
@@ -2307,7 +2274,7 @@ describe Riffer::Agent::Run do
       let(:emitted) { [] }
       let(:tool_message) do
         tc = tool_class
-        agent_with_tools = Class.new(Riffer::Agent) do
+        agent_with_tools = stub_agent("AgentWithTools") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -2374,8 +2341,7 @@ describe Riffer::Agent::Run do
 
     describe "throw during tool execution" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "interrupt_partial_tool"
+        stub_tool("InterruptPartialTool") do
           description "Simple tool"
           def call(context:)
             text("done")
@@ -2385,7 +2351,7 @@ describe Riffer::Agent::Run do
 
       it "stops tool execution on interrupt and resumes pending tools" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -2426,7 +2392,7 @@ describe Riffer::Agent::Run do
 
       it "resumes all pending tools when interrupt fires on assistant callback" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -2594,8 +2560,7 @@ describe Riffer::Agent::Run do
 
     describe "with tools" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "resume_weather_tool"
+        stub_tool("ResumeWeatherTool") do
           description "Gets the weather"
           params do
             required :city, String
@@ -2608,7 +2573,7 @@ describe Riffer::Agent::Run do
 
       it "completes tool loop after resume" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -2679,8 +2644,7 @@ describe Riffer::Agent::Run do
       end
 
       it "uses init context for tool execution" do
-        context_tool = Class.new(Riffer::Tool) do
-          identifier "resume_context_tool"
+        context_tool = stub_tool("ResumeContextTool") do
           description "Gets user info"
           params do
             required :field, String
@@ -2691,7 +2655,7 @@ describe Riffer::Agent::Run do
         end
 
         tc = context_tool
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -2728,8 +2692,7 @@ describe Riffer::Agent::Run do
       end
 
       it "executes pending tool calls left by a prior interrupt" do
-        tc = Class.new(Riffer::Tool) do
-          identifier "cross_process_pending_tool"
+        tc = stub_tool("CrossProcessPendingTool") do
           description "Simple tool"
           def call(context:)
             text("done")
@@ -2737,7 +2700,7 @@ describe Riffer::Agent::Run do
         end
 
         tool = tc
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           uses_tools [tool]
         end
@@ -2779,8 +2742,7 @@ describe Riffer::Agent::Run do
 
     describe "auto-derived step offset" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "resume_step_tool"
+        stub_tool("ResumeStepTool") do
           description "Simple tool"
           def call(context:)
             text("done")
@@ -2790,7 +2752,7 @@ describe Riffer::Agent::Run do
 
       it "enforces max_steps across sessions" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 3
           uses_tools [tc]
@@ -2822,7 +2784,7 @@ describe Riffer::Agent::Run do
 
       it "enforces max_steps on cross-process resume via message counting" do
         tc = tool_class
-        custom_agent_class = Class.new(Riffer::Agent) do
+        custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
           max_steps 4
           uses_tools [tc]
@@ -2851,7 +2813,7 @@ describe Riffer::Agent::Run do
 
     describe "with structured_output" do
       it "returns parsed structured_output on in-memory resume" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           structured_output do
             required :sentiment, String
@@ -2879,7 +2841,7 @@ describe Riffer::Agent::Run do
       end
 
       it "returns parsed structured_output on cross-process resume" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           structured_output do
             required :sentiment, String
@@ -3035,8 +2997,7 @@ describe Riffer::Agent::Run do
     end
 
     it "executes pending tool calls on string continuation" do
-      tc = Class.new(Riffer::Tool) do
-        identifier "continuation_pending_tool"
+      tc = stub_tool("ContinuationPendingTool") do
         description "Simple tool"
         def call(context:)
           text("done")
@@ -3044,7 +3005,7 @@ describe Riffer::Agent::Run do
       end
 
       tool = tc
-      custom_agent_class = Class.new(Riffer::Agent) do
+      custom_agent_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tool]
       end
@@ -3084,8 +3045,7 @@ describe Riffer::Agent::Run do
     end
 
     it "enforces max_steps across continuations" do
-      tc = Class.new(Riffer::Tool) do
-        identifier "continuation_step_tool"
+      tc = stub_tool("ContinuationStepTool") do
         description "Simple tool"
         def call(context:)
           text("done")
@@ -3093,7 +3053,7 @@ describe Riffer::Agent::Run do
       end
 
       tool = tc
-      custom_agent_class = Class.new(Riffer::Agent) do
+      custom_agent_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         max_steps 3
         uses_tools [tool]
@@ -3190,8 +3150,7 @@ describe Riffer::Agent::Run do
 
     describe "during tool calling loop" do
       let(:tool_class) do
-        Class.new(Riffer::Tool) do
-          identifier "stream_emit_weather_tool"
+        stub_tool("StreamEmitWeatherTool") do
           description "Gets the weather"
           params do
             required :city, String
@@ -3205,7 +3164,7 @@ describe Riffer::Agent::Run do
       let(:emitted) { [] }
       let(:agent) do
         tc = tool_class
-        agent_with_tools = Class.new(Riffer::Agent) do
+        agent_with_tools = stub_agent("AgentWithTools") do
           model "mock/riffer-1"
           uses_tools [tc]
         end
@@ -3263,15 +3222,14 @@ describe Riffer::Agent::Run do
     end
 
     let(:agent_class) do
-      Class.new(Riffer::Agent) do
+      stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
       end
     end
 
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "run_tracing_tool"
+      stub_tool("RunTracingTool") do
         description "Traced tool"
         def call(context:)
           text("done")
@@ -3281,7 +3239,7 @@ describe Riffer::Agent::Run do
 
     let(:agent_class_with_tools) do
       tc = tool_class
-      Class.new(Riffer::Agent) do
+      stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
         uses_tools [tc]
@@ -3289,7 +3247,7 @@ describe Riffer::Agent::Run do
     end
 
     let(:agent_class_with_blocking_input) do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
       end
@@ -3298,7 +3256,7 @@ describe Riffer::Agent::Run do
     end
 
     let(:agent_class_with_blocking_output) do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
       end
@@ -3307,7 +3265,7 @@ describe Riffer::Agent::Run do
     end
 
     let(:agent_class_with_passing_guardrail) do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
       end
@@ -3316,7 +3274,7 @@ describe Riffer::Agent::Run do
     end
 
     let(:agent_class_with_transform_guardrail) do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
       end
@@ -3325,7 +3283,7 @@ describe Riffer::Agent::Run do
     end
 
     let(:agent_class_with_raising_guardrail) do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
       end
@@ -3490,7 +3448,7 @@ describe Riffer::Agent::Run do
 
     it "records the max steps interrupt reason" do
       tc = tool_class
-      agent_with_max_steps = Class.new(Riffer::Agent) do
+      agent_with_max_steps = stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
         uses_tools [tc]
@@ -3714,15 +3672,14 @@ describe Riffer::Agent::Run do
 
   describe "tags" do
     let(:agent_class) do
-      Class.new(Riffer::Agent) do
+      stub_agent do
         identifier "tagged-agent"
         model "mock/riffer-1"
       end
     end
 
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "run_tags_tool"
+      stub_tool("RunTagsTool") do
         description "Tagged tool"
         def call(context:)
           text("done")
@@ -3732,7 +3689,7 @@ describe Riffer::Agent::Run do
 
     let(:agent_class_with_tools) do
       tc = tool_class
-      Class.new(Riffer::Agent) do
+      stub_agent do
         identifier "tagged-agent"
         model "mock/riffer-1"
         uses_tools [tc]
@@ -3836,7 +3793,7 @@ describe Riffer::Agent::Run do
       end
 
       it "stamps riffer.tag.* on the execute_guardrail span" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent do
           identifier "tagged-agent"
           model "mock/riffer-1"
         end

@@ -4,8 +4,7 @@ require "test_helper"
 
 describe Riffer::Tools::Runtime do
   let(:weather_tool_class) do
-    Class.new(Riffer::Tool) do
-      identifier "weather_tool"
+    stub_tool("WeatherTool") do
       description "Gets the weather"
 
       params do
@@ -19,8 +18,7 @@ describe Riffer::Tools::Runtime do
   end
 
   let(:slow_tool_class) do
-    Class.new(Riffer::Tool) do
-      identifier "slow_tool"
+    stub_tool("SlowTool") do
       description "A slow tool"
       timeout 0.01
 
@@ -121,8 +119,7 @@ describe Riffer::Tools::Runtime do
     end
 
     it "returns unhandled_error response for RuntimeError" do
-      error_tool = Class.new(Riffer::Tool) do
-        identifier "error_tool"
+      error_tool = stub_tool("ErrorTool") do
         description "Raises an error"
 
         def call(context:, **)
@@ -141,8 +138,7 @@ describe Riffer::Tools::Runtime do
     end
 
     it "returns error response for ToolExecutionError" do
-      error_tool = Class.new(Riffer::Tool) do
-        identifier "tool_exec_error_tool"
+      error_tool = stub_tool("ToolExecErrorTool") do
         description "Raises a ToolExecutionError"
 
         def call(context:, **)
@@ -161,8 +157,7 @@ describe Riffer::Tools::Runtime do
     end
 
     it "returns unhandled_error response for NoMethodError, carrying the exception" do
-      buggy_tool = Class.new(Riffer::Tool) do
-        identifier "buggy_tool"
+      buggy_tool = stub_tool("BuggyTool") do
         description "Has a bug"
 
         def call(context:, **)
@@ -323,8 +318,7 @@ describe Riffer::Tools::Runtime do
     end
 
     let(:buggy_tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "buggy_tool"
+      stub_tool("BuggyTool") do
         description "Has a bug"
 
         def call(context:, **)
@@ -344,8 +338,7 @@ describe Riffer::Tools::Runtime do
     end
 
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "integration_tool"
+      stub_tool("IntegrationTool") do
         description "Traced tool"
         def call(context:)
           text("done")
@@ -355,7 +348,7 @@ describe Riffer::Tools::Runtime do
 
     let(:agent_class_with_tools) do
       tc = tool_class
-      Class.new(Riffer::Agent) do
+      stub_agent do
         identifier "traced-agent"
         model "mock/riffer-1"
         uses_tools [tc]
@@ -555,8 +548,7 @@ describe Riffer::Tools::Runtime::Inline do
   end
 
   it "executes tool calls sequentially" do
-    weather_tool = Class.new(Riffer::Tool) do
-      identifier "weather_tool"
+    weather_tool = stub_tool("WeatherTool") do
       description "Gets the weather"
 
       params do
@@ -584,8 +576,7 @@ describe Riffer::Tools::Runtime::Fibers do
   it "executes tool calls concurrently" do
     seen = []
 
-    tracking_tool = Class.new(Riffer::Tool) do
-      identifier "tracking_tool"
+    tracking_tool = stub_tool("TrackingTool") do
       description "Tracks fibers"
 
       define_method(:call) do |context:, **|
@@ -614,8 +605,7 @@ describe Riffer::Tools::Runtime::Threaded do
     thread_ids = Mutex.new
     seen = []
 
-    tracking_tool = Class.new(Riffer::Tool) do
-      identifier "tracking_tool"
+    tracking_tool = stub_tool("TrackingTool") do
       description "Tracks threads"
 
       define_method(:call) do |context:, **|

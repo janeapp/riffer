@@ -154,11 +154,32 @@ Riffer::Tool.find('missing')     # => nil
 Riffer::Tool.all                 # => [SearchTool, ...]
 ```
 
-Only **named direct subclasses** are found:
+Only **named direct subclasses** are found implicitly:
 
 - Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationTool < Riffer::Tool`), call `find`/`all` on the intermediate class to look up its subclasses.
-- Anonymous classes (`Class.new(Riffer::Tool)`) are never findable, even when they set an explicit `identifier`.
+- Anonymous classes (`Class.new(Riffer::Tool)`) are never findable implicitly, even when they set an explicit `identifier` — see [Registering a tool explicitly](#registering-a-tool-explicitly).
 - Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
+- A subclass whose constant no longer points at it — after a Zeitwerk reload or an RSpec `stub_const` — drops out of `find` and `all`. The check runs when the registry is rebuilt, which defining, registering, or unregistering a subclass triggers; removing or restoring a constant on its own does not, so lookups keep returning the old class until the next rebuild.
+
+### Registering a tool explicitly
+
+**Testing a tool that gets resolved by identifier? Use [`Riffer::Testing`](TESTING.md)** — `stub_tool` builds and registers a throwaway tool and cleans it up for you. The API below is the manual alternative, for production wiring and anything outside the stub lifecycle.
+
+`register` adds a tool to its parent's registry by hand and `unregister` removes it:
+
+```ruby
+Riffer::Tool.register(tool)   # findable until unregistered
+Riffer::Tool.unregister(tool) # no-op if it was never registered
+```
+
+Explicit registration differs from implicit in a few ways:
+
+- Anonymous classes are allowed, as long as they declare an `identifier`. A blank identifier raises `Riffer::ArgumentError`.
+- The class must be a **direct** subclass of the receiver, mirroring implicit registration. `Riffer::Tool.register(SomeAppTool)` raises `Riffer::ArgumentError` when `SomeAppTool` descends from an intermediate base — call `register` on that base instead.
+- Taking an identifier already held by another tool, implicit or explicit, raises `Riffer::DuplicateIdentifierError`. Re-registering the same class raises too; there is no idempotent path.
+- The registration survives until you remove it — it is never dropped for a stale constant.
+
+Registration is not synchronized. Register during boot or from a single-threaded test, before concurrent lookups begin.
 
 ## The call Method
 

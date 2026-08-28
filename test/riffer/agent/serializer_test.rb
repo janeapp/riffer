@@ -15,8 +15,7 @@ end
 
 describe Riffer::Agent::Serializer do
   def build_agent_class(&block)
-    Class.new(Riffer::Agent) do
-      identifier "support"
+    stub_agent("Support") do
       model "mock/riffer-1"
       instructions "You are helpful."
       instance_eval(&block) if block
@@ -34,8 +33,7 @@ describe Riffer::Agent::Serializer do
     end
 
     it "resolves Proc-based model and instructions to strings" do
-      klass = Class.new(Riffer::Agent) do
-        identifier "dyn"
+      klass = stub_agent("Dyn") do
         model -> { "mock/riffer-1" }
         instructions ->(context) { "Hi #{context[:name]}" }
       end
@@ -240,8 +238,7 @@ describe Riffer::Agent::Serializer do
     end
 
     it "reconstructs the model string from the resolved provider and model name" do
-      klass = Class.new(Riffer::Agent) do
-        identifier "dyn"
+      klass = stub_agent("Dyn") do
         model -> { "mock/riffer-1" }
       end
 

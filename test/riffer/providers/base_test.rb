@@ -301,7 +301,7 @@ describe Riffer::Providers::Base do
     let(:provider) { Riffer::Providers::Mock.new }
 
     let(:agent_class) do
-      Class.new(Riffer::Agent) do
+      stub_agent do
         identifier "chat-traced-agent"
         model "mock/riffer-1"
       end

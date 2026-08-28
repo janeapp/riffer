@@ -26,7 +26,7 @@ describe Riffer::Evals::EvaluatorRunner do
   end
 
   let(:agent_class) do
-    Class.new(Riffer::Agent) do
+    stub_agent("Agent") do
       model "mock/mock-model"
       instructions "You are a helpful assistant."
     end
@@ -138,7 +138,7 @@ describe Riffer::Evals::EvaluatorRunner do
       end
       Riffer::Providers::Repository.register(:usage_mock) { usage_mock }
 
-      usage_agent = Class.new(Riffer::Agent) do
+      usage_agent = stub_agent("UsageAgent") do
         model "usage_mock/mock-model"
         instructions "You are a helpful assistant."
       end
@@ -171,7 +171,7 @@ describe Riffer::Evals::EvaluatorRunner do
   describe "context" do
     it "passes context to agent" do
       received_context = nil
-      context_agent = Class.new(Riffer::Agent) do
+      context_agent = stub_agent("ContextAgent") do
         model lambda { |context|
           received_context = context
           "mock/mock-model"
@@ -191,7 +191,7 @@ describe Riffer::Evals::EvaluatorRunner do
 
     it "allows per-scenario context to override top-level" do
       received_contexts = []
-      context_agent = Class.new(Riffer::Agent) do
+      context_agent = stub_agent("ContextAgent") do
         model lambda { |context|
           received_contexts << context
           "mock/mock-model"

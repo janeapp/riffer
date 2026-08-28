@@ -29,13 +29,21 @@ module Riffer::Helpers::Identifier
     cached = klass.instance_variable_get(:@derived_identifier) #: String?
     return cached if cached
 
-    # Tool classes shadow Module#name with the identifier DSL, so the real
-    # class-path name must come from Module's own implementation.
-    real_name = Module.instance_method(:name).bind_call(klass) #: String?
+    real_name = real_name(klass)
     return "" if real_name.nil?
 
     derived = derive(real_name)
     klass.instance_variable_set(:@derived_identifier, derived)
     derived
+  end
+
+  # Returns the class-path name of a class or module, or +nil+ when anonymous.
+  # Tool classes shadow Module#name with the identifier DSL, so the real name
+  # must come from Module's own implementation.
+  #
+  #--
+  #: (Module) -> String?
+  def real_name(klass)
+    Module.instance_method(:name).bind_call(klass) #: String?
   end
 end
