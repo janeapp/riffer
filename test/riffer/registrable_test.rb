@@ -315,42 +315,4 @@ describe Riffer::Registrable do
       expect(base.find("implicit-tool")).must_equal tool
     end
   end
-
-  describe "with_registered" do
-    let(:base) { Class.new(Riffer::Tool) }
-
-    it "registers every class for the duration of the block and returns its value" do
-      first = Class.new(base) { identifier "first-tool" }
-      second = Class.new(base) { identifier "second-tool" }
-
-      result = base.with_registered(first, second) do
-        [base.find("first-tool"), base.find("second-tool")]
-      end
-
-      expect(result).must_equal [first, second]
-      expect(base.all).must_be_empty
-    end
-
-    it "unregisters when the block raises" do
-      tool = Class.new(base) { identifier "raising-tool" }
-
-      expect do
-        base.with_registered(tool) { raise Riffer::Error, "boom" }
-      end.must_raise Riffer::Error
-
-      expect(base.find("raising-tool")).must_be_nil
-    end
-
-    it "unwinds partial registrations when a later class collides" do
-      first = Class.new(base) { identifier "first-tool" }
-      colliding = Class.new(base) { identifier "first-tool" }
-
-      expect do
-        base.with_registered(first, colliding) { flunk "block must not run" }
-      end.must_raise Riffer::DuplicateIdentifierError
-
-      expect(base.find("first-tool")).must_be_nil
-      expect(base.all).must_be_empty
-    end
-  end
 end

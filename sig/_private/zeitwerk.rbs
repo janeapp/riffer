@@ -5,6 +5,8 @@ module Zeitwerk
   class Loader
     def self.for_gem: (*untyped) -> Zeitwerk::Loader
 
+    def ignore: (*String) -> void
+
     def inflector: () -> untyped
 
     def setup: () -> void

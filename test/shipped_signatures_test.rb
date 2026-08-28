@@ -13,7 +13,7 @@ describe "shipped RBS signatures" do
     shipped_dirs = %w[generated manual]
 
     # Root namespaces of optional dependencies that must not leak into shipped sigs.
-    forbidden_roots = %w[OpenAI Anthropic Aws MCP Async Zeitwerk Seahorse Faraday]
+    forbidden_roots = %w[OpenAI Anthropic Aws MCP Async Zeitwerk Seahorse Faraday RSpec Minitest]
 
     # Matches the root segment of a qualified RBS type reference, allowing a leading `::` and
     # ignoring segments nested under another namespace — so `Riffer::Providers::OpenAI` has

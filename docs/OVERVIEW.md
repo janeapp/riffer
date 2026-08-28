@@ -133,6 +133,7 @@ Response
 - [Configuration](CONFIGURATION.md) - Global configuration
 - [Tracing](TRACING.md) - OpenTelemetry span contract and host wiring
 - [Evals](EVALS.md) - Evaluating agent quality
+- [Testing](TESTING.md) - Stubbing agents and tools in tests
 - [Guardrails](GUARDRAILS.md) - Input/output validation
 - [Skills](SKILLS.md) - Packaged agent capabilities
 - [Serialization](SERIALIZATION.md) - Persisting and transferring agent definitions

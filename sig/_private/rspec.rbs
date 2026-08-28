@@ -1,0 +1,7 @@
+# Minimal signatures for `rspec`, a development-only framework riffer never
+# depends on. Only the surface `lib/riffer/testing/rspec.rb` touches is
+# declared; the file is required by hand from a consumer's spec_helper, so this
+# stub keeps Steep aware of the constants without a `library` dependency.
+module RSpec
+  def self.configure: () { (untyped) -> void } -> void
+end

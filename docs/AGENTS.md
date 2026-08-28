@@ -330,23 +330,13 @@ Only **named direct subclasses** are found:
 
 ### Registering an agent explicitly
 
-`register` adds an agent to its parent's registry by hand, `unregister` removes it, and `with_registered` scopes the pair to a block. This exists for test suites: an anonymous agent class is never found implicitly, so registering it is the way to make the code under test resolve it by identifier.
+**Testing an agent that gets resolved by identifier? Use [`Riffer::Testing`](TESTING.md)** — `stub_agent` builds and registers a throwaway agent and cleans it up for you. The API below is the manual alternative, for production wiring and anything outside the stub lifecycle.
+
+`register` adds an agent to its parent's registry by hand and `unregister` removes it:
 
 ```ruby
-stub_agent = Class.new(Riffer::Agent) do
-  identifier 'support_agent'
-  model 'mock/gpt-5-mini'
-end
-
-Riffer::Agent.with_registered(stub_agent) do
-  TriageWorkflow.new.run('What are your hours?')
-end
-# => stub_agent is unregistered again, even if the block raises
-```
-
-```ruby
-Riffer::Agent.register(stub_agent)   # findable until unregistered
-Riffer::Agent.unregister(stub_agent) # no-op if it was never registered
+Riffer::Agent.register(agent)   # findable until unregistered
+Riffer::Agent.unregister(agent) # no-op if it was never registered
 ```
 
 Explicit registration differs from implicit in a few ways:

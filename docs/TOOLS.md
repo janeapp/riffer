@@ -163,24 +163,13 @@ Only **named direct subclasses** are found:
 
 ### Registering a tool explicitly
 
-`register` adds a tool to its parent's registry by hand, `unregister` removes it, and `with_registered` scopes the pair to a block. This exists for test suites: an anonymous tool class is never found implicitly, so registering it is the way to make the code under test resolve it by identifier.
+**Testing a tool that gets resolved by identifier? Use [`Riffer::Testing`](TESTING.md)** — `stub_tool` builds and registers a throwaway tool and cleans it up for you. The API below is the manual alternative, for production wiring and anything outside the stub lifecycle.
+
+`register` adds a tool to its parent's registry by hand and `unregister` removes it:
 
 ```ruby
-stub_tool = Class.new(Riffer::Tool) do
-  identifier 'kb_search'
-
-  def call(context:, **) = text('stubbed')
-end
-
-Riffer::Tool.with_registered(stub_tool) do
-  SupportAgent.new.generate('What are your hours?')
-end
-# => stub_tool is unregistered again, even if the block raises
-```
-
-```ruby
-Riffer::Tool.register(stub_tool)   # findable until unregistered
-Riffer::Tool.unregister(stub_tool) # no-op if it was never registered
+Riffer::Tool.register(tool)   # findable until unregistered
+Riffer::Tool.unregister(tool) # no-op if it was never registered
 ```
 
 Explicit registration differs from implicit in a few ways:

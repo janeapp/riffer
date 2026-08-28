@@ -44,10 +44,9 @@ module Riffer::Registrable
 
   # Registers a direct subclass under its +identifier+, whether or not it is
   # named. Unlike implicit registration it survives a name that no longer
-  # resolves, so an ephemeral class stays findable until +unregister+.
-  #
-  #   klass = Class.new(Riffer::Tool) { identifier "stub_tool" }
-  #   Riffer::Tool.register(klass)
+  # resolves, so an ephemeral class stays findable until +unregister+. Test
+  # suites are better served by Riffer::Testing, which stubs and cleans up for
+  # them.
   #
   # Raises Riffer::ArgumentError when the identifier is blank or the class is
   # not a direct subclass, and Riffer::DuplicateIdentifierError when the
@@ -79,45 +78,7 @@ module Riffer::Registrable
     @identifier_registry = nil
   end
 
-  # Registers each class for the duration of the block and returns the block's
-  # value.
-  #
-  #   Riffer::Tool.with_registered(stub_tool) do
-  #     agent.generate("...")
-  #   end
-  #
-  # Raises whatever +register+ raises, having first unregistered the classes it
-  # already registered.
-  #
-  #--
-  #: [T] (*Class) { () -> T } -> T
-  def with_registered(*klasses)
-    registered = [] #: Array[Class]
-
-    begin
-      klasses.each do |klass|
-        register(klass)
-        registered << klass
-      end
-    rescue StandardError
-      unregister_all(registered)
-      raise
-    end
-
-    begin
-      yield
-    ensure
-      unregister_all(registered)
-    end
-  end
-
   private
-
-  #--
-  #: (Array[Class]) -> void
-  def unregister_all(klasses)
-    klasses.reverse_each { |klass| unregister(klass) }
-  end
 
   # Ruby invokes +inherited+ with +self+ bound to the direct superclass — the
   # only registry the new subclass joins — so busting self's memo is exactly

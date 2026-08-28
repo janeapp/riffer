@@ -48,6 +48,9 @@ groups:
       - source: EVALS.md
         slug: evals
         description: Evaluating agent quality
+      - source: TESTING.md
+        slug: testing
+        description: Stubbing agents and tools in tests
       - source: GUARDRAILS.md
         slug: guardrails
         description: Input/output validation

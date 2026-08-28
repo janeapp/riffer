@@ -10,6 +10,13 @@ loader.inflector.inflect(
   "azure_open_ai" => "AzureOpenAI",
   "open_router" => "OpenRouter",
 )
+# Test-framework wiring a consumer requires by hand; neither file defines the
+# constant its path implies, and both reference framework constants riffer
+# never loads itself.
+loader.ignore(
+  "#{__dir__}/riffer/testing/rspec.rb",
+  "#{__dir__}/riffer/testing/minitest.rb",
+)
 loader.setup
 
 module Riffer

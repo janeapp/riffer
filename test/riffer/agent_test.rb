@@ -312,6 +312,9 @@ describe Riffer::Agent do
 
   describe ".find" do
     it "is backed by the Registrable registry" do
+      agent = stub_agent(identifier: "findable_agent")
+
+      expect(Riffer::Agent.find("findable_agent")).must_equal agent
       expect(Riffer::Agent.find("no-such-agent")).must_be_nil
     end
   end

@@ -1,0 +1,6 @@
+# Hand-written because the signature names `Minitest`, an optional
+# development-only framework that must never appear in a shipped signature —
+# `lib/riffer/testing/minitest.rb` therefore leaves rbs-inline disabled.
+module Riffer::Testing::MinitestCleanup : Minitest::Test
+  def after_teardown: () -> void
+end
