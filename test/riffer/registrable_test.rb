@@ -2,6 +2,8 @@
 
 require "test_helper"
 
+require "tmpdir"
+
 # Named container so classes assigned beneath it get permanent names; each test
 # removes the constants it creates (the classes stay named — that's fine).
 # Every test builds a fresh anonymous base class, so its registry never
@@ -134,6 +136,221 @@ describe Riffer::Registrable do
 
       expect { base.find("dup-agent") }.must_raise Riffer::DuplicateIdentifierError
       expect { base.find("dup-agent") }.must_raise Riffer::DuplicateIdentifierError
+    end
+  end
+
+  describe "liveness of implicit registrations" do
+    let(:base) { Class.new(Riffer::Tool) }
+
+    it "skips a subclass whose constant has been removed" do
+      tool = define_named_subclass(base, :EphemeralTool, identifier: "ephemeral-tool")
+      RegistrableTestNamespace.send(:remove_const, :EphemeralTool)
+
+      expect(base.find("ephemeral-tool")).must_be_nil
+      expect(base.all).wont_include tool
+    end
+
+    it "skips a stale generation sharing a name with a live subclass" do
+      stale = define_named_subclass(base, :ReloadedTool, identifier: "reloaded-tool")
+      RegistrableTestNamespace.send(:remove_const, :ReloadedTool)
+      live = define_named_subclass(base, :ReloadedTool, identifier: "reloaded-tool")
+
+      expect(base.find("reloaded-tool")).must_equal live
+      expect(base.all).wont_include stale
+    end
+
+    it "skips a subclass whose constant now points elsewhere" do
+      tool = define_named_subclass(base, :ReplacedTool, identifier: "replaced-tool")
+      RegistrableTestNamespace.send(:remove_const, :ReplacedTool)
+      RegistrableTestNamespace.const_set(:ReplacedTool, Class.new)
+
+      expect(base.find("replaced-tool")).must_be_nil
+      expect(base.all).wont_include tool
+    end
+
+    it "leaves a pending autoload for a superseded generation untouched" do
+      Dir.mktmpdir("registrable-autoload") do |dir|
+        stale = define_named_subclass(base, :AutoloadedTool, identifier: "autoloaded-tool")
+        RegistrableTestNamespace.send(:remove_const, :AutoloadedTool)
+        # The autoloaded file cannot name the anonymous base, so it reads it back
+        # out of the thread rather than through a constant the registry would see.
+        Thread.current[:registrable_autoload_base] = base
+        path = File.join(dir, "autoloaded_tool.rb")
+        File.write(path, <<~RUBY)
+          RegistrableTestNamespace.const_set(
+            :AutoloadedTool,
+            Class.new(Thread.current[:registrable_autoload_base]) { identifier "autoloaded-tool" },
+          )
+        RUBY
+        RegistrableTestNamespace.autoload(:AutoloadedTool, path)
+
+        expect(base.all).wont_include stale
+        expect(RegistrableTestNamespace.autoload?(:AutoloadedTool)).must_equal path
+
+        live = RegistrableTestNamespace::AutoloadedTool
+
+        expect(base.find("autoloaded-tool")).must_equal live
+      ensure
+        Thread.current[:registrable_autoload_base] = nil
+      end
+    end
+  end
+
+  describe "register" do
+    let(:base) { Class.new(Riffer::Tool) }
+
+    it "registers an anonymous class under its explicit identifier" do
+      tool = Class.new(base) { identifier "registered-tool" }
+
+      base.register(tool)
+
+      expect(base.find("registered-tool")).must_equal tool
+      expect(base.all).must_equal [tool]
+    end
+
+    it "registers an anonymous agent class" do
+      agent_base = Class.new(Riffer::Agent)
+      agent = Class.new(agent_base) { identifier "registered-agent" }
+
+      agent_base.register(agent)
+
+      expect(agent_base.find("registered-agent")).must_equal agent
+    end
+
+    it "raises ArgumentError when the identifier is blank" do
+      tool = Class.new(base)
+
+      error = expect { base.register(tool) }.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_include "identifier"
+    end
+
+    it "raises ArgumentError for a class that is not a direct subclass" do
+      child = define_named_subclass(base, :ChildTool)
+      grandchild = Class.new(child) { identifier "grandchild-tool" }
+
+      expect { base.register(grandchild) }.must_raise Riffer::ArgumentError
+    end
+
+    it "raises ArgumentError for a class outside the lineage" do
+      error = expect { base.register(Object) }.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_include "direct subclass"
+    end
+
+    it "raises DuplicateIdentifierError against an implicit registration" do
+      implicit = define_named_subclass(base, :ImplicitTool, identifier: "shared-tool")
+      explicit = Class.new(base) { identifier "shared-tool" }
+
+      error = expect { base.register(explicit) }.must_raise Riffer::DuplicateIdentifierError
+
+      expect(error.message).must_include "shared-tool"
+      expect(error.message).must_include implicit.to_s
+    end
+
+    it "raises DuplicateIdentifierError against another explicit registration" do
+      first = Class.new(base) { identifier "shared-tool" }
+      second = Class.new(base) { identifier "shared-tool" }
+      base.register(first)
+
+      expect { base.register(second) }.must_raise Riffer::DuplicateIdentifierError
+    end
+
+    it "raises DuplicateIdentifierError when re-registering the same class" do
+      tool = Class.new(base) { identifier "shared-tool" }
+      base.register(tool)
+
+      expect { base.register(tool) }.must_raise Riffer::DuplicateIdentifierError
+    end
+
+    it "does not report a duplicate when a registered class also registers implicitly" do
+      tool = Class.new(base) { identifier "overlaid-tool" }
+      base.register(tool)
+      RegistrableTestNamespace.const_set(:OverlaidTool, tool)
+
+      expect(base.find("overlaid-tool")).must_equal tool
+      expect(base.all).must_equal [tool]
+    end
+
+    it "raises DuplicateIdentifierError when a later subclass claims an explicit identifier" do
+      explicit = Class.new(base) { identifier "shared-tool" }
+      base.register(explicit)
+      implicit = define_named_subclass(base, :LateTool, identifier: "shared-tool")
+
+      error = expect { base.find("shared-tool") }.must_raise Riffer::DuplicateIdentifierError
+
+      expect(error.message).must_include explicit.to_s
+      expect(error.message).must_include implicit.to_s
+    end
+  end
+
+  describe "unregister" do
+    let(:base) { Class.new(Riffer::Tool) }
+
+    it "removes an explicit registration" do
+      tool = Class.new(base) { identifier "temporary-tool" }
+      base.register(tool)
+
+      base.unregister(tool)
+
+      expect(base.find("temporary-tool")).must_be_nil
+      expect(base.all).wont_include tool
+    end
+
+    it "leaves other registrations alone when the class was never registered" do
+      registered = Class.new(base) { identifier "kept-tool" }
+      base.register(registered)
+      other = Class.new(base) { identifier "absent-tool" }
+
+      base.unregister(other)
+
+      expect(base.find("kept-tool")).must_equal registered
+    end
+
+    it "never removes an implicit registration" do
+      tool = define_named_subclass(base, :ImplicitTool, identifier: "implicit-tool")
+
+      base.unregister(tool)
+
+      expect(base.find("implicit-tool")).must_equal tool
+    end
+  end
+
+  describe "with_registered" do
+    let(:base) { Class.new(Riffer::Tool) }
+
+    it "registers every class for the duration of the block and returns its value" do
+      first = Class.new(base) { identifier "first-tool" }
+      second = Class.new(base) { identifier "second-tool" }
+
+      result = base.with_registered(first, second) do
+        [base.find("first-tool"), base.find("second-tool")]
+      end
+
+      expect(result).must_equal [first, second]
+      expect(base.all).must_be_empty
+    end
+
+    it "unregisters when the block raises" do
+      tool = Class.new(base) { identifier "raising-tool" }
+
+      expect do
+        base.with_registered(tool) { raise Riffer::Error, "boom" }
+      end.must_raise Riffer::Error
+
+      expect(base.find("raising-tool")).must_be_nil
+    end
+
+    it "unwinds partial registrations when a later class collides" do
+      first = Class.new(base) { identifier "first-tool" }
+      colliding = Class.new(base) { identifier "first-tool" }
+
+      expect do
+        base.with_registered(first, colliding) { flunk "block must not run" }
+      end.must_raise Riffer::DuplicateIdentifierError
+
+      expect(base.find("first-tool")).must_be_nil
+      expect(base.all).must_be_empty
     end
   end
 end
