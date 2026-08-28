@@ -310,8 +310,7 @@ describe Riffer::Providers::Mock do
       end
 
       it "stores tools parameter in calls" do
-        tool_class = Class.new(Riffer::Tool) do
-          identifier "test_tool"
+        tool_class = stub_tool("TestTool") do
           description "A test tool"
         end
         provider.generate_text(prompt: "Hello", tools: [tool_class])

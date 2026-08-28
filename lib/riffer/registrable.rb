@@ -43,10 +43,10 @@ module Riffer::Registrable
   end
 
   # Registers a direct subclass under its +identifier+, whether or not it is
-  # named. Unlike implicit registration it survives a name that no longer
-  # resolves, so an ephemeral class stays findable until +unregister+. Test
-  # suites are better served by Riffer::Testing, which stubs and cleans up for
-  # them.
+  # named — unlike implicit registration, it survives a name that no longer
+  # resolves, so an ephemeral class stays findable until +unregister+. Prefer
+  # Riffer::Testing for ordinary test setup, which stubs and cleans up
+  # automatically.
   #
   # Raises Riffer::ArgumentError when the identifier is blank or the class is
   # not a direct subclass, and Riffer::DuplicateIdentifierError when the

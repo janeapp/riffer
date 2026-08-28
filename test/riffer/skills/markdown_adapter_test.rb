@@ -22,8 +22,7 @@ describe Riffer::Skills::MarkdownAdapter do
     end
 
     it "uses the configured skill_activate_tool name in the prompt" do
-      custom = Class.new(Riffer::Tool) do
-        identifier "custom_activate"
+      custom = stub_tool("CustomActivate") do
         description "Custom"
         def call(context:)
           text("ok")

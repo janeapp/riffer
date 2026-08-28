@@ -611,8 +611,7 @@ describe Riffer::Providers::Gemini do
 
   describe "tool calling" do
     let(:weather_tool) do
-      Class.new(Riffer::Tool) do
-        identifier "get_weather"
+      stub_tool("GetWeather") do
         description "Get the current weather for a city"
         params do
           required :city, String, description: "The city name"

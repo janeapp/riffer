@@ -4,7 +4,7 @@ require "test_helper"
 
 describe Riffer::Agent do
   let(:agent_class) do
-    Class.new(Riffer::Agent) do
+    stub_agent do
       identifier "test-agent"
       model "mock/riffer-1"
       instructions "You are a helpful assistant."
@@ -58,7 +58,7 @@ describe Riffer::Agent do
     end
 
     it "leaves the session empty when no instructions or skills are configured" do
-      bare = Class.new(Riffer::Agent) { model "mock/riffer-1" }.new
+      bare = stub_agent("BareAgent") { model "mock/riffer-1" }.new
 
       expect(bare.session.messages).must_equal []
     end
@@ -95,7 +95,7 @@ describe Riffer::Agent do
 
     describe "with invalid model format" do
       let(:invalid_agent_class) do
-        Class.new(Riffer::Agent) do
+        stub_agent("InvalidAgent") do
           model "invalid-format"
         end
       end
@@ -108,7 +108,7 @@ describe Riffer::Agent do
 
     describe "with unregistered provider" do
       it "raises Riffer::ArgumentError at Agent.new" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "nonexistent/gpt-4"
         end
         error = expect { klass.new }.must_raise(Riffer::ArgumentError)
@@ -118,7 +118,7 @@ describe Riffer::Agent do
 
     describe "with dynamic instructions" do
       it "resolves the Proc at Agent.new and seeds the session" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           instructions -> { "Dynamic instructions" }
         end
@@ -130,7 +130,7 @@ describe Riffer::Agent do
       end
 
       it "passes context to the Proc" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           instructions ->(context) { "You are assisting #{context[:name]}" }
         end
@@ -142,7 +142,7 @@ describe Riffer::Agent do
       end
 
       it "passes an empty context Hash when not provided" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           instructions ->(context) { context[:name].nil? ? "No name" : "With name #{context[:name]}" }
         end
@@ -155,7 +155,7 @@ describe Riffer::Agent do
 
       it "does not add a system message when the Proc returns nil" do
         returner = ->(_context) {}
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           instructions returner
         end
@@ -170,23 +170,23 @@ describe Riffer::Agent do
 
   describe ".config" do
     it "returns a Riffer::Agent::Config" do
-      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
 
       expect(klass.config).must_be_instance_of Riffer::Agent::Config
     end
 
     it "returns the same instance across multiple reads on one class" do
-      klass = Class.new(Riffer::Agent) { model "mock/riffer-1" }
+      klass = stub_agent("Agent") { model "mock/riffer-1" }
 
       expect(klass.config).must_be_same_as klass.config
     end
 
     it "is independent between sibling subclasses" do
-      sibling_a = Class.new(Riffer::Agent) do
+      sibling_a = stub_agent("SiblingAAgent") do
         model "mock/riffer-1"
         max_steps 3
       end
-      sibling_b = Class.new(Riffer::Agent) do
+      sibling_b = stub_agent("SiblingBAgent") do
         model "mock/riffer-1"
         max_steps 7
       end
@@ -197,11 +197,11 @@ describe Riffer::Agent do
     end
 
     it "is independent between parent and child subclasses" do
-      parent = Class.new(Riffer::Agent) do
+      parent = stub_agent("ParentAgent") do
         model "mock/riffer-1"
         max_steps 3
       end
-      child = Class.new(parent)
+      child = stub_agent("ChildAgent", base: parent)
 
       expect(child.config).wont_be_same_as parent.config
       # Each subclass starts fresh; only tool_runtime walks the chain.
@@ -225,7 +225,7 @@ describe Riffer::Agent do
     end
 
     it "ignores the class config when config: is passed" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions "Ignore me."
         max_steps 99
@@ -237,7 +237,7 @@ describe Riffer::Agent do
     end
 
     it "falls back to self.class.config when config: is omitted" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions "From class."
       end
@@ -272,7 +272,7 @@ describe Riffer::Agent do
     it "stores Params instance" do
       params = Riffer::Params.new
       params.required(:sentiment, String)
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
       end
       klass.structured_output(params)
@@ -281,7 +281,7 @@ describe Riffer::Agent do
     end
 
     it "stores Params from block DSL" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         structured_output do
           required :sentiment, String, description: "The sentiment"
@@ -312,7 +312,7 @@ describe Riffer::Agent do
 
   describe ".find" do
     it "is backed by the Registrable registry" do
-      agent = stub_agent(identifier: "findable_agent")
+      agent = stub_agent("FindableAgent")
 
       expect(Riffer::Agent.find("findable_agent")).must_equal agent
       expect(Riffer::Agent.find("no-such-agent")).must_be_nil
@@ -327,7 +327,7 @@ describe Riffer::Agent do
     end
 
     it "passes context to tools" do
-      context_tool = Class.new(Riffer::Tool) do
+      context_tool = stub_tool("ClassGenerateContextTool") do
         description "Gets user info"
         params do
           required :field, String
@@ -336,11 +336,10 @@ describe Riffer::Agent do
           text(context[field.to_sym] || "unknown")
         end
       end
-      context_tool.identifier("class_generate_context_tool")
 
       tool = context_tool
       received_context = nil
-      custom_agent_class = Class.new(Riffer::Agent) do
+      custom_agent_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools lambda { |context|
           received_context = context
@@ -368,7 +367,7 @@ describe Riffer::Agent do
     end
 
     it "passes context to tools" do
-      context_tool = Class.new(Riffer::Tool) do
+      context_tool = stub_tool("ClassStreamContextTool") do
         description "Gets user info"
         params do
           required :field, String
@@ -377,11 +376,10 @@ describe Riffer::Agent do
           text(context[field.to_sym] || "unknown")
         end
       end
-      context_tool.identifier("class_stream_context_tool")
 
       tool = context_tool
       received_context = nil
-      custom_agent_class = Class.new(Riffer::Agent) do
+      custom_agent_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools lambda { |context|
           received_context = context
@@ -397,7 +395,7 @@ describe Riffer::Agent do
 
   describe ".uses_tools" do
     let(:weather_tool_class) do
-      Class.new(Riffer::Tool) do
+      stub_tool("WeatherTool") do
         description "Gets the weather"
 
         params do
@@ -412,7 +410,7 @@ describe Riffer::Agent do
 
     let(:agent_with_tools_class) do
       tool_class = weather_tool_class
-      Class.new(Riffer::Agent) do
+      stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [tool_class]
       end
@@ -428,7 +426,7 @@ describe Riffer::Agent do
 
     it "accepts a lambda" do
       tool_class = weather_tool_class
-      agent = Class.new(Riffer::Agent) do
+      agent = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools -> { [tool_class] }
       end
@@ -439,7 +437,7 @@ describe Riffer::Agent do
 
   describe ".tool_runtime" do
     it "stores a tool_runtime class" do
-      agent = Class.new(Riffer::Agent) do
+      agent = stub_agent("Agent") do
         model "mock/riffer-1"
         tool_runtime Riffer::Tools::Runtime::Threaded
       end
@@ -455,7 +453,7 @@ describe Riffer::Agent do
     end
 
     it "defaults to inline when no config" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
       end
 
@@ -463,7 +461,7 @@ describe Riffer::Agent do
     end
 
     it "resolves a ToolRuntime class to an instance" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         tool_runtime Riffer::Tools::Runtime::Threaded
       end
@@ -475,7 +473,7 @@ describe Riffer::Agent do
       original = Riffer.config.tool_runtime
       begin
         Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
         end
 
@@ -489,7 +487,7 @@ describe Riffer::Agent do
       original = Riffer.config.tool_runtime
       begin
         Riffer.config.tool_runtime = Riffer::Tools::Runtime::Threaded
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           tool_runtime Riffer::Tools::Runtime::Inline
         end
@@ -502,7 +500,7 @@ describe Riffer::Agent do
 
     it "resolves freshly per agent instance, threading context into the Proc" do
       received_contexts = []
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         tool_runtime lambda { |context|
           received_contexts << context
@@ -536,7 +534,7 @@ describe Riffer::Agent do
 
     it "registers before guardrails" do
       gr = pass_guardrail_class
-      agent = Class.new(Riffer::Agent) do
+      agent = stub_agent("Agent") do
         model "mock/riffer-1"
       end
       agent.guardrail(:before, with: gr)
@@ -547,7 +545,7 @@ describe Riffer::Agent do
 
     it "stores options in config" do
       gr = pass_guardrail_class
-      agent = Class.new(Riffer::Agent) do
+      agent = stub_agent("Agent") do
         model "mock/riffer-1"
       end
       agent.guardrail(:before, with: gr, foo: :bar)
@@ -566,7 +564,7 @@ describe Riffer::Agent do
     end
 
     it "returns nil when no instructions configured" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
       end
 
@@ -574,7 +572,7 @@ describe Riffer::Agent do
     end
 
     it "resolves dynamic instructions using the init context" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions ->(context) { "Helping #{context[:name]}" }
       end
@@ -585,7 +583,7 @@ describe Riffer::Agent do
 
     it "returns nil when Proc returns nil" do
       returner = ->(_ctx) {}
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions returner
       end
@@ -602,7 +600,7 @@ describe Riffer::Agent do
     end
 
     it "returns a System message when skills are configured" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -619,7 +617,7 @@ describe Riffer::Agent do
     after { clear_mcp_registry! }
 
     it "accumulates mcp_configs with progressive flag per call" do
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         use_mcp :github
         use_mcp :jira, progressive: false
       end
@@ -663,13 +661,12 @@ describe Riffer::Agent do
     end
 
     it "merges MCP tools with uses_tools tools" do
-      static_tool = Class.new(Riffer::Tool) do
-        identifier "static_tool"
+      static_tool = stub_tool("StaticTool") do
         description "Static tool"
       end
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [static_tool]
         use_mcp :srv, progressive: false
@@ -682,13 +679,13 @@ describe Riffer::Agent do
     end
 
     it "raises ArgumentError when tools share the same name" do
-      static = Class.new(Riffer::Tool) do
+      static = stub_tool do
         identifier "srv__mcp_tool"
         description "Static tool"
       end
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [static]
         use_mcp :srv, progressive: false
@@ -701,7 +698,7 @@ describe Riffer::Agent do
     it "returns MCP tools even when uses_tools is not set" do
       inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_class])
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         use_mcp :srv, progressive: false
       end
@@ -715,7 +712,7 @@ describe Riffer::Agent do
       Riffer.config.mcp.credentials = lambda do |manifest:, matched_tags:, context:|
       end
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         use_mcp :srv, progressive: false
       end
@@ -730,7 +727,7 @@ describe Riffer::Agent do
       prev = Riffer.config.mcp.credentials
       Riffer.config.mcp.credentials = ->(manifest:, matched_tags:, context:) { { "Authorization" => "Bearer x" } }
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         use_mcp :srv, progressive: false
       end
@@ -764,7 +761,7 @@ describe Riffer::Agent do
       it "returns mcp_search instead of individual tool classes" do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a, fake_tool_b])
 
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           use_mcp :srv, progressive: true
         end
@@ -779,7 +776,7 @@ describe Riffer::Agent do
       it "search tool returns matching tools as inject_tools" do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
 
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           use_mcp :srv, progressive: true
         end
@@ -798,7 +795,7 @@ describe Riffer::Agent do
         inject_ready_registration(name: "srv", tags: [:srv], tools: [fake_tool_a])
         inject_ready_registration(name: "other", tags: [:other], tools: [fake_tool_b])
 
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           use_mcp :other, progressive: false
           use_mcp :srv, progressive: true
@@ -822,7 +819,7 @@ describe Riffer::Agent do
         inject_ready_registration(name: "srv1", tags: [:g1], tools: [fake_tool_a])
         inject_ready_registration(name: "srv2", tags: [:g2], tools: [fake_tool_b])
 
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           use_mcp :g1, progressive: true
           use_mcp :g2, progressive: true
@@ -844,7 +841,7 @@ describe Riffer::Agent do
         prev = Riffer.config.mcp.credentials
         Riffer.config.mcp.credentials = ->(**) {}
 
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           use_mcp :srv, progressive: true
         end
@@ -862,7 +859,7 @@ describe Riffer::Agent do
           matched_tags.include?(:srv) ? nil : { token: "tok" }
         }
 
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           model "mock/riffer-1"
           use_mcp :other, progressive: false
           use_mcp :srv, progressive: true
@@ -878,7 +875,7 @@ describe Riffer::Agent do
       end
 
       it "mcp_configs stores the progressive flag" do
-        klass = Class.new(Riffer::Agent) do
+        klass = stub_agent("Agent") do
           use_mcp :foo                       # default: true
           use_mcp :bar, progressive: false   # explicit opt-out
         end
@@ -889,7 +886,7 @@ describe Riffer::Agent do
       end
 
       it "defaults progressive to true when not specified" do
-        klass = Class.new(Riffer::Agent) { use_mcp :foo }
+        klass = stub_agent("Agent") { use_mcp :foo }
 
         expect(klass.mcp_configs.first[:progressive]).must_equal true
       end
@@ -898,9 +895,9 @@ describe Riffer::Agent do
 
   describe "#tools validation" do
     it "raises when a tool is missing a description" do
-      bad_tool = Class.new(Riffer::Tool) { identifier "bad_tool" }
+      bad_tool = stub_tool("BadTool")
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [bad_tool]
       end
@@ -910,7 +907,7 @@ describe Riffer::Agent do
     end
 
     it "raises when an MCP tool is missing a description" do
-      bad_mcp_tool = Class.new(Riffer::Tool) { identifier "bad_mcp_tool" }
+      bad_mcp_tool = stub_tool("BadMcpTool")
 
       manifest = Riffer::Mcp::Manifest.new(name: "srv", tags: [:srv], endpoint: "https://x.com", discovery_headers: {})
       reg = Riffer::Mcp::Registration.allocate
@@ -920,7 +917,7 @@ describe Riffer::Agent do
       store = Riffer::Mcp::Registry.instance_variable_get(:@store)
       Riffer::Mcp::Registry.instance_variable_get(:@mutex).synchronize { store["srv"] = reg }
 
-      klass = Class.new(Riffer::Agent) do
+      klass = stub_agent("Agent") do
         model "mock/riffer-1"
         use_mcp :srv, progressive: false
       end
@@ -934,8 +931,7 @@ describe Riffer::Agent do
 
   describe "interrupt! with experimental_history_healing" do
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "interrupt_heal_tool"
+      stub_tool("InterruptHealTool") do
         description "Slow tool"
         def call(context:)
           text("done")
@@ -948,7 +944,7 @@ describe Riffer::Agent do
     it "fills orphans and exposes healed_tool_call_ids when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -981,7 +977,7 @@ describe Riffer::Agent do
 
     it "leaves orphans in place when healing is off (default)" do
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -1004,7 +1000,7 @@ describe Riffer::Agent do
     it "does not fire on_message for placeholder tool messages" do
       Riffer.config.experimental_history_healing = true
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
       end
@@ -1030,8 +1026,7 @@ describe Riffer::Agent do
 
   describe "max_steps interrupt with experimental_history_healing" do
     let(:tool_class) do
-      Class.new(Riffer::Tool) do
-        identifier "max_steps_heal_tool"
+      stub_tool("MaxStepsHealTool") do
         description "Loop tool"
         def call(context:)
           text("ok")
@@ -1044,7 +1039,7 @@ describe Riffer::Agent do
     it "fills orphan tool_use with the placeholder when healing is on" do
       Riffer.config.experimental_history_healing = true
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
         max_steps 1
@@ -1069,7 +1064,7 @@ describe Riffer::Agent do
 
     it "leaves orphan tool_use when healing is off" do
       tc = tool_class
-      custom_class = Class.new(Riffer::Agent) do
+      custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
         max_steps 1
@@ -1090,7 +1085,7 @@ describe Riffer::Agent do
   end
 
   describe "seeded history with experimental_history_healing" do
-    let(:custom_class) { Class.new(Riffer::Agent) { model "mock/riffer-1" } }
+    let(:custom_class) { stub_agent("CustomAgent") { model "mock/riffer-1" } }
 
     after { Riffer.config.experimental_history_healing = false }
 
@@ -1134,14 +1129,13 @@ describe Riffer::Agent do
           Riffer::Messages::Assistant.new("", tool_calls: [tc]),
         ],
       )
-      tool = Class.new(Riffer::Tool) do
-        identifier "pending_seed_tool"
+      tool = stub_tool("PendingSeedTool") do
         description "Pending tool"
         def call(context:)
           text("done")
         end
       end
-      with_tools = Class.new(Riffer::Agent) do
+      with_tools = stub_agent("WithTools") do
         model "mock/riffer-1"
         uses_tools [tool]
       end

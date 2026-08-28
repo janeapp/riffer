@@ -3,14 +3,14 @@
 require "test_helper"
 
 describe Riffer::Testing do
-  it "makes a stubbed tool findable by identifier" do
-    tool = stub_tool(identifier: "stubbed_kb_search")
+  it "makes a stubbed tool findable by its derived identifier" do
+    tool = stub_tool("StubbedKbSearch")
 
     expect(Riffer::Tool.find("stubbed_kb_search")).must_equal tool
   end
 
   it "evaluates the body in the stubbed tool" do
-    tool = stub_tool(identifier: "stubbed_echo") do
+    tool = stub_tool("StubbedEcho") do
       description "Echoes a canned answer"
 
       def call(context:, **) = text("stubbed")
@@ -20,8 +20,8 @@ describe Riffer::Testing do
     expect(tool.new.call(context: nil).content).must_equal "stubbed"
   end
 
-  it "makes a stubbed agent findable by identifier" do
-    agent = stub_agent(identifier: "stubbed_support_agent") { model "mock/riffer-1" }
+  it "makes a stubbed agent findable by its derived identifier" do
+    agent = stub_agent("StubbedSupportAgent") { model "mock/riffer-1" }
 
     expect(Riffer::Agent.find("stubbed_support_agent")).must_equal agent
     expect(agent.model).must_equal "mock/riffer-1"
@@ -29,20 +29,21 @@ describe Riffer::Testing do
 
   it "stubs onto an intermediate base class" do
     base = Class.new(Riffer::Tool)
-    tool = stub_tool(identifier: "stubbed_child_tool", base: base)
+    tool = stub_tool("StubbedChildTool", base: base)
 
     expect(base.find("stubbed_child_tool")).must_equal tool
     expect(Riffer::Tool.find("stubbed_child_tool")).must_be_nil
   end
 
-  it "raises ArgumentError when neither a name nor an identifier is given" do
+  it "raises ArgumentError when neither a name nor a body identifier is given" do
     expect { stub_tool }.must_raise Riffer::ArgumentError
+    expect { stub_tool { description "nameless" } }.must_raise Riffer::ArgumentError
   end
 
   it "raises DuplicateIdentifierError when the identifier is already taken" do
-    stub_tool(identifier: "stubbed_duplicate")
+    stub_tool("StubbedDuplicate")
 
-    expect { stub_tool(identifier: "stubbed_duplicate") }.must_raise Riffer::DuplicateIdentifierError
+    expect { stub_tool { identifier "stubbed_duplicate" } }.must_raise Riffer::DuplicateIdentifierError
   end
 
   describe "a named stub" do
@@ -61,21 +62,13 @@ describe Riffer::Testing do
       expect(Riffer::Tool.find("stubbed_symbol_tool")).must_equal tool
     end
 
-    it "prefers the identifier keyword over the name" do
-      tool = stub_tool("StubbedOverriddenTool", identifier: "stubbed_kwarg_identifier")
-
-      expect(Object.const_get(:StubbedOverriddenTool)).must_equal tool
-      expect(Riffer::Tool.find("stubbed_kwarg_identifier")).must_equal tool
-      expect(Riffer::Tool.find("stubbed_overridden_tool")).must_be_nil
-    end
-
-    it "prefers an identifier declared in the body" do
-      tool = stub_tool("StubbedBodyTool", identifier: "stubbed_kwarg_loses") do
+    it "prefers an identifier declared in the body over the derived one" do
+      tool = stub_tool("StubbedBodyTool") do
         identifier "stubbed_body_wins"
       end
 
       expect(Riffer::Tool.find("stubbed_body_wins")).must_equal tool
-      expect(Riffer::Tool.find("stubbed_kwarg_loses")).must_be_nil
+      expect(Riffer::Tool.find("stubbed_body_tool")).must_be_nil
     end
 
     it "raises ArgumentError for a name that is not a simple constant name" do
@@ -93,6 +86,15 @@ describe Riffer::Testing do
     end
   end
 
+  describe "an anonymous stub" do
+    it "registers under the identifier its body declares without naming a constant" do
+      tool = stub_tool { identifier "stubbed_anonymous_tool" }
+
+      expect(Riffer::Tool.find("stubbed_anonymous_tool")).must_equal tool
+      expect(Riffer::Helpers::Identifier.real_name(tool)).must_be_nil
+    end
+  end
+
   describe "reset!" do
     it "unregisters tracked stubs newest first" do
       base = Class.new(Riffer::Tool)
@@ -101,8 +103,8 @@ describe Riffer::Testing do
         unregistered << klass.identifier
         super(klass)
       end
-      stub_tool(identifier: "first_reset_tool", base: base)
-      stub_tool(identifier: "second_reset_tool", base: base)
+      stub_tool("FirstResetTool", base: base)
+      stub_tool("SecondResetTool", base: base)
 
       Riffer::Testing.reset!
 
@@ -110,7 +112,7 @@ describe Riffer::Testing do
     end
 
     it "forgets the stubs it removed" do
-      stub_tool(identifier: "stubbed_cleared_tool")
+      stub_tool("StubbedClearedTool")
 
       Riffer::Testing.reset!
 
@@ -157,7 +159,7 @@ describe Riffer::Testing do
     end
 
     it "shares tracking between an including test case and the module" do
-      tool = Riffer::Testing.stub_tool(identifier: "stubbed_module_call")
+      tool = Riffer::Testing.stub_tool("StubbedModuleCall")
 
       reset!
 
@@ -169,7 +171,7 @@ describe Riffer::Testing do
     it "resets stubs once a test finishes" do
       test_case = Class.new(Minitest::Test) do
         def test_stubs_a_tool
-          stub_tool(identifier: "stubbed_adapter_cleanup")
+          stub_tool("StubbedAdapterCleanup")
         end
       end
 

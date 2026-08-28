@@ -19,34 +19,36 @@ module Riffer::Testing
 
   # Builds an agent class, evaluates the optional body in it, and makes it
   # resolvable until the next +reset!+. A +name+ assigns a top-level constant
-  # and derives the identifier unless +identifier+ overrides it.
+  # and derives the identifier; the body may set +identifier+ like any other
+  # agent config.
   #
   #   agent = stub_agent("SupportAgent") { model "mock/gpt-5-mini" }
   #
-  # Raises Riffer::ArgumentError when the constant is already defined, and
-  # Riffer::DuplicateIdentifierError when another agent already holds the
-  # identifier.
+  # Raises Riffer::ArgumentError when the constant is already defined or the
+  # stub ends up with no identifier, and Riffer::DuplicateIdentifierError when
+  # another agent already holds the identifier.
   #
   #--
-  #: (?(String | Symbol)?, ?identifier: (String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
-  def stub_agent(name = nil, identifier: nil, base: Riffer::Agent, &body)
-    build_stub(name, identifier: identifier, base: base, &body) #: singleton(Riffer::Agent)
+  #: (?(String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
+  def stub_agent(name = nil, base: Riffer::Agent, &body)
+    build_stub(name, base: base, &body) #: singleton(Riffer::Agent)
   end
 
   # Builds a tool class, evaluates the optional body in it, and makes it
   # resolvable until the next +reset!+. A +name+ assigns a top-level constant
-  # and derives the identifier unless +identifier+ overrides it.
+  # and derives the identifier; the body may set +identifier+ like any other
+  # tool config.
   #
   #   tool = stub_tool("KbSearch") { def call(context:, **) = text("stubbed") }
   #
-  # Raises Riffer::ArgumentError when the constant is already defined, and
-  # Riffer::DuplicateIdentifierError when another tool already holds the
-  # identifier.
+  # Raises Riffer::ArgumentError when the constant is already defined or the
+  # stub ends up with no identifier, and Riffer::DuplicateIdentifierError when
+  # another tool already holds the identifier.
   #
   #--
-  #: (?(String | Symbol)?, ?identifier: (String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
-  def stub_tool(name = nil, identifier: nil, base: Riffer::Tool, &body)
-    build_stub(name, identifier: identifier, base: base, &body) #: singleton(Riffer::Tool)
+  #: (?(String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
+  def stub_tool(name = nil, base: Riffer::Tool, &body)
+    build_stub(name, base: base, &body) #: singleton(Riffer::Tool)
   end
 
   # Removes every stub built since the last reset — its registration and any
@@ -76,15 +78,16 @@ module Riffer::Testing
   private
 
   #--
-  #: ((String | Symbol)?, identifier: (String | Symbol)?, base: Class) ?{ () [self: untyped] -> void } -> Class
-  def build_stub(name, identifier:, base:, &body)
-    raise Riffer::ArgumentError, "a stub needs a name, an identifier, or both" if name.nil? && identifier.nil?
-
+  #: ((String | Symbol)?, base: Class) ?{ () [self: untyped] -> void } -> Class
+  def build_stub(name, base:, &body)
     const_name = validate_const_name(name)
     stub = Class.new(base)
     configurable = stub #: untyped
-    configurable.identifier((identifier || Riffer::Helpers::Identifier.derive(const_name)).to_s)
+    configurable.identifier(Riffer::Helpers::Identifier.derive(const_name)) if const_name
     configurable.class_eval(&body) if body
+    if configurable.identifier.to_s.strip.empty?
+      raise Riffer::ArgumentError, "a stub needs a name, or an identifier set in its block"
+    end
 
     # The class must be registered while still anonymous: naming it first makes
     # it implicitly live, and +register+ rejects an identifier the registry

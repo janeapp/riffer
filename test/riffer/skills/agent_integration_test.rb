@@ -7,7 +7,7 @@ describe "Agent skills integration" do
 
   describe "generate with skills" do
     it "injects skills catalog into separate system message" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions "You are helpful."
         skills do
@@ -28,7 +28,7 @@ describe "Agent skills integration" do
     end
 
     it "uses Markdown renderer for mock provider by default" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -46,7 +46,7 @@ describe "Agent skills integration" do
     end
 
     it "allows custom adapter override" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -64,7 +64,7 @@ describe "Agent skills integration" do
     end
 
     it "uses XML renderer for mock provider when the model name contains claude" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/claude-sonnet-4-6"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -84,7 +84,7 @@ describe "Agent skills integration" do
     it "explicit adapter wins over model-aware default" do
       # Mock with a "claude" model name would default to XML; explicit
       # MarkdownAdapter must still take precedence.
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/claude-sonnet-4-6"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -103,7 +103,7 @@ describe "Agent skills integration" do
     end
 
     it "selects XmlAdapter for amazon_bedrock with an Anthropic model id" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "amazon_bedrock/us.anthropic.claude-sonnet-4-6"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -119,7 +119,7 @@ describe "Agent skills integration" do
     end
 
     it "selects MarkdownAdapter for amazon_bedrock with a non-Anthropic model id" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "amazon_bedrock/us.amazon.nova-lite-v1:0"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -135,7 +135,7 @@ describe "Agent skills integration" do
     end
 
     it "includes skill_activate tool in resolved tools" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -151,15 +151,14 @@ describe "Agent skills integration" do
     end
 
     it "merges skill tools with existing tools" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "my_tool"
+      tool_class = stub_tool("MyTool") do
         description "A custom tool"
         def call(context:)
           text("ok")
         end
       end
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [tool_class]
         skills do
@@ -177,6 +176,8 @@ describe "Agent skills integration" do
     end
 
     it "raises on tool name conflict" do
+      # Not a stub: the identifier deliberately collides with the real
+      # Riffer::Skills::ActivateTool, which the registry would reject.
       conflict_tool = Class.new(Riffer::Tool) do
         identifier "skill_activate"
         description "Conflicts with skill_activate"
@@ -185,7 +186,7 @@ describe "Agent skills integration" do
         end
       end
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [conflict_tool]
         skills do
@@ -198,15 +199,14 @@ describe "Agent skills integration" do
     end
 
     it "passes skills context in context" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "spy_tool"
+      tool_class = stub_tool("SpyTool") do
         description "Captures context"
         def call(context:)
           text(context[:skills].skills.keys.sort.join(","))
         end
       end
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [tool_class]
         skills do
@@ -227,7 +227,7 @@ describe "Agent skills integration" do
     end
 
     it "handles Proc backend" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend lambda { |_ctx|
@@ -247,7 +247,7 @@ describe "Agent skills integration" do
 
     it "generates no system message when skills backend returns empty" do
       Dir.mktmpdir do |dir|
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           skills do
             backend Riffer::Skills::FilesystemBackend.new(dir)
@@ -267,7 +267,7 @@ describe "Agent skills integration" do
       original_default = Riffer.config.skills.default_backend
       Riffer.config.skills.default_backend = Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           # no per-agent backend; should pick up the global default
@@ -296,7 +296,7 @@ describe "Agent skills integration" do
       end.new
       Riffer.config.skills.default_backend = decoy_backend
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -316,15 +316,14 @@ describe "Agent skills integration" do
 
   describe "#tools" do
     it "returns uses_tools when no skills configured" do
-      tool_class = Class.new(Riffer::Tool) do
-        identifier "my_tool"
+      tool_class = stub_tool("MyTool") do
         description "A tool"
         def call(context:)
           text("ok")
         end
       end
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         uses_tools [tool_class]
       end
@@ -333,7 +332,7 @@ describe "Agent skills integration" do
     end
 
     it "appends skill_activate when skills block is configured" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -346,15 +345,14 @@ describe "Agent skills integration" do
     end
 
     it "uses the per-agent activate_tool override" do
-      custom = Class.new(Riffer::Tool) do
-        identifier "my_activate"
+      custom = stub_tool("MyActivate") do
         description "Custom"
         def call(context:)
           text("ok")
         end
       end
 
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -371,7 +369,7 @@ describe "Agent skills integration" do
 
   describe "activated skills" do
     it "appends activated skill bodies to skills system message" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions "Base instructions."
         skills do
@@ -397,7 +395,7 @@ describe "Agent skills integration" do
     end
 
     it "omits catalog entirely when all skills are pre-activated" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -418,7 +416,7 @@ describe "Agent skills integration" do
     end
 
     it "raises on unknown activated skill" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -431,7 +429,7 @@ describe "Agent skills integration" do
     end
 
     it "supports Proc for activate" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -451,7 +449,7 @@ describe "Agent skills integration" do
 
   describe "stream with skills" do
     it "injects skills catalog into separate system message" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         instructions "You are helpful."
         skills do
@@ -474,7 +472,7 @@ describe "Agent skills integration" do
 
   describe "stream emits SkillActivation events" do
     it "emits SkillActivation event when skill is activated via tool call" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -493,7 +491,7 @@ describe "Agent skills integration" do
     end
 
     it "does not emit duplicate events for re-activation of the same skill" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -511,7 +509,7 @@ describe "Agent skills integration" do
     end
 
     it "composes with and restores the consumer's on_activate across a stream" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -533,7 +531,7 @@ describe "Agent skills integration" do
 
   describe "skill activation end-to-end" do
     it "activates a skill via tool call and returns body" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -555,7 +553,7 @@ describe "Agent skills integration" do
     end
 
     it "returns error for unknown skill activation" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -574,7 +572,7 @@ describe "Agent skills integration" do
     end
 
     it "answers a re-activation with a pointer instead of the body" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -596,7 +594,7 @@ describe "Agent skills integration" do
 
   describe "user-explicit activation" do
     it "injects the wrapped body as a user message and pointers later model activations" do
-      agent_class = Class.new(Riffer::Agent) do
+      agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
           backend Riffer::Skills::FilesystemBackend.new(SKILLS_FIXTURES_PATH)
@@ -634,7 +632,7 @@ describe "Agent skills integration" do
         write_skill(dir, "code-review", "Reviews code.")
         write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           skills do
             backend Riffer::Skills::FilesystemBackend.new(dir)
@@ -650,7 +648,7 @@ describe "Agent skills integration" do
         write_skill(dir, "code-review", "Reviews code.")
         write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           skills do
             backend Riffer::Skills::FilesystemBackend.new(dir)
@@ -665,7 +663,7 @@ describe "Agent skills integration" do
       Dir.mktmpdir do |dir|
         write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           skills do
             backend Riffer::Skills::FilesystemBackend.new(dir)
@@ -680,7 +678,7 @@ describe "Agent skills integration" do
       Dir.mktmpdir do |dir|
         write_skill(dir, "deploy-prod", "Deploys to production.", disable_model_invocation: true)
 
-        agent_class = Class.new(Riffer::Agent) do
+        agent_class = stub_agent("Agent") do
           model "mock/riffer-1"
           skills do
             backend Riffer::Skills::FilesystemBackend.new(dir)

@@ -22,7 +22,9 @@ Either one adds `stub_agent` and `stub_tool` to every example and cleans up afte
 
 ```ruby
 it 'answers from the knowledge base' do
-  stub_tool(identifier: 'kb_search') do
+  stub_tool('KbSearch') do
+    description 'Searches the knowledge base.'
+
     def call(context:, **)
       text('We are open 9-5.')
     end
@@ -37,9 +39,9 @@ end
 `stub_tool` returns the class, so you can assert against it or pass it to `uses_tools`:
 
 ```ruby
-tool = stub_tool(identifier: 'kb_search')
+tool = stub_tool('KbSearch') { description 'Searches the knowledge base.' }
 
-stub_agent(identifier: 'faq_agent') { uses_tools [tool] }
+stub_agent('FaqAgent') { uses_tools [tool] }
 ```
 
 The block is evaluated in the new class, so the whole [tool DSL](TOOLS.md) is available inside it — `description`, `params`, `timeout`, `call`.
@@ -69,13 +71,13 @@ stub_agent('FaqAgent')
 Object.const_get('FaqAgent').identifier # => 'faq_agent'
 ```
 
-The identifier is derived from the name exactly as it is for a regular agent or tool, so `identifier` only earns its keep when you want a different one. Pass `identifier:` on its own when nothing under test needs a constant:
+The identifier is derived from the name exactly as it is for a regular agent or tool, and the block can override it like any other config. Skip the name and set the identifier in the block when nothing under test needs a constant, or when the identifier can't derive from one:
 
 ```ruby
-stub_tool(identifier: 'kb_search')
+stub_tool { identifier 'kb-search' }
 ```
 
-At least one of the two is required; `stub_tool` with neither raises `Riffer::ArgumentError`. So does a name that isn't a simple top-level constant name (`'Legacy::Agent'` and `'legacy_agent'` are both rejected — namespaced stubs aren't supported), and so does a name that is **already defined**: riffer adds constants, it never replaces them. Use your framework's `stub_const` when you need a real class swapped out for the duration of a test.
+A stub needs a name, an identifier set in its block, or both; `stub_tool` with neither raises `Riffer::ArgumentError`. So does a name that isn't a simple top-level constant name (`'Legacy::Agent'` and `'legacy_agent'` are both rejected — namespaced stubs aren't supported), and so does a name that is **already defined**: riffer adds constants, it never replaces them. Use your framework's `stub_const` when you need a real class swapped out for the duration of a test.
 
 `reset!`, and the adapters that call it, remove the constants the stubs created along with their registrations.
 
@@ -84,7 +86,7 @@ At least one of the two is required; `stub_tool` with neither raises `Riffer::Ar
 Both helpers take a `base:` — pass your app's intermediate class so the stub lands in the registry the code under test reads:
 
 ```ruby
-stub_tool(identifier: 'kb_search', base: ApplicationTool)
+stub_tool('KbSearch', base: ApplicationTool)
 ```
 
 The stub is always a **direct** subclass of `base`, mirroring how implicit registration works.
@@ -113,8 +115,8 @@ Tracking lives on `Riffer::Testing` itself, so `Riffer::Testing.stub_tool(...)` 
 Stubbing an identifier that is already taken raises `Riffer::DuplicateIdentifierError`:
 
 ```ruby
-stub_tool(identifier: 'kb_search')
-stub_tool(identifier: 'kb_search')
+stub_tool { identifier 'kb_search' }
+stub_tool { identifier 'kb_search' }
 # => Riffer::DuplicateIdentifierError: Duplicate identifier "kb_search" for ...
 ```
 

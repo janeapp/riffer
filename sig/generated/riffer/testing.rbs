@@ -15,31 +15,33 @@ module Riffer::Testing
 
   # Builds an agent class, evaluates the optional body in it, and makes it
   # resolvable until the next +reset!+. A +name+ assigns a top-level constant
-  # and derives the identifier unless +identifier+ overrides it.
+  # and derives the identifier; the body may set +identifier+ like any other
+  # agent config.
   #
   #   agent = stub_agent("SupportAgent") { model "mock/gpt-5-mini" }
   #
-  # Raises Riffer::ArgumentError when the constant is already defined, and
-  # Riffer::DuplicateIdentifierError when another agent already holds the
-  # identifier.
+  # Raises Riffer::ArgumentError when the constant is already defined or the
+  # stub ends up with no identifier, and Riffer::DuplicateIdentifierError when
+  # another agent already holds the identifier.
   #
   # --
-  # : (?(String | Symbol)?, ?identifier: (String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
-  def stub_agent: (?(String | Symbol)?, ?identifier: (String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
+  # : (?(String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
+  def stub_agent: (?(String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
 
   # Builds a tool class, evaluates the optional body in it, and makes it
   # resolvable until the next +reset!+. A +name+ assigns a top-level constant
-  # and derives the identifier unless +identifier+ overrides it.
+  # and derives the identifier; the body may set +identifier+ like any other
+  # tool config.
   #
   #   tool = stub_tool("KbSearch") { def call(context:, **) = text("stubbed") }
   #
-  # Raises Riffer::ArgumentError when the constant is already defined, and
-  # Riffer::DuplicateIdentifierError when another tool already holds the
-  # identifier.
+  # Raises Riffer::ArgumentError when the constant is already defined or the
+  # stub ends up with no identifier, and Riffer::DuplicateIdentifierError when
+  # another tool already holds the identifier.
   #
   # --
-  # : (?(String | Symbol)?, ?identifier: (String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
-  def stub_tool: (?(String | Symbol)?, ?identifier: (String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
+  # : (?(String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
+  def stub_tool: (?(String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
 
   # Removes every stub built since the last reset — its registration and any
   # constant it created — newest first, and forgets them. A no-op when nothing
@@ -58,8 +60,8 @@ module Riffer::Testing
   private
 
   # --
-  # : ((String | Symbol)?, identifier: (String | Symbol)?, base: Class) ?{ () [self: untyped] -> void } -> Class
-  def build_stub: ((String | Symbol)?, identifier: (String | Symbol)?, base: Class) ?{ () [self: untyped] -> void } -> Class
+  # : ((String | Symbol)?, base: Class) ?{ () [self: untyped] -> void } -> Class
+  def build_stub: ((String | Symbol)?, base: Class) ?{ () [self: untyped] -> void } -> Class
 
   # --
   # : ((String | Symbol)?) -> String?

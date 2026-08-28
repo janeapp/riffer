@@ -128,7 +128,7 @@ describe Riffer::Agent::Context do
     end
 
     it "accepts an Array of Riffer::Tool subclasses" do
-      tool = Class.new(Riffer::Tool)
+      tool = stub_tool("Tool")
       context.mcp_progressive_tools = [tool]
 
       expect(context.mcp_progressive_tools).must_equal [tool]
@@ -149,7 +149,7 @@ describe Riffer::Agent::Context do
     end
 
     it "exposes the written value via #[] (hash-style read still works)" do
-      tool = Class.new(Riffer::Tool)
+      tool = stub_tool("Tool")
       context.mcp_progressive_tools = [tool]
 
       expect(context[:mcp_progressive_tools]).must_equal [tool]
@@ -166,7 +166,7 @@ describe Riffer::Agent::Context do
     end
 
     it "accepts an Array of Riffer::Tool subclasses" do
-      tool = Class.new(Riffer::Tool)
+      tool = stub_tool("Tool")
       context.discovered_tools = [tool]
 
       expect(context.discovered_tools).must_equal [tool]
@@ -187,7 +187,7 @@ describe Riffer::Agent::Context do
     end
 
     it "exposes the written value via #[] (hash-style read still works)" do
-      tool = Class.new(Riffer::Tool)
+      tool = stub_tool("Tool")
       context.discovered_tools = [tool]
 
       expect(context[:discovered_tools]).must_equal [tool]
@@ -197,24 +197,16 @@ describe Riffer::Agent::Context do
   describe "#discover_tools" do
     let(:context) { Riffer::Agent::Context.new }
 
-    def named_tool(identifier)
-      n = identifier
-      Class.new(Riffer::Tool).tap do |klass|
-        klass.define_singleton_method(:name) { n }
-        klass.define_singleton_method(:identifier) { n }
-      end
-    end
-
     it "accumulates tools from a nil start" do
-      tool = named_tool("tool_a")
+      tool = stub_tool("ToolA")
       context.discover_tools([tool])
 
       expect(context.discovered_tools).must_equal [tool]
     end
 
     it "extends an existing set" do
-      tool_a = named_tool("tool_a")
-      tool_b = named_tool("tool_b")
+      tool_a = stub_tool("ToolA")
+      tool_b = stub_tool("ToolB")
       context.discover_tools([tool_a])
       context.discover_tools([tool_b])
 
@@ -223,7 +215,7 @@ describe Riffer::Agent::Context do
     end
 
     it "deduplicates by name" do
-      tool = named_tool("tool_a")
+      tool = stub_tool("ToolA")
       context.discover_tools([tool])
       context.discover_tools([tool])
 
@@ -231,7 +223,7 @@ describe Riffer::Agent::Context do
     end
 
     it "returns the updated array" do
-      tool = named_tool("tool_a")
+      tool = stub_tool("ToolA")
       result = context.discover_tools([tool])
 
       expect(result).must_equal [tool]
