@@ -321,10 +321,10 @@ Riffer::Agent.find('missing')         # => nil
 Riffer::Agent.all                     # => [SupportAgent, ...]
 ```
 
-Only **named direct subclasses** are found:
+Only **named direct subclasses** are found implicitly:
 
 - Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationAgent < Riffer::Agent`), call `find`/`all` on the intermediate class to look up its subclasses.
-- Anonymous classes (`Class.new(Riffer::Agent)`) are never findable, even when they set an explicit `identifier`.
+- Anonymous classes (`Class.new(Riffer::Agent)`) are never findable implicitly, even when they set an explicit `identifier` — see [Registering an agent explicitly](#registering-an-agent-explicitly).
 - Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
 - A subclass whose constant no longer points at it — after a Zeitwerk reload or an RSpec `stub_const` — drops out of `find` and `all`. The check runs when the registry is rebuilt, which defining, registering, or unregistering a subclass triggers; removing or restoring a constant on its own does not, so lookups keep returning the old class until the next rebuild.
 

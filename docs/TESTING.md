@@ -1,6 +1,6 @@
 # Testing
 
-`Riffer::Testing` builds throwaway agents and tools your suite can resolve by identifier, and removes them again when the test ends. It exists because agents and tools are looked up by identifier at runtime (see [Looking Up Tools](TOOLS.md#looking-up-tools)) and only **named** classes are found implicitly — an anonymous `Class.new(Riffer::Tool)` never is.
+`Riffer::Testing` builds throwaway agents and tools your suite can resolve by identifier or by constant name, and removes them again when the test ends. It exists because agents and tools are looked up by identifier at runtime (see [Looking Up Tools](TOOLS.md#looking-up-tools)) and only **named** classes are found implicitly — an anonymous `Class.new(Riffer::Tool)` never is.
 
 ## Setup
 
@@ -39,7 +39,7 @@ end
 ```ruby
 tool = stub_tool(identifier: 'kb_search')
 
-stub_agent(identifier: 'support_agent') { uses_tools [tool] }
+stub_agent(identifier: 'faq_agent') { uses_tools [tool] }
 ```
 
 The block is evaluated in the new class, so the whole [tool DSL](TOOLS.md) is available inside it — `description`, `params`, `timeout`, `call`.
@@ -47,8 +47,8 @@ The block is evaluated in the new class, so the whole [tool DSL](TOOLS.md) is av
 ## Stubbing an agent
 
 ```ruby
-it 'routes to the support agent' do
-  stub_agent(identifier: 'support_agent') do
+it 'routes to the FAQ agent' do
+  stub_agent('FaqAgent') do # identifier defaults to 'faq_agent', as for a regular agent
     model 'mock/gpt-5-mini'
     instructions 'You are a stub.'
   end
@@ -58,6 +58,26 @@ end
 ```
 
 Pair it with the [Mock provider](providers/MOCK_PROVIDER.md) to queue deterministic responses.
+
+## Naming a stub
+
+The first argument assigns a top-level constant, so the stub resolves the way a production class does — `Object.const_get('FaqAgent')`, a workflow runner that instantiates agents by class name, a class name stored in a row of data:
+
+```ruby
+stub_agent('FaqAgent')
+
+Object.const_get('FaqAgent').identifier # => 'faq_agent'
+```
+
+The identifier is derived from the name exactly as it is for a regular agent or tool, so `identifier` only earns its keep when you want a different one. Pass `identifier:` on its own when nothing under test needs a constant:
+
+```ruby
+stub_tool(identifier: 'kb_search')
+```
+
+At least one of the two is required; `stub_tool` with neither raises `Riffer::ArgumentError`. So does a name that isn't a simple top-level constant name (`'Legacy::Agent'` and `'legacy_agent'` are both rejected — namespaced stubs aren't supported), and so does a name that is **already defined**: riffer adds constants, it never replaces them. Use your framework's `stub_const` when you need a real class swapped out for the duration of a test.
+
+`reset!`, and the adapters that call it, remove the constants the stubs created along with their registrations.
 
 ## Stubbing under an intermediate base class
 
@@ -99,6 +119,8 @@ stub_tool(identifier: 'kb_search')
 ```
 
 Seeing this on the **first** stub in a test means an earlier stub was never removed — usually a missing adapter require in the helper, or a teardown that skips `Riffer::Testing.reset!`. The same error fires when a stub collides with a real class in your app that already claims the identifier; rename the stub or stub under an intermediate `base:`.
+
+A leaked **named** stub leaves its constant behind on top of its registration, and only `reset!` takes a constant back down — so the second test to name it gets a `Riffer::ArgumentError` about the constant rather than a fresh class.
 
 ## Registering without a stub
 
