@@ -65,7 +65,7 @@ module Riffer::Registrable
     existing = identifier_registry[key]
     raise_duplicate_identifier!(key, existing, klass) if existing
 
-    @explicit_registrations = explicit_registrations.merge(key => klass)
+    explicit_registrations[key] = klass
     @identifier_registry = nil
   end
 
@@ -74,7 +74,10 @@ module Riffer::Registrable
   #--
   #: (Class) -> void
   def unregister(klass)
-    @explicit_registrations = explicit_registrations.reject { |_key, registered| registered.equal?(klass) }
+    key, = explicit_registrations.find { |_key, registered| registered.equal?(klass) }
+    return if key.nil?
+
+    explicit_registrations.delete(key)
     @identifier_registry = nil
   end
 
