@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.43.0</span>
+            <span class="version">v0.44.0</span>
           </div>
         </nav>
       </div>
@@ -98,28 +98,33 @@
                 >
               </li>
               <li>
+                <a href="/guides/testing/"
+                  ><span class="num">12</span> Testing</a
+                >
+              </li>
+              <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">12</span> Guardrails</a
+                  ><span class="num">13</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">13</span> Skills</a
+                  ><span class="num">14</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">14</span> MCP</a
+                  ><span class="num">15</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">15</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">16</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
             </ul>
@@ -449,6 +454,65 @@
     </tr>
   </tbody>
 </table>
+
+<h3 id="file-downloads">File Downloads</h3>
+
+<p>File-attachment-download policy lives under <code>config.files</code>. Before an LLM call, riffer resolves every <code>Riffer::Messages::FilePart</code> attached to a user message against the provider’s own capability — some providers accept a URL as-is, some need the bytes inline, and some can’t take an attachment at all. See <a href="/guides/messages/#file-parts">Messages — File Parts</a> for <code>FilePart</code> itself and its <code>sha256:</code> field.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">files</span><span class="p">.</span><span class="nf">allow_downloads</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">files</span><span class="p">.</span><span class="nf">max_bytes</span> <span class="o">=</span> <span class="mi">5_000_000</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">files</span><span class="p">.</span><span class="nf">max_per_message</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Per file, riffer applies this policy, in order:</p>
+
+<ol>
+  <li><strong>Already inline data</strong> — nothing to download. If <code>sha256:</code> was given, it’s verified against the existing bytes regardless of any other setting below.</li>
+  <li><strong>Provider can’t accept the file at all</strong> — raises <code>Riffer::FileUnsupportedError</code>.</li>
+  <li><strong>Provider accepts a URL as-is</strong> — passed straight through, untouched, <em>unless</em> <code>sha256:</code> was given, in which case riffer downloads and verifies anyway (a caller who set <code>sha256:</code> is asking for integrity verification, not a passthrough).</li>
+  <li><strong>Provider needs the bytes inline</strong> — riffer downloads the file, verifying <code>sha256:</code> if given.</li>
+</ol>
+
+<p>Every download in step 3 or 4 is gated by <code>allow_downloads</code>; with it <code>false</code> (the default), reaching either of those steps raises <code>Riffer::FileDownloadsDisabledError</code> instead of fetching anything. This means upgrading to a riffer version with this feature never starts downloading arbitrary URLs on your behalf — you have to opt in.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allow_downloads</code></td>
+      <td>Whether riffer may download a <code>FilePart</code>’s URL. Accepts booleans or <code>'true'</code>/<code>'false'</code>/<code>'1'</code>/<code>'0'</code>. Defaults to <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>max_bytes</code></td>
+      <td>Maximum size, in bytes, of a downloaded file; the download is aborted once the streamed body exceeds this, independent of (and regardless of a missing/lying) <code>content-length</code> header. Defaults to <code>3_500_000</code>.</td>
+    </tr>
+    <tr>
+      <td><code>timeout</code></td>
+      <td>Open and read timeout, in seconds, for a single download attempt. Defaults to <code>60</code>.</td>
+    </tr>
+    <tr>
+      <td><code>max_per_message</code></td>
+      <td>Maximum number of files allowed on a single user message; checked against each message as originally authored, before consecutive messages are merged. <code>nil</code> (default) means uncapped.</td>
+    </tr>
+    <tr>
+      <td><code>runner</code></td>
+      <td>A <code>Riffer::Runner</code> instance that resolves every file across a call’s messages. Defaults to <code>Riffer::Runner::Sequential.new</code>; assign <code>Riffer::Runner::Threaded.new</code> (or <code>Riffer::Runner::Fibers.new</code> inside a fiber-based host) to resolve multiple files concurrently.</td>
+    </tr>
+    <tr>
+      <td><code>downloader</code></td>
+      <td>The object that fetches a URL’s bytes; must respond to <code>#call(url, max_bytes:, timeout:)</code> returning the raw (not base64-encoded) file content. Riffer caches it as base64 or raw bytes, whichever the provider actually needs, rather than producing both. Defaults to <code>Riffer::Files::Downloader.new</code>, which fetches over HTTPS only, following up to 3 redirects. Assign your own to add logging/metrics, or to fetch from a non-HTTPS store (e.g. <code>s3://</code>).</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A file that fails resolution raises a <code>Riffer::FileError</code> subclass — <code>Riffer::FileUnsupportedError</code>, <code>Riffer::FileDownloadsDisabledError</code>, <code>Riffer::TooManyFilesError</code>, <code>Riffer::FileChecksumMismatchError</code>, <code>Riffer::FileTooLargeError</code>, <code>Riffer::FileDownloadError</code>, or <code>Riffer::FileEncodingError</code> — so callers can <code>rescue Riffer::FileError</code> for any attachment problem, or a specific subclass to handle one case.</p>
 
 <h3 id="pricing">Pricing</h3>
 

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Testing — Riffer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Gabarito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="/copy.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="wordmark" href="/">riffer<span class="gem">◆</span></a>
+          <div class="links">
+            <a href="/guides/overview/">Guides</a>
+            <a href="/api/">API Reference</a>
+            <a href="https://github.com/janeapp/riffer">GitHub</a>
+            <span class="version">v0.44.0</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap docs-layout">
+      <aside class="sidebar">
+        <details class="sidebar-nav">
+          <summary>Chapters</summary>
+          <div class="sidebar-links">
+            <span class="group-label jane">Start here</span>
+            <ul>
+              <li>
+                <a href="/guides/overview/"
+                  ><span class="num">01</span> Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/getting-started/"
+                  ><span class="num">02</span> Getting Started</a
+                >
+              </li>
+            </ul>
+            <span class="group-label rose">The fundamentals</span>
+            <ul>
+              <li>
+                <a href="/guides/agents/"
+                  ><span class="num">03</span> Agents</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-lifecycle/"
+                  ><span class="num">04</span> Agent Lifecycle</a
+                >
+              </li>
+              <li>
+                <a href="/guides/agent-loop/"
+                  ><span class="num">05</span> Agent Loop</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tools/"
+                  ><span class="num">06</span> Tools</a
+                >
+              </li>
+              <li>
+                <a href="/guides/advanced-tools/"
+                  ><span class="num">07</span> Advanced Tool Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/messages/"
+                  ><span class="num">08</span> Messages</a
+                >
+              </li>
+              <li>
+                <a href="/guides/stream-events/"
+                  ><span class="num">09</span> Stream Events</a
+                >
+              </li>
+            </ul>
+            <span class="group-label gold">Going further</span>
+            <ul>
+              <li>
+                <a href="/guides/configuration/"
+                  ><span class="num">10</span> Configuration</a
+                >
+              </li>
+              <li>
+                <a href="/guides/evals/"
+                  ><span class="num">11</span> Evals</a
+                >
+              </li>
+              <li>
+                <a href="/guides/testing/" class="active" aria-current="page"
+                  ><span class="num">12</span> Testing</a
+                >
+              </li>
+              <li>
+                <a href="/guides/guardrails/"
+                  ><span class="num">13</span> Guardrails</a
+                >
+              </li>
+              <li>
+                <a href="/guides/skills/"
+                  ><span class="num">14</span> Skills</a
+                >
+              </li>
+              <li>
+                <a href="/guides/mcp/"
+                  ><span class="num">15</span> MCP</a
+                >
+              </li>
+              <li>
+                <a href="/guides/serialization/"
+                  ><span class="num">16</span> Serialization</a
+                >
+              </li>
+              <li>
+                <a href="/guides/tracing/"
+                  ><span class="num">17</span> Tracing</a
+                >
+              </li>
+            </ul>
+            <span class="group-label jane">Providers</span>
+            <ul>
+              <li>
+                <a href="/guides/providers/overview/"
+                  ><span class="num">01</span> Providers Overview</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/amazon-bedrock/"
+                  ><span class="num">02</span> Amazon Bedrock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/anthropic/"
+                  ><span class="num">03</span> Anthropic Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openai/"
+                  ><span class="num">04</span> OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/azure-openai/"
+                  ><span class="num">05</span> Azure OpenAI Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/gemini/"
+                  ><span class="num">06</span> Gemini Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/openrouter/"
+                  ><span class="num">07</span> OpenRouter Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/mock/"
+                  ><span class="num">08</span> Mock Provider</a
+                >
+              </li>
+              <li>
+                <a href="/guides/providers/custom/"
+                  ><span class="num">09</span> Creating Custom Providers</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </aside>
+
+      <main>
+        <article>
+          <p class="kicker"><span class="chapter">Going further · 12</span></p>
+          <h1>Testing</h1>
+          <nav class="toc" aria-label="On this page">
+            <span class="toc-label">On this page</span>
+            <ul>
+              <li><a href="#setup">Setup</a></li>
+              <li><a href="#stubbing-a-tool">Stubbing a tool</a></li>
+              <li><a href="#stubbing-an-agent">Stubbing an agent</a></li>
+              <li><a href="#naming-a-stub">Naming a stub</a></li>
+              <li><a href="#stubbing-under-an-intermediate-base-class">Stubbing under an intermediate base class</a></li>
+              <li><a href="#cleanup">Cleanup</a></li>
+              <li><a href="#when-a-stub-leaks">When a stub leaks</a></li>
+              <li><a href="#registering-without-a-stub">Registering without a stub</a></li>
+            </ul>
+          </nav>
+          
+<p><code>Riffer::Testing</code> builds throwaway agents and tools your suite can resolve by identifier or by constant name, and removes them again when the test ends. It exists because agents and tools are looked up by identifier at runtime (see <a href="/guides/tools/#looking-up-tools">Looking Up Tools</a>) and only <strong>named</strong> classes are found implicitly — an anonymous <code>Class.new(Riffer::Tool)</code> never is.</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>Require the adapter for your framework once, in your spec/test helper:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># spec/spec_helper.rb</span>
+<span class="nb">require</span> <span class="s1">'riffer/testing/rspec'</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test/test_helper.rb</span>
+<span class="nb">require</span> <span class="s1">'riffer/testing/minitest'</span>
+</code></pre></div></div>
+
+<p>Either one adds <code>stub_agent</code> and <code>stub_tool</code> to every example and cleans up after each one. Neither RSpec nor minitest is a riffer dependency; the adapter files are only loaded when you require them yourself.</p>
+
+<h2 id="stubbing-a-tool">Stubbing a tool</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">it</span> <span class="s1">'answers from the knowledge base'</span> <span class="k">do</span>
+  <span class="n">stub_tool</span><span class="p">(</span><span class="s1">'KbSearch'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">description</span> <span class="s1">'Searches the knowledge base.'</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">context</span><span class="p">:,</span> <span class="o">**</span><span class="p">)</span>
+      <span class="n">text</span><span class="p">(</span><span class="s1">'We are open 9-5.'</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">response</span> <span class="o">=</span> <span class="no">SupportAgent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s1">'What are your hours?'</span><span class="p">)</span>
+
+  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">content</span><span class="p">).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s1">'9-5'</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>stub_tool</code> returns the class, so you can assert against it or pass it to <code>uses_tools</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tool</span> <span class="o">=</span> <span class="n">stub_tool</span><span class="p">(</span><span class="s1">'KbSearch'</span><span class="p">)</span> <span class="p">{</span> <span class="n">description</span> <span class="s1">'Searches the knowledge base.'</span> <span class="p">}</span>
+
+<span class="n">stub_agent</span><span class="p">(</span><span class="s1">'FaqAgent'</span><span class="p">)</span> <span class="p">{</span> <span class="n">uses_tools</span> <span class="p">[</span><span class="n">tool</span><span class="p">]</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>The block is evaluated in the new class, so the whole <a href="/guides/tools/">tool DSL</a> is available inside it — <code>description</code>, <code>params</code>, <code>timeout</code>, <code>call</code>.</p>
+
+<h2 id="stubbing-an-agent">Stubbing an agent</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">it</span> <span class="s1">'routes to the FAQ agent'</span> <span class="k">do</span>
+  <span class="n">stub_agent</span><span class="p">(</span><span class="s1">'FaqAgent'</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># identifier defaults to 'faq_agent', as for a regular agent</span>
+    <span class="n">model</span> <span class="s1">'mock/gpt-5-mini'</span>
+    <span class="n">instructions</span> <span class="s1">'You are a stub.'</span>
+  <span class="k">end</span>
+
+  <span class="no">TriageWorkflow</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="s1">'What are your hours?'</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Pair it with the <a href="/guides/providers/mock/">Mock provider</a> to queue deterministic responses.</p>
+
+<h2 id="naming-a-stub">Naming a stub</h2>
+
+<p>The first argument assigns a top-level constant, so the stub resolves the way a production class does — <code>Object.const_get('FaqAgent')</code>, a workflow runner that instantiates agents by class name, a class name stored in a row of data:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stub_agent</span><span class="p">(</span><span class="s1">'FaqAgent'</span><span class="p">)</span>
+
+<span class="no">Object</span><span class="p">.</span><span class="nf">const_get</span><span class="p">(</span><span class="s1">'FaqAgent'</span><span class="p">).</span><span class="nf">identifier</span> <span class="c1"># =&gt; 'faq_agent'</span>
+</code></pre></div></div>
+
+<p>The identifier is derived from the name exactly as it is for a regular agent or tool, and the block can override it like any other config. Skip the name and set the identifier in the block when nothing under test needs a constant, or when the identifier can’t derive from one:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stub_tool</span> <span class="p">{</span> <span class="n">identifier</span> <span class="s1">'kb-search'</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>A stub needs a name, an identifier set in its block, or both; <code>stub_tool</code> with neither raises <code>Riffer::ArgumentError</code>. So does a name that isn’t a simple top-level constant name (<code>'Legacy::Agent'</code> and <code>'legacy_agent'</code> are both rejected — namespaced stubs aren’t supported), and so does a name that is <strong>already defined</strong>: riffer adds constants, it never replaces them. Use your framework’s <code>stub_const</code> when you need a real class swapped out for the duration of a test.</p>
+
+<p><code>reset!</code>, and the adapters that call it, remove the constants the stubs created along with their registrations.</p>
+
+<h2 id="stubbing-under-an-intermediate-base-class">Stubbing under an intermediate base class</h2>
+
+<p>Both helpers take a <code>base:</code> — pass your app’s intermediate class so the stub lands in the registry the code under test reads:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stub_tool</span><span class="p">(</span><span class="s1">'KbSearch'</span><span class="p">,</span> <span class="ss">base: </span><span class="no">ApplicationTool</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The stub is always a <strong>direct</strong> subclass of <code>base</code>, mirroring how implicit registration works.</p>
+
+<h2 id="cleanup">Cleanup</h2>
+
+<p><code>Riffer::Testing.reset!</code> removes every stub built since the last reset, newest first, and forgets them. The adapters call it after each example; a no-op when nothing was stubbed.</p>
+
+<p>Without an adapter — a framework riffer ships no wiring for, or a suite that configures its own hooks — include the module and call <code>reset!</code> from your own teardown:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyTestCase</span> <span class="o">&lt;</span> <span class="no">WhateverBase</span>
+  <span class="kp">include</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Testing</span>
+
+  <span class="k">def</span> <span class="nf">teardown</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Testing</span><span class="p">.</span><span class="nf">reset!</span>
+    <span class="k">super</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Tracking lives on <code>Riffer::Testing</code> itself, so <code>Riffer::Testing.stub_tool(...)</code> outside an example and <code>stub_tool(...)</code> inside one share one list. Tracking is not synchronized — stub from a single-threaded test, before concurrent lookups begin.</p>
+
+<h2 id="when-a-stub-leaks">When a stub leaks</h2>
+
+<p>Stubbing an identifier that is already taken raises <code>Riffer::DuplicateIdentifierError</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stub_tool</span> <span class="p">{</span> <span class="n">identifier</span> <span class="s1">'kb_search'</span> <span class="p">}</span>
+<span class="n">stub_tool</span> <span class="p">{</span> <span class="n">identifier</span> <span class="s1">'kb_search'</span> <span class="p">}</span>
+<span class="c1"># =&gt; Riffer::DuplicateIdentifierError: Duplicate identifier "kb_search" for ...</span>
+</code></pre></div></div>
+
+<p>Seeing this on the <strong>first</strong> stub in a test means an earlier stub was never removed — usually a missing adapter require in the helper, or a teardown that skips <code>Riffer::Testing.reset!</code>. The same error fires when a stub collides with a real class in your app that already claims the identifier; rename the stub or stub under an intermediate <code>base:</code>.</p>
+
+<p>A leaked <strong>named</strong> stub leaves its constant behind on top of its registration, and only <code>reset!</code> takes a constant back down — so the second test to name it gets a <code>Riffer::ArgumentError</code> about the constant rather than a fresh class.</p>
+
+<h2 id="registering-without-a-stub">Registering without a stub</h2>
+
+<p>For production wiring, or a test that needs a class registered outside the stub lifecycle, <code>Riffer::Tool.register</code> / <code>unregister</code> (and the <code>Riffer::Agent</code> equivalents) manage the registry by hand. See <a href="/guides/tools/#registering-a-tool-explicitly">Registering a tool explicitly</a>.</p>
+
+        </article>
+
+        <nav class="pager">
+          <a class="doc" href="/guides/evals/"
+            ><span class="go">←</span
+            ><span
+              ><span class="desc">Previous</span
+              ><span class="name">Evals</span></span
+            ></a
+          >
+          <a class="doc next" href="/guides/guardrails/"
+            ><span
+              ><span class="desc">Next</span
+              ><span class="name">Guardrails</span></span
+            ><span class="go">→</span></a
+          >
+        </nav>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <span>MIT License · Built at <a href="https://jane.app">Jane</a></span>
+        <span><a href="https://github.com/janeapp/riffer">github.com/janeapp/riffer</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

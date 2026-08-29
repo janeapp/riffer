@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.43.0</span>
+            <span class="version">v0.44.0</span>
           </div>
         </nav>
       </div>
@@ -98,28 +98,33 @@
                 >
               </li>
               <li>
+                <a href="/guides/testing/"
+                  ><span class="num">12</span> Testing</a
+                >
+              </li>
+              <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">12</span> Guardrails</a
+                  ><span class="num">13</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">13</span> Skills</a
+                  ><span class="num">14</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">14</span> MCP</a
+                  ><span class="num">15</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">15</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">16</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
             </ul>
@@ -377,7 +382,7 @@
 
 <h3 id="file-support">File Support</h3>
 
-<p>Gemini supports inline base64-encoded files (images and documents):</p>
+<p>Gemini’s API only accepts inline base64-encoded files (images and documents), never a URL reference:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">data: </span><span class="n">base64_data</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">)</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
@@ -387,13 +392,12 @@
 <span class="p">)</span>
 </code></pre></div></div>
 
-<p><strong>Note:</strong> URL-based file references are not supported. Provide base64-encoded data instead.</p>
+<p>A <code>FilePart.from_url</code> source works too — riffer downloads and base64-encodes it before sending, subject to the <code>allow_downloads</code> policy in <a href="/guides/configuration/#file-downloads">File Downloads</a>.</p>
 
 <h2 id="limitations">Limitations</h2>
 
 <ul>
   <li><strong>No web search</strong> - Gemini’s standard API does not include a web search tool</li>
-  <li><strong>No URL files</strong> - Only base64 inline data is supported for file attachments</li>
   <li><strong>Tool call IDs</strong> - Gemini does not return unique call IDs for tool invocations; IDs are generated client-side</li>
 </ul>
 

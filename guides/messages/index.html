@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.43.0</span>
+            <span class="version">v0.44.0</span>
           </div>
         </nav>
       </div>
@@ -98,28 +98,33 @@
                 >
               </li>
               <li>
+                <a href="/guides/testing/"
+                  ><span class="num">12</span> Testing</a
+                >
+              </li>
+              <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">12</span> Guardrails</a
+                  ><span class="num">13</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">13</span> Skills</a
+                  ><span class="num">14</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">14</span> MCP</a
+                  ><span class="num">15</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">15</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">16</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
             </ul>
@@ -391,7 +396,16 @@
 
 <span class="c1"># From raw base64 data</span>
 <span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">)</span>
+
+<span class="c1"># With an expected sha256 checksum of the file's contents</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span>
+  <span class="s2">"https://example.com/doc.pdf"</span><span class="p">,</span>
+  <span class="ss">sha256: </span><span class="s2">"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"</span>
+<span class="p">)</span>
+<span class="n">file</span><span class="p">.</span><span class="nf">sha256</span>  <span class="c1"># =&gt; "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"</span>
 </code></pre></div></div>
+
+<p><code>sha256:</code> accepts a 64-character hex digest (case-insensitive; normalized to lowercase). Raises <code>Riffer::ArgumentError</code> on any other format.</p>
 
 <h3 id="hash-shorthand">Hash Shorthand</h3>
 
@@ -403,6 +417,7 @@
 <span class="c1"># URL shorthand (media_type auto-detected from extension, or provide explicitly)</span>
 <span class="p">{</span><span class="ss">url: </span><span class="s2">"https://example.com/photo.jpg"</span><span class="p">}</span>
 <span class="p">{</span><span class="ss">url: </span><span class="s2">"https://example.com/file"</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">}</span>
+<span class="p">{</span><span class="ss">url: </span><span class="s2">"https://example.com/file"</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">,</span> <span class="ss">sha256: </span><span class="s2">"e3b0c4..."</span><span class="p">}</span>
 
 <span class="c1"># Data shorthand</span>
 <span class="p">{</span><span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">}</span>

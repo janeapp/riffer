@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.43.0</span>
+            <span class="version">v0.44.0</span>
           </div>
         </nav>
       </div>
@@ -98,28 +98,33 @@
                 >
               </li>
               <li>
+                <a href="/guides/testing/"
+                  ><span class="num">12</span> Testing</a
+                >
+              </li>
+              <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">12</span> Guardrails</a
+                  ><span class="num">13</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">13</span> Skills</a
+                  ><span class="num">14</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">14</span> MCP</a
+                  ><span class="num">15</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">15</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">16</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
             </ul>
@@ -189,6 +194,7 @@
               <li><a href="#example">Example</a></li>
               <li><a href="#streaming">Streaming</a></li>
               <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#file-support">File Support</a></li>
               <li><a href="#message-format">Message Format</a></li>
               <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
               <li><a href="#aws-iam-permissions">AWS IAM Permissions</a></li>
@@ -346,6 +352,22 @@
   <span class="n">uses_tools</span> <span class="p">[</span><span class="no">S3ListTool</span><span class="p">]</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h2 id="file-support">File Support</h2>
+
+<p>Bedrock accepts file attachments either as raw bytes, or as <code>s3://</code> URIs passed straight through to Converse — Bedrock fetches the S3 object itself:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">"s3://my-bucket/document.pdf"</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
+  <span class="ss">prompt: </span><span class="s2">"Summarize this document"</span><span class="p">,</span>
+  <span class="ss">model: </span><span class="s2">"us.anthropic.claude-haiku-4-5-20251001-v1:0"</span><span class="p">,</span>
+  <span class="ss">files: </span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Any other URL scheme (e.g. <code>https://</code>) isn’t something Bedrock accepts as a reference, so riffer downloads the file itself and sends the raw bytes — see <a href="/guides/configuration/#file-downloads">File Downloads</a> for the <code>allow_downloads</code> policy this requires.</p>
+
+<p><strong>A <code>sha256:</code> on an <code>s3://</code> <code>FilePart</code> is a combination that always fails with the default setup.</strong> Setting <code>sha256:</code> forces riffer to download and verify the file itself before Bedrock ever sees it, regardless of the URL scheme — but riffer’s default downloader only fetches <code>https://</code> URLs, so an <code>s3://</code> source can never be verified out of the box. Either configure a custom <code>Riffer.config.files.downloader</code> that can reach S3, or omit <code>sha256:</code> and let the <code>s3://</code> URI pass straight through to Bedrock unverified.</p>
 
 <h2 id="message-format">Message Format</h2>
 

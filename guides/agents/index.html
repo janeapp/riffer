@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.43.0</span>
+            <span class="version">v0.44.0</span>
           </div>
         </nav>
       </div>
@@ -98,28 +98,33 @@
                 >
               </li>
               <li>
+                <a href="/guides/testing/"
+                  ><span class="num">12</span> Testing</a
+                >
+              </li>
+              <li>
                 <a href="/guides/guardrails/"
-                  ><span class="num">12</span> Guardrails</a
+                  ><span class="num">13</span> Guardrails</a
                 >
               </li>
               <li>
                 <a href="/guides/skills/"
-                  ><span class="num">13</span> Skills</a
+                  ><span class="num">14</span> Skills</a
                 >
               </li>
               <li>
                 <a href="/guides/mcp/"
-                  ><span class="num">14</span> MCP</a
+                  ><span class="num">15</span> MCP</a
                 >
               </li>
               <li>
                 <a href="/guides/serialization/"
-                  ><span class="num">15</span> Serialization</a
+                  ><span class="num">16</span> Serialization</a
                 >
               </li>
               <li>
                 <a href="/guides/tracing/"
-                  ><span class="num">16</span> Tracing</a
+                  ><span class="num">17</span> Tracing</a
                 >
               </li>
             </ul>
@@ -493,13 +498,35 @@
 <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">all</span>                     <span class="c1"># =&gt; [SupportAgent, ...]</span>
 </code></pre></div></div>
 
-<p>Only <strong>named direct subclasses</strong> are found:</p>
+<p>Only <strong>named direct subclasses</strong> are found implicitly:</p>
 
 <ul>
   <li>Grandchildren are not visible to a grandparent’s <code>find</code> or <code>all</code>. If your app defines an intermediate base class (<code>class ApplicationAgent &lt; Riffer::Agent</code>), call <code>find</code>/<code>all</code> on the intermediate class to look up its subclasses.</li>
-  <li>Anonymous classes (<code>Class.new(Riffer::Agent)</code>) are never findable, even when they set an explicit <code>identifier</code>.</li>
+  <li>Anonymous classes (<code>Class.new(Riffer::Agent)</code>) are never findable implicitly, even when they set an explicit <code>identifier</code> — see <a href="#registering-an-agent-explicitly">Registering an agent explicitly</a>.</li>
   <li>Two subclasses sharing an identifier raise <code>Riffer::DuplicateIdentifierError</code> at the first lookup.</li>
+  <li>A subclass whose constant no longer points at it — after a Zeitwerk reload or an RSpec <code>stub_const</code> — drops out of <code>find</code> and <code>all</code>. The check runs when the registry is rebuilt, which defining, registering, or unregistering a subclass triggers; removing or restoring a constant on its own does not, so lookups keep returning the old class until the next rebuild.</li>
 </ul>
+
+<h3 id="registering-an-agent-explicitly">Registering an agent explicitly</h3>
+
+<p><strong>Testing an agent that gets resolved by identifier? Use <a href="/guides/testing/"><code>Riffer::Testing</code></a></strong> — <code>stub_agent</code> builds and registers a throwaway agent and cleans it up for you. The API below is the manual alternative, for production wiring and anything outside the stub lifecycle.</p>
+
+<p><code>register</code> adds an agent to its parent’s registry by hand and <code>unregister</code> removes it:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>   <span class="c1"># findable until unregistered</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span><span class="p">.</span><span class="nf">unregister</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span> <span class="c1"># no-op if it was never registered</span>
+</code></pre></div></div>
+
+<p>Explicit registration differs from implicit in a few ways:</p>
+
+<ul>
+  <li>Anonymous classes are allowed, as long as they declare an <code>identifier</code>. A blank identifier raises <code>Riffer::ArgumentError</code>.</li>
+  <li>The class must be a <strong>direct</strong> subclass of the receiver, mirroring implicit registration. <code>Riffer::Agent.register(SomeAppAgent)</code> raises <code>Riffer::ArgumentError</code> when <code>SomeAppAgent</code> descends from an intermediate base — call <code>register</code> on that base instead.</li>
+  <li>Taking an identifier already held by another agent, implicit or explicit, raises <code>Riffer::DuplicateIdentifierError</code>. Re-registering the same class raises too; there is no idempotent path.</li>
+  <li>The registration survives until you remove it — it is never dropped for a stale constant.</li>
+</ul>
+
+<p>Registration is not synchronized. Register during boot or from a single-threaded test, before concurrent lookups begin.</p>
 
 <h2 id="per-call-tags">Per-Call Tags</h2>
 

@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="module Riffer::Registrable: Registry of a class&#39;s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and "
+      content="module Riffer::Registrable: Registry of a class&#39;s direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and +all+."
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="Registry of a class&#39;s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and ">
+    <meta property="og:description" content="Registry of a class&#39;s direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and +all+.">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="Registry of a class&#39;s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and ">
+    <meta name="twitter:description" content="Registry of a class&#39;s direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via +find+ and +all+.">
 
 
 
@@ -456,6 +456,10 @@
 
         <li ><a href="#method-i-find">find</a></li>
 
+        <li ><a href="#method-i-register">register</a></li>
+
+        <li ><a href="#method-i-unregister">unregister</a></li>
+
       </ul>
     </details>
   </div>
@@ -473,7 +477,7 @@
       </span>
     </summary>
 
-    <ul class="link-list nav-list"><li><details open><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Config/Pricing.html">Pricing</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Pricing/Rates.html">Rates</a></code></li></ul></details></li><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li><li><code><a href="../Riffer/Config/Tracing.html">Tracing</a></code></li></ul></details></li><li><code><a href="../Riffer/DuplicateIdentifierError.html">DuplicateIdentifierError</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Identifier.html">Identifier</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="../Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../Riffer/Mcp/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/FinishReason.html">FinishReason</a></code></li><li><details><summary><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/Gemini/Client.html">Client</a></code></li></ul></details></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><code><a href="../Riffer/Registrable.html">Registrable</a></code></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/FinishReasonDone.html">FinishReasonDone</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Tracing.html">Tracing</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tracing/NoOp.html">NoOp</a></code></li><li><code><a href="../Riffer/Tracing/Otel.html">Otel</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
+    <ul class="link-list nav-list"><li><code><a href="../Object.html">Object</a></code></li><li><details><summary><code><a href="../Riffer.html">Riffer</a></code></summary><ul class="link-list nav-list"><li><details><summary><code><a href="../Riffer/Agent.html">Agent</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Config.html">Config</a></code></li><li><code><a href="../Riffer/Agent/Context.html">Context</a></code></li><li><code><a href="../Riffer/Agent/Response.html">Response</a></code></li><li><code><a href="../Riffer/Agent/Run.html">Run</a></code></li><li><details><summary><code><a href="../Riffer/Agent/Serializer.html">Serializer</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Serializer/VersionError.html">VersionError</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/Session.html">Session</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/Session/Repair.html">Repair</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Agent/StructuredOutput.html">StructuredOutput</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Agent/StructuredOutput/Result.html">Result</a></code></li></ul></details></li></ul></details></li><li><code><a href="../Riffer/ArgumentError.html">ArgumentError</a></code></li><li><details><summary><code><a href="../Riffer/Config.html">Config</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Files.html">Files</a></code></li><li><details><summary><code><a href="../Riffer/Config/Pricing.html">Pricing</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Config/Pricing/Rates.html">Rates</a></code></li></ul></details></li><li><code><a href="../Riffer/Config/Skills.html">Skills</a></code></li><li><code><a href="../Riffer/Config/Tracing.html">Tracing</a></code></li></ul></details></li><li><code><a href="../Riffer/DuplicateIdentifierError.html">DuplicateIdentifierError</a></code></li><li><code><a href="../Riffer/Error.html">Error</a></code></li><li><details><summary><code><a href="../Riffer/Evals.html">Evals</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Evaluator.html">Evaluator</a></code></li><li><code><a href="../Riffer/Evals/EvaluatorRunner.html">EvaluatorRunner</a></code></li><li><details><summary><code><a href="../Riffer/Evals/Judge.html">Judge</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Evals/Judge/EvaluationTool.html">EvaluationTool</a></code></li></ul></details></li><li><code><a href="../Riffer/Evals/Result.html">Result</a></code></li><li><code><a href="../Riffer/Evals/RunResult.html">RunResult</a></code></li><li><code><a href="../Riffer/Evals/ScenarioResult.html">ScenarioResult</a></code></li></ul></details></li><li><code><a href="../Riffer/FileChecksumMismatchError.html">FileChecksumMismatchError</a></code></li><li><code><a href="../Riffer/FileDownloadError.html">FileDownloadError</a></code></li><li><code><a href="../Riffer/FileDownloadsDisabledError.html">FileDownloadsDisabledError</a></code></li><li><code><a href="../Riffer/FileEncodingError.html">FileEncodingError</a></code></li><li><code><a href="../Riffer/FileError.html">FileError</a></code></li><li><code><a href="../Riffer/FileTooLargeError.html">FileTooLargeError</a></code></li><li><code><a href="../Riffer/FileUnsupportedError.html">FileUnsupportedError</a></code></li><li><details><summary><code><a href="../Riffer/Files.html">Files</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Files/Downloader.html">Downloader</a></code></li><li><code><a href="../Riffer/Files/Resolver.html">Resolver</a></code></li></ul></details></li><li><code><a href="../Riffer/Guardrail.html">Guardrail</a></code></li><li><details><summary><code><a href="../Riffer/Guardrails.html">Guardrails</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Guardrails/Modification.html">Modification</a></code></li><li><code><a href="../Riffer/Guardrails/Result.html">Result</a></code></li><li><code><a href="../Riffer/Guardrails/Runner.html">Runner</a></code></li><li><code><a href="../Riffer/Guardrails/Tripwire.html">Tripwire</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Helpers.html">Helpers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Helpers/CallOrValue.html">CallOrValue</a></code></li><li><details><summary><code><a href="../Riffer/Helpers/Dependencies.html">Dependencies</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Helpers/Dependencies/LoadError.html">LoadError</a></code></li></ul></details></li><li><code><a href="../Riffer/Helpers/Identifier.html">Identifier</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Mcp.html">Mcp</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/AuthenticatedTool.html">AuthenticatedTool</a></code></li><li><code><a href="../Riffer/Mcp/Client.html">Client</a></code></li><li><code><a href="../Riffer/Mcp/CredentialsDeniedError.html">CredentialsDeniedError</a></code></li><li><code><a href="../Riffer/Mcp/Error.html">Error</a></code></li><li><code><a href="../Riffer/Mcp/Manifest.html">Manifest</a></code></li><li><code><a href="../Riffer/Mcp/Registration.html">Registration</a></code></li><li><code><a href="../Riffer/Mcp/Registry.html">Registry</a></code></li><li><details><summary><code><a href="../Riffer/Mcp/SearchTool.html">SearchTool</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Mcp/SearchTool/Result.html">Result</a></code></li></ul></details></li><li><code><a href="../Riffer/Mcp/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Mcp/ToolFactory.html">ToolFactory</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Messages.html">Messages</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Messages/Assistant.html">Assistant</a></code></li><li><code><a href="../Riffer/Messages/Base.html">Base</a></code></li><li><code><a href="../Riffer/Messages/FilePart.html">FilePart</a></code></li><li><code><a href="../Riffer/Messages/System.html">System</a></code></li><li><code><a href="../Riffer/Messages/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/Messages/User.html">User</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Params.html">Params</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Params/Boolean.html">Boolean</a></code></li><li><code><a href="../Riffer/Params/Param.html">Param</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Providers.html">Providers</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/AmazonBedrock.html">AmazonBedrock</a></code></li><li><code><a href="../Riffer/Providers/Anthropic.html">Anthropic</a></code></li><li><code><a href="../Riffer/Providers/AzureOpenAI.html">AzureOpenAI</a></code></li><li><code><a href="../Riffer/Providers/Base.html">Base</a></code></li><li><code><a href="../Riffer/Providers/FinishReason.html">FinishReason</a></code></li><li><details><summary><code><a href="../Riffer/Providers/Gemini.html">Gemini</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Providers/Gemini/Client.html">Client</a></code></li></ul></details></li><li><code><a href="../Riffer/Providers/Mock.html">Mock</a></code></li><li><code><a href="../Riffer/Providers/OpenAI.html">OpenAI</a></code></li><li><code><a href="../Riffer/Providers/OpenRouter.html">OpenRouter</a></code></li><li><code><a href="../Riffer/Providers/Repository.html">Repository</a></code></li><li><code><a href="../Riffer/Providers/TokenUsage.html">TokenUsage</a></code></li></ul></details></li><li><code><a href="../Riffer/Registrable.html">Registrable</a></code></li><li><details><summary><code><a href="../Riffer/Runner.html">Runner</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Runner/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Runner/Sequential.html">Sequential</a></code></li><li><code><a href="../Riffer/Runner/Threaded.html">Threaded</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Skills.html">Skills</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Skills/ActivateTool.html">ActivateTool</a></code></li><li><code><a href="../Riffer/Skills/Adapter.html">Adapter</a></code></li><li><code><a href="../Riffer/Skills/Backend.html">Backend</a></code></li><li><code><a href="../Riffer/Skills/Config.html">Config</a></code></li><li><code><a href="../Riffer/Skills/Context.html">Context</a></code></li><li><code><a href="../Riffer/Skills/FilesystemBackend.html">FilesystemBackend</a></code></li><li><code><a href="../Riffer/Skills/Frontmatter.html">Frontmatter</a></code></li><li><code><a href="../Riffer/Skills/MarkdownAdapter.html">MarkdownAdapter</a></code></li><li><code><a href="../Riffer/Skills/XmlAdapter.html">XmlAdapter</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/StreamEvents.html">StreamEvents</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/StreamEvents/Base.html">Base</a></code></li><li><code><a href="../Riffer/StreamEvents/FinishReasonDone.html">FinishReasonDone</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailModification.html">GuardrailModification</a></code></li><li><code><a href="../Riffer/StreamEvents/GuardrailTripwire.html">GuardrailTripwire</a></code></li><li><code><a href="../Riffer/StreamEvents/Interrupt.html">Interrupt</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDelta.html">ReasoningDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ReasoningDone.html">ReasoningDone</a></code></li><li><code><a href="../Riffer/StreamEvents/SkillActivation.html">SkillActivation</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDelta.html">TextDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/TextDone.html">TextDone</a></code></li><li><code><a href="../Riffer/StreamEvents/TokenUsageDone.html">TokenUsageDone</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDelta.html">ToolCallDelta</a></code></li><li><code><a href="../Riffer/StreamEvents/ToolCallDone.html">ToolCallDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchDone.html">WebSearchDone</a></code></li><li><code><a href="../Riffer/StreamEvents/WebSearchStatus.html">WebSearchStatus</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Testing.html">Testing</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Testing/MinitestCleanup.html">MinitestCleanup</a></code></li></ul></details></li><li><code><a href="../Riffer/TimeoutError.html">TimeoutError</a></code></li><li><code><a href="../Riffer/TooManyFilesError.html">TooManyFilesError</a></code></li><li><code><a href="../Riffer/Tool.html">Tool</a></code></li><li><code><a href="../Riffer/ToolExecutionError.html">ToolExecutionError</a></code></li><li><details><summary><code><a href="../Riffer/Tools.html">Tools</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Response.html">Response</a></code></li><li><details><summary><code><a href="../Riffer/Tools/Runtime.html">Runtime</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tools/Runtime/Fibers.html">Fibers</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Inline.html">Inline</a></code></li><li><code><a href="../Riffer/Tools/Runtime/Threaded.html">Threaded</a></code></li></ul></details></li><li><code><a href="../Riffer/Tools/Toolable.html">Toolable</a></code></li></ul></details></li><li><details><summary><code><a href="../Riffer/Tracing.html">Tracing</a></code></summary><ul class="link-list nav-list"><li><code><a href="../Riffer/Tracing/NoOp.html">NoOp</a></code></li><li><code><a href="../Riffer/Tracing/Otel.html">Otel</a></code></li></ul></details></li><li><code><a href="../Riffer/ValidationError.html">ValidationError</a></code></li></ul></details></li></ul>
   </details>
 </div>
 
@@ -506,7 +510,7 @@
 
   <section class="description">
     
-<p>Registry of a class’s named direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via <code>find</code> and <code>all</code>.</p>
+<p>Registry of a class’s direct subclasses, keyed by identifier. Extend it onto a base class to look up subclasses in constant time via <code>find</code> and <code>all</code>. Subclasses join implicitly by inheriting; <code>register</code> adds one explicitly, for ephemeral classes a test suite builds and tears down. Registration is not synchronized — register during boot or from a single-threaded test, before concurrent lookups begin.</p>
 
 <pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tool</span>
   <span class="ruby-identifier">extend</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Registrable</span>
@@ -565,7 +569,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 36</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all</span>
   <span class="ruby-identifier">identifier_registry</span>.<span class="ruby-identifier">values</span>
 <span class="ruby-keyword">end</span></pre>
@@ -576,7 +580,7 @@
         <div class="method-description">
 
 
-          <p>Returns all registered subclasses. Only *named direct* subclasses are registered: grandchildren are not included (call <code>all</code> on their direct parent instead), anonymous classes are never registered, and duplicate identifiers raise <a href="DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> at first lookup.</p>
+          <p>Returns all registered subclasses, implicit and explicit. Carries the same registration rules as <code>find</code>.</p>
 
 
         </div>
@@ -607,7 +611,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">identifier</span>)
   <span class="ruby-identifier">identifier_registry</span>[<span class="ruby-identifier">identifier</span>.<span class="ruby-identifier">to_s</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -618,7 +622,108 @@
         <div class="method-description">
 
 
-          <p>Finds a registered subclass by identifier, or <code>nil</code> when none matches. Only *named direct* subclasses are registered: grandchildren are not visible to a grandparent’s <code>find</code> (call <code>find</code> on their direct parent instead), anonymous classes are never registered, and duplicate identifiers raise <a href="DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> at first lookup.</p>
+          <p>Finds a registered subclass by identifier, or <code>nil</code> when none matches. Implicit registration covers only *named direct* subclasses: grandchildren are not visible to a grandparent’s <code>find</code> (call <code>find</code> on their direct parent instead), anonymous classes are never registered implicitly, and a subclass whose name no longer resolves back to it is dropped at the next registry rebuild. Duplicate identifiers raise <a href="DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> at first lookup.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-register" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-register" title="Link to this method">
+                <span class="method-name">register</span>
+                <span class="method-args">(klass)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="register-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">register</span>(<span class="ruby-identifier">klass</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">superclass</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-keyword">self</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{klass} must be a direct subclass of #{self} to register&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">key</span> = <span class="ruby-identifier">identifier_key</span>(<span class="ruby-identifier">klass</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{klass} must declare a non-blank identifier to register&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">existing</span> = <span class="ruby-identifier">identifier_registry</span>[<span class="ruby-identifier">key</span>]
+  <span class="ruby-identifier">raise_duplicate_identifier!</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">existing</span>, <span class="ruby-identifier">klass</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">existing</span>
+
+  <span class="ruby-identifier">explicit_registrations</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">klass</span>
+  <span class="ruby-ivar">@identifier_registry</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Registers a direct subclass under its <code>identifier</code>, whether or not it is named — unlike implicit registration, it survives a name that no longer resolves, so an ephemeral class stays findable until <code>unregister</code>. Prefer <a href="Testing.html"><code>Riffer::Testing</code></a> for ordinary test setup, which stubs and cleans up automatically.</p>
+
+<p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> when the identifier is blank or the class is not a direct subclass, and <a href="DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> when the identifier is already taken — including by this same class.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-unregister" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-unregister" title="Link to this method">
+                <span class="method-name">unregister</span>
+                <span class="method-args">(klass)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="unregister-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/registrable.rb, line 76</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unregister</span>(<span class="ruby-identifier">klass</span>)
+  <span class="ruby-identifier">key</span>, = <span class="ruby-identifier">explicit_registrations</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">_key</span>, <span class="ruby-identifier">registered</span><span class="ruby-operator">|</span> <span class="ruby-identifier">registered</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">klass</span>) }
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">explicit_registrations</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">key</span>)
+  <span class="ruby-ivar">@identifier_registry</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Removes an explicit registration of <code>klass</code>, leaving implicit registrations untouched.</p>
 
 
         </div>
