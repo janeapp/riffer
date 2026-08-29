@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.44.0](https://github.com/janeapp/riffer/compare/riffer/v0.43.0...riffer/v0.44.0) (2026-08-28)
+
+
+### Features
+
+* file attachment downloading for user messages ([#407](https://github.com/janeapp/riffer/issues/407)) ([4e78868](https://github.com/janeapp/riffer/commit/4e78868f7d1efe59c35906fff2ba7594ccbd6de7))
+* registry liveness, explicit registration, and Riffer::Testing stub factories ([#415](https://github.com/janeapp/riffer/issues/415)) ([6935749](https://github.com/janeapp/riffer/commit/69357496b094fcfa9e72d12a525645374ef6e352))
+
 ## [0.43.0](https://github.com/janeapp/riffer/compare/riffer/v0.42.0...riffer/v0.43.0) (2026-08-27)
 
 
