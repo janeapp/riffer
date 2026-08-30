@@ -47,7 +47,7 @@ jobs:
         with:
           bundler-cache: true
       - run: bin/docs
-      - uses: JamesIves/github-pages-deploy-action@65b5dfd4f5bcd3a7403bbc2959c144256167464e
+      - uses: JamesIves/github-pages-deploy-action@9d877eea73427180ae43cf98e8914934fe157a1a
         with:
           branch: gh-pages
           folder: ./_site
