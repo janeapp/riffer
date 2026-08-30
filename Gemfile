@@ -21,9 +21,9 @@ gem "rubocop", require: false
 gem "rubocop-minitest", require: false
 gem "rubocop-performance", require: false
 gem "rubocop-rake", require: false
-gem "steep", "~> 2.0"
+gem "steep", "~> 2.1"
 gem "vcr", "~> 6.0"
-gem "webmock", "~> 3.0"
+gem "webmock", "~> 3.26"
 
 # Docs site build (docs-site/build.rb, rake docs:*). Rouge is pinned below 5
 # because kramdown's rouge integration trips deprecation warnings on rouge 5.
