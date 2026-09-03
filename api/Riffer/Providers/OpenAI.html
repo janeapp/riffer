@@ -564,6 +564,14 @@
       </header>
       <dl>
 
+        <dt id="FINISH_REASONS">FINISH_REASONS</dt>
+
+        <dd>
+
+          <p>The Responses API has no <a href="../../lib/riffer/providers/finish_reason_rb.html">finish_reason</a> field. The response <code>status</code> is the primary signal; an <code>incomplete</code> status is only meaningful together with <code>incomplete_details.reason</code>, so that branch nests one level.</p>
+        </dd>
+
+
         <dt id="WEB_SEARCH_TOOL_TYPE">WEB_SEARCH_TOOL_TYPE</dt>
 
         <dd>
@@ -607,7 +615,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/open_ai.rb, line 17</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/open_ai.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">depends_on</span> <span class="ruby-string">&quot;openai&quot;</span>
@@ -655,7 +663,7 @@
             </details>
           </div>
           <div class="method-source-code" id="semconv_provider_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/open_ai.rb, line 11</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/open_ai.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">semconv_provider_name</span>
   <span class="ruby-string">&quot;openai&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -711,7 +719,7 @@
             </details>
           </div>
           <div class="method-source-code" id="file_delivery-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/open_ai.rb, line 24</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/open_ai.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">file_delivery</span>(<span class="ruby-identifier">file</span>)
   <span class="ruby-identifier">file</span>.<span class="ruby-identifier">image?</span> <span class="ruby-operator">?</span> <span class="ruby-value">:url</span> <span class="ruby-operator">:</span> <span class="ruby-value">:base64</span>
 <span class="ruby-keyword">end</span></pre>

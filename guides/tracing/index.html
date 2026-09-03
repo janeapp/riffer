@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.44.0</span>
+            <span class="version">v0.45.0</span>
           </div>
         </nav>
       </div>
@@ -525,7 +525,7 @@
   </tbody>
 </table>
 
-<p><code>gen_ai.response.finish_reasons</code> is an array of exactly one normalized value, from the fixed vocabulary <code>stop</code>, <code>length</code>, <code>tool_calls</code>, <code>content_filter</code>, <code>error</code>, <code>other</code>. When the provider’s raw wire value carries more nuance than the normalized one, the raw string is preserved on <code>riffer.finish_reason.raw</code>.</p>
+<p><code>gen_ai.response.finish_reasons</code> is an array of exactly one normalized value, from the fixed vocabulary <code>stop</code>, <code>length</code>, <code>tool_calls</code>, <code>content_filter</code>, <code>context_window</code>, <code>malformed_output</code>, <code>error</code>, <code>other</code>. When the provider’s raw wire value carries more nuance than the normalized one, the raw string is preserved on <code>riffer.finish_reason.raw</code>.</p>
 
 <h2 id="execute_tool-tool--the-tool-call-span"><code>execute_tool {tool}</code> — the tool call span</h2>
 

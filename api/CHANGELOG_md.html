@@ -452,11 +452,20 @@
 
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 
-<span id="label-0.44.0+-282026-08-28-29" class="legacy-anchor"></span>
-<h2 id="0440-2026-08-28"><a href="#0440-2026-08-28"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.43.0...riffer/v0.44.0">0.44.0</a> (2026-08-28)</a></h2>
+<span id="label-0.45.0+-282026-09-03-29" class="legacy-anchor"></span>
+<h2 id="0450-2026-09-03"><a href="#0450-2026-09-03"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.44.0...riffer/v0.45.0">0.45.0</a> (2026-09-03)</a></h2>
 
 <span id="label-Features" class="legacy-anchor"></span>
 <h3 id="features"><a href="#features">Features</a></h3>
+<ul><li>
+<p>expand finish reason vocabulary and close provider gaps (<a href="https://github.com/janeapp/riffer/issues/419">#419</a>) (<a href="https://github.com/janeapp/riffer/commit/daf91a61956ce8da626a590d30307e11e90d474b">daf91a6</a>)</p>
+</li></ul>
+
+<span id="label-0.44.0+-282026-08-28-29" class="legacy-anchor"></span>
+<h2 id="0440-2026-08-28"><a href="#0440-2026-08-28"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.43.0...riffer/v0.44.0">0.44.0</a> (2026-08-28)</a></h2>
+
+<span id="label-Features-1" class="legacy-anchor"></span>
+<h3 id="features-1"><a href="#features-1">Features</a></h3>
 <ul><li>
 <p>file attachment downloading for user messages (<a href="https://github.com/janeapp/riffer/issues/407">#407</a>) (<a href="https://github.com/janeapp/riffer/commit/4e78868f7d1efe59c35906fff2ba7594ccbd6de7">4e78868</a>)</p>
 </li><li>
@@ -472,8 +481,8 @@
 <p>call_with_validation no longer raises <a href="Riffer/ValidationError.html"><code>Riffer::ValidationError</code></a> / <a href="Riffer/TimeoutError.html"><code>Riffer::TimeoutError</code></a> / <a href="Riffer/Error.html"><code>Riffer::Error</code></a> — it always returns a <a href="Riffer/Tools/Response.html"><code>Riffer::Tools::Response</code></a>. <a href="Riffer/TimeoutError.html"><code>Riffer::TimeoutError</code></a> has been removed; delete any <code>rescue Riffer::TimeoutError</code> and check <code>response.error_type</code> instead. Custom runtimes overriding dispatch_tool_call no longer inherit rescues from the base class.</p>
 </li></ul>
 
-<span id="label-Features-1" class="legacy-anchor"></span>
-<h3 id="features-1"><a href="#features-1">Features</a></h3>
+<span id="label-Features-2" class="legacy-anchor"></span>
+<h3 id="features-2"><a href="#features-2">Features</a></h3>
 <ul><li>
 <p>tools are the error boundary — call_with_validation never raises (<a href="https://github.com/janeapp/riffer/issues/412">#412</a>) (<a href="https://github.com/janeapp/riffer/commit/b6db9b6ab2885d170cbba52c7a571c63b83d892e">b6db9b6</a>)</p>
 </li></ul>
@@ -487,8 +496,8 @@
 <p>duplicate identifiers among named direct subclasses of <a href="Riffer/Tool.html"><code>Riffer::Tool</code></a> or <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a> now raise <a href="Riffer/DuplicateIdentifierError.html"><code>Riffer::DuplicateIdentifierError</code></a> on lookup. Agent.find/.all (and the new Tool.find/.all) cover named direct subclasses only - anonymous classes are excluded even with an explicit identifier. Riffer::Helpers::ClassNameConverter is removed; use <a href="Riffer/Helpers/Identifier.html#method-i-derive"><code>Riffer::Helpers::Identifier.derive</code></a> (the separator: keyword is dropped).</p>
 </li></ul>
 
-<span id="label-Features-2" class="legacy-anchor"></span>
-<h3 id="features-2"><a href="#features-2">Features</a></h3>
+<span id="label-Features-3" class="legacy-anchor"></span>
+<h3 id="features-3"><a href="#features-3">Features</a></h3>
 <ul><li>
 <p>one identifier registry pattern for tools and agents (<a href="https://github.com/janeapp/riffer/issues/406">#406</a>) (<a href="https://github.com/janeapp/riffer/commit/72fa7d6377f903e4a88f9f5ec0e27e51b46dc293">72fa7d6</a>)</p>
 </li></ul>
@@ -502,8 +511,8 @@
 <p>Inference providers no longer support extra configuration parameters (e.g. timeouts). Instead, a provider client object can be defined in the riffer config directly. Credential and endpoint parameters are still supported.</p>
 </li></ul>
 
-<span id="label-Features-3" class="legacy-anchor"></span>
-<h3 id="features-3"><a href="#features-3">Features</a></h3>
+<span id="label-Features-4" class="legacy-anchor"></span>
+<h3 id="features-4"><a href="#features-4">Features</a></h3>
 <ul><li>
 <p>config-injected provider clients, retire provider_options (<a href="https://github.com/janeapp/riffer/issues/391">#391</a>) (<a href="https://github.com/janeapp/riffer/commit/72fa0e32ff6cfeee29bae9e2618d001cbc387d99">72fa0e3</a>)</p>
 </li></ul>
@@ -511,8 +520,8 @@
 <span id="label-0.40.0+-282026-08-12-29" class="legacy-anchor"></span>
 <h2 id="0400-2026-08-12"><a href="#0400-2026-08-12"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.39.0...riffer/v0.40.0">0.40.0</a> (2026-08-12)</a></h2>
 
-<span id="label-Features-4" class="legacy-anchor"></span>
-<h3 id="features-4"><a href="#features-4">Features</a></h3>
+<span id="label-Features-5" class="legacy-anchor"></span>
+<h3 id="features-5"><a href="#features-5">Features</a></h3>
 <ul><li>
 <p>replace RDoc guide pages with a static docs site (<a href="https://github.com/janeapp/riffer/issues/390">#390</a>) (<a href="https://github.com/janeapp/riffer/commit/eef94e140b618ae55a0dea2e0e94cf91462ae169">eef94e1</a>)</p>
 </li></ul>
@@ -520,8 +529,8 @@
 <span id="label-0.39.0+-282026-07-29-29" class="legacy-anchor"></span>
 <h2 id="0390-2026-07-29"><a href="#0390-2026-07-29"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.38.1...riffer/v0.39.0">0.39.0</a> (2026-07-29)</a></h2>
 
-<span id="label-Features-5" class="legacy-anchor"></span>
-<h3 id="features-5"><a href="#features-5">Features</a></h3>
+<span id="label-Features-6" class="legacy-anchor"></span>
+<h3 id="features-6"><a href="#features-6">Features</a></h3>
 <ul><li>
 <p><strong>evals:</strong> expose token usage on evaluation results (<a href="https://github.com/janeapp/riffer/issues/380">#380</a>) (<a href="https://github.com/janeapp/riffer/commit/32d576e492809845c36f44ebf37de3af3b6785b0">32d576e</a>)</p>
 </li></ul>
@@ -538,8 +547,8 @@
 <span id="label-0.38.0+-282026-07-21-29" class="legacy-anchor"></span>
 <h2 id="0380-2026-07-21"><a href="#0380-2026-07-21"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.37.1...riffer/v0.38.0">0.38.0</a> (2026-07-21)</a></h2>
 
-<span id="label-Features-6" class="legacy-anchor"></span>
-<h3 id="features-6"><a href="#features-6">Features</a></h3>
+<span id="label-Features-7" class="legacy-anchor"></span>
+<h3 id="features-7"><a href="#features-7">Features</a></h3>
 <ul><li>
 <p>record time to first chunk on streaming chat spans (<a href="https://github.com/janeapp/riffer/issues/369">#369</a>) (<a href="https://github.com/janeapp/riffer/commit/133b0197dd358ae1cd37adbeb7b5df7446b0cbde">133b019</a>)</p>
 </li></ul>
@@ -556,8 +565,8 @@
 <span id="label-0.37.0+-282026-07-10-29" class="legacy-anchor"></span>
 <h2 id="0370-2026-07-10"><a href="#0370-2026-07-10"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.36.0...riffer/v0.37.0">0.37.0</a> (2026-07-10)</a></h2>
 
-<span id="label-Features-7" class="legacy-anchor"></span>
-<h3 id="features-7"><a href="#features-7">Features</a></h3>
+<span id="label-Features-8" class="legacy-anchor"></span>
+<h3 id="features-8"><a href="#features-8">Features</a></h3>
 <ul><li>
 <p><strong>providers:</strong> first-class provider registration API (<a href="https://github.com/janeapp/riffer/issues/353">#353</a>) (<a href="https://github.com/janeapp/riffer/commit/551d80bf615de813629768156c6674d232877150">551d80b</a>)</p>
 </li></ul>
@@ -571,8 +580,8 @@
 <p>config.metrics, the Riffer::Metrics module, and Riffer::Metrics::Otel are removed. Hosts wiring a metrics backend must drop that configuration.</p>
 </li></ul>
 
-<span id="label-Features-8" class="legacy-anchor"></span>
-<h3 id="features-8"><a href="#features-8">Features</a></h3>
+<span id="label-Features-9" class="legacy-anchor"></span>
+<h3 id="features-9"><a href="#features-9">Features</a></h3>
 <ul><li>
 <p>remove the metrics primitive (<a href="https://github.com/janeapp/riffer/issues/347">#347</a>) (<a href="https://github.com/janeapp/riffer/commit/70a838e9d49da12f89886c6e6f7bca35f427f77c">70a838e</a>)</p>
 </li></ul>
@@ -580,8 +589,8 @@
 <span id="label-0.35.0+-282026-06-25-29" class="legacy-anchor"></span>
 <h2 id="0350-2026-06-25"><a href="#0350-2026-06-25"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.34.0...riffer/v0.35.0">0.35.0</a> (2026-06-25)</a></h2>
 
-<span id="label-Features-9" class="legacy-anchor"></span>
-<h3 id="features-9"><a href="#features-9">Features</a></h3>
+<span id="label-Features-10" class="legacy-anchor"></span>
+<h3 id="features-10"><a href="#features-10">Features</a></h3>
 <ul><li>
 <p>per-call tags: for Agent#generate and stream (<a href="https://github.com/janeapp/riffer/issues/339">#339</a>) (<a href="https://github.com/janeapp/riffer/commit/ddfda8929ca3b594415f827957d8c91104387317">ddfda89</a>)</p>
 </li></ul>
@@ -595,8 +604,8 @@
 <p><strong>telemetry:</strong> <code>config.tracing.tracer_provider</code> and <code>config.metrics.meter_provider</code> are removed. Assign the OTEL backend instead: <code>config.tracing.backend = Riffer::Tracing::Otel.build</code> (pass <code>provider:</code> to override the global provider).</p>
 </li></ul>
 
-<span id="label-Features-10" class="legacy-anchor"></span>
-<h3 id="features-10"><a href="#features-10">Features</a></h3>
+<span id="label-Features-11" class="legacy-anchor"></span>
+<h3 id="features-11"><a href="#features-11">Features</a></h3>
 <ul><li>
 <p>emit a riffer.guardrail.duration metric for guardrail execution (<a href="https://github.com/janeapp/riffer/issues/338">#338</a>) (<a href="https://github.com/janeapp/riffer/commit/7b0dfb014f710d839e53d25ee345df5b404c8c60">7b0dfb0</a>)</p>
 </li><li>
@@ -612,8 +621,8 @@
 <p>reported input_tokens grows by the cache token counts on Anthropic and Bedrock, and output_tokens grows by the thinking token count on Gemini, whenever those features are active.</p>
 </li></ul>
 
-<span id="label-Features-11" class="legacy-anchor"></span>
-<h3 id="features-11"><a href="#features-11">Features</a></h3>
+<span id="label-Features-12" class="legacy-anchor"></span>
+<h3 id="features-12"><a href="#features-12">Features</a></h3>
 <ul><li>
 <p>add the Riffer::Metrics OpenTelemetry port foundation (<a href="https://github.com/janeapp/riffer/issues/325">#325</a>) (<a href="https://github.com/janeapp/riffer/commit/92d060c9f006f9f6e904aa57e749909f360b8cd3">92d060c</a>)</p>
 </li><li>
@@ -666,8 +675,8 @@
 <p>apply module/class conventions consistently (<a href="https://github.com/janeapp/riffer/issues/298">#298</a>)</p>
 </li></ul>
 
-<span id="label-Features-12" class="legacy-anchor"></span>
-<h3 id="features-12"><a href="#features-12">Features</a></h3>
+<span id="label-Features-13" class="legacy-anchor"></span>
+<h3 id="features-13"><a href="#features-13">Features</a></h3>
 <ul><li>
 <p>add Bedrock prompt caching and surface cached tokens (<a href="https://github.com/janeapp/riffer/issues/300">#300</a>) (<a href="https://github.com/janeapp/riffer/commit/407390b505a3af6b881c5204d856a8e9ceddbed9">407390b</a>)</p>
 </li><li>
@@ -683,8 +692,8 @@
 <span id="label-0.31.0+-282026-06-03-29" class="legacy-anchor"></span>
 <h2 id="0310-2026-06-03"><a href="#0310-2026-06-03"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.30.0...riffer/v0.31.0">0.31.0</a> (2026-06-03)</a></h2>
 
-<span id="label-Features-13" class="legacy-anchor"></span>
-<h3 id="features-13"><a href="#features-13">Features</a></h3>
+<span id="label-Features-14" class="legacy-anchor"></span>
+<h3 id="features-14"><a href="#features-14">Features</a></h3>
 <ul><li>
 <p>forward session: through Agent.from_h/from_json for history seeding (<a href="https://github.com/janeapp/riffer/issues/295">#295</a>) (<a href="https://github.com/janeapp/riffer/commit/0b2eaa27f5154bfd61891d4e93b8938f7dce2ce6">0b2eaa2</a>)</p>
 </li></ul>
@@ -698,8 +707,8 @@
 <p>unlimited max_steps is now represented as <code>nil</code> at the agent level (set via <code>max_steps nil</code>), not Float::INFINITY — <a href="Riffer/Agent/Config.html#attribute-i-max_steps"><code>Riffer::Agent::Config#max_steps</code></a> may be nil and is no longer normalized. <a href="Riffer/Params.html"><code>Riffer::Params</code></a> parameter types are typed Module (widened from Class) to honestly include <a href="Riffer/Params/Boolean.html"><code>Riffer::Params::Boolean</code></a>, which is a Module.</p>
 </li></ul>
 
-<span id="label-Features-14" class="legacy-anchor"></span>
-<h3 id="features-14"><a href="#features-14">Features</a></h3>
+<span id="label-Features-15" class="legacy-anchor"></span>
+<h3 id="features-15"><a href="#features-15">Features</a></h3>
 <ul><li>
 <p><a href="Riffer/Agent/Serializer.html"><code>Riffer::Agent::Serializer</code></a> for transferable agent definitions (<a href="https://github.com/janeapp/riffer/issues/293">#293</a>) (<a href="https://github.com/janeapp/riffer/commit/99134b0bf52bccfd727e52349aba8432389775be">99134b0</a>)</p>
 </li></ul>
@@ -724,8 +733,8 @@
 <p>Public API reshape on <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a>. Downstream consumers must migrate the following surfaces:</p>
 </li></ul>
 
-<span id="label-Features-15" class="legacy-anchor"></span>
-<h3 id="features-15"><a href="#features-15">Features</a></h3>
+<span id="label-Features-16" class="legacy-anchor"></span>
+<h3 id="features-16"><a href="#features-16">Features</a></h3>
 <ul><li>
 <p>add bin/ wrappers for common dev commands (<a href="https://github.com/janeapp/riffer/issues/276">#276</a>) (<a href="https://github.com/janeapp/riffer/commit/6812ba254d0b9220dae5ed0bbfbc4d8fee5b14e1">6812ba2</a>)</p>
 </li><li>
@@ -749,8 +758,8 @@
 <p>Custom subclasses of Riffer::ToolRuntime that override around_tool_call or dispatch_tool_call must accept the new assistant_message: kwarg (or **kwargs). Existing overrides that omit it will raise ArgumentError: unknown keyword: :assistant_message.</p>
 </li></ul>
 
-<span id="label-Features-16" class="legacy-anchor"></span>
-<h3 id="features-16"><a href="#features-16">Features</a></h3>
+<span id="label-Features-17" class="legacy-anchor"></span>
+<h3 id="features-17"><a href="#features-17">Features</a></h3>
 <ul><li>
 <p>add history mutation API to <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a> (<a href="https://github.com/janeapp/riffer/issues/249">#249</a>) (<a href="https://github.com/janeapp/riffer/commit/d980daa1526e476ce08b299be84e93257b746a1b">d980daa</a>)</p>
 </li><li>
@@ -778,8 +787,8 @@
 <span id="label-0.27.0+-282026-05-01-29" class="legacy-anchor"></span>
 <h2 id="0270-2026-05-01"><a href="#0270-2026-05-01"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.26.0...riffer/v0.27.0">0.27.0</a> (2026-05-01)</a></h2>
 
-<span id="label-Features-17" class="legacy-anchor"></span>
-<h3 id="features-17"><a href="#features-17">Features</a></h3>
+<span id="label-Features-18" class="legacy-anchor"></span>
+<h3 id="features-18"><a href="#features-18">Features</a></h3>
 <ul><li>
 <p>integrate MCP server tools into agent tool resolution (<a href="https://github.com/janeapp/riffer/commit/6c7a09a1797dcc8fbafd198665fb665ede93f009">6c7a09a</a>)</p>
 </li></ul>
@@ -793,8 +802,8 @@
 <span id="label-0.26.0+-282026-04-29-29" class="legacy-anchor"></span>
 <h2 id="0260-2026-04-29"><a href="#0260-2026-04-29"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.25.0...riffer/v0.26.0">0.26.0</a> (2026-04-29)</a></h2>
 
-<span id="label-Features-18" class="legacy-anchor"></span>
-<h3 id="features-18"><a href="#features-18">Features</a></h3>
+<span id="label-Features-19" class="legacy-anchor"></span>
+<h3 id="features-19"><a href="#features-19">Features</a></h3>
 <ul><li>
 <p>model-aware skills adapter selection (<a href="https://github.com/janeapp/riffer/issues/232">#232</a>) (<a href="https://github.com/janeapp/riffer/commit/74a5323945f3f6f30538d472400cc5fe27b588da">74a5323</a>)</p>
 </li></ul>
@@ -810,8 +819,8 @@
 <p><a href="Riffer/Skills/Adapter.html#method-c-new"><code>Riffer::Skills::Adapter.new</code></a> now requires skill_activate_tool:. The agent wires this up; only matters if you construct an adapter yourself. Custom adapters that override initialize must call super.</p>
 </li></ul>
 
-<span id="label-Features-19" class="legacy-anchor"></span>
-<h3 id="features-19"><a href="#features-19">Features</a></h3>
+<span id="label-Features-20" class="legacy-anchor"></span>
+<h3 id="features-20"><a href="#features-20">Features</a></h3>
 <ul><li>
 <p>class-level tool resolution; lift activation tool to global config (<a href="https://github.com/janeapp/riffer/issues/230">#230</a>) (<a href="https://github.com/janeapp/riffer/commit/936c4baa6beff4f2cd6c87bfe90be8c20a7f30e1">936c4ba</a>)</p>
 </li></ul>
@@ -837,8 +846,8 @@
 <span id="label-0.24.0+-282026-04-20-29" class="legacy-anchor"></span>
 <h2 id="0240-2026-04-20"><a href="#0240-2026-04-20"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.23.0...riffer/v0.24.0">0.24.0</a> (2026-04-20)</a></h2>
 
-<span id="label-Features-20" class="legacy-anchor"></span>
-<h3 id="features-20"><a href="#features-20">Features</a></h3>
+<span id="label-Features-21" class="legacy-anchor"></span>
+<h3 id="features-21"><a href="#features-21">Features</a></h3>
 <ul><li>
 <p>add optional message id generation (<a href="https://github.com/janeapp/riffer/issues/210">#210</a>) (<a href="https://github.com/janeapp/riffer/commit/0f9e20dcd2d69a49fe5da71be3f0b9deb0a046a4">0f9e20d</a>)</p>
 </li></ul>
@@ -846,8 +855,8 @@
 <span id="label-0.23.0+-282026-04-15-29" class="legacy-anchor"></span>
 <h2 id="0230-2026-04-15"><a href="#0230-2026-04-15"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.22.0...riffer/v0.23.0">0.23.0</a> (2026-04-15)</a></h2>
 
-<span id="label-Features-21" class="legacy-anchor"></span>
-<h3 id="features-21"><a href="#features-21">Features</a></h3>
+<span id="label-Features-22" class="legacy-anchor"></span>
+<h3 id="features-22"><a href="#features-22">Features</a></h3>
 <ul><li>
 <p>add Gemini provider (<a href="https://github.com/janeapp/riffer/issues/199">#199</a>) (<a href="https://github.com/janeapp/riffer/commit/d0f08237052258be64a8fb63e0d1c23508258176">d0f0823</a>)</p>
 </li></ul>
@@ -861,8 +870,8 @@
 <p><code>Tool.name</code> returns <code>namespace/tool_name</code> instead of <code>namespace__tool_name</code>.</p>
 </li></ul>
 
-<span id="label-Features-22" class="legacy-anchor"></span>
-<h3 id="features-22"><a href="#features-22">Features</a></h3>
+<span id="label-Features-23" class="legacy-anchor"></span>
+<h3 id="features-23"><a href="#features-23">Features</a></h3>
 <ul><li>
 <p>use human-friendly <code>/</code> separator for tool names (<a href="https://github.com/janeapp/riffer/issues/202">#202</a>) (<a href="https://github.com/janeapp/riffer/commit/8dda251ff6d91a6cebbbb82082b7ac21c2a51253">8dda251</a>)</p>
 </li></ul>
@@ -876,8 +885,8 @@
 <span id="label-0.21.0+-282026-04-09-29" class="legacy-anchor"></span>
 <h2 id="0210-2026-04-09"><a href="#0210-2026-04-09"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.20.0...riffer/v0.21.0">0.21.0</a> (2026-04-09)</a></h2>
 
-<span id="label-Features-23" class="legacy-anchor"></span>
-<h3 id="features-23"><a href="#features-23">Features</a></h3>
+<span id="label-Features-24" class="legacy-anchor"></span>
+<h3 id="features-24"><a href="#features-24">Features</a></h3>
 <ul><li>
 <p><strong><a href="lib/riffer/providers/amazon_bedrock_rb.html">amazon_bedrock</a>:</strong> support S3 URI file sources (<a href="https://github.com/janeapp/riffer/issues/190">#190</a>) (<a href="https://github.com/janeapp/riffer/commit/243e5b12407cac800b6cf0968a24989924932c26">243e5b1</a>)</p>
 </li><li>
@@ -887,8 +896,8 @@
 <span id="label-0.20.0+-282026-03-26-29" class="legacy-anchor"></span>
 <h2 id="0200-2026-03-26"><a href="#0200-2026-03-26"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.19.0...riffer/v0.20.0">0.20.0</a> (2026-03-26)</a></h2>
 
-<span id="label-Features-24" class="legacy-anchor"></span>
-<h3 id="features-24"><a href="#features-24">Features</a></h3>
+<span id="label-Features-25" class="legacy-anchor"></span>
+<h3 id="features-25"><a href="#features-25">Features</a></h3>
 <ul><li>
 <p>add fibers tool runtime using async gem (<a href="https://github.com/janeapp/riffer/issues/178">#178</a>) (<a href="https://github.com/janeapp/riffer/commit/67fd34493126559b99a00cc3402a6adabefc14ea">67fd344</a>)</p>
 </li></ul>
@@ -902,8 +911,8 @@
 <span id="label-0.19.0+-282026-03-25-29" class="legacy-anchor"></span>
 <h2 id="0190-2026-03-25"><a href="#0190-2026-03-25"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.18.0...riffer/v0.19.0">0.19.0</a> (2026-03-25)</a></h2>
 
-<span id="label-Features-25" class="legacy-anchor"></span>
-<h3 id="features-25"><a href="#features-25">Features</a></h3>
+<span id="label-Features-26" class="legacy-anchor"></span>
+<h3 id="features-26"><a href="#features-26">Features</a></h3>
 <ul><li>
 <p>Add Azure OpenAI provider (<a href="https://github.com/janeapp/riffer/issues/167">#167</a>) (<a href="https://github.com/janeapp/riffer/commit/5d34fcd4a98a6bcfa768c50fea7c25959eca5f1d">5d34fcd</a>)</p>
 </li><li>
@@ -915,8 +924,8 @@
 <span id="label-0.18.0+-282026-03-13-29" class="legacy-anchor"></span>
 <h2 id="0180-2026-03-13"><a href="#0180-2026-03-13"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.17.0...riffer/v0.18.0">0.18.0</a> (2026-03-13)</a></h2>
 
-<span id="label-Features-26" class="legacy-anchor"></span>
-<h3 id="features-26"><a href="#features-26">Features</a></h3>
+<span id="label-Features-27" class="legacy-anchor"></span>
+<h3 id="features-27"><a href="#features-27">Features</a></h3>
 <ul><li>
 <p>add support for agent skills (<a href="https://github.com/janeapp/riffer/issues/151">#151</a>) (<a href="https://github.com/janeapp/riffer/commit/8847d54dede875f207d0e0b28bb64039d3c2e69f">8847d54</a>)</p>
 </li><li>
@@ -932,8 +941,8 @@
 <p>rename <code>tool_context</code> to <code>context</code> (<a href="https://github.com/janeapp/riffer/issues/159">#159</a>)</p>
 </li></ul>
 
-<span id="label-Features-27" class="legacy-anchor"></span>
-<h3 id="features-27"><a href="#features-27">Features</a></h3>
+<span id="label-Features-28" class="legacy-anchor"></span>
+<h3 id="features-28"><a href="#features-28">Features</a></h3>
 <ul><li>
 <p>add experimental ToolRuntime abstraction for tool execution (<a href="https://github.com/janeapp/riffer/issues/156">#156</a>) (<a href="https://github.com/janeapp/riffer/commit/0ca7563df9f0a555e5fa6a1f3065d5f072abbf7e">0ca7563</a>)</p>
 </li><li>
@@ -968,8 +977,8 @@
 <span id="label-0.16.0+-282026-02-27-29" class="legacy-anchor"></span>
 <h2 id="0160-2026-02-27"><a href="#0160-2026-02-27"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.15.1...riffer/v0.16.0">0.16.0</a> (2026-02-27)</a></h2>
 
-<span id="label-Features-28" class="legacy-anchor"></span>
-<h3 id="features-28"><a href="#features-28">Features</a></h3>
+<span id="label-Features-29" class="legacy-anchor"></span>
+<h3 id="features-29"><a href="#features-29">Features</a></h3>
 <ul><li>
 <p>add Riffer::Boolean sentinel type for boolean params (<a href="https://github.com/janeapp/riffer/issues/147">#147</a>) (<a href="https://github.com/janeapp/riffer/commit/5337cf3820d54cf9e03a630ca32b8a7f59347221">5337cf3</a>)</p>
 </li><li>
@@ -988,8 +997,8 @@
 <span id="label-0.15.0+-282026-02-25-29" class="legacy-anchor"></span>
 <h2 id="0150-2026-02-25"><a href="#0150-2026-02-25"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.14.0...riffer/v0.15.0">0.15.0</a> (2026-02-25)</a></h2>
 
-<span id="label-Features-29" class="legacy-anchor"></span>
-<h3 id="features-29"><a href="#features-29">Features</a></h3>
+<span id="label-Features-30" class="legacy-anchor"></span>
+<h3 id="features-30"><a href="#features-30">Features</a></h3>
 <ul><li>
 <p>store structured output in assistant messages (<a href="https://github.com/janeapp/riffer/issues/140">#140</a>) (<a href="https://github.com/janeapp/riffer/commit/9cdb2e2adad5eab6745212e573534d3369528ccb">9cdb2e2</a>)</p>
 </li></ul>
@@ -997,8 +1006,8 @@
 <span id="label-0.14.0+-282026-02-24-29" class="legacy-anchor"></span>
 <h2 id="0140-2026-02-24"><a href="#0140-2026-02-24"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.13.0...riffer/v0.14.0">0.14.0</a> (2026-02-24)</a></h2>
 
-<span id="label-Features-30" class="legacy-anchor"></span>
-<h3 id="features-30"><a href="#features-30">Features</a></h3>
+<span id="label-Features-31" class="legacy-anchor"></span>
+<h3 id="features-31"><a href="#features-31">Features</a></h3>
 <ul><li>
 <p>add file attachment support for user messages (<a href="https://github.com/janeapp/riffer/issues/129">#129</a>) (<a href="https://github.com/janeapp/riffer/commit/0d08eb140e4094a729b1da5e3fddb57b251bf6f3">0d08eb1</a>)</p>
 </li><li>
@@ -1032,8 +1041,8 @@
 <span id="label-0.13.0+-282026-02-12-29" class="legacy-anchor"></span>
 <h2 id="0130-2026-02-12"><a href="#0130-2026-02-12"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.12.0...riffer/v0.13.0">0.13.0</a> (2026-02-12)</a></h2>
 
-<span id="label-Features-31" class="legacy-anchor"></span>
-<h3 id="features-31"><a href="#features-31">Features</a></h3>
+<span id="label-Features-32" class="legacy-anchor"></span>
+<h3 id="features-32"><a href="#features-32">Features</a></h3>
 <ul><li>
 <p>remove identifiers from evals and guardrails (<a href="https://github.com/janeapp/riffer/issues/112">#112</a>) (<a href="https://github.com/janeapp/riffer/commit/7b60707206e53451f5bee2faf1c12a75eaf26d98">7b60707</a>)</p>
 </li></ul>
@@ -1047,8 +1056,8 @@
 <p>Agent#generate now returns <a href="Riffer/Agent/Response.html"><code>Riffer::Agent::Response</code></a> instead of String. Use response.content or response.to_s for the text.</p>
 </li></ul>
 
-<span id="label-Features-32" class="legacy-anchor"></span>
-<h3 id="features-32"><a href="#features-32">Features</a></h3>
+<span id="label-Features-33" class="legacy-anchor"></span>
+<h3 id="features-33"><a href="#features-33">Features</a></h3>
 <ul><li>
 <p>add Claude Code Review GitHub Action (<a href="https://github.com/janeapp/riffer/issues/108">#108</a>) (<a href="https://github.com/janeapp/riffer/commit/f4b281c43e6ad50430c38323bcb876b60efc994a">f4b281c</a>)</p>
 </li><li>
@@ -1074,8 +1083,8 @@
 <span id="label-0.11.0+-282026-02-04-29" class="legacy-anchor"></span>
 <h2 id="0110-2026-02-04"><a href="#0110-2026-02-04"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.10.0...riffer/v0.11.0">0.11.0</a> (2026-02-04)</a></h2>
 
-<span id="label-Features-33" class="legacy-anchor"></span>
-<h3 id="features-33"><a href="#features-33">Features</a></h3>
+<span id="label-Features-34" class="legacy-anchor"></span>
+<h3 id="features-34"><a href="#features-34">Features</a></h3>
 <ul><li>
 <p>add class methods for generate and stream to <a href="Riffer/Agent.html"><code>Riffer::Agent</code></a> (<a href="https://github.com/janeapp/riffer/issues/97">#97</a>) (<a href="https://github.com/janeapp/riffer/commit/597636aef7498fe34c975522930e3fd0939a2ea0">597636a</a>)</p>
 </li><li>
@@ -1085,8 +1094,8 @@
 <span id="label-0.10.0+-282026-01-30-29" class="legacy-anchor"></span>
 <h2 id="0100-2026-01-30"><a href="#0100-2026-01-30"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.9.0...riffer/v0.10.0">0.10.0</a> (2026-01-30)</a></h2>
 
-<span id="label-Features-34" class="legacy-anchor"></span>
-<h3 id="features-34"><a href="#features-34">Features</a></h3>
+<span id="label-Features-35" class="legacy-anchor"></span>
+<h3 id="features-35"><a href="#features-35">Features</a></h3>
 <ul><li>
 <p>update class name conversion to support configurable namespace separators (<a href="https://github.com/janeapp/riffer/issues/96">#96</a>) (<a href="https://github.com/janeapp/riffer/commit/e7091e95210c2df27138e61e64032d52ecf174e1">e7091e9</a>)</p>
 </li></ul>
@@ -1102,8 +1111,8 @@
 <span id="label-0.9.0+-282026-01-28-29" class="legacy-anchor"></span>
 <h2 id="090-2026-01-28"><a href="#090-2026-01-28"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.8.0...riffer/v0.9.0">0.9.0</a> (2026-01-28)</a></h2>
 
-<span id="label-Features-35" class="legacy-anchor"></span>
-<h3 id="features-35"><a href="#features-35">Features</a></h3>
+<span id="label-Features-36" class="legacy-anchor"></span>
+<h3 id="features-36"><a href="#features-36">Features</a></h3>
 <ul><li>
 <p>implement <a href="Riffer/Tools/Response.html"><code>Riffer::Tools::Response</code></a> for consistent tool result handling (<a href="https://github.com/janeapp/riffer/issues/91">#91</a>) (<a href="https://github.com/janeapp/riffer/commit/df44f1fe8ff0b5bea73a2df8d6c0b8359e6c47f3">df44f1f</a>)</p>
 </li></ul>
@@ -1111,8 +1120,8 @@
 <span id="label-0.8.0+-282026-01-26-29" class="legacy-anchor"></span>
 <h2 id="080-2026-01-26"><a href="#080-2026-01-26"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.7.0...riffer/v0.8.0">0.8.0</a> (2026-01-26)</a></h2>
 
-<span id="label-Features-36" class="legacy-anchor"></span>
-<h3 id="features-36"><a href="#features-36">Features</a></h3>
+<span id="label-Features-37" class="legacy-anchor"></span>
+<h3 id="features-37"><a href="#features-37">Features</a></h3>
 <ul><li>
 <p>add anthropic provider support (<a href="https://github.com/janeapp/riffer/issues/89">#89</a>) (<a href="https://github.com/janeapp/riffer/commit/338674e794535b2559ce4dca5d36e09e9512b94c">338674e</a>)</p>
 </li><li>
@@ -1126,8 +1135,8 @@
 <span id="label-0.7.0+-282026-01-21-29" class="legacy-anchor"></span>
 <h2 id="070-2026-01-21"><a href="#070-2026-01-21"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.6.1...riffer/v0.7.0">0.7.0</a> (2026-01-21)</a></h2>
 
-<span id="label-Features-37" class="legacy-anchor"></span>
-<h3 id="features-37"><a href="#features-37">Features</a></h3>
+<span id="label-Features-38" class="legacy-anchor"></span>
+<h3 id="features-38"><a href="#features-38">Features</a></h3>
 <ul><li>
 <p>tool calling support (<a href="https://github.com/janeapp/riffer/issues/82">#82</a>) (<a href="https://github.com/janeapp/riffer/commit/0b2676a77e93b3fd55041e66a5c8c0ab6762e3d2">0b2676a</a>)</p>
 </li></ul>
@@ -1144,8 +1153,8 @@
 <span id="label-0.6.0+-282026-01-14-29" class="legacy-anchor"></span>
 <h2 id="060-2026-01-14"><a href="#060-2026-01-14"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.5.1...riffer/v0.6.0">0.6.0</a> (2026-01-14)</a></h2>
 
-<span id="label-Features-38" class="legacy-anchor"></span>
-<h3 id="features-38"><a href="#features-38">Features</a></h3>
+<span id="label-Features-39" class="legacy-anchor"></span>
+<h3 id="features-39"><a href="#features-39">Features</a></h3>
 <ul><li>
 <p>aws bedrock provider (<a href="https://github.com/janeapp/riffer/issues/73">#73</a>) (<a href="https://github.com/janeapp/riffer/commit/428ae902db90c2d3765186ea06d76ee379b3eae7">428ae90</a>)</p>
 </li><li>
@@ -1168,8 +1177,8 @@
 <span id="label-0.5.0+-282026-01-06-29" class="legacy-anchor"></span>
 <h2 id="050-2026-01-06"><a href="#050-2026-01-06"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.4.2...riffer/v0.5.0">0.5.0</a> (2026-01-06)</a></h2>
 
-<span id="label-Features-39" class="legacy-anchor"></span>
-<h3 id="features-39"><a href="#features-39">Features</a></h3>
+<span id="label-Features-40" class="legacy-anchor"></span>
+<h3 id="features-40"><a href="#features-40">Features</a></h3>
 <ul><li>
 <p>streaming via agents (<a href="https://github.com/janeapp/riffer/issues/63">#63</a>) (<a href="https://github.com/janeapp/riffer/commit/b4171c20f64a7ada1264ce90ab5278c19ff8a47a">b4171c2</a>)</p>
 </li></ul>
@@ -1201,8 +1210,8 @@
 <span id="label-0.4.0+-282025-12-29-29" class="legacy-anchor"></span>
 <h2 id="040-2025-12-29"><a href="#040-2025-12-29"><a href="https://github.com/janeapp/riffer/compare/riffer/v0.3.2...riffer/v0.4.0">0.4.0</a> (2025-12-29)</a></h2>
 
-<span id="label-Features-40" class="legacy-anchor"></span>
-<h3 id="features-40"><a href="#features-40">Features</a></h3>
+<span id="label-Features-41" class="legacy-anchor"></span>
+<h3 id="features-41"><a href="#features-41">Features</a></h3>
 <ul><li>
 <p>add documentation generation and publishing workflow (<a href="https://github.com/janeapp/riffer/issues/51">#51</a>) (<a href="https://github.com/janeapp/riffer/commit/49e3b046c2011f56bb8803b76e152df9ffb26617">49e3b04</a>)</p>
 </li></ul>
@@ -1228,8 +1237,8 @@
 <span id="label-0.3.0+-282025-12-29-29" class="legacy-anchor"></span>
 <h2 id="030-2025-12-29"><a href="#030-2025-12-29"><a href="https://github.com/janeapp/riffer/compare/riffer-v0.2.0...riffer/v0.3.0">0.3.0</a> (2025-12-29)</a></h2>
 
-<span id="label-Features-41" class="legacy-anchor"></span>
-<h3 id="features-41"><a href="#features-41">Features</a></h3>
+<span id="label-Features-42" class="legacy-anchor"></span>
+<h3 id="features-42"><a href="#features-42">Features</a></h3>
 <ul><li>
 <p>add release and publish workflows (<a href="https://github.com/janeapp/riffer/issues/35">#35</a>) (<a href="https://github.com/janeapp/riffer/commit/3eb03897d0e96c01ef1857c04b2bafa53e37dde0">3eb0389</a>)</p>
 </li></ul>
@@ -1255,8 +1264,8 @@
 <span id="label-0.2.0+-282025-12-28-29" class="legacy-anchor"></span>
 <h2 id="020-2025-12-28"><a href="#020-2025-12-28"><a href="https://github.com/janeapp/riffer/compare/v0.1.0...v0.2.0">0.2.0</a> (2025-12-28)</a></h2>
 
-<span id="label-Features-42" class="legacy-anchor"></span>
-<h3 id="features-42"><a href="#features-42">Features</a></h3>
+<span id="label-Features-43" class="legacy-anchor"></span>
+<h3 id="features-43"><a href="#features-43">Features</a></h3>
 <ul><li>
 <p>add release and publish workflows (<a href="https://github.com/janeapp/riffer/issues/35">#35</a>) (<a href="https://github.com/janeapp/riffer/commit/3eb03897d0e96c01ef1857c04b2bafa53e37dde0">3eb0389</a>)</p>
 </li></ul>

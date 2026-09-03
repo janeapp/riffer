@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.44.0</span>
+            <span class="version">v0.45.0</span>
           </div>
         </nav>
       </div>
@@ -307,6 +307,14 @@
       <td>A provider safety system blocked or cut the response.</td>
     </tr>
     <tr>
+      <td><code>:context_window</code></td>
+      <td>Input plus output hit the model’s context window; trim or compact history rather than raising <code>max_tokens</code>.</td>
+    </tr>
+    <tr>
+      <td><code>:malformed_output</code></td>
+      <td>The model emitted output the provider could not parse, such as an invalid tool call; retry or nudge rather than backing off.</td>
+    </tr>
+    <tr>
       <td><code>:error</code></td>
       <td>The provider reported an error finish.</td>
     </tr>
@@ -317,7 +325,7 @@
   </tbody>
 </table>
 
-<p><code>finish_reason</code> is <code>nil</code> when the provider doesn’t report one. Use it to detect truncation without parsing provider responses:</p>
+<p><code>finish_reason</code> is <code>nil</code> when the provider doesn’t report one. The provider’s raw wire value travels alongside on the <code>FinishReasonDone</code> stream event and the <code>riffer.finish_reason.raw</code> trace attribute — for OpenRouter that is the upstream model’s <code>native_finish_reason</code>, and for a failed OpenAI response it is the error code. Use <code>finish_reason</code> to detect truncation without parsing provider responses:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Summarize this document"</span><span class="p">)</span>
 <span class="n">retry_with_higher_limit</span> <span class="k">if</span> <span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">.</span><span class="nf">last</span><span class="p">.</span><span class="nf">finish_reason</span> <span class="o">==</span> <span class="ss">:length</span>

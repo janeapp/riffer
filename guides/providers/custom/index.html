@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.44.0</span>
+            <span class="version">v0.45.0</span>
           </div>
         </nav>
       </div>
@@ -450,7 +450,7 @@
 
 <h2 id="finish-reasons">Finish Reasons</h2>
 
-<p><code>Riffer::Providers::FinishReason</code> is the same kind of normalized contract — map your provider’s raw finish/stop value into the vocabulary defined in <a href="/guides/messages/#finish-reasons">Messages — Finish Reasons</a> (<code>:stop</code>, <code>:length</code>, <code>:tool_calls</code>, <code>:content_filter</code>, <code>:error</code>, <code>:other</code>), keeping the raw wire value alongside:</p>
+<p><code>Riffer::Providers::FinishReason</code> is the same kind of normalized contract — map your provider’s raw finish/stop value into the vocabulary defined in <a href="/guides/messages/#finish-reasons">Messages — Finish Reasons</a> (<code>:stop</code>, <code>:length</code>, <code>:tool_calls</code>, <code>:content_filter</code>, <code>:context_window</code>, <code>:malformed_output</code>, <code>:error</code>, <code>:other</code>), keeping the raw wire value alongside:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_finish_reason</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
   <span class="n">raw</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">stop_reason</span>
