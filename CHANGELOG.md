@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.45.0](https://github.com/janeapp/riffer/compare/riffer/v0.44.0...riffer/v0.45.0) (2026-09-03)
+
+
+### Features
+
+* expand finish reason vocabulary and close provider gaps ([#419](https://github.com/janeapp/riffer/issues/419)) ([daf91a6](https://github.com/janeapp/riffer/commit/daf91a61956ce8da626a590d30307e11e90d474b))
+
 ## [0.44.0](https://github.com/janeapp/riffer/compare/riffer/v0.43.0...riffer/v0.44.0) (2026-08-28)
 
 
