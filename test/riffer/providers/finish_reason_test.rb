@@ -22,6 +22,12 @@ describe Riffer::Providers::FinishReason do
       expect(finish_reason.raw).must_be_nil
     end
 
+    it "accepts every value in the vocabulary" do
+      reasons = Riffer::Providers::FinishReason::VALUES.map { |v| Riffer::Providers::FinishReason.new(reason: v).reason }
+
+      expect(reasons).must_equal %i[stop length tool_calls content_filter context_window malformed_output error other]
+    end
+
     it "raises on a reason outside the vocabulary" do
       error = expect { Riffer::Providers::FinishReason.new(reason: :bogus) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_include ":bogus"

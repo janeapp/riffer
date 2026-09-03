@@ -191,6 +191,14 @@ describe Riffer::Messages::Assistant do
       expect(message.finish_reason).must_be_nil
     end
 
+    it "accepts context_window and malformed_output" do
+      reasons = %i[context_window malformed_output].map do |reason|
+        Riffer::Messages::Assistant.new("Cut", finish_reason: reason).finish_reason
+      end
+
+      expect(reasons).must_equal %i[context_window malformed_output]
+    end
+
     it "raises on a value outside the normalized vocabulary" do
       error = expect { Riffer::Messages::Assistant.new("Bad", finish_reason: :bogus) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_include ":bogus"

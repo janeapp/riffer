@@ -17,7 +17,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "PROHIBITED_CONTENT" => :content_filter,
     "SPII" => :content_filter,
     "IMAGE_SAFETY" => :content_filter,
-    "MALFORMED_FUNCTION_CALL" => :error,
+    "IMAGE_PROHIBITED_CONTENT" => :content_filter,
+    "IMAGE_RECITATION" => :content_filter,
+    "LANGUAGE" => :content_filter,
+    "MALFORMED_FUNCTION_CALL" => :malformed_output,
+    "UNEXPECTED_TOOL_CALL" => :malformed_output,
+    "NO_IMAGE" => :error,
+    "TOO_MANY_TOOL_CALLS" => :other,
+    "OTHER" => :other,
+    "IMAGE_OTHER" => :other,
+    "FINISH_REASON_UNSPECIFIED" => :other,
   }.freeze #: Hash[String, Symbol]
 
   # The GenAI semconv well-known provider name.

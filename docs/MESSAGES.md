@@ -83,16 +83,18 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 
 `finish_reason` carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic's `end_turn`, OpenAI's response status, Gemini's `STOP`, …) into a normalized vocabulary:
 
-| Value             | Meaning                                                         |
-| ----------------- | --------------------------------------------------------------- |
-| `:stop`           | The model finished its turn naturally (or hit a stop sequence). |
-| `:length`         | Output was truncated at the max-token limit.                    |
-| `:tool_calls`     | The model stopped to call tools.                                |
-| `:content_filter` | A provider safety system blocked or cut the response.           |
-| `:error`          | The provider reported an error finish.                          |
-| `:other`          | A provider-specific value with no normalized equivalent.        |
+| Value               | Meaning                                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                         |
+| `:length`           | Output was truncated at the max-token limit.                                                                            |
+| `:tool_calls`       | The model stopped to call tools.                                                                                        |
+| `:content_filter`   | A provider safety system blocked or cut the response.                                                                   |
+| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.             |
+| `:malformed_output` | The model emitted output the provider could not parse, such as an invalid tool call; retry or nudge rather than backing off. |
+| `:error`            | The provider reported an error finish.                                                                                  |
+| `:other`            | A provider-specific value with no normalized equivalent.                                                                |
 
-`finish_reason` is `nil` when the provider doesn't report one. Use it to detect truncation without parsing provider responses:
+`finish_reason` is `nil` when the provider doesn't report one. The provider's raw wire value travels alongside on the `FinishReasonDone` stream event and the `riffer.finish_reason.raw` trace attribute — for OpenRouter that is the upstream model's `native_finish_reason`, and for a failed OpenAI response it is the error code. Use `finish_reason` to detect truncation without parsing provider responses:
 
 ```ruby
 response = agent.generate("Summarize this document")

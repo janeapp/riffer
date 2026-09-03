@@ -53,10 +53,19 @@ describe Riffer::Providers::OpenAI do
       expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "incomplete"]
     end
 
-    it "derives error from a failed response" do
-      response = Struct.new(:status).new(:failed)
+    it "derives error from a failed response and keeps the error code as raw" do
+      error = Struct.new(:code).new(:rate_limit_exceeded)
+      response = Struct.new(:status, :error).new(:failed, error)
+      finish_reason = provider.send(:build_finish_reason, response)
 
-      expect(provider.send(:build_finish_reason, response).reason).must_equal :error
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:error, "rate_limit_exceeded"]
+    end
+
+    it "falls back to failed as raw when a failed response carries no error code" do
+      response = Struct.new(:status, :error).new(:failed, nil)
+      finish_reason = provider.send(:build_finish_reason, response)
+
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:error, "failed"]
     end
 
     it "returns nil without a status" do

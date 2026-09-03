@@ -12,6 +12,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     "max_tokens" => :length,
     "tool_use" => :tool_calls,
     "refusal" => :content_filter,
+    "model_context_window_exceeded" => :context_window,
+    # A paused server-tool turn resumes only by re-sending the response; the
+    # agent loop does not do that, so it has no normalized equivalent.
+    "pause_turn" => :other,
   }.freeze #: Hash[String, Symbol]
 
   # Returns the XML skill adapter for Anthropic/Claude.

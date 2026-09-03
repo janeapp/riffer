@@ -148,7 +148,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     when :incomplete
       incomplete_finish_reason(typed_response)
     when :failed
-      Riffer::Providers::FinishReason.new(reason: :error, raw: "failed")
+      Riffer::Providers::FinishReason.new(reason: :error, raw: typed_response.error&.code&.to_s || "failed")
     else
       Riffer::Providers::FinishReason.new(reason: :other, raw: status.to_s)
     end

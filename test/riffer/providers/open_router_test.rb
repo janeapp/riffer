@@ -49,6 +49,26 @@ describe Riffer::Providers::OpenRouter do
       expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "model_length"]
     end
 
+    it "prefers the upstream native finish reason as raw" do
+      finish_reason = provider.send(:build_finish_reason, :tool_calls, native: "tool_use")
+
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:tool_calls, "tool_use"]
+    end
+
+    it "falls back to the normalized value as raw without a native finish reason" do
+      finish_reason = provider.send(:build_finish_reason, :stop, native: "")
+
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:stop, "stop"]
+    end
+
+    it "reads native_finish_reason from the choice's raw data" do
+      choice = Struct.new(:finish_reason, :native_finish_reason).new(:stop, "end_turn")
+      response = Struct.new(:choices).new([choice])
+      finish_reason = provider.send(:extract_finish_reason, response)
+
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:stop, "end_turn"]
+    end
+
     it "returns nil without a finish reason" do
       expect(provider.send(:build_finish_reason, nil)).must_be_nil
     end
@@ -883,6 +903,16 @@ describe Riffer::Providers::OpenRouter do
       expect(done_events.first.name).must_equal "get_weather"
       expect(done_events.first.arguments).must_equal '{"city":"Toronto"}'
       expect(done_events.first.call_id).must_equal "call_abc"
+    end
+
+    it "carries the upstream native finish reason as raw on FinishReasonDone" do
+      native_choice_struct = Struct.new(:delta, :finish_reason, :native_finish_reason)
+      chunk = chunk_struct.new(choices: [native_choice_struct.new(nil, "stop", "end_turn")], usage: nil)
+      install_chunks(provider, [chunk])
+
+      done = provider.stream_text(prompt: "hi", model: "x/y").to_a.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+
+      expect([done.finish_reason, done.raw_finish_reason]).must_equal [:stop, "end_turn"]
     end
 
     it "assigns distinct fallback ids when multiple tool calls arrive without ids" do

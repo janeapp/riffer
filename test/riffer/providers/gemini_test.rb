@@ -39,14 +39,36 @@ describe Riffer::Providers::Gemini do
       expect(provider.send(:build_finish_reason, "SAFETY", tool_calls: false).reason).must_equal :content_filter
     end
 
-    it "normalizes MALFORMED_FUNCTION_CALL to error" do
-      expect(provider.send(:build_finish_reason, "MALFORMED_FUNCTION_CALL", tool_calls: false).reason).must_equal :error
+    it "normalizes every safety-style value to content_filter" do
+      raws = %w[RECITATION BLOCKLIST PROHIBITED_CONTENT SPII IMAGE_SAFETY IMAGE_PROHIBITED_CONTENT IMAGE_RECITATION
+                LANGUAGE]
+      reasons = raws.map { |raw| provider.send(:build_finish_reason, raw, tool_calls: false).reason }.uniq
+
+      expect(reasons).must_equal [:content_filter]
+    end
+
+    it "normalizes MALFORMED_FUNCTION_CALL and UNEXPECTED_TOOL_CALL to malformed_output" do
+      raws = %w[MALFORMED_FUNCTION_CALL UNEXPECTED_TOOL_CALL]
+      reasons = raws.map { |raw| provider.send(:build_finish_reason, raw, tool_calls: false).reason }.uniq
+
+      expect(reasons).must_equal [:malformed_output]
+    end
+
+    it "normalizes NO_IMAGE to error" do
+      expect(provider.send(:build_finish_reason, "NO_IMAGE", tool_calls: false).reason).must_equal :error
+    end
+
+    it "normalizes catch-all values to other" do
+      raws = %w[TOO_MANY_TOOL_CALLS OTHER IMAGE_OTHER FINISH_REASON_UNSPECIFIED]
+      reasons = raws.map { |raw| provider.send(:build_finish_reason, raw, tool_calls: false).reason }.uniq
+
+      expect(reasons).must_equal [:other]
     end
 
     it "normalizes unknown values to other and keeps the raw value" do
-      finish_reason = provider.send(:build_finish_reason, "LANGUAGE", tool_calls: false)
+      finish_reason = provider.send(:build_finish_reason, "MYSTERY", tool_calls: false)
 
-      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "LANGUAGE"]
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "MYSTERY"]
     end
 
     it "returns nil without a finish reason" do

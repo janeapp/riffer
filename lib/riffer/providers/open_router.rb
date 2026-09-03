@@ -133,18 +133,30 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(response)
     typed_response = response #: OpenAI::Models::Chat::ChatCompletion
-    build_finish_reason(typed_response.choices.first&.finish_reason)
+    choice = typed_response.choices.first
+    build_finish_reason(choice&.finish_reason, native: native_finish_reason(choice))
   end
 
+  # +native+ is the upstream model's own finish reason, which OpenRouter
+  # reports alongside its normalized one; it wins as +raw+ when present.
   #--
-  #: (untyped) -> Riffer::Providers::FinishReason?
-  def build_finish_reason(finish_reason)
+  #: (untyped, ?native: untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason(finish_reason, native: nil)
     return nil unless finish_reason
 
-    raw = finish_reason.to_s
-    return nil if raw.empty?
+    normalized = finish_reason.to_s
+    return nil if normalized.empty?
 
-    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
+    raw = native.to_s.empty? ? normalized : native.to_s
+    Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(normalized, :other), raw: raw)
+  end
+
+  # +native_finish_reason+ is outside the OpenAI schema, so it is only
+  # reachable through the SDK model's raw data hash.
+  #--
+  #: (untyped) -> untyped
+  def native_finish_reason(choice)
+    choice && choice.to_h[:native_finish_reason]
   end
 
   #--
@@ -187,6 +199,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       reasoning: +"",
       tool_calls: {},
       finish_reason: nil,
+      native_finish_reason: nil,
     } #: Hash[Symbol, untyped]
 
     # Use stream_raw (not stream) — the latter yields a higher-level
@@ -211,7 +224,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     yielder << Riffer::StreamEvents::TextDone.new(state[:text]) unless state[:text].empty?
     yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning]) unless state[:reasoning].empty?
-    yield_finish_reason(yielder, build_finish_reason(state[:finish_reason]))
+    yield_finish_reason(yielder, build_finish_reason(state[:finish_reason], native: state[:native_finish_reason]))
   end
 
   #--
@@ -228,6 +241,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     end
 
     state[:finish_reason] = choice.finish_reason if choice&.finish_reason
+    state[:native_finish_reason] = native_finish_reason(choice) || state[:native_finish_reason]
 
     emit_tool_call_done_events(state: state, yielder: yielder) if choice && finish_reason_is_tool_calls?(choice)
 

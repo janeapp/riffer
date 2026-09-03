@@ -153,7 +153,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | `gen_ai.output.messages`                   | string   | When `capture_messages` is on (JSON)                                          |
 | `error.type`                               | string   | On an unhandled exception                                                     |
 
-`gen_ai.response.finish_reasons` is an array of exactly one normalized value, from the fixed vocabulary `stop`, `length`, `tool_calls`, `content_filter`, `error`, `other`. When the provider's raw wire value carries more nuance than the normalized one, the raw string is preserved on `riffer.finish_reason.raw`.
+`gen_ai.response.finish_reasons` is an array of exactly one normalized value, from the fixed vocabulary `stop`, `length`, `tool_calls`, `content_filter`, `context_window`, `malformed_output`, `error`, `other`. When the provider's raw wire value carries more nuance than the normalized one, the raw string is preserved on `riffer.finish_reason.raw`.
 
 ## `execute_tool {tool}` — the tool call span
 

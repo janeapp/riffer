@@ -17,6 +17,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "tool_use" => :tool_calls,
     "guardrail_intervened" => :content_filter,
     "content_filtered" => :content_filter,
+    "malformed_model_output" => :malformed_output,
+    "malformed_tool_use" => :malformed_output,
+    "model_context_window_exceeded" => :context_window,
   }.freeze #: Hash[String, Symbol]
 
   # Returns the skill adapter for the Bedrock model — XML for Anthropic models
