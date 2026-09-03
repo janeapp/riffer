@@ -74,6 +74,29 @@ describe Riffer::Providers::OpenAI do
       expect(provider.send(:build_finish_reason, response)).must_be_nil
     end
 
+    it "maps each status without a nested detail, keeping the status as raw" do
+      derived = %w[completed failed cancelled in_progress queued].to_h do |status|
+        response = Struct.new(:status, :output, :error).new(status.to_sym, [], nil)
+        finish_reason = provider.send(:build_finish_reason, response)
+        [status, [finish_reason.reason, finish_reason.raw]]
+      end
+
+      expect(derived).must_equal(
+        "completed" => [:stop, "completed"],
+        "failed" => [:error, "failed"],
+        "cancelled" => [:other, "cancelled"],
+        "in_progress" => [:other, "in_progress"],
+        "queued" => [:other, "queued"],
+      )
+    end
+
+    it "covers every response status the SDK defines" do
+      provider # loads the openai gem, which the provider requires lazily
+      statuses = OpenAI::Models::Responses::ResponseStatus.values.map(&:to_s)
+
+      expect(Riffer::Providers::OpenAI::FINISH_REASONS.keys.sort).must_equal statuses.sort
+    end
+
     it "extracts the finish reason when generating" do
       VCR.use_cassette("Riffer_Providers_OpenAI/_generate_text/when_prompt_is_provided/returns_an_Assistant_message") do
         result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini")
