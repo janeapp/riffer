@@ -5,6 +5,21 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
+  # The Responses API has no finish_reason field. The response +status+ is
+  # the primary signal; an +incomplete+ status is only meaningful together
+  # with <tt>incomplete_details.reason</tt>, so that branch nests one level.
+  FINISH_REASONS = {
+    "completed" => :stop,
+    "incomplete" => {
+      "max_output_tokens" => :length,
+      "content_filter" => :content_filter,
+    },
+    "failed" => :error,
+    "cancelled" => :other,
+    "in_progress" => :other,
+    "queued" => :other,
+  }.freeze #: Hash[String, Symbol | Hash[String, Symbol]]
+
   # The GenAI semconv well-known provider name.
   #--
   #: () -> String
@@ -133,40 +148,32 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     build_finish_reason(response)
   end
 
-  # The Responses API reports no finish_reason field, so one is derived.
   #--
   #: (untyped) -> Riffer::Providers::FinishReason?
   def build_finish_reason(response)
     typed_response = response #: OpenAI::Models::Responses::Response
-    status = typed_response.status
+    status = typed_response.status&.to_s
     return nil unless status
 
-    case status.to_sym
-    when :completed
-      reason = extract_tool_calls(typed_response).empty? ? :stop : :tool_calls
-      Riffer::Providers::FinishReason.new(reason: reason, raw: "completed")
-    when :incomplete
-      incomplete_finish_reason(typed_response)
-    when :failed
-      Riffer::Providers::FinishReason.new(reason: :error, raw: "failed")
-    else
-      Riffer::Providers::FinishReason.new(reason: :other, raw: status.to_s)
-    end
+    detail = finish_detail(typed_response, status)
+    mapping = FINISH_REASONS.fetch(status, :other)
+    reason = mapping.is_a?(Hash) ? mapping.fetch(detail.to_s, :other) : mapping
+    # A completed response signals tool use only through its output items.
+    reason = :tool_calls if reason == :stop && !extract_tool_calls(typed_response).empty?
+
+    Riffer::Providers::FinishReason.new(reason: reason, raw: detail || status)
   end
 
+  # The nested field that names the cause behind an ambiguous status.
   #--
-  #: (untyped) -> Riffer::Providers::FinishReason
-  def incomplete_finish_reason(response)
+  #: (untyped, String) -> String?
+  def finish_detail(response, status)
     typed_response = response #: OpenAI::Models::Responses::Response
-    raw = typed_response.incomplete_details&.reason&.to_s
 
-    reason = case raw
-             when "max_output_tokens" then :length
-             when "content_filter" then :content_filter
-             else :other
-             end
-
-    Riffer::Providers::FinishReason.new(reason: reason, raw: raw || "incomplete")
+    case status
+    when "incomplete" then typed_response.incomplete_details&.reason&.to_s
+    when "failed" then typed_response.error&.code&.to_s
+    end
   end
 
   #--

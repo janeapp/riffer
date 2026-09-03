@@ -5,7 +5,7 @@
 # wire value. +reason+ carries the same meaning for every provider.
 class Riffer::Providers::FinishReason
   # The normalized vocabulary every provider maps into.
-  VALUES = %i[stop length tool_calls content_filter error other].freeze #: Array[Symbol]
+  VALUES = %i[stop length tool_calls content_filter context_window malformed_output error other].freeze #: Array[Symbol]
 
   # The normalized reason.
   attr_reader :reason #: Symbol

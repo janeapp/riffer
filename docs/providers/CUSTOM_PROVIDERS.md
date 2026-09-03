@@ -252,7 +252,7 @@ Riffer::StreamEvents::FinishReasonDone.new(
 
 ## Finish Reasons
 
-`Riffer::Providers::FinishReason` is the same kind of normalized contract — map your provider's raw finish/stop value into the vocabulary defined in [Messages — Finish Reasons](../MESSAGES.md#finish-reasons) (`:stop`, `:length`, `:tool_calls`, `:content_filter`, `:error`, `:other`), keeping the raw wire value alongside:
+`Riffer::Providers::FinishReason` is the same kind of normalized contract — map your provider's raw finish/stop value into the vocabulary defined in [Messages — Finish Reasons](../MESSAGES.md#finish-reasons) (`:stop`, `:length`, `:tool_calls`, `:content_filter`, `:context_window`, `:malformed_output`, `:error`, `:other`), keeping the raw wire value alongside:
 
 ```ruby
 def extract_finish_reason(response)

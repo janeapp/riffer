@@ -57,9 +57,17 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
+  # +native+ is the upstream model's own finish reason, which OpenRouter
+  # reports alongside its normalized one; it wins as +raw+ when present.
   # --
-  # : (untyped) -> Riffer::Providers::FinishReason?
-  def build_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
+  # : (untyped, ?native: untyped) -> Riffer::Providers::FinishReason?
+  def build_finish_reason: (untyped, ?native: untyped) -> Riffer::Providers::FinishReason?
+
+  # +native_finish_reason+ is outside the OpenAI schema, so it is only
+  # reachable through the SDK model's raw data hash.
+  # --
+  # : (untyped) -> untyped
+  def native_finish_reason: (untyped) -> untyped
 
   # --
   # : (untyped) -> String

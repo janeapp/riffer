@@ -53,10 +53,20 @@ describe Riffer::Providers::Anthropic do
       expect(provider.send(:build_finish_reason, :refusal).reason).must_equal :content_filter
     end
 
-    it "normalizes unknown values to other and keeps the raw value" do
+    it "normalizes model_context_window_exceeded to context_window" do
+      expect(provider.send(:build_finish_reason, :model_context_window_exceeded).reason).must_equal :context_window
+    end
+
+    it "normalizes pause_turn to other and keeps the raw value" do
       finish_reason = provider.send(:build_finish_reason, :pause_turn)
 
       expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "pause_turn"]
+    end
+
+    it "normalizes unknown values to other and keeps the raw value" do
+      finish_reason = provider.send(:build_finish_reason, :mystery)
+
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "mystery"]
     end
 
     it "returns nil without a stop reason" do

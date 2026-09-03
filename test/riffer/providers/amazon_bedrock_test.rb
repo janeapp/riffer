@@ -48,6 +48,18 @@ describe Riffer::Providers::AmazonBedrock do
       expect(provider.send(:build_finish_reason, "content_filtered").reason).must_equal :content_filter
     end
 
+    it "normalizes malformed_model_output to malformed_output" do
+      expect(provider.send(:build_finish_reason, "malformed_model_output").reason).must_equal :malformed_output
+    end
+
+    it "normalizes malformed_tool_use to malformed_output" do
+      expect(provider.send(:build_finish_reason, "malformed_tool_use").reason).must_equal :malformed_output
+    end
+
+    it "normalizes model_context_window_exceeded to context_window" do
+      expect(provider.send(:build_finish_reason, "model_context_window_exceeded").reason).must_equal :context_window
+    end
+
     it "normalizes unknown values to other and keeps the raw value" do
       finish_reason = provider.send(:build_finish_reason, "mystery")
 

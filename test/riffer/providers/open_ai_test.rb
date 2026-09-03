@@ -53,16 +53,48 @@ describe Riffer::Providers::OpenAI do
       expect([finish_reason.reason, finish_reason.raw]).must_equal [:other, "incomplete"]
     end
 
-    it "derives error from a failed response" do
-      response = Struct.new(:status).new(:failed)
+    it "derives error from a failed response and keeps the error code as raw" do
+      error = Struct.new(:code).new(:rate_limit_exceeded)
+      response = Struct.new(:status, :error).new(:failed, error)
+      finish_reason = provider.send(:build_finish_reason, response)
 
-      expect(provider.send(:build_finish_reason, response).reason).must_equal :error
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:error, "rate_limit_exceeded"]
+    end
+
+    it "falls back to failed as raw when a failed response carries no error code" do
+      response = Struct.new(:status, :error).new(:failed, nil)
+      finish_reason = provider.send(:build_finish_reason, response)
+
+      expect([finish_reason.reason, finish_reason.raw]).must_equal [:error, "failed"]
     end
 
     it "returns nil without a status" do
       response = Struct.new(:status).new(nil)
 
       expect(provider.send(:build_finish_reason, response)).must_be_nil
+    end
+
+    it "maps each status without a nested detail, keeping the status as raw" do
+      derived = %w[completed failed cancelled in_progress queued].to_h do |status|
+        response = Struct.new(:status, :output, :error).new(status.to_sym, [], nil)
+        finish_reason = provider.send(:build_finish_reason, response)
+        [status, [finish_reason.reason, finish_reason.raw]]
+      end
+
+      expect(derived).must_equal(
+        "completed" => [:stop, "completed"],
+        "failed" => [:error, "failed"],
+        "cancelled" => [:other, "cancelled"],
+        "in_progress" => [:other, "in_progress"],
+        "queued" => [:other, "queued"],
+      )
+    end
+
+    it "covers every response status the SDK defines" do
+      provider # loads the openai gem, which the provider requires lazily
+      statuses = OpenAI::Models::Responses::ResponseStatus.values.map(&:to_s)
+
+      expect(Riffer::Providers::OpenAI::FINISH_REASONS.keys.sort).must_equal statuses.sort
     end
 
     it "extracts the finish reason when generating" do

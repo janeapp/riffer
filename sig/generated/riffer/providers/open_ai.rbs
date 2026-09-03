@@ -4,6 +4,11 @@
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
+  # The Responses API has no finish_reason field. The response +status+ is
+  # the primary signal; an +incomplete+ status is only meaningful together
+  # with <tt>incomplete_details.reason</tt>, so that branch nests one level.
+  FINISH_REASONS: Hash[String, Symbol | Hash[String, Symbol]]
+
   # The GenAI semconv well-known provider name.
   # --
   # : () -> String
@@ -50,14 +55,14 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
-  # The Responses API reports no finish_reason field, so one is derived.
   # --
   # : (untyped) -> Riffer::Providers::FinishReason?
   def build_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
+  # The nested field that names the cause behind an ambiguous status.
   # --
-  # : (untyped) -> Riffer::Providers::FinishReason
-  def incomplete_finish_reason: (untyped) -> Riffer::Providers::FinishReason
+  # : (untyped, String) -> String?
+  def finish_detail: (untyped, String) -> String?
 
   # --
   # : (untyped) -> String
