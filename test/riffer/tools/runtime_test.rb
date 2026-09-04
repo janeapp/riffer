@@ -598,6 +598,31 @@ describe Riffer::Tools::Runtime::Fibers do
     expect(results.length).must_equal 3
     expect(seen.uniq.length).must_equal 3
   end
+
+  it "returns every tool result inside a running reactor" do
+    slow_tool = stub_tool("SlowishTool") do
+      description "Sleeps then responds"
+
+      def call(context:, **)
+        sleep 0.01
+        text("done")
+      end
+    end
+
+    runtime = Riffer::Tools::Runtime::Fibers.new
+    tool_calls = Array.new(3) do |i|
+      Riffer::Messages::Assistant::ToolCall.new(
+        call_id: "cid_#{i}", name: "slowish_tool", arguments: "{}",
+      )
+    end
+
+    Async do
+      results = runtime.execute(tool_calls, tools: [slow_tool], context: nil)
+
+      expect(results.length).must_equal 3
+      expect(results.compact.map { |(_, response)| response.content }).must_equal %w[done done done]
+    end
+  end
 end
 
 describe Riffer::Tools::Runtime::Threaded do

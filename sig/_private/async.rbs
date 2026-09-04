@@ -10,6 +10,8 @@ module Async
     def async: () { () -> void } -> untyped
 
     def wait: () -> void
+
+    def stop: () -> void
   end
 
   class Semaphore
@@ -21,4 +23,6 @@ end
 
 module Kernel
   def Async: () { () -> void } -> untyped
+
+  def Sync: () { () -> void } -> untyped
 end
