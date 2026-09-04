@@ -4,6 +4,8 @@
 # +max_concurrency+ caps simultaneous fibers via an <tt>Async::Semaphore</tt>.
 # If multiple fibers raise, only the first exception is re-raised after all
 # finish.
+# Joins the current reactor task when one is already running, and otherwise
+# starts its own.
 class Riffer::Runner::Fibers < Riffer::Runner
   @max_concurrency: Integer?
 

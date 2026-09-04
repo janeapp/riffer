@@ -220,6 +220,8 @@ end
 
 Fibers use cooperative scheduling — they yield control at I/O boundaries (network calls, file reads, sleep). CPU-bound tools will not benefit from the fibers runtime. Be mindful of fiber-local state (`Fiber.[]`) and note that `Thread.current[]` values are shared across all fibers in the same thread.
 
+The fibers runtime is safe to use inside an existing reactor. When called from plain Ruby it starts its own reactor and blocks until every tool call finishes. When the process is already inside an Async task — for example under Falcon, or inside an `Async do ... end` block — it joins the current task instead of starting a nested reactor, so it is safe to call from request handlers.
+
 ### Custom Runtimes
 
 Create a custom runtime by subclassing `Riffer::Tools::Runtime` and overriding the private `dispatch_tool_call` method:
