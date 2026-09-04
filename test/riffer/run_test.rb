@@ -212,6 +212,96 @@ describe Riffer::Agent::Run do
     end
   end
 
+  describe "#generate outcome" do
+    let(:schema_agent_class) do
+      stub_agent("Agent") do
+        model "mock/riffer-1"
+        structured_output do
+          required :a, Integer
+        end
+      end
+    end
+
+    it "is :completed with nil detail when the run finishes normally" do
+      result = agent_class.generate("Hello")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:completed, nil]
+    end
+
+    it "is :completed with structured_output populated when the schema validates" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response('{"a": 1}')
+      result = agent.generate("Go")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:completed, nil]
+      expect(result.structured_output).must_equal({ a: 1 })
+    end
+
+    it "is :invalid_structured_output with the validation error when a required key is missing" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response('{"b": 1}')
+      result = agent.generate("Go")
+
+      expect(result.structured_output).must_be_nil
+      expect(result.outcome.reason).must_equal :invalid_structured_output
+      expect(result.outcome.detail).must_include "a is required"
+    end
+
+    it "is :invalid_structured_output with the parse error when the content is not JSON" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response("not json")
+      result = agent.generate("Go")
+
+      expect(result.structured_output).must_be_nil
+      expect(result.outcome.reason).must_equal :invalid_structured_output
+      expect(result.outcome.detail).must_match(/\AJSON parse error/)
+    end
+
+    it "is :guardrail_blocked with the tripwire reason" do
+      klass = stub_agent("Agent") do
+        model "mock/riffer-1"
+      end
+      klass.guardrail(:before, with: RunTracingBlockingInputGuardrail)
+      result = klass.generate("Hello")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:guardrail_blocked, "Input blocked"]
+    end
+
+    it "is :interrupted with the interrupt reason" do
+      agent = agent_class.new
+      agent.session.on_message { |_msg| agent.interrupt!("needs approval") }
+      result = agent.generate("Hello")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:interrupted, "needs approval"]
+    end
+
+    it "is :interrupted with nil detail when no reason is given" do
+      agent = agent_class.new
+      agent.session.on_message { |_msg| agent.interrupt! }
+      result = agent.generate("Hello")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:interrupted, nil]
+    end
+
+    it "reports the provider finish reason ahead of a structured output failure" do
+      agent = schema_agent_class.new
+      agent.provider.stub_response('{"b": 1}', finish_reason: :length)
+      result = agent.generate("Go")
+
+      expect(result.structured_output).must_be_nil
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:length, nil]
+    end
+
+    it "reports the interrupt ahead of the provider finish reason" do
+      agent = agent_class.new
+      agent.provider.stub_response("Truncated", finish_reason: :length)
+      agent.session.on_message { |_msg| agent.interrupt!("stop") }
+      result = agent.generate("Hello")
+
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:interrupted, "stop"]
+    end
+  end
+
   describe "#stream with structured_output" do
     it "raises ArgumentError when class-level structured_output is configured" do
       klass = stub_agent("Agent") do
@@ -281,7 +371,7 @@ describe Riffer::Agent::Run do
     it "response is not blocked without guardrails" do
       result = agent_class.generate("Hello")
 
-      expect(result.blocked?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
     end
 
     it "response content is accessible" do
@@ -303,7 +393,7 @@ describe Riffer::Agent::Run do
       it "returns blocked response" do
         result = agent_with_blocking_input.generate("Hello")
 
-        expect(result.blocked?).must_equal true
+        expect(result.outcome.reason).must_equal :guardrail_blocked
       end
 
       it "has tripwire with reason" do
@@ -350,7 +440,7 @@ describe Riffer::Agent::Run do
       it "returns blocked response" do
         result = agent_with_blocking_output.generate("Hello")
 
-        expect(result.blocked?).must_equal true
+        expect(result.outcome.reason).must_equal :guardrail_blocked
       end
 
       it "has tripwire with after phase" do
@@ -393,7 +483,7 @@ describe Riffer::Agent::Run do
       it "returns unblocked response" do
         result = agent_with_transform.generate("Hello")
 
-        expect(result.blocked?).must_equal false
+        expect(result.outcome.reason).must_equal :completed
       end
 
       it "response is modified" do
@@ -829,7 +919,7 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Call tool")
 
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
       tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 1
@@ -925,7 +1015,7 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Call tools")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
       expect(result.healed_tool_call_ids.length).must_equal 2
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       tools = agent.session.messages.grep(Riffer::Messages::Tool)
@@ -952,7 +1042,7 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Call tools")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
       expect(result.healed_tool_call_ids).must_equal []
       expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
     end
@@ -1013,8 +1103,7 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Loop forever")
 
-      expect(result.interrupted?).must_equal true
-      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.outcome.reason).must_equal :max_steps
       expect(result.healed_tool_call_ids.length).must_equal 1
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       synth = agent.session.messages.last
@@ -1038,8 +1127,7 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Loop forever")
 
-      expect(result.interrupted?).must_equal true
-      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.outcome.reason).must_equal :max_steps
       expect(result.healed_tool_call_ids).must_equal []
       expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
     end
@@ -1106,7 +1194,7 @@ describe Riffer::Agent::Run do
       agent.provider.stub_response("All done!")
       result = agent.generate
 
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
     end
   end
 
@@ -1773,7 +1861,7 @@ describe Riffer::Agent::Run do
         expect(result.content).must_equal "I need a tool"
       end
 
-      it "sets interrupted? to true when limit is reached" do
+      it "sets the outcome reason to :max_steps when limit is reached" do
         tc = tool_class
         custom_agent_class = stub_agent("CustomAgent") do
           model "mock/riffer-1"
@@ -1787,24 +1875,7 @@ describe Riffer::Agent::Run do
 
         result = agent.generate("Do stuff")
 
-        expect(result.interrupted?).must_equal true
-      end
-
-      it "sets interrupt_reason to :max_steps when limit is reached" do
-        tc = tool_class
-        custom_agent_class = stub_agent("CustomAgent") do
-          model "mock/riffer-1"
-          max_steps 1
-          uses_tools [tc]
-        end
-
-        agent = custom_agent_class.new
-        provider = agent.provider
-        provider.stub_response("", tool_calls: [{ name: "max_steps_tool", arguments: "{}" }])
-
-        result = agent.generate("Do stuff")
-
-        expect(result.interrupt_reason).must_equal :max_steps
+        expect([result.outcome.reason, result.outcome.detail]).must_equal [:max_steps, nil]
       end
     end
 
@@ -2306,12 +2377,12 @@ describe Riffer::Agent::Run do
   end
 
   describe "interruptible callbacks with #generate" do
-    it "returns response with interrupted? true" do
+    it "returns response with an :interrupted outcome" do
       agent = agent_class.new
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
     end
 
     it "returns accumulated content" do
@@ -2327,16 +2398,16 @@ describe Riffer::Agent::Run do
       agent.session.on_message { |_msg| throw :riffer_interrupt, "needs approval" }
       result = agent.generate("Hello")
 
-      expect(result.interrupted?).must_equal true
-      expect(result.interrupt_reason).must_equal "needs approval"
+      expect(result.outcome.reason).must_equal :interrupted
+      expect(result.outcome.detail).must_equal "needs approval"
     end
 
-    it "returns nil interrupt_reason when no reason given" do
+    it "returns nil outcome detail when no reason given" do
       agent = agent_class.new
       agent.session.on_message { |_msg| throw :riffer_interrupt }
       result = agent.generate("Hello")
 
-      expect(result.interrupt_reason).must_be_nil
+      expect(result.outcome.detail).must_be_nil
     end
 
     describe "throw during tool execution" do
@@ -2377,14 +2448,14 @@ describe Riffer::Agent::Run do
 
         result = agent.generate("Call tools")
 
-        expect(result.interrupted?).must_equal true
+        expect(result.outcome.reason).must_equal :interrupted
         tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 1
 
         result = agent.generate("Continue")
 
-        expect(result.interrupted?).must_equal false
+        expect(result.outcome.reason).must_equal :completed
         tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 2
@@ -2418,14 +2489,14 @@ describe Riffer::Agent::Run do
 
         result = agent.generate("Call tools")
 
-        expect(result.interrupted?).must_equal true
+        expect(result.outcome.reason).must_equal :interrupted
         tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 0
 
         result = agent.generate("Continue")
 
-        expect(result.interrupted?).must_equal false
+        expect(result.outcome.reason).must_equal :completed
         tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
         expect(tool_messages.length).must_equal 2
@@ -2450,15 +2521,15 @@ describe Riffer::Agent::Run do
         agent.session.on_message { |_msg| agent.interrupt! }
         result = agent.generate("Hello")
 
-        expect(result.interrupted?).must_equal true
+        expect(result.outcome.reason).must_equal :interrupted
       end
 
-      it "passes reason to interrupt_reason" do
+      it "passes reason to the outcome detail" do
         agent = agent_class.new
         agent.session.on_message { |_msg| agent.interrupt!(:needs_approval) }
         result = agent.generate("Hello")
 
-        expect(result.interrupt_reason).must_equal :needs_approval
+        expect(result.outcome.detail).must_equal "needs_approval"
       end
 
       it "defaults reason to nil" do
@@ -2466,7 +2537,7 @@ describe Riffer::Agent::Run do
         agent.session.on_message { |_msg| agent.interrupt! }
         result = agent.generate("Hello")
 
-        expect(result.interrupt_reason).must_be_nil
+        expect(result.outcome.detail).must_be_nil
       end
     end
   end
@@ -2478,7 +2549,7 @@ describe Riffer::Agent::Run do
       result = agent.generate("Continue")
 
       expect(result).must_be_instance_of Riffer::Agent::Response
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
     end
 
     it "returns a Response" do
@@ -2508,10 +2579,10 @@ describe Riffer::Agent::Run do
       agent.generate("Hello")
       result = agent.generate("Continue")
 
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
     end
 
-    it "returns nil interrupt_reason on successful resume" do
+    it "returns a :completed outcome on successful resume" do
       agent = agent_class.new
       interrupted_once = false
       agent.session.on_message do |_msg|
@@ -2523,7 +2594,7 @@ describe Riffer::Agent::Run do
       agent.generate("Hello")
       result = agent.generate("Continue")
 
-      expect(result.interrupt_reason).must_be_nil
+      expect([result.outcome.reason, result.outcome.detail]).must_equal [:completed, nil]
     end
 
     it "preserves messages from original generate" do
@@ -2598,11 +2669,11 @@ describe Riffer::Agent::Run do
 
         result = agent.generate("What's the weather?")
 
-        expect(result.interrupted?).must_equal true
+        expect(result.outcome.reason).must_equal :interrupted
 
         result = agent.generate("Continue")
 
-        expect(result.interrupted?).must_equal false
+        expect(result.outcome.reason).must_equal :completed
         expect(result.content).must_equal "The weather is nice!"
       end
     end
@@ -2624,7 +2695,7 @@ describe Riffer::Agent::Run do
         agent = agent_class.new(session: Riffer::Agent::Session.new(messages: [Riffer::Messages::User.new("Hello")]))
         result = agent.generate
 
-        expect(result.interrupted?).must_equal false
+        expect(result.outcome.reason).must_equal :completed
       end
 
       it "accepts a new prompt to continue the seeded conversation" do
@@ -2724,7 +2795,7 @@ describe Riffer::Agent::Run do
 
         result = agent.generate
 
-        expect(result.interrupted?).must_equal false
+        expect(result.outcome.reason).must_equal :completed
 
         tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
@@ -2773,13 +2844,12 @@ describe Riffer::Agent::Run do
 
         result = agent.generate("Do stuff")
 
-        expect(result.interrupted?).must_equal true
+        expect(result.outcome.reason).must_equal :interrupted
 
         # Resume via generate with array: step offset is auto-derived from assistant messages
         result = agent.generate("Continue")
 
-        expect(result.interrupted?).must_equal true
-        expect(result.interrupt_reason).must_equal :max_steps
+        expect(result.outcome.reason).must_equal :max_steps
       end
 
       it "enforces max_steps on cross-process resume via message counting" do
@@ -2806,8 +2876,7 @@ describe Riffer::Agent::Run do
 
         result = agent.generate
 
-        expect(result.interrupted?).must_equal true
-        expect(result.interrupt_reason).must_equal :max_steps
+        expect(result.outcome.reason).must_equal :max_steps
       end
     end
 
@@ -2986,11 +3055,11 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Hello")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
 
       result = agent.generate("Continue please")
 
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
       user_messages = agent.session.messages.grep(Riffer::Messages::User)
 
       expect(user_messages.length).must_equal 2
@@ -3031,14 +3100,14 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Call tools")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
       tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 1
 
       result = agent.generate("Go ahead")
 
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
       tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 2
@@ -3073,12 +3142,11 @@ describe Riffer::Agent::Run do
 
       result = agent.generate("Do stuff")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
 
       result = agent.generate("Continue")
 
-      expect(result.interrupted?).must_equal true
-      expect(result.interrupt_reason).must_equal :max_steps
+      expect(result.outcome.reason).must_equal :max_steps
     end
 
     it "continues conversation with stream" do
@@ -3457,6 +3525,36 @@ describe Riffer::Agent::Run do
       generate_with_tool_loop(agent_with_max_steps.new)
 
       expect(run_span.attributes["riffer.interrupt.reason"]).must_equal "max_steps"
+    end
+
+    it "records the outcome reason on a completed run" do
+      agent_class.new.generate("Hello")
+
+      expect(run_span.attributes["riffer.outcome.reason"]).must_equal "completed"
+    end
+
+    it "omits the outcome detail when there is none" do
+      agent_class.new.generate("Hello")
+
+      expect(run_span.attributes).wont_include "riffer.outcome.detail"
+    end
+
+    it "records the outcome reason and detail on an interrupt" do
+      agent = agent_class.new
+      agent.session.on_message { |msg| agent.interrupt!("approval needed") if msg.is_a?(Riffer::Messages::Assistant) }
+      agent.generate("Hello")
+
+      expect(run_span.attributes.slice("riffer.outcome.reason", "riffer.outcome.detail")).must_equal(
+        { "riffer.outcome.reason" => "interrupted", "riffer.outcome.detail" => "approval needed" },
+      )
+    end
+
+    it "omits the interrupt reason on an interrupt without one" do
+      agent = agent_class.new
+      agent.session.on_message { |msg| agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) }
+      agent.generate("Hello")
+
+      expect(run_span.attributes).wont_include "riffer.interrupt.reason"
     end
 
     it "keeps the span status unset on interrupts" do

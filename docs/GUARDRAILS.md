@@ -28,10 +28,10 @@ class MyAgent < Riffer::Agent
 end
 
 response = MyAgent.generate("Hello!")
-response.blocked?  # => false
+response.outcome.reason    # => :completed
 
 response = MyAgent.generate("You are a badword")
-response.blocked?          # => true
+response.outcome.reason    # => :guardrail_blocked
 response.tripwire.reason   # => "Profanity detected"
 ```
 
@@ -195,7 +195,7 @@ end
 response = MyAgent.generate("Hello")
 
 response.content        # The response text
-response.blocked?       # true if a guardrail blocked execution
+response.outcome.reason # :guardrail_blocked if a guardrail blocked execution
 response.tripwire       # Tripwire object with block details (if blocked)
 response.modified?      # true if any guardrail transformed data
 response.modifications  # Array of Modification records
@@ -206,7 +206,7 @@ response.modifications  # Array of Modification records
 ```ruby
 response = MyAgent.generate("Hello")
 
-if response.blocked?
+if response.outcome.reason == :guardrail_blocked
   puts "Blocked: #{response.tripwire.reason}"
   puts "Phase: #{response.tripwire.phase}"
   puts "Guardrail: #{response.tripwire.guardrail}"

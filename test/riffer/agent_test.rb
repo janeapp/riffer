@@ -965,7 +965,7 @@ describe Riffer::Agent do
 
       result = agent.generate("Call tools")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
       expect(result.healed_tool_call_ids.length).must_equal 2
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       tools = agent.session.messages.grep(Riffer::Messages::Tool)
@@ -992,7 +992,7 @@ describe Riffer::Agent do
 
       result = agent.generate("Call tools")
 
-      expect(result.interrupted?).must_equal true
+      expect(result.outcome.reason).must_equal :interrupted
       expect(result.healed_tool_call_ids).must_equal []
       expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
     end
@@ -1052,8 +1052,7 @@ describe Riffer::Agent do
 
       result = agent.generate("Loop forever")
 
-      expect(result.interrupted?).must_equal true
-      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.outcome.reason).must_equal :max_steps
       expect(result.healed_tool_call_ids.length).must_equal 1
       expect(agent.session.orphaned_tool_call_ids).must_equal []
       synth = agent.session.messages.last
@@ -1077,8 +1076,7 @@ describe Riffer::Agent do
 
       result = agent.generate("Loop forever")
 
-      expect(result.interrupted?).must_equal true
-      expect(result.interrupt_reason).must_equal Riffer::Agent::INTERRUPT_MAX_STEPS
+      expect(result.outcome.reason).must_equal :max_steps
       expect(result.healed_tool_call_ids).must_equal []
       expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
     end
@@ -1144,7 +1142,7 @@ describe Riffer::Agent do
       agent.provider.stub_response("All done!")
       result = agent.generate
 
-      expect(result.interrupted?).must_equal false
+      expect(result.outcome.reason).must_equal :completed
     end
   end
 end

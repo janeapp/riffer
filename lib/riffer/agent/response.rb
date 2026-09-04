@@ -1,29 +1,28 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Wraps an agent generation response. When a guardrail blocks execution,
-# +content+ is empty and +tripwire+ carries the block details.
+# Wraps an agent generation response. +outcome+ says how the run ended; when a
+# guardrail blocks execution, +content+ is empty and +tripwire+ carries the
+# block details.
 #
 #   response = agent.generate("Hello")
-#   if response.blocked?
-#     puts "Blocked: #{response.tripwire.reason}"
-#   else
+#   if response.outcome.success?
 #     puts response.content
+#   else
+#     puts "#{response.outcome.reason}: #{response.outcome.detail}"
 #   end
 class Riffer::Agent::Response
-  # @rbs @interrupted: bool
-
   # The response content.
   attr_reader :content #: String
+
+  # How the run ended.
+  attr_reader :outcome #: Riffer::Agent::Outcome
 
   # The tripwire if execution was blocked.
   attr_reader :tripwire #: Riffer::Guardrails::Tripwire?
 
   # The modifications made by guardrails during processing.
   attr_reader :modifications #: Array[Riffer::Guardrails::Modification]
-
-  # The reason provided with the interrupt, if any.
-  attr_reader :interrupt_reason #: (String | Symbol)?
 
   # The parsed structured output, if structured output was configured.
   attr_reader :structured_output #: Hash[Symbol, untyped]?
@@ -45,10 +44,9 @@ class Riffer::Agent::Response
   #--
   #: (
   #    String,
+  #    outcome: Riffer::Agent::Outcome,
   #    ?tripwire: Riffer::Guardrails::Tripwire?,
   #    ?modifications: Array[Riffer::Guardrails::Modification],
-  #    ?interrupted: bool,
-  #    ?interrupt_reason: (String | Symbol)?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?messages: Array[Riffer::Messages::Base],
   #    ?healed_tool_call_ids: Array[String],
@@ -57,10 +55,9 @@ class Riffer::Agent::Response
   #  ) -> void
   def initialize(
     content,
+    outcome:,
     tripwire: nil,
     modifications: [],
-    interrupted: false,
-    interrupt_reason: nil,
     structured_output: nil,
     messages: [],
     healed_tool_call_ids: [],
@@ -68,23 +65,14 @@ class Riffer::Agent::Response
     steps: 0
   )
     @content = content
+    @outcome = outcome
     @tripwire = tripwire
     @modifications = modifications
-    @interrupted = interrupted
-    @interrupt_reason = interrupt_reason
     @structured_output = structured_output
     @messages = messages
     @healed_tool_call_ids = healed_tool_call_ids
     @token_usage = token_usage
     @steps = steps
-  end
-
-  # Returns true if the response was blocked by a guardrail.
-  #
-  #--
-  #: () -> bool
-  def blocked?
-    !tripwire.nil?
   end
 
   # Returns true if any guardrail modified data during processing.
@@ -93,14 +81,5 @@ class Riffer::Agent::Response
   #: () -> bool
   def modified?
     modifications.any?
-  end
-
-  # Returns true if the agent loop was interrupted by a callback
-  # via <tt>throw :riffer_interrupt</tt>.
-  #
-  #--
-  #: () -> bool
-  def interrupted?
-    @interrupted
   end
 end

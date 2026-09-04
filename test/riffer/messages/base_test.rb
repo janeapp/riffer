@@ -204,6 +204,13 @@ describe Riffer::Messages::Base do
         expect(result.finish_reason).must_equal :stop
       end
 
+      it "round-trips finish_reason_raw through to_h" do
+        message = Riffer::Messages::Assistant.new("Hello", finish_reason: :stop, finish_reason_raw: "end_turn")
+        result = Riffer::Messages::Base.from_hash(message.to_h)
+
+        expect(result.finish_reason_raw).must_equal "end_turn"
+      end
+
       it "defaults to nil when not provided" do
         result = Riffer::Messages::Base.from_hash({ role: "assistant", content: "Hello" })
 

@@ -155,6 +155,7 @@ module Riffer::Agent::Run
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
+    accumulated_finish_reason_raw = nil #: String?
 
     call_llm_stream(agent, tags).each do |event|
       stream_yielder << event
@@ -178,6 +179,7 @@ module Riffer::Agent::Run
         accumulated_token_usage = event.token_usage
       when Riffer::StreamEvents::FinishReasonDone
         accumulated_finish_reason = event.finish_reason
+        accumulated_finish_reason_raw = event.raw_finish_reason
       end
     end
 
@@ -186,6 +188,7 @@ module Riffer::Agent::Run
       tool_calls: accumulated_tool_calls,
       token_usage: accumulated_token_usage,
       finish_reason: accumulated_finish_reason,
+      finish_reason_raw: accumulated_finish_reason_raw,
     )
   end
 
@@ -207,6 +210,7 @@ module Riffer::Agent::Run
     build_response(
       agent,
       "",
+      outcome: Riffer::Agent::Outcome.new(reason: :guardrail_blocked, detail: tripwire.reason),
       tripwire: tripwire,
       modifications: all_modifications,
       token_usage: token_usage,
@@ -215,16 +219,37 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
-  def final_response(agent, all_modifications, **extra)
-    response = agent.session.final_assistant_message
+  #: (Riffer::Agent, Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, **untyped) -> Riffer::Agent::Response
+  def final_response(agent, all_modifications, interrupted: false, interrupt_reason: nil, **extra)
+    message = agent.session.final_assistant_message
+    result = structured_output_result(agent, message)
     build_response(
       agent,
-      response&.content || "",
+      message&.content || "",
+      outcome: final_outcome(message, result, interrupted: interrupted, interrupt_reason: interrupt_reason),
       modifications: all_modifications,
-      structured_output: validate_structured_output(agent, response),
+      structured_output: result&.object,
       **extra,
     )
+  end
+
+  # Ordered most-causal first: a stop the caller forced outranks what the
+  # provider reported, which outranks how riffer post-processed the content.
+  #--
+  #: (Riffer::Messages::Assistant?, Riffer::Agent::StructuredOutput::Result?, interrupted: bool, interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Outcome
+  def final_outcome(message, result, interrupted:, interrupt_reason:)
+    finish_reason = message&.finish_reason
+    if interrupted && interrupt_reason == Riffer::Agent::INTERRUPT_MAX_STEPS
+      Riffer::Agent::Outcome.new(reason: :max_steps)
+    elsif interrupted
+      Riffer::Agent::Outcome.new(reason: :interrupted, detail: interrupt_reason&.to_s)
+    elsif finish_reason && Riffer::Agent::Outcome::PROVIDER_STOP_REASONS.include?(finish_reason)
+      Riffer::Agent::Outcome.new(reason: finish_reason, detail: message&.finish_reason_raw)
+    elsif result&.failure?
+      Riffer::Agent::Outcome.new(reason: :invalid_structured_output, detail: result.error)
+    else
+      Riffer::Agent::Outcome.new(reason: :completed)
+    end
   end
 
   #--
@@ -327,11 +352,11 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
-  def validate_structured_output(agent, response)
-    return unless response&.structured_output? && agent.structured_output
+  #: (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
+  def structured_output_result(agent, message)
+    return unless message && agent.structured_output
 
-    agent.structured_output.parse_and_validate(response.content).object
+    agent.structured_output.parse_and_validate(message.content)
   end
 
   #--
@@ -358,10 +383,9 @@ module Riffer::Agent::Run
   #: (
   #    Riffer::Agent,
   #    String,
+  #    outcome: Riffer::Agent::Outcome,
   #    ?tripwire: Riffer::Guardrails::Tripwire?,
   #    ?modifications: Array[Riffer::Guardrails::Modification],
-  #    ?interrupted: bool,
-  #    ?interrupt_reason: (String | Symbol)?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?healed_tool_call_ids: Array[String],
   #    ?token_usage: Riffer::Providers::TokenUsage?,
@@ -370,10 +394,9 @@ module Riffer::Agent::Run
   def build_response(
     agent,
     content,
+    outcome:,
     tripwire: nil,
     modifications: [],
-    interrupted: false,
-    interrupt_reason: nil,
     structured_output: nil,
     healed_tool_call_ids: [],
     token_usage: nil,
@@ -382,10 +405,9 @@ module Riffer::Agent::Run
     messages = agent.session.messages
     Riffer::Agent::Response.new(
       content,
+      outcome: outcome,
       tripwire: tripwire,
       modifications: modifications,
-      interrupted: interrupted,
-      interrupt_reason: interrupt_reason,
       structured_output: structured_output,
       messages: messages.frozen? ? messages : messages.dup.freeze,
       healed_tool_call_ids: healed_tool_call_ids,
@@ -460,7 +482,12 @@ module Riffer::Agent::Run
     span.set_attribute("riffer.steps", response.steps)
     Riffer::Tracing.record_usage(span, response.token_usage)
 
-    span.set_attribute("riffer.interrupt.reason", response.interrupt_reason.to_s) if response.interrupt_reason
+    outcome = response.outcome
+    span.set_attribute("riffer.outcome.reason", outcome.reason.to_s)
+    detail = outcome.detail
+    span.set_attribute("riffer.outcome.detail", detail) if detail
+    interrupt_reason = interrupt_reason_attribute(outcome)
+    span.set_attribute("riffer.interrupt.reason", interrupt_reason) if interrupt_reason
 
     tripwire = response.tripwire
     return unless tripwire
@@ -469,5 +496,14 @@ module Riffer::Agent::Run
     span.set_attribute("riffer.tripwire.guardrail", identifier) unless identifier.empty?
     span.set_attribute("riffer.tripwire.reason", tripwire.reason)
     span.set_attribute("riffer.tripwire.phase", tripwire.phase.to_s)
+  end
+
+  #--
+  #: (Riffer::Agent::Outcome) -> String?
+  def interrupt_reason_attribute(outcome)
+    case outcome.reason
+    when :max_steps then Riffer::Agent::INTERRUPT_MAX_STEPS.to_s
+    when :interrupted then outcome.detail
+    end
   end
 end

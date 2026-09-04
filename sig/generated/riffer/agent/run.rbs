@@ -45,8 +45,14 @@ module Riffer::Agent::Run
   def tripwire_response: (Riffer::Agent, Enumerator::Yielder?, Riffer::Guardrails::Tripwire, Array[Riffer::Guardrails::Modification], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
   # --
-  # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
-  def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], **untyped) -> Riffer::Agent::Response
+  # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, **untyped) -> Riffer::Agent::Response
+  def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, **untyped) -> Riffer::Agent::Response
+
+  # Ordered most-causal first: a stop the caller forced outranks what the
+  # provider reported, which outranks how riffer post-processed the content.
+  # --
+  # : (Riffer::Messages::Assistant?, Riffer::Agent::StructuredOutput::Result?, interrupted: bool, interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Outcome
+  def final_outcome: (Riffer::Messages::Assistant?, Riffer::Agent::StructuredOutput::Result?, interrupted: bool, interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Outcome
 
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> Riffer::Messages::Assistant
@@ -77,8 +83,8 @@ module Riffer::Agent::Run
   def run_after_guardrails: (Riffer::Agent, Riffer::Messages::Assistant, Enumerator::Yielder?, Array[Riffer::Guardrails::Modification], ?Hash[String, String]) { (Riffer::Guardrails::Tripwire) -> void } -> untyped
 
   # --
-  # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
-  def validate_structured_output: (Riffer::Agent, Riffer::Messages::Assistant?) -> Hash[Symbol, untyped]?
+  # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
+  def structured_output_result: (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
 
   # --
   # : (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
@@ -96,16 +102,15 @@ module Riffer::Agent::Run
   # : (
   #     Riffer::Agent,
   #     String,
+  #     outcome: Riffer::Agent::Outcome,
   #     ?tripwire: Riffer::Guardrails::Tripwire?,
   #     ?modifications: Array[Riffer::Guardrails::Modification],
-  #     ?interrupted: bool,
-  #     ?interrupt_reason: (String | Symbol)?,
   #     ?structured_output: Hash[Symbol, untyped]?,
   #     ?healed_tool_call_ids: Array[String],
   #     ?token_usage: Riffer::Providers::TokenUsage?,
   #     ?steps: Integer
   #   ) -> Riffer::Agent::Response
-  def build_response: (Riffer::Agent, String, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def build_response: (Riffer::Agent, String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.
@@ -136,4 +141,8 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Agent::Response) -> void
   def record_run_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Agent::Response) -> void
+
+  # --
+  # : (Riffer::Agent::Outcome) -> String?
+  def interrupt_reason_attribute: (Riffer::Agent::Outcome) -> String?
 end

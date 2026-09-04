@@ -215,7 +215,7 @@ Emitted when the agent loop is interrupted. This can happen in two ways:
 - An `on_message` callback calls `agent.interrupt!` or `throw :riffer_interrupt` (reason is a String or `nil`).
 - The `max_steps` limit is reached (reason is the Symbol `:max_steps`).
 
-This is the streaming equivalent of `Response#interrupted?` in generate mode.
+This is the streaming equivalent of `response.outcome.reason == :interrupted` (or `:max_steps`) in generate mode.
 
 ```ruby
 # Callback interrupt with a string reason

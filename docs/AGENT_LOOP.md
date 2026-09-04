@@ -34,7 +34,7 @@ The agent loop normally runs until the LLM produces a response with no tool call
 Guardrails are registered at class definition time and run automatically on every request. When a guardrail calls `block`, it sets a **tripwire** that stops the loop immediately. The LLM is never called (for `:before` guardrails) or its response is discarded (for `:after` guardrails).
 
 - **When to use:** Policy enforcement that should always apply — content filtering, input validation, length limits.
-- **Response:** `response.blocked?` returns `true`, `response.tripwire` contains the reason and metadata.
+- **Response:** `response.outcome.reason` is `:guardrail_blocked`, `response.tripwire` contains the reason and metadata.
 - **Streaming:** Yields a `GuardrailTripwire` event.
 - **Resumable:** No. A tripwire is a hard stop. The caller must change the input and start a new `generate`/`stream` call.
 
@@ -45,7 +45,7 @@ class MyAgent < Riffer::Agent
 end
 
 response = MyAgent.generate('blocked input')
-response.blocked?          # => true
+response.outcome.reason    # => :guardrail_blocked
 response.tripwire.reason   # => "Content policy violation"
 ```
 
@@ -54,7 +54,7 @@ response.tripwire.reason   # => "Content policy violation"
 Callbacks registered with `on_message` can call `agent.interrupt!` (or `throw :riffer_interrupt`) to pause the loop at any point — after receiving an assistant message, after a tool result, etc. The caller controls exactly when and why to interrupt.
 
 - **When to use:** Flow control that depends on runtime decisions — human-in-the-loop approval, budget tracking, conditional pausing.
-- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` contains the optional reason.
+- **Response:** `response.outcome.reason` is `:interrupted`, `response.outcome.detail` contains the optional reason.
 - **Streaming:** Yields an `Interrupt` event with a `reason` attribute.
 - **Resumable:** Yes. Call `generate('Continue')` or `stream('Continue')` on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.
 
@@ -65,8 +65,8 @@ agent.session.on_message do |msg|
 end
 
 response = agent.generate('Do something risky')
-response.interrupted?      # => true
-response.interrupt_reason  # => "approval needed"
+response.outcome.reason    # => :interrupted
+response.outcome.detail    # => "approval needed"
 response = agent.generate('Approved, continue')  # continues where it left off
 ```
 
@@ -75,7 +75,7 @@ response = agent.generate('Approved, continue')  # continues where it left off
 The `max_steps` class method caps the number of LLM call steps in the tool-use loop. When the step count reaches the limit, the loop interrupts automatically with reason `:max_steps`.
 
 - **When to use:** Safety net to prevent runaway tool-use loops — useful when agents have access to many tools or operate autonomously.
-- **Response:** `response.interrupted?` returns `true`, `response.interrupt_reason` is `:max_steps`.
+- **Response:** `response.outcome.reason` is `:max_steps`.
 - **Streaming:** Yields an `Interrupt` event with `reason: :max_steps`.
 - **Resumable:** Yes. Call `generate('Continue')` or `stream('Continue')` on the same agent instance to resume. For cross-process resume, pass persisted messages as an array to a new agent. Pending tool calls are automatically executed before the LLM loop resumes.
 
@@ -86,8 +86,7 @@ class MyAgent < Riffer::Agent
 end
 
 response = MyAgent.generate('Do a complex task')
-response.interrupted?      # => true (if 8 steps were reached)
-response.interrupt_reason  # => :max_steps
+response.outcome.reason    # => :max_steps (if 8 steps were reached)
 ```
 
 ### Unhandled Exceptions
@@ -101,6 +100,6 @@ If a guardrail, provider call, or other internal code raises an exception, it pr
 | Defined       | At class level (`guardrail :before`) | At instance level (`on_message`)     | At class level (`max_steps 8`)       |
 | Fires         | Automatically on every request       | When callback logic decides          | When step count reaches limit        |
 | Resumable     | No                                   | Yes (call `generate`/`stream` again) | Yes (call `generate`/`stream` again) |
-| Response flag | `blocked?`                           | `interrupted?`                       | `interrupted?`                       |
+| Outcome reason | `:guardrail_blocked`                | `:interrupted`                       | `:max_steps`                         |
 | Stream event  | `GuardrailTripwire`                  | `Interrupt`                          | `Interrupt`                          |
 | Purpose       | Policy enforcement                   | Flow control                         | Runaway loop prevention              |

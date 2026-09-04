@@ -203,6 +203,8 @@ class Riffer::Agent::Session
         tool_calls: attrs.fetch(:tool_calls, old.tool_calls),
         token_usage: attrs.fetch(:token_usage, old.token_usage),
         structured_output: attrs.fetch(:structured_output, old.structured_output),
+        finish_reason: attrs.fetch(:finish_reason, old.finish_reason),
+        finish_reason_raw: attrs.fetch(:finish_reason_raw, old.finish_reason_raw),
       )
     when Riffer::Messages::Tool
       Riffer::Messages::Tool.new(
