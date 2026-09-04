@@ -21,13 +21,14 @@ Use `stub_response` to queue responses:
 ```ruby
 # Get the provider instance from the agent
 agent = TestableAgent.new
-provider = agent.send(:provider_instance)
+provider = agent.provider
 
 # Stub a simple text response
 provider.stub_response("Hello, I'm here to help!")
 
 # Now generate will return the stubbed response
 response = agent.generate("Hi")
+response.content
 # => "Hello, I'm here to help!"
 ```
 
@@ -55,10 +56,10 @@ provider.stub_response("First response")
 provider.stub_response("Second response")
 provider.stub_response("Third response")
 
-agent.generate("Message 1")  # => "First response"
-agent.generate("Message 2")  # => "Second response"
-agent.generate("Message 3")  # => "Third response"
-agent.generate("Message 4")  # => "Mock response" (default)
+agent.generate("Message 1").content  # => "First response"
+agent.generate("Message 2").content  # => "Second response"
+agent.generate("Message 3").content  # => "Third response"
+agent.generate("Message 4").content  # => "Mock response" (default)
 ```
 
 ## Inspecting Calls
@@ -92,7 +93,7 @@ require 'minitest/autorun'
 class MyAgentTest < Minitest::Test
   def setup
     @agent = TestableAgent.new
-    @provider = @agent.send(:provider_instance)
+    @provider = @agent.provider
   end
 
   def test_generates_response
@@ -146,18 +147,24 @@ text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
 ## Web Search
 
-The test provider emits web search events when `web_search: true` is passed to the stream call:
+The mock provider emits web search events when `web_search: true` is set in the agent's `model_options`:
 
 ```ruby
-provider.stub_response("Here are the latest results.")
+class SearchingAgent < Riffer::Agent
+  model 'mock/any'
+  model_options web_search: true
+end
+
+agent = SearchingAgent.new
+agent.provider.stub_response("Here are the latest results.")
 
 events = []
-agent.stream("What's new in Ruby?", web_search: true).each { |e| events << e }
+agent.stream("What's new in Ruby?").each { |e| events << e }
 
 # Events include WebSearchStatus and WebSearchDone before text events
-search_deltas = events.select { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
+search_statuses = events.select { |e| e.is_a?(Riffer::StreamEvents::WebSearchStatus) }
 search_done = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
-search_done.query    # => "test search query"
+search_done.query    # => "mock search query"
 search_done.sources  # => [{title: "Example", url: "https://example.com"}]
 ```
 
