@@ -113,6 +113,8 @@ Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four
 | `gen_ai.usage.cache_read.input_tokens`     | int    | When the provider reported cache reads               |
 | `gen_ai.usage.cache_creation.input_tokens` | int    | When the provider reported cache writes              |
 | `riffer.cost`                              | float  | When every call in the run was priced                |
+| `riffer.outcome.reason`                    | string | Always — the `response.outcome.reason`               |
+| `riffer.outcome.detail`                    | string | When `response.outcome.detail` is present            |
 | `riffer.interrupt.reason`                  | string | On interrupt (e.g. approval needed, max steps)       |
 | `riffer.tripwire.guardrail`                | string | On a guardrail tripwire, when the guardrail is named |
 | `riffer.tripwire.reason`                   | string | On a guardrail tripwire                              |
@@ -271,7 +273,7 @@ When enabled, content is serialized as GenAI-semconv JSON strings. File attachme
 The span and attribute shape is a public, versioned contract, in two tiers:
 
 - **`gen_ai.*`** tracks the OpenTelemetry GenAI semantic conventions, pinned to schema version `1.37.0`. That convention is still "Development" status upstream and its attribute names may change; Riffer absorbs such renames deliberately in a release, never silently, with a CHANGELOG entry.
-- **`riffer.*`** is Riffer-owned (`riffer.steps`, `riffer.cost`, `riffer.interrupt.reason`, `riffer.tripwire.*`, `riffer.guardrail.*`, `riffer.finish_reason.raw`) and changes only through a normal version bump and CHANGELOG entry.
+- **`riffer.*`** is Riffer-owned (`riffer.steps`, `riffer.cost`, `riffer.outcome.*`, `riffer.interrupt.reason`, `riffer.tripwire.*`, `riffer.guardrail.*`, `riffer.finish_reason.raw`) and changes only through a normal version bump and CHANGELOG entry.
 
 The semantic-convention schema version is a documented pin rather than a span attribute — the OpenTelemetry Ruby API can't attach a schema URL to a tracer. The runtime version signal is the instrumentation scope: every span carries scope name `riffer` at the gem version that emitted it. Pin the Riffer version your dashboards depend on, and watch the CHANGELOG for tracing entries before upgrading.
 

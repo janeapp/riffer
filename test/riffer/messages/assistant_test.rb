@@ -171,6 +171,18 @@ describe Riffer::Messages::Assistant do
       expect(message.to_h[:finish_reason]).must_equal :stop
     end
 
+    it "includes finish_reason_raw when present" do
+      message = Riffer::Messages::Assistant.new("Done", finish_reason: :stop, finish_reason_raw: "end_turn")
+
+      expect(message.to_h[:finish_reason_raw]).must_equal "end_turn"
+    end
+
+    it "excludes finish_reason_raw when nil" do
+      message = Riffer::Messages::Assistant.new("Done", finish_reason: :stop)
+
+      expect(message.to_h.key?(:finish_reason_raw)).must_equal false
+    end
+
     it "excludes finish_reason when nil" do
       message = Riffer::Messages::Assistant.new("No finish reason")
 

@@ -71,6 +71,7 @@ class Riffer::Providers::Base
         token_usage: token_usage,
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
+        finish_reason_raw: finish_reason&.raw,
       )
     end
   end

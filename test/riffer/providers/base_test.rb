@@ -25,6 +25,14 @@ class ChatTracingSilentStreamProvider < Riffer::Providers::Mock
   def execute_stream(params, yielder); end
 end
 
+class RawFinishReasonProvider < Riffer::Providers::Mock
+  private
+
+  def extract_finish_reason(_response)
+    Riffer::Providers::FinishReason.new(reason: :length, raw: "max_tokens")
+  end
+end
+
 describe Riffer::Providers::Base do
   let(:provider) { Riffer::Providers::Base.new }
 
@@ -45,6 +53,28 @@ describe Riffer::Providers::Base do
 
     it "falls back to unknown for anonymous classes" do
       expect(Class.new(Riffer::Providers::Base).semconv_provider_name).must_equal "unknown"
+    end
+  end
+
+  describe "#generate_text finish reason" do
+    let(:provider) { RawFinishReasonProvider.new }
+
+    it "sets the normalized finish_reason on the message" do
+      result = provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(result.finish_reason).must_equal :length
+    end
+
+    it "sets finish_reason_raw on the message" do
+      result = provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(result.finish_reason_raw).must_equal "max_tokens"
+    end
+
+    it "leaves finish_reason_raw nil when the provider reports no raw value" do
+      result = Riffer::Providers::Mock.new.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(result.finish_reason_raw).must_be_nil
     end
   end
 

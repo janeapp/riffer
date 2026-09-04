@@ -19,11 +19,31 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # <tt>Riffer::Providers::FinishReason::VALUES</tt>).
   attr_reader :finish_reason #: Symbol?
 
+  # The provider's raw finish-reason value behind +finish_reason+, when one
+  # exists on the wire.
+  attr_reader :finish_reason_raw #: String?
+
   # Raises Riffer::ArgumentError when +finish_reason+ is outside the
   # normalized vocabulary.
   #--
-  #: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?) -> void
-  def initialize(content, id: nil, tool_calls: [], token_usage: nil, structured_output: nil, finish_reason: nil)
+  #: (
+  #    String,
+  #    ?id: String?,
+  #    ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall],
+  #    ?token_usage: Riffer::Providers::TokenUsage?,
+  #    ?structured_output: Hash[Symbol, untyped]?,
+  #    ?finish_reason: Symbol?,
+  #    ?finish_reason_raw: String?
+  #  ) -> void
+  def initialize(
+    content,
+    id: nil,
+    tool_calls: [],
+    token_usage: nil,
+    structured_output: nil,
+    finish_reason: nil,
+    finish_reason_raw: nil
+  )
     if finish_reason && !Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
       values = Riffer::Providers::FinishReason::VALUES.inspect
       raise Riffer::ArgumentError, "finish_reason must be one of #{values}, got #{finish_reason.inspect}"
@@ -34,6 +54,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     @token_usage = token_usage
     @structured_output = structured_output
     @finish_reason = finish_reason
+    @finish_reason_raw = finish_reason_raw
   end
 
   #--
@@ -71,6 +92,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason
+    hash[:finish_reason_raw] = finish_reason_raw if finish_reason_raw
     hash
   end
 end

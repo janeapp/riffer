@@ -49,7 +49,8 @@ msg.role           # => :assistant
 msg.content        # => "I'm doing well, thank you!"
 msg.tool_calls     # => []
 msg.token_usage    # => nil or Riffer::Providers::TokenUsage
-msg.finish_reason  # => nil or a normalized Symbol (see below)
+msg.finish_reason      # => nil or a normalized Symbol (see below)
+msg.finish_reason_raw  # => nil or the provider's raw wire value (e.g. "max_tokens")
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -94,7 +95,7 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 | `:error`            | The provider reported an error finish.                                                                                  |
 | `:other`            | A provider-specific value with no normalized equivalent.                                                                |
 
-`finish_reason` is `nil` when the provider doesn't report one. The provider's raw wire value travels alongside on the `FinishReasonDone` stream event and the `riffer.finish_reason.raw` trace attribute — for OpenRouter that is the upstream model's `native_finish_reason`, and for a failed OpenAI response it is the error code. Use `finish_reason` to detect truncation without parsing provider responses:
+`finish_reason` is `nil` when the provider doesn't report one. The provider's raw wire value travels alongside as `finish_reason_raw` on the message (round-tripped through `to_h` / `from_hash`), on the `FinishReasonDone` stream event, and as the `riffer.finish_reason.raw` trace attribute — for OpenRouter that is the upstream model's `native_finish_reason`, and for a failed OpenAI response it is the error code. Use `finish_reason` to detect truncation without parsing provider responses:
 
 ```ruby
 response = agent.generate("Summarize this document")
@@ -103,7 +104,7 @@ retry_with_higher_limit if agent.session.messages.last.finish_reason == :length
 
 #### Structured Output on Messages
 
-When an agent has `structured_output` configured, the final assistant message stores the parsed hash directly. The `structured_output?` predicate checks for a non-nil value:
+When an agent has `structured_output` configured, the final assistant message stores the parsed hash directly. The message holds the parsed JSON, not the schema-validated result; schema validation is reported on `response.outcome` (see [Agent Lifecycle — response.outcome](AGENT_LIFECYCLE.md#responseoutcome)). The `structured_output?` predicate checks for a non-nil value:
 
 ```ruby
 msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_output: {sentiment: "positive"})

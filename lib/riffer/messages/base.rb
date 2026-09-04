@@ -37,6 +37,7 @@ class Riffer::Messages::Base
         tool_calls: tool_calls,
         structured_output: structured_output,
         finish_reason: finish_reason,
+        finish_reason_raw: msg[:finish_reason_raw],
       )
     when :system
       Riffer::Messages::System.new(content, id: id)

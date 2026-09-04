@@ -168,6 +168,19 @@ end
 
 The LLM response is automatically parsed and validated against the schema. Access the result via `response.structured_output`.
 
+When the response is not valid JSON or does not satisfy the schema, `response.structured_output` is `nil`, `response.outcome.reason` is `:invalid_structured_output`, and `response.outcome.detail` carries the parse or validation message:
+
+```ruby
+response = SentimentAgent.generate('Analyze: "I love this!"')
+
+if response.outcome.success?
+  response.structured_output  # => {sentiment: "positive", score: 0.95}
+else
+  response.outcome.reason     # => :invalid_structured_output
+  response.outcome.detail     # => "score is required"
+end
+```
+
 #### Nested Objects
 
 Use `Hash` with a block to define nested object schemas:

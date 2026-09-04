@@ -30,9 +30,8 @@ agent.generate(prompt = nil, files: nil)
 ```ruby
 # New conversation (class method — recommended for simple calls)
 response = MyAgent.generate('Hello', context: {user_id: 123})
-puts response.content       # Access the response text
-puts response.blocked?      # Check if guardrail blocked (always false without guardrails)
-puts response.interrupted?  # Check if a callback interrupted the loop
+puts response.content         # Access the response text
+puts response.outcome.reason  # How the run ended (:completed, :guardrail_blocked, :interrupted, ...)
 
 # New conversation (instance method — when you need message history or callbacks)
 agent = MyAgent.new(context: {user_id: 123})
@@ -142,9 +141,9 @@ Works with both `generate` and `stream`. Only emits agent-generated messages (As
 
 Callbacks can interrupt the agent loop. This is useful for human-in-the-loop approval, cost limits, or content filtering.
 
-Use `agent.interrupt!` (or the lower-level `throw :riffer_interrupt`) to stop the loop. The response will have `interrupted?` set to `true` and contain the accumulated content up to the point of interruption.
+Use `agent.interrupt!` (or the lower-level `throw :riffer_interrupt`) to stop the loop. The response's `outcome.reason` will be `:interrupted` and `content` will hold the accumulated content up to the point of interruption.
 
-An optional reason can be passed to `interrupt!`. It is available via `interrupt_reason` on the response (generate) or `reason` on the `Interrupt` event (stream):
+An optional reason can be passed to `interrupt!`. It is available via `outcome.detail` on the response (generate) or `reason` on the `Interrupt` event (stream):
 
 ```ruby
 agent = MyAgent.new
@@ -155,9 +154,9 @@ agent.session.on_message do |msg|
 end
 
 response = agent.generate('Call the tool')
-response.interrupted?      # => true
-response.interrupt_reason  # => "needs human approval"
-response.content           # => last assistant content before interrupt
+response.outcome.reason  # => :interrupted
+response.outcome.detail  # => "needs human approval"
+response.content         # => last assistant content before interrupt
 ```
 
 **Streaming** — interrupts emit an `Interrupt` event:
@@ -188,7 +187,7 @@ agent.session.on_message { |msg| throw :riffer_interrupt if needs_approval?(msg)
 
 response = agent.generate('Do something risky')
 
-if response.interrupted?
+if response.outcome.reason == :interrupted
   approve_action(agent.session.messages)
   response = agent.generate('Approved, go ahead')  # executes pending tools, then calls the LLM
   # or: agent.generate                              # resume without a new turn
@@ -306,17 +305,43 @@ agent.context[:skills]        # the Skills::Context, if skills configured
 | Attribute              | Type                        | Description                                                                                      |
 | ---------------------- | --------------------------- | ------------------------------------------------------------------------------------------------ |
 | `content`              | `String`                    | The response text                                                                                |
+| `outcome`              | `Outcome`                   | How the run ended — `reason` and optional `detail` (see below)                                   |
 | `structured_output`    | `Hash` / `nil`              | Parsed and validated structured output (see below)                                               |
-| `blocked?`             | `Boolean`                   | `true` if a guardrail tripwire fired                                                             |
 | `tripwire`             | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request                                                  |
 | `modified?`            | `Boolean`                   | `true` if a guardrail modified the content                                                       |
 | `modifications`        | `Array`                     | List of guardrail modifications applied                                                          |
-| `interrupted?`         | `Boolean`                   | `true` if the loop was interrupted                                                               |
-| `interrupt_reason`     | `String` / `Symbol` / `nil` | The reason passed to `throw :riffer_interrupt`                                                   |
 | `messages`             | `Array`                     | Full message history from the conversation                                                       |
 | `healed_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with placeholder results during interrupt healing (else `[]`)             |
 | `token_usage`          | `TokenUsage` / `nil`        | Aggregate `Riffer::Providers::TokenUsage` across this run's LLM calls (`nil` when none reported) |
 | `steps`                | `Integer`                   | LLM calls made during this run (`0` when a before-guardrail blocks first); not the session's cumulative count |
+
+### response.outcome
+
+`response.outcome` is a `Riffer::Agent::Outcome` — the single place to read how the run ended. `reason` is always one of the values below; `detail` is a `String` with the specifics when there are any, else `nil`. `outcome.success?` is shorthand for `reason == :completed`.
+
+| Reason                       | Source                                                     | `detail`                                  |
+| ---------------------------- | ---------------------------------------------------------- | ----------------------------------------- |
+| `:completed`                 | The loop ended normally                                    | `nil`                                     |
+| `:guardrail_blocked`         | A guardrail tripwire fired (`tripwire` is set)             | The tripwire reason                       |
+| `:max_steps`                 | The `max_steps` limit was reached                          | `nil`                                     |
+| `:interrupted`               | A callback called `interrupt!` / `throw :riffer_interrupt` | The interrupt reason, or `nil`            |
+| `:length`, `:content_filter`, `:context_window`, `:malformed_output`, `:error`, `:other` | The assistant message's normalized `finish_reason` (see [Messages — Finish Reasons](MESSAGES.md#finish-reasons)) | The provider's raw finish value (`finish_reason_raw`), or `nil` |
+| `:invalid_structured_output` | The final message failed JSON parsing or schema validation | The parse or validation error             |
+
+When several apply, the most causal wins: a guardrail block outranks an interrupt, an interrupt outranks the provider's finish reason, and the provider's finish reason outranks a structured output failure. A run that hit `:length` and therefore produced invalid JSON reports `:length`.
+
+```ruby
+agent = MyAgent.new
+response = agent.generate('Hello')
+
+case response.outcome.reason
+when :completed                 then puts response.content
+when :guardrail_blocked         then puts "Blocked: #{response.outcome.detail}"
+when :interrupted, :max_steps   then response = agent.generate('Continue')
+when :invalid_structured_output then warn response.outcome.detail
+else warn "Provider stopped early: #{response.outcome.reason}"
+end
+```
 
 ### response.structured_output
 
@@ -328,7 +353,7 @@ response.content            # => raw JSON string from the LLM
 response.structured_output  # => {sentiment: "positive", score: 0.95}
 ```
 
-Returns `nil` when structured output is not configured or when validation fails.
+Returns `nil` when structured output is not configured, or when parsing or validation fails — in which case `response.outcome.reason` is `:invalid_structured_output` and `response.outcome.detail` carries the error.
 
 The assistant message in the message history stores the parsed hash, so you can access structured output directly from persisted messages:
 
