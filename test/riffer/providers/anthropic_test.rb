@@ -691,6 +691,56 @@ describe Riffer::Providers::Anthropic do
       expect(params.key?(:output_config)).must_equal false
     end
 
+    it "preserves caller-supplied output_config keys alongside format" do
+      provider = Riffer::Providers::Anthropic.new
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "claude-haiku-4-5-20251001",
+        { structured_output: structured_output, output_config: { effort: "high" } },
+      )
+
+      expect(params[:output_config][:effort]).must_equal "high"
+      expect(params[:output_config][:format][:type]).must_equal "json_schema"
+    end
+
+    it "overrides a caller-supplied format with the structured output format" do
+      provider = Riffer::Providers::Anthropic.new
+      params = Riffer::Params.new
+      params.required(:sentiment, String)
+      structured_output = Riffer::Agent::StructuredOutput.new(params)
+      messages = [Riffer::Messages::User.new("Analyze")]
+
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "claude-haiku-4-5-20251001",
+        { structured_output: structured_output, output_config: { effort: "low", format: { type: "text" } } },
+      )
+
+      expect(params[:output_config][:format][:type]).must_equal "json_schema"
+      expect(params[:output_config][:effort]).must_equal "low"
+    end
+
+    it "passes caller-supplied output_config through unchanged without structured output" do
+      provider = Riffer::Providers::Anthropic.new
+      messages = [Riffer::Messages::User.new("Hello")]
+
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "claude-haiku-4-5-20251001",
+        { output_config: { effort: "high" } },
+      )
+
+      expect(params[:output_config]).must_equal({ effort: "high" })
+    end
+
     it "does not pass structured_output through to API params" do
       provider = Riffer::Providers::Anthropic.new
       params = Riffer::Params.new
