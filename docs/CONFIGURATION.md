@@ -345,14 +345,15 @@ end
 
 ### Anthropic
 
-| Option        | Description                                 |
-| ------------- | ------------------------------------------- |
-| `temperature` | Sampling temperature                        |
-| `max_tokens`  | Maximum tokens in response                  |
-| `top_p`       | Nucleus sampling parameter                  |
-| `top_k`       | Top-k sampling parameter                    |
-| `thinking`    | Extended thinking config hash (Claude 3.7+) |
-| `web_search`  | Enable web search (`true` or config hash)   |
+| Option          | Description                                 |
+| --------------- | ------------------------------------------- |
+| `temperature`   | Sampling temperature                        |
+| `max_tokens`    | Maximum tokens in response                  |
+| `top_p`         | Nucleus sampling parameter                  |
+| `top_k`         | Top-k sampling parameter                    |
+| `thinking`      | Extended thinking config hash (Claude 3.7+) |
+| `output_config` | Output config hash (e.g. `effort`)          |
+| `web_search`    | Enable web search (`true` or config hash)   |
 
 ```ruby
 class MyAgent < Riffer::Agent
@@ -365,7 +366,15 @@ class ReasoningAgent < Riffer::Agent
   model 'anthropic/claude-haiku-4-5-20251001'
   model_options thinking: {type: "enabled", budget_tokens: 10000}
 end
+
+# With an output effort level
+class EffortAgent < Riffer::Agent
+  model 'anthropic/claude-opus-5'
+  model_options output_config: {effort: "high"}
+end
 ```
+
+`output_config` composes with `structured_output`: the JSON schema format is added alongside any other `output_config` keys you supply.
 
 ## Environment Variables
 

@@ -96,7 +96,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       # Use strict schema to make optional fields nullable. Without this,
       # Anthropic may return empty strings or whitespace instead of null
       # for optional fields that the model has no value for.
+      #
+      # Merged over any caller-supplied output_config (e.g. effort) so those
+      # keys survive; the structured-output format wins because the run loop
+      # validates the response against it.
       params[:output_config] = {
+        **(params[:output_config] || {}),
         format: {
           type: "json_schema",
           schema: structured_output.json_schema(strict: true),
