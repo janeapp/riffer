@@ -10,13 +10,13 @@ GEM
   specs:
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
-    anthropic (1.66.0)
+    anthropic (1.68.0)
       base64 (~> 0.1)
       cgi (~> 0.1)
       connection_pool (>= 2, < 4)
       standardwebhooks (~> 1.0)
     ast (2.4.3)
-    async (2.45.0)
+    async (2.45.1)
       console (~> 1.29)
       fiber-annotation
       io-event (~> 1.21)
@@ -119,7 +119,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
     lumberjack (1.4.2)
-    mcp (1.3.0)
+    mcp (1.4.0)
       json_schemer (>= 2.4)
     method_source (1.1.0)
     minitest (6.0.6)
@@ -131,7 +131,7 @@ GEM
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    openai (0.81.0)
+    openai (0.84.0)
       connection_pool (>= 2.2.3)
       logger
     opentelemetry-api (1.11.0)
@@ -214,7 +214,7 @@ GEM
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
     shellany (0.0.1)
-    simpleidn (0.2.3)
+    simpleidn (0.3.0)
     standardwebhooks (1.1.0)
     steep (2.1.0)
       concurrent-ruby (>= 1.1.10)
@@ -264,7 +264,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.66.0)
+  anthropic (~> 1.68.0)
   async (~> 2.45)
   aws-sdk-bedrockruntime (~> 1.42)
   dotenv
@@ -275,9 +275,9 @@ DEPENDENCIES
   irb
   kramdown
   kramdown-parser-gfm
-  mcp (~> 1.3)
+  mcp (~> 1.4)
   minitest (~> 6.0)
-  openai (~> 0.81.0)
+  openai (~> 0.84.0)
   opentelemetry-sdk (~> 1.13)
   rake (~> 13.0)
   rbs-inline (~> 0.12)
