@@ -537,6 +537,42 @@ describe Riffer::Params do
       expect(items_schema[:properties]["note"][:type]).must_equal %w[string null]
     end
 
+    it "makes an optional object with nested params nullable" do
+      params = Riffer::Params.new
+      params.optional(:definition, Hash) do
+        required :name, String
+      end
+      schema = params.to_json_schema(strict: true)
+      definition = schema[:properties]["definition"]
+
+      expect(definition[:type]).must_equal %w[object null]
+      expect(definition[:properties]["name"][:type]).must_equal "string"
+      expect(definition[:required]).must_equal ["name"]
+    end
+
+    it "makes an optional array with nested params nullable" do
+      params = Riffer::Params.new
+      params.optional(:items, Array) do
+        required :name, String
+      end
+      schema = params.to_json_schema(strict: true)
+      items = schema[:properties]["items"]
+
+      expect(items[:type]).must_equal %w[array null]
+      expect(items[:items][:type]).must_equal "object"
+      expect(items[:items][:properties]["name"][:type]).must_equal "string"
+    end
+
+    it "makes an optional typed array nullable" do
+      params = Riffer::Params.new
+      params.optional(:tags, Array, of: String)
+      schema = params.to_json_schema(strict: true)
+      tags = schema[:properties]["tags"]
+
+      expect(tags[:type]).must_equal %w[array null]
+      expect(tags[:items]).must_equal({ type: "string" })
+    end
+
     it "keeps required properties non-nullable" do
       params = Riffer::Params.new
       params.required(:name, String)

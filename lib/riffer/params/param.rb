@@ -168,7 +168,8 @@ class Riffer::Params::Param
     elsif self.type == Array && item_type
       schema[:items] = { type: TYPE_MAPPINGS[item_type] }
     elsif self.type == Hash && nested_params
-      schema.merge!(nested_params.to_json_schema(strict: strict))
+      # The nested schema carries its own type: "object", which would clobber a nullable union.
+      schema.merge!(nested_params.to_json_schema(strict: strict).except(:type))
     end
 
     schema
