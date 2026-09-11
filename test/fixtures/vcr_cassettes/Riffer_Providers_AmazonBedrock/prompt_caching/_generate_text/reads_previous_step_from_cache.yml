@@ -1,0 +1,420 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-sonnet-4-6/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Here is the handbook:\n\nSection
+        1. Clause 1 of the clinic handbook describes procedure number 1, which staff
+        follow when handling a case of type 1 during regular operating hours. Section
+        2. Clause 2 of the clinic handbook describes procedure number 2, which staff
+        follow when handling a case of type 2 during regular operating hours. Section
+        3. Clause 3 of the clinic handbook describes procedure number 3, which staff
+        follow when handling a case of type 3 during regular operating hours. Section
+        4. Clause 4 of the clinic handbook describes procedure number 4, which staff
+        follow when handling a case of type 4 during regular operating hours. Section
+        5. Clause 5 of the clinic handbook describes procedure number 5, which staff
+        follow when handling a case of type 5 during regular operating hours. Section
+        6. Clause 6 of the clinic handbook describes procedure number 6, which staff
+        follow when handling a case of type 6 during regular operating hours. Section
+        7. Clause 7 of the clinic handbook describes procedure number 7, which staff
+        follow when handling a case of type 7 during regular operating hours. Section
+        8. Clause 8 of the clinic handbook describes procedure number 8, which staff
+        follow when handling a case of type 8 during regular operating hours. Section
+        9. Clause 9 of the clinic handbook describes procedure number 9, which staff
+        follow when handling a case of type 9 during regular operating hours. Section
+        10. Clause 10 of the clinic handbook describes procedure number 10, which
+        staff follow when handling a case of type 10 during regular operating hours.
+        Section 11. Clause 11 of the clinic handbook describes procedure number 11,
+        which staff follow when handling a case of type 11 during regular operating
+        hours. Section 12. Clause 12 of the clinic handbook describes procedure number
+        12, which staff follow when handling a case of type 12 during regular operating
+        hours. Section 13. Clause 13 of the clinic handbook describes procedure number
+        13, which staff follow when handling a case of type 13 during regular operating
+        hours. Section 14. Clause 14 of the clinic handbook describes procedure number
+        14, which staff follow when handling a case of type 14 during regular operating
+        hours. Section 15. Clause 15 of the clinic handbook describes procedure number
+        15, which staff follow when handling a case of type 15 during regular operating
+        hours. Section 16. Clause 16 of the clinic handbook describes procedure number
+        16, which staff follow when handling a case of type 16 during regular operating
+        hours. Section 17. Clause 17 of the clinic handbook describes procedure number
+        17, which staff follow when handling a case of type 17 during regular operating
+        hours. Section 18. Clause 18 of the clinic handbook describes procedure number
+        18, which staff follow when handling a case of type 18 during regular operating
+        hours. Section 19. Clause 19 of the clinic handbook describes procedure number
+        19, which staff follow when handling a case of type 19 during regular operating
+        hours. Section 20. Clause 20 of the clinic handbook describes procedure number
+        20, which staff follow when handling a case of type 20 during regular operating
+        hours. Section 21. Clause 21 of the clinic handbook describes procedure number
+        21, which staff follow when handling a case of type 21 during regular operating
+        hours. Section 22. Clause 22 of the clinic handbook describes procedure number
+        22, which staff follow when handling a case of type 22 during regular operating
+        hours. Section 23. Clause 23 of the clinic handbook describes procedure number
+        23, which staff follow when handling a case of type 23 during regular operating
+        hours. Section 24. Clause 24 of the clinic handbook describes procedure number
+        24, which staff follow when handling a case of type 24 during regular operating
+        hours. Section 25. Clause 25 of the clinic handbook describes procedure number
+        25, which staff follow when handling a case of type 25 during regular operating
+        hours. Section 26. Clause 26 of the clinic handbook describes procedure number
+        26, which staff follow when handling a case of type 26 during regular operating
+        hours. Section 27. Clause 27 of the clinic handbook describes procedure number
+        27, which staff follow when handling a case of type 27 during regular operating
+        hours. Section 28. Clause 28 of the clinic handbook describes procedure number
+        28, which staff follow when handling a case of type 28 during regular operating
+        hours. Section 29. Clause 29 of the clinic handbook describes procedure number
+        29, which staff follow when handling a case of type 29 during regular operating
+        hours. Section 30. Clause 30 of the clinic handbook describes procedure number
+        30, which staff follow when handling a case of type 30 during regular operating
+        hours. Section 31. Clause 31 of the clinic handbook describes procedure number
+        31, which staff follow when handling a case of type 31 during regular operating
+        hours. Section 32. Clause 32 of the clinic handbook describes procedure number
+        32, which staff follow when handling a case of type 32 during regular operating
+        hours. Section 33. Clause 33 of the clinic handbook describes procedure number
+        33, which staff follow when handling a case of type 33 during regular operating
+        hours. Section 34. Clause 34 of the clinic handbook describes procedure number
+        34, which staff follow when handling a case of type 34 during regular operating
+        hours. Section 35. Clause 35 of the clinic handbook describes procedure number
+        35, which staff follow when handling a case of type 35 during regular operating
+        hours. Section 36. Clause 36 of the clinic handbook describes procedure number
+        36, which staff follow when handling a case of type 36 during regular operating
+        hours. Section 37. Clause 37 of the clinic handbook describes procedure number
+        37, which staff follow when handling a case of type 37 during regular operating
+        hours. Section 38. Clause 38 of the clinic handbook describes procedure number
+        38, which staff follow when handling a case of type 38 during regular operating
+        hours. Section 39. Clause 39 of the clinic handbook describes procedure number
+        39, which staff follow when handling a case of type 39 during regular operating
+        hours. Section 40. Clause 40 of the clinic handbook describes procedure number
+        40, which staff follow when handling a case of type 40 during regular operating
+        hours. Section 41. Clause 41 of the clinic handbook describes procedure number
+        41, which staff follow when handling a case of type 41 during regular operating
+        hours. Section 42. Clause 42 of the clinic handbook describes procedure number
+        42, which staff follow when handling a case of type 42 during regular operating
+        hours. Section 43. Clause 43 of the clinic handbook describes procedure number
+        43, which staff follow when handling a case of type 43 during regular operating
+        hours. Section 44. Clause 44 of the clinic handbook describes procedure number
+        44, which staff follow when handling a case of type 44 during regular operating
+        hours. Section 45. Clause 45 of the clinic handbook describes procedure number
+        45, which staff follow when handling a case of type 45 during regular operating
+        hours. Section 46. Clause 46 of the clinic handbook describes procedure number
+        46, which staff follow when handling a case of type 46 during regular operating
+        hours. Section 47. Clause 47 of the clinic handbook describes procedure number
+        47, which staff follow when handling a case of type 47 during regular operating
+        hours. Section 48. Clause 48 of the clinic handbook describes procedure number
+        48, which staff follow when handling a case of type 48 during regular operating
+        hours. Section 49. Clause 49 of the clinic handbook describes procedure number
+        49, which staff follow when handling a case of type 49 during regular operating
+        hours. Section 50. Clause 50 of the clinic handbook describes procedure number
+        50, which staff follow when handling a case of type 50 during regular operating
+        hours. Section 51. Clause 51 of the clinic handbook describes procedure number
+        51, which staff follow when handling a case of type 51 during regular operating
+        hours. Section 52. Clause 52 of the clinic handbook describes procedure number
+        52, which staff follow when handling a case of type 52 during regular operating
+        hours. Section 53. Clause 53 of the clinic handbook describes procedure number
+        53, which staff follow when handling a case of type 53 during regular operating
+        hours. Section 54. Clause 54 of the clinic handbook describes procedure number
+        54, which staff follow when handling a case of type 54 during regular operating
+        hours. Section 55. Clause 55 of the clinic handbook describes procedure number
+        55, which staff follow when handling a case of type 55 during regular operating
+        hours. Section 56. Clause 56 of the clinic handbook describes procedure number
+        56, which staff follow when handling a case of type 56 during regular operating
+        hours. Section 57. Clause 57 of the clinic handbook describes procedure number
+        57, which staff follow when handling a case of type 57 during regular operating
+        hours. Section 58. Clause 58 of the clinic handbook describes procedure number
+        58, which staff follow when handling a case of type 58 during regular operating
+        hours. Section 59. Clause 59 of the clinic handbook describes procedure number
+        59, which staff follow when handling a case of type 59 during regular operating
+        hours. Section 60. Clause 60 of the clinic handbook describes procedure number
+        60, which staff follow when handling a case of type 60 during regular operating
+        hours. Section 61. Clause 61 of the clinic handbook describes procedure number
+        61, which staff follow when handling a case of type 61 during regular operating
+        hours. Section 62. Clause 62 of the clinic handbook describes procedure number
+        62, which staff follow when handling a case of type 62 during regular operating
+        hours. Section 63. Clause 63 of the clinic handbook describes procedure number
+        63, which staff follow when handling a case of type 63 during regular operating
+        hours. Section 64. Clause 64 of the clinic handbook describes procedure number
+        64, which staff follow when handling a case of type 64 during regular operating
+        hours. Section 65. Clause 65 of the clinic handbook describes procedure number
+        65, which staff follow when handling a case of type 65 during regular operating
+        hours. Section 66. Clause 66 of the clinic handbook describes procedure number
+        66, which staff follow when handling a case of type 66 during regular operating
+        hours. Section 67. Clause 67 of the clinic handbook describes procedure number
+        67, which staff follow when handling a case of type 67 during regular operating
+        hours. Section 68. Clause 68 of the clinic handbook describes procedure number
+        68, which staff follow when handling a case of type 68 during regular operating
+        hours. Section 69. Clause 69 of the clinic handbook describes procedure number
+        69, which staff follow when handling a case of type 69 during regular operating
+        hours. Section 70. Clause 70 of the clinic handbook describes procedure number
+        70, which staff follow when handling a case of type 70 during regular operating
+        hours. Section 71. Clause 71 of the clinic handbook describes procedure number
+        71, which staff follow when handling a case of type 71 during regular operating
+        hours. Section 72. Clause 72 of the clinic handbook describes procedure number
+        72, which staff follow when handling a case of type 72 during regular operating
+        hours. Section 73. Clause 73 of the clinic handbook describes procedure number
+        73, which staff follow when handling a case of type 73 during regular operating
+        hours. Section 74. Clause 74 of the clinic handbook describes procedure number
+        74, which staff follow when handling a case of type 74 during regular operating
+        hours. Section 75. Clause 75 of the clinic handbook describes procedure number
+        75, which staff follow when handling a case of type 75 during regular operating
+        hours. Section 76. Clause 76 of the clinic handbook describes procedure number
+        76, which staff follow when handling a case of type 76 during regular operating
+        hours. Section 77. Clause 77 of the clinic handbook describes procedure number
+        77, which staff follow when handling a case of type 77 during regular operating
+        hours. Section 78. Clause 78 of the clinic handbook describes procedure number
+        78, which staff follow when handling a case of type 78 during regular operating
+        hours. Section 79. Clause 79 of the clinic handbook describes procedure number
+        79, which staff follow when handling a case of type 79 during regular operating
+        hours. Section 80. Clause 80 of the clinic handbook describes procedure number
+        80, which staff follow when handling a case of type 80 during regular operating
+        hours.\n\nWhat is the current cancellation policy?"},{"cachePoint":{"type":"default"}}]}],"system":[{"text":"You
+        are a clinic assistant. Call lookup_policy before answering a policy question."},{"cachePoint":{"type":"default"}}],"toolConfig":{"tools":[{"toolSpec":{"name":"lookup_policy","description":"Look
+        up the current wording of a named clinic policy","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        policy name"}},"required":["name"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 54ffd73f-93b1-4446-8b7b-0c757a0d5da3
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.254.1 ua/2.1 api/bedrock_runtime#1.83.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '13273'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 18:21:03 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '567'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 183a1877-51b9-4378-b7fa-1235322fc80d
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1489},"output":{"message":{"content":[{"text":"Let
+        me look up the current cancellation policy for you right away."},{"toolUse":{"input":{"name":"cancellation"},"name":"lookup_policy","toolUseId":"tooluse_P3nbk6atWRa0Ub7fBJbhKJ","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheDetails":[{"inputTokens":3488,"ttl":"5m"}],"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":3488,"cacheWriteInputTokens":3488,"inputTokens":3,"outputTokens":69,"serverToolUsage":{},"totalTokens":3560}}'
+  recorded_at: Fri, 11 Sep 2026 18:21:03 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-sonnet-4-6/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"Here is the handbook:\n\nSection
+        1. Clause 1 of the clinic handbook describes procedure number 1, which staff
+        follow when handling a case of type 1 during regular operating hours. Section
+        2. Clause 2 of the clinic handbook describes procedure number 2, which staff
+        follow when handling a case of type 2 during regular operating hours. Section
+        3. Clause 3 of the clinic handbook describes procedure number 3, which staff
+        follow when handling a case of type 3 during regular operating hours. Section
+        4. Clause 4 of the clinic handbook describes procedure number 4, which staff
+        follow when handling a case of type 4 during regular operating hours. Section
+        5. Clause 5 of the clinic handbook describes procedure number 5, which staff
+        follow when handling a case of type 5 during regular operating hours. Section
+        6. Clause 6 of the clinic handbook describes procedure number 6, which staff
+        follow when handling a case of type 6 during regular operating hours. Section
+        7. Clause 7 of the clinic handbook describes procedure number 7, which staff
+        follow when handling a case of type 7 during regular operating hours. Section
+        8. Clause 8 of the clinic handbook describes procedure number 8, which staff
+        follow when handling a case of type 8 during regular operating hours. Section
+        9. Clause 9 of the clinic handbook describes procedure number 9, which staff
+        follow when handling a case of type 9 during regular operating hours. Section
+        10. Clause 10 of the clinic handbook describes procedure number 10, which
+        staff follow when handling a case of type 10 during regular operating hours.
+        Section 11. Clause 11 of the clinic handbook describes procedure number 11,
+        which staff follow when handling a case of type 11 during regular operating
+        hours. Section 12. Clause 12 of the clinic handbook describes procedure number
+        12, which staff follow when handling a case of type 12 during regular operating
+        hours. Section 13. Clause 13 of the clinic handbook describes procedure number
+        13, which staff follow when handling a case of type 13 during regular operating
+        hours. Section 14. Clause 14 of the clinic handbook describes procedure number
+        14, which staff follow when handling a case of type 14 during regular operating
+        hours. Section 15. Clause 15 of the clinic handbook describes procedure number
+        15, which staff follow when handling a case of type 15 during regular operating
+        hours. Section 16. Clause 16 of the clinic handbook describes procedure number
+        16, which staff follow when handling a case of type 16 during regular operating
+        hours. Section 17. Clause 17 of the clinic handbook describes procedure number
+        17, which staff follow when handling a case of type 17 during regular operating
+        hours. Section 18. Clause 18 of the clinic handbook describes procedure number
+        18, which staff follow when handling a case of type 18 during regular operating
+        hours. Section 19. Clause 19 of the clinic handbook describes procedure number
+        19, which staff follow when handling a case of type 19 during regular operating
+        hours. Section 20. Clause 20 of the clinic handbook describes procedure number
+        20, which staff follow when handling a case of type 20 during regular operating
+        hours. Section 21. Clause 21 of the clinic handbook describes procedure number
+        21, which staff follow when handling a case of type 21 during regular operating
+        hours. Section 22. Clause 22 of the clinic handbook describes procedure number
+        22, which staff follow when handling a case of type 22 during regular operating
+        hours. Section 23. Clause 23 of the clinic handbook describes procedure number
+        23, which staff follow when handling a case of type 23 during regular operating
+        hours. Section 24. Clause 24 of the clinic handbook describes procedure number
+        24, which staff follow when handling a case of type 24 during regular operating
+        hours. Section 25. Clause 25 of the clinic handbook describes procedure number
+        25, which staff follow when handling a case of type 25 during regular operating
+        hours. Section 26. Clause 26 of the clinic handbook describes procedure number
+        26, which staff follow when handling a case of type 26 during regular operating
+        hours. Section 27. Clause 27 of the clinic handbook describes procedure number
+        27, which staff follow when handling a case of type 27 during regular operating
+        hours. Section 28. Clause 28 of the clinic handbook describes procedure number
+        28, which staff follow when handling a case of type 28 during regular operating
+        hours. Section 29. Clause 29 of the clinic handbook describes procedure number
+        29, which staff follow when handling a case of type 29 during regular operating
+        hours. Section 30. Clause 30 of the clinic handbook describes procedure number
+        30, which staff follow when handling a case of type 30 during regular operating
+        hours. Section 31. Clause 31 of the clinic handbook describes procedure number
+        31, which staff follow when handling a case of type 31 during regular operating
+        hours. Section 32. Clause 32 of the clinic handbook describes procedure number
+        32, which staff follow when handling a case of type 32 during regular operating
+        hours. Section 33. Clause 33 of the clinic handbook describes procedure number
+        33, which staff follow when handling a case of type 33 during regular operating
+        hours. Section 34. Clause 34 of the clinic handbook describes procedure number
+        34, which staff follow when handling a case of type 34 during regular operating
+        hours. Section 35. Clause 35 of the clinic handbook describes procedure number
+        35, which staff follow when handling a case of type 35 during regular operating
+        hours. Section 36. Clause 36 of the clinic handbook describes procedure number
+        36, which staff follow when handling a case of type 36 during regular operating
+        hours. Section 37. Clause 37 of the clinic handbook describes procedure number
+        37, which staff follow when handling a case of type 37 during regular operating
+        hours. Section 38. Clause 38 of the clinic handbook describes procedure number
+        38, which staff follow when handling a case of type 38 during regular operating
+        hours. Section 39. Clause 39 of the clinic handbook describes procedure number
+        39, which staff follow when handling a case of type 39 during regular operating
+        hours. Section 40. Clause 40 of the clinic handbook describes procedure number
+        40, which staff follow when handling a case of type 40 during regular operating
+        hours. Section 41. Clause 41 of the clinic handbook describes procedure number
+        41, which staff follow when handling a case of type 41 during regular operating
+        hours. Section 42. Clause 42 of the clinic handbook describes procedure number
+        42, which staff follow when handling a case of type 42 during regular operating
+        hours. Section 43. Clause 43 of the clinic handbook describes procedure number
+        43, which staff follow when handling a case of type 43 during regular operating
+        hours. Section 44. Clause 44 of the clinic handbook describes procedure number
+        44, which staff follow when handling a case of type 44 during regular operating
+        hours. Section 45. Clause 45 of the clinic handbook describes procedure number
+        45, which staff follow when handling a case of type 45 during regular operating
+        hours. Section 46. Clause 46 of the clinic handbook describes procedure number
+        46, which staff follow when handling a case of type 46 during regular operating
+        hours. Section 47. Clause 47 of the clinic handbook describes procedure number
+        47, which staff follow when handling a case of type 47 during regular operating
+        hours. Section 48. Clause 48 of the clinic handbook describes procedure number
+        48, which staff follow when handling a case of type 48 during regular operating
+        hours. Section 49. Clause 49 of the clinic handbook describes procedure number
+        49, which staff follow when handling a case of type 49 during regular operating
+        hours. Section 50. Clause 50 of the clinic handbook describes procedure number
+        50, which staff follow when handling a case of type 50 during regular operating
+        hours. Section 51. Clause 51 of the clinic handbook describes procedure number
+        51, which staff follow when handling a case of type 51 during regular operating
+        hours. Section 52. Clause 52 of the clinic handbook describes procedure number
+        52, which staff follow when handling a case of type 52 during regular operating
+        hours. Section 53. Clause 53 of the clinic handbook describes procedure number
+        53, which staff follow when handling a case of type 53 during regular operating
+        hours. Section 54. Clause 54 of the clinic handbook describes procedure number
+        54, which staff follow when handling a case of type 54 during regular operating
+        hours. Section 55. Clause 55 of the clinic handbook describes procedure number
+        55, which staff follow when handling a case of type 55 during regular operating
+        hours. Section 56. Clause 56 of the clinic handbook describes procedure number
+        56, which staff follow when handling a case of type 56 during regular operating
+        hours. Section 57. Clause 57 of the clinic handbook describes procedure number
+        57, which staff follow when handling a case of type 57 during regular operating
+        hours. Section 58. Clause 58 of the clinic handbook describes procedure number
+        58, which staff follow when handling a case of type 58 during regular operating
+        hours. Section 59. Clause 59 of the clinic handbook describes procedure number
+        59, which staff follow when handling a case of type 59 during regular operating
+        hours. Section 60. Clause 60 of the clinic handbook describes procedure number
+        60, which staff follow when handling a case of type 60 during regular operating
+        hours. Section 61. Clause 61 of the clinic handbook describes procedure number
+        61, which staff follow when handling a case of type 61 during regular operating
+        hours. Section 62. Clause 62 of the clinic handbook describes procedure number
+        62, which staff follow when handling a case of type 62 during regular operating
+        hours. Section 63. Clause 63 of the clinic handbook describes procedure number
+        63, which staff follow when handling a case of type 63 during regular operating
+        hours. Section 64. Clause 64 of the clinic handbook describes procedure number
+        64, which staff follow when handling a case of type 64 during regular operating
+        hours. Section 65. Clause 65 of the clinic handbook describes procedure number
+        65, which staff follow when handling a case of type 65 during regular operating
+        hours. Section 66. Clause 66 of the clinic handbook describes procedure number
+        66, which staff follow when handling a case of type 66 during regular operating
+        hours. Section 67. Clause 67 of the clinic handbook describes procedure number
+        67, which staff follow when handling a case of type 67 during regular operating
+        hours. Section 68. Clause 68 of the clinic handbook describes procedure number
+        68, which staff follow when handling a case of type 68 during regular operating
+        hours. Section 69. Clause 69 of the clinic handbook describes procedure number
+        69, which staff follow when handling a case of type 69 during regular operating
+        hours. Section 70. Clause 70 of the clinic handbook describes procedure number
+        70, which staff follow when handling a case of type 70 during regular operating
+        hours. Section 71. Clause 71 of the clinic handbook describes procedure number
+        71, which staff follow when handling a case of type 71 during regular operating
+        hours. Section 72. Clause 72 of the clinic handbook describes procedure number
+        72, which staff follow when handling a case of type 72 during regular operating
+        hours. Section 73. Clause 73 of the clinic handbook describes procedure number
+        73, which staff follow when handling a case of type 73 during regular operating
+        hours. Section 74. Clause 74 of the clinic handbook describes procedure number
+        74, which staff follow when handling a case of type 74 during regular operating
+        hours. Section 75. Clause 75 of the clinic handbook describes procedure number
+        75, which staff follow when handling a case of type 75 during regular operating
+        hours. Section 76. Clause 76 of the clinic handbook describes procedure number
+        76, which staff follow when handling a case of type 76 during regular operating
+        hours. Section 77. Clause 77 of the clinic handbook describes procedure number
+        77, which staff follow when handling a case of type 77 during regular operating
+        hours. Section 78. Clause 78 of the clinic handbook describes procedure number
+        78, which staff follow when handling a case of type 78 during regular operating
+        hours. Section 79. Clause 79 of the clinic handbook describes procedure number
+        79, which staff follow when handling a case of type 79 during regular operating
+        hours. Section 80. Clause 80 of the clinic handbook describes procedure number
+        80, which staff follow when handling a case of type 80 during regular operating
+        hours.\n\nWhat is the current cancellation policy?"}]},{"role":"assistant","content":[{"text":"Let
+        me look up the current cancellation policy for you right away."},{"toolUse":{"toolUseId":"tooluse_P3nbk6atWRa0Ub7fBJbhKJ","name":"lookup_policy","input":{"name":"cancellation"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_P3nbk6atWRa0Ub7fBJbhKJ","content":[{"text":"Cancellations
+        require 24 hours notice."}]}},{"cachePoint":{"type":"default"}}]}],"system":[{"text":"You
+        are a clinic assistant. Call lookup_policy before answering a policy question."},{"cachePoint":{"type":"default"}}],"toolConfig":{"tools":[{"toolSpec":{"name":"lookup_policy","description":"Look
+        up the current wording of a named clinic policy","inputSchema":{"json":{"type":"object","properties":{"name":{"type":"string","description":"The
+        policy name"}},"required":["name"],"additionalProperties":false}}}}]}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 8bff343f-d747-49c1-b656-d0e5db506f9c
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.254.1 ua/2.1 api/bedrock_runtime#1.83.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '13650'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 18:21:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '665'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a0c4f257-cf55-406f-9ef2-8a909657f518
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1506},"output":{"message":{"content":[{"text":"The
+        current **cancellation policy** is:\n\n> **Cancellations require 24 hours
+        notice.**\n\nThis means that if you need to cancel an appointment, please
+        make sure to do so at least **24 hours in advance**. If you have any further
+        questions or need assistance with a cancellation, feel free to ask!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheDetails":[{"inputTokens":93,"ttl":"5m"}],"cacheReadInputTokenCount":3488,"cacheReadInputTokens":3488,"cacheWriteInputTokenCount":93,"cacheWriteInputTokens":93,"inputTokens":1,"outputTokens":73,"serverToolUsage":{},"totalTokens":3655}}'
+  recorded_at: Fri, 11 Sep 2026 18:21:05 GMT
+recorded_with: VCR 6.4.0

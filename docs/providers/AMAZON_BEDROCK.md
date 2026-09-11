@@ -94,7 +94,10 @@ model_options additional_model_request_fields: {
 
 ### cache_control
 
-Enable prompt caching for models that support it (Claude, Nova). Riffer appends a single Converse `cachePoint` to the stable prefix — after the system array, or after the tools when there is no system prompt — so system instructions and tool definitions are reused across the calls in an agent loop and across conversation turns. The volatile message tail is never cached.
+Enable prompt caching for models that support it (Claude, Nova). Riffer mirrors Anthropic's automatic caching with two Converse `cachePoint` blocks:
+
+- A **static** checkpoint at the end of the stable prefix — after the system array, or after the tools when there is no system prompt — so system instructions and tool definitions are reused across every call.
+- A **moving** checkpoint after the last content block of the final message (a user turn or a batch of tool results). Bedrock looks back roughly 20 content blocks from a checkpoint for the longest cached prefix, so the second and later calls in a tool loop, and later turns in a conversation, read the accumulated conversation from cache instead of re-billing it at the full input rate.
 
 ```ruby
 # 5-minute TTL (default)
@@ -104,7 +107,7 @@ model_options cache_control: {type: "ephemeral"}
 model_options cache_control: {type: "ephemeral", ttl: "1h"}
 ```
 
-Caching is opt-in: omit `cache_control` and no cachePoint is sent. The breakpoint is only honored once the prefix clears the model's minimum token count; on models that don't support `cachePoint`, the Converse request errors. Verify hits via `response.token_usage.cache_read_tokens`.
+Both checkpoints share the same `ttl`. Caching is opt-in: omit `cache_control` and no cachePoint is sent. A checkpoint is only honored once the content before it clears the model's minimum token count (see the per-model limits in the [AWS prompt caching guide](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html)) and is silently ignored below it, so short conversations may see no cache reads at first. On models that don't support `cachePoint`, the Converse request errors. Verify hits via `response.token_usage.cache_read_tokens`, which should grow with each step of an agent loop as the conversation accumulates.
 
 ## Example
 

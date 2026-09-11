@@ -129,21 +129,25 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     params
   end
 
-  # Converse chains +tools -> system -> messages+, so a single +cachePoint+ at
-  # the end of the system array (or the tools array, when there is no system
-  # prompt) also caches the preceding sections.
+  # Converse treats +tools -> system -> messages+ as one prefix and looks back
+  # from a +cachePoint+ for the longest cached run, so the point on the final
+  # message reuses the previous step's cache wherever that point sat. Mixed
+  # ttls must be ordered 1h before 5m, so both points share one.
   #--
   #: (Hash[Symbol, untyped], untyped) -> void
   def apply_cache_point(params, cache_control)
     cache_point = { cache_point: build_cache_point(cache_control) }
     system = params[:system]
     tools = params.dig(:tool_config, :tools)
+    last_message = params[:messages].last
 
     if system && !system.empty?
       system << cache_point
     elsif tools && !tools.empty?
       tools << cache_point
     end
+
+    last_message[:content] << cache_point if last_message
   end
 
   #--

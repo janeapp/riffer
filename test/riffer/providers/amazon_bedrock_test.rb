@@ -1063,6 +1063,8 @@ describe Riffer::Providers::AmazonBedrock do
 
   describe "prompt caching" do
     let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
+    let(:cache_point) { { cache_point: { type: "default" } } }
     let(:cache_tool) do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
@@ -1072,17 +1074,73 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
-    it "appends a cachePoint after the system array when a system prompt is present" do
-      provider = Riffer::Providers::AmazonBedrock.new
+    def tool_call_message(*call_ids)
+      Riffer::Messages::Assistant.new(
+        "",
+        tool_calls: call_ids.map do |call_id|
+          Riffer::Messages::Assistant::ToolCall.new(call_id: call_id, name: "get_weather", arguments: "{}")
+        end,
+      )
+    end
+
+    def tool_result_message(call_id)
+      Riffer::Messages::Tool.new("Sunny", tool_call_id: call_id, name: "get_weather")
+    end
+
+    it "appends a cachePoint after the system array and after the last user text block" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
 
-      expect(params[:system].last).must_equal({ cache_point: { type: "default" } })
+      expect(params[:system].last).must_equal cache_point
+      expect(params[:messages].last[:content]).must_equal [{ text: "Hello" }, cache_point]
+    end
+
+    it "places the moving cachePoint after the file parts of the last user message" do
+      image_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+      file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+      messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Describe", files: [file])]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+      content = params[:messages].last[:content]
+
+      expect(content.length).must_equal 3
+      expect(content[1].key?(:image)).must_equal true
+      expect(content.last).must_equal cache_point
+    end
+
+    it "places the moving cachePoint as a sibling of a single tool_result block" do
+      messages = [
+        Riffer::Messages::System.new("Be concise"),
+        Riffer::Messages::User.new("Weather?"),
+        tool_call_message("tooluse_1"),
+        tool_result_message("tooluse_1"),
+      ]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+      content = params[:messages].last[:content]
+
+      expect(content.map(&:keys)).must_equal [[:tool_result], [:cache_point]]
+      expect(content.first[:tool_result].key?(:cache_point)).must_equal false
+    end
+
+    it "places the moving cachePoint after several merged tool_result blocks" do
+      messages = [
+        Riffer::Messages::System.new("Be concise"),
+        Riffer::Messages::User.new("Weather?"),
+        tool_call_message("tooluse_1", "tooluse_2"),
+        tool_result_message("tooluse_1"),
+        tool_result_message("tooluse_2"),
+      ]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+      content = params[:messages].last[:content]
+
+      expect(content.map(&:keys)).must_equal [[:tool_result], [:tool_result], [:cache_point]]
+      expect(content.map { |block| block[:tool_result]&.key?(:cache_point) }).must_equal [false, false, nil]
     end
 
     it "appends a cachePoint after the tools when there is no system prompt" do
-      provider = Riffer::Providers::AmazonBedrock.new
       messages = [Riffer::Messages::User.new("Hello")]
 
       params = provider.send(
@@ -1092,11 +1150,20 @@ describe Riffer::Providers::AmazonBedrock do
         { cache_control: { type: "ephemeral" }, tools: [cache_tool] },
       )
 
-      expect(params[:tool_config][:tools].last).must_equal({ cache_point: { type: "default" } })
+      expect(params[:tool_config][:tools].last).must_equal cache_point
+      expect(params[:messages].last[:content].last).must_equal cache_point
     end
 
-    it "translates the ttl onto the cachePoint" do
-      provider = Riffer::Providers::AmazonBedrock.new
+    it "only adds the static cachePoint when there are no messages" do
+      messages = [Riffer::Messages::System.new("Be concise")]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+
+      expect(params[:system].last).must_equal cache_point
+      expect(params[:messages]).must_equal []
+    end
+
+    it "translates the ttl onto both cachePoints" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(
@@ -1107,10 +1174,10 @@ describe Riffer::Providers::AmazonBedrock do
       )
 
       expect(params[:system].last[:cache_point][:ttl]).must_equal "1h"
+      expect(params[:messages].last[:content].last[:cache_point][:ttl]).must_equal "1h"
     end
 
     it "does not pass cache_control through as a top-level param" do
-      provider = Riffer::Providers::AmazonBedrock.new
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
@@ -1118,13 +1185,78 @@ describe Riffer::Providers::AmazonBedrock do
       expect(params.key?(:cache_control)).must_equal false
     end
 
-    it "adds no cachePoint when caching is not requested" do
-      provider = Riffer::Providers::AmazonBedrock.new
+    it "adds no cachePoint anywhere when caching is not requested" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, model, {})
 
       expect(params[:system].none? { |block| block.key?(:cache_point) }).must_equal true
+      expect(params[:messages].last[:content].none? { |block| block.key?(:cache_point) }).must_equal true
+    end
+
+    describe "#generate_text across the steps of a tool loop" do
+      # Sonnet 4.6 ignores a checkpoint until 1,024 tokens precede it. The
+      # system prompt alone stays well under that, so the static checkpoint
+      # is a no-op and every cache read the second step sees has to come
+      # from the moving checkpoint on the first step's user message.
+      let(:model) { "us.anthropic.claude-sonnet-4-6" }
+      let(:lookup_tool) do
+        stub_tool("LookupPolicy") do
+          description "Look up the current wording of a named clinic policy"
+          params do
+            required :name, String, description: "The policy name"
+          end
+        end
+      end
+      let(:handbook) do
+        (1..80).map do |n|
+          "Section #{n}. Clause #{n} of the clinic handbook describes procedure number #{n}, " \
+            "which staff follow when handling a case of type #{n} during regular operating hours."
+        end.join(" ")
+      end
+      let(:first_step) do
+        [
+          Riffer::Messages::System.new(
+            "You are a clinic assistant. Call lookup_policy before answering a policy question.",
+          ),
+          Riffer::Messages::User.new(
+            "Here is the handbook:\n\n#{handbook}\n\nWhat is the current cancellation policy?",
+          ),
+        ]
+      end
+
+      it "reads the previous step's messages from cache on the next step of a tool loop" do
+        VCR.use_cassette(
+          "Riffer_Providers_AmazonBedrock/prompt_caching/_generate_text/reads_previous_step_from_cache",
+        ) do
+          first = provider.generate_text(
+            messages: first_step,
+            model: model,
+            tools: [lookup_tool],
+            cache_control: { type: "ephemeral" },
+          )
+
+          expect(first.tool_calls).wont_be_empty
+          expect(first.token_usage.cache_write_tokens).must_be :>, 1024
+
+          second = provider.generate_text(
+            messages: [
+              *first_step,
+              first,
+              Riffer::Messages::Tool.new(
+                "Cancellations require 24 hours notice.",
+                tool_call_id: first.tool_calls.first.call_id,
+                name: "lookup_policy",
+              ),
+            ],
+            model: model,
+            tools: [lookup_tool],
+            cache_control: { type: "ephemeral" },
+          )
+
+          expect(second.token_usage.cache_read_tokens).must_be :>=, first.token_usage.cache_write_tokens
+        end
+      end
     end
   end
 
