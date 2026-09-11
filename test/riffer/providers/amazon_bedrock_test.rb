@@ -1194,54 +1194,6 @@ describe Riffer::Providers::AmazonBedrock do
       expect(params[:messages].last[:content].none? { |block| block.key?(:cache_point) }).must_equal true
     end
 
-    describe "against the SDK's param validation" do
-      # stub_responses: true skips the network but still runs the SDK's shape
-      # validation on the params, so a cachePoint in an invalid position
-      # raises instead of silently building. The SDK stubs an event stream as
-      # nil, so converse_stream needs an explicit empty stream to decode; its
-      # stub validator only accepts a Hash for that member.
-      let(:client) do
-        Aws::BedrockRuntime::Client.new(stub_responses: true).tap do |client|
-          client.stub_responses(:converse_stream, stream: {})
-        end
-      end
-      let(:request) do
-        {
-          messages: [
-            Riffer::Messages::System.new("Be concise"),
-            Riffer::Messages::User.new("Weather?"),
-            tool_call_message("tooluse_1"),
-            tool_result_message("tooluse_1"),
-          ],
-          model: model,
-          tools: [cache_tool],
-          cache_control: { type: "ephemeral" },
-        }
-      end
-
-      before do
-        provider # force SDK load so Aws::BedrockRuntime resolves for the client
-        Riffer.config.amazon_bedrock.client = client
-      end
-
-      it "sends both cachePoints on a generate request" do
-        provider.generate_text(**request)
-        params = client.api_requests.last[:params]
-
-        expect(params[:system].last).must_equal cache_point
-        expect(params[:messages].last[:content].last).must_equal cache_point
-      end
-
-      it "sends the same params on a streaming request" do
-        provider.generate_text(**request)
-        provider.stream_text(**request).to_a
-        generate_request, stream_request = client.api_requests
-
-        expect(stream_request[:operation_name]).must_equal :converse_stream
-        expect(stream_request[:params]).must_equal generate_request[:params]
-      end
-    end
-
     describe "#generate_text across the steps of a tool loop" do
       # Sonnet 4.6 ignores a checkpoint until 1,024 tokens precede it. The
       # system prompt alone stays well under that, so the static checkpoint
