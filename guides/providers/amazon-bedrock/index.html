@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.46.1</span>
+            <span class="version">v0.47.0</span>
           </div>
         </nav>
       </div>
@@ -288,7 +288,12 @@
 
 <h3 id="cache_control">cache_control</h3>
 
-<p>Enable prompt caching for models that support it (Claude, Nova). Riffer appends a single Converse <code>cachePoint</code> to the stable prefix — after the system array, or after the tools when there is no system prompt — so system instructions and tool definitions are reused across the calls in an agent loop and across conversation turns. The volatile message tail is never cached.</p>
+<p>Enable prompt caching for models that support it (Claude, Nova). Riffer mirrors Anthropic’s automatic caching with two Converse <code>cachePoint</code> blocks:</p>
+
+<ul>
+  <li>A <strong>static</strong> checkpoint at the end of the stable prefix — after the system array, or after the tools when there is no system prompt — so system instructions and tool definitions are reused across every call.</li>
+  <li>A <strong>moving</strong> checkpoint after the last content block of the final message (a user turn or a batch of tool results). Bedrock looks back roughly 20 content blocks from a checkpoint for the longest cached prefix, so the second and later calls in a tool loop, and later turns in a conversation, read the accumulated conversation from cache instead of re-billing it at the full input rate.</li>
+</ul>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 5-minute TTL (default)</span>
 <span class="n">model_options</span> <span class="ss">cache_control: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"ephemeral"</span><span class="p">}</span>
@@ -297,7 +302,7 @@
 <span class="n">model_options</span> <span class="ss">cache_control: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"ephemeral"</span><span class="p">,</span> <span class="ss">ttl: </span><span class="s2">"1h"</span><span class="p">}</span>
 </code></pre></div></div>
 
-<p>Caching is opt-in: omit <code>cache_control</code> and no cachePoint is sent. The breakpoint is only honored once the prefix clears the model’s minimum token count; on models that don’t support <code>cachePoint</code>, the Converse request errors. Verify hits via <code>response.token_usage.cache_read_tokens</code>.</p>
+<p>Both checkpoints share the same <code>ttl</code>. Caching is opt-in: omit <code>cache_control</code> and no cachePoint is sent. A checkpoint is only honored once the content before it clears the model’s minimum token count (see the per-model limits in the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">AWS prompt caching guide</a>) and is silently ignored below it, so short conversations may see no cache reads at first. On models that don’t support <code>cachePoint</code>, the Converse request errors. Verify hits via <code>response.token_usage.cache_read_tokens</code>, which should grow with each step of an agent loop as the conversation accumulates.</p>
 
 <h2 id="example">Example</h2>
 
