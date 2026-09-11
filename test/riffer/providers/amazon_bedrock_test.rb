@@ -1241,6 +1241,71 @@ describe Riffer::Providers::AmazonBedrock do
         expect(stream_request[:params]).must_equal generate_request[:params]
       end
     end
+
+    describe "#generate_text across the steps of a tool loop" do
+      # Sonnet 4.6 ignores a checkpoint until 1,024 tokens precede it. The
+      # system prompt alone stays well under that, so the static checkpoint
+      # is a no-op and every cache read the second step sees has to come
+      # from the moving checkpoint on the first step's user message.
+      let(:model) { "us.anthropic.claude-sonnet-4-6" }
+      let(:lookup_tool) do
+        stub_tool("LookupPolicy") do
+          description "Look up the current wording of a named clinic policy"
+          params do
+            required :name, String, description: "The policy name"
+          end
+        end
+      end
+      let(:handbook) do
+        (1..80).map do |n|
+          "Section #{n}. Clause #{n} of the clinic handbook describes procedure number #{n}, " \
+            "which staff follow when handling a case of type #{n} during regular operating hours."
+        end.join(" ")
+      end
+      let(:first_step) do
+        [
+          Riffer::Messages::System.new(
+            "You are a clinic assistant. Call lookup_policy before answering a policy question.",
+          ),
+          Riffer::Messages::User.new(
+            "Here is the handbook:\n\n#{handbook}\n\nWhat is the current cancellation policy?",
+          ),
+        ]
+      end
+
+      it "reads the previous step's messages from cache on the next step of a tool loop" do
+        VCR.use_cassette(
+          "Riffer_Providers_AmazonBedrock/prompt_caching/_generate_text/reads_previous_step_from_cache",
+        ) do
+          first = provider.generate_text(
+            messages: first_step,
+            model: model,
+            tools: [lookup_tool],
+            cache_control: { type: "ephemeral" },
+          )
+
+          expect(first.tool_calls).wont_be_empty
+          expect(first.token_usage.cache_write_tokens).must_be :>, 1024
+
+          second = provider.generate_text(
+            messages: [
+              *first_step,
+              first,
+              Riffer::Messages::Tool.new(
+                "Cancellations require 24 hours notice.",
+                tool_call_id: first.tool_calls.first.call_id,
+                name: "lookup_policy",
+              ),
+            ],
+            model: model,
+            tools: [lookup_tool],
+            cache_control: { type: "ephemeral" },
+          )
+
+          expect(second.token_usage.cache_read_tokens).must_be :>=, first.token_usage.cache_write_tokens
+        end
+      end
+    end
   end
 
   describe "file handling" do
