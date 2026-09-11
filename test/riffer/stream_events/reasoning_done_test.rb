@@ -40,6 +40,16 @@ describe Riffer::StreamEvents::ReasoningDone do
 
       expect(event.redacted_data).must_equal "encrypted"
     end
+
+    it "defaults the id to nil" do
+      expect(Riffer::StreamEvents::ReasoningDone.new("Hello").id).must_be_nil
+    end
+
+    it "sets the id" do
+      event = Riffer::StreamEvents::ReasoningDone.new("Hello", id: "rs_1")
+
+      expect(event.id).must_equal "rs_1"
+    end
   end
 
   describe "#to_h" do
@@ -59,6 +69,12 @@ describe Riffer::StreamEvents::ReasoningDone do
       event = Riffer::StreamEvents::ReasoningDone.new("", redacted_data: "encrypted")
 
       expect(event.to_h).must_equal({ role: :assistant, content: "", redacted_data: "encrypted" })
+    end
+
+    it "includes the id when set" do
+      event = Riffer::StreamEvents::ReasoningDone.new("Hello", id: "rs_1")
+
+      expect(event.to_h).must_equal({ role: :assistant, content: "Hello", id: "rs_1" })
     end
   end
 end

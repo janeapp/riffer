@@ -44,7 +44,7 @@ describe Riffer::Tracing::StreamRecorder do
       recorder << Riffer::StreamEvents::ReasoningDone.new("Two plus two", signature: "sig_1")
 
       expect(recorder.reasoning.map(&:to_h)).must_equal(
-        [{ text: "Two plus two", signature: "sig_1", redacted_data: nil }],
+        [{ text: "Two plus two", signature: "sig_1", redacted_data: nil, id: nil }],
       )
     end
 

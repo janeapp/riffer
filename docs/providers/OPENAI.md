@@ -82,6 +82,8 @@ model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
 
 When reasoning is enabled, you'll receive `ReasoningDelta` and `ReasoningDone` events during streaming.
 
+The response's reasoning item arrives with its encrypted content already populated, which riffer keeps on the assistant message and replays ahead of the items it produced (see [reasoning blocks](../MESSAGES.md#reasoning-thinking-blocks)). No `include: ["reasoning.encrypted_content"]` is needed. A reasoning item only appears when the model actually reasons about the prompt, so a trivial prompt at a low effort level leaves `reasoning` empty.
+
 ### web_search
 
 Enable server-side web search using OpenAI's `web_search_preview` tool. Pass `true` to use defaults or a hash to merge with the tool definition:

@@ -1,0 +1,417 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"A farmer has 17 sheep and all but
+        9 run away. Then he buys triple the remaining. Compute step by step and give
+        only the final number."}],"model":"gpt-5.6-luna","reasoning":{"effort":"high","summary":"auto"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.85.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.85.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '243'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 23:41:37 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a39a86213dd5d7dd-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '3135'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '180000000'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_d90f39e19f924dafb7bd7d1ca9e9228b
+      Set-Cookie:
+      - __cf_bm=mIs9tphwBatbIVSZcovn6wVNMLyOJ.YQol1oj0e6ovY-1789170094.2797155-1.0.1.1-t1KGZ_KWsyMytmwUV3Xq4l4L8w9cQnfB2lFtog9Xdwy3WELUbmn4sMDYOnZ5AL46uJRlAlJpP9FV5l1jygPOChoU.yCkATfHvfwlkc.p7nsrjIqVBWNNBmGer4q_N0Ax;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Sat,
+        12 Sep 2026 00:11:37 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0d4a3185125f09e5016aa491ae766c87d09f062947180570bf",
+          "object": "response",
+          "created_at": 1789170094,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1789170097,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5.6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0d4a3185125f09e5016aa491afbf7887d0b4b61b622f1c1652",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABqpJGxpYeJCoAsTVTe9K4qe-8S8agjcbje2uUBoohdUOGuL0LpjHZOz3Iij6VlW1NHPTBKsdDZT9Q6kYwrwibVM5iBZFYrSHGZ2x9sHW_WKsY4-78D0NhmuQI7SZoYU20QKbEVR5TldeAPC6lbhKIqv-Zs-kwe5N21lOdqK0n_ZBeUDPyKHSC3-YfVKSKe-_MCTxyHVFvPUIMm2QqYXjA7hOhm3DiQOpJIGVH92jWR1Nvc3UQA5F4Nh1qzl2pDDx2iE9l-ZzPczgKwx8Zd0d9vkrEXx0G9rrSiwaXHBpNFAABXAHipcMdENX19aODEJ8W9EI59HmItwqNpzdLMoKpRbe3Wr_kc0sOB7ZaEQE31Luhu0uvGe2k3rSng2RI7YaqpiKatd_bQh24-pJI_w7rNNtMdRUG-v9by4Jrh2KlsrRtxJKk-P-ESLjb00GOMNgbfeN2zNLZdxJnfTUp6aF2PfdsmvE8JbXzcIkQMlvdmJpDgani-9iIy78cA_zXW-0k0RFkCQAYGOZsbMWuD4DB2BkNQs-hBdvQn2k9r-Rp4MStPpKHN8K6XCReYEnF2BEsSRKpc3dphuLm2rw_N_uYr8PF6nsxf2sMzuLYUXuQe0v8ul0ky1yPKZNL9DgXNW6Bxqa-n7i3gb0WqFHw-e6JIyMo3xz64_KRPCpsoM--vRwynGEPgbAaaUiJX1Se1IWwEa9paTWbglfHjbRKw10nYd1hbA05pMaWIY3vNEurx7mXM0MvTeKIbZfZdCzuO0x5iPTJYwQ_CJc7BLurcnIe7zIyVqVqEvsDWDNsPvOOv8fV28bpEKdgzSriQxKSeIL07R42Yhivs3Bfg8aKcQFu_AoHztSzVSbpINZ2uPBRVzxWlyt2oy3_Xrqq4kVWsBsqEwUk7BvqQG5NV4oPb6sI_yOM3sctWxEWwFLL5GHXm4SgFsGmLj7_2ar6e-uF3_E730y5xRQYZoG9yJIK_mb1U5XVCu08GOIAOO2adfa-W8IaxwjWCTcB64mxscbyv3lZ_dWK2mRiTALThLDeLEhB7L8gwFi9bgEGj9XdS-ADLVt7emT9bz1D0hfLJ_e45xwMTHDLxTRYyczarI4-f-VU7EZ63B_qlRdDXYvoMZHtUowQUGJtXkWsnSilY7-d43fdRQJ4-XZpiXKsqEHvDv7-cYtB065vJ2PQFPuO43YRBuJemyuxRTGhOVySrRTQR26njL7Sj_wJEYYN_4JyRC50kIreDnyDrrNi56_ZUox5dW4uCYFT1eWVFSTf8C23Vj1Jgu0s-WkJfhscM1hckGYVah1kfXxGHIpp1FO_lqb5ku7OeyJl_de59ArLbcydiBHs0hwf3yqusSjz3UeBzTGyqzdCitakSA95JIQ-tRb-dxch0qJMCBjWmCXArG3xGP2KlM5025TnCg2ARfGx3UVpjG1MVB_hYgAXrSF_W5qNv4Sr29nY5iJOFXkKWiIL-Ru-6swtfDC_tkTYmzVILF_z4L7DbKCAWSETSg_5OGWDnN1bgygnhor5K7SDCGH_BLg3shahowmrHJ3KO-7MErvLbwto1tYVA5isEISMnVMDjvzrkNkWY9vAXu1I050zQi7yyv2A0",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Calculating sheep total**\n\nI need to focus on isolating the final number. Starting with 17 sheep, if all but 9 run away, that means 9 are left. If he buys triple the remaining, that's 27 sheep added. So now I have 9 remaining plus the 27 he bought, which adds up to a total of 36 sheep. The task only requires that final number."
+                }
+              ]
+            },
+            {
+              "id": "msg_0d4a3185125f09e5016aa491b17aa487d0940d227fe65ffbe3",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "36"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "high",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 38,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 90,
+            "output_tokens_details": {
+              "reasoning_tokens": 83
+            },
+            "total_tokens": 128
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 11 Sep 2026 23:41:37 GMT
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"A farmer has 17 sheep and all but
+        9 run away. Then he buys triple the remaining. Compute step by step and give
+        only the final number."},{"type":"reasoning","id":"rs_0d4a3185125f09e5016aa491afbf7887d0b4b61b622f1c1652","summary":[{"type":"summary_text","text":"**Calculating
+        sheep total**\n\nI need to focus on isolating the final number. Starting with
+        17 sheep, if all but 9 run away, that means 9 are left. If he buys triple
+        the remaining, that''s 27 sheep added. So now I have 9 remaining plus the
+        27 he bought, which adds up to a total of 36 sheep. The task only requires
+        that final number."}],"encrypted_content":"gAAAAABqpJGxpYeJCoAsTVTe9K4qe-8S8agjcbje2uUBoohdUOGuL0LpjHZOz3Iij6VlW1NHPTBKsdDZT9Q6kYwrwibVM5iBZFYrSHGZ2x9sHW_WKsY4-78D0NhmuQI7SZoYU20QKbEVR5TldeAPC6lbhKIqv-Zs-kwe5N21lOdqK0n_ZBeUDPyKHSC3-YfVKSKe-_MCTxyHVFvPUIMm2QqYXjA7hOhm3DiQOpJIGVH92jWR1Nvc3UQA5F4Nh1qzl2pDDx2iE9l-ZzPczgKwx8Zd0d9vkrEXx0G9rrSiwaXHBpNFAABXAHipcMdENX19aODEJ8W9EI59HmItwqNpzdLMoKpRbe3Wr_kc0sOB7ZaEQE31Luhu0uvGe2k3rSng2RI7YaqpiKatd_bQh24-pJI_w7rNNtMdRUG-v9by4Jrh2KlsrRtxJKk-P-ESLjb00GOMNgbfeN2zNLZdxJnfTUp6aF2PfdsmvE8JbXzcIkQMlvdmJpDgani-9iIy78cA_zXW-0k0RFkCQAYGOZsbMWuD4DB2BkNQs-hBdvQn2k9r-Rp4MStPpKHN8K6XCReYEnF2BEsSRKpc3dphuLm2rw_N_uYr8PF6nsxf2sMzuLYUXuQe0v8ul0ky1yPKZNL9DgXNW6Bxqa-n7i3gb0WqFHw-e6JIyMo3xz64_KRPCpsoM--vRwynGEPgbAaaUiJX1Se1IWwEa9paTWbglfHjbRKw10nYd1hbA05pMaWIY3vNEurx7mXM0MvTeKIbZfZdCzuO0x5iPTJYwQ_CJc7BLurcnIe7zIyVqVqEvsDWDNsPvOOv8fV28bpEKdgzSriQxKSeIL07R42Yhivs3Bfg8aKcQFu_AoHztSzVSbpINZ2uPBRVzxWlyt2oy3_Xrqq4kVWsBsqEwUk7BvqQG5NV4oPb6sI_yOM3sctWxEWwFLL5GHXm4SgFsGmLj7_2ar6e-uF3_E730y5xRQYZoG9yJIK_mb1U5XVCu08GOIAOO2adfa-W8IaxwjWCTcB64mxscbyv3lZ_dWK2mRiTALThLDeLEhB7L8gwFi9bgEGj9XdS-ADLVt7emT9bz1D0hfLJ_e45xwMTHDLxTRYyczarI4-f-VU7EZ63B_qlRdDXYvoMZHtUowQUGJtXkWsnSilY7-d43fdRQJ4-XZpiXKsqEHvDv7-cYtB065vJ2PQFPuO43YRBuJemyuxRTGhOVySrRTQR26njL7Sj_wJEYYN_4JyRC50kIreDnyDrrNi56_ZUox5dW4uCYFT1eWVFSTf8C23Vj1Jgu0s-WkJfhscM1hckGYVah1kfXxGHIpp1FO_lqb5ku7OeyJl_de59ArLbcydiBHs0hwf3yqusSjz3UeBzTGyqzdCitakSA95JIQ-tRb-dxch0qJMCBjWmCXArG3xGP2KlM5025TnCg2ARfGx3UVpjG1MVB_hYgAXrSF_W5qNv4Sr29nY5iJOFXkKWiIL-Ru-6swtfDC_tkTYmzVILF_z4L7DbKCAWSETSg_5OGWDnN1bgygnhor5K7SDCGH_BLg3shahowmrHJ3KO-7MErvLbwto1tYVA5isEISMnVMDjvzrkNkWY9vAXu1I050zQi7yyv2A0"},{"type":"message","role":"assistant","content":"36"},{"role":"user","content":"And
+        times 3?"}],"model":"gpt-5.6-luna","reasoning":{"effort":"high","summary":"auto"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.85.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.85.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2432'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 23:41:40 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a39a8636aef7d7dd-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - team-c58089d6-6de8-4174-9362-b238cecaf04f
+      Openai-Processing-Ms:
+      - '3066'
+      Openai-Project:
+      - proj_bAqiRfh7TFWmykwzXG5BVsrE
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '30000'
+      X-Ratelimit-Limit-Tokens:
+      - '180000000'
+      X-Ratelimit-Remaining-Requests:
+      - '29999'
+      X-Ratelimit-Remaining-Tokens:
+      - '179999958'
+      X-Ratelimit-Reset-Requests:
+      - 2ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_0575b33d6b1a46b5a800eec9e4b89be7
+      Set-Cookie:
+      - __cf_bm=aIdqTsdPPpS4wS2P77nqHT1l4MC9sSE4e15D.YYc6xA-1789170097.7096732-1.0.1.1-8GYxiQfEWDUppq1vgIUI7c3OMA3nBQKca3YjrSULhnV1fTlP1IBXuhnqlmWjpUBdm_h4EJ0ArjA0xZA0RcaGA.Y3uDLWwuw4AZajGsKZLWYGMkHf4H_e_10XfEkZhyFZ;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Sat,
+        12 Sep 2026 00:11:40 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0d4a3185125f09e5016aa491b1c88487d0b40c855a5e006aff",
+          "object": "response",
+          "created_at": 1789170097,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1789170100,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5.6-luna",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0d4a3185125f09e5016aa491b25f4087d0bc3d085936726201",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABqpJG0eyVBUAeqfTan6ccckcUi4B4gwikpja_hXK6g7b8B12-aYXQEqBc1wtB259bP-XFAP-_LFofbizVsZ5HeuZnzmF89Mn1IBxNK7Kv_T9mwbjCOm9pbHoWbM8XrREe-C9HbXwehFdk5ot_HP9MglJPzcNv2ZzhF8Y7zcCVSc_ImoctFGNyA6J3P2bUIPvAsNHe0Wcf4vJMDalVjpiZyWjocbjQK5B2AeQm0R6BS0mz73uB_geD6C1Gu1MtglW3mpctyI-QljIKYJy4EZV9GdUXsIMUvE6CMfsiiM4S_o18qyBQDDuFf5kOguXUcIRoNFajWZ5nOvNPfK8vc1UGQOH15CilD4LHbK1ury2dEyTKFORz8H3Dp_Ts60VkWXqUbRbkYXZk3QppMDTAzzbNEyqSy2_8PZP50wRLHXWIx-5DzxY_CEJ5VlU7dqxfRmUc00MTiu2MbxEJtKG09RBZkopxqrOXouIiMqAYzrEmZk_NaK3ZNiToXnET3r_Kum4q3u0dZ0vlXDL6_EB9wTwODW_J9EUBdLYp5-w9X3jvuIe3owIxV0H-WUyRxldSB2Mguzj8Q_adLAULkT3OdYbAGSnsKbiUqafwV6uY8yLM1-1lmCoVJDdOVW5cLDmGL7XZRzKqVnHca0o5SlI4sRhcvmBIKjJcIdNJY7YpdltvT41usZbaOywYpk-Vxj9jOyw64Mn4-YGmTQnH3EYMzW1TFuzDpEimJZaavR6RMFPYx_izmGDwvuy3gRDQ37fwkj0-2GpAiq-2R8_krlhlbTHhZL_AhDGMHsR4dESxJOLROTcMLPXC8i05xFsX3lXSNoMHH--tXxYv3bHOOrpvQ6V8woa55AYPEYDFV5N_jaHRznYj3Ixpwk2ZdW8gBK_feeKnmS5e0hVpfrRQer_XKSuHdgtufUkadGqsWrsgJsQETgJ9PoVPaO4LTap68GcJA4CjgAeNgOM7fVU7dbkpWuAe_kZ0BjiDP2San9QopfkWyx0WILnX8Ld48eFmkA4TcDuesFQ91OQtBSGGCl5gK43AprD9OSP_Y7HdDHcSBJ-frSmEpEQ4bar2t1-yhJaGKZoB3qiVrQDXNvWfCeNJGttjUzGj56grHC_dtLvVhVB-qqN7J_OStpLJGzCbDuHbCZ3phMwXP4wVAm9RIwF4ySmPKPylUkxwEU7c0MkINTjCUo9Aqnppf7CtKGqH1GDYVUDdLg6Wz8bBees3mKe7VZnh81TZNfL-9ew7gEK8WfIT7cc_GHsGIx_g8SH52tZoIBFLUG5OhEDajqfY8SVLiVVV4yozQXmKohKQ95dVlfpkX3NQS3H1mXeHUIXYjAyFkOenvh4gGI3wC6mfl9XjsZn5SKKaZ4-dXPuY8IpCFrxlmnye20NuwXdVpk4eD3kXXjDtnVahLldmz5buN9nOM4svUWWf-f8EXd5Y1hCXdkCCyR2BLBPTuxORZWpFw5_3ucBvJR3JbBdbXSKg_mG0tbmVQJybSs7LLhz3xeOqrMGSw6S7csa3_Kb_2TYfhlNXvp7wo7vbfsG5SfdgPnmvq562JY6U5NMRbdMyL68ve3Ncqe_ysROnSjY1vr-KOKoYBQIM8wQbWNg8IttkP7AcJv3NxyXrR4c8yVxIhi0E7FMus6qirZetICxxIzxgkpEVmd-Oh-PMsUJ31-ZQHOI0e03tm-8cNcjaI7JJpnXyccLzUGybSOqppQ56EsPkymy_xcwfS3WZYPTM-BI0e0IpJgNTqoGL9I0RgUnkJKrWxlXV9dN0NuhPn-6ul-lkaGCr3QjmbI9_QZR1-Zu1fVHUsyT5z1QxLouF8BVAxFyOcs7nMk_LcdSg_cCnywZPI8MU58O7KfKEMCjkuWaUSTaFC0WYDWzjCm8G4eyN8pc2JBKtkcIedFgDMwpgE4_6YdtKv7udcU9v8EkQVr7BlRtq8Nso4Dc2npz4aud915iB5Vacu3oUZ9TKH4EjeUtpC36XBTuLrlo1iSd9-alpTcNYZHb3zFQTjdYfwdM5VzuFpLNik-rfWkNc6cUY9zqQXTI88s6vx5uTjWVJ_rTT9Xc3Q4WFOB1jS-o48FgJfKe-NZUE_fX5zWvqYpNxf4D44YO5if1-otXhFMQ3BTAC3y5wfywlkC3TUxgXUhhFJM4lwuGYCx-9ZLGU=",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Clarifying user\u2019s question**\n\nIt seems like the user is challenging the interpretation concerning \"times 3.\" They might be asking if the remaining 9 should be multiplied by 3, implying a buying amount of 27, not just the total. Originally, I calculated 36, but if the user is fixated on \"times 3,\" then maybe the answer they want is indeed 27. There appears to be some ambiguity they want resolved, so I could simply clarify that the final answer is likely 27."
+                }
+              ]
+            },
+            {
+              "id": "msg_0d4a3185125f09e5016aa491b48cf887d089979103a92139cc",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "27"
+                }
+              ],
+              "phase": "final_answer",
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "24h",
+          "reasoning": {
+            "context": "all_turns",
+            "effort": "high",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 0.98,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 139,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 183,
+            "output_tokens_details": {
+              "reasoning_tokens": 176
+            },
+            "total_tokens": 322
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 11 Sep 2026 23:41:40 GMT
+recorded_with: VCR 6.4.0

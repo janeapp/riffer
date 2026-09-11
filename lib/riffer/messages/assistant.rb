@@ -4,16 +4,29 @@
 # Represents an assistant (LLM) message in a conversation; may include tool
 # calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
-  ToolCall = Struct.new(:call_id, :name, :arguments)
-  Reasoning = Struct.new(:text, :signature, :redacted_data)
+  ToolCall = Struct.new(:call_id, :name, :arguments, :signature) do
+    # Omits an absent +signature+, so a tool call from a provider that doesn't
+    # sign one serializes to the same hash it always has.
+    #--
+    #: () -> Hash[Symbol, untyped]
+    def to_h
+      hash = super
+      hash.delete(:signature) if hash[:signature].nil?
+      hash
+    end
+  end
+
+  Reasoning = Struct.new(:text, :signature, :redacted_data, :id)
 
   # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
 
   # Reasoning (thinking) blocks in the order the model produced them.
-  # +signature+ and +redacted_data+ are opaque provider tokens that must be
-  # replayed unmodified — a provider replays only the blocks carrying one, since
-  # an altered or unsigned block is rejected on the next turn.
+  # +signature+ is the provider's opaque replay token — an Anthropic or Bedrock
+  # thinking signature, OpenAI encrypted reasoning content, a Gemini thought
+  # signature — and must be replayed unmodified, so a provider replays only the
+  # blocks carrying one (or +redacted_data+); an altered or unsigned block is
+  # rejected on the next turn.
   attr_reader :reasoning #: Array[Riffer::Messages::Assistant::Reasoning]
 
   # Token usage data for this response.
@@ -92,6 +105,26 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
       "#{content}\n\n#{other.content}",
       tool_calls: tool_calls + other.tool_calls,
       reasoning: reasoning + other.reasoning,
+    )
+  end
+
+  # Returns a copy with every provider replay token dropped — reasoning
+  # signatures and redacted payloads, tool call signatures — keeping the
+  # reasoning text and ids. A token is bound to the exact request prefix that
+  # produced it, so a provider rejects one replayed under an edited history;
+  # every converter skips a block that carries none.
+  #--
+  #: () -> Riffer::Messages::Assistant
+  def without_replay_tokens
+    self.class.new(
+      content,
+      id: id,
+      tool_calls: tool_calls.map { |tc| ToolCall.new(tc.call_id, tc.name, tc.arguments, nil) },
+      token_usage: token_usage,
+      structured_output: structured_output,
+      finish_reason: finish_reason,
+      finish_reason_raw: finish_reason_raw,
+      reasoning: reasoning.map { |r| Reasoning.new(r.text, nil, nil, r.id) },
     )
   end
 

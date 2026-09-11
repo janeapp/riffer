@@ -1811,7 +1811,7 @@ describe Riffer::Providers::AmazonBedrock do
         reasoning = provider.send(:extract_reasoning, response)
 
         expect(reasoning.map(&:to_h)).must_equal(
-          [{ text: "Two plus two", signature: "sig_1", redacted_data: nil }],
+          [{ text: "Two plus two", signature: "sig_1", redacted_data: nil, id: nil }],
         )
       end
 
@@ -1821,7 +1821,7 @@ describe Riffer::Providers::AmazonBedrock do
         reasoning = provider.send(:extract_reasoning, response)
 
         expect(reasoning.map(&:to_h)).must_equal(
-          [{ text: nil, signature: nil, redacted_data: "encrypted-bytes" }],
+          [{ text: nil, signature: nil, redacted_data: "encrypted-bytes", id: nil }],
         )
       end
 

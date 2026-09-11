@@ -58,6 +58,29 @@ describe Riffer::StreamEvents::ToolCallDone do
 
       expect(event.role).must_equal :assistant
     end
+
+    it "defaults the signature to nil" do
+      event = Riffer::StreamEvents::ToolCallDone.new(
+        item_id: "item_123",
+        call_id: "call_123",
+        name: "weather_lookup",
+        arguments: '{"city":"Toronto"}',
+      )
+
+      expect(event.signature).must_be_nil
+    end
+
+    it "sets the signature" do
+      event = Riffer::StreamEvents::ToolCallDone.new(
+        item_id: "item_123",
+        call_id: "call_123",
+        name: "weather_lookup",
+        arguments: '{"city":"Toronto"}',
+        signature: "sig_1",
+      )
+
+      expect(event.signature).must_equal "sig_1"
+    end
   end
 
   describe "#to_h" do
@@ -77,6 +100,18 @@ describe Riffer::StreamEvents::ToolCallDone do
       }
 
       expect(event.to_h).must_equal expected
+    end
+
+    it "includes the signature when set" do
+      event = Riffer::StreamEvents::ToolCallDone.new(
+        item_id: "item_123",
+        call_id: "call_123",
+        name: "weather_lookup",
+        arguments: '{"city":"Toronto"}',
+        signature: "sig_1",
+      )
+
+      expect(event.to_h[:signature]).must_equal "sig_1"
     end
   end
 end

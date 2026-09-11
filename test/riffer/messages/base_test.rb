@@ -286,6 +286,18 @@ describe Riffer::Messages::Base do
 
         expect(result.reasoning).must_equal []
       end
+
+      it "round-trips the reasoning id and a signed tool call" do
+        block = Riffer::Messages::Assistant::Reasoning.new("Thinking", "enc_1", nil, "rs_1")
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "c_1", name: "weather", arguments: "{}", signature: "sig_1",
+        )
+        message = Riffer::Messages::Assistant.new("Answer", reasoning: [block], tool_calls: [tool_call])
+        result = Riffer::Messages::Base.from_hash(message.to_h)
+
+        expect(result.reasoning).must_equal [block]
+        expect(result.tool_calls).must_equal [tool_call]
+      end
     end
 
     describe "with user files" do

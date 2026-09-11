@@ -54,12 +54,14 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
         call_id: event.call_id,
         name: event.name,
         arguments: event.arguments,
+        signature: event.signature,
       )
     when Riffer::StreamEvents::ReasoningDone
       @reasoning << Riffer::Messages::Assistant::Reasoning.new(
         event.content,
         event.signature,
         event.redacted_data,
+        event.id,
       )
     when Riffer::StreamEvents::TokenUsageDone
       @token_usage = event.token_usage

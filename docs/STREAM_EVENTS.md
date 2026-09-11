@@ -89,9 +89,10 @@ event.item_id    # => "item_123"
 event.call_id    # => "call_456"
 event.name       # => "weather_tool"
 event.arguments  # => '{"city":"Tokyo"}'
+event.signature  # => nil, or the provider's opaque replay token (Gemini)
 ```
 
-Contains the complete tool call information.
+Contains the complete tool call information. `signature` is present only for providers that sign a tool call — Gemini's thought signature — and `to_h` includes the key only when set; the agent loop carries it onto the assistant message's `tool_calls` so the next turn replays it unmodified.
 
 ### ReasoningDelta
 
@@ -113,18 +114,23 @@ event.role           # => :assistant
 event.content        # => "Let me think about this step by step..."
 event.signature      # => nil
 event.redacted_data  # => nil
+event.id             # => nil
 
 # Anthropic and Bedrock sign their reasoning blocks
 event = Riffer::StreamEvents::ReasoningDone.new("Let me think...", signature: "EuYBCkQYAiJAy...")
 event.signature  # => "EuYBCkQYAiJAy..."
 event.to_h       # => {role: :assistant, content: "Let me think...", signature: "EuYBCkQYAiJAy..."}
 
+# OpenAI signs with encrypted content, keyed by the reasoning item's id
+event = Riffer::StreamEvents::ReasoningDone.new("Let me think...", signature: "gAAAAAB...", id: "rs_68f...")
+event.id  # => "rs_68f..."
+
 # A safety-redacted block carries encrypted bytes instead of readable text
 event = Riffer::StreamEvents::ReasoningDone.new("", redacted_data: "<encrypted>")
 event.redacted_data  # => "<encrypted>"
 ```
 
-`signature` and `redacted_data` are opaque replay tokens, present only for providers that sign reasoning (Anthropic, Amazon Bedrock); `to_h` includes each key only when set. The agent loop carries them onto the assistant message as [reasoning blocks](MESSAGES.md#reasoning-thinking-blocks) so the next turn replays them unmodified.
+`signature` and `redacted_data` are opaque replay tokens, present only for providers that sign reasoning (Anthropic, Amazon Bedrock, OpenAI, Gemini); `id` identifies the block for the providers that key a replay by it (OpenAI). `to_h` includes each key only when set. The agent loop carries them onto the assistant message as [reasoning blocks](MESSAGES.md#reasoning-thinking-blocks) so the next turn replays them unmodified.
 
 ### WebSearchStatus
 

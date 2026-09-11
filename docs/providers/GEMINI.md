@@ -80,6 +80,16 @@ Nucleus sampling:
 model_options topP: 0.9
 ```
 
+### thinkingConfig
+
+Controls thinking on Gemini 2.5+. Set `includeThoughts` to receive the model's thought summaries as `ReasoningDelta` / `ReasoningDone` stream events and as [reasoning blocks](../MESSAGES.md#reasoning-thinking-blocks) on the assistant message:
+
+```ruby
+model_options thinkingConfig: {includeThoughts: true}
+```
+
+Gemini signs its function calls and its text with a thought signature whether or not summaries are requested, and riffer replays those signatures on later turns. Gemini 3 rejects a replayed function call that lost its signature, so editing recorded history drops the signature rather than sending a stale one — see [Editing history drops the replay tokens](../MESSAGES.md#editing-history-drops-the-replay-tokens).
+
 ## Usage
 
 ### Basic Generation

@@ -73,6 +73,14 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+
+  # --
+  # : (untyped) -> String
+  def summary_text: (untyped) -> String
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
@@ -94,10 +102,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_reasoning_summary_text_done: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-
-  # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_function_call_arguments_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
@@ -112,6 +116,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (untyped, status: String, yielder: Riffer::Providers::_EventSink) -> void
   def handle_web_search_status: (untyped, status: String, yielder: Riffer::Providers::_EventSink) -> void
 
+  # The summary-text done event carries neither the item id nor the encrypted
+  # content, so a replayable block only exists once the reasoning item itself
+  # completes.
+  # --
+  # : (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_output_item_done_reasoning: (untyped, yielder: Riffer::Providers::_EventSink) -> void
+
   # --
   # : (untyped, yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_item_done_web_search: (untyped, yielder: Riffer::Providers::_EventSink) -> void
@@ -123,6 +134,14 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # --
   # : (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
+
+  # Reasoning items lead the list and every signed block on the message is
+  # replayed: OpenAI rejects a partial or reordered replay. An item id is
+  # required alongside the encrypted content, which also keeps a signed
+  # Anthropic-style block — which has no id — off the wire.
+  # --
+  # : (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
+  def reasoning_input_items: (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
 
   # --
   # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
