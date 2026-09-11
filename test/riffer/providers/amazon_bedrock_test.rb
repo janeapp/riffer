@@ -1063,6 +1063,8 @@ describe Riffer::Providers::AmazonBedrock do
 
   describe "prompt caching" do
     let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
+    let(:cache_point) { { cache_point: { type: "default" } } }
     let(:cache_tool) do
       stub_tool("GetWeather") do
         description "Get the current weather for a city"
@@ -1072,17 +1074,73 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
 
-    it "appends a cachePoint after the system array when a system prompt is present" do
-      provider = Riffer::Providers::AmazonBedrock.new
+    def tool_call_message(*call_ids)
+      Riffer::Messages::Assistant.new(
+        "",
+        tool_calls: call_ids.map do |call_id|
+          Riffer::Messages::Assistant::ToolCall.new(call_id: call_id, name: "get_weather", arguments: "{}")
+        end,
+      )
+    end
+
+    def tool_result_message(call_id)
+      Riffer::Messages::Tool.new("Sunny", tool_call_id: call_id, name: "get_weather")
+    end
+
+    it "appends a cachePoint after the system array and after the last user text block" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
 
-      expect(params[:system].last).must_equal({ cache_point: { type: "default" } })
+      expect(params[:system].last).must_equal cache_point
+      expect(params[:messages].last[:content]).must_equal [{ text: "Hello" }, cache_point]
+    end
+
+    it "places the moving cachePoint after the file parts of the last user message" do
+      image_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+      file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+      messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Describe", files: [file])]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+      content = params[:messages].last[:content]
+
+      expect(content.length).must_equal 3
+      expect(content[1].key?(:image)).must_equal true
+      expect(content.last).must_equal cache_point
+    end
+
+    it "places the moving cachePoint as a sibling of a single tool_result block" do
+      messages = [
+        Riffer::Messages::System.new("Be concise"),
+        Riffer::Messages::User.new("Weather?"),
+        tool_call_message("tooluse_1"),
+        tool_result_message("tooluse_1"),
+      ]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+      content = params[:messages].last[:content]
+
+      expect(content.map(&:keys)).must_equal [[:tool_result], [:cache_point]]
+      expect(content.first[:tool_result].key?(:cache_point)).must_equal false
+    end
+
+    it "places the moving cachePoint after several merged tool_result blocks" do
+      messages = [
+        Riffer::Messages::System.new("Be concise"),
+        Riffer::Messages::User.new("Weather?"),
+        tool_call_message("tooluse_1", "tooluse_2"),
+        tool_result_message("tooluse_1"),
+        tool_result_message("tooluse_2"),
+      ]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+      content = params[:messages].last[:content]
+
+      expect(content.map(&:keys)).must_equal [[:tool_result], [:tool_result], [:cache_point]]
+      expect(content.map { |block| block[:tool_result]&.key?(:cache_point) }).must_equal [false, false, nil]
     end
 
     it "appends a cachePoint after the tools when there is no system prompt" do
-      provider = Riffer::Providers::AmazonBedrock.new
       messages = [Riffer::Messages::User.new("Hello")]
 
       params = provider.send(
@@ -1092,11 +1150,20 @@ describe Riffer::Providers::AmazonBedrock do
         { cache_control: { type: "ephemeral" }, tools: [cache_tool] },
       )
 
-      expect(params[:tool_config][:tools].last).must_equal({ cache_point: { type: "default" } })
+      expect(params[:tool_config][:tools].last).must_equal cache_point
+      expect(params[:messages].last[:content].last).must_equal cache_point
     end
 
-    it "translates the ttl onto the cachePoint" do
-      provider = Riffer::Providers::AmazonBedrock.new
+    it "only adds the static cachePoint when there are no messages" do
+      messages = [Riffer::Messages::System.new("Be concise")]
+
+      params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
+
+      expect(params[:system].last).must_equal cache_point
+      expect(params[:messages]).must_equal []
+    end
+
+    it "translates the ttl onto both cachePoints" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(
@@ -1107,10 +1174,10 @@ describe Riffer::Providers::AmazonBedrock do
       )
 
       expect(params[:system].last[:cache_point][:ttl]).must_equal "1h"
+      expect(params[:messages].last[:content].last[:cache_point][:ttl]).must_equal "1h"
     end
 
     it "does not pass cache_control through as a top-level param" do
-      provider = Riffer::Providers::AmazonBedrock.new
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
@@ -1118,13 +1185,61 @@ describe Riffer::Providers::AmazonBedrock do
       expect(params.key?(:cache_control)).must_equal false
     end
 
-    it "adds no cachePoint when caching is not requested" do
-      provider = Riffer::Providers::AmazonBedrock.new
+    it "adds no cachePoint anywhere when caching is not requested" do
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Hello")]
 
       params = provider.send(:build_request_params, messages, model, {})
 
       expect(params[:system].none? { |block| block.key?(:cache_point) }).must_equal true
+      expect(params[:messages].last[:content].none? { |block| block.key?(:cache_point) }).must_equal true
+    end
+
+    describe "against the SDK's param validation" do
+      # stub_responses: true skips the network but still runs the SDK's shape
+      # validation on the params, so a cachePoint in an invalid position
+      # raises instead of silently building. The SDK stubs an event stream as
+      # nil, so converse_stream needs an explicit empty stream to decode; its
+      # stub validator only accepts a Hash for that member.
+      let(:client) do
+        Aws::BedrockRuntime::Client.new(stub_responses: true).tap do |client|
+          client.stub_responses(:converse_stream, stream: {})
+        end
+      end
+      let(:request) do
+        {
+          messages: [
+            Riffer::Messages::System.new("Be concise"),
+            Riffer::Messages::User.new("Weather?"),
+            tool_call_message("tooluse_1"),
+            tool_result_message("tooluse_1"),
+          ],
+          model: model,
+          tools: [cache_tool],
+          cache_control: { type: "ephemeral" },
+        }
+      end
+
+      before do
+        provider # force SDK load so Aws::BedrockRuntime resolves for the client
+        Riffer.config.amazon_bedrock.client = client
+      end
+
+      it "sends both cachePoints on a generate request" do
+        provider.generate_text(**request)
+        params = client.api_requests.last[:params]
+
+        expect(params[:system].last).must_equal cache_point
+        expect(params[:messages].last[:content].last).must_equal cache_point
+      end
+
+      it "sends the same params on a streaming request" do
+        provider.generate_text(**request)
+        provider.stream_text(**request).to_a
+        generate_request, stream_request = client.api_requests
+
+        expect(stream_request[:operation_name]).must_equal :converse_stream
+        expect(stream_request[:params]).must_equal generate_request[:params]
+      end
     end
   end
 
