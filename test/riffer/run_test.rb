@@ -892,6 +892,35 @@ describe Riffer::Agent::Run do
     end
   end
 
+  describe "reasoning accumulation with #stream" do
+    # Mock streams no reasoning of its own; this subclass emits the signed
+    # ReasoningDone a Claude provider would.
+    let(:reasoning_provider) do
+      Class.new(Riffer::Providers::Mock) do
+        def execute_stream(params, yielder)
+          yielder << Riffer::StreamEvents::ReasoningDelta.new("Let me think")
+          yielder << Riffer::StreamEvents::ReasoningDone.new("Let me think", signature: "sig_1")
+          super
+        end
+      end
+    end
+
+    it "attaches reasoning from ReasoningDone to the assistant message" do
+      Riffer::Providers::Repository.register(:reasoning_mock) { reasoning_provider }
+      agent = stub_agent("ReasoningAgent") { model "reasoning_mock/riffer-1" }.new
+      agent.provider.stub_response("Four.")
+
+      agent.stream("What is 2+2?").each { |_| }
+      assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+
+      expect(assistant.reasoning.map(&:to_h)).must_equal(
+        [{ text: "Let me think", signature: "sig_1", redacted_data: nil }],
+      )
+    ensure
+      Riffer::Providers::Repository.unregister(:reasoning_mock)
+    end
+  end
+
   describe "pending tool calls on fresh generate" do
     it "does not execute pending tool calls" do
       tool_class = stub_tool("FreshGenerateTool") do

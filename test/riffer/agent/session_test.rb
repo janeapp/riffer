@@ -209,6 +209,15 @@ describe Riffer::Agent::Session do
       expect([result.finish_reason, result.finish_reason_raw]).must_equal [:length, "max_tokens"]
     end
 
+    it "preserves reasoning on assistant" do
+      block = Riffer::Messages::Assistant::Reasoning.new("Thinking", "sig_1", nil)
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [block])
+      s = Riffer::Agent::Session.new(messages: [a])
+      result = s.update(id: "a_x", content: "new")
+
+      expect(result.reasoning).must_equal [block]
+    end
+
     it "preserves files on a user message" do
       file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: "x")
       u = Riffer::Messages::User.new("old", id: "u_x", files: [file])

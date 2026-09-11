@@ -1423,6 +1423,62 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "reasoning" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    let(:weather_tool) do
+      stub_tool("GetWeather") do
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+    end
+
+    it "keeps reasoning out of the Responses input items" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("thought", "sig", nil)
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
+      message = Riffer::Messages::Assistant.new("Checking", reasoning: [reasoning], tool_calls: [tool_call])
+
+      items = provider.send(:convert_assistant_to_openai_format, message)
+
+      expect(items.map { |item| item[:type] }).must_equal %w[message function_call]
+      expect(items.to_s).wont_include "sig"
+    end
+
+    # OpenAI returns reasoning summaries without a signature, so riffer never
+    # replays them; a history carrying reasoning must still replay clean.
+    it "replays history carrying unsigned reasoning" do
+      cassette = "Riffer_Providers_OpenAI/reasoning/_generate_text/replays_history_with_unsigned_reasoning"
+      VCR.use_cassette(cassette) do
+        model = "gpt-5.6-luna"
+        first = provider.generate_text(
+          prompt: "What is the weather in Toronto?",
+          model: model,
+          tools: [weather_tool],
+          reasoning: "low",
+        )
+
+        expect(first.has_tool_calls?).must_equal true
+
+        tool_call = first.tool_calls.first
+        second = provider.generate_text(
+          messages: [
+            Riffer::Messages::User.new("What is the weather in Toronto?"),
+            first,
+            Riffer::Messages::Tool.new("Sunny, 22C", tool_call_id: tool_call.call_id, name: tool_call.name),
+          ],
+          model: model,
+          tools: [weather_tool],
+          reasoning: "low",
+        )
+
+        expect(second).must_be_instance_of Riffer::Messages::Assistant
+        expect(second.content).wont_be_empty
+        expect(second.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe "#stream_text resource cleanup" do
     let(:provider) { Riffer::Providers::OpenAI.new }
 

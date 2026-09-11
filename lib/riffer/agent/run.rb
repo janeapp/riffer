@@ -153,6 +153,7 @@ module Riffer::Agent::Run
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
     accumulated_content = +""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
+    accumulated_reasoning = [] #: Array[Riffer::Messages::Assistant::Reasoning]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
     accumulated_finish_reason_raw = nil #: String?
@@ -175,6 +176,12 @@ module Riffer::Agent::Run
           name: event.name,
           arguments: event.arguments,
         )
+      when Riffer::StreamEvents::ReasoningDone
+        accumulated_reasoning << Riffer::Messages::Assistant::Reasoning.new(
+          event.content,
+          event.signature,
+          event.redacted_data,
+        )
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage
       when Riffer::StreamEvents::FinishReasonDone
@@ -186,6 +193,7 @@ module Riffer::Agent::Run
     Riffer::Messages::Assistant.new(
       accumulated_content,
       tool_calls: accumulated_tool_calls,
+      reasoning: accumulated_reasoning,
       token_usage: accumulated_token_usage,
       finish_reason: accumulated_finish_reason,
       finish_reason_raw: accumulated_finish_reason_raw,

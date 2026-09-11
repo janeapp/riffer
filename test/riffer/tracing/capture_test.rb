@@ -18,6 +18,16 @@ describe Riffer::Tracing::Capture do
       expect(JSON.parse(json).map { |message| message["role"] }).must_equal ["user"]
     end
 
+    it "serializes assistant reasoning as a reasoning part" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("Two plus two", "sig_1", nil)
+      json = Riffer::Tracing::Capture.input_messages([Riffer::Messages::Assistant.new("4", reasoning: [reasoning])])
+
+      expect(JSON.parse(json).dig(0, "parts")).must_equal [
+        { "type" => "reasoning", "content" => "Two plus two" },
+        { "type" => "text", "content" => "4" },
+      ]
+    end
+
     it "serializes assistant tool calls with parsed arguments" do
       tool_call = Riffer::Messages::Assistant::ToolCall.new(
         call_id: "call_1",
@@ -101,6 +111,49 @@ describe Riffer::Tracing::Capture do
       json = Riffer::Tracing::Capture.output_messages(content: "", tool_calls: [], finish_reason: :stop)
 
       expect(JSON.parse(json).dig(0, "parts")).must_equal []
+    end
+
+    it "emits the reasoning part before the text part" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("Two plus two", "sig_1", nil)
+      json = Riffer::Tracing::Capture.output_messages(
+        content: "4",
+        tool_calls: [],
+        finish_reason: :stop,
+        reasoning: [reasoning],
+      )
+
+      expect(JSON.parse(json).dig(0, "parts")).must_equal [
+        { "type" => "reasoning", "content" => "Two plus two" },
+        { "type" => "text", "content" => "4" },
+      ]
+    end
+
+    it "never captures a signature or a redacted payload" do
+      reasoning = [
+        Riffer::Messages::Assistant::Reasoning.new("Two plus two", "sig_1", nil),
+        Riffer::Messages::Assistant::Reasoning.new(nil, nil, "encrypted-bytes"),
+      ]
+      json = Riffer::Tracing::Capture.output_messages(
+        content: "4",
+        tool_calls: [],
+        finish_reason: :stop,
+        reasoning: reasoning,
+      )
+
+      expect(json).wont_include "sig_1"
+      expect(json).wont_include "encrypted-bytes"
+    end
+
+    it "skips a reasoning block with no text" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("", nil, "encrypted-bytes")
+      json = Riffer::Tracing::Capture.output_messages(
+        content: "4",
+        tool_calls: [],
+        finish_reason: :stop,
+        reasoning: [reasoning],
+      )
+
+      expect(JSON.parse(json).dig(0, "parts")).must_equal [{ "type" => "text", "content" => "4" }]
     end
   end
 end

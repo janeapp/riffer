@@ -51,6 +51,7 @@ msg.tool_calls     # => []
 msg.token_usage    # => nil or Riffer::Providers::TokenUsage
 msg.finish_reason      # => nil or a normalized Symbol (see below)
 msg.finish_reason_raw  # => nil or the provider's raw wire value (e.g. "max_tokens")
+msg.reasoning          # => [] or an array of Reasoning blocks (see below)
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -84,16 +85,16 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 
 `finish_reason` carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic's `end_turn`, OpenAI's response status, Gemini's `STOP`, …) into a normalized vocabulary:
 
-| Value               | Meaning                                                                                                                 |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                         |
-| `:length`           | Output was truncated at the max-token limit.                                                                            |
-| `:tool_calls`       | The model stopped to call tools.                                                                                        |
-| `:content_filter`   | A provider safety system blocked or cut the response.                                                                   |
-| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.             |
+| Value               | Meaning                                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                              |
+| `:length`           | Output was truncated at the max-token limit.                                                                                 |
+| `:tool_calls`       | The model stopped to call tools.                                                                                             |
+| `:content_filter`   | A provider safety system blocked or cut the response.                                                                        |
+| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.                  |
 | `:malformed_output` | The model emitted output the provider could not parse, such as an invalid tool call; retry or nudge rather than backing off. |
-| `:error`            | The provider reported an error finish.                                                                                  |
-| `:other`            | A provider-specific value with no normalized equivalent.                                                                |
+| `:error`            | The provider reported an error finish.                                                                                       |
+| `:other`            | A provider-specific value with no normalized equivalent.                                                                     |
 
 `finish_reason` is `nil` when the provider doesn't report one. The provider's raw wire value travels alongside as `finish_reason_raw` on the message (round-tripped through `to_h` / `from_hash`), on the `FinishReasonDone` stream event, and as the `riffer.finish_reason.raw` trace attribute — for OpenRouter that is the upstream model's `native_finish_reason`, and for a failed OpenAI response it is the error code. Use `finish_reason` to detect truncation without parsing provider responses:
 
@@ -101,6 +102,30 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 response = agent.generate("Summarize this document")
 retry_with_higher_limit if agent.session.messages.last.finish_reason == :length
 ```
+
+#### Reasoning (Thinking) Blocks
+
+`msg.reasoning` holds the model's reasoning blocks in the order it produced them. Each entry is a `Riffer::Messages::Assistant::Reasoning` struct with `text`, `signature`, and `redacted_data`:
+
+```ruby
+block = msg.reasoning.first
+block.text           # => "Two plus two is four" (nil for a fully redacted block)
+block.signature      # => the provider's verification token, or nil
+block.redacted_data  # => the provider's encrypted stand-in for safety-redacted reasoning, or nil
+```
+
+`signature` and `redacted_data` are opaque provider tokens: never parse or edit them. Riffer replays a block on the next turn only when it carries one of the two, and sends `text` and `signature` together unchanged — providers reject a modified block with a 400, and unsigned reasoning has nothing to verify.
+
+Reasoning round-trips through `to_h` / `from_hash` (the `reasoning` key is present only when non-empty), so persisted history replays as recorded. Stripping it from stored history is safe and shrinks the payload, at a quality cost: Claude models reason better on the tool-result step when their own prior thinking is replayed.
+
+Which providers populate it:
+
+| Provider                    | `reasoning` populated                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| Anthropic                   | Yes, with a signature (or a redacted payload)                                              |
+| Amazon Bedrock (Claude)     | Yes, with a signature (or a redacted payload)                                              |
+| Amazon Bedrock (non-Claude) | Text only, no signature — never replayed                                                   |
+| OpenAI / OpenRouter         | Streamed reasoning text only (no signature, so never replayed); `generate` leaves it empty |
 
 #### Structured Output on Messages
 

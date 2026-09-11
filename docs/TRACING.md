@@ -262,7 +262,7 @@ The value is **unitless on the wire** — Riffer attaches no currency. It is the
 
 The prompt and completion content attributes — `gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions` on `chat`, and `gen_ai.tool.call.arguments` / `gen_ai.tool.call.result` on `execute_tool` — are **off by default** and gated behind `config.tracing.capture_messages`. Message content routinely carries sensitive data (including PHI); leave capture off unless your trace backend is an appropriate destination for it.
 
-When enabled, content is serialized as GenAI-semconv JSON strings. File attachments serialize as metadata-only stubs (media type and name, never bytes). Riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK's attribute length limits. See [Configuration — Tracing](CONFIGURATION.md#tracing) for the knob.
+When enabled, content is serialized as GenAI-semconv JSON strings. File attachments serialize as metadata-only stubs (media type and name, never bytes). A model's reasoning blocks serialize as `reasoning` parts ahead of the text and tool-call parts, carrying the readable thinking text only — a block's signature and redacted payload never reach a span. Riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK's attribute length limits. See [Configuration — Tracing](CONFIGURATION.md#tracing) for the knob.
 
 ## Provider names
 

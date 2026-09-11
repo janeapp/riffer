@@ -21,6 +21,8 @@ class Riffer::Tracing::StreamRecorder
 
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
 
+  attr_reader reasoning: Array[Riffer::Messages::Assistant::Reasoning]
+
   # --
   # : (Enumerator::Yielder, ?clock: ^() -> Float) -> void
   def initialize: (Enumerator::Yielder, ?clock: ^() -> Float) -> void

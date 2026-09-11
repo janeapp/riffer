@@ -5,9 +5,16 @@
 # calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
   ToolCall = Struct.new(:call_id, :name, :arguments)
+  Reasoning = Struct.new(:text, :signature, :redacted_data)
 
   # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
+
+  # Reasoning (thinking) blocks in the order the model produced them.
+  # +signature+ and +redacted_data+ are opaque provider tokens that must be
+  # replayed unmodified — a provider replays only the blocks carrying one, since
+  # an altered or unsigned block is rejected on the next turn.
+  attr_reader :reasoning #: Array[Riffer::Messages::Assistant::Reasoning]
 
   # Token usage data for this response.
   attr_reader :token_usage #: Riffer::Providers::TokenUsage?
@@ -33,7 +40,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?finish_reason: Symbol?,
-  #    ?finish_reason_raw: String?
+  #    ?finish_reason_raw: String?,
+  #    ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]
   #  ) -> void
   def initialize(
     content,
@@ -42,7 +50,8 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     token_usage: nil,
     structured_output: nil,
     finish_reason: nil,
-    finish_reason_raw: nil
+    finish_reason_raw: nil,
+    reasoning: []
   )
     if finish_reason && !Riffer::Providers::FinishReason::VALUES.include?(finish_reason)
       values = Riffer::Providers::FinishReason::VALUES.inspect
@@ -55,6 +64,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     @structured_output = structured_output
     @finish_reason = finish_reason
     @finish_reason_raw = finish_reason_raw
+    @reasoning = reasoning
   end
 
   #--
@@ -78,7 +88,11 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #--
   #: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +(other)
-    self.class.new("#{content}\n\n#{other.content}", tool_calls: tool_calls + other.tool_calls)
+    self.class.new(
+      "#{content}\n\n#{other.content}",
+      tool_calls: tool_calls + other.tool_calls,
+      reasoning: reasoning + other.reasoning,
+    )
   end
 
   # Converts the message to a hash.
@@ -89,6 +103,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     hash = { role: role, content: content } #: Hash[Symbol, untyped]
     hash[:id] = id if id
     hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
+    hash[:reasoning] = reasoning.map(&:to_h) unless reasoning.empty?
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason

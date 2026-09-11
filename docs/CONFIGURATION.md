@@ -341,7 +341,15 @@ class MyAgent < Riffer::Agent
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
   model_options inference_config: {temperature: 0.7, max_tokens: 4096}
 end
+
+# With extended thinking (Claude)
+class ReasoningAgent < Riffer::Agent
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
+  model_options additional_model_request_fields: {thinking: {type: "enabled", budget_tokens: 1024}}
+end
 ```
+
+Signed reasoning blocks are replayed to the model automatically on later turns (see [Messages — reasoning blocks](MESSAGES.md#reasoning-thinking-blocks)).
 
 ### Anthropic
 

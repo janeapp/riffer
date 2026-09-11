@@ -25,9 +25,9 @@ module Riffer::Tracing::Capture # :nodoc: all
   end
 
   #--
-  #: (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> String
-  def output_messages(content:, tool_calls:, finish_reason:)
-    message = { role: "assistant", parts: assistant_parts(content, tool_calls) } #: Hash[Symbol, untyped]
+  #: (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> String
+  def output_messages(content:, tool_calls:, finish_reason:, reasoning: [])
+    message = { role: "assistant", parts: assistant_parts(content, tool_calls, reasoning) } #: Hash[Symbol, untyped]
     message[:finish_reason] = finish_reason if finish_reason
     JSON.generate([message])
   end
@@ -43,16 +43,22 @@ module Riffer::Tracing::Capture # :nodoc: all
       parts.concat(message.files.map { |file| file_part(file) })
       { role: "user", parts: parts }
     when Riffer::Messages::Assistant
-      { role: "assistant", parts: assistant_parts(message.content, message.tool_calls) }
+      { role: "assistant", parts: assistant_parts(message.content, message.tool_calls, message.reasoning) }
     when Riffer::Messages::Tool
       { role: "tool", parts: [{ type: "tool_call_response", id: message.tool_call_id, response: message.content }] }
     end
   end
 
   #--
-  #: (String?, Array[Riffer::Messages::Assistant::ToolCall]) -> Array[Hash[Symbol, untyped]]
-  def assistant_parts(content, tool_calls)
+  #: (String?, Array[Riffer::Messages::Assistant::ToolCall], ?Array[Riffer::Messages::Assistant::Reasoning]) -> Array[Hash[Symbol, untyped]]
+  def assistant_parts(content, tool_calls, reasoning = [])
     parts = [] #: Array[Hash[Symbol, untyped]]
+    # A block's signature or redacted payload is an opaque credential, never
+    # span content — only readable reasoning text is captured.
+    reasoning.each do |block|
+      text = block.text
+      parts << reasoning_part(text) if text && !text.empty?
+    end
     parts << text_part(content) if content && !content.empty?
     parts.concat(tool_calls.map { |tool_call| tool_call_part(tool_call) })
     parts
@@ -62,6 +68,12 @@ module Riffer::Tracing::Capture # :nodoc: all
   #: (String?) -> Hash[Symbol, untyped]
   def text_part(content)
     { type: "text", content: content }
+  end
+
+  #--
+  #: (String) -> Hash[Symbol, untyped]
+  def reasoning_part(content)
+    { type: "reasoning", content: content }
   end
 
   #--

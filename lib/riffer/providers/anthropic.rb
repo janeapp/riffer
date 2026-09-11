@@ -200,6 +200,23 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning(response)
+    message = response #: Anthropic::Models::Message
+    content_blocks = message.content
+    return [] if content_blocks.nil? || content_blocks.empty?
+
+    content_blocks.filter_map do |block|
+      case block
+      when ::Anthropic::Models::ThinkingBlock
+        Riffer::Messages::Assistant::Reasoning.new(block.thinking, block.signature, nil)
+      when ::Anthropic::Models::RedactedThinkingBlock
+        Riffer::Messages::Assistant::Reasoning.new(nil, nil, block.data)
+      end
+    end
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
@@ -238,9 +255,9 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           when ::Anthropic::Models::ToolUseBlock
             handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
           when ::Anthropic::Models::ThinkingBlock
-            if current_state[:reasoning]
-              handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
-            end
+            handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
+          when ::Anthropic::Models::RedactedThinkingBlock
+            handle_content_block_stop_redacted_thinking(event, state: current_state, yielder: yielder)
           when ::Anthropic::Models::ServerToolUseBlock
             handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder)
           when ::Anthropic::Models::WebSearchToolResultBlock
@@ -328,11 +345,25 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     state[:tool_call] = nil
   end
 
+  # Under <tt>display: "omitted"</tt> a thinking block streams no
+  # ThinkingEvent deltas at all, so the accumulated block is the only source of
+  # its text and of the signature needed to replay it.
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_thinking(_event, state:, yielder:)
-    yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
+  def handle_content_block_stop_thinking(event, state:, yielder:)
+    content_block = event.content_block
+    yielder << Riffer::StreamEvents::ReasoningDone.new(
+      state[:reasoning] || content_block.thinking || "",
+      signature: content_block.signature,
+    )
     state[:reasoning] = nil
+  end
+
+  # A redacted block arrives complete at content_block_start with no deltas.
+  #--
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_redacted_thinking(event, state:, yielder:)
+    yielder << Riffer::StreamEvents::ReasoningDone.new("", redacted_data: event.content_block.data)
   end
 
   #--
@@ -422,6 +453,18 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
     content = [] #: Array[Hash[Symbol, untyped]]
+
+    # Thinking leads the block array, and only signed or redacted blocks are
+    # replayed: the API rejects a block whose text and signature don't match,
+    # and reasoning with neither carries nothing to verify.
+    message.reasoning.each do |r|
+      if r.signature && !r.signature.empty?
+        content << { type: "thinking", thinking: r.text || "", signature: r.signature }
+      elsif r.redacted_data
+        content << { type: "redacted_thinking", data: r.redacted_data }
+      end
+    end
+
     content << { type: "text", text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|

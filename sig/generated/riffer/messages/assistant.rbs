@@ -14,8 +14,25 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
                 | (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
   end
 
+  class Reasoning < Struct[untyped]
+    attr_accessor text(): untyped
+
+    attr_accessor signature(): untyped
+
+    attr_accessor redacted_data(): untyped
+
+    def self.new: (?untyped text, ?untyped signature, ?untyped redacted_data) -> instance
+                | (?text: untyped, ?signature: untyped, ?redacted_data: untyped) -> instance
+  end
+
   # Array of tool calls requested by the assistant.
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
+
+  # Reasoning (thinking) blocks in the order the model produced them.
+  # +signature+ and +redacted_data+ are opaque provider tokens that must be
+  # replayed unmodified — a provider replays only the blocks carrying one, since
+  # an altered or unsigned block is rejected on the next turn.
+  attr_reader reasoning: Array[Riffer::Messages::Assistant::Reasoning]
 
   # Token usage data for this response.
   attr_reader token_usage: Riffer::Providers::TokenUsage?
@@ -41,9 +58,10 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?finish_reason: Symbol?,
-  #    ?finish_reason_raw: String?
+  #    ?finish_reason_raw: String?,
+  #    ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]
   #  ) -> void
-  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?) -> void
+  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> void
 
   # --
   # : () -> Symbol

@@ -1751,4 +1751,307 @@ describe Riffer::Providers::AmazonBedrock do
       end
     end
   end
+
+  describe "reasoning" do
+    let(:provider) { Riffer::Providers::AmazonBedrock.new }
+
+    def build_response(content_blocks)
+      Aws::BedrockRuntime::Types::ConverseResponse.new(
+        output: Aws::BedrockRuntime::Types::ConverseOutput::Message.new(
+          message: Aws::BedrockRuntime::Types::Message.new(role: "assistant", content: content_blocks),
+        ),
+      )
+    end
+
+    def reasoning_block(reasoning_content)
+      Aws::BedrockRuntime::Types::ContentBlock.new(
+        reasoning_content: Aws::BedrockRuntime::Types::ReasoningContentBlock.new(**reasoning_content),
+      )
+    end
+
+    def stub_stream_events(provider, events)
+      stream_double = Object.new
+      stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+      client_double = Object.new
+      client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+      provider.instance_variable_set(:@client, client_double)
+    end
+
+    def reasoning_delta_event(**delta)
+      Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+        delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(
+          reasoning_content: Aws::BedrockRuntime::Types::ReasoningContentBlockDelta.new(**delta),
+        ),
+        content_block_index: 0,
+        event_type: :content_block_delta,
+      )
+    end
+
+    def block_stop_event(index)
+      Aws::BedrockRuntime::Types::ContentBlockStopEvent.new(
+        content_block_index: index,
+        event_type: :content_block_stop,
+      )
+    end
+
+    describe "#extract_reasoning" do
+      it "extracts reasoning text with its signature" do
+        provider # force SDK load before constructing the Aws types below
+        response = build_response(
+          [
+            reasoning_block(
+              reasoning_text: Aws::BedrockRuntime::Types::ReasoningTextBlock.new(
+                text: "Two plus two",
+                signature: "sig_1",
+              ),
+            ),
+            Aws::BedrockRuntime::Types::ContentBlock.new(text: "4"),
+          ],
+        )
+        reasoning = provider.send(:extract_reasoning, response)
+
+        expect(reasoning.map(&:to_h)).must_equal(
+          [{ text: "Two plus two", signature: "sig_1", redacted_data: nil }],
+        )
+      end
+
+      it "extracts a redacted reasoning block" do
+        provider # force SDK load before constructing the Aws types below
+        response = build_response([reasoning_block(redacted_content: "encrypted-bytes")])
+        reasoning = provider.send(:extract_reasoning, response)
+
+        expect(reasoning.map(&:to_h)).must_equal(
+          [{ text: nil, signature: nil, redacted_data: "encrypted-bytes" }],
+        )
+      end
+
+      it "returns an empty array when the response carries no reasoning" do
+        provider # force SDK load before constructing the Aws types below
+        response = build_response([Aws::BedrockRuntime::Types::ContentBlock.new(text: "4")])
+
+        expect(provider.send(:extract_reasoning, response)).must_equal []
+      end
+    end
+
+    describe "#stream_text" do
+      it "yields a ReasoningDelta per text delta and one signed ReasoningDone" do
+        provider # force SDK load before constructing the Aws types below
+        stub_stream_events(
+          provider,
+          [
+            reasoning_delta_event(text: "Two plus "),
+            reasoning_delta_event(text: "two"),
+            reasoning_delta_event(signature: "sig_1"),
+            block_stop_event(0),
+          ],
+        )
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        deltas = events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)
+        done = events.grep(Riffer::StreamEvents::ReasoningDone)
+
+        expect(deltas).must_equal ["Two plus ", "two"]
+        expect(done.map(&:to_h)).must_equal(
+          [{ role: :assistant, content: "Two plus two", signature: "sig_1" }],
+        )
+      end
+
+      it "yields a ReasoningDone with the concatenated redacted payload" do
+        provider # force SDK load before constructing the Aws types below
+        stub_stream_events(
+          provider,
+          [
+            reasoning_delta_event(redacted_content: "encrypted-"),
+            reasoning_delta_event(redacted_content: "bytes"),
+            block_stop_event(0),
+          ],
+        )
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        done = events.grep(Riffer::StreamEvents::ReasoningDone)
+
+        expect(done.map(&:to_h)).must_equal(
+          [{ role: :assistant, content: "", redacted_data: "encrypted-bytes" }],
+        )
+      end
+
+      it "keeps streaming tool calls after a reasoning block" do
+        provider # force SDK load before constructing the Aws types below
+        stub_stream_events(
+          provider,
+          [
+            reasoning_delta_event(text: "Need the weather"),
+            reasoning_delta_event(signature: "sig_1"),
+            block_stop_event(0),
+            Aws::BedrockRuntime::Types::ContentBlockStartEvent.new(
+              start: Aws::BedrockRuntime::Types::ContentBlockStart.new(
+                tool_use: Aws::BedrockRuntime::Types::ToolUseBlockStart.new(
+                  tool_use_id: "call_1",
+                  name: "get_weather",
+                ),
+              ),
+              content_block_index: 1,
+              event_type: :content_block_start,
+            ),
+            Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+              delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(
+                tool_use: Aws::BedrockRuntime::Types::ToolUseBlockDelta.new(input: '{"city":"Toronto"}'),
+              ),
+              content_block_index: 1,
+              event_type: :content_block_delta,
+            ),
+            block_stop_event(1),
+          ],
+        )
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        tool_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ToolCallDone) }
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).size).must_equal 1
+        expect(tool_done.arguments).must_equal '{"city":"Toronto"}'
+      end
+    end
+
+    describe "with thinking enabled" do
+      let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+      let(:thinking_options) do
+        {
+          additional_model_request_fields: { thinking: { type: "enabled", budget_tokens: 1024 } },
+          inference_config: { max_tokens: 4000 },
+        }
+      end
+      let(:weather_tool) do
+        stub_tool("GetWeather") do
+          description "Get the current weather for a city"
+          params do
+            required :city, String, description: "The city name"
+          end
+        end
+      end
+
+      it "returns signed reasoning alongside the answer" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/_generate_text/with_thinking_enabled") do
+          result = provider.generate_text(
+            prompt: "What is 2+2? Think step by step.",
+            model: model,
+            **thinking_options,
+          )
+          block = result.reasoning.first
+
+          expect(result.reasoning).wont_be_empty
+          expect(block.text).wont_be_empty
+          expect(block.signature).wont_be_empty
+          expect(block.redacted_data).must_be_nil
+          expect(result.content).wont_be_empty
+        end
+      end
+
+      # Proves Converse accepts the reasoning_content block riffer replays: the
+      # second call resends the first response's signed reasoning alongside the
+      # tool result.
+      it "replays reasoning with a tool result" do
+        cassette = "Riffer_Providers_AmazonBedrock/reasoning/_generate_text/replays_reasoning_with_tool_result"
+        VCR.use_cassette(cassette) do
+          first = provider.generate_text(
+            prompt: "What is the weather in Toronto?",
+            model: model,
+            tools: [weather_tool],
+            **thinking_options,
+          )
+
+          expect(first.has_tool_calls?).must_equal true
+          expect(first.reasoning.first.signature).wont_be_empty
+
+          tool_call = first.tool_calls.first
+          second = provider.generate_text(
+            messages: [
+              Riffer::Messages::User.new("What is the weather in Toronto?"),
+              first,
+              Riffer::Messages::Tool.new("Sunny, 22C", tool_call_id: tool_call.call_id, name: tool_call.name),
+            ],
+            model: model,
+            tools: [weather_tool],
+            **thinking_options,
+          )
+
+          expect(second).must_be_instance_of Riffer::Messages::Assistant
+          expect(second.content).wont_be_empty
+          expect(second.finish_reason).must_equal :stop
+        end
+      end
+
+      it "streams reasoning deltas and a signed ReasoningDone before the text" do
+        cassette = "Riffer_Providers_AmazonBedrock/reasoning/_stream_text/yields_reasoning_events_with_signature"
+        VCR.use_cassette(cassette) do
+          events = provider.stream_text(
+            prompt: "What is 2+2? Think step by step.",
+            model: model,
+            **thinking_options,
+          ).to_a
+          deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
+          done = events.grep(Riffer::StreamEvents::ReasoningDone)
+          first_text_delta = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+
+          expect(deltas).wont_be_empty
+          expect(done.size).must_equal 1
+          expect(done.first.signature).wont_be_empty
+          expect(done.first.content).must_equal deltas.map(&:content).join
+          expect(events.index(done.first)).must_be :<, first_text_delta
+        end
+      end
+    end
+
+    describe "replay in #build_request_params" do
+      let(:signed) { Riffer::Messages::Assistant::Reasoning.new("Two plus two", "sig_1", nil) }
+      let(:unsigned) { Riffer::Messages::Assistant::Reasoning.new("Unsigned thought", nil, nil) }
+      let(:redacted) { Riffer::Messages::Assistant::Reasoning.new(nil, nil, "encrypted-bytes") }
+
+      def assistant_content(reasoning:, tool_calls: [])
+        messages = [
+          Riffer::Messages::User.new("What is 2+2?"),
+          Riffer::Messages::Assistant.new("4", reasoning: reasoning, tool_calls: tool_calls),
+          Riffer::Messages::User.new("Thanks"),
+        ]
+        params = provider.send(:build_request_params, messages, "us.anthropic.claude-haiku-4-5-20251001-v1:0", {})
+        params[:messages].find { |m| m[:role] == "assistant" }[:content]
+      end
+
+      it "places a signed reasoning block before the text block" do
+        content = assistant_content(reasoning: [signed])
+
+        expect(content).must_equal(
+          [
+            { reasoning_content: { reasoning_text: { text: "Two plus two", signature: "sig_1" } } },
+            { text: "4" },
+          ],
+        )
+      end
+
+      it "places a signed reasoning block before a tool_use block" do
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
+        content = assistant_content(reasoning: [signed], tool_calls: [tool_call])
+
+        expect(content.map(&:keys).flatten).must_equal %i[reasoning_content text tool_use]
+      end
+
+      it "skips unsigned reasoning" do
+        content = assistant_content(reasoning: [unsigned])
+
+        expect(content).must_equal [{ text: "4" }]
+      end
+
+      it "skips reasoning whose signature is blank" do
+        blank = Riffer::Messages::Assistant::Reasoning.new("Two plus two", "", nil)
+        content = assistant_content(reasoning: [blank])
+
+        expect(content).must_equal [{ text: "4" }]
+      end
+
+      it "replays a redacted block as redacted_content" do
+        content = assistant_content(reasoning: [redacted])
+
+        expect(content.first).must_equal({ reasoning_content: { redacted_content: "encrypted-bytes" } })
+      end
+    end
+  end
 end
