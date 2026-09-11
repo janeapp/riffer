@@ -604,6 +604,67 @@ describe Riffer::Params do
 
       expect(schema[:properties]["units"].key?(:default)).must_equal false
     end
+
+    it "raises ArgumentError for a Hash param without a block" do
+      params = Riffer::Params.new
+      params.required(:applies_when, Hash)
+
+      error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal(
+        "applies_when: a Hash param requires a block defining its properties under strict schemas",
+      )
+    end
+
+    it "renders a Hash param without a block in non-strict mode" do
+      params = Riffer::Params.new
+      params.required(:applies_when, Hash, description: "Conditions")
+
+      expect(params.to_json_schema[:properties]["applies_when"]).must_equal(
+        type: "object", description: "Conditions",
+      )
+    end
+
+    it "renders a Hash param with a block as a closed object" do
+      params = Riffer::Params.new
+      params.required(:address, Hash) do
+        required :city, String
+      end
+      address = params.to_json_schema(strict: true)[:properties]["address"]
+
+      expect(address).must_equal(
+        type: "object",
+        properties: { "city" => { type: "string" } },
+        required: ["city"],
+        additionalProperties: false,
+      )
+    end
+
+    it "raises ArgumentError for an Array param without a block or of:" do
+      params = Riffer::Params.new
+      params.required(:tags, Array)
+
+      error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_equal(
+        "tags: an Array param requires a block or of: defining its items under strict schemas",
+      )
+    end
+
+    it "renders an Array param without a block or of: in non-strict mode" do
+      params = Riffer::Params.new
+      params.required(:tags, Array)
+
+      expect(params.to_json_schema[:properties]["tags"]).must_equal(type: "array")
+    end
+
+    it "raises ArgumentError for a Hash param without a block nested inside a block" do
+      params = Riffer::Params.new
+      params.required(:shipping, Hash) do
+        required :address, Hash
+      end
+
+      error = expect { params.to_json_schema(strict: true) }.must_raise(Riffer::ArgumentError)
+      expect(error.message).must_include "address: a Hash param requires a block"
+    end
   end
 
   describe ".from_json_schema" do

@@ -54,6 +54,8 @@ class Riffer::Params
   # Converts all parameters to JSON Schema format. When +strict+ is true, every
   # property is listed in +required+ and optional ones are made nullable
   # instead, satisfying providers that enforce strict structured output schemas.
+  # Raises Riffer::ArgumentError when +strict+ and a Hash param (at any depth)
+  # has no block or an Array param has neither a block nor <tt>of:</tt>.
   # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]

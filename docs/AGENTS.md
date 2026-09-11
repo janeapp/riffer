@@ -247,7 +247,7 @@ end
 
 #### Limitations
 
-Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`.
+A `Hash` param requires a block, and an `Array` param requires a block or `of:`. Using both `of:` and a block raises `Riffer::ArgumentError`. Using `of:` with a non-primitive type (e.g. `of: Hash`) also raises `Riffer::ArgumentError`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 

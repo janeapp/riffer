@@ -74,8 +74,17 @@ class Riffer::Params::Param
   # params are made nullable (<tt>["type", "null"]</tt>) so strict providers
   # distinguish absent from present; optional params with an +enum+ use +anyOf+
   # instead, since providers like Anthropic reject
-  # <tt>{"type": ["string", "null"], "enum": [...]}</tt>.
+  # <tt>{"type": ["string", "null"], "enum": [...]}</tt>. Raises
+  # Riffer::ArgumentError when +strict+ and a Hash param has no block or an
+  # Array param has neither a block nor <tt>of:</tt>, since strict providers
+  # reject objects without +properties+ and arrays without +items+.
   # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]
+
+  private
+
+  # --
+  # : () -> void
+  def validate_strict_shape!: () -> void
 end
