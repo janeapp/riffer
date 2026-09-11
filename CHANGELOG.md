@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.46.1](https://github.com/janeapp/riffer/compare/riffer/v0.46.0...riffer/v0.46.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* accept JSON integers for Float params ([#429](https://github.com/janeapp/riffer/issues/429)) ([928c33b](https://github.com/janeapp/riffer/commit/928c33b1125bf013f66c8b736191bc70eb313ccd))
+* **agent:** type stream's enumerator as returning Response ([#428](https://github.com/janeapp/riffer/issues/428)) ([4d2b2d2](https://github.com/janeapp/riffer/commit/4d2b2d2aa08d1d95b97226e84180284349fff441))
+
 ## [0.46.0](https://github.com/janeapp/riffer/compare/riffer/v0.45.0...riffer/v0.46.0) (2026-09-08)
 
 
