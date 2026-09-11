@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.47.0](https://github.com/janeapp/riffer/compare/riffer/v0.46.1...riffer/v0.47.0) (2026-09-11)
+
+
+### Features
+
+* **bedrock:** moving cachePoint so the conversation tail is cached ([#431](https://github.com/janeapp/riffer/issues/431)) ([4fa44b8](https://github.com/janeapp/riffer/commit/4fa44b817c00642303ac30002c33dd77c6d502ab))
+
 ## [0.46.1](https://github.com/janeapp/riffer/compare/riffer/v0.46.0...riffer/v0.46.1) (2026-09-11)
 
 
