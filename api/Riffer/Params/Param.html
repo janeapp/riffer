@@ -880,7 +880,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_json_schema-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params/param.rb, line 144</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params/param.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
   <span class="ruby-identifier">nullable</span> = <span class="ruby-identifier">strict</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">required</span>
 
@@ -949,7 +949,7 @@
             </details>
           </div>
           <div class="method-source-code" id="type_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params/param.rb, line 133</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params/param.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">type_name</span>
   <span class="ruby-constant">TYPE_MAPPINGS</span>[<span class="ruby-identifier">type</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
 <span class="ruby-keyword">end</span></pre>
@@ -997,6 +997,8 @@
 
   <span class="ruby-keyword">if</span> [<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Params</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-constant">TrueClass</span>, <span class="ruby-constant">FalseClass</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">type</span>)
     [<span class="ruby-keyword">true</span>, <span class="ruby-keyword">false</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Float</span>
+    <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Numeric</span>)
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">type</span>)
   <span class="ruby-keyword">end</span>

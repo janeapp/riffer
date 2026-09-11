@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.46.0</span>
+            <span class="version">v0.46.1</span>
           </div>
         </nav>
       </div>
@@ -254,6 +254,13 @@
 <h3 id="stream">stream</h3>
 
 <p>Streams a response as an Enumerator. Same prompt/files semantics as <code>generate</code>.</p>
+
+<p>Consuming the enumerator with a block returns the same <code>Riffer::Agent::Response</code> that <code>generate</code> would, so you can stream events to the user and still inspect the final outcome:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="no">MyAgent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Tell me a story'</span><span class="p">).</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span> <span class="n">handle</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">outcome</span><span class="p">.</span><span class="nf">reason</span>  <span class="c1"># =&gt; :completed</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">content</span>
+</code></pre></div></div>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># New conversation (class method — recommended for simple calls)</span>
 <span class="no">MyAgent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'Tell me a story'</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>

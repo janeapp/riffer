@@ -1796,7 +1796,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="interrupt-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 327</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 328</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrupt!</span>(<span class="ruby-identifier">reason</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">throw</span> <span class="ruby-value">:riffer_interrupt</span>, <span class="ruby-identifier">reason</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1838,7 +1838,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="stream-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 314</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 315</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream</span>(<span class="ruby-identifier">prompt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">tags:</span> {})
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@structured_output</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">ArgumentError</span>,
@@ -1854,7 +1854,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
         <div class="method-description">
 
 
-          <p>Streams a response from the agent, returning an <code>Enumerator</code> of <a href="StreamEvents.html"><code>Riffer::StreamEvents</code></a>. See <a href="Agent.html#method-i-generate"><code>generate</code></a> for prompt/files/tags semantics.</p>
+          <p>Streams a response from the agent as an <code>Enumerator</code> of <a href="StreamEvents.html"><code>Riffer::StreamEvents</code></a> whose block-form <code>each</code> returns the final <a href="Agent/Response.html"><code>Riffer::Agent::Response</code></a>. See <a href="Agent.html#method-i-generate"><code>generate</code></a> for prompt/files/tags semantics.</p>
 
 <p>Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> if structured output is configured.</p>
 
@@ -1887,7 +1887,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="to_h-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 335</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 336</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">to_h</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1929,7 +1929,7 @@ Progressive registrations expose +mcp_search+ instead of every schema up front.<
             </details>
           </div>
           <div class="method-source-code" id="to_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 343</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/agent.rb, line 344</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json</span>(<span class="ruby-operator">*</span>)
   <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Serializer</span>.<span class="ruby-identifier">to_json</span>(<span class="ruby-value">agent:</span> <span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>

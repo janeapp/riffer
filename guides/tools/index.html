@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.46.0</span>
+            <span class="version">v0.46.1</span>
           </div>
         </nav>
       </div>
@@ -338,6 +338,8 @@
 </table>
 
 <p><code>Riffer::Params::Boolean</code> is the preferred way to declare boolean parameters. <code>TrueClass</code> and <code>FalseClass</code> continue to work for backwards compatibility.</p>
+
+<p>A <code>Float</code> param accepts a whole number too, since JSON Schema’s <code>number</code> covers integers — a model returning <code>120</code> for a <code>Float</code> is valid, and the validated value is coerced to <code>120.0</code>. <code>Integer</code> stays strict: <code>1.0</code> is rejected, matching JSON Schema’s <code>integer</code>.</p>
 
 <h3 id="nested-parameters">Nested Parameters</h3>
 
