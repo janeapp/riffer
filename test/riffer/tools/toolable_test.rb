@@ -108,6 +108,31 @@ describe Riffer::Tools::Toolable do
       expect(schema[:type]).must_equal "object"
       expect(schema[:properties]).must_equal({})
     end
+
+    describe "with a Hash param that has no block" do
+      let(:tool_class) do
+        Class.new(Riffer::Tool) do
+          identifier "apply_rule"
+          description "Applies a rule"
+
+          params do
+            required :applies_when, Hash
+          end
+        end
+      end
+
+      it "raises ArgumentError naming the tool and param in strict mode" do
+        error = expect { tool_class.parameters_schema(strict: true) }.must_raise(Riffer::ArgumentError)
+
+        expect(error.message).must_equal(
+          "apply_rule: applies_when: a Hash param requires a block defining its properties under strict schemas",
+        )
+      end
+
+      it "renders the schema in non-strict mode" do
+        expect(tool_class.parameters_schema[:properties]["applies_when"]).must_equal(type: "object")
+      end
+    end
   end
 
   describe "#kind" do

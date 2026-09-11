@@ -95,12 +95,16 @@ module Riffer::Tools::Toolable
     @params_builder = builder
   end
 
-  # Returns the JSON Schema for the tool's parameters.
+  # Returns the JSON Schema for the tool's parameters. Raises
+  # Riffer::ArgumentError, prefixed with the tool name, when the params cannot
+  # render under +strict+.
   #
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def parameters_schema(strict: false)
     @params_builder&.to_json_schema(strict: strict) || empty_schema
+  rescue Riffer::ArgumentError => e
+    raise Riffer::ArgumentError, "#{identifier}: #{e.message}"
   end
 
   # Returns the kind of toolable entity; defaults to +:tool+.
