@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.47.1](https://github.com/janeapp/riffer/compare/riffer/v0.47.0...riffer/v0.47.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* **params:** keep optional Hash params nullable in strict JSON Schema ([#433](https://github.com/janeapp/riffer/issues/433)) ([c7308fd](https://github.com/janeapp/riffer/commit/c7308fd15a3293877510e74c41662a68fac942df))
+* **params:** raise for bare Hash and Array params under strict schemas ([#434](https://github.com/janeapp/riffer/issues/434)) ([174ad92](https://github.com/janeapp/riffer/commit/174ad92e7c765dc8833695ded9d2920f1ab27337))
+
 ## [0.47.0](https://github.com/janeapp/riffer/compare/riffer/v0.46.1...riffer/v0.47.0) (2026-09-11)
 
 
