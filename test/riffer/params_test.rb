@@ -360,6 +360,92 @@ describe Riffer::Params do
 
       expect(result[:items]).must_equal [{ name: "A" }, { name: "B" }]
     end
+
+    it "accepts a float for a Float param" do
+      params = Riffer::Params.new
+      params.required(:price, Float)
+
+      expect(params.validate({ price: 120.5 })[:price]).must_equal 120.5
+    end
+
+    it "accepts an integer for a Float param and coerces it to a float" do
+      params = Riffer::Params.new
+      params.required(:price, Float)
+      result = params.validate({ price: 120 })
+
+      expect(result[:price]).must_equal 120.0
+      expect(result[:price]).must_be_instance_of Float
+    end
+
+    it "rejects a string for a Float param" do
+      params = Riffer::Params.new
+      params.required(:price, Float)
+      error = expect { params.validate({ price: "120" }) }.must_raise(Riffer::ValidationError)
+
+      expect(error.message).must_match(/price must be a number/)
+    end
+
+    it "rejects a boolean for a Float param" do
+      params = Riffer::Params.new
+      params.required(:price, Float)
+      error = expect { params.validate({ price: true }) }.must_raise(Riffer::ValidationError)
+
+      expect(error.message).must_match(/price must be a number/)
+    end
+
+    it "rejects a float for an Integer param" do
+      params = Riffer::Params.new
+      params.required(:quantity, Integer)
+      error = expect { params.validate({ quantity: 1.5 }) }.must_raise(Riffer::ValidationError)
+
+      expect(error.message).must_match(/quantity must be an? integer/)
+    end
+
+    it "accepts an integer for a Float param nested in an array of objects" do
+      params = Riffer::Params.new
+      params.required(:treatments, Array) do
+        required :price, Float
+      end
+      result = params.validate({ treatments: [{ price: 120 }] })
+
+      expect(result[:treatments]).must_equal [{ price: 120.0 }]
+      expect(result[:treatments].first[:price]).must_be_instance_of Float
+    end
+
+    it "accepts an integer for a Float param nested in a Hash" do
+      params = Riffer::Params.new
+      params.required(:invoice, Hash) do
+        required :total, Float
+      end
+      result = params.validate({ invoice: { total: 120 } })
+
+      expect(result[:invoice][:total]).must_be_instance_of Float
+    end
+
+    it "accepts mixed numerics in an of: Float array and coerces them to floats" do
+      params = Riffer::Params.new
+      params.required(:scores, Array, of: Float)
+      result = params.validate({ scores: [1, 2.5] })
+
+      expect(result[:scores]).must_equal [1.0, 2.5]
+      expect(result[:scores].map(&:class)).must_equal [Float, Float]
+    end
+
+    it "rejects a non-numeric item in an of: Float array" do
+      params = Riffer::Params.new
+      params.required(:scores, Array, of: Float)
+      error = expect { params.validate({ scores: [1, "2"] }) }.must_raise(Riffer::ValidationError)
+
+      expect(error.message).must_match(/scores\[1\] must be a number/)
+    end
+
+    it "rejects a float item in an of: Integer array" do
+      params = Riffer::Params.new
+      params.required(:counts, Array, of: Integer)
+      error = expect { params.validate({ counts: [1, 2.5] }) }.must_raise(Riffer::ValidationError)
+
+      expect(error.message).must_match(/counts\[1\] must be an? integer/)
+    end
   end
 
   describe "#to_json_schema" do

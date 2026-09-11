@@ -60,10 +60,34 @@ describe Riffer::Params::Param do
       expect(param.valid_type?(42)).must_equal true
     end
 
+    it "returns false for a float on an integer param" do
+      param = Riffer::Params::Param.new(name: :count, type: Integer, required: true)
+
+      expect(param.valid_type?(1.5)).must_equal false
+    end
+
     it "returns true for valid float type" do
       param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
 
       expect(param.valid_type?(3.14)).must_equal true
+    end
+
+    it "returns true for an integer on a float param" do
+      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+
+      expect(param.valid_type?(120)).must_equal true
+    end
+
+    it "returns false for a numeric string on a float param" do
+      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+
+      expect(param.valid_type?("120")).must_equal false
+    end
+
+    it "returns false for a boolean on a float param" do
+      param = Riffer::Params::Param.new(name: :amount, type: Float, required: true)
+
+      expect(param.valid_type?(true)).must_equal false
     end
 
     it "returns true for true boolean value" do

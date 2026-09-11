@@ -114,6 +114,11 @@ class Riffer::Params::Param
 
   # Validates that a value matches the expected type.
   #
+  # A Float param maps to JSON Schema <tt>"number"</tt>, which covers integers,
+  # so a whole number arrives as an Integer and must be accepted. Integer stays
+  # strict, matching JSON Schema <tt>"integer"</tt>, which excludes
+  # <tt>1.0</tt>. +true+ and +false+ are not Numeric in Ruby, so they are still
+  # rejected for a Float param.
   #--
   #: (untyped) -> bool
   def valid_type?(value)
@@ -121,6 +126,8 @@ class Riffer::Params::Param
 
     if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(type)
       [true, false].include?(value)
+    elsif type == Float
+      value.is_a?(Numeric)
     else
       value.is_a?(type)
     end

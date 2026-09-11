@@ -79,6 +79,11 @@ class Riffer::Params
 
   # Validates arguments against parameter definitions.
   #
+  # A Float param accepts an Integer (JSON Schema <tt>"number"</tt> covers
+  # integers) and its value is coerced with +to_f+, so callers always get a
+  # Float. The same holds for the items of an <tt>of: Float</tt> array. No other
+  # type is coerced.
+  #
   # Raises Riffer::ValidationError if validation fails.
   #
   #--
@@ -112,7 +117,7 @@ class Riffer::Params
 
       value = validate_nested(param, value, errors)
 
-      validated[param.name] = value
+      validated[param.name] = param.type == Float ? value.to_f : value
     end
 
     raise Riffer::ValidationError, errors.join("; ") if errors.any?
@@ -178,7 +183,6 @@ class Riffer::Params
       validate_nested_array_of_objects(param, value, errors)
     elsif param.type == Array && param.item_type
       validate_typed_array(param, value, errors)
-      value
     else
       value
     end
@@ -218,20 +222,29 @@ class Riffer::Params
     end
   end
 
+  # Returns the array with +of: Float+ items coerced to Float; every other item
+  # type is returned untouched.
   #--
-  #: (Riffer::Params::Param, Array[untyped], Array[String]) -> void
+  #: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_typed_array(param, value, errors)
     item_type = param.item_type
-    return unless item_type
+    return value unless item_type
 
     type_name = Riffer::Params::Param::TYPE_MAPPINGS[item_type]
     valid_item = if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(item_type)
                    ->(item) { [true, false].include?(item) }
+                 elsif item_type == Float
+                   ->(item) { item.is_a?(Numeric) }
                  else
                    ->(item) { item.is_a?(item_type) }
                  end
-    value.each_with_index do |item, i|
-      errors << "#{param.name}[#{i}] must be a #{type_name}" unless valid_item.call(item)
+    value.map.with_index do |item, i|
+      unless valid_item.call(item)
+        errors << "#{param.name}[#{i}] must be a #{type_name}"
+        next item
+      end
+
+      item_type == Float ? item.to_f : item
     end
   end
 end

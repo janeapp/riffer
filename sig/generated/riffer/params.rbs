@@ -40,6 +40,11 @@ class Riffer::Params
 
   # Validates arguments against parameter definitions.
   #
+  # A Float param accepts an Integer (JSON Schema <tt>"number"</tt> covers
+  # integers) and its value is coerced with +to_f+, so callers always get a
+  # Float. The same holds for the items of an <tt>of: Float</tt> array. No other
+  # type is coerced.
+  #
   # Raises Riffer::ValidationError if validation fails.
   #
   # --
@@ -71,7 +76,9 @@ class Riffer::Params
   # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
 
+  # Returns the array with +of: Float+ items coerced to Float; every other item
+  # type is returned untouched.
   # --
-  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> void
-  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> void
+  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
+  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
 end
