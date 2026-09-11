@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 set -e
+bundle exec rbs collection update
 exec bundle exec steep check "$@"

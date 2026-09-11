@@ -58,7 +58,7 @@ end
 namespace :steep do
   desc "Run Steep type checker"
   task :check do
-    sh "bundle exec steep check"
+    sh "bin/typecheck"
   end
 end
 
