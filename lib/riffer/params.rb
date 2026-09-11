@@ -117,7 +117,7 @@ class Riffer::Params
 
       value = validate_nested(param, value, errors)
 
-      validated[param.name] = param.type == Float ? value.to_f : value
+      validated[param.name] = coerce_value(param.type, value)
     end
 
     raise Riffer::ValidationError, errors.join("; ") if errors.any?
@@ -222,8 +222,7 @@ class Riffer::Params
     end
   end
 
-  # Returns the array with +of: Float+ items coerced to Float; every other item
-  # type is returned untouched.
+  # Returns the array with its valid items coerced by +coerce_value+.
   #--
   #: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_typed_array(param, value, errors)
@@ -244,7 +243,19 @@ class Riffer::Params
         next item
       end
 
-      item_type == Float ? item.to_f : item
+      coerce_value(item_type, item)
     end
+  end
+
+  # Coerces an already-validated value to the Ruby type its param declares.
+  # Only Float coerces today, because JSON Schema "number" accepts integers and
+  # callers should not get a type that depends on whether the model wrote a
+  # decimal point. Add a branch here rather than inline at a call site.
+  #--
+  #: (Module, untyped) -> untyped
+  def coerce_value(type, value)
+    return value.to_f if type == Float
+
+    value
   end
 end
