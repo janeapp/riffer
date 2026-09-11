@@ -13,3 +13,4 @@ tmp
 vendor
 /.claude/settings.local.json
 .DS_Store
+.gem_rbs_collection/

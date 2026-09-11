@@ -59,6 +59,10 @@ jobs:
         run: bin/rbs
       - name: Check for RBS drift
         run: git diff --exit-code sig/generated/
+      - name: Update RBS collection
+        run: bundle exec rbs collection update
+      - name: Check for rbs collection lock drift
+        run: git diff --exit-code rbs_collection.lock.yaml
       - name: Run Steep type check
         run: bin/typecheck
 
