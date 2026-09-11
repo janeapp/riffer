@@ -155,7 +155,7 @@ class Riffer::Agent
 
   # Streams a response using a new agent instance.
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def self.stream(prompt = nil, files: nil, context: nil, tags: {})
     new(context: context).stream(prompt, files: files, tags: tags)
   end
@@ -304,13 +304,14 @@ class Riffer::Agent
     Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
-  # Streams a response from the agent, returning an +Enumerator+ of
-  # +Riffer::StreamEvents+. See +#generate+ for prompt/files/tags semantics.
+  # Streams a response from the agent as an +Enumerator+ of
+  # +Riffer::StreamEvents+ whose block-form +each+ returns the final
+  # Riffer::Agent::Response. See +#generate+ for prompt/files/tags semantics.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
   #--
-  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream(prompt = nil, files: nil, tags: {})
     if @structured_output
       raise Riffer::ArgumentError,

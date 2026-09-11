@@ -14,8 +14,8 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
 
   private
 

@@ -65,6 +65,16 @@ describe Riffer::Agent::Run do
       expect(Riffer::Agent::Run.stream(agent: agent, prompt: "hi")).must_be_instance_of Enumerator
     end
 
+    it "returns the run response when the enumerator is consumed with a block" do
+      agent = agent_class.new
+
+      response = Riffer::Agent::Run.stream(agent: agent, prompt: "hi").each { |_| }
+
+      expect(response).must_be_instance_of Riffer::Agent::Response
+      expect(response.outcome.reason).must_equal :completed
+      expect(response.content).must_equal agent.session.messages.last.content
+    end
+
     it "stamps the streamed finish reason on the accumulated assistant message" do
       agent = agent_class.new
       Riffer::Agent::Run.stream(agent: agent, prompt: "hi").each { |_| }

@@ -113,8 +113,8 @@ class Riffer::Agent
 
   # Streams a response using a new agent instance.
   # --
-  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def self.stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  def self.stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
 
   # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
   # --
@@ -208,14 +208,15 @@ class Riffer::Agent
   # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Riffer::Agent::Response
 
-  # Streams a response from the agent, returning an +Enumerator+ of
-  # +Riffer::StreamEvents+. See +#generate+ for prompt/files/tags semantics.
+  # Streams a response from the agent as an +Enumerator+ of
+  # +Riffer::StreamEvents+ whose block-form +each+ returns the final
+  # Riffer::Agent::Response. See +#generate+ for prompt/files/tags semantics.
   #
   # Raises Riffer::ArgumentError if structured output is configured.
   #
   # --
-  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  def stream: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
 
   # Interrupts the agent loop from an +on_message+ callback. Equivalent to
   # <tt>throw :riffer_interrupt, reason</tt>.
