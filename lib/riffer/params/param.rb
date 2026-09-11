@@ -121,6 +121,8 @@ class Riffer::Params::Param
 
     if [Riffer::Params::Boolean, TrueClass, FalseClass].include?(type)
       [true, false].include?(value)
+    elsif type == Float
+      value.is_a?(Numeric)
     else
       value.is_a?(type)
     end

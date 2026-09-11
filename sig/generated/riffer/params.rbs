@@ -40,6 +40,11 @@ class Riffer::Params
 
   # Validates arguments against parameter definitions.
   #
+  # A Float param accepts an Integer (JSON Schema <tt>"number"</tt> covers
+  # integers) and its value is coerced with +to_f+, so callers always get a
+  # Float. The same holds for the items of an <tt>of: Float</tt> array. No other
+  # type is coerced.
+  #
   # Raises Riffer::ValidationError if validation fails.
   #
   # --
@@ -71,7 +76,16 @@ class Riffer::Params
   # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_nested_array_of_objects: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
 
+  # Returns the array with its valid items coerced by +coerce_value+.
   # --
-  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> void
-  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> void
+  # : (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
+  def validate_typed_array: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
+
+  # Coerces an already-validated value to the Ruby type its param declares.
+  # Only Float coerces today, because JSON Schema "number" accepts integers and
+  # callers should not get a type that depends on whether the model wrote a
+  # decimal point. Add a branch here rather than inline at a call site.
+  # --
+  # : (Module, untyped) -> untyped
+  def coerce_value: (Module, untyped) -> untyped
 end

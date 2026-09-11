@@ -115,6 +115,8 @@ Options:
 
 `Riffer::Params::Boolean` is the preferred way to declare boolean parameters. `TrueClass` and `FalseClass` continue to work for backwards compatibility.
 
+A `Float` param accepts a whole number too, since JSON Schema's `number` covers integers — a model returning `120` for a `Float` is valid, and the validated value is coerced to `120.0`. `Integer` stays strict: `1.0` is rejected, matching JSON Schema's `integer`.
+
 ### Nested Parameters
 
 Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
