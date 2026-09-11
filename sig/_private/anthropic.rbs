@@ -11,6 +11,7 @@ module Anthropic
 
       def stream: (Hash[Symbol, untyped] params) -> untyped
                 | (**untyped) -> untyped
+                | ...
     end
   end
 end

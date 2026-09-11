@@ -66,7 +66,7 @@ class Riffer::Messages::FilePart
   def self.from_url(url, media_type: nil, filename: nil, sha256: nil)
     unless media_type
       ext = ::File.extname(URI.parse(url).path.to_s).downcase
-      media_type = MEDIA_TYPES[ext]
+      media_type = MEDIA_TYPES[ext] #: String?
       raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" unless media_type
     end
 
@@ -77,7 +77,7 @@ class Riffer::Messages::FilePart
   # or returns +file+ unchanged when it is already a FilePart. Raises
   # Riffer::ArgumentError on an invalid hash.
   #--
-  #: ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
+  #: (untyped) -> Riffer::Messages::FilePart
   def self.from_hash(file)
     return file if file.is_a?(Riffer::Messages::FilePart)
 

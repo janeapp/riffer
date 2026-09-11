@@ -8,7 +8,7 @@ class Riffer::Messages::Base
   # Builds the matching message subclass from a hash, or returns +msg+ unchanged
   # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
   #--
-  #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
+  #: (untyped) -> Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
 

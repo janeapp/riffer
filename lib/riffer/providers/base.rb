@@ -30,7 +30,7 @@ class Riffer::Providers::Base
   #--
   #: () -> String
   def self.semconv_provider_name
-    class_name = name
+    class_name = name #: String?
     # Anonymous classes stay uncached: a class assigned to a constant
     # later must pick up its real name, not a frozen "unknown".
     return "unknown" unless class_name

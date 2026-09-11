@@ -42,8 +42,8 @@ class Riffer::Messages::FilePart
   # or returns +file+ unchanged when it is already a FilePart. Raises
   # Riffer::ArgumentError on an invalid hash.
   # --
-  # : ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
-  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::FilePart) -> Riffer::Messages::FilePart
+  # : (untyped) -> Riffer::Messages::FilePart
+  def self.from_hash: (untyped) -> Riffer::Messages::FilePart
 
   # The base64-encoded contents - caller-supplied, or filled in by the file
   # resolver after a download.  Nil for a URL source riffer hasn't fetched.

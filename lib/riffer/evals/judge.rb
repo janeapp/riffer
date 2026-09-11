@@ -109,7 +109,7 @@ class Riffer::Evals::Judge
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def parse_tool_response(response)
-    tool_call = response.tool_calls.first
+    tool_call = response.tool_calls.first #: Riffer::Messages::Assistant::ToolCall?
     raise Riffer::Error, "Invalid judge response: no tool call found" unless tool_call
 
     parsed = JSON.parse(tool_call[:arguments], symbolize_names: true)

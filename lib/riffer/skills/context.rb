@@ -106,7 +106,7 @@ class Riffer::Skills::Context
   #--
   #: (String) -> bool
   def model_invocable?(name)
-    skill = skills[name]
+    skill = skills[name] #: Riffer::Skills::Frontmatter?
     return false unless skill
 
     !skill.disable_model_invocation

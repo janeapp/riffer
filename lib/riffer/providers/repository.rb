@@ -30,7 +30,7 @@ module Riffer::Providers::Repository
   # Raises Riffer::ArgumentError when called without a block.
   #
   #--
-  #: ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
+  #: ((String | Symbol)) ?{ () -> singleton(Riffer::Providers::Base) } -> void
   def register(identifier, &factory)
     raise Riffer::ArgumentError, "register requires a block returning a provider class" unless factory
 

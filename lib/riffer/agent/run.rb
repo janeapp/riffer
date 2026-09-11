@@ -458,7 +458,7 @@ module Riffer::Agent::Run
   end
 
   #--
-  #: (Hash[(String | Symbol), untyped]?) -> Hash[String, String]
+  #: (untyped) -> Hash[String, String]
   def normalize_tags(tags)
     return {} if tags.nil?
     raise Riffer::ArgumentError, "tags: must be a Hash, got #{tags.class}" unless tags.is_a?(Hash)

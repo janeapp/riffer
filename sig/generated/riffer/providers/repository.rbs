@@ -18,8 +18,8 @@ module Riffer::Providers::Repository
   # Raises Riffer::ArgumentError when called without a block.
   #
   # --
-  # : ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
-  def register: (String | Symbol) { () -> singleton(Riffer::Providers::Base) } -> void
+  # : ((String | Symbol)) ?{ () -> singleton(Riffer::Providers::Base) } -> void
+  def register: (String | Symbol) ?{ () -> singleton(Riffer::Providers::Base) } -> void
 
   # Removes a custom registration by identifier, leaving any built-in of the
   # same name intact.

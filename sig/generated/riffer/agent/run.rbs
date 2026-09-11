@@ -133,8 +133,8 @@ module Riffer::Agent::Run
   def run_span_attributes: (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
 
   # --
-  # : (Hash[(String | Symbol), untyped]?) -> Hash[String, String]
-  def normalize_tags: (Hash[String | Symbol, untyped]?) -> Hash[String, String]
+  # : (untyped) -> Hash[String, String]
+  def normalize_tags: (untyped) -> Hash[String, String]
 
   # --
   # : (Hash[String, String]) -> Hash[String, String]
