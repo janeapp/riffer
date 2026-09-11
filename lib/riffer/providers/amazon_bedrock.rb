@@ -129,13 +129,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     params
   end
 
-  # Converse chains +tools -> system -> messages+, so the +cachePoint+ at the
-  # end of the system array (or the tools array, when there is no system
-  # prompt) caches the stable prefix. The second, after the last content block
-  # of the final message, moves with the conversation: Bedrock looks back from
-  # it for the longest cached prefix, so later calls in a tool loop read the
-  # accumulated messages from cache. Both share a ttl because Bedrock rejects
-  # a 5m point placed ahead of a 1h one.
+  # Converse treats +tools -> system -> messages+ as one prefix and looks back
+  # from a +cachePoint+ for the longest cached run, so the point on the final
+  # message reuses the previous step's cache wherever that point sat. Mixed
+  # ttls must be ordered 1h before 5m, so both points share one.
   #--
   #: (Hash[Symbol, untyped], untyped) -> void
   def apply_cache_point(params, cache_control)
