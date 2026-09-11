@@ -1,7 +1,3 @@
-# Dependency signatures come from ruby/gem_rbs_collection, resolved against
-# Gemfile.lock. The source is pinned to a commit so `rbs collection update` is
-# deterministic — the lock only moves when Gemfile.lock does. Bump the SHA
-# deliberately to pull newer upstream stubs.
 sources:
   - type: git
     name: ruby/gem_rbs_collection
@@ -11,7 +7,5 @@ sources:
 
 path: .gem_rbs_collection
 
-# `yaml` is stdlib rather than a Gemfile.lock entry, so it has to be requested
-# by hand; every other dependency is discovered from the lock.
 gems:
   - name: yaml
