@@ -9,6 +9,12 @@ describe Riffer::Agent::Session do
   let(:tool_assistant) { Riffer::Messages::Assistant.new("", id: "a_2", tool_calls: [tc]) }
   let(:tool_msg) { Riffer::Messages::Tool.new("sunny", id: "t_1", tool_call_id: "c_1", name: "weather") }
 
+  let(:signed_reasoning) { Riffer::Messages::Assistant::Reasoning.new("thought", "sig_1", nil, "rs_1") }
+  let(:signed_assistant) { Riffer::Messages::Assistant.new("hello", id: "a_3", reasoning: [signed_reasoning]) }
+  let(:second_signed_assistant) do
+    Riffer::Messages::Assistant.new("again", id: "a_4", reasoning: [signed_reasoning])
+  end
+
   let(:session) do
     Riffer::Agent::Session.new(messages: [user, plain_assistant, tool_assistant, tool_msg])
   end
@@ -136,6 +142,37 @@ describe Riffer::Agent::Session do
 
       expect(s.set([user])).must_be_same_as s
     end
+
+    it "strips the replay tokens off carried-over assistants past the divergence point" do
+      s = Riffer::Agent::Session.new(messages: [user, signed_assistant, tool_msg, second_signed_assistant])
+      s.set([user, tool_msg, second_signed_assistant])
+
+      expect(s.messages[2].reasoning.map(&:signature)).must_equal [nil]
+    end
+
+    it "leaves the replay tokens alone when the new history only appends" do
+      s = Riffer::Agent::Session.new(messages: [user, signed_assistant])
+      s.set([user, signed_assistant, tool_msg])
+
+      expect(s.messages[1]).must_be_same_as signed_assistant
+    end
+
+    it "strips the assistants a guardrail replacement pushed out of position" do
+      s = Riffer::Agent::Session.new(messages: [user, signed_assistant, tool_msg, second_signed_assistant])
+      replacement = Riffer::Messages::Assistant.new("redacted", id: "a_3", reasoning: [signed_reasoning])
+      s.set([user, replacement, tool_msg, second_signed_assistant])
+
+      expect(s.messages[1]).must_be_same_as replacement
+      expect(s.messages[3].reasoning.map(&:signature)).must_equal [nil]
+    end
+
+    it "leaves a freshly built assistant alone" do
+      replacement = Riffer::Messages::Assistant.new("new", id: "a_5", reasoning: [signed_reasoning])
+      s = Riffer::Agent::Session.new(messages: [user, signed_assistant])
+      s.set([user, replacement])
+
+      expect(s.messages[1]).must_be_same_as replacement
+    end
   end
 
   describe "#unset" do
@@ -186,6 +223,21 @@ describe Riffer::Agent::Session do
     it "returns nil when no message matches" do
       expect(session.remove(id: "missing")).must_be_nil
     end
+
+    it "strips the replay tokens off every assistant after the removed message" do
+      s = Riffer::Agent::Session.new(messages: [user, signed_assistant, second_signed_assistant])
+      s.remove(id: "u_1")
+
+      expect(s.messages.map { |m| m.reasoning.map(&:signature) }).must_equal [[nil], [nil]]
+    end
+
+    it "leaves assistants before the removed message signed" do
+      s = Riffer::Agent::Session.new(messages: [signed_assistant, user, second_signed_assistant])
+      s.remove(id: "u_1")
+
+      expect(s.messages[0]).must_be_same_as signed_assistant
+      expect(s.messages[1].reasoning.map(&:signature)).must_equal [nil]
+    end
   end
 
   describe "#update with id:" do
@@ -207,6 +259,15 @@ describe Riffer::Agent::Session do
       result = s.update(id: "a_x", content: "new")
 
       expect([result.finish_reason, result.finish_reason_raw]).must_equal [:length, "max_tokens"]
+    end
+
+    it "preserves reasoning on assistant" do
+      block = Riffer::Messages::Assistant::Reasoning.new("Thinking", "sig_1", nil)
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [block])
+      s = Riffer::Agent::Session.new(messages: [a])
+      result = s.update(id: "a_x", content: "new")
+
+      expect(result.reasoning).must_equal [block]
     end
 
     it "preserves files on a user message" do
@@ -244,6 +305,14 @@ describe Riffer::Agent::Session do
       session.update(id: "a_2", tool_calls: [])
 
       expect(session.find { |m| m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_1" }).must_be_nil
+    end
+
+    it "keeps the replaced message's replay tokens and strips every later one" do
+      s = Riffer::Agent::Session.new(messages: [signed_assistant, user, second_signed_assistant])
+      result = s.update(id: "a_3", content: "edited")
+
+      expect(result.reasoning.map(&:signature)).must_equal ["sig_1"]
+      expect(s.messages[2].reasoning.map(&:signature)).must_equal [nil]
     end
 
     it "cascades to Tool children only for dropped call_ids" do

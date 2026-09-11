@@ -1423,6 +1423,139 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "reasoning" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    let(:weather_tool) do
+      stub_tool("GetWeather") do
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+    end
+
+    let(:model) { "gpt-5.6-luna" }
+
+    # An Anthropic or Bedrock block is signed but has no item id, and OpenAI
+    # keys a replayed reasoning item by id — so such a block never goes out.
+    it "skips a signed reasoning entry that carries no item id" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("thought", "sig", nil)
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
+      message = Riffer::Messages::Assistant.new("Checking", reasoning: [reasoning], tool_calls: [tool_call])
+
+      items = provider.send(:convert_assistant_to_openai_format, message)
+
+      expect(items.map { |item| item[:type] }).must_equal %w[message function_call]
+      expect(items.to_s).wont_include "sig"
+    end
+
+    it "skips a redacted Anthropic-style block" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new(nil, nil, "encrypted-bytes")
+      message = Riffer::Messages::Assistant.new("Checking", reasoning: [reasoning])
+
+      expect(provider.send(:convert_assistant_to_openai_format, message)).must_equal(
+        { role: "assistant", content: "Checking" },
+      )
+    end
+
+    it "replays an encrypted block as a reasoning item ahead of the function call" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("thought", "enc_1", nil, "rs_1")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
+      message = Riffer::Messages::Assistant.new("Checking", reasoning: [reasoning], tool_calls: [tool_call])
+
+      items = provider.send(:convert_assistant_to_openai_format, message)
+
+      expect(items.first).must_equal(
+        {
+          type: "reasoning",
+          id: "rs_1",
+          summary: [{ type: "summary_text", text: "thought" }],
+          encrypted_content: "enc_1",
+        },
+      )
+      expect(items.map { |item| item[:type] }).must_equal %w[reasoning message function_call]
+    end
+
+    it "uses the items form for a text-only assistant carrying an encrypted block" do
+      reasoning = Riffer::Messages::Assistant::Reasoning.new("", "enc_1", nil, "rs_1")
+      message = Riffer::Messages::Assistant.new("Four.", reasoning: [reasoning])
+
+      items = provider.send(:convert_assistant_to_openai_format, message)
+
+      expect(items.map { |item| item[:type] }).must_equal %w[reasoning message]
+      expect(items.first[:summary]).must_equal []
+    end
+
+    it "carries the reasoning item id on the streamed ReasoningDone" do
+      VCR.use_cassette("Riffer_Providers_OpenAI/_stream_text/with_reasoning_parameter/yields_ReasoningDone_event") do
+        events = provider.stream_text(prompt: "What is 2+2?", model: "gpt-5-mini", reasoning: "medium").to_a
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
+
+        expect(done.id).must_match(/\Ars_/)
+        expect(done.content).wont_be_empty
+      end
+    end
+
+    # Proves the Responses API accepts the reasoning item riffer replays: the
+    # second call resends the first response's encrypted reasoning ahead of the
+    # function_call it produced.
+    it "replays encrypted reasoning with a tool result" do
+      cassette = "Riffer_Providers_OpenAI/reasoning/_generate_text/replays_encrypted_reasoning_with_tool_result"
+      VCR.use_cassette(cassette) do
+        prompt = "I'm planning a picnic tomorrow in Toronto. Think about what you need, then check the weather."
+        first = provider.generate_text(prompt: prompt, model: model, tools: [weather_tool], reasoning: "high")
+        block = first.reasoning.first
+
+        expect(first.has_tool_calls?).must_equal true
+        expect(block.signature).wont_be_empty
+        expect(block.id).must_match(/\Ars_/)
+
+        tool_call = first.tool_calls.first
+        second = provider.generate_text(
+          messages: [
+            Riffer::Messages::User.new(prompt),
+            first,
+            Riffer::Messages::Tool.new("Sunny, 22C", tool_call_id: tool_call.call_id, name: tool_call.name),
+          ],
+          model: model,
+          tools: [weather_tool],
+          reasoning: "high",
+        )
+
+        expect(second).must_be_instance_of Riffer::Messages::Assistant
+        expect(second.content).wont_be_empty
+        expect(second.finish_reason).must_equal :stop
+      end
+    end
+
+    # The items form for a text-only assistant is the same replay shape without
+    # a function_call to anchor it, which OpenAI accepts on its own.
+    it "replays encrypted reasoning on a text-only assistant" do
+      cassette = "Riffer_Providers_OpenAI/reasoning/_generate_text/replays_encrypted_reasoning_text_only"
+      VCR.use_cassette(cassette) do
+        prompt = "A farmer has 17 sheep and all but 9 run away. Then he buys triple the remaining. " \
+                 "Compute step by step and give only the final number."
+        first = provider.generate_text(prompt: prompt, model: model, reasoning: "high")
+
+        expect(first.reasoning.first.signature).wont_be_empty
+
+        second = provider.generate_text(
+          messages: [
+            Riffer::Messages::User.new(prompt),
+            first,
+            Riffer::Messages::User.new("And times 3?"),
+          ],
+          model: model,
+          reasoning: "high",
+        )
+
+        expect(second).must_be_instance_of Riffer::Messages::Assistant
+        expect(second.content).wont_be_empty
+        expect(second.finish_reason).must_equal :stop
+      end
+    end
+  end
+
   describe "#stream_text resource cleanup" do
     let(:provider) { Riffer::Providers::OpenAI.new }
 

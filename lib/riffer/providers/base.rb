@@ -5,8 +5,8 @@ require "json"
 
 # Base class for all LLM providers. A template-method flow: subclasses implement
 # the hooks (+build_request_params+, +execute_generate+, +execute_stream+,
-# +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
-# class orchestrates them.
+# +extract_token_usage+, +extract_content+, +extract_tool_calls+,
+# +extract_reasoning+) and the base class orchestrates them.
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
@@ -57,17 +57,25 @@ class Riffer::Providers::Base
 
       content = extract_content(response)
       tool_calls = extract_tool_calls(response)
+      reasoning = extract_reasoning(response)
       token_usage = extract_token_usage(response)
       finish_reason = extract_finish_reason(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
 
       Riffer::Tracing.record_usage(span, token_usage)
       record_finish_reason(span, finish_reason&.reason, finish_reason&.raw)
-      capture_output(span, content: content, tool_calls: tool_calls, finish_reason: finish_reason&.reason)
+      capture_output(
+        span,
+        content: content,
+        tool_calls: tool_calls,
+        finish_reason: finish_reason&.reason,
+        reasoning: reasoning,
+      )
 
       Riffer::Messages::Assistant.new(
         content,
         tool_calls: tool_calls,
+        reasoning: reasoning,
         token_usage: token_usage,
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
@@ -237,6 +245,14 @@ class Riffer::Providers::Base
     raise NotImplementedError, "Subclasses must implement #extract_tool_calls"
   end
 
+  # Defaults to none rather than raising — reasoning blocks are optional, so
+  # providers that don't expose them stay valid.
+  #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning(_response)
+    []
+  end
+
   # A deliberate whitelist — caller options outside it stay off spans.
   REQUEST_PARAM_ATTRIBUTES = {
     temperature: "gen_ai.request.temperature",
@@ -315,6 +331,7 @@ class Riffer::Providers::Base
       content: recorder.content,
       tool_calls: recorder.tool_calls,
       finish_reason: recorder.finish_reason,
+      reasoning: recorder.reasoning,
     )
   end
 
@@ -329,8 +346,8 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
-  def capture_output(span, content:, tool_calls:, finish_reason:)
+  #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> void
+  def capture_output(span, content:, tool_calls:, finish_reason:, reasoning: [])
     return unless capture_messages?(span)
 
     span.set_attribute(
@@ -339,6 +356,7 @@ class Riffer::Providers::Base
         content: content,
         tool_calls: tool_calls,
         finish_reason: finish_reason,
+        reasoning: reasoning,
       ),
     )
   end

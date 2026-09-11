@@ -100,13 +100,15 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     client.post(api_path(model, "generateContent"), body)
   end
 
+  # A thought summary arrives as an ordinary text part flagged
+  # <tt>thought: true</tt>, so it has to be filtered out of the answer.
   #--
   #: (Hash[Symbol, untyped]) -> String
   def extract_content(response)
     parts = response.dig(:candidates, 0, :content, :parts)
     return "" unless parts
 
-    parts.filter_map { |part| part[:text] }.join
+    parts.filter_map { |part| part[:text] unless part[:thought] }.join
   end
 
   #--
@@ -123,8 +125,26 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
         call_id: "gemini_call_#{SecureRandom.hex(12)}",
         name: fc[:name],
         arguments: encode_tool_arguments(fc[:args]),
+        signature: part[:thoughtSignature],
       )
     end
+  end
+
+  # Gemini spreads one turn's thinking over several thought parts and hangs the
+  # replay token on a separate non-thought text part, so the turn collapses into
+  # a single Reasoning block.
+  #--
+  #: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning(response)
+    parts = response.dig(:candidates, 0, :content, :parts)
+    return [] unless parts
+
+    thoughts = parts.select { |part| part[:thought] && part[:text] }
+    signed = parts.find { |part| !part[:thought] && part[:text] && part[:thoughtSignature] }
+    signature = signed && signed[:thoughtSignature]
+    return [] if thoughts.empty? && signature.nil?
+
+    [Riffer::Messages::Assistant::Reasoning.new(thoughts.map { |part| part[:text] }.join, signature, nil, nil)]
   end
 
   #--
@@ -178,6 +198,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     body = params.except(:model)
 
     full_text = +""
+    thought_text = +""
+    text_signature = nil #: String?
     buffer = +""
     raw_finish_reason = nil #: String?
     saw_function_call = false
@@ -197,7 +219,11 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
         parts = parsed.dig(:candidates, 0, :content, :parts)
 
         parts&.each do |part|
-          if part[:text]
+          if part[:text] && part[:thought]
+            thought_text << part[:text]
+            yielder << Riffer::StreamEvents::ReasoningDelta.new(part[:text])
+          elsif part[:text]
+            text_signature = part[:thoughtSignature] || text_signature
             full_text << part[:text]
             yielder << Riffer::StreamEvents::TextDelta.new(part[:text])
           elsif part[:functionCall]
@@ -210,6 +236,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
               call_id: call_id,
               name: fc[:name],
               arguments: arguments,
+              signature: part[:thoughtSignature],
             )
           end
         end
@@ -226,6 +253,9 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
     client.post_stream(path, body) { |chunk| process_chunk.call(chunk) }
 
+    unless thought_text.empty? && text_signature.nil?
+      yielder << Riffer::StreamEvents::ReasoningDone.new(thought_text, signature: text_signature)
+    end
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))
   end
@@ -268,22 +298,40 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     result
   end
 
+  # A thought signature binds a part to the turn that produced it: Gemini 3
+  # rejects a replayed functionCall that lost its own, and a text turn carries
+  # the token on its first text part. Thought summaries are never sent back.
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format(message)
     parts = [] #: Array[Hash[Symbol, untyped]]
-    parts << { text: message.content } if message.content && !message.content.empty?
+
+    if message.content && !message.content.empty?
+      text_part = { text: message.content } #: Hash[Symbol, untyped]
+      signature = reasoning_signature(message)
+      text_part[:thoughtSignature] = signature if signature
+      parts << text_part
+    end
 
     message.tool_calls.each do |tc|
-      parts << {
+      part = {
         functionCall: {
           name: tc.name,
           args: parse_tool_arguments(tc.arguments),
         },
-      }
+      } #: Hash[Symbol, untyped]
+      part[:thoughtSignature] = tc.signature if tc.signature && !tc.signature.empty?
+      parts << part
     end
 
     { role: "model", parts: parts }
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant) -> String?
+  def reasoning_signature(message)
+    signed = message.reasoning.find { |r| r.signature && !r.signature.empty? }
+    signed&.signature
   end
 
   #--

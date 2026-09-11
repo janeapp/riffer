@@ -245,10 +245,37 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning(response)
+    typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+    content_blocks = typed_response.output&.message&.content
+    return [] if content_blocks.nil? || content_blocks.empty?
+
+    reasoning = [] #: Array[Riffer::Messages::Assistant::Reasoning]
+
+    content_blocks.each do |block|
+      next unless block.respond_to?(:reasoning_content) && block.reasoning_content
+
+      reasoning_content = block.reasoning_content
+      reasoning_text = reasoning_content.reasoning_text
+      redacted_content = reasoning_content.redacted_content
+
+      if reasoning_text
+        reasoning << Riffer::Messages::Assistant::Reasoning.new(reasoning_text.text, reasoning_text.signature, nil)
+      elsif redacted_content
+        reasoning << Riffer::Messages::Assistant::Reasoning.new(nil, nil, redacted_content)
+      end
+    end
+
+    reasoning
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
+      reasoning: nil,
       tool_call: nil,
     } #: Hash[Symbol, untyped]
 
@@ -260,9 +287,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         when Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
           handle_content_block_delta_text_delta(event, state: current_state, yielder: yielder) if event.delta&.text
           handle_content_block_delta_tool_use(event, state: current_state, yielder: yielder) if event.delta&.tool_use
+          if event.delta&.reasoning_content
+            handle_content_block_delta_reasoning(event, state: current_state, yielder: yielder)
+          end
         when Aws::BedrockRuntime::Types::ContentBlockStopEvent
           handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
+          if current_state[:reasoning]
+            handle_content_block_stop_reasoning(event, state: current_state, yielder: yielder)
+          end
         when Aws::BedrockRuntime::Types::MessageStopEvent
           yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
@@ -315,6 +348,28 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
   end
 
+  # ConverseStream emits no start event for a reasoning block: text deltas
+  # arrive first, then a single signature delta, then the block stop.
+  #--
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_delta_reasoning(event, state:, yielder:)
+    typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
+    delta = typed_event.delta.reasoning_content
+    state[:reasoning] ||= { text: +"", signature: nil, redacted_data: nil }
+
+    if delta.text
+      state[:reasoning][:text] << delta.text
+      yielder << Riffer::StreamEvents::ReasoningDelta.new(delta.text)
+    elsif delta.signature
+      state[:reasoning][:signature] = delta.signature
+    elsif delta.redacted_content
+      # Encrypted bytes, split across deltas; concatenated without touching the
+      # encoding so the blob replays byte-identical.
+      state[:reasoning][:redacted_data] ||= +""
+      state[:reasoning][:redacted_data] << delta.redacted_content
+    end
+  end
+
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_delta_tool_use(event, state:, yielder:)
@@ -335,6 +390,18 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::TextDone.new(state[:text])
     state[:text] = nil
+  end
+
+  #--
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_reasoning(_event, state:, yielder:)
+    reasoning = state[:reasoning]
+    yielder << Riffer::StreamEvents::ReasoningDone.new(
+      reasoning[:text],
+      signature: reasoning[:signature],
+      redacted_data: reasoning[:redacted_data],
+    )
+    state[:reasoning] = nil
   end
 
   #--
@@ -388,6 +455,18 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
     content = [] #: Array[Hash[Symbol, untyped]]
+
+    # Reasoning leads the block array, and only signed or redacted blocks are
+    # replayed: Converse rejects a modified block, and the non-Claude models it
+    # hosts return reasoning with no signature to replay at all.
+    message.reasoning.each do |r|
+      if r.signature && !r.signature.empty?
+        content << { reasoning_content: { reasoning_text: { text: r.text || "", signature: r.signature } } }
+      elsif r.redacted_data
+        content << { reasoning_content: { redacted_content: r.redacted_data } }
+      end
+    end
+
     content << { text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|

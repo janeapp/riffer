@@ -917,4 +917,250 @@ describe Riffer::Providers::Gemini do
       end
     end
   end
+  describe "reasoning" do
+    let(:provider) { Riffer::Providers::Gemini.new }
+    let(:model) { "gemini-3-flash-preview" }
+    let(:weather_tool) do
+      stub_tool("GetWeather") do
+        description "Get the current weather for a city"
+        params do
+          required :city, String, description: "The city name"
+        end
+      end
+    end
+
+    def response_with(parts)
+      { candidates: [{ content: { parts: parts }, finishReason: "STOP" }] }
+    end
+
+    describe "#extract_content" do
+      it "excludes thought parts from the answer" do
+        response = response_with(
+          [
+            { text: "Working through it", thought: true },
+            { text: "The answer is 4", thoughtSignature: "sig_1" },
+          ],
+        )
+
+        expect(provider.send(:extract_content, response)).must_equal "The answer is 4"
+      end
+    end
+
+    describe "#extract_tool_calls" do
+      it "captures the thought signature on the functionCall part" do
+        response = response_with(
+          [{ functionCall: { name: "get_weather", args: { city: "Toronto" } }, thoughtSignature: "sig_1" }],
+        )
+        tool_calls = provider.send(:extract_tool_calls, response)
+
+        expect(tool_calls.map(&:signature)).must_equal ["sig_1"]
+      end
+
+      it "keeps part order and signs the first of a parallel pair" do
+        response = response_with(
+          [
+            { functionCall: { name: "get_weather", args: { city: "Toronto" } }, thoughtSignature: "sig_1" },
+            { functionCall: { name: "get_weather", args: { city: "Tokyo" } } },
+          ],
+        )
+        tool_calls = provider.send(:extract_tool_calls, response)
+
+        expect(tool_calls.map(&:signature)).must_equal ["sig_1", nil]
+        expect(tool_calls.map { |tc| JSON.parse(tc.arguments)["city"] }).must_equal %w[Toronto Tokyo]
+      end
+    end
+
+    describe "#extract_reasoning" do
+      it "joins the thought parts into one block signed by the text part" do
+        response = response_with(
+          [
+            { text: "First I check ", thought: true },
+            { text: "the forecast", thought: true },
+            { text: "It is sunny", thoughtSignature: "sig_1" },
+          ],
+        )
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal(
+          [{ text: "First I check the forecast", signature: "sig_1", redacted_data: nil, id: nil }],
+        )
+      end
+
+      it "returns the signature alone when the turn carries no thought summary" do
+        response = response_with([{ text: "It is sunny", thoughtSignature: "sig_1" }])
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal(
+          [{ text: "", signature: "sig_1", redacted_data: nil, id: nil }],
+        )
+      end
+
+      it "returns an empty array without thoughts or a text signature" do
+        expect(provider.send(:extract_reasoning, response_with([{ text: "It is sunny" }]))).must_equal []
+      end
+    end
+
+    describe "#stream_text" do
+      let(:stream_url) do
+        "https://generativelanguage.googleapis.com/v1beta/models/#{model}:streamGenerateContent?alt=sse"
+      end
+
+      def sse(*payloads)
+        payloads.map { |payload| "data: #{JSON.generate(payload)}\n\n" }.join
+      end
+
+      it "yields thought parts as reasoning and signs one ReasoningDone" do
+        stub_request(:post, stream_url).to_return(
+          status: 200,
+          body: sse(
+            response_with([{ text: "Working ", thought: true }]),
+            response_with([{ text: "through it", thought: true }]),
+            response_with([{ text: "The answer is 4" }]),
+            response_with([{ text: "", thoughtSignature: "sig_1" }]),
+          ),
+        )
+        events = provider.stream_text(prompt: "What is 2+2?", model: model).to_a
+        done = events.grep(Riffer::StreamEvents::ReasoningDone)
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)).must_equal ["Working ", "through it"]
+        expect(done.map(&:to_h)).must_equal(
+          [{ role: :assistant, content: "Working through it", signature: "sig_1" }],
+        )
+      end
+
+      it "keeps thought text out of the answer and closes reasoning before the text" do
+        stub_request(:post, stream_url).to_return(
+          status: 200,
+          body: sse(
+            response_with([{ text: "Working through it", thought: true }]),
+            response_with([{ text: "The answer is 4", thoughtSignature: "sig_1" }]),
+          ),
+        )
+        events = provider.stream_text(prompt: "What is 2+2?", model: model).to_a
+        text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+        done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
+
+        expect(text_done.content).must_equal "The answer is 4"
+        expect(events.index(done)).must_be :<, events.index(text_done)
+      end
+
+      it "signs a streamed tool call with the thought signature on its part" do
+        stub_request(:post, stream_url).to_return(
+          status: 200,
+          body: sse(
+            response_with(
+              [{ functionCall: { name: "get_weather", args: { city: "Toronto" } }, thoughtSignature: "sig_1" }],
+            ),
+          ),
+        )
+        events = provider.stream_text(prompt: "Weather?", model: model, tools: [weather_tool]).to_a
+
+        expect(events.grep(Riffer::StreamEvents::ToolCallDone).map(&:signature)).must_equal ["sig_1"]
+      end
+    end
+
+    describe "replay in #build_request_params" do
+      def model_parts(message)
+        messages = [
+          Riffer::Messages::User.new("What is the weather in Toronto?"),
+          message,
+          Riffer::Messages::User.new("Thanks"),
+        ]
+        params = provider.send(:build_request_params, messages, model, {})
+        params[:contents].find { |content| content[:role] == "model" }[:parts]
+      end
+
+      it "replays the thought signature on the functionCall part" do
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "gemini_call_1",
+          name: "get_weather",
+          arguments: '{"city":"Toronto"}',
+          signature: "sig_1",
+        )
+
+        expect(model_parts(Riffer::Messages::Assistant.new("", tool_calls: [tool_call]))).must_equal(
+          [{ functionCall: { name: "get_weather", args: { "city" => "Toronto" } }, thoughtSignature: "sig_1" }],
+        )
+      end
+
+      it "keeps part order when only the first of a parallel pair is signed" do
+        signed = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "gemini_call_1", name: "get_weather", arguments: '{"city":"Toronto"}', signature: "sig_1",
+        )
+        unsigned = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "gemini_call_2", name: "get_weather", arguments: '{"city":"Tokyo"}',
+        )
+        parts = model_parts(Riffer::Messages::Assistant.new("", tool_calls: [signed, unsigned]))
+
+        expect(parts.map { |part| part[:thoughtSignature] }).must_equal ["sig_1", nil]
+        expect(parts.map { |part| part[:functionCall][:args]["city"] }).must_equal %w[Toronto Tokyo]
+      end
+
+      it "replays the text signature on the first text part and drops the thought text" do
+        reasoning = Riffer::Messages::Assistant::Reasoning.new("Working through it", "sig_1", nil, nil)
+
+        expect(model_parts(Riffer::Messages::Assistant.new("It is sunny", reasoning: [reasoning]))).must_equal(
+          [{ text: "It is sunny", thoughtSignature: "sig_1" }],
+        )
+      end
+
+      it "sends no signature when the reasoning is unsigned" do
+        reasoning = Riffer::Messages::Assistant::Reasoning.new("Working through it", nil, nil, nil)
+
+        expect(model_parts(Riffer::Messages::Assistant.new("It is sunny", reasoning: [reasoning]))).must_equal(
+          [{ text: "It is sunny" }],
+        )
+      end
+    end
+
+    # Proves Gemini 3 accepts the thought signature riffer replays: without it
+    # the second call is rejected with "Function call is missing a
+    # thought_signature".
+    it "replays a thought signature with a tool result" do
+      cassette = "Riffer_Providers_Gemini/reasoning/_generate_text/replays_thought_signature_with_tool_result"
+      VCR.use_cassette(cassette) do
+        first = provider.generate_text(
+          prompt: "What is the weather in Toronto?",
+          model: model,
+          tools: [weather_tool],
+        )
+
+        expect(first.has_tool_calls?).must_equal true
+        expect(first.tool_calls.first.signature).wont_be_empty
+
+        tool_call = first.tool_calls.first
+        second = provider.generate_text(
+          messages: [
+            Riffer::Messages::User.new("What is the weather in Toronto?"),
+            first,
+            Riffer::Messages::Tool.new("Sunny, 22C", tool_call_id: tool_call.call_id, name: tool_call.name),
+          ],
+          model: model,
+          tools: [weather_tool],
+        )
+
+        expect(second).must_be_instance_of Riffer::Messages::Assistant
+        expect(second.content).wont_be_empty
+        expect(second.finish_reason).must_equal :stop
+      end
+    end
+
+    it "yields thought summaries when includeThoughts is set" do
+      cassette = "Riffer_Providers_Gemini/reasoning/_stream_text/yields_thought_summaries"
+      VCR.use_cassette(cassette) do
+        events = provider.stream_text(
+          prompt: "A farmer has 17 sheep and all but 9 run away. Then he buys triple the remaining. " \
+                  "Compute step by step.",
+          model: model,
+          thinkingConfig: { includeThoughts: true },
+        ).to_a
+        deltas = events.grep(Riffer::StreamEvents::ReasoningDelta)
+        done = events.grep(Riffer::StreamEvents::ReasoningDone)
+        text_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+        expect(deltas).wont_be_empty
+        expect(done.size).must_equal 1
+        expect(done.first.content).must_equal deltas.map(&:content).join
+        expect(text_done.content).wont_include deltas.first.content
+      end
+    end
+  end
 end

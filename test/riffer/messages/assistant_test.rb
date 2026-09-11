@@ -60,6 +60,63 @@ describe Riffer::Messages::Assistant do
     end
   end
 
+  describe "#reasoning" do
+    it "returns an empty array by default" do
+      message = Riffer::Messages::Assistant.new("I can help")
+
+      expect(message.reasoning).must_equal []
+    end
+
+    it "returns the stored blocks" do
+      block = Riffer::Messages::Assistant::Reasoning.new("Let me think", "sig_1", nil)
+      message = Riffer::Messages::Assistant.new("I can help", reasoning: [block])
+
+      expect(message.reasoning).must_equal [block]
+    end
+  end
+
+  describe "#without_replay_tokens" do
+    let(:reasoning) { Riffer::Messages::Assistant::Reasoning.new("Let me think", "sig_1", "redacted", "rs_1") }
+    let(:tool_call) do
+      Riffer::Messages::Assistant::ToolCall.new(
+        call_id: "c_1", name: "weather", arguments: "{}", signature: "sig_2",
+      )
+    end
+    let(:signed) do
+      Riffer::Messages::Assistant.new(
+        "I can help",
+        id: "a_1",
+        reasoning: [reasoning],
+        tool_calls: [tool_call],
+        finish_reason: :tool_calls,
+      )
+    end
+
+    it "nulls the reasoning signature and redacted payload, keeping text and id" do
+      expect(signed.without_replay_tokens.reasoning.map(&:to_h)).must_equal(
+        [{ text: "Let me think", signature: nil, redacted_data: nil, id: "rs_1" }],
+      )
+    end
+
+    it "nulls the tool call signature, keeping the rest of the call" do
+      expect(signed.without_replay_tokens.tool_calls.map(&:to_h)).must_equal(
+        [{ call_id: "c_1", name: "weather", arguments: "{}" }],
+      )
+    end
+
+    it "keeps the content, id and finish reason" do
+      stripped = signed.without_replay_tokens
+
+      expect([stripped.content, stripped.id, stripped.finish_reason]).must_equal ["I can help", "a_1", :tool_calls]
+    end
+
+    it "leaves the original untouched" do
+      signed.without_replay_tokens
+
+      expect(signed.reasoning.first.signature).must_equal "sig_1"
+    end
+  end
+
   describe "#has_tool_calls?" do
     it "returns false when tool_calls is empty" do
       message = Riffer::Messages::Assistant.new("hi")
@@ -105,6 +162,17 @@ describe Riffer::Messages::Assistant do
       expect(result.tool_calls).must_equal [tc_a, tc_b]
     end
 
+    it "combines reasoning from both messages" do
+      r_a = Riffer::Messages::Assistant::Reasoning.new("First thought", "sig_a", nil)
+      r_b = Riffer::Messages::Assistant::Reasoning.new("Second thought", "sig_b", nil)
+      a = Riffer::Messages::Assistant.new("First", reasoning: [r_a])
+      b = Riffer::Messages::Assistant.new("Second", reasoning: [r_b])
+
+      result = a + b
+
+      expect(result.reasoning).must_equal [r_a, r_b]
+    end
+
     it "discards token_usage and structured_output" do
       usage = Riffer::Providers::TokenUsage.new(input_tokens: 10, output_tokens: 5)
       a = Riffer::Messages::Assistant.new("First", token_usage: usage, structured_output: { key: "val" })
@@ -131,10 +199,34 @@ describe Riffer::Messages::Assistant do
       expect(message.to_h[:tool_calls]).must_equal [{ call_id: nil, name: "test", arguments: nil }]
     end
 
+    it "includes a tool call signature when the provider signed it" do
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(name: "test", signature: "sig_1")
+      message = Riffer::Messages::Assistant.new("Using tool", tool_calls: [tool_call])
+
+      expect(message.to_h[:tool_calls]).must_equal(
+        [{ call_id: nil, name: "test", arguments: nil, signature: "sig_1" }],
+      )
+    end
+
     it "excludes tool_calls when empty" do
       message = Riffer::Messages::Assistant.new("No tools")
 
       expect(message.to_h).must_equal({ role: :assistant, content: "No tools" })
+    end
+
+    it "includes reasoning when provided" do
+      block = Riffer::Messages::Assistant::Reasoning.new("Thinking", "sig_1", nil)
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [block])
+
+      expect(message.to_h[:reasoning]).must_equal(
+        [{ text: "Thinking", signature: "sig_1", redacted_data: nil, id: nil }],
+      )
+    end
+
+    it "excludes reasoning when empty" do
+      message = Riffer::Messages::Assistant.new("No reasoning")
+
+      expect(message.to_h.key?(:reasoning)).must_equal false
     end
 
     it "includes usage when provided" do

@@ -1,0 +1,154 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"]}}]}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 11 Sep 2026 23:40:03 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=800
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "candidates": [
+            {
+              "content": {
+                "parts": [
+                  {
+                    "functionCall": {
+                      "name": "get_weather",
+                      "args": {
+                        "city": "Toronto"
+                      },
+                      "id": "call_35304"
+                    },
+                    "thoughtSignature": "Et4BCtsBARFNMg/7OkIyAqXuDmdko5dgMim3rpsFrCAnetFi0Vl7WDWfxu4mqtc41Exq0ESxc7/7ZL66Aobfj0dEvf4YdCRI1TRBoiIwlzyiMSopnBc2FR2whBB3cfs2TnYzrOoB1nkwSc66sFPOwojYByiF8kVOMA/gFxVXIjq99AUaLYTb1iROHuP9ndiNqhET6Ban8/vFq2ZAZ0IbAvBZmLcPKEq177/pB2w0qC0Ask1D/juedLOUPswbZFcAnPwWaxE+YrTqjD8xwCslU1gnbclLwSZd58lSrwyoNKS3"
+                  }
+                ],
+                "role": "model"
+              },
+              "finishReason": "STOP",
+              "index": 0,
+              "finishMessage": "Model generated function call(s)."
+            }
+          ],
+          "usageMetadata": {
+            "promptTokenCount": 60,
+            "candidatesTokenCount": 16,
+            "totalTokenCount": 102,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 60
+              }
+            ],
+            "thoughtsTokenCount": 26,
+            "serviceTier": "standard"
+          },
+          "modelVersion": "gemini-3-flash-preview",
+          "responseId": "U5GkatWlC7Oi6dkPlITa8Qg"
+        }
+  recorded_at: Fri, 11 Sep 2026 23:40:03 GMT
+- request:
+    method: post
+    uri: https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent
+    body:
+      encoding: UTF-8
+      string: '{"contents":[{"role":"user","parts":[{"text":"What is the weather in
+        Toronto?"}]},{"role":"model","parts":[{"functionCall":{"name":"get_weather","args":{"city":"Toronto"}},"thoughtSignature":"Et4BCtsBARFNMg/7OkIyAqXuDmdko5dgMim3rpsFrCAnetFi0Vl7WDWfxu4mqtc41Exq0ESxc7/7ZL66Aobfj0dEvf4YdCRI1TRBoiIwlzyiMSopnBc2FR2whBB3cfs2TnYzrOoB1nkwSc66sFPOwojYByiF8kVOMA/gFxVXIjq99AUaLYTb1iROHuP9ndiNqhET6Ban8/vFq2ZAZ0IbAvBZmLcPKEq177/pB2w0qC0Ask1D/juedLOUPswbZFcAnPwWaxE+YrTqjD8xwCslU1gnbclLwSZd58lSrwyoNKS3"}]},{"role":"user","parts":[{"functionResponse":{"name":"get_weather","response":{"result":"Sunny,
+        22C"}}}]}],"tools":[{"functionDeclarations":[{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"]}}]}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - generativelanguage.googleapis.com
+      Content-Type:
+      - application/json
+      X-Goog-Api-Key:
+      - "<GEMINI_API_KEY>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gemini-Service-Tier:
+      - standard
+      Content-Type:
+      - application/json; charset=UTF-8
+      Vary:
+      - Origin
+      - Referer
+      - X-Origin
+      Date:
+      - Fri, 11 Sep 2026 23:40:04 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      X-Xss-Protection:
+      - '0'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Server-Timing:
+      - gfet4t7; dur=718
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJjYW5kaWRhdGVzIjogWwogICAgewogICAgICAiY29udGVudCI6IHsKICAgICAgICAicGFydHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJ0ZXh0IjogIk9LLiBUaGUgY3VycmVudCB3ZWF0aGVyIGluIFRvcm9udG8gaXMgc3VubnkgYW5kIDIywrBDLiIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJyb2xlIjogIm1vZGVsIgogICAgICB9LAogICAgICAiZmluaXNoUmVhc29uIjogIlNUT1AiLAogICAgICAiaW5kZXgiOiAwCiAgICB9CiAgXSwKICAidXNhZ2VNZXRhZGF0YSI6IHsKICAgICJwcm9tcHRUb2tlbkNvdW50IjogMTIxLAogICAgImNhbmRpZGF0ZXNUb2tlbkNvdW50IjogMTYsCiAgICAidG90YWxUb2tlbkNvdW50IjogMTM3LAogICAgInByb21wdFRva2Vuc0RldGFpbHMiOiBbCiAgICAgIHsKICAgICAgICAibW9kYWxpdHkiOiAiVEVYVCIsCiAgICAgICAgInRva2VuQ291bnQiOiAxMjEKICAgICAgfQogICAgXSwKICAgICJzZXJ2aWNlVGllciI6ICJzdGFuZGFyZCIKICB9LAogICJtb2RlbFZlcnNpb24iOiAiZ2VtaW5pLTMtZmxhc2gtcHJldmlldyIsCiAgInJlc3BvbnNlSWQiOiAiVkpHa2F1cWxDSnlIejdJUHA5aXJnQWciCn0K
+  recorded_at: Fri, 11 Sep 2026 23:40:04 GMT
+recorded_with: VCR 6.4.0

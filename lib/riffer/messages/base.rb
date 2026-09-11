@@ -24,6 +24,9 @@ class Riffer::Messages::Base
       tool_calls = (msg[:tool_calls] || []).map do |tc|
         tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
       end
+      reasoning = (msg[:reasoning] || []).map do |r|
+        r.is_a?(Riffer::Messages::Assistant::Reasoning) ? r : Riffer::Messages::Assistant::Reasoning.new(**r)
+      end
       Riffer::Messages::Assistant.new(
         msg[:content],
         id: msg[:id],
@@ -31,6 +34,7 @@ class Riffer::Messages::Base
         structured_output: msg[:structured_output],
         finish_reason: msg[:finish_reason]&.to_sym,
         finish_reason_raw: msg[:finish_reason_raw],
+        reasoning: reasoning,
       )
     when :system
       Riffer::Messages::System.new(msg[:content], id: msg[:id])

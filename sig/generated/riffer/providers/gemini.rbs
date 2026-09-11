@@ -33,6 +33,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def execute_generate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
+  # A thought summary arrives as an ordinary text part flagged
+  # <tt>thought: true</tt>, so it has to be filtered out of the answer.
   # --
   # : (Hash[Symbol, untyped]) -> String
   def extract_content: (Hash[Symbol, untyped]) -> String
@@ -40,6 +42,13 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # --
   # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::ToolCall]
+
+  # Gemini spreads one turn's thinking over several thought parts and hangs the
+  # replay token on a separate non-thought text part, so the turn collapses into
+  # a single Reasoning block.
+  # --
+  # : (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning: (Hash[Symbol, untyped]) -> Array[Riffer::Messages::Assistant::Reasoning]
 
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage?
@@ -69,9 +78,16 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
   def partition_messages: (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]
 
+  # A thought signature binds a part to the turn that produced it: Gemini 3
+  # rejects a replayed functionCall that lost its own, and a text turn carries
+  # the token on its first text part. Thought summaries are never sent back.
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_gemini_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant) -> String?
+  def reasoning_signature: (Riffer::Messages::Assistant) -> String?
 
   # --
   # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]

@@ -2,8 +2,8 @@
 
 # Base class for all LLM providers. A template-method flow: subclasses implement
 # the hooks (+build_request_params+, +execute_generate+, +execute_stream+,
-# +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
-# class orchestrates them.
+# +extract_token_usage+, +extract_content+, +extract_tool_calls+,
+# +extract_reasoning+) and the base class orchestrates them.
 class Riffer::Providers::Base
   self.@semconv_provider_name: String?
 
@@ -113,6 +113,12 @@ class Riffer::Providers::Base
   # : (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
+  # Defaults to none rather than raising — reasoning blocks are optional, so
+  # providers that don't expose them stay valid.
+  # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+
   # A deliberate whitelist — caller options outside it stay off spans.
   REQUEST_PARAM_ATTRIBUTES: Hash[Symbol, String]
 
@@ -143,8 +149,8 @@ class Riffer::Providers::Base
   def capture_input: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Array[Riffer::Messages::Base]) -> void
 
   # --
-  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
-  def capture_output: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> void
+  # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> void
+  def capture_output: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> void
 
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool

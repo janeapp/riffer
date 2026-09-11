@@ -83,11 +83,16 @@ module Riffer::Agent::Run
 
     begin
       step = agent.session.steps
+      previous_prefix = nil #: [Array[String], Array[String]]?
 
       reason = catch(:riffer_interrupt) do
         execute_pending_tool_calls(agent, tags)
 
         loop do
+          prefix = prefix_fingerprint(agent)
+          strip_stale_replay_tokens(agent) if previous_prefix && previous_prefix != prefix
+          previous_prefix = prefix
+
           response = stream_yielder ? accumulate_streamed_response(agent, stream_yielder, tags) : call_llm(agent, tags)
           step += 1
           run_steps += 1
@@ -153,6 +158,7 @@ module Riffer::Agent::Run
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
     accumulated_content = +""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
+    accumulated_reasoning = [] #: Array[Riffer::Messages::Assistant::Reasoning]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
     accumulated_finish_reason_raw = nil #: String?
@@ -174,6 +180,14 @@ module Riffer::Agent::Run
           call_id: event.call_id,
           name: event.name,
           arguments: event.arguments,
+          signature: event.signature,
+        )
+      when Riffer::StreamEvents::ReasoningDone
+        accumulated_reasoning << Riffer::Messages::Assistant::Reasoning.new(
+          event.content,
+          event.signature,
+          event.redacted_data,
+          event.id,
         )
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage
@@ -186,6 +200,7 @@ module Riffer::Agent::Run
     Riffer::Messages::Assistant.new(
       accumulated_content,
       tool_calls: accumulated_tool_calls,
+      reasoning: accumulated_reasoning,
       token_usage: accumulated_token_usage,
       finish_reason: accumulated_finish_reason,
       finish_reason_raw: accumulated_finish_reason_raw,
@@ -359,6 +374,25 @@ module Riffer::Agent::Run
     return unless message
 
     agent.structured_output&.parse_and_validate(message.content)
+  end
+
+  # What the provider receives ahead of the conversation itself: the system
+  # instructions and the tool list. Riffer changes either between steps of a
+  # single run (progressive MCP tool exposure, skill activation), which
+  # invalidates every replay token the history already carries.
+  #--
+  #: (Riffer::Agent) -> [Array[String], Array[String]]
+  def prefix_fingerprint(agent)
+    systems = agent.session.messages.filter_map { |m| m.content if m.is_a?(Riffer::Messages::System) }
+    [systems, effective_tools(agent).map(&:name).sort]
+  end
+
+  #--
+  #: (Riffer::Agent) -> void
+  def strip_stale_replay_tokens(agent)
+    agent.session.set(
+      agent.session.messages.map { |m| m.is_a?(Riffer::Messages::Assistant) ? m.without_replay_tokens : m },
+    )
   end
 
   #--

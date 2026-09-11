@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 2+2? Think
+        step by step."}]}],"system":[],"inferenceConfig":{"maxTokens":4000},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - a28b4e0b-652f-494a-82ac-cba62e3995f6
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.254.1 ua/2.1 api/bedrock_runtime#1.83.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '219'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 23:11:24 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1323'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - c6e043ca-e29f-4976-af1a-52de81bee9c1
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1718},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"EtoDCoQBCBEQARgCKkB+jp0d1oOa2XAESl6UKxV2daI/Y2bfxFLCCdGQ0fvzwdFq/6SvTXIG6GCWyooYSZ+GsttQKhSoFCio7/LN7dk4MhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw0NzQ2Njg0MjA3NTKoAZyVktUGEgwqEQGTKbvxgjtOJPkaDFa0CEkzZ6lMSJIGNSIwFF8Pv32MfOmq0EWfn4oGJzxlVodLp/7Zicp1HDQO2RFbthVEy/dF801SvFQCxQ36KoIC2fHyFvh4lXdV/v7CpMfEMgz6qhldugZTGK2Q41fZyZT5ZfI3JHWafkitEZNhNWWHpKfZ9h3cqoRGhnDqoeRoCSDDpm6GBj0/giF5JN2NG9QxLL3wZr7Ivj1SLX7yx9LAyNv3dMKQ+l5vQxXtOK5dyq0rkuB8KfGuPFHOPfXZbg/h3Lm9I2lmHCGmkq9N8H85yXfAeLCoZPFkuoHdO6yIDgJxefqDgc7Ls1j8thxkAAxty+6kDJsNw5xodlOVasvq9kf8gziRlewrDD5N7w+f195qyfrl+wDEy7qhbbrKMzYWF4JC/u8+gPu1Wsi+gh+SvdvIRErNoANcLKf8teJ9+4n9GAE=","text":"This
+        is a simple arithmetic question. Let me think through it step by step.\n\n2
+        + 2 means I have 2 items and I''m adding 2 more items.\n\nIf I count: 1, 2
+        (that''s the first 2), then add 1, 2 (that''s the second 2), I get 1, 2, 3,
+        4.\n\nSo 2 + 2 = 4."}}},{"text":"# 2 + 2 = 4\n\n**Step by step:**\n1. Start
+        with 2\n2. Add 2 more\n3. Count: 1, 2, 3, 4\n\nThe answer is **4**."}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"inputTokens":48,"outputTokens":168,"serverToolUsage":{},"totalTokens":216}}'
+  recorded_at: Fri, 11 Sep 2026 23:11:24 GMT
+recorded_with: VCR 6.4.0

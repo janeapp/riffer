@@ -247,6 +247,59 @@ describe Riffer::Messages::Base do
       end
     end
 
+    describe "with assistant reasoning" do
+      let(:reasoning) { Riffer::Messages::Assistant::Reasoning.new("Thinking", "sig_1", nil) }
+
+      it "preserves Reasoning structs in assistant messages" do
+        result = Riffer::Messages::Base.from_hash(
+          { role: "assistant", content: "Answer", reasoning: [reasoning] },
+        )
+
+        expect(result.reasoning).must_equal [reasoning]
+      end
+
+      it "converts reasoning hashes to Reasoning structs" do
+        result = Riffer::Messages::Base.from_hash(
+          {
+            role: "assistant",
+            content: "Answer",
+            reasoning: [{ text: "Thinking", signature: "sig_1", redacted_data: nil }],
+          },
+        )
+        block = result.reasoning.first
+
+        expect(block).must_be_instance_of Riffer::Messages::Assistant::Reasoning
+        expect(block.text).must_equal "Thinking"
+        expect(block.signature).must_equal "sig_1"
+        expect(block.redacted_data).must_be_nil
+      end
+
+      it "round-trips reasoning through to_h" do
+        message = Riffer::Messages::Assistant.new("Answer", reasoning: [reasoning])
+        result = Riffer::Messages::Base.from_hash(message.to_h)
+
+        expect(result.reasoning).must_equal [reasoning]
+      end
+
+      it "defaults to an empty array when not provided" do
+        result = Riffer::Messages::Base.from_hash({ role: "assistant", content: "Answer" })
+
+        expect(result.reasoning).must_equal []
+      end
+
+      it "round-trips the reasoning id and a signed tool call" do
+        block = Riffer::Messages::Assistant::Reasoning.new("Thinking", "enc_1", nil, "rs_1")
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(
+          call_id: "c_1", name: "weather", arguments: "{}", signature: "sig_1",
+        )
+        message = Riffer::Messages::Assistant.new("Answer", reasoning: [block], tool_calls: [tool_call])
+        result = Riffer::Messages::Base.from_hash(message.to_h)
+
+        expect(result.reasoning).must_equal [block]
+        expect(result.tool_calls).must_equal [tool_call]
+      end
+    end
+
     describe "with user files" do
       it "converts file hashes to FilePart objects" do
         result = Riffer::Messages::Base.from_hash(

@@ -70,6 +70,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
@@ -97,9 +101,17 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
+  # Under <tt>display: "omitted"</tt> a thinking block streams no
+  # ThinkingEvent deltas at all, so the accumulated block is the only source of
+  # its text and of the signature needed to replay it.
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_thinking: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+
+  # A redacted block arrives complete at content_block_start with no deltas.
+  # --
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_redacted_thinking: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void

@@ -327,6 +327,29 @@ class MyAgent < Riffer::Agent
 end
 ```
 
+When `reasoning` is set, a reasoning output item arrives with its `encrypted_content` already populated — no `include: ["reasoning.encrypted_content"]` is needed — and riffer replays it on later turns (see [Messages — reasoning blocks](MESSAGES.md#reasoning-thinking-blocks)). A reasoning item only appears when the model actually reasons about the prompt.
+
+### Gemini
+
+Options other than `tools` and `structured_output` are passed through as the request's `generationConfig`.
+
+| Option           | Description                                                      |
+| ---------------- | ---------------------------------------------------------------- |
+| `temperature`    | Sampling temperature                                             |
+| `maxOutputTokens`| Maximum tokens in response                                       |
+| `topP` / `topK`  | Nucleus and top-k sampling parameters                            |
+| `thinkingConfig` | Thinking config hash (e.g. `includeThoughts`) for Gemini 2.5+    |
+
+```ruby
+# With thought summaries streamed as reasoning events
+class ReasoningAgent < Riffer::Agent
+  model 'gemini/gemini-3-flash-preview'
+  model_options thinkingConfig: {includeThoughts: true}
+end
+```
+
+`includeThoughts` only controls whether the model's thought *summaries* come back. Gemini signs its function calls and text with a thought signature either way, and riffer replays those automatically — Gemini 3 rejects a replayed function call that lost its signature.
+
 ### Amazon Bedrock
 
 Options are passed through to the [Bedrock Converse API](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#converse-instance_method).
@@ -341,7 +364,15 @@ class MyAgent < Riffer::Agent
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
   model_options inference_config: {temperature: 0.7, max_tokens: 4096}
 end
+
+# With extended thinking (Claude)
+class ReasoningAgent < Riffer::Agent
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
+  model_options additional_model_request_fields: {thinking: {type: "enabled", budget_tokens: 1024}}
+end
 ```
+
+Signed reasoning blocks are replayed to the model automatically on later turns (see [Messages — reasoning blocks](MESSAGES.md#reasoning-thinking-blocks)).
 
 ### Anthropic
 

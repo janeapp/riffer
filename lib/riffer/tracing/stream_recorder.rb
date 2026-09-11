@@ -20,6 +20,8 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
 
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
 
+  attr_reader :reasoning #: Array[Riffer::Messages::Assistant::Reasoning]
+
   #--
   #: (Enumerator::Yielder, ?clock: ^() -> Float) -> void
   def initialize(yielder, clock: -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) })
@@ -27,6 +29,7 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
     @clock = clock
     @started_at = clock.call
     @tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
+    @reasoning = [] #: Array[Riffer::Messages::Assistant::Reasoning]
   end
 
   #--
@@ -51,6 +54,14 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
         call_id: event.call_id,
         name: event.name,
         arguments: event.arguments,
+        signature: event.signature,
+      )
+    when Riffer::StreamEvents::ReasoningDone
+      @reasoning << Riffer::Messages::Assistant::Reasoning.new(
+        event.content,
+        event.signature,
+        event.redacted_data,
+        event.id,
       )
     when Riffer::StreamEvents::TokenUsageDone
       @token_usage = event.token_usage

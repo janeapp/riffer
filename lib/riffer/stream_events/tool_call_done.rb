@@ -15,19 +15,28 @@ class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
   # The complete arguments JSON string.
   attr_reader :arguments #: String
 
+  # The provider's opaque replay token for this tool call, for the providers
+  # that sign one (Gemini).
+  attr_reader :signature #: String?
+
   #--
-  #: (item_id: String, call_id: String, name: String, arguments: String, ?role: Symbol) -> void
-  def initialize(item_id:, call_id:, name:, arguments:, role: :assistant)
+  #: (item_id: String, call_id: String, name: String, arguments: String, ?signature: String?, ?role: Symbol) -> void
+  def initialize(item_id:, call_id:, name:, arguments:, signature: nil, role: :assistant)
     super(role: role)
     @item_id = item_id
     @call_id = call_id
     @name = name
     @arguments = arguments
+    @signature = signature
   end
 
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
-    { role: @role, item_id: @item_id, call_id: @call_id, name: @name, arguments: @arguments }
+    hash = {
+      role: @role, item_id: @item_id, call_id: @call_id, name: @name, arguments: @arguments,
+    } #: Hash[Symbol, untyped]
+    hash[:signature] = @signature if @signature
+    hash
   end
 end

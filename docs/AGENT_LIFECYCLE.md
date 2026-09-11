@@ -286,6 +286,8 @@ agent.session.reverse_each.find { |m| m.is_a?(Riffer::Messages::Assistant) }    
 agent.session.orphaned_tool_call_ids                                            # Array[String], zero-cost validation
 ```
 
+Every mutator also drops the reasoning and tool-call replay tokens off the assistant messages whose request prefix it changed — `update` strips everything after the replaced message, `remove` everything from the removed position on, `set` everything carried over past the first position that differs. The reasoning text and ids survive; only the opaque tokens go. See [Messages — editing history drops the replay tokens](MESSAGES.md#editing-history-drops-the-replay-tokens).
+
 Mutating history while a `stream` enumerator is being consumed is undefined; mutators are intended for use between turns.
 
 Mutators do **not** fire `on_message` — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Healing placeholders bypass `on_message` for the same reason; consumers learn that healing happened via `Response#healed_tool_call_ids` (and `StreamEvents::Interrupt#healed_tool_call_ids`).
