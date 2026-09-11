@@ -835,7 +835,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_json_schema-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params.rb, line 133</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
   <span class="ruby-identifier">properties</span> = {} <span class="ruby-comment">#: Hash[String, untyped]</span>
   <span class="ruby-identifier">required_params</span> = [] <span class="ruby-comment">#: Array[String]</span>
@@ -859,7 +859,7 @@
         <div class="method-description">
 
 
-          <p>Converts all parameters to JSON Schema format. When <code>strict</code> is true, every property is listed in <code>required</code> and optional ones are made nullable instead, satisfying providers that enforce strict structured output schemas.</p>
+          <p>Converts all parameters to JSON Schema format. When <code>strict</code> is true, every property is listed in <code>required</code> and optional ones are made nullable instead, satisfying providers that enforce strict structured output schemas. Raises <a href="ArgumentError.html"><code>Riffer::ArgumentError</code></a> when <code>strict</code> and a Hash param (at any depth) has no block or an Array param has neither a block nor <code>of:</code>.</p>
 
 
         </div>

@@ -880,8 +880,9 @@
             </details>
           </div>
           <div class="method-source-code" id="to_json_schema-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params/param.rb, line 146</span>
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/params/param.rb, line 149</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-keyword">false</span>)
+  <span class="ruby-identifier">validate_strict_shape!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">strict</span>
   <span class="ruby-identifier">nullable</span> = <span class="ruby-identifier">strict</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">required</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">nullable</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">enum</span>
@@ -906,7 +907,8 @@
   <span class="ruby-keyword">elsif</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Array</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item_type</span>
     <span class="ruby-identifier">schema</span>[<span class="ruby-value">:items</span>] = { <span class="ruby-value">type:</span> <span class="ruby-constant">TYPE_MAPPINGS</span>[<span class="ruby-identifier">item_type</span>] }
   <span class="ruby-keyword">elsif</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hash</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">nested_params</span>
-    <span class="ruby-identifier">schema</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">nested_params</span>.<span class="ruby-identifier">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-identifier">strict</span>))
+    <span class="ruby-comment"># The nested schema carries its own type: &quot;object&quot;, which would clobber a nullable union.</span>
+    <span class="ruby-identifier">schema</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">nested_params</span>.<span class="ruby-identifier">to_json_schema</span>(<span class="ruby-value">strict:</span> <span class="ruby-identifier">strict</span>).<span class="ruby-identifier">except</span>(<span class="ruby-value">:type</span>))
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">schema</span>
@@ -918,7 +920,7 @@
         <div class="method-description">
 
 
-          <p>Converts this parameter to JSON Schema format. When <code>strict</code>, optional params are made nullable (<code>[&quot;type&quot;, &quot;null&quot;]</code>) so strict providers distinguish absent from present; optional params with an <code>enum</code> use <code>anyOf</code> instead, since providers like Anthropic reject <code>{&quot;type&quot;: [&quot;string&quot;, &quot;null&quot;], &quot;enum&quot;: [...]}</code>.</p>
+          <p>Converts this parameter to JSON Schema format. When <code>strict</code>, optional params are made nullable (<code>[&quot;type&quot;, &quot;null&quot;]</code>) so strict providers distinguish absent from present; optional params with an <code>enum</code> use <code>anyOf</code> instead, since providers like Anthropic reject <code>{&quot;type&quot;: [&quot;string&quot;, &quot;null&quot;], &quot;enum&quot;: [...]}</code>. Raises <a href="../ArgumentError.html"><code>Riffer::ArgumentError</code></a> when <code>strict</code> and a Hash param has no block or an Array param has neither a block nor <code>of:</code>, since strict providers reject objects without <code>properties</code> and arrays without <code>items</code>.</p>
 
 
         </div>

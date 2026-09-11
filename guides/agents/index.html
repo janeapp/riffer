@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.0</span>
+            <span class="version">v0.47.1</span>
           </div>
         </nav>
       </div>
@@ -426,7 +426,7 @@
 
 <h4 id="limitations">Limitations</h4>
 
-<p>Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code>) also raises <code>Riffer::ArgumentError</code>.</p>
+<p>A <code>Hash</code> param requires a block, and an <code>Array</code> param requires a block or <code>of:</code>. Using both <code>of:</code> and a block raises <code>Riffer::ArgumentError</code>. Using <code>of:</code> with a non-primitive type (e.g. <code>of: Hash</code>) also raises <code>Riffer::ArgumentError</code>.</p>
 
 <p>Structured output is not compatible with streaming — calling <code>stream</code> on an agent with structured output configured raises <code>Riffer::ArgumentError</code>.</p>
 
