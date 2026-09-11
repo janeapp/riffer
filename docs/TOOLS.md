@@ -121,8 +121,6 @@ A `Float` param accepts a whole number too, since JSON Schema's `number` covers 
 
 Tool params support the same nested DSL as structured output — nested objects (`Hash` with block), typed arrays (`Array, of:`), and arrays of objects (`Array` with block). See the [structured output section in Agents](AGENTS.md#nested-objects) for full syntax.
 
-A `Hash` param needs a block, and an `Array` param needs a block or `of:`. Anthropic, Bedrock, OpenAI, and OpenRouter receive strict schemas and reject an object without `properties` / `additionalProperties: false` or an array without `items`, so rendering a bare `Hash` or `Array` param for them raises `Riffer::ArgumentError` naming the tool and param. Non-strict schemas (Gemini, MCP) still render them as plain `object` / `array`.
-
 ```ruby
 class CreateOrderTool < Riffer::Tool
   description "Creates an order"

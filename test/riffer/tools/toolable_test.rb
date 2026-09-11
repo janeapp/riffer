@@ -121,11 +121,11 @@ describe Riffer::Tools::Toolable do
         end
       end
 
-      it "raises ArgumentError naming the tool and param in strict mode" do
+      it "raises ArgumentError in strict mode" do
         error = expect { tool_class.parameters_schema(strict: true) }.must_raise(Riffer::ArgumentError)
 
         expect(error.message).must_equal(
-          "apply_rule: applies_when: a Hash param requires a block defining its properties under strict schemas",
+          "applies_when: a Hash param requires a block defining its properties under strict schemas",
         )
       end
 

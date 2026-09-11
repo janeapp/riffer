@@ -72,9 +72,7 @@ module Riffer::Tools::Toolable : Module
   # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def params: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
-  # Returns the JSON Schema for the tool's parameters. Raises
-  # Riffer::ArgumentError, prefixed with the tool name, when the params cannot
-  # render under +strict+.
+  # Returns the JSON Schema for the tool's parameters.
   #
   # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
