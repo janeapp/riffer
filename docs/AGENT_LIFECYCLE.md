@@ -59,6 +59,14 @@ response = MyAgent.generate('What is in this image?', files: [
 
 Streams a response as an Enumerator. Same prompt/files semantics as `generate`.
 
+Consuming the enumerator with a block returns the same `Riffer::Agent::Response` that `generate` would, so you can stream events to the user and still inspect the final outcome:
+
+```ruby
+response = MyAgent.stream('Tell me a story').each { |event| handle(event) }
+response.outcome.reason  # => :completed
+response.content
+```
+
 ```ruby
 # New conversation (class method — recommended for simple calls)
 MyAgent.stream('Tell me a story').each do |event|

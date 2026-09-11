@@ -20,7 +20,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
