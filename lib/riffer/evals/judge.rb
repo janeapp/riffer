@@ -6,6 +6,9 @@ require "json"
 # Executes LLM-as-judge evaluations, using tool calling internally to get
 # structured output from the judge model.
 class Riffer::Evals::Judge
+  #--
+  # @dynamic model
+
   # @rbs @provider_instance: Riffer::Providers::Base?
   # @rbs @provider_name: String?
   # @rbs @model_name: String?
@@ -109,8 +112,7 @@ class Riffer::Evals::Judge
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def parse_tool_response(response)
-    tool_call = response.tool_calls.first
-    raise Riffer::Error, "Invalid judge response: no tool call found" unless tool_call
+    tool_call = response.tool_calls.fetch(0) { raise Riffer::Error, "Invalid judge response: no tool call found" }
 
     parsed = JSON.parse(tool_call[:arguments], symbolize_names: true)
     score = parsed[:score]

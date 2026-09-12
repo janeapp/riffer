@@ -15,8 +15,6 @@ module Riffer::Providers::Repository
   #
   #   Riffer::Providers::Repository.register(:jane) { MyApp::JaneProvider }
   #
-  # Raises Riffer::ArgumentError when called without a block.
-  #
   # --
   # : ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
   def register: (String | Symbol) { () -> singleton(Riffer::Providers::Base) } -> void

@@ -3,6 +3,9 @@
 
 # Represents the result of evaluating a single scenario.
 class Riffer::Evals::ScenarioResult
+  #--
+  # @dynamic input, output, ground_truth, results, messages, token_usage
+
   # The input that was evaluated.
   attr_reader :input #: String
 

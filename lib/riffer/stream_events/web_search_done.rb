@@ -3,6 +3,9 @@
 
 # The result of a completed server-side web search during streaming.
 class Riffer::StreamEvents::WebSearchDone < Riffer::StreamEvents::Base
+  #--
+  # @dynamic query, sources
+
   # The search query used.
   attr_reader :query #: String
 

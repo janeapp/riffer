@@ -10,6 +10,9 @@
 #   end
 #
 class Riffer::Params
+  #--
+  # @dynamic parameters
+
   # The defined parameters.
   attr_reader :parameters #: Array[Riffer::Params::Param]
 

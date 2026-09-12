@@ -5,6 +5,9 @@
 # Riffer::Agent subclass. Procs are stored unresolved and resolved per-instance
 # later.
 class Riffer::Agent::Config
+  #--
+  # @dynamic identifier, model, instructions, model_options, model_options=, structured_output, max_steps, max_steps=, tools_config, tools_config=, mcp_configs, tool_runtime, skills_config, skills_config=, guardrails
+
   DEFAULT_MAX_STEPS = 16 #: Integer
 
   # The configured agent identifier.

@@ -3,6 +3,9 @@
 
 # Represents the result of a single evaluation.
 class Riffer::Evals::Result
+  #--
+  # @dynamic evaluator, score, reason, metadata, higher_is_better, token_usage
+
   # The evaluator class that produced this result.
   attr_reader :evaluator #: singleton(Riffer::Evals::Evaluator)
 

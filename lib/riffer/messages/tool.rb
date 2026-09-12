@@ -3,6 +3,9 @@
 
 # Represents a tool execution result in a conversation.
 class Riffer::Messages::Tool < Riffer::Messages::Base
+  #--
+  # @dynamic tool_call_id, name, error, error_type
+
   # The ID of the tool call this result responds to.
   attr_reader :tool_call_id #: String
 

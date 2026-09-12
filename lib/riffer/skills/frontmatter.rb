@@ -8,6 +8,9 @@ require "yaml"
 # flag is recognized, and any other unrecognized top-level keys are merged into
 # +metadata+.
 class Riffer::Skills::Frontmatter
+  #--
+  # @dynamic name, description, disable_model_invocation, metadata
+
   NAME_PATTERN = /\A[a-z0-9]+(-[a-z0-9]+)*\z/ #: Regexp
   MAX_NAME_LENGTH = 64 #: Integer
   MAX_DESCRIPTION_LENGTH = 1024 #: Integer

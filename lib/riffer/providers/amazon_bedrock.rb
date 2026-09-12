@@ -154,7 +154,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #: (untyped) -> Hash[Symbol, untyped]
   def build_cache_point(cache_control)
     point = { type: "default" } #: Hash[Symbol, untyped]
-    ttl = cache_control.is_a?(Hash) ? cache_control[:ttl] : nil
+    ttl = cache_control[:ttl] if cache_control.is_a?(Hash)
     point[:ttl] = ttl if ttl
     point
   end

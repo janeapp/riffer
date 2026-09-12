@@ -9,5 +9,5 @@ target :lib do
 
   check "lib"
 
-  configure_code_diagnostics(D::Ruby.strict)
+  configure_code_diagnostics(D::Ruby.all_error)
 end

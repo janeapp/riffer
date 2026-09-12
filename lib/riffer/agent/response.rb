@@ -12,6 +12,9 @@
 #     puts "#{response.outcome.reason}: #{response.outcome.detail}"
 #   end
 class Riffer::Agent::Response
+  #--
+  # @dynamic content, outcome, tripwire, modifications, structured_output, token_usage, steps, messages, healed_tool_call_ids
+
   # The response content.
   attr_reader :content #: String
 

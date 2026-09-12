@@ -3,6 +3,9 @@
 
 # Represents a user message in a conversation.
 class Riffer::Messages::User < Riffer::Messages::Base
+  #--
+  # @dynamic files
+
   # File attachments for this message.
   attr_reader :files #: Array[Riffer::Messages::FilePart]
 

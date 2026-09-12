@@ -140,13 +140,6 @@ describe Riffer::Messages::FilePart do
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/Invalid sha256/)
     end
-
-    it "raises for non-hash non-FilePart" do
-      error = expect do
-        Riffer::Messages::FilePart.from_hash("invalid")
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_match(/must be a Hash or FilePart/)
-    end
   end
 
   describe "#url?" do

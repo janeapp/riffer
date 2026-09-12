@@ -15,6 +15,9 @@ require "json"
 #   end
 #
 class Riffer::Tools::Response
+  #--
+  # @dynamic content, error_message, error_type, exception
+
   # @rbs @success: bool
 
   VALID_FORMATS = %i[text json].freeze #: Array[Symbol]

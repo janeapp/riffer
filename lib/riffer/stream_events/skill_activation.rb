@@ -4,6 +4,9 @@
 # Emitted when a skill is activated during streaming, via the +on_activate+
 # callback when the LLM calls the activation tool.
 class Riffer::StreamEvents::SkillActivation < Riffer::StreamEvents::Base
+  #--
+  # @dynamic name
+
   # The activated skill name.
   attr_reader :name #: String
 

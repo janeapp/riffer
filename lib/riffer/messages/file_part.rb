@@ -7,6 +7,9 @@ require "uri"
 # Represents a file attachment (image or document) — from a URL (+from_url+) or
 # raw base64 data (+new+).
 class Riffer::Messages::FilePart
+  #--
+  # @dynamic media_type, filename, sha256
+
   # @rbs @url_string: String?
   # @rbs @data: String?
   # @rbs @downloaded_data: String?
@@ -66,8 +69,7 @@ class Riffer::Messages::FilePart
   def self.from_url(url, media_type: nil, filename: nil, sha256: nil)
     unless media_type
       ext = ::File.extname(URI.parse(url).path.to_s).downcase
-      media_type = MEDIA_TYPES[ext]
-      raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" unless media_type
+      media_type = MEDIA_TYPES.fetch(ext) { raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" }
     end
 
     new(url: url, media_type: media_type, filename: filename, sha256: sha256)
@@ -80,8 +82,6 @@ class Riffer::Messages::FilePart
   #: ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
   def self.from_hash(file)
     return file if file.is_a?(Riffer::Messages::FilePart)
-
-    raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}" unless file.is_a?(Hash)
 
     url = file[:url]
     data = file[:data]

@@ -3,6 +3,9 @@
 
 # Records a guardrail transformation event.
 class Riffer::Guardrails::Modification
+  #--
+  # @dynamic guardrail, phase, message_indices
+
   # The guardrail class that transformed data.
   attr_reader :guardrail #: singleton(Riffer::Guardrail)
 

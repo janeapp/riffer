@@ -4,6 +4,9 @@
 # Represents an incremental reasoning chunk during streaming; only emitted by
 # providers that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDelta < Riffer::StreamEvents::Base
+  #--
+  # @dynamic content
+
   # The incremental reasoning content.
   attr_reader :content #: String
 

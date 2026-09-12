@@ -4,6 +4,9 @@
 # Represents an assistant (LLM) message in a conversation; may include tool
 # calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
+  #--
+  # @dynamic tool_calls, token_usage, structured_output, finish_reason, finish_reason_raw
+
   ToolCall = Struct.new(:call_id, :name, :arguments)
 
   # Array of tool calls requested by the assistant.

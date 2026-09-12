@@ -5,6 +5,9 @@
 # activation, and prompt rendering, caching skill bodies to avoid redundant
 # backend reads. Exposed to tools via <tt>context.skills</tt>.
 class Riffer::Skills::Context
+  #--
+  # @dynamic skills, adapter, on_activate, on_activate=
+
   # @rbs @backend: Riffer::Skills::Backend
   # @rbs @bodies: Hash[String, String]
   # @rbs @activated: Array[String]
@@ -106,10 +109,7 @@ class Riffer::Skills::Context
   #--
   #: (String) -> bool
   def model_invocable?(name)
-    skill = skills[name]
-    return false unless skill
-
-    !skill.disable_model_invocation
+    skills.key?(name) && !skills.fetch(name).disable_model_invocation
   end
 
   # Returns whether any skill is available for the model to activate.

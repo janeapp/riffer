@@ -5,6 +5,9 @@ require "uri"
 
 # Holds the configuration for a single MCP server.
 class Riffer::Mcp::Manifest
+  #--
+  # @dynamic name, tags, endpoint, discovery_headers, credentials_scope
+
   # Identifier used as the registration key and generated-agent identifier.
   attr_reader :name #: String
 
