@@ -4,6 +4,9 @@
 # Normalized token usage for an LLM API call. Buckets carry the same
 # meaning for every provider.
 class Riffer::Providers::TokenUsage
+  #--
+  # @dynamic input_tokens, output_tokens, cache_write_tokens, cache_read_tokens, cost
+
   # Number of tokens entering the context window, including cache reads and writes.
   attr_reader :input_tokens #: Integer
 

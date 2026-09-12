@@ -3,6 +3,9 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
+  #--
+  # @dynamic amazon_bedrock, anthropic, azure_openai, gemini, openai, openrouter, evals, mcp, tool_runtime, skills, tracing, files, pricing, message_id_strategy, experimental_history_healing
+
   AmazonBedrock = Struct.new(:api_token, :region, :client)
   Anthropic = Struct.new(:api_key, :client)
   AzureOpenAI = Struct.new(:api_key, :endpoint, :client)
@@ -14,6 +17,9 @@ class Riffer::Config
 
   # Skills-related global configuration.
   class Skills
+    #--
+    # @dynamic default_activate_tool, default_backend
+
     # The tool class the LLM calls to activate a skill; defaults to
     # <tt>Riffer::Skills::ActivateTool</tt>.
     attr_reader :default_activate_tool #: singleton(Riffer::Tool)
@@ -59,6 +65,9 @@ class Riffer::Config
 
   # Tracing-related global configuration.
   class Tracing
+    #--
+    # @dynamic enabled, capture_messages, backend
+
     # Whether riffer emits OTEL spans; defaults to +true+, a no-op until a
     # host wires an OTEL SDK.
     attr_reader :enabled #: bool
@@ -117,6 +126,9 @@ class Riffer::Config
 
   # File-attachment-download policy for +Riffer::Messages::FilePart+ URL sources
   class Files
+    #--
+    # @dynamic allow_downloads, max_bytes, timeout, max_per_message, runner, downloader
+
     # Allow file attachments to be downloaded to send to providers.
     attr_reader :allow_downloads #: bool
     # Maximum file size to download before failing.
@@ -214,6 +226,9 @@ class Riffer::Config
     # Per-million-token rates for one model's four token buckets. +cache_read+
     # and +cache_write+ fall back to the +input+ rate when unset.
     class Rates
+      #--
+      # @dynamic input, output, cache_read, cache_write
+
       # Input rate per million tokens.
       attr_reader :input #: Float
 

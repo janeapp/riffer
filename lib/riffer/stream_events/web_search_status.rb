@@ -4,6 +4,9 @@
 # A web search status notification, emitted as a server-side web search
 # progresses.
 class Riffer::StreamEvents::WebSearchStatus < Riffer::StreamEvents::Base
+  #--
+  # @dynamic status, url, query
+
   # The web search status ("in_progress", "searching", "completed", "open_page").
   attr_reader :status #: String
 

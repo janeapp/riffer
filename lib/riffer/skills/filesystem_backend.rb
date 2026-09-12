@@ -53,8 +53,7 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   def read_skill(name)
     list_skills unless @skills_cache
     cache = @skills_cache #: Hash[String, String]
-    dir = cache[name] #: String?
-    raise Riffer::ArgumentError, "Skill not found: '#{name}'" unless dir
+    dir = cache.fetch(name) { raise Riffer::ArgumentError, "Skill not found: '#{name}'" }
 
     _, body = Riffer::Skills::Frontmatter.parse(File.read(File.join(dir, SKILL_FILENAME)))
     body

@@ -4,6 +4,9 @@
 # Represents an incremental tool call chunk (partial argument data) during
 # streaming.
 class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
+  #--
+  # @dynamic item_id, name, arguments_delta
+
   # The tool call item identifier.
   attr_reader :item_id #: String
 

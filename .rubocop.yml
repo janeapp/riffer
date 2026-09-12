@@ -67,12 +67,12 @@ Style/ClassAndModuleChildren:
 Lint/UnusedMethodArgument:
   AllowUnusedKeywordArguments: true
 
-# Additions, not overrides: RBS-inline annotations must lint.
+# Additions, not overrides: RBS-inline and Steep annotations must lint.
 Layout/LeadingCommentSpace:
   AllowRBSInlineAnnotation: true
 
 Layout/LineLength:
-  AllowedPatterns: ['#:']
+  AllowedPatterns: ['#:', '# @dynamic']
 
 Minitest/MultipleAssertions:
   Max: 3

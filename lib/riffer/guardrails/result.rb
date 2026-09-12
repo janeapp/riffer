@@ -4,6 +4,9 @@
 # Represents the result of a guardrail execution: +pass+ (continue unchanged),
 # +transform+ (continue with changed data), or +block+ (halt with a reason).
 class Riffer::Guardrails::Result
+  #--
+  # @dynamic type, data, metadata
+
   TYPES = %i[pass transform block].freeze #: Array[Symbol]
 
   # The result type (:pass, :transform, or :block).

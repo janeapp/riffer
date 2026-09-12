@@ -4,6 +4,9 @@
 # Represents an interrupt during streaming, fired when a callback throws
 # +:riffer_interrupt+.
 class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
+  #--
+  # @dynamic reason, healed_tool_call_ids
+
   # The reason provided with the interrupt, if any.
   attr_reader :reason #: (String | Symbol)?
 

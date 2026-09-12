@@ -4,6 +4,9 @@
 # Wraps a stream yielder to observe terminal events for span stamping while
 # forwarding every event downstream untouched.
 class Riffer::Tracing::StreamRecorder # :nodoc: all
+  #--
+  # @dynamic token_usage, time_to_first_chunk, finish_reason, raw_finish_reason, content, tool_calls
+
   # @rbs @yielder: Enumerator::Yielder
   # @rbs @clock: ^() -> Float
   # @rbs @started_at: Float

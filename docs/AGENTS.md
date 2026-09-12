@@ -372,7 +372,7 @@ agent.generate("Summarize this ticket.",
 agent.stream("...", tags: {team: "growth", environment: "production"})
 ```
 
-Keys and values may be `String` or `Symbol`; both are stringified, and entries with a `nil` value are dropped. Passing a non-`Hash` raises `Riffer::ArgumentError`. An omitted or empty `tags:` is a complete no-op.
+Keys and values may be `String` or `Symbol`; both are stringified, and entries with a `nil` value are dropped. An omitted or empty `tags:` is a complete no-op.
 
 Tags propagate to **two** places:
 

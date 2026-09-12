@@ -3,6 +3,9 @@
 
 # Captures information about a blocked guardrail execution.
 class Riffer::Guardrails::Tripwire
+  #--
+  # @dynamic reason, guardrail, phase, metadata
+
   PHASES = Riffer::Guardrails::PHASES #: Array[Symbol]
 
   # The reason for blocking.

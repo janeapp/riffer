@@ -13,6 +13,9 @@
 #   agent.session.find { |m| m.id == "a_1" }
 #
 class Riffer::Agent::Session
+  #--
+  # @dynamic messages
+
   include Enumerable #[Riffer::Messages::Base]
 
   # @rbs @callbacks: Array[^(Riffer::Messages::Base) -> void]

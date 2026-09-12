@@ -3,6 +3,9 @@
 
 # Wraps the result of structured output parsing and validation.
 class Riffer::Agent::StructuredOutput::Result
+  #--
+  # @dynamic object, error
+
   # The validated object, or +nil+ on failure.
   attr_reader :object #: Hash[Symbol, untyped]?
 

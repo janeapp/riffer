@@ -6,6 +6,9 @@ require "json"
 # Parses and validates structured JSON responses against a Riffer::Params
 # schema.
 class Riffer::Agent::StructuredOutput
+  #--
+  # @dynamic params
+
   # The schema parameters.
   attr_reader :params #: Riffer::Params
 

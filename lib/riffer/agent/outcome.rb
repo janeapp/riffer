@@ -12,6 +12,9 @@
 #   when :invalid_structured_output then warn response.outcome.detail
 #   end
 class Riffer::Agent::Outcome
+  #--
+  # @dynamic reason, detail
+
   # Finish reasons that end a turn normally; every other finish reason means the
   # provider cut the turn short and surfaces as the run's outcome verbatim.
   NORMAL_FINISH_REASONS = %i[stop tool_calls].freeze #: Array[Symbol]

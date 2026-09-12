@@ -6,6 +6,9 @@
 # +render_catalog+; the activation tool is exposed via +#skill_activate_tool+
 # for the rendered output.
 class Riffer::Skills::Adapter
+  #--
+  # @dynamic skill_activate_tool
+
   # The activation tool class for this adapter.
   attr_reader :skill_activate_tool #: singleton(Riffer::Tool)
 

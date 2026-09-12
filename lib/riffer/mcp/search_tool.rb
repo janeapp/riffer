@@ -7,6 +7,9 @@ class Riffer::Mcp::SearchTool < Riffer::Tool
 
   # Successful search response carrying the matched tool classes.
   class Result < Riffer::Tools::Response
+    #--
+    # @dynamic discovered_tools
+
     # Tool classes that matched the search query.
     attr_reader :discovered_tools #: Array[singleton(Riffer::Tool)]
 

@@ -4,6 +4,9 @@
 # Executes guardrails sequentially, passing each one's output to the next; if
 # any blocks, execution stops and a tripwire is returned.
 class Riffer::Guardrails::Runner
+  #--
+  # @dynamic guardrail_configs, phase, context, tags
+
   # The guardrail configs to execute.
   attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]]
 

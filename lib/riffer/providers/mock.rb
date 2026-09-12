@@ -3,6 +3,9 @@
 
 # Mock provider for mocking LLM responses in tests; no external gems required.
 class Riffer::Providers::Mock < Riffer::Providers::Base
+  #--
+  # @dynamic calls
+
   # @rbs @responses: Array[Hash[Symbol, untyped]]
   # @rbs @current_index: Integer
   # @rbs @stubbed_responses: Array[Hash[Symbol, untyped]]

@@ -4,6 +4,9 @@
 # A single parameter definition, handling type validation and JSON Schema
 # generation.
 class Riffer::Params::Param
+  #--
+  # @dynamic name, type, required, description, enum, default, item_type, nested_params
+
   # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS = {
     String => "string",

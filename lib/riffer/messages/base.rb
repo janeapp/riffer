@@ -5,14 +5,15 @@ require "securerandom"
 
 # Base class for all message types. Subclasses must implement +role+.
 class Riffer::Messages::Base
+  #--
+  # @dynamic content, id
+
   # Builds the matching message subclass from a hash, or returns +msg+ unchanged
   # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
   #--
-  #: (untyped) -> Riffer::Messages::Base
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
-
-    raise Riffer::ArgumentError, "Message must be a Hash or Message object, got #{msg.class}" unless msg.is_a?(Hash)
 
     raise Riffer::ArgumentError, "Message hash must include a 'role' key" if msg[:role].nil? || msg[:role].empty?
 

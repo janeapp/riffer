@@ -4,6 +4,9 @@
 # Normalized reason the LLM finished, emitted once near the end of the
 # stream; no ordering guarantee relative to TokenUsageDone.
 class Riffer::StreamEvents::FinishReasonDone < Riffer::StreamEvents::Base
+  #--
+  # @dynamic finish_reason, raw_finish_reason
+
   # The normalized finish reason (see <tt>Riffer::Providers::FinishReason::VALUES</tt>).
   attr_reader :finish_reason #: Symbol
 

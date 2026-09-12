@@ -3,6 +3,9 @@
 
 # Represents a completed tool call during streaming.
 class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
+  #--
+  # @dynamic item_id, call_id, name, arguments
+
   # The tool call item identifier.
   attr_reader :item_id #: String
 

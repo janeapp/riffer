@@ -27,13 +27,9 @@ module Riffer::Providers::Repository
   #
   #   Riffer::Providers::Repository.register(:jane) { MyApp::JaneProvider }
   #
-  # Raises Riffer::ArgumentError when called without a block.
-  #
   #--
-  #: ((String | Symbol)) ?{ () -> singleton(Riffer::Providers::Base) } -> void
+  #: ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
   def register(identifier, &factory)
-    raise Riffer::ArgumentError, "register requires a block returning a provider class" unless factory
-
     @registrations[identifier.to_sym] = factory
     @key_for = nil
   end

@@ -5,8 +5,8 @@ class Riffer::Messages::Base
   # Builds the matching message subclass from a hash, or returns +msg+ unchanged
   # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
   # --
-  # : (untyped) -> Riffer::Messages::Base
-  def self.from_hash: (untyped) -> Riffer::Messages::Base
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Base) -> Riffer::Messages::Base
 
   # The message content.
   attr_reader content: String
