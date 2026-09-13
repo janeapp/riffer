@@ -5,7 +5,7 @@ gemspec
 
 gem "anthropic", "~> 1.69.0"
 gem "async", "~> 2.45"
-gem "aws-sdk-bedrockruntime", "~> 1.42"
+gem "aws-sdk-bedrockruntime", "~> 1.84"
 gem "dotenv"
 gem "faraday", ">= 1.0"
 gem "guard"
@@ -14,7 +14,7 @@ gem "io-event", "< 1.22"
 gem "irb"
 gem "mcp", "~> 1.5"
 gem "minitest", "~> 6.0"
-gem "openai", "~> 0.85.0"
+gem "openai", "~> 0.88.0"
 gem "rake", "~> 13.0"
 gem "rbs-inline", "~> 0.12"
 gem "rubocop", require: false
