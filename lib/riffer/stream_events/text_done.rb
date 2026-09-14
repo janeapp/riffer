@@ -3,11 +3,8 @@
 
 # Represents completed text generation during streaming.
 class Riffer::StreamEvents::TextDone < Riffer::StreamEvents::Base
-  #--
-  # @dynamic content
-
   # The complete text content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   #--
   #: (String, ?role: Symbol) -> void

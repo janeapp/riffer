@@ -7,9 +7,6 @@ require "uri"
 # Represents a file attachment (image or document) — from a URL (+from_url+) or
 # raw base64 data (+new+).
 class Riffer::Messages::FilePart
-  #--
-  # @dynamic media_type, filename, sha256
-
   # @rbs @url_string: String?
   # @rbs @data: String?
   # @rbs @downloaded_data: String?
@@ -32,13 +29,13 @@ class Riffer::Messages::FilePart
   SHA256_PATTERN = /\A[0-9a-f]{64}\z/i #: Regexp
 
   # The MIME type of the file.
-  attr_reader :media_type #: String
+  attr_reader :media_type #: String # @dynamic media_type
 
   # The filename, if available.
-  attr_reader :filename #: String?
+  attr_reader :filename #: String? # @dynamic filename
 
   # The expected SHA-256 of the file contents, if the caller supplied one.
-  attr_reader :sha256 #: String?
+  attr_reader :sha256 #: String? # @dynamic sha256
 
   # Raises Riffer::ArgumentError unless +data+ or +url+ is given and
   # +media_type+ is supported.

@@ -4,19 +4,16 @@
 # Represents the result of a guardrail execution: +pass+ (continue unchanged),
 # +transform+ (continue with changed data), or +block+ (halt with a reason).
 class Riffer::Guardrails::Result
-  #--
-  # @dynamic type, data, metadata
-
   TYPES = %i[pass transform block].freeze #: Array[Symbol]
 
   # The result type (:pass, :transform, or :block).
-  attr_reader :type #: Symbol
+  attr_reader :type #: Symbol # @dynamic type
 
   # The data (for pass/transform) or reason (for block).
-  attr_reader :data #: untyped
+  attr_reader :data #: untyped # @dynamic data
 
   # Optional metadata for block results.
-  attr_reader :metadata #: Hash[Symbol, untyped]?
+  attr_reader :metadata #: Hash[Symbol, untyped]? # @dynamic metadata
 
   class << self
     # Creates a pass result that continues with unchanged data.

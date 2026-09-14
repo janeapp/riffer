@@ -5,22 +5,19 @@
 # activation, and prompt rendering, caching skill bodies to avoid redundant
 # backend reads. Exposed to tools via <tt>context.skills</tt>.
 class Riffer::Skills::Context
-  #--
-  # @dynamic skills, adapter, on_activate, on_activate=
-
   # @rbs @backend: Riffer::Skills::Backend
   # @rbs @bodies: Hash[String, String]
   # @rbs @activated: Array[String]
   # @rbs @preactivated: Array[String]
 
   # Skill catalog indexed by name.
-  attr_reader :skills #: Hash[String, Riffer::Skills::Frontmatter]
+  attr_reader :skills #: Hash[String, Riffer::Skills::Frontmatter] # @dynamic skills
 
   # The skill adapter used for this context.
-  attr_reader :adapter #: Riffer::Skills::Adapter
+  attr_reader :adapter #: Riffer::Skills::Adapter # @dynamic adapter
 
   # Optional callback invoked when a skill is first activated.
-  attr_accessor :on_activate #: (^(String) -> void)?
+  attr_accessor :on_activate #: (^(String) -> void)? # @dynamic on_activate, on_activate=
 
   #--
   #: (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void

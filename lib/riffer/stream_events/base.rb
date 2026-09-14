@@ -3,11 +3,8 @@
 
 # Base class for all streaming events. Subclasses must implement +to_h+.
 class Riffer::StreamEvents::Base
-  #--
-  # @dynamic role
-
   # The message role (typically :assistant).
-  attr_reader :role #: Symbol
+  attr_reader :role #: Symbol # @dynamic role
 
   #--
   #: (?role: Symbol) -> void

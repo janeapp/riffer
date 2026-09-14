@@ -3,11 +3,8 @@
 
 # Represents the complete result of an evaluation run across multiple scenarios.
 class Riffer::Evals::RunResult
-  #--
-  # @dynamic scenario_results
-
   # Per-scenario evaluation results.
-  attr_reader :scenario_results #: Array[Riffer::Evals::ScenarioResult]
+  attr_reader :scenario_results #: Array[Riffer::Evals::ScenarioResult] # @dynamic scenario_results
 
   #--
   #: (scenario_results: Array[Riffer::Evals::ScenarioResult]) -> void

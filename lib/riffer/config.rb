@@ -3,9 +3,6 @@
 
 # Configuration for the Riffer framework.
 class Riffer::Config
-  #--
-  # @dynamic amazon_bedrock, anthropic, azure_openai, gemini, openai, openrouter, evals, mcp, tool_runtime, skills, tracing, files, pricing, message_id_strategy, experimental_history_healing
-
   AmazonBedrock = Struct.new(:api_token, :region, :client)
   Anthropic = Struct.new(:api_key, :client)
   AzureOpenAI = Struct.new(:api_key, :endpoint, :client)
@@ -17,16 +14,13 @@ class Riffer::Config
 
   # Skills-related global configuration.
   class Skills
-    #--
-    # @dynamic default_activate_tool, default_backend
-
     # The tool class the LLM calls to activate a skill; defaults to
     # <tt>Riffer::Skills::ActivateTool</tt>.
-    attr_reader :default_activate_tool #: singleton(Riffer::Tool)
+    attr_reader :default_activate_tool #: singleton(Riffer::Tool) # @dynamic default_activate_tool
 
     # Default skills backend for agents that declare a +skills+ block without
     # one; defaults to +nil+.
-    attr_reader :default_backend #: (Riffer::Skills::Backend | Proc)?
+    attr_reader :default_backend #: (Riffer::Skills::Backend | Proc)? # @dynamic default_backend
 
     #--
     #: () -> void
@@ -65,22 +59,19 @@ class Riffer::Config
 
   # Tracing-related global configuration.
   class Tracing
-    #--
-    # @dynamic enabled, capture_messages, backend
-
     # Whether riffer emits OTEL spans; defaults to +true+, a no-op until a
     # host wires an OTEL SDK.
-    attr_reader :enabled #: bool
+    attr_reader :enabled #: bool # @dynamic enabled
 
     # Whether LLM-call spans capture full message content
     # (<tt>gen_ai.input.messages</tt>, <tt>gen_ai.output.messages</tt>,
     # <tt>gen_ai.system_instructions</tt>); defaults to +false+ — message
     # content routinely carries sensitive data.
-    attr_reader :capture_messages #: bool
+    attr_reader :capture_messages #: bool # @dynamic capture_messages
 
     # The backend riffer routes spans through; defaults to +nil+, a no-op.
     # Riffer auto-detects no backend; assigning one is opt-in.
-    attr_reader :backend #: untyped
+    attr_reader :backend #: untyped # @dynamic backend
 
     #--
     #: () -> void
@@ -126,21 +117,18 @@ class Riffer::Config
 
   # File-attachment-download policy for +Riffer::Messages::FilePart+ URL sources
   class Files
-    #--
-    # @dynamic allow_downloads, max_bytes, timeout, max_per_message, runner, downloader
-
     # Allow file attachments to be downloaded to send to providers.
-    attr_reader :allow_downloads #: bool
+    attr_reader :allow_downloads #: bool # @dynamic allow_downloads
     # Maximum file size to download before failing.
-    attr_reader :max_bytes #: Integer
+    attr_reader :max_bytes #: Integer # @dynamic max_bytes
     # Maximum amount of time to spend downloading a file before failing.
-    attr_reader :timeout #: Integer
+    attr_reader :timeout #: Integer # @dynamic timeout
     # Maximum number of files to include in an individual message.
-    attr_reader :max_per_message #: Integer?
+    attr_reader :max_per_message #: Integer? # @dynamic max_per_message
     # Execution pattern for downloading files.
-    attr_reader :runner #: Riffer::Runner
+    attr_reader :runner #: Riffer::Runner # @dynamic runner
     # The object used to fetch a URL source's bytes
-    attr_reader :downloader #: untyped
+    attr_reader :downloader #: untyped # @dynamic downloader
 
     #--
     #: () -> void
@@ -226,20 +214,17 @@ class Riffer::Config
     # Per-million-token rates for one model's four token buckets. +cache_read+
     # and +cache_write+ fall back to the +input+ rate when unset.
     class Rates
-      #--
-      # @dynamic input, output, cache_read, cache_write
-
       # Input rate per million tokens.
-      attr_reader :input #: Float
+      attr_reader :input #: Float # @dynamic input
 
       # Output rate per million tokens.
-      attr_reader :output #: Float
+      attr_reader :output #: Float # @dynamic output
 
       # Cache-read rate per million tokens.
-      attr_reader :cache_read #: Float?
+      attr_reader :cache_read #: Float? # @dynamic cache_read
 
       # Cache-write rate per million tokens.
-      attr_reader :cache_write #: Float?
+      attr_reader :cache_write #: Float? # @dynamic cache_write
 
       #--
       #: (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
@@ -344,34 +329,34 @@ class Riffer::Config
   VALID_MESSAGE_ID_STRATEGIES = %i[none uuid uuidv7].freeze
 
   # Amazon Bedrock configuration.
-  attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock
+  attr_reader :amazon_bedrock #: Riffer::Config::AmazonBedrock # @dynamic amazon_bedrock
 
   # Anthropic configuration.
-  attr_reader :anthropic #: Riffer::Config::Anthropic
+  attr_reader :anthropic #: Riffer::Config::Anthropic # @dynamic anthropic
 
   # Azure OpenAI configuration.
-  attr_reader :azure_openai #: Riffer::Config::AzureOpenAI
+  attr_reader :azure_openai #: Riffer::Config::AzureOpenAI # @dynamic azure_openai
 
   # Google Gemini configuration.
-  attr_reader :gemini #: Riffer::Config::Gemini
+  attr_reader :gemini #: Riffer::Config::Gemini # @dynamic gemini
 
   # OpenAI configuration.
-  attr_reader :openai #: Riffer::Config::OpenAI
+  attr_reader :openai #: Riffer::Config::OpenAI # @dynamic openai
 
   # OpenRouter configuration.
-  attr_reader :openrouter #: Riffer::Config::OpenRouter
+  attr_reader :openrouter #: Riffer::Config::OpenRouter # @dynamic openrouter
 
   # Evals configuration.
-  attr_reader :evals #: Riffer::Config::Evals
+  attr_reader :evals #: Riffer::Config::Evals # @dynamic evals
 
   # MCP configuration. +credentials+ is an optional Proc returning per-run
   # +tools/call+ headers (or +nil+ to deny); +discovery_runner+ runs tool
   # discovery.
-  attr_reader :mcp #: Riffer::Config::Mcp
+  attr_reader :mcp #: Riffer::Config::Mcp # @dynamic mcp
 
   # Global tool runtime configuration (experimental); defaults to
   # <tt>Riffer::Tools::Runtime::Inline.new</tt>.
-  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
+  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) # @dynamic tool_runtime
 
   # Sets the global tool runtime. Raises Riffer::ArgumentError on an invalid
   # value.
@@ -389,20 +374,20 @@ class Riffer::Config
   end
 
   # Skills-related global configuration.
-  attr_reader :skills #: Riffer::Config::Skills
+  attr_reader :skills #: Riffer::Config::Skills # @dynamic skills
 
   # Tracing-related global configuration.
-  attr_reader :tracing #: Riffer::Config::Tracing
+  attr_reader :tracing #: Riffer::Config::Tracing # @dynamic tracing
 
-  attr_reader :files #: Riffer::Config::Files
+  attr_reader :files #: Riffer::Config::Files # @dynamic files
 
   # Consumer-configured per-model token pricing.
-  attr_reader :pricing #: Riffer::Config::Pricing
+  attr_reader :pricing #: Riffer::Config::Pricing # @dynamic pricing
 
   # Strategy for auto-generating message ids: +:none+ (default), +:uuid+, or
   # +:uuidv7+. When not +:none+, messages get an +id+ at construction, and
   # seeded messages passed to +Riffer::Agent#generate+ must carry their own.
-  attr_reader :message_id_strategy #: Symbol
+  attr_reader :message_id_strategy #: Symbol # @dynamic message_id_strategy
 
   # Sets the message id strategy. Raises Riffer::ArgumentError unless the value
   # is +:none+, +:uuid+, or +:uuidv7+.
@@ -419,7 +404,7 @@ class Riffer::Config
   # Experimental: when +true+, riffer maintains the +tool_use+ ↔ +tool_result+
   # invariant itself — stripping orphaned exchanges and filling interrupted
   # ones. Defaults to +false+; the surface may change without notice.
-  attr_reader :experimental_history_healing #: bool
+  attr_reader :experimental_history_healing #: bool # @dynamic experimental_history_healing
 
   # Sets the +experimental_history_healing+ flag, coercing boolean-ish values so
   # an env-var +"false"+ (truthy in Ruby) doesn't silently enable healing.

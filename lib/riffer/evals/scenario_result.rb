@@ -3,26 +3,23 @@
 
 # Represents the result of evaluating a single scenario.
 class Riffer::Evals::ScenarioResult
-  #--
-  # @dynamic input, output, ground_truth, results, messages, token_usage
-
   # The input that was evaluated.
-  attr_reader :input #: String
+  attr_reader :input #: String # @dynamic input
 
   # The agent output for this scenario.
-  attr_reader :output #: String
+  attr_reader :output #: String # @dynamic output
 
   # The ground truth used during evaluation.
-  attr_reader :ground_truth #: String?
+  attr_reader :ground_truth #: String? # @dynamic ground_truth
 
   # Individual evaluation results.
-  attr_reader :results #: Array[Riffer::Evals::Result]
+  attr_reader :results #: Array[Riffer::Evals::Result] # @dynamic results
 
   # The full message history from the agent conversation.
-  attr_reader :messages #: Array[Riffer::Messages::Base]
+  attr_reader :messages #: Array[Riffer::Messages::Base] # @dynamic messages
 
   # Token usage the agent under test spent generating this scenario's output.
-  attr_reader :token_usage #: Riffer::Providers::TokenUsage?
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
 
   #--
   #: (input: String, output: String, ground_truth: String?, results: Array[Riffer::Evals::Result], ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?) -> void

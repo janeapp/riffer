@@ -3,11 +3,8 @@
 
 # Emitted when a guardrail blocks execution during streaming.
 class Riffer::StreamEvents::GuardrailTripwire < Riffer::StreamEvents::Base
-  #--
-  # @dynamic tripwire
-
   # The tripwire containing block details.
-  attr_reader :tripwire #: Riffer::Guardrails::Tripwire
+  attr_reader :tripwire #: Riffer::Guardrails::Tripwire # @dynamic tripwire
 
   #--
   #: (Riffer::Guardrails::Tripwire, ?role: Symbol) -> void

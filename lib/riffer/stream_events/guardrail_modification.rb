@@ -3,11 +3,8 @@
 
 # Emitted when a guardrail transforms data during streaming.
 class Riffer::StreamEvents::GuardrailModification < Riffer::StreamEvents::Base
-  #--
-  # @dynamic modification
-
   # The modification record.
-  attr_reader :modification #: Riffer::Guardrails::Modification
+  attr_reader :modification #: Riffer::Guardrails::Modification # @dynamic modification
 
   #--
   #: (Riffer::Guardrails::Modification, ?role: Symbol) -> void

@@ -5,43 +5,40 @@
 # Riffer::Agent subclass. Procs are stored unresolved and resolved per-instance
 # later.
 class Riffer::Agent::Config
-  #--
-  # @dynamic identifier, model, instructions, model_options, model_options=, structured_output, max_steps, max_steps=, tools_config, tools_config=, mcp_configs, tool_runtime, skills_config, skills_config=, guardrails
-
   DEFAULT_MAX_STEPS = 16 #: Integer
 
   # The configured agent identifier.
-  attr_reader :identifier #: String?
+  attr_reader :identifier #: String? # @dynamic identifier
 
   # The configured model.
-  attr_reader :model #: (String | Proc)?
+  attr_reader :model #: (String | Proc)? # @dynamic model
 
   # The configured instructions.
-  attr_reader :instructions #: (String | Proc)?
+  attr_reader :instructions #: (String | Proc)? # @dynamic instructions
 
   # Options passed to generate_text/stream_text.
-  attr_accessor :model_options #: Hash[Symbol, untyped]
+  attr_accessor :model_options #: Hash[Symbol, untyped] # @dynamic model_options, model_options=
 
   # The configured structured-output schema.
-  attr_reader :structured_output #: Riffer::Params?
+  attr_reader :structured_output #: Riffer::Params? # @dynamic structured_output
 
   # The maximum number of LLM call steps in the tool-use loop.
-  attr_accessor :max_steps #: Numeric?
+  attr_accessor :max_steps #: Numeric? # @dynamic max_steps, max_steps=
 
   # The configured tools.
-  attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)?
+  attr_accessor :tools_config #: (Array[singleton(Riffer::Tool)] | Proc)? # @dynamic tools_config, tools_config=
 
   # The accumulated +use_mcp+ tag configurations.
-  attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]]
+  attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
 
   # The configured tool runtime.
-  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
+  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) # @dynamic tool_runtime
 
   # The configured skills.
-  attr_accessor :skills_config #: Riffer::Skills::Config?
+  attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
 
   # Registered guardrail entries keyed by phase.
-  attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]]
+  attr_reader :guardrails #: Hash[Symbol, Array[Hash[Symbol, untyped]]] # @dynamic guardrails
 
   # Builds a new Config. Raises Riffer::ArgumentError if +model+ or
   # +instructions+ is invalid (e.g. an empty string).

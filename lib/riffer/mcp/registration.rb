@@ -4,15 +4,12 @@
 # Per-server state managed by Riffer::Mcp::Registry — discovers tools via
 # +tools/list+ and generates tool classes when a server is registered.
 class Riffer::Mcp::Registration
-  #--
-  # @dynamic manifest
-
   # @rbs @cancelled: bool
   # @rbs @tools: Array[singleton(Riffer::Mcp::Tool)]
   # @rbs @mutex: Thread::Mutex
 
   # The manifest that describes this server.
-  attr_reader :manifest #: Riffer::Mcp::Manifest
+  attr_reader :manifest #: Riffer::Mcp::Manifest # @dynamic manifest
 
   # Generated Riffer::Mcp::Tool subclasses.
   #

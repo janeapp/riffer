@@ -6,9 +6,6 @@ require "json"
 # Executes LLM-as-judge evaluations, using tool calling internally to get
 # structured output from the judge model.
 class Riffer::Evals::Judge
-  #--
-  # @dynamic model
-
   # @rbs @provider_instance: Riffer::Providers::Base?
   # @rbs @provider_name: String?
   # @rbs @model_name: String?
@@ -31,7 +28,7 @@ class Riffer::Evals::Judge
   end
 
   # The model string (provider/model format).
-  attr_reader :model #: String
+  attr_reader :model #: String # @dynamic model
 
   # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   #--

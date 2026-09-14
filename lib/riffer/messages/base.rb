@@ -5,9 +5,6 @@ require "securerandom"
 
 # Base class for all message types. Subclasses must implement +role+.
 class Riffer::Messages::Base
-  #--
-  # @dynamic content, id
-
   # Builds the matching message subclass from a hash, or returns +msg+ unchanged
   # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
   #--
@@ -43,10 +40,10 @@ class Riffer::Messages::Base
   end
 
   # The message content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   # The message id, or nil when +Riffer.config.message_id_strategy+ is +:none+.
-  attr_reader :id #: String?
+  attr_reader :id #: String? # @dynamic id
 
   #--
   #: (String, ?id: String?) -> void

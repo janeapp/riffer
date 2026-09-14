@@ -8,27 +8,24 @@ require "yaml"
 # flag is recognized, and any other unrecognized top-level keys are merged into
 # +metadata+.
 class Riffer::Skills::Frontmatter
-  #--
-  # @dynamic name, description, disable_model_invocation, metadata
-
   NAME_PATTERN = /\A[a-z0-9]+(-[a-z0-9]+)*\z/ #: Regexp
   MAX_NAME_LENGTH = 64 #: Integer
   MAX_DESCRIPTION_LENGTH = 1024 #: Integer
 
   # The skill name (1-64 chars, lowercase alphanumeric and hyphens).
-  attr_reader :name #: String
+  attr_reader :name #: String # @dynamic name
 
   # The skill description (1-1024 chars).
-  attr_reader :description #: String
+  attr_reader :description #: String # @dynamic description
 
   # Whether the skill opts out of model-driven activation. Hidden from the
   # catalog and rejected at model activation; still reachable via programmatic
   # activation.
-  attr_reader :disable_model_invocation #: bool
+  attr_reader :disable_model_invocation #: bool # @dynamic disable_model_invocation
 
   # Metadata from the spec's +metadata+ field plus any unrecognized top-level
   # keys.
-  attr_reader :metadata #: Hash[Symbol, untyped]
+  attr_reader :metadata #: Hash[Symbol, untyped] # @dynamic metadata
 
   # Parses a raw SKILL.md string into a +[Frontmatter, body]+ pair — public so
   # custom backends needn't reimplement parsing. Raises Riffer::ArgumentError

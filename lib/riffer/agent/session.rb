@@ -13,15 +13,12 @@
 #   agent.session.find { |m| m.id == "a_1" }
 #
 class Riffer::Agent::Session
-  #--
-  # @dynamic messages
-
   include Enumerable #[Riffer::Messages::Base]
 
   # @rbs @callbacks: Array[^(Riffer::Messages::Base) -> void]
 
   # The message history.
-  attr_reader :messages #: Array[Riffer::Messages::Base]
+  attr_reader :messages #: Array[Riffer::Messages::Base] # @dynamic messages
 
   #--
   #: (?messages: Array[Riffer::Messages::Base]) -> void

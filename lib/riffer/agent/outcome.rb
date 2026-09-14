@@ -12,9 +12,6 @@
 #   when :invalid_structured_output then warn response.outcome.detail
 #   end
 class Riffer::Agent::Outcome
-  #--
-  # @dynamic reason, detail
-
   # Finish reasons that end a turn normally; every other finish reason means the
   # provider cut the turn short and surfaces as the run's outcome verbatim.
   NORMAL_FINISH_REASONS = %i[stop tool_calls].freeze #: Array[Symbol]
@@ -28,10 +25,10 @@ class Riffer::Agent::Outcome
             PROVIDER_STOP_REASONS).freeze #: Array[Symbol]
 
   # Why the run ended.
-  attr_reader :reason #: Symbol
+  attr_reader :reason #: Symbol # @dynamic reason
 
   # Human-readable specifics for +reason+, when there are any.
-  attr_reader :detail #: String?
+  attr_reader :detail #: String? # @dynamic detail
 
   # Raises Riffer::ArgumentError when +reason+ is outside VALUES.
   #--

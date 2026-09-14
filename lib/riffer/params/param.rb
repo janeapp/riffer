@@ -4,9 +4,6 @@
 # A single parameter definition, handling type validation and JSON Schema
 # generation.
 class Riffer::Params::Param
-  #--
-  # @dynamic name, type, required, description, enum, default, item_type, nested_params
-
   # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS = {
     String => "string",
@@ -34,28 +31,28 @@ class Riffer::Params::Param
   }.freeze #: Hash[String, Module]
 
   # The parameter name.
-  attr_reader :name #: Symbol
+  attr_reader :name #: Symbol # @dynamic name
 
   # The Ruby type.
-  attr_reader :type #: Module
+  attr_reader :type #: Module # @dynamic type
 
   # Whether the parameter is required.
-  attr_reader :required #: bool
+  attr_reader :required #: bool # @dynamic required
 
   # The parameter description, if any.
-  attr_reader :description #: String?
+  attr_reader :description #: String? # @dynamic description
 
   # Allowed values, if constrained.
-  attr_reader :enum #: Array[untyped]?
+  attr_reader :enum #: Array[untyped]? # @dynamic enum
 
   # The default value, if any.
-  attr_reader :default #: untyped
+  attr_reader :default #: untyped # @dynamic default
 
   # Element type for a typed array (+of:+).
-  attr_reader :item_type #: Module?
+  attr_reader :item_type #: Module? # @dynamic item_type
 
   # Nested Params for object / array-of-object types.
-  attr_reader :nested_params #: Riffer::Params?
+  attr_reader :nested_params #: Riffer::Params? # @dynamic nested_params
 
   # Reconstructs a Param from a single JSON Schema property. Raises
   # Riffer::ArgumentError on a type outside the Params-expressible subset.

@@ -3,9 +3,6 @@
 
 # Mock provider for mocking LLM responses in tests; no external gems required.
 class Riffer::Providers::Mock < Riffer::Providers::Base
-  #--
-  # @dynamic calls
-
   # @rbs @responses: Array[Hash[Symbol, untyped]]
   # @rbs @current_index: Integer
   # @rbs @stubbed_responses: Array[Hash[Symbol, untyped]]
@@ -28,7 +25,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   # Array of recorded method calls for assertions.
-  attr_reader :calls #: Array[Hash[Symbol, untyped]]
+  attr_reader :calls #: Array[Hash[Symbol, untyped]] # @dynamic calls
 
   # +responses:+ pre-configures canned responses (same shape as
   # +#stub_response+) for standalone use; agent tests queue responses on
