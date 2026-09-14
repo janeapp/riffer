@@ -212,6 +212,24 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::Reasoning]
+  def extract_reasoning(response)
+    typed_response = response #: OpenAI::Models::Responses::Response
+
+    typed_response.output.filter_map do |item|
+      next unless item.is_a?(::OpenAI::Models::Responses::ResponseReasoningItem)
+
+      Riffer::Messages::Assistant::Reasoning.new(summary_text(item.summary), item.encrypted_content, nil, item.id)
+    end
+  end
+
+  #--
+  #: (untyped) -> String
+  def summary_text(summary)
+    summary.map(&:text).join("\n\n")
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
@@ -232,8 +250,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           handle_output_text_done(event, state: current_state, yielder: yielder)
         when :"response.reasoning_summary_text.delta"
           handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
-        when :"response.reasoning_summary_text.done"
-          handle_reasoning_summary_text_done(event, state: current_state, yielder: yielder)
         when :"response.function_call_arguments.delta"
           handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
         when :"response.function_call_arguments.done"
@@ -245,7 +261,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         when :"response.web_search_call.completed"
           handle_web_search_status(event, status: "completed", yielder: yielder)
         when :"response.output_item.done"
-          handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
+          case event.item&.type
+          when :web_search_call then handle_output_item_done_web_search(event, yielder: yielder)
+          when :reasoning then handle_output_item_done_reasoning(event, yielder: yielder)
+          end
         when :"response.completed", :"response.incomplete", :"response.failed"
           handle_response_finished(event, state: current_state, yielder: yielder)
         end
@@ -283,12 +302,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_summary_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.delta)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_reasoning_summary_text_done(event, state:, yielder:)
-    yielder << Riffer::StreamEvents::ReasoningDone.new(event.text)
   end
 
   #--
@@ -332,6 +345,20 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (untyped, status: String, yielder: Riffer::Providers::_EventSink) -> void
   def handle_web_search_status(_event, status:, yielder:)
     yielder << Riffer::StreamEvents::WebSearchStatus.new(status)
+  end
+
+  # The summary-text done event carries neither the item id nor the encrypted
+  # content, so a replayable block only exists once the reasoning item itself
+  # completes.
+  #--
+  #: (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_output_item_done_reasoning(event, yielder:)
+    item = event.item #: OpenAI::Models::Responses::ResponseReasoningItem
+    yielder << Riffer::StreamEvents::ReasoningDone.new(
+      summary_text(item.summary),
+      signature: item.encrypted_content,
+      id: item.id,
+    )
   end
 
   #--
@@ -381,23 +408,40 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
   def convert_assistant_to_openai_format(message)
-    if message.tool_calls.empty?
-      { role: "assistant", content: message.content }
-    else
-      items = [] #: Array[Hash[Symbol, untyped]]
-      if message.content && !message.content.empty?
-        items << { type: "message", role: "assistant",
-                   content: message.content, }
-      end
-      message.tool_calls.each do |tc|
-        items << {
-          type: "function_call",
-          call_id: tc.call_id,
-          name: encode_tool_name(tc.name),
-          arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
-        }
-      end
-      items
+    items = reasoning_input_items(message)
+    return { role: "assistant", content: message.content } if items.empty? && message.tool_calls.empty?
+
+    if message.content && !message.content.empty?
+      items << { type: "message", role: "assistant",
+                 content: message.content, }
+    end
+    message.tool_calls.each do |tc|
+      items << {
+        type: "function_call",
+        call_id: tc.call_id,
+        name: encode_tool_name(tc.name),
+        arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
+      }
+    end
+    items
+  end
+
+  # Reasoning items lead the list and every signed block on the message is
+  # replayed: OpenAI rejects a partial or reordered replay. An item id is
+  # required alongside the encrypted content, which also keeps a signed
+  # Anthropic-style block — which has no id — off the wire.
+  #--
+  #: (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
+  def reasoning_input_items(message)
+    message.reasoning.filter_map do |r|
+      next unless r.id && r.signature && !r.signature.empty?
+
+      {
+        type: "reasoning",
+        id: r.id,
+        summary: r.text.to_s.empty? ? [] : [{ type: "summary_text", text: r.text }],
+        encrypted_content: r.signature,
+      }
     end
   end
 

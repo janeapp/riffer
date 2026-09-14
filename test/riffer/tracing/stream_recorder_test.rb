@@ -37,4 +37,22 @@ describe Riffer::Tracing::StreamRecorder do
       expect(recorder.time_to_first_chunk).must_be_nil
     end
   end
+
+  describe "#reasoning" do
+    it "records each ReasoningDone event" do
+      recorder = Riffer::Tracing::StreamRecorder.new([])
+      recorder << Riffer::StreamEvents::ReasoningDone.new("Two plus two", signature: "sig_1")
+
+      expect(recorder.reasoning.map(&:to_h)).must_equal(
+        [{ text: "Two plus two", signature: "sig_1", redacted_data: nil, id: nil }],
+      )
+    end
+
+    it "is empty when no reasoning arrives" do
+      recorder = Riffer::Tracing::StreamRecorder.new([])
+      recorder << Riffer::StreamEvents::TextDone.new("4")
+
+      expect(recorder.reasoning).must_equal []
+    end
+  end
 end

@@ -902,6 +902,101 @@ describe Riffer::Agent::Run do
     end
   end
 
+  describe "reasoning accumulation with #stream" do
+    # Mock streams no reasoning of its own; this subclass emits the signed
+    # ReasoningDone a Claude provider would.
+    let(:reasoning_provider) do
+      Class.new(Riffer::Providers::Mock) do
+        def execute_stream(params, yielder)
+          yielder << Riffer::StreamEvents::ReasoningDelta.new("Let me think")
+          yielder << Riffer::StreamEvents::ReasoningDone.new("Let me think", signature: "sig_1")
+          super
+        end
+      end
+    end
+
+    it "attaches reasoning from ReasoningDone to the assistant message" do
+      Riffer::Providers::Repository.register(:reasoning_mock) { reasoning_provider }
+      agent = stub_agent("ReasoningAgent") { model "reasoning_mock/riffer-1" }.new
+      agent.provider.stub_response("Four.")
+
+      agent.stream("What is 2+2?").each { |_| }
+      assistant = agent.session.messages.find { |m| m.is_a?(Riffer::Messages::Assistant) }
+
+      expect(assistant.reasoning.map(&:to_h)).must_equal(
+        [{ text: "Let me think", signature: "sig_1", redacted_data: nil, id: nil }],
+      )
+    ensure
+      Riffer::Providers::Repository.unregister(:reasoning_mock)
+    end
+  end
+
+  describe "replay tokens across a prefix change" do
+    # Mock returns no reasoning of its own; this subclass signs every response
+    # the way a Claude or Gemini provider would.
+    let(:signing_provider) do
+      Class.new(Riffer::Providers::Mock) do
+        def extract_reasoning(_response)
+          [Riffer::Messages::Assistant::Reasoning.new("Let me think", "sig_1", nil, nil)]
+        end
+      end
+    end
+
+    let(:discovered_tool) do
+      stub_tool("DiscoveredTool") do
+        description "Exposed only after the first step"
+        def call(context:)
+          text("ok")
+        end
+      end
+    end
+
+    let(:discovering_tool) do
+      later = discovered_tool
+      stub_tool("DiscoveringTool") do
+        description "Exposes another tool"
+        define_method(:call) do |context:|
+          context.discover_tools([later])
+          text("ok")
+        end
+      end
+    end
+
+    before { Riffer::Providers::Repository.register(:signing_mock) { signing_provider } }
+    after { Riffer::Providers::Repository.unregister(:signing_mock) }
+
+    def signing_agent(name, tool)
+      stub_agent(name) do
+        model "signing_mock/riffer-1"
+        uses_tools [tool]
+      end.new
+    end
+
+    def reasoning_signatures(agent)
+      agent.session.messages.grep(Riffer::Messages::Assistant).map { |m| m.reasoning.map(&:signature) }
+    end
+
+    it "strips the earlier assistants when the tool list grows mid-run" do
+      agent = signing_agent("GrowingPrefixAgent", discovering_tool)
+      agent.provider.stub_response("", tool_calls: [{ name: "discovering_tool", arguments: "{}" }])
+      agent.provider.stub_response("Done.")
+
+      agent.generate("Go")
+
+      expect(reasoning_signatures(agent)).must_equal [[nil], ["sig_1"]]
+    end
+
+    it "keeps the replay tokens when the prefix holds steady across steps" do
+      agent = signing_agent("SteadyPrefixAgent", discovered_tool)
+      agent.provider.stub_response("", tool_calls: [{ name: "discovered_tool", arguments: "{}" }])
+      agent.provider.stub_response("Done.")
+
+      agent.generate("Go")
+
+      expect(reasoning_signatures(agent)).must_equal [["sig_1"], ["sig_1"]]
+    end
+  end
+
   describe "pending tool calls on fresh generate" do
     it "does not execute pending tool calls" do
       tool_class = stub_tool("FreshGenerateTool") do

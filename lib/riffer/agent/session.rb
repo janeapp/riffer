@@ -48,11 +48,15 @@ class Riffer::Agent::Session
     message
   end
 
-  # Replaces the message history wholesale
+  # Replaces the message history wholesale. Every carried-over assistant from
+  # the divergence point on loses its replay tokens — pruning, healing or a
+  # guardrail rewrite changed the prefix those tokens were signed against.
   #--
   #: (Array[Riffer::Messages::Base]) -> self
   def set(messages)
+    previous = @messages
     @messages = messages
+    strip_replay_tokens_from!(divergence_index(previous, messages), carried_over: previous)
     self
   end
 
@@ -65,7 +69,8 @@ class Riffer::Agent::Session
   end
 
   # Removes a message by id, cascading to drop the +Tool+ results of a removed
-  # assistant's +tool_calls+ so the +tool_use+ ↔ +tool_result+ invariant holds.
+  # assistant's +tool_calls+ so the +tool_use+ ↔ +tool_result+ invariant holds,
+  # and stripping the replay tokens off every assistant that followed it.
   # Raises on a +Tool+ message — that would orphan its parent; use +#update+
   # instead. Returns +nil+ if no message matches.
   #--
@@ -87,13 +92,16 @@ class Riffer::Agent::Session
     else
       @messages.delete_at(idx)
     end
+    strip_replay_tokens_from!(idx)
     target
   end
 
   # Partial in-place update: looks up a message by +id:+ or +tool_call_id:+
   # (exactly one), overlays +attrs+ onto a same-type replacement, and swaps it
   # in. Dropping +tool_calls+ from an assistant cascades to remove their +Tool+
-  # results, preserving the invariant. Raises on neither/both keys or no match.
+  # results, preserving the invariant. Every assistant after the replaced
+  # message loses its replay tokens; the replacement keeps its own, since its
+  # prefix is unchanged. Raises on neither/both keys or no match.
   #--
   #: (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base
   def update(id: nil, tool_call_id: nil, **attrs)
@@ -115,6 +123,7 @@ class Riffer::Agent::Session
     replacement = rebuild_message(old, attrs)
     @messages[idx] = replacement
     cascade_dropped_tool_calls(old, replacement)
+    strip_replay_tokens_from!(idx + 1)
     replacement
   end
 
@@ -180,6 +189,34 @@ class Riffer::Agent::Session
 
   private
 
+  # The first index at which the new history stops being the old one,
+  # +previous.length+ when the new array only appends.
+  #--
+  #: (Array[Riffer::Messages::Base], Array[Riffer::Messages::Base]) -> Integer
+  def divergence_index(previous, messages)
+    limit = [previous.length, messages.length].min
+    (0...limit).each { |i| return i unless previous[i].equal?(messages[i]) }
+    previous.length
+  end
+
+  # Drops the replay tokens off every assistant from +index+ on — a provider
+  # binds a reasoning signature or thought signature to the exact request
+  # prefix that produced it and rejects one replayed under an edited history,
+  # while an unsigned block is simply skipped. +carried_over:+ limits the strip
+  # to messages that were already in the history, leaving freshly built ones
+  # alone.
+  #--
+  #: (Integer, ?carried_over: Array[Riffer::Messages::Base]?) -> void
+  def strip_replay_tokens_from!(index, carried_over: nil)
+    (index...@messages.length).each do |i|
+      message = @messages[i]
+      next unless message.is_a?(Riffer::Messages::Assistant)
+      next if carried_over&.none? { |m| m.equal?(message) }
+
+      @messages[i] = message.without_replay_tokens
+    end
+  end
+
   #--
   #: (Riffer::Messages::Base, Riffer::Messages::Base) -> void
   def cascade_dropped_tool_calls(old, replacement)
@@ -205,6 +242,7 @@ class Riffer::Agent::Session
         structured_output: attrs.fetch(:structured_output, old.structured_output),
         finish_reason: attrs.fetch(:finish_reason, old.finish_reason),
         finish_reason_raw: attrs.fetch(:finish_reason_raw, old.finish_reason_raw),
+        reasoning: attrs.fetch(:reasoning, old.reasoning),
       )
     when Riffer::Messages::Tool
       Riffer::Messages::Tool.new(

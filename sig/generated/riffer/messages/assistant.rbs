@@ -10,12 +10,35 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
     attr_accessor arguments(): untyped
 
-    def self.new: (?untyped call_id, ?untyped name, ?untyped arguments) -> instance
-                | (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
+    attr_accessor signature(): untyped
+
+    def self.new: (?untyped call_id, ?untyped name, ?untyped arguments, ?untyped signature) -> instance
+                | (?call_id: untyped, ?name: untyped, ?arguments: untyped, ?signature: untyped) -> instance
+  end
+
+  class Reasoning < Struct[untyped]
+    attr_accessor text(): untyped
+
+    attr_accessor signature(): untyped
+
+    attr_accessor redacted_data(): untyped
+
+    attr_accessor id(): untyped
+
+    def self.new: (?untyped text, ?untyped signature, ?untyped redacted_data, ?untyped id) -> instance
+                | (?text: untyped, ?signature: untyped, ?redacted_data: untyped, ?id: untyped) -> instance
   end
 
   # Array of tool calls requested by the assistant.
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
+
+  # Reasoning (thinking) blocks in the order the model produced them.
+  # +signature+ is the provider's opaque replay token — an Anthropic or Bedrock
+  # thinking signature, OpenAI encrypted reasoning content, a Gemini thought
+  # signature — and must be replayed unmodified, so a provider replays only the
+  # blocks carrying one (or +redacted_data+); an altered or unsigned block is
+  # rejected on the next turn.
+  attr_reader reasoning: Array[Riffer::Messages::Assistant::Reasoning]
 
   # Token usage data for this response.
   attr_reader token_usage: Riffer::Providers::TokenUsage?
@@ -41,9 +64,10 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?finish_reason: Symbol?,
-  #    ?finish_reason_raw: String?
+  #    ?finish_reason_raw: String?,
+  #    ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]
   #  ) -> void
-  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?) -> void
+  def initialize: (String, ?id: String?, ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall], ?token_usage: Riffer::Providers::TokenUsage?, ?structured_output: Hash[Symbol, untyped]?, ?finish_reason: Symbol?, ?finish_reason_raw: String?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> void
 
   # --
   # : () -> Symbol
@@ -60,6 +84,15 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # --
   # : (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+
+  # Returns a copy with every provider replay token dropped — reasoning
+  # signatures and redacted payloads, tool call signatures — keeping the
+  # reasoning text and ids. A token is bound to the exact request prefix that
+  # produced it, so a provider rejects one replayed under an edited history;
+  # every converter skips a block that carries none.
+  # --
+  # : () -> Riffer::Messages::Assistant
+  def without_replay_tokens: () -> Riffer::Messages::Assistant
 
   # Converts the message to a hash.
   #

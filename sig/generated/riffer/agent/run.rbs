@@ -88,6 +88,18 @@ module Riffer::Agent::Run
   # : (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
   def structured_output_result: (Riffer::Agent, Riffer::Messages::Assistant?) -> Riffer::Agent::StructuredOutput::Result?
 
+  # What the provider receives ahead of the conversation itself: the system
+  # instructions and the tool list. Riffer changes either between steps of a
+  # single run (progressive MCP tool exposure, skill activation), which
+  # invalidates every replay token the history already carries.
+  # --
+  # : (Riffer::Agent) -> [Array[String], Array[String]]
+  def prefix_fingerprint: (Riffer::Agent) -> [ Array[String], Array[String] ]
+
+  # --
+  # : (Riffer::Agent) -> void
+  def strip_stale_replay_tokens: (Riffer::Agent) -> void
+
   # --
   # : (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
   def effective_tools: (Riffer::Agent) -> Array[singleton(Riffer::Tool)]

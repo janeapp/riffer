@@ -51,6 +51,7 @@ msg.tool_calls     # => []
 msg.token_usage    # => nil or Riffer::Providers::TokenUsage
 msg.finish_reason      # => nil or a normalized Symbol (see below)
 msg.finish_reason_raw  # => nil or the provider's raw wire value (e.g. "max_tokens")
+msg.reasoning          # => [] or an array of Reasoning blocks (see below)
 
 # Response with tool calls
 msg = Riffer::Messages::Assistant.new("", tool_calls: [
@@ -84,16 +85,16 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 
 `finish_reason` carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic's `end_turn`, OpenAI's response status, Gemini's `STOP`, …) into a normalized vocabulary:
 
-| Value               | Meaning                                                                                                                 |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                         |
-| `:length`           | Output was truncated at the max-token limit.                                                                            |
-| `:tool_calls`       | The model stopped to call tools.                                                                                        |
-| `:content_filter`   | A provider safety system blocked or cut the response.                                                                   |
-| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.             |
+| Value               | Meaning                                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                              |
+| `:length`           | Output was truncated at the max-token limit.                                                                                 |
+| `:tool_calls`       | The model stopped to call tools.                                                                                             |
+| `:content_filter`   | A provider safety system blocked or cut the response.                                                                        |
+| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.                  |
 | `:malformed_output` | The model emitted output the provider could not parse, such as an invalid tool call; retry or nudge rather than backing off. |
-| `:error`            | The provider reported an error finish.                                                                                  |
-| `:other`            | A provider-specific value with no normalized equivalent.                                                                |
+| `:error`            | The provider reported an error finish.                                                                                       |
+| `:other`            | A provider-specific value with no normalized equivalent.                                                                     |
 
 `finish_reason` is `nil` when the provider doesn't report one. The provider's raw wire value travels alongside as `finish_reason_raw` on the message (round-tripped through `to_h` / `from_hash`), on the `FinishReasonDone` stream event, and as the `riffer.finish_reason.raw` trace attribute — for OpenRouter that is the upstream model's `native_finish_reason`, and for a failed OpenAI response it is the error code. Use `finish_reason` to detect truncation without parsing provider responses:
 
@@ -101,6 +102,52 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 response = agent.generate("Summarize this document")
 retry_with_higher_limit if agent.session.messages.last.finish_reason == :length
 ```
+
+#### Reasoning (Thinking) Blocks
+
+`msg.reasoning` holds the model's reasoning blocks in the order it produced them. Each entry is a `Riffer::Messages::Assistant::Reasoning` struct with `text`, `signature`, `redacted_data`, and `id`:
+
+```ruby
+block = msg.reasoning.first
+block.text           # => "Two plus two is four" (nil for a fully redacted block)
+block.signature      # => the provider's opaque replay token, or nil
+block.redacted_data  # => the provider's encrypted stand-in for safety-redacted reasoning, or nil
+block.id             # => the provider's identifier for the block, or nil
+```
+
+`signature` is whatever opaque token the provider needs back to accept the block on the next turn — an Anthropic or Bedrock thinking signature, OpenAI's encrypted reasoning content, a Gemini thought signature. `redacted_data` is the same idea for reasoning the provider redacted for safety. Never parse or edit either. `id` identifies the block for the providers that key a replay by it (OpenAI's `rs_...` item id).
+
+Riffer replays a block on the next turn only when it carries a token, and sends `text` and `signature` together unchanged — providers reject a modified block with a 400, and unsigned reasoning has nothing to verify.
+
+Reasoning round-trips through `to_h` / `from_hash` (the `reasoning` key is present only when non-empty), so persisted history replays as recorded. Stripping it from stored history is safe and shrinks the payload, at a quality cost: Claude models reason better on the tool-result step when their own prior thinking is replayed.
+
+Which providers populate it:
+
+| Provider                    | `reasoning` populated                                                                                                            |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic                   | Yes, with a signature (or a redacted payload)                                                                                    |
+| Amazon Bedrock (Claude)     | Yes, with a signature (or a redacted payload)                                                                                    |
+| Amazon Bedrock (non-Claude) | Text only, no signature — never replayed                                                                                         |
+| OpenAI                      | Yes, with the encrypted reasoning content as `signature` and the item id as `id`; replayed ahead of the items it produced        |
+| OpenRouter                  | Streamed reasoning text only (no signature, so never replayed); `generate` leaves it empty                                       |
+| Gemini                      | Thought summaries when `thinkingConfig: {includeThoughts: true}`, with the turn's thought signature as `signature`               |
+
+Gemini also signs each function call, so `tool_calls` carries a `signature` of its own (see [Tool Call Structure](#tool-call-structure)). Gemini 3 rejects a replayed function call that lost its signature.
+
+#### Signed reasoning is provider-specific
+
+A replay token is meaningful only to the provider that issued it: an Anthropic signature means nothing to OpenAI, and vice versa. Riffer's converters skip any block they can't replay, so a mismatched token is dropped rather than sent — but if you move a session from one provider to another, strip it explicitly with `msg.without_replay_tokens` so the stored history stops carrying dead weight.
+
+#### Editing history drops the replay tokens
+
+A provider binds a reasoning signature to the exact request prefix that produced it — the system message, the tool list, and every preceding message. Change any of those and the provider rejects the token. Riffer therefore drops the tokens (keeping the reasoning text and `id`) whenever it changes the prefix itself:
+
+- `session.set(messages)` strips every carried-over assistant from the first position that differs onward. That covers pruning, interrupt healing, and guardrail rewrites.
+- `session.remove(id:)` strips every assistant after the removed message.
+- `session.update(...)` strips every assistant after the replaced one; the replacement keeps its own tokens, since nothing ahead of it moved.
+- The run loop strips the whole history mid-run when the system instructions or the tool list change between steps (progressive MCP tool exposure, skill activation).
+
+An unsigned block is simply skipped by every converter, so the effect is a quality cost on that turn, never an error.
 
 #### Structured Output on Messages
 
@@ -272,11 +319,14 @@ Tool calls in assistant messages have this structure:
   id: "item_123",       # Item identifier
   call_id: "call_456",  # Call identifier for response matching
   name: "weather_tool", # Tool name
-  arguments: '{"city":"Tokyo"}'  # JSON string of arguments
+  arguments: '{"city":"Tokyo"}',  # JSON string of arguments
+  signature: "Et4BCtsB..."        # Opaque replay token, when the provider signs tool calls
 }
 ```
 
 When creating tool result messages, use the `id` as `tool_call_id`.
+
+`signature` is populated only by providers that sign a tool call — today that's Gemini's thought signature, which Gemini 3 requires back on replay. It is omitted from `to_h` when absent, so history from every other provider serializes unchanged.
 
 ## Message Emission
 
@@ -370,4 +420,4 @@ Subclasses implement `role` and optionally extend `to_h` with additional fields.
 
 ## Editing history after the fact
 
-The session's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, rewrite a tool result, fill an orphan `tool_use` — use the mutators on `agent.session` (`update`, `remove`). Each one enforces the `tool_use` ↔ `tool_result` invariant. See [Mutating history](AGENT_LIFECYCLE.md#mutating-history) for the full list.
+The session's `messages` array is mutable, but the message value objects themselves are immutable. To edit recorded history — truncate an assistant message, rewrite a tool result, fill an orphan `tool_use` — use the mutators on `agent.session` (`update`, `remove`). Each one enforces the `tool_use` ↔ `tool_result` invariant, and each drops the replay tokens off the assistants whose prefix it changed (see [Editing history drops the replay tokens](#editing-history-drops-the-replay-tokens)). See [Mutating history](AGENT_LIFECYCLE.md#mutating-history) for the full list.

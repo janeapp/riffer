@@ -1,0 +1,221 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":4000,"thinking":{"type":"enabled","budget_tokens":1024},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.69.0
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.69.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '415'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 23:11:35 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-09-11T23:11:34Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-09-11T23:11:35Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '20000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '19999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-09-11T23:11:34Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-09-11T23:11:34Z'
+      Server:
+      - cloudflare
+      Request-Id:
+      - req_011CexVpXbSXFGjDny4nzcGE
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Traceresponse:
+      - 00-5bf4c7eb9b662013ce3ca194dc1f9afc-30cd255d970ecf8a-01
+      Vary:
+      - Accept-Encoding
+      X-Robots-Tag:
+      - none
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Ray:
+      - a39a5a2e6eb96826-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-haiku-4-5-20251001","id":"msg_011CexVpXwXtYHx58uSvMiLR","type":"message","role":"assistant","content":[{"type":"thinking","thinking":"The
+        user is asking for the weather in Toronto. I have access to a `get_weather`
+        function that takes a city name as a parameter. Toronto is a valid city, so
+        I can call this function with \"Toronto\" as the city parameter.","signature":"EtgDCpoBCBEYAipAUFoY5JeOE36cgG5D/ElIfpObvSi/8UN0iF6VuRYAfbDo9nkVj6pD3eid+7v+agqOXoxUOQrE8KiiyYqjp6bQsTIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNDQ4ZjcyOTUtYzBjZS00OWYzLTk1OTktYzE4ZWU0N2I0ZmMxqAGmlZLVBhIMqSFeh+oQGAFqcjikGgy0YyefPnIFWWtzwB4iMO/yobp0jeK9U9PU7uB0worFPO9g/nrKS2RMVJ0oRD5sNYenrrQmk4PtfGbUi33joirqAUtpXttlb5wTUr+PDy820jKr7U8qduVQHHtGnh0M7j2jthyZIbmi4xyTfQn7UAJo2CDnONrMCMuKv52Cm3ssUsLfH3iWLMrUNI7DT25JLo2n/A8A0unuobfAQf0N6OMt+og4pD1i8OO1F05TBLhj87UbuZ7W2IWN6xP8fP7NLHXFVJfxtF+KRJ8FNL9YSLklO04f503TrLcRt2vDTT3zo2gpLPIKCZ0VvhnRQopxiGy1t6HswGQKNC4DmOofxrYg9YH2Ia+8BAUl7/1YL4l9QLYWV0vk3mWhHzlPwGKhYlF501mQHbtZJlUUeBgB"},{"type":"tool_use","id":"toolu_01NmK3iauKYKpzHRY8xxbuGj","name":"get_weather","input":{"city":"Toronto"},"caller":{"type":"direct"}}],"container":null,"stop_reason":"tool_use","stop_sequence":null,"stop_details":null,"usage":{"input_tokens":610,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":112,"output_tokens_details":{"thinking_tokens":56},"service_tier":"standard","inference_geo":"not_available"}}'
+  recorded_at: Fri, 11 Sep 2026 23:11:35 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","content":[{"type":"thinking","thinking":"The
+        user is asking for the weather in Toronto. I have access to a `get_weather`
+        function that takes a city name as a parameter. Toronto is a valid city, so
+        I can call this function with \"Toronto\" as the city parameter.","signature":"EtgDCpoBCBEYAipAUFoY5JeOE36cgG5D/ElIfpObvSi/8UN0iF6VuRYAfbDo9nkVj6pD3eid+7v+agqOXoxUOQrE8KiiyYqjp6bQsTIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNDQ4ZjcyOTUtYzBjZS00OWYzLTk1OTktYzE4ZWU0N2I0ZmMxqAGmlZLVBhIMqSFeh+oQGAFqcjikGgy0YyefPnIFWWtzwB4iMO/yobp0jeK9U9PU7uB0worFPO9g/nrKS2RMVJ0oRD5sNYenrrQmk4PtfGbUi33joirqAUtpXttlb5wTUr+PDy820jKr7U8qduVQHHtGnh0M7j2jthyZIbmi4xyTfQn7UAJo2CDnONrMCMuKv52Cm3ssUsLfH3iWLMrUNI7DT25JLo2n/A8A0unuobfAQf0N6OMt+og4pD1i8OO1F05TBLhj87UbuZ7W2IWN6xP8fP7NLHXFVJfxtF+KRJ8FNL9YSLklO04f503TrLcRt2vDTT3zo2gpLPIKCZ0VvhnRQopxiGy1t6HswGQKNC4DmOofxrYg9YH2Ia+8BAUl7/1YL4l9QLYWV0vk3mWhHzlPwGKhYlF501mQHbtZJlUUeBgB"},{"type":"tool_use","id":"toolu_01NmK3iauKYKpzHRY8xxbuGj","name":"get_weather","input":{"city":"Toronto"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01NmK3iauKYKpzHRY8xxbuGj","content":"Sunny,
+        22C"}]}],"max_tokens":4000,"thinking":{"type":"enabled","budget_tokens":1024},"tools":[{"name":"get_weather","description":"Get
+        the current weather for a city","input_schema":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.69.0
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.69.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1580'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Sep 2026 23:11:35 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-09-11T23:11:35Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-09-11T23:11:35Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '20000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '19999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-09-11T23:11:35Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-09-11T23:11:35Z'
+      Server:
+      - cloudflare
+      Request-Id:
+      - req_011CexVpcvR33Mr7cwXqo3Fi
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Traceresponse:
+      - 00-0b6724fb2633811dfb5570842e647da5-aa84f9df7fe67e95-01
+      Vary:
+      - Accept-Encoding
+      X-Robots-Tag:
+      - none
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Ray:
+      - a39a5a362b256826-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS00LTUtMjAyNTEwMDEiLCJpZCI6Im1zZ18wMTFDZXhWcGRHbTQyVGJIOFlFQmE4OFgiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGV4dCIsInRleHQiOiJUaGUgd2VhdGhlciBpbiBUb3JvbnRvIGlzIGN1cnJlbnRseSAqKnN1bm55IHdpdGggYSB0ZW1wZXJhdHVyZSBvZiAyMsKwQyAoYWJvdXQgNzLCsEYpKiouIn1dLCJjb250YWluZXIiOm51bGwsInN0b3BfcmVhc29uIjoiZW5kX3R1cm4iLCJzdG9wX3NlcXVlbmNlIjpudWxsLCJzdG9wX2RldGFpbHMiOm51bGwsInVzYWdlIjp7ImlucHV0X3Rva2VucyI6NzQwLCJjYWNoZV9jcmVhdGlvbl9pbnB1dF90b2tlbnMiOjAsImNhY2hlX3JlYWRfaW5wdXRfdG9rZW5zIjowLCJjYWNoZV9jcmVhdGlvbiI6eyJlcGhlbWVyYWxfNW1faW5wdXRfdG9rZW5zIjowLCJlcGhlbWVyYWxfMWhfaW5wdXRfdG9rZW5zIjowfSwib3V0cHV0X3Rva2VucyI6MjcsIm91dHB1dF90b2tlbnNfZGV0YWlscyI6eyJ0aGlua2luZ190b2tlbnMiOjB9LCJzZXJ2aWNlX3RpZXIiOiJzdGFuZGFyZCIsImluZmVyZW5jZV9nZW8iOiJub3RfYXZhaWxhYmxlIn19
+  recorded_at: Fri, 11 Sep 2026 23:11:35 GMT
+recorded_with: VCR 6.4.0

@@ -13,8 +13,8 @@ module Riffer::Tracing::Capture
   def system_instructions: (Array[Riffer::Messages::Base]) -> String?
 
   # --
-  # : (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> String
-  def output_messages: (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?) -> String
+  # : (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> String
+  def output_messages: (content: String?, tool_calls: Array[Riffer::Messages::Assistant::ToolCall], finish_reason: Symbol?, ?reasoning: Array[Riffer::Messages::Assistant::Reasoning]) -> String
 
   private
 
@@ -23,12 +23,16 @@ module Riffer::Tracing::Capture
   def convert_message: (Riffer::Messages::Base) -> Hash[Symbol, untyped]?
 
   # --
-  # : (String?, Array[Riffer::Messages::Assistant::ToolCall]) -> Array[Hash[Symbol, untyped]]
-  def assistant_parts: (String?, Array[Riffer::Messages::Assistant::ToolCall]) -> Array[Hash[Symbol, untyped]]
+  # : (String?, Array[Riffer::Messages::Assistant::ToolCall], ?Array[Riffer::Messages::Assistant::Reasoning]) -> Array[Hash[Symbol, untyped]]
+  def assistant_parts: (String?, Array[Riffer::Messages::Assistant::ToolCall], ?Array[Riffer::Messages::Assistant::Reasoning]) -> Array[Hash[Symbol, untyped]]
 
   # --
   # : (String?) -> Hash[Symbol, untyped]
   def text_part: (String?) -> Hash[Symbol, untyped]
+
+  # --
+  # : (String) -> Hash[Symbol, untyped]
+  def reasoning_part: (String) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Messages::Assistant::ToolCall) -> Hash[Symbol, untyped]
