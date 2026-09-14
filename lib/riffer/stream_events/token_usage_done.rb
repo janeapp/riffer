@@ -4,7 +4,7 @@
 # Final token usage for the response, emitted when the LLM finishes.
 class Riffer::StreamEvents::TokenUsageDone < Riffer::StreamEvents::Base
   # The token usage data for this response.
-  attr_reader :token_usage #: Riffer::Providers::TokenUsage
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage # @dynamic token_usage
 
   #--
   #: (token_usage: Riffer::Providers::TokenUsage, ?role: Symbol) -> void

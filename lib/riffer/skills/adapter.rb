@@ -7,7 +7,7 @@
 # for the rendered output.
 class Riffer::Skills::Adapter
   # The activation tool class for this adapter.
-  attr_reader :skill_activate_tool #: singleton(Riffer::Tool)
+  attr_reader :skill_activate_tool #: singleton(Riffer::Tool) # @dynamic skill_activate_tool
 
   #--
   #: (skill_activate_tool: singleton(Riffer::Tool)) -> void

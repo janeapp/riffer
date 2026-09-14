@@ -4,13 +4,13 @@
 # Records a guardrail transformation event.
 class Riffer::Guardrails::Modification
   # The guardrail class that transformed data.
-  attr_reader :guardrail #: singleton(Riffer::Guardrail)
+  attr_reader :guardrail #: singleton(Riffer::Guardrail) # @dynamic guardrail
 
   # The phase when the transformation occurred (:before or :after).
-  attr_reader :phase #: Symbol
+  attr_reader :phase #: Symbol # @dynamic phase
 
   # The indices of messages that were changed.
-  attr_reader :message_indices #: Array[Integer]
+  attr_reader :message_indices #: Array[Integer] # @dynamic message_indices
 
   #--
   #: (guardrail: singleton(Riffer::Guardrail), phase: Symbol, message_indices: Array[Integer]) -> void

@@ -5,13 +5,13 @@
 # streaming.
 class Riffer::StreamEvents::ToolCallDelta < Riffer::StreamEvents::Base
   # The tool call item identifier.
-  attr_reader :item_id #: String
+  attr_reader :item_id #: String # @dynamic item_id
 
   # The tool name (may only be present in first delta).
-  attr_reader :name #: String?
+  attr_reader :name #: String? # @dynamic name
 
   # The incremental arguments JSON fragment.
-  attr_reader :arguments_delta #: String
+  attr_reader :arguments_delta #: String # @dynamic arguments_delta
 
   #--
   #: (item_id: String, arguments_delta: String, ?name: String?, ?role: Symbol) -> void

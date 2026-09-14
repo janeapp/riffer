@@ -88,13 +88,6 @@ describe Riffer::Messages::Base do
   end
 
   describe ".from_hash" do
-    it "raises ArgumentError when message is not a Hash or Message object" do
-      error = expect do
-        Riffer::Messages::Base.from_hash("invalid")
-      end.must_raise(Riffer::ArgumentError)
-      expect(error.message).must_equal "Message must be a Hash or Message object, got String"
-    end
-
     it "raises ArgumentError when message has unknown role" do
       error = expect do
         Riffer::Messages::Base.from_hash({ role: "unknown", content: "test" })

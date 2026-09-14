@@ -4,7 +4,7 @@
 # Represents an incremental text chunk during streaming.
 class Riffer::StreamEvents::TextDelta < Riffer::StreamEvents::Base
   # The incremental text content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   #--
   #: (String, ?role: Symbol) -> void

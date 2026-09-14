@@ -18,7 +18,7 @@ class Riffer::Agent::Session
   # @rbs @callbacks: Array[^(Riffer::Messages::Base) -> void]
 
   # The message history.
-  attr_reader :messages #: Array[Riffer::Messages::Base]
+  attr_reader :messages #: Array[Riffer::Messages::Base] # @dynamic messages
 
   #--
   #: (?messages: Array[Riffer::Messages::Base]) -> void

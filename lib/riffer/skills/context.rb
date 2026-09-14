@@ -11,13 +11,13 @@ class Riffer::Skills::Context
   # @rbs @preactivated: Array[String]
 
   # Skill catalog indexed by name.
-  attr_reader :skills #: Hash[String, Riffer::Skills::Frontmatter]
+  attr_reader :skills #: Hash[String, Riffer::Skills::Frontmatter] # @dynamic skills
 
   # The skill adapter used for this context.
-  attr_reader :adapter #: Riffer::Skills::Adapter
+  attr_reader :adapter #: Riffer::Skills::Adapter # @dynamic adapter
 
   # Optional callback invoked when a skill is first activated.
-  attr_accessor :on_activate #: (^(String) -> void)?
+  attr_accessor :on_activate #: (^(String) -> void)? # @dynamic on_activate, on_activate=
 
   #--
   #: (backend: Riffer::Skills::Backend, skills: Hash[String, Riffer::Skills::Frontmatter], adapter: Riffer::Skills::Adapter) -> void
@@ -106,10 +106,7 @@ class Riffer::Skills::Context
   #--
   #: (String) -> bool
   def model_invocable?(name)
-    skill = skills[name]
-    return false unless skill
-
-    !skill.disable_model_invocation
+    skills.key?(name) && !skills.fetch(name).disable_model_invocation
   end
 
   # Returns whether any skill is available for the model to activate.

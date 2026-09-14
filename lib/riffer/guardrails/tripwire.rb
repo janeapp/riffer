@@ -6,16 +6,16 @@ class Riffer::Guardrails::Tripwire
   PHASES = Riffer::Guardrails::PHASES #: Array[Symbol]
 
   # The reason for blocking.
-  attr_reader :reason #: String
+  attr_reader :reason #: String # @dynamic reason
 
   # The guardrail class that triggered the block.
-  attr_reader :guardrail #: singleton(Riffer::Guardrail)
+  attr_reader :guardrail #: singleton(Riffer::Guardrail) # @dynamic guardrail
 
   # The phase when the block occurred (:before or :after).
-  attr_reader :phase #: Symbol
+  attr_reader :phase #: Symbol # @dynamic phase
 
   # Optional metadata about the block.
-  attr_reader :metadata #: Hash[Symbol, untyped]?
+  attr_reader :metadata #: Hash[Symbol, untyped]? # @dynamic metadata
 
   # Raises Riffer::ArgumentError if +phase+ is invalid.
   #--

@@ -29,13 +29,13 @@ class Riffer::Messages::FilePart
   SHA256_PATTERN = /\A[0-9a-f]{64}\z/i #: Regexp
 
   # The MIME type of the file.
-  attr_reader :media_type #: String
+  attr_reader :media_type #: String # @dynamic media_type
 
   # The filename, if available.
-  attr_reader :filename #: String?
+  attr_reader :filename #: String? # @dynamic filename
 
   # The expected SHA-256 of the file contents, if the caller supplied one.
-  attr_reader :sha256 #: String?
+  attr_reader :sha256 #: String? # @dynamic sha256
 
   # Raises Riffer::ArgumentError unless +data+ or +url+ is given and
   # +media_type+ is supported.
@@ -66,8 +66,7 @@ class Riffer::Messages::FilePart
   def self.from_url(url, media_type: nil, filename: nil, sha256: nil)
     unless media_type
       ext = ::File.extname(URI.parse(url).path.to_s).downcase
-      media_type = MEDIA_TYPES[ext]
-      raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" unless media_type
+      media_type = MEDIA_TYPES.fetch(ext) { raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" }
     end
 
     new(url: url, media_type: media_type, filename: filename, sha256: sha256)
@@ -80,8 +79,6 @@ class Riffer::Messages::FilePart
   #: ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
   def self.from_hash(file)
     return file if file.is_a?(Riffer::Messages::FilePart)
-
-    raise Riffer::ArgumentError, "File must be a Hash or FilePart object, got #{file.class}" unless file.is_a?(Hash)
 
     url = file[:url]
     data = file[:data]

@@ -7,7 +7,7 @@ require "json"
 # schema.
 class Riffer::Agent::StructuredOutput
   # The schema parameters.
-  attr_reader :params #: Riffer::Params
+  attr_reader :params #: Riffer::Params # @dynamic params
 
   #--
   #: (Riffer::Params) -> void

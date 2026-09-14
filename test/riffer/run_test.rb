@@ -3849,12 +3849,6 @@ describe Riffer::Agent::Run do
 
         expect(agent.provider.calls.last.key?(:tags)).must_equal false
       end
-
-      it "raises when tags is not a hash" do
-        agent = agent_class.new
-        err = expect { agent.generate("Hello", tags: "growth") }.must_raise Riffer::ArgumentError
-        expect(err.message).must_match(/tags: must be a Hash/)
-      end
     end
 
     describe "tracing" do

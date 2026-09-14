@@ -9,7 +9,7 @@ class Riffer::Mcp::Registration
   # @rbs @mutex: Thread::Mutex
 
   # The manifest that describes this server.
-  attr_reader :manifest #: Riffer::Mcp::Manifest
+  attr_reader :manifest #: Riffer::Mcp::Manifest # @dynamic manifest
 
   # Generated Riffer::Mcp::Tool subclasses.
   #

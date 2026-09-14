@@ -5,13 +5,13 @@
 # progresses.
 class Riffer::StreamEvents::WebSearchStatus < Riffer::StreamEvents::Base
   # The web search status ("in_progress", "searching", "completed", "open_page").
-  attr_reader :status #: String
+  attr_reader :status #: String # @dynamic status
 
   # The URL being fetched (present for "open_page" status).
-  attr_reader :url #: String?
+  attr_reader :url #: String? # @dynamic url
 
   # The search query (present when available during status changes).
-  attr_reader :query #: String?
+  attr_reader :query #: String? # @dynamic query
 
   #--
   #: (String, ?url: String?, ?query: String?, ?role: Symbol) -> void

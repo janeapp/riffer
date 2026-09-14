@@ -8,17 +8,17 @@ class Riffer::Tracing::StreamRecorder # :nodoc: all
   # @rbs @clock: ^() -> Float
   # @rbs @started_at: Float
 
-  attr_reader :token_usage #: Riffer::Providers::TokenUsage?
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
 
-  attr_reader :time_to_first_chunk #: Float?
+  attr_reader :time_to_first_chunk #: Float? # @dynamic time_to_first_chunk
 
-  attr_reader :finish_reason #: Symbol?
+  attr_reader :finish_reason #: Symbol? # @dynamic finish_reason
 
-  attr_reader :raw_finish_reason #: String?
+  attr_reader :raw_finish_reason #: String? # @dynamic raw_finish_reason
 
-  attr_reader :content #: String?
+  attr_reader :content #: String? # @dynamic content
 
-  attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
+  attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
 
   #--
   #: (Enumerator::Yielder, ?clock: ^() -> Float) -> void

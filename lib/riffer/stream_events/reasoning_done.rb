@@ -5,7 +5,7 @@
 # that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDone < Riffer::StreamEvents::Base
   # The complete reasoning content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   #--
   #: (String, ?role: Symbol) -> void

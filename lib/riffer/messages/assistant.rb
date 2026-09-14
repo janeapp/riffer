@@ -7,21 +7,21 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   ToolCall = Struct.new(:call_id, :name, :arguments)
 
   # Array of tool calls requested by the assistant.
-  attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall]
+  attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
 
   # Token usage data for this response.
-  attr_reader :token_usage #: Riffer::Providers::TokenUsage?
+  attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
 
   # Parsed structured output hash, or nil when not applicable.
-  attr_reader :structured_output #: Hash[Symbol, untyped]?
+  attr_reader :structured_output #: Hash[Symbol, untyped]? # @dynamic structured_output
 
   # Normalized reason the provider finished this response, when reported (see
   # <tt>Riffer::Providers::FinishReason::VALUES</tt>).
-  attr_reader :finish_reason #: Symbol?
+  attr_reader :finish_reason #: Symbol? # @dynamic finish_reason
 
   # The provider's raw finish-reason value behind +finish_reason+, when one
   # exists on the wire.
-  attr_reader :finish_reason_raw #: String?
+  attr_reader :finish_reason_raw #: String? # @dynamic finish_reason_raw
 
   # Raises Riffer::ArgumentError when +finish_reason+ is outside the
   # normalized vocabulary.

@@ -5,7 +5,7 @@
 # providers that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDelta < Riffer::StreamEvents::Base
   # The incremental reasoning content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   #--
   #: (String, ?role: Symbol) -> void

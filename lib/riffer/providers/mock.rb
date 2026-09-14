@@ -25,7 +25,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   # Array of recorded method calls for assertions.
-  attr_reader :calls #: Array[Hash[Symbol, untyped]]
+  attr_reader :calls #: Array[Hash[Symbol, untyped]] # @dynamic calls
 
   # +responses:+ pre-configures canned responses (same shape as
   # +#stub_response+) for standalone use; agent tests queue responses on

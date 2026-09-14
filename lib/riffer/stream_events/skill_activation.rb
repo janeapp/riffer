@@ -5,7 +5,7 @@
 # callback when the LLM calls the activation tool.
 class Riffer::StreamEvents::SkillActivation < Riffer::StreamEvents::Base
   # The activated skill name.
-  attr_reader :name #: String
+  attr_reader :name #: String # @dynamic name
 
   #--
   #: (String, ?role: Symbol) -> void

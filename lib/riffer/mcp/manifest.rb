@@ -6,20 +6,20 @@ require "uri"
 # Holds the configuration for a single MCP server.
 class Riffer::Mcp::Manifest
   # Identifier used as the registration key and generated-agent identifier.
-  attr_reader :name #: String
+  attr_reader :name #: String # @dynamic name
 
   # Tags for matching +use_mcp+.
-  attr_reader :tags #: Array[Symbol]
+  attr_reader :tags #: Array[Symbol] # @dynamic tags
 
   # HTTPS URL passed to the MCP transport.
-  attr_reader :endpoint #: String
+  attr_reader :endpoint #: String # @dynamic endpoint
 
   # Headers (or a Proc) resolved once when building the discovery client.
-  attr_reader :discovery_headers #: (Hash[String, untyped] | ::Proc)?
+  attr_reader :discovery_headers #: (Hash[String, untyped] | ::Proc)? # @dynamic discovery_headers
 
   # Optional hint (+:global+/+:tenant+/+:user+) for whether invocation
   # credentials depend on tenant/user keys in +context+.
-  attr_reader :credentials_scope #: Symbol?
+  attr_reader :credentials_scope #: Symbol? # @dynamic credentials_scope
 
   # Raises Riffer::ArgumentError unless +name+ is present and +endpoint+ is a
   # valid HTTPS URL.

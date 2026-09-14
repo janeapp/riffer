@@ -214,44 +214,44 @@ class Riffer::Agent
   end
 
   # The conversation handle.
-  attr_reader :session #: Riffer::Agent::Session
+  attr_reader :session #: Riffer::Agent::Session # @dynamic session
 
   # The per-instance Riffer::Agent::Config.
-  attr_reader :config #: Riffer::Agent::Config
+  attr_reader :config #: Riffer::Agent::Config # @dynamic config
 
   # The system message built from the configured +instructions+, or +nil+ when
   # none are configured.
-  attr_reader :instruction_message #: Riffer::Messages::System?
+  attr_reader :instruction_message #: Riffer::Messages::System? # @dynamic instruction_message
 
   # The system message describing the configured skills catalog, or +nil+ when
   # skills are unconfigured or the catalog is empty.
-  attr_reader :skills_message #: Riffer::Messages::System?
+  attr_reader :skills_message #: Riffer::Messages::System? # @dynamic skills_message
 
   # The mutable runtime context shared with every +Riffer::Agent::Run+ this
   # agent executes and threaded through all Proc-based settings.
-  attr_reader :context #: Riffer::Agent::Context
+  attr_reader :context #: Riffer::Agent::Context # @dynamic context
 
   # The resolved provider name (the part before "/" in the model string),
   # e.g. +"openai"+.
-  attr_reader :provider_name #: String
+  attr_reader :provider_name #: String # @dynamic provider_name
 
   # The resolved model name (the part after "/" in the model string), used as
   # the model argument on every LLM call.
-  attr_reader :model_name #: String
+  attr_reader :model_name #: String # @dynamic model_name
 
   # The provider client. Public so tests can pre-queue responses on
   # +Riffer::Providers::Mock+ before calling +#generate+.
-  attr_reader :provider #: Riffer::Providers::Base
+  attr_reader :provider #: Riffer::Providers::Base # @dynamic provider
 
   # The +Riffer::Agent::StructuredOutput+ wrapping the configured schema, or
   # +nil+ when not configured.
-  attr_reader :structured_output #: Riffer::Agent::StructuredOutput?
+  attr_reader :structured_output #: Riffer::Agent::StructuredOutput? # @dynamic structured_output
 
   # The tool classes the LLM sees on every call this agent makes.
-  attr_reader :tools #: Array[singleton(Riffer::Tool)]
+  attr_reader :tools #: Array[singleton(Riffer::Tool)] # @dynamic tools
 
   # The tool runtime instance used to execute tool calls.
-  attr_reader :tool_runtime #: Riffer::Tools::Runtime
+  attr_reader :tool_runtime #: Riffer::Tools::Runtime # @dynamic tool_runtime
 
   # Initializes a new agent.
   #

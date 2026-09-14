@@ -12,8 +12,6 @@ class Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Base)
 
-    raise Riffer::ArgumentError, "Message must be a Hash or Message object, got #{msg.class}" unless msg.is_a?(Hash)
-
     raise Riffer::ArgumentError, "Message hash must include a 'role' key" if msg[:role].nil? || msg[:role].empty?
 
     case msg[:role].to_sym
@@ -42,10 +40,10 @@ class Riffer::Messages::Base
   end
 
   # The message content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   # The message id, or nil when +Riffer.config.message_id_strategy+ is +:none+.
-  attr_reader :id #: String?
+  attr_reader :id #: String? # @dynamic id
 
   #--
   #: (String, ?id: String?) -> void

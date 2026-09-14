@@ -5,16 +5,16 @@
 # any blocks, execution stops and a tripwire is returned.
 class Riffer::Guardrails::Runner
   # The guardrail configs to execute.
-  attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]]
+  attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]] # @dynamic guardrail_configs
 
   # The execution phase (:before or :after).
-  attr_reader :phase #: Symbol
+  attr_reader :phase #: Symbol # @dynamic phase
 
   # The context passed to guardrails.
-  attr_reader :context #: untyped
+  attr_reader :context #: untyped # @dynamic context
 
   # The normalized per-call tags, stamped as +riffer.tag.*+ on guardrail spans.
-  attr_reader :tags #: Hash[String, String]
+  attr_reader :tags #: Hash[String, String] # @dynamic tags
 
   #--
   #: (Array[Hash[Symbol, untyped]], phase: Symbol, ?context: untyped, ?tags: Hash[String, String]) -> void

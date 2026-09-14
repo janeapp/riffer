@@ -4,17 +4,17 @@
 # Represents a tool execution result in a conversation.
 class Riffer::Messages::Tool < Riffer::Messages::Base
   # The ID of the tool call this result responds to.
-  attr_reader :tool_call_id #: String
+  attr_reader :tool_call_id #: String # @dynamic tool_call_id
 
   # The name of the tool that was called.
-  attr_reader :name #: String
+  attr_reader :name #: String # @dynamic name
 
   # The error message if the tool execution failed.
-  attr_reader :error #: String?
+  attr_reader :error #: String? # @dynamic error
 
   # The type of error (:unknown_tool, :validation_error, :execution_error,
   # :timeout_error, :unhandled_error).
-  attr_reader :error_type #: Symbol?
+  attr_reader :error_type #: Symbol? # @dynamic error_type
 
   #--
   #: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void

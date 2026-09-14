@@ -20,17 +20,17 @@ class Riffer::Tools::Response
   VALID_FORMATS = %i[text json].freeze #: Array[Symbol]
 
   # The response content.
-  attr_reader :content #: String
+  attr_reader :content #: String # @dynamic content
 
   # The error message, or +nil+ on success.
-  attr_reader :error_message #: String?
+  attr_reader :error_message #: String? # @dynamic error_message
 
   # The error type, or +nil+ on success.
-  attr_reader :error_type #: Symbol?
+  attr_reader :error_type #: Symbol? # @dynamic error_type
 
   # The exception an unhandled failure was folded from, or +nil+. Kept out of
   # every serialized form so it never reaches an LLM or a message payload.
-  attr_reader :exception #: Exception?
+  attr_reader :exception #: Exception? # @dynamic exception
 
   # Creates a success response.
   #

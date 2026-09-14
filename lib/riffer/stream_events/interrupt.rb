@@ -5,11 +5,11 @@
 # +:riffer_interrupt+.
 class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
   # The reason provided with the interrupt, if any.
-  attr_reader :reason #: (String | Symbol)?
+  attr_reader :reason #: (String | Symbol)? # @dynamic reason
 
   # Call ids of tool_use blocks riffer filled with placeholder results when the
   # interrupt fired (only when history healing is on).
-  attr_reader :healed_tool_call_ids #: Array[String]
+  attr_reader :healed_tool_call_ids #: Array[String] # @dynamic healed_tool_call_ids
 
   #--
   #: (?reason: (String | Symbol)?, ?healed_tool_call_ids: Array[String]) -> void

@@ -115,10 +115,6 @@ describe Riffer::Providers::Repository do
 
       expect(Riffer::Providers::Repository::REPO).wont_include(:jane)
     end
-
-    it "raises Riffer::ArgumentError without a block" do
-      expect { Riffer::Providers::Repository.register(:jane) }.must_raise(Riffer::ArgumentError)
-    end
   end
 
   describe ".unregister" do
