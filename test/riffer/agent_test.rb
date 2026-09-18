@@ -272,6 +272,67 @@ describe Riffer::Agent do
       expect(parent.guardrails_for(:before)).must_be_empty
     end
 
+    it "does not let a mutation of a subclass's tool list reach the parent" do
+      first_tool = stub_tool("FirstInheritedTool")
+      second_tool = stub_tool("SecondInheritedTool")
+      parent = stub_agent("ToolsParentAgent") do
+        model "mock/riffer-1"
+        uses_tools [first_tool]
+      end
+      child = stub_agent("ToolsChildAgent", base: parent)
+
+      child.config.tools_config << second_tool
+
+      expect(child.config.tools_config).must_equal [first_tool, second_tool]
+      expect(parent.config.tools_config).must_equal [first_tool]
+    end
+
+    # A Proc has nothing to alias, and duplicating it would only allocate.
+    it "shares a Proc tool list rather than duplicating it" do
+      resolver = ->(_context) { [] }
+      parent = stub_agent("ProcToolsParentAgent") do
+        model "mock/riffer-1"
+        uses_tools resolver
+      end
+      child = stub_agent("ProcToolsChildAgent", base: parent)
+
+      expect(child.config.tools_config).must_be_same_as resolver
+    end
+
+    it "does not let a subclass's added schema field reach the parent" do
+      parent = stub_agent("SchemaParentAgent") do
+        model "mock/riffer-1"
+        structured_output { required :verdict, String }
+      end
+      child = stub_agent("SchemaChildAgent", base: parent)
+
+      child.config.structured_output.required(:confidence, Float)
+
+      expect(child.config.structured_output.parameters.map(&:name)).must_equal %i[verdict confidence]
+      expect(parent.config.structured_output.parameters.map(&:name)).must_equal %i[verdict]
+    end
+
+    # Param#nested_params is a Params of its own, so the copy has to follow it.
+    it "does not let a subclass's nested schema field reach the parent" do
+      parent = stub_agent("NestedSchemaParentAgent") do
+        model "mock/riffer-1"
+        structured_output do
+          required :claim, Hash do
+            required :id, String
+          end
+        end
+      end
+      child = stub_agent("NestedSchemaChildAgent", base: parent)
+
+      child.config.structured_output.parameters.first.nested_params.required(:amount, Float)
+
+      child_nested = child.config.structured_output.parameters.first.nested_params
+      parent_nested = parent.config.structured_output.parameters.first.nested_params
+
+      expect(child_nested.parameters.map(&:name)).must_equal %i[id amount]
+      expect(parent_nested.parameters.map(&:name)).must_equal %i[id]
+    end
+
     it "gives a subclass its own skills config" do
       parent = stub_agent("SkillsParentAgent") do
         model "mock/riffer-1"

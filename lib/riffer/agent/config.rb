@@ -178,6 +178,9 @@ class Riffer::Agent::Config
   # Returns a copy for a subclass to start from, sharing no mutable collection
   # with this one.
   #
+  # An Array +tools_config+ is duplicated because +attr_accessor+ leaves it open
+  # to +<<+ from outside; a Proc is shared, having nothing to alias.
+  #
   # +identifier+ is excluded because it is configuration here but identity on the
   # subclass; two classes claiming one identifier raise
   # Riffer::DuplicateIdentifierError at the next registry lookup. +tool_runtime+
@@ -190,9 +193,9 @@ class Riffer::Agent::Config
       model: model,
       instructions: instructions,
       model_options: model_options.dup,
-      structured_output: structured_output,
+      structured_output: structured_output&.deep_copy,
       max_steps: max_steps,
-      tools_config: tools_config,
+      tools_config: tools_config.is_a?(Array) ? tools_config.dup : tools_config,
       mcp_configs: mcp_configs.dup,
       skills_config: skills_config&.dup,
       guardrails: guardrails.transform_values(&:dup),
