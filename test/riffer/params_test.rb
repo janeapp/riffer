@@ -823,4 +823,27 @@ describe Riffer::Params do
       expect(rebuilt.validate({ answer: "yes" })).must_equal({ answer: "yes", score: 0.0 })
     end
   end
+  describe "#deep_copy" do
+    it "holds no collection in common with the original, at any depth" do
+      original = Riffer::Params.new
+      original.required(:claim, Hash) { required :id, String }
+
+      copy = original.deep_copy
+      copy.required(:verdict, String)
+      copy.parameters.first.nested_params.required(:amount, Float)
+
+      expect(original.parameters.map(&:name)).must_equal %i[claim]
+      expect(original.parameters.first.nested_params.parameters.map(&:name)).must_equal %i[id]
+      expect(copy.parameters.map(&:name)).must_equal %i[claim verdict]
+    end
+
+    it "produces an equivalent schema" do
+      original = Riffer::Params.new
+      original.required(:answer, String, description: "the answer")
+      original.optional(:score, Float, default: 0.0)
+
+      expect(original.deep_copy.to_json_schema(strict: false)).
+        must_equal original.to_json_schema(strict: false)
+    end
+  end
 end

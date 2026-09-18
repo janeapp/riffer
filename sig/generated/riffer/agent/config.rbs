@@ -103,6 +103,21 @@ class Riffer::Agent::Config
   # : (Symbol) -> Array[Hash[Symbol, untyped]]
   def guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 
+  # Returns a copy for a subclass to start from, sharing no mutable collection
+  # with this one.
+  #
+  # An Array +tools_config+ is duplicated because +attr_accessor+ leaves it open
+  # to +<<+ from outside; a Proc is shared, having nothing to alias.
+  #
+  # +identifier+ is excluded because it is configuration here but identity on the
+  # subclass; two classes claiming one identifier raise
+  # Riffer::DuplicateIdentifierError at the next registry lookup. +tool_runtime+
+  # is excluded so a subclass still picks up +Riffer.config.tool_runtime+ instead
+  # of pinning whatever this class resolved.
+  # --
+  # : () -> Riffer::Agent::Config
+  def copy_for_subclass: () -> Riffer::Agent::Config
+
   private
 
   # --

@@ -28,6 +28,16 @@ class Riffer::Agent
     @config ||= Riffer::Agent::Config.new
   end
 
+  # Copies this class's configuration onto a new subclass, so the subclass starts
+  # from it and its own DSL calls override on top. Fires before the subclass body
+  # runs, which is what makes that ordering hold.
+  #--
+  #: (Class) -> void
+  def self.inherited(subclass)
+    super
+    subclass.instance_variable_set(:@config, config.copy_for_subclass)
+  end
+
   # Gets or sets the agent identifier.
   #
   #--

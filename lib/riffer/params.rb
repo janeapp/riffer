@@ -42,6 +42,21 @@ class Riffer::Params
     params
   end
 
+  # Returns a copy holding no collection in common with this one, so a caller can
+  # keep defining parameters on either without reaching the other.
+  #
+  # Param itself is read-only, so its instances are shared rather than rebuilt.
+  # Only +nested_params+ needs following, being a Params with a mutable
+  # collection of its own.
+  #
+  #--
+  #: () -> Riffer::Params
+  def deep_copy
+    copy = self.class.new
+    @parameters.each { |param| copy.parameters << copy_param(param) }
+    copy
+  end
+
   # Defines a required parameter.
   #
   #--
@@ -150,6 +165,23 @@ class Riffer::Params
   end
 
   private
+
+  #--
+  #: (Riffer::Params::Param) -> Riffer::Params::Param
+  def copy_param(param)
+    return param unless param.nested_params
+
+    Riffer::Params::Param.new(
+      name: param.name,
+      type: param.type,
+      required: param.required,
+      description: param.description,
+      enum: param.enum,
+      default: param.default,
+      item_type: param.item_type,
+      nested_params: param.nested_params.deep_copy,
+    )
+  end
 
   #--
   #: (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?

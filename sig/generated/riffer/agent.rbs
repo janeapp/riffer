@@ -22,6 +22,13 @@ class Riffer::Agent
   # : () -> Riffer::Agent::Config
   def self.config: () -> Riffer::Agent::Config
 
+  # Copies this class's configuration onto a new subclass, so the subclass starts
+  # from it and its own DSL calls override on top. Fires before the subclass body
+  # runs, which is what makes that ordering hold.
+  # --
+  # : (Class) -> void
+  def self.inherited: (Class) -> void
+
   # Gets or sets the agent identifier.
   #
   # --
