@@ -175,6 +175,30 @@ class Riffer::Agent::Config
     @guardrails[phase] || []
   end
 
+  # Returns a copy for a subclass to start from, sharing no mutable collection
+  # with this one.
+  #
+  # +identifier+ is excluded because it is configuration here but identity on the
+  # subclass; two classes claiming one identifier raise
+  # Riffer::DuplicateIdentifierError at the next registry lookup. +tool_runtime+
+  # is excluded so a subclass still picks up +Riffer.config.tool_runtime+ instead
+  # of pinning whatever this class resolved.
+  #--
+  #: () -> Riffer::Agent::Config
+  def copy_for_subclass
+    Riffer::Agent::Config.new(
+      model: model,
+      instructions: instructions,
+      model_options: model_options.dup,
+      structured_output: structured_output,
+      max_steps: max_steps,
+      tools_config: tools_config,
+      mcp_configs: mcp_configs.dup,
+      skills_config: skills_config&.dup,
+      guardrails: guardrails.transform_values(&:dup),
+    )
+  end
+
   private
 
   #--

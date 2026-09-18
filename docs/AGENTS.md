@@ -126,7 +126,7 @@ end
 
 ### use_mcp
 
-Loads tools from registered [MCP](MCP.md) servers by tag. Like `uses_tools`, **`use_mcp` is not inherited**—add it on each subclass that should include MCP tools.
+Loads tools from registered [MCP](MCP.md) servers by tag. A subclass inherits its parent's registrations and `use_mcp` adds to them, so a tag declared on both is registered twice.
 
 ### model_options
 
@@ -303,6 +303,32 @@ MyAgent.config.max_steps  # => 8
 ```
 
 The DSL methods read and mutate this Config in place.
+
+### Inheritance
+
+A subclass starts from a copy of its parent's Config, so it inherits every setting the parent declared and overrides only what its own body declares:
+
+```ruby
+class BaseAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  max_steps 8
+end
+
+class TerseAgent < BaseAgent
+  max_steps 2
+end
+
+TerseAgent.config.model      # => 'openai/gpt-5-mini'
+TerseAgent.config.max_steps  # => 2
+BaseAgent.config.max_steps   # => 8
+```
+
+The copy shares no mutable collection with the parent, so `use_mcp`, `guardrail`, and a `skills` block on a subclass never reach the class it inherits from.
+
+Two settings are deliberately not copied:
+
+- `identifier` — configuration on the parent but identity on the subclass. A subclass derives its own from its class name, and two classes claiming one identifier would raise `Riffer::DuplicateIdentifierError` at the first lookup.
+- `tool_runtime` — a subclass resolves `Riffer.config.tool_runtime` at its own definition time rather than pinning whatever its parent resolved.
 
 For advanced composition or testing, build a Config directly and pass it via `config:` to bypass class-level DSL entirely:
 
