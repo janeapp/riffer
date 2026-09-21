@@ -252,7 +252,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       tool_call: nil,
     } #: Hash[Symbol, untyped]
 
-    message_stopped = false
+    stream_completed = false
 
     client.converse_stream(**params) do |stream|
       stream.on_event do |event|
@@ -266,16 +266,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
           handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
         when Aws::BedrockRuntime::Types::MessageStopEvent
-          message_stopped = true
+          stream_completed = true
           yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
         when Aws::Errors::EventError
           # The SDK turns an event-stream +:message-type: error+ frame into an
           # EventError instance and hands it to this block as an event; it is
-          # never raised. Re-raise it here (Exception#exception clones the
-          # error with a useful message while keeping error_code/error_message)
-          # so the failure surfaces instead of truncating the stream.
+          # never raised. Re-raise it here so the failure surfaces instead of
+          # truncating the stream.
           raise_stream_event_error!(event)
         else
           raise_if_stream_exception!(event)
@@ -283,7 +282,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       end
     end
 
-    return if message_stopped
+    return if stream_completed
 
     raise Riffer::IncompleteStreamError, "Bedrock ConverseStream ended without a messageStop event"
   end

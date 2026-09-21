@@ -211,7 +211,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       web_search_query: nil,
     } #: Hash[Symbol, untyped]
 
-    message_stopped = false
+    stream_completed = false
 
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
@@ -249,7 +249,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
             handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder)
           end
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
-          message_stopped = true
+          stream_completed = true
           handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
       end
@@ -260,7 +260,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       stream.close
     end
 
-    return if message_stopped
+    return if stream_completed
 
     raise Riffer::IncompleteStreamError, "Anthropic stream ended without a message_stop event"
   end
