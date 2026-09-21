@@ -846,13 +846,97 @@ describe Riffer::Providers::AmazonBedrock do
           ),
           event_type: :metadata,
         )
-        stub_stream_events(provider, [message_start, metadata])
+        message_stop = Aws::BedrockRuntime::Types::MessageStopEvent.new(
+          stop_reason: "end_turn",
+          event_type: :message_stop,
+        )
+        stub_stream_events(provider, [message_start, metadata, message_stop])
 
         events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
         usage_done = events.find { |e| e.is_a?(Riffer::StreamEvents::TokenUsageDone) }
 
         expect(usage_done).wont_be_nil
         expect(usage_done.token_usage.input_tokens).must_equal 5
+      end
+    end
+
+    describe "when the stream ends without a messageStop event" do
+      let(:provider) { Riffer::Providers::AmazonBedrock.new }
+
+      def stub_stream_events(provider, events)
+        stream_double = Object.new
+        stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+        client_double = Object.new
+        client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+        provider.instance_variable_set(:@client, client_double)
+      end
+
+      it "raises Riffer::IncompleteStreamError for an empty stream" do
+        stub_stream_events(provider, [])
+
+        error = assert_raises(Riffer::IncompleteStreamError) do
+          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        end
+
+        assert_kind_of Riffer::Error, error
+        expect(error.message).must_equal "Bedrock ConverseStream ended without a messageStop event"
+      end
+
+      it "raises after yielding the content events it did receive" do
+        provider # force SDK load before constructing the Aws types below
+        delta_event = Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+          delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(text: "Hel"),
+          content_block_index: 0,
+          event_type: :content_block_delta,
+        )
+        stop_event = Aws::BedrockRuntime::Types::ContentBlockStopEvent.new(
+          content_block_index: 0,
+          event_type: :content_block_stop,
+        )
+        stub_stream_events(provider, [delta_event, stop_event])
+
+        enum = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+        events = []
+
+        assert_raises(Riffer::IncompleteStreamError) { enum.each { |e| events << e } }
+
+        expect(events.map(&:class)).must_equal [
+          Riffer::StreamEvents::TextDelta,
+          Riffer::StreamEvents::TextDone,
+        ]
+        expect(events.first.content).must_equal "Hel"
+        expect(events.last.content).must_equal "Hel"
+      end
+
+      # aws-sdk-core turns a `:message-type: error` frame into an EventError
+      # instance handed to the on_event block; it is never raised by the SDK.
+      it "raises the EventError the SDK delivers as an event" do
+        provider # force SDK load before constructing the Aws types below
+        event = Aws::Errors::EventError.new(:error, "InternalServerError", "boom")
+        stub_stream_events(provider, [event])
+
+        error = assert_raises(Aws::Errors::EventError) do
+          provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        end
+
+        expect(error.message).must_equal "InternalServerError: boom"
+        expect(error.error_code).must_equal "InternalServerError"
+        expect(error.error_message).must_equal "boom"
+      end
+
+      it "does not raise when a messageStop event arrives" do
+        provider # force SDK load before constructing the Aws types below
+        message_stop = Aws::BedrockRuntime::Types::MessageStopEvent.new(
+          stop_reason: "end_turn",
+          event_type: :message_stop,
+        )
+        stub_stream_events(provider, [message_stop])
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+        finish_reason_done = events.find { |e| e.is_a?(Riffer::StreamEvents::FinishReasonDone) }
+
+        expect(finish_reason_done).wont_be_nil
+        expect(finish_reason_done.finish_reason).must_equal :stop
       end
     end
 
@@ -885,6 +969,10 @@ describe Riffer::Providers::AmazonBedrock do
         events << Aws::BedrockRuntime::Types::ContentBlockStopEvent.new(
           content_block_index: 0,
           event_type: :content_block_stop,
+        )
+        events << Aws::BedrockRuntime::Types::MessageStopEvent.new(
+          stop_reason: "end_turn",
+          event_type: :message_stop,
         )
         stub_stream_events(provider, events)
 

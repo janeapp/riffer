@@ -272,6 +272,25 @@ event.to_h               # => {role: :assistant, finish_reason: :length, raw_fin
 
 The agent loop stamps this value onto the accumulated assistant message's `finish_reason`.
 
+## Incomplete Streams
+
+If a provider's stream ends before its terminal event, the enumerator raises `Riffer::IncompleteStreamError` (a `Riffer::Error` subclass) instead of finishing normally, so a truncated or empty response is never returned as a complete message. Events already yielded before the raise were delivered as usual, and the request is safe to retry.
+
+Supported on Amazon Bedrock, Anthropic, and OpenAI / Azure OpenAI.
+
+```ruby
+attempts = 0
+begin
+  agent.stream_text(prompt: "Tell me a story").each do |event|
+    print event.content if event.is_a?(Riffer::StreamEvents::TextDelta)
+  end
+rescue Riffer::IncompleteStreamError => e
+  warn "stream ended early: #{e.message}"
+  retry if (attempts += 1) < 3
+  raise
+end
+```
+
 ## Streaming with Tools
 
 When an agent uses tools during streaming, the flow is:

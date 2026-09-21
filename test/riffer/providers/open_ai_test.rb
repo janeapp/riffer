@@ -1447,10 +1447,24 @@ describe Riffer::Providers::OpenAI do
       expect(close_count).must_equal 1
     end
 
-    it "calls stream.close exactly once on happy path" do
+    it "calls stream.close exactly once when the stream ends without a terminal event" do
       close_count = 0
       stream_double = Object.new
       stream_double.define_singleton_method(:each) { |&_block| }
+      stream_double.define_singleton_method(:close) { close_count += 1 }
+      install_stream_double(provider, stream_double)
+
+      assert_raises(Riffer::IncompleteStreamError) do
+        provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+      end
+      expect(close_count).must_equal 1
+    end
+
+    it "calls stream.close exactly once on happy path" do
+      completed = Struct.new(:type, :response).new(:"response.completed", nil)
+      close_count = 0
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| block.call(completed) }
       stream_double.define_singleton_method(:close) { close_count += 1 }
       install_stream_double(provider, stream_double)
 
