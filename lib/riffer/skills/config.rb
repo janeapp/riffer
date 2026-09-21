@@ -67,4 +67,15 @@ class Riffer::Skills::Config
 
     @activate_tool = value
   end
+
+  private
+
+  # +dup+ would leave the copy sharing this one's activation list, so activating
+  # a skill on either would reach the other. A Proc has nothing to alias.
+  #--
+  #: (Riffer::Skills::Config) -> void
+  def initialize_copy(source)
+    super
+    @activate = source.activate.dup if source.activate.is_a?(Array)
+  end
 end

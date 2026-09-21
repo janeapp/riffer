@@ -45,4 +45,12 @@ class Riffer::Skills::Config
   # --
   # : (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
   def activate_tool: (?singleton(Riffer::Tool)?) -> singleton(Riffer::Tool)?
+
+  private
+
+  # +dup+ would leave the copy sharing this one's activation list, so activating
+  # a skill on either would reach the other. A Proc has nothing to alias.
+  # --
+  # : (Riffer::Skills::Config) -> void
+  def initialize_copy: (Riffer::Skills::Config) -> void
 end

@@ -298,4 +298,67 @@ describe Riffer::Agent::Config do
       expect(Riffer::Agent::Config.new.guardrails_for(:unknown)).must_equal []
     end
   end
+  # Enumerating the fields to isolate has missed one every time it was tried, so
+  # this asserts the invariant instead: walk both graphs and fail on any unfrozen
+  # collection reachable from each. A newly added field is covered without anyone
+  # remembering to cover it.
+  describe "#dup isolation" do
+    let(:populated) do
+      config = Riffer::Agent::Config.new(
+        identifier: "populated",
+        model: "mock/riffer-1",
+        instructions: "You are populated.",
+        model_options: { thinking: { budget_tokens: 100 }, stop: ["halt"] },
+        max_steps: 4,
+        tools_config: [Riffer::Tool],
+        tool_runtime: Riffer::Tools::Runtime::Inline,
+      )
+      config.add_mcp(:a_tag)
+      config.add_guardrail(:before, klass: Riffer::Guardrail, options: { threshold: 1 })
+      config.skills_config = Riffer::Skills::Config.new.tap { |sc| sc.activate(["a-skill"]) }
+      config.structured_output = Riffer::Params.new.tap do |params|
+        params.required(:claim, Hash) { required :id, String }
+      end
+      config
+    end
+
+    it "shares no mutable collection with its copy" do
+      shared = shared_mutable_paths(populated, populated.dup)
+
+      expect(shared).must_equal []
+    end
+  end
+
+  private
+
+  # Walks two object graphs in parallel and collects the paths at which both
+  # reach one unfrozen Hash or Array. Two references to the same non-collection
+  # are deliberate sharing, so recursion stops there — only what is reachable
+  # through a copied object can be wrongly shared.
+  def shared_mutable_paths(original, copy, path = "config", seen = {}.compare_by_identity, found = [])
+    return found if original.nil? || original.is_a?(Module) || original.is_a?(Proc)
+    return found if seen.key?(original)
+
+    seen[original] = true
+    collection = original.is_a?(Hash) || original.is_a?(Array)
+    found << path if collection && !original.frozen? && original.equal?(copy)
+    return found if !collection && original.equal?(copy)
+
+    case original
+    when Hash
+      original.each_key { |key| shared_mutable_paths(original[key], copy[key], "#{path}[#{key}]", seen, found) }
+    when Array
+      original.each_index { |i| shared_mutable_paths(original[i], copy[i], "#{path}[#{i}]", seen, found) }
+    else
+      original.instance_variables.each do |ivar|
+        shared_mutable_paths(
+          original.instance_variable_get(ivar),
+          copy.instance_variable_get(ivar),
+          "#{path}.#{ivar}", seen, found,
+        )
+      end
+    end
+
+    found
+  end
 end
