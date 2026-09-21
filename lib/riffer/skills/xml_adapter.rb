@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-require "cgi"
+require "cgi/escape"
 
 # Renders a skill catalog as XML for the system prompt, optimized for
 # Anthropic/Claude.
