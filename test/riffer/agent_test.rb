@@ -353,6 +353,46 @@ describe Riffer::Agent do
       expect(parent_nested.parameters.map(&:name)).must_equal %i[id]
     end
 
+    it "does not let a subclass reach the tags inside a parent's mcp entry" do
+      parent = stub_agent("McpTagsParentAgent") do
+        model "mock/riffer-1"
+        use_mcp :shared_tag
+      end
+      child = stub_agent("McpTagsChildAgent", base: parent)
+
+      child.config.mcp_configs.first[:tags] << :extra_tag
+
+      expect(child.config.mcp_configs.first[:tags]).must_equal %i[shared_tag extra_tag]
+      expect(parent.config.mcp_configs.first[:tags]).must_equal %i[shared_tag]
+    end
+
+    it "does not let a subclass reach the options inside a parent's guardrail entry" do
+      guardrail_class = Class.new(Riffer::Guardrail)
+      parent = stub_agent("GuardrailOptionsParentAgent") do
+        model "mock/riffer-1"
+        guardrail :before, with: guardrail_class, threshold: 1
+      end
+      child = stub_agent("GuardrailOptionsChildAgent", base: parent)
+
+      child.config.guardrails_for(:before).first[:options][:threshold] = 99
+
+      expect(child.config.guardrails_for(:before).first[:options][:threshold]).must_equal 99
+      expect(parent.config.guardrails_for(:before).first[:options][:threshold]).must_equal 1
+    end
+
+    it "does not let a subclass reach a nested value in the parent's model options" do
+      parent = stub_agent("ModelOptionsParentAgent") do
+        model "mock/riffer-1"
+        model_options({ thinking: { budget_tokens: 100 } })
+      end
+      child = stub_agent("ModelOptionsChildAgent", base: parent)
+
+      child.config.model_options[:thinking][:budget_tokens] = 999
+
+      expect(child.config.model_options[:thinking][:budget_tokens]).must_equal 999
+      expect(parent.config.model_options[:thinking][:budget_tokens]).must_equal 100
+    end
+
     it "gives a subclass its own skills config" do
       parent = stub_agent("SkillsParentAgent") do
         model "mock/riffer-1"

@@ -184,19 +184,32 @@ class Riffer::Agent::Config
   end
 
   # +dup+ would leave the copy sharing every collection with this one, so a
-  # declaration on either would reach the other. An Array +tools_config+ is
-  # duplicated because +attr_accessor+ leaves it open to +<<+ from outside; a
-  # Proc is shared, having nothing to alias.
+  # declaration on either would reach the other. The nesting runs deeper than one
+  # level: an mcp entry holds its own +:tags+ array, a guardrail entry its own
+  # +:options+ hash, and +model_options+ is arbitrary.
   #--
   #: (Riffer::Agent::Config) -> void
   def initialize_copy(source)
     super
-    @model_options = source.model_options.dup
-    @mcp_configs = source.mcp_configs.dup
-    @guardrails = source.guardrails.transform_values(&:dup)
+    @model_options = deep_dup(source.model_options)
+    @mcp_configs = deep_dup(source.mcp_configs)
+    @guardrails = deep_dup(source.guardrails)
+    @tools_config = deep_dup(source.tools_config)
     @skills_config = source.skills_config&.dup
     @structured_output = source.structured_output&.dup
-    @tools_config = source.tools_config.is_a?(Array) ? source.tools_config.dup : source.tools_config
+  end
+
+  # Only collections are rebuilt. Anything else is shared by reference, which a
+  # Class or a Proc needs — +Class#dup+ would answer a new anonymous class, and a
+  # duplicated Proc would only allocate.
+  #--
+  #: (untyped) -> untyped
+  def deep_dup(value)
+    case value
+    when Hash then value.transform_values { |entry| deep_dup(entry) }
+    when Array then value.map { |entry| deep_dup(entry) }
+    else value
+    end
   end
 
   private

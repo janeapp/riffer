@@ -91,7 +91,7 @@ Tool names must be unique across `uses_tools` and all included MCP servers; dupl
 
 ### Subclassing
 
-A subclass [inherits](AGENTS.md#inheritance) its parent's registrations, and `use_mcp` adds to them. Declaring the same tag on a parent and a child registers it twice.
+A subclass [inherits](AGENTS.md#inheritance) its parent's registrations, and `use_mcp` adds to them. Repeating a parent's tag adds a second entry rather than replacing the first. Duplicate tags are de-duplicated when tools resolve, so a server's tools are never loaded twice.
 
 ## Progressive Tool Discovery
 

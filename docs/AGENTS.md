@@ -126,7 +126,7 @@ end
 
 ### use_mcp
 
-Loads tools from registered [MCP](MCP.md) servers by tag. A subclass inherits its parent's registrations and `use_mcp` adds to them, so a tag declared on both is registered twice.
+Loads tools from registered [MCP](MCP.md) servers by tag. A subclass inherits its parent's registrations and `use_mcp` adds to them. Duplicate tags are de-duplicated when tools resolve.
 
 ### model_options
 

@@ -110,12 +110,19 @@ class Riffer::Agent::Config
   def guardrails_for: (Symbol) -> Array[Hash[Symbol, untyped]]
 
   # +dup+ would leave the copy sharing every collection with this one, so a
-  # declaration on either would reach the other. An Array +tools_config+ is
-  # duplicated because +attr_accessor+ leaves it open to +<<+ from outside; a
-  # Proc is shared, having nothing to alias.
+  # declaration on either would reach the other. The nesting runs deeper than one
+  # level: an mcp entry holds its own +:tags+ array, a guardrail entry its own
+  # +:options+ hash, and +model_options+ is arbitrary.
   # --
   # : (Riffer::Agent::Config) -> void
   def initialize_copy: (Riffer::Agent::Config) -> void
+
+  # Only collections are rebuilt. Anything else is shared by reference, which a
+  # Class or a Proc needs — +Class#dup+ would answer a new anonymous class, and a
+  # duplicated Proc would only allocate.
+  # --
+  # : (untyped) -> untyped
+  def deep_dup: (untyped) -> untyped
 
   private
 
