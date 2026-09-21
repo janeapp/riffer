@@ -238,16 +238,37 @@ describe Riffer::Agent do
       expect(Class.new(parent).config.identifier).must_be_nil
     end
 
-    # Excluded from the copy so a subclass resolves the current global rather
-    # than pinning whatever its parent resolved at load time.
-    it "does not copy tool_runtime" do
+    it "inherits a declared tool_runtime" do
       parent = stub_agent("RuntimeParentAgent") do
         model "mock/riffer-1"
         tool_runtime Riffer::Tools::Runtime::Inline
       end
       child = stub_agent("RuntimeChildAgent", base: parent)
 
-      expect(child.config.tool_runtime).must_equal Riffer.config.tool_runtime
+      expect(child.config.tool_runtime).must_equal Riffer::Tools::Runtime::Inline
+    end
+
+    it "falls back to the global runtime when the parent declared none" do
+      parent = stub_agent("NoRuntimeParentAgent") { model "mock/riffer-1" }
+      child = stub_agent("NoRuntimeChildAgent", base: parent)
+
+      expect(child.config.tool_runtime).must_be_same_as Riffer.config.tool_runtime
+    end
+
+    # The global resolves on read rather than at construction, so a config that
+    # declared no runtime follows a later change to it.
+    it "follows a change to the global runtime when none was declared" do
+      agent = stub_agent("LateGlobalAgent") { model "mock/riffer-1" }
+      replacement = Riffer::Tools::Runtime::Inline.new
+      original = Riffer.config.tool_runtime
+
+      begin
+        Riffer.config.tool_runtime = replacement
+
+        expect(agent.config.tool_runtime).must_be_same_as replacement
+      ensure
+        Riffer.config.tool_runtime = original
+      end
     end
 
     it "does not let a subclass append to the parent's mcp registrations" do

@@ -7,6 +7,8 @@
 class Riffer::Agent::Config
   DEFAULT_MAX_STEPS = 16 #: Integer
 
+  # @rbs @tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?
+
   # The configured agent identifier.
   attr_reader :identifier #: String? # @dynamic identifier
 
@@ -31,9 +33,6 @@ class Riffer::Agent::Config
   # The accumulated +use_mcp+ tag configurations.
   attr_reader :mcp_configs #: Array[Hash[Symbol, untyped]] # @dynamic mcp_configs
 
-  # The configured tool runtime.
-  attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) # @dynamic tool_runtime
-
   # The configured skills.
   attr_accessor :skills_config #: Riffer::Skills::Config? # @dynamic skills_config, skills_config=
 
@@ -52,7 +51,7 @@ class Riffer::Agent::Config
   #    ?max_steps: Numeric?,
   #    ?tools_config: (Array[singleton(Riffer::Tool)] | Proc)?,
   #    ?mcp_configs: Array[Hash[Symbol, untyped]],
-  #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc),
+  #    ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?,
   #    ?skills_config: Riffer::Skills::Config?,
   #    ?guardrails: Hash[Symbol, Array[Hash[Symbol, untyped]]]
   #  ) -> void
@@ -65,7 +64,7 @@ class Riffer::Agent::Config
     max_steps: DEFAULT_MAX_STEPS,
     tools_config: nil,
     mcp_configs: [],
-    tool_runtime: Riffer.config.tool_runtime,
+    tool_runtime: nil,
     skills_config: nil,
     guardrails: { before: [], after: [] }
   )
@@ -79,7 +78,7 @@ class Riffer::Agent::Config
     self.model = model
     self.instructions = instructions
     self.structured_output = structured_output
-    self.tool_runtime = tool_runtime
+    self.tool_runtime = tool_runtime if tool_runtime
   end
 
   # Sets +identifier+, coercing the value to String.
@@ -98,6 +97,15 @@ class Riffer::Agent::Config
     end
 
     @structured_output = value
+  end
+
+  # Returns the declared tool runtime, or +Riffer.config.tool_runtime+ when none
+  # was declared. Resolving the global here rather than at construction is what
+  # lets a copy tell an inherited runtime from a defaulted one.
+  #--
+  #: () -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
+  def tool_runtime
+    @tool_runtime || Riffer.config.tool_runtime
   end
 
   # Sets +tool_runtime+. Raises Riffer::ArgumentError on an invalid value.
@@ -197,6 +205,7 @@ class Riffer::Agent::Config
       max_steps: max_steps,
       tools_config: tools_config.is_a?(Array) ? tools_config.dup : tools_config,
       mcp_configs: mcp_configs.dup,
+      tool_runtime: @tool_runtime,
       skills_config: skills_config&.dup,
       guardrails: guardrails.transform_values(&:dup),
     )

@@ -265,7 +265,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, reads `Riffer.config.tool_runtime` at the point of use, so an agent that declares none follows a later change to the global. See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ### guardrail
 
@@ -325,10 +325,7 @@ BaseAgent.config.max_steps   # => 8
 
 The copy shares no mutable collection with the parent, so `use_mcp`, `guardrail`, and a `skills` block on a subclass never reach the class it inherits from.
 
-Two settings are deliberately not copied:
-
-- `identifier` — configuration on the parent but identity on the subclass. A subclass derives its own from its class name, and two classes claiming one identifier would raise `Riffer::DuplicateIdentifierError` at the first lookup.
-- `tool_runtime` — a subclass resolves `Riffer.config.tool_runtime` at its own definition time rather than pinning whatever its parent resolved.
+One setting is deliberately not copied. `identifier` is configuration on the parent but identity on the subclass, so a subclass derives its own from its class name; two classes claiming one identifier would raise `Riffer::DuplicateIdentifierError` at the first lookup.
 
 For advanced composition or testing, build a Config directly and pass it via `config:` to bypass class-level DSL entirely:
 
