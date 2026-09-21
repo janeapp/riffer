@@ -193,22 +193,12 @@ class Riffer::Agent::Config
   #: (Riffer::Agent::Config) -> void
   def initialize_copy(source)
     super
-    @model_options = deep_dup(source.model_options)
-    @mcp_configs = deep_dup(source.mcp_configs)
-    @guardrails = deep_dup(source.guardrails)
-    @tools_config = deep_dup(source.tools_config)
+    @model_options = Riffer::Helpers::DeepDup.call(source.model_options)
+    @mcp_configs = Riffer::Helpers::DeepDup.call(source.mcp_configs)
+    @guardrails = Riffer::Helpers::DeepDup.call(source.guardrails)
+    @tools_config = Riffer::Helpers::DeepDup.call(source.tools_config)
     @skills_config = source.skills_config&.dup
     @structured_output = source.structured_output&.dup
-  end
-
-  #--
-  #: (untyped) -> untyped
-  def deep_dup(value)
-    case value
-    when Hash then value.transform_values { |entry| deep_dup(entry) }
-    when Array then value.map { |entry| deep_dup(entry) }
-    else value
-    end
   end
 
   #--

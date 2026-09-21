@@ -316,8 +316,10 @@ describe Riffer::Agent::Config do
       config.add_mcp(:a_tag)
       config.add_guardrail(:before, klass: Riffer::Guardrail, options: { threshold: 1 })
       config.skills_config = Riffer::Skills::Config.new.tap { |sc| sc.activate(["a-skill"]) }
+      config.add_guardrail(:around, klass: Riffer::Guardrail, options: { phase: :both })
       config.structured_output = Riffer::Params.new.tap do |params|
         params.required(:claim, Hash) { required :id, String }
+        params.optional(:status, String, enum: %w[open closed], default: { note: ["seen"] })
       end
       config
     end
@@ -326,6 +328,15 @@ describe Riffer::Agent::Config do
       shared = shared_mutable_paths(populated, populated.dup)
 
       expect(shared).must_equal []
+    end
+
+    # Isolation from the source is not the only property: an +:around+ guardrail
+    # is one registration listed under two phases, and rebuilding each occurrence
+    # separately would silently make it two.
+    it "keeps a reference shared within the config shared within the copy" do
+      copy = populated.dup
+
+      expect(copy.guardrails_for(:before).last).must_be_same_as copy.guardrails_for(:after).last
     end
   end
 

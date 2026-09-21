@@ -120,10 +120,6 @@ class Riffer::Agent::Config
   def initialize_copy: (Riffer::Agent::Config) -> void
 
   # --
-  # : (untyped) -> untyped
-  def deep_dup: (untyped) -> untyped
-
-  # --
   # : (untyped, String) -> void
   def validate_string_or_proc!: (untyped, String) -> void
 end

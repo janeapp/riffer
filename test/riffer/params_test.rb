@@ -837,6 +837,18 @@ describe Riffer::Params do
       expect(copy.parameters.map(&:name)).must_equal %i[claim verdict]
     end
 
+    it "does not share a mutable enum or default with the original" do
+      original = Riffer::Params.new
+      original.optional(:status, String, enum: %w[open closed], default: { note: ["seen"] })
+
+      copy = original.dup
+      copy.parameters.first.enum << "archived"
+      copy.parameters.first.default[:note] << "edited"
+
+      expect(original.parameters.first.enum).must_equal %w[open closed]
+      expect(original.parameters.first.default).must_equal({ note: ["seen"] })
+    end
+
     it "produces an equivalent schema" do
       original = Riffer::Params.new
       original.required(:answer, String, description: "the answer")

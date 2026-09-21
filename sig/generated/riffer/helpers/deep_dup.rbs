@@ -1,0 +1,21 @@
+# Generated from lib/riffer/helpers/deep_dup.rb with RBS::Inline
+
+# Copying for the nested Hashes and Arrays a configuration object holds.
+module Riffer::Helpers::DeepDup
+  # Returns +value+ with every Hash and Array rebuilt, so a copy shares no
+  # collection with its source.
+  #
+  # Anything else is returned as-is, which a Class or a Proc needs: +Class#dup+
+  # answers a new anonymous class. One source collection maps to one copy, so
+  # references shared within +value+ stay shared in the result — an +:around+
+  # guardrail registered under two phases is still one registration afterwards.
+  # --
+  # : (untyped) -> untyped
+  def call: (untyped) -> untyped
+
+  private
+
+  # --
+  # : (untyped, Hash[untyped, untyped]) -> untyped
+  def rebuild: (untyped, Hash[untyped, untyped]) -> untyped
+end
