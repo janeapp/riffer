@@ -31,11 +31,18 @@ class Riffer::Agent
   # Copies this class's configuration onto a new subclass, so the subclass starts
   # from it and its own DSL calls override on top. Fires before the subclass body
   # runs, which is what makes that ordering hold.
+  #
+  # +identifier+ is cleared because it is configuration here but identity on the
+  # subclass; two classes claiming one identifier raise
+  # Riffer::DuplicateIdentifierError at the next registry lookup. Cleared, the
+  # subclass derives its own from its class name.
   #--
   #: (Class) -> void
   def self.inherited(subclass)
     super
-    subclass.instance_variable_set(:@config, config.copy_for_subclass)
+    copy = config.dup
+    copy.identifier = nil
+    subclass.instance_variable_set(:@config, copy)
   end
 
   # Gets or sets the agent identifier.

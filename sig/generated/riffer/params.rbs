@@ -26,17 +26,6 @@ class Riffer::Params
   # : (Hash[Symbol, untyped]) -> Riffer::Params
   def self.from_json_schema: (Hash[Symbol, untyped]) -> Riffer::Params
 
-  # Returns a copy holding no collection in common with this one, so a caller can
-  # keep defining parameters on either without reaching the other.
-  #
-  # Param itself is read-only, so its instances are shared rather than rebuilt.
-  # Only +nested_params+ needs following, being a Params with a mutable
-  # collection of its own.
-  #
-  # --
-  # : () -> Riffer::Params
-  def deep_copy: () -> Riffer::Params
-
   # Defines a required parameter.
   #
   # --
@@ -72,6 +61,12 @@ class Riffer::Params
   def to_json_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
   private
+
+  # +dup+ would leave the copy sharing this one's parameters, so a caller
+  # defining a parameter on either would reach the other.
+  # --
+  # : (Riffer::Params) -> void
+  def initialize_copy: (Riffer::Params) -> void
 
   # --
   # : (Riffer::Params::Param) -> Riffer::Params::Param
