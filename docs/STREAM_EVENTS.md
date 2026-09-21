@@ -274,18 +274,22 @@ The agent loop stamps this value onto the accumulated assistant message's `finis
 
 ## Incomplete Streams
 
-If a provider's stream ends before its terminal event, the enumerator raises `Riffer::IncompleteStreamError` (a `Riffer::Error` subclass) instead of finishing normally, so a truncated or empty response is never returned as a complete message. Events already yielded before the raise were delivered as usual, and the request is safe to retry.
+If a provider's stream ends before its terminal event, the enumerator raises `Riffer::IncompleteStreamError` (a `Riffer::Error` subclass) instead of finishing normally, so a truncated or empty response is never returned as a complete message. Events already yielded before the raise were delivered as usual, but nothing from the failed step is added to the session: there is no partial assistant message to resume from, and messages from earlier completed steps (tool calls and their results) are untouched.
 
 Supported on Amazon Bedrock, Anthropic, and OpenAI / Azure OpenAI.
 
+The user prompt is added to the session before the run starts and stays there after the failure, so retry with `agent.stream` and no prompt. Passing the prompt again would add a second user turn.
+
 ```ruby
 attempts = 0
+prompt = "Tell me a story"
 begin
-  agent.stream_text(prompt: "Tell me a story").each do |event|
+  agent.stream(prompt).each do |event|
     print event.content if event.is_a?(Riffer::StreamEvents::TextDelta)
   end
 rescue Riffer::IncompleteStreamError => e
   warn "stream ended early: #{e.message}"
+  prompt = nil # already in the session; re-run on the existing history
   retry if (attempts += 1) < 3
   raise
 end
