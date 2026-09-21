@@ -10,7 +10,7 @@ gems:
     remote: https://github.com/ruby/gem_rbs_collection.git
     repo_dir: gems
 - name: anthropic
-  version: 1.69.0
+  version: 1.71.0
   source:
     type: rubygems
 - name: ast
@@ -30,11 +30,11 @@ gems:
     remote: https://github.com/ruby/gem_rbs_collection.git
     repo_dir: gems
 - name: aws-sdk-bedrockruntime
-  version: 1.84.0
+  version: 1.85.0
   source:
     type: rubygems
 - name: aws-sdk-core
-  version: 3.256.0
+  version: 3.257.0
   source:
     type: rubygems
 - name: base64
@@ -170,7 +170,7 @@ gems:
   source:
     type: stdlib
 - name: openai
-  version: 0.88.0
+  version: 0.91.0
   source:
     type: rubygems
 - name: openssl
