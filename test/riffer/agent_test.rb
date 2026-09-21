@@ -203,7 +203,6 @@ describe Riffer::Agent do
       end
       child = stub_agent("ChildAgent", base: parent)
 
-      # A subclass inherits the parent's settings in a config object of its own.
       expect(child.config).wont_be_same_as parent.config
       expect(child.config.max_steps).must_equal 3
     end
