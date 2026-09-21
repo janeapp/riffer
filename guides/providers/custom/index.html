@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.1</span>
+            <span class="version">v0.47.2</span>
           </div>
         </nav>
       </div>
@@ -469,6 +469,8 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">FinishReasonDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">finish_reason: :stop</span><span class="p">,</span> <span class="ss">raw_finish_reason: </span><span class="s2">"done"</span><span class="p">)</span>
 </code></pre></div></div>
+
+<p>Also have <code>execute_stream</code> raise <code>Riffer::IncompleteStreamError</code> when the stream ends without the provider’s terminal event, rather than returning normally. Otherwise a connection that drops mid-response looks identical to a finished one, and the agent loop accepts a truncated message as complete.</p>
 
 <h2 id="trace-provider-name">Trace Provider Name</h2>
 

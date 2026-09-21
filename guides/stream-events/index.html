@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.1</span>
+            <span class="version">v0.47.2</span>
           </div>
         </nav>
       </div>
@@ -189,6 +189,7 @@
             <ul>
               <li><a href="#using-streaming">Using Streaming</a></li>
               <li><a href="#event-types">Event Types</a></li>
+              <li><a href="#incomplete-streams">Incomplete Streams</a></li>
               <li><a href="#streaming-with-tools">Streaming with Tools</a></li>
               <li><a href="#complete-example">Complete Example</a></li>
               <li><a href="#base-class">Base Class</a></li>
@@ -450,6 +451,28 @@
 </code></pre></div></div>
 
 <p>The agent loop stamps this value onto the accumulated assistant message’s <code>finish_reason</code>.</p>
+
+<h2 id="incomplete-streams">Incomplete Streams</h2>
+
+<p>If a provider’s stream ends before its terminal event, the enumerator raises <code>Riffer::IncompleteStreamError</code> (a <code>Riffer::Error</code> subclass) instead of finishing normally, so a truncated or empty response is never returned as a complete message. Events already yielded before the raise were delivered as usual, but nothing from the failed step is added to the session: there is no partial assistant message to resume from, and messages from earlier completed steps (tool calls and their results) are untouched.</p>
+
+<p>Supported on Amazon Bedrock, Anthropic, and OpenAI / Azure OpenAI.</p>
+
+<p>The user prompt is added to the session before the run starts and stays there after the failure, so retry with <code>agent.stream</code> and no prompt. Passing the prompt again would add a second user turn.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">attempts</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">"Tell me a story"</span>
+<span class="k">begin</span>
+  <span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="n">prompt</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span> <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">rescue</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">IncompleteStreamError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="nb">warn</span> <span class="s2">"stream ended early: </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+  <span class="n">prompt</span> <span class="o">=</span> <span class="kp">nil</span> <span class="c1"># already in the session; re-run on the existing history</span>
+  <span class="k">retry</span> <span class="k">if</span> <span class="p">(</span><span class="n">attempts</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span>
+  <span class="k">raise</span>
+<span class="k">end</span>
+</code></pre></div></div>
 
 <h2 id="streaming-with-tools">Streaming with Tools</h2>
 

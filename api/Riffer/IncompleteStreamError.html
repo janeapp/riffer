@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::ArgumentError - Riffer API Reference</title>
+<title>class Riffer::IncompleteStreamError - Riffer API Reference</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::ArgumentError"
+    content="ruby,class,Riffer::IncompleteStreamError"
   >
 
     <meta
       name="description"
-      content="class Riffer::ArgumentError: Raised when invalid arguments are provided."
+      content="class Riffer::IncompleteStreamError: Raised when a provider&#39;s stream ends before its terminal event (Bedrock&#39;s messageStop, Anthropic&#39;s message_stop, OpenAI&#39;s response. failed), so a trun"
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::ArgumentError - Riffer API Reference">
+<meta property="og:title" content="class Riffer::IncompleteStreamError - Riffer API Reference">
 
 
 
-    <meta property="og:description" content="Raised when invalid arguments are provided.">
+    <meta property="og:description" content="Raised when a provider&#39;s stream ends before its terminal event (Bedrock&#39;s messageStop, Anthropic&#39;s message_stop, OpenAI&#39;s response. failed), so a trun">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::ArgumentError - Riffer API Reference">
+<meta name="twitter:title" content="class Riffer::IncompleteStreamError - Riffer API Reference">
 
 
 
-    <meta name="twitter:description" content="Raised when invalid arguments are provided.">
+    <meta name="twitter:description" content="Raised when a provider&#39;s stream ends before its terminal event (Bedrock&#39;s messageStop, Anthropic&#39;s message_stop, OpenAI&#39;s response. failed), so a trun">
 
 
 
@@ -442,7 +442,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li>ArgumentError</li></ul>
+    <ul><li><a href="Error.html">Riffer::Error</a><ul><li>StandardError</li></ul></li></ul>
   </details>
 </div>
 
@@ -473,7 +473,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-argumenterror">
+<main role="main" aria-labelledby="class-riffer-incompletestreamerror">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -486,21 +486,21 @@
       
       <li>
         
-        <span>ArgumentError</span>
+        <span>IncompleteStreamError</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::ArgumentError" class="legacy-anchor"></span>
-  <h1 id="class-riffer-argumenterror" class="anchor-link class">
-    class Riffer::ArgumentError
+  <span id="class-Riffer::IncompleteStreamError" class="legacy-anchor"></span>
+  <h1 id="class-riffer-incompletestreamerror" class="anchor-link class">
+    class Riffer::IncompleteStreamError
   </h1>
 
   <section class="description">
     
-<p>Raised when invalid arguments are provided.</p>
+<p>Raised when a provider’s stream ends before its terminal event (Bedrock’s messageStop, Anthropic’s message_stop, OpenAI’s response.completed / incomplete / failed), so a truncated or empty response is never returned as a complete message. Events already yielded were delivered; the request is safe to retry.</p>
 
   </section>
 
