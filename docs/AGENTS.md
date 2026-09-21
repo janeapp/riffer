@@ -126,7 +126,7 @@ end
 
 ### use_mcp
 
-Loads tools from registered [MCP](MCP.md) servers by tag. A subclass inherits its parent's registrations and `use_mcp` adds to them. Duplicate tags are de-duplicated when tools resolve.
+Loads tools from registered [MCP](MCP.md) servers by tag.
 
 ### model_options
 
@@ -323,9 +323,7 @@ TerseAgent.config.max_steps  # => 2
 BaseAgent.config.max_steps   # => 8
 ```
 
-The copy shares no mutable collection with the parent, so `use_mcp`, `guardrail`, and a `skills` block on a subclass never reach the class it inherits from.
-
-One setting is deliberately not copied. `identifier` is configuration on the parent but identity on the subclass, so a subclass derives its own from its class name; two classes claiming one identifier would raise `Riffer::DuplicateIdentifierError` at the first lookup.
+`identifier` is not inherited. A subclass derives its own from its class name, since two classes claiming one identifier would raise `Riffer::DuplicateIdentifierError` at the first lookup.
 
 For advanced composition or testing, build a Config directly and pass it via `config:` to bypass class-level DSL entirely:
 

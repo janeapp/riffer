@@ -89,10 +89,6 @@ MCP tools are appended after any tools declared with `uses_tools`.
 
 Tool names must be unique across `uses_tools` and all included MCP servers; duplicate names raise `Riffer::ArgumentError` when tools are resolved.
 
-### Subclassing
-
-A subclass [inherits](AGENTS.md#inheritance) its parent's registrations, and `use_mcp` adds to them. Repeating a parent's tag adds a second entry rather than replacing the first. Duplicate tags are de-duplicated when tools resolve, so a server's tools are never loaded twice.
-
 ## Progressive Tool Discovery
 
 Progressive discovery is the default. The `use_mcp` instruction exposes **`mcp_search`** instead of flooding the context with every tool schema up front.

@@ -299,9 +299,9 @@ describe Riffer::Agent::Config do
     end
   end
   # Enumerating the fields to isolate has missed one every time it was tried, so
-  # this asserts the invariant instead: walk both graphs and fail on any unfrozen
-  # collection reachable from each. A newly added field is covered without anyone
-  # remembering to cover it.
+  # this asserts the invariant instead: no unfrozen collection is reachable from
+  # both a config and its copy. A field or collaborator added later is covered
+  # without anyone remembering to cover it.
   describe "#dup isolation" do
     let(:populated) do
       config = Riffer::Agent::Config.new(
@@ -332,9 +332,9 @@ describe Riffer::Agent::Config do
   private
 
   # Walks two object graphs in parallel and collects the paths at which both
-  # reach one unfrozen Hash or Array. Two references to the same non-collection
-  # are deliberate sharing, so recursion stops there — only what is reachable
-  # through a copied object can be wrongly shared.
+  # reach one unfrozen Hash or Array. Frozen ones are exempt, sharing those being
+  # safe. Recursion continues through a shared object rather than stopping at it,
+  # so an uncopied collaborator is caught as well as an uncopied collection.
   def shared_mutable_paths(original, copy, path = "config", seen = {}.compare_by_identity, found = [])
     return found if original.nil? || original.is_a?(Module) || original.is_a?(Proc)
     return found if seen.key?(original)
@@ -342,7 +342,6 @@ describe Riffer::Agent::Config do
     seen[original] = true
     collection = original.is_a?(Hash) || original.is_a?(Array)
     found << path if collection && !original.frozen? && original.equal?(copy)
-    return found if !collection && original.equal?(copy)
 
     case original
     when Hash

@@ -157,24 +157,7 @@ class Riffer::Params
   #: (Riffer::Params) -> void
   def initialize_copy(source)
     super
-    @parameters = source.parameters.map { |param| copy_param(param) }
-  end
-
-  #--
-  #: (Riffer::Params::Param) -> Riffer::Params::Param
-  def copy_param(param)
-    return param unless param.nested_params
-
-    Riffer::Params::Param.new(
-      name: param.name,
-      type: param.type,
-      required: param.required,
-      description: param.description,
-      enum: param.enum,
-      default: param.default,
-      item_type: param.item_type,
-      nested_params: param.nested_params.dup,
-    )
+    @parameters = source.parameters.map(&:dup)
   end
 
   #--

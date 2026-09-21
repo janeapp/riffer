@@ -183,6 +183,8 @@ class Riffer::Agent::Config
     @guardrails[phase] || []
   end
 
+  private
+
   # +dup+ would leave the copy sharing every collection with this one, so a
   # declaration on either would reach the other. The nesting runs deeper than one
   # level: an mcp entry holds its own +:tags+ array, a guardrail entry its own
@@ -199,9 +201,6 @@ class Riffer::Agent::Config
     @structured_output = source.structured_output&.dup
   end
 
-  # Only collections are rebuilt. Anything else is shared by reference, which a
-  # Class or a Proc needs — +Class#dup+ would answer a new anonymous class, and a
-  # duplicated Proc would only allocate.
   #--
   #: (untyped) -> untyped
   def deep_dup(value)
@@ -211,8 +210,6 @@ class Riffer::Agent::Config
     else value
     end
   end
-
-  private
 
   #--
   #: (untyped, String) -> void

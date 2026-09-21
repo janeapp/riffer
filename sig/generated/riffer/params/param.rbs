@@ -84,6 +84,12 @@ class Riffer::Params::Param
 
   private
 
+  # +dup+ would leave the copy sharing this one's nested Params, so a caller
+  # defining a parameter on either would reach the other.
+  # --
+  # : (Riffer::Params::Param) -> void
+  def initialize_copy: (Riffer::Params::Param) -> void
+
   # --
   # : () -> void
   def validate_strict_shape!: () -> void

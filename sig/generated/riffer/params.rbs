@@ -69,10 +69,6 @@ class Riffer::Params
   def initialize_copy: (Riffer::Params) -> void
 
   # --
-  # : (Riffer::Params::Param) -> Riffer::Params::Param
-  def copy_param: (Riffer::Params::Param) -> Riffer::Params::Param
-
-  # --
   # : (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested: (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
