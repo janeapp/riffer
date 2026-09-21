@@ -274,6 +274,8 @@ For streaming, emit a `FinishReasonDone` event near the end of `execute_stream`:
 yielder << Riffer::StreamEvents::FinishReasonDone.new(finish_reason: :stop, raw_finish_reason: "done")
 ```
 
+Also have `execute_stream` raise `Riffer::IncompleteStreamError` when the stream ends without the provider's terminal event, rather than returning normally. Otherwise a connection that drops mid-response looks identical to a finished one, and the agent loop accepts a truncated message as complete.
+
 ## Trace Provider Name
 
 LLM-call and agent-run spans stamp `gen_ai.provider.name` from the `semconv_provider_name` class method. The default is your snake_cased class name; override it when a [GenAI semconv well-known value](https://opentelemetry.io/docs/specs/semconv/gen-ai/) exists for your provider:

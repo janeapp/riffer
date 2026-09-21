@@ -211,6 +211,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       web_search_query: nil,
     } #: Hash[Symbol, untyped]
 
+    stream_completed = false
+
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
     stream = client.messages.stream(
@@ -247,6 +249,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
             handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder)
           end
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
+          stream_completed = true
           handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
       end
@@ -256,6 +259,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       # socket leaks until GC. close is idempotent and a no-op after EOF.
       stream.close
     end
+
+    return if stream_completed
+
+    raise Riffer::IncompleteStreamError, "Anthropic stream ended without a message_stop event"
   end
 
   #--

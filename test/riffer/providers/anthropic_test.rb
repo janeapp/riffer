@@ -1421,10 +1421,26 @@ describe Riffer::Providers::Anthropic do
       expect(close_count).must_equal 1
     end
 
-    it "calls stream.close exactly once on happy path" do
+    it "calls stream.close exactly once when the stream ends without a terminal event" do
       close_count = 0
       stream_double = Object.new
       stream_double.define_singleton_method(:each) { |&_block| }
+      stream_double.define_singleton_method(:close) { close_count += 1 }
+      install_stream_double(provider, stream_double)
+
+      assert_raises(Riffer::IncompleteStreamError) do
+        provider.stream_text(prompt: "Hi", model: "claude-haiku-4-5-20251001").to_a
+      end
+      expect(close_count).must_equal 1
+    end
+
+    it "calls stream.close exactly once on happy path" do
+      provider # force SDK load before constructing the event below
+      message_stop = Anthropic::Helpers::Streaming::MessageStopEvent.new(type: :message_stop, message: nil)
+      close_count = 0
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| block.call(message_stop) }
+      stream_double.define_singleton_method(:accumulated_message) { nil }
       stream_double.define_singleton_method(:close) { close_count += 1 }
       install_stream_double(provider, stream_double)
 

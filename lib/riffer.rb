@@ -41,6 +41,13 @@ module Riffer
   # Raised when a tool encounters an expected execution error.
   class ToolExecutionError < Error; end
 
+  # Raised when a provider's stream ends before its terminal event (Bedrock's
+  # messageStop, Anthropic's message_stop, OpenAI's response.completed /
+  # incomplete / failed), so a truncated or empty response is never returned
+  # as a complete message. Events already yielded were delivered; the
+  # request is safe to retry.
+  class IncompleteStreamError < Error; end
+
   # Base error for a file attachment that can't be resolved for the provider.
   class FileError < Error; end
 

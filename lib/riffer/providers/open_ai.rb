@@ -218,6 +218,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       tool_info: {},
     } #: Hash[Symbol, untyped]
 
+    stream_completed = false
+
     stream = client.responses.stream(params)
     begin
       stream.each do |event|
@@ -247,6 +249,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         when :"response.output_item.done"
           handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
         when :"response.completed", :"response.incomplete", :"response.failed"
+          stream_completed = true
           handle_response_finished(event, state: current_state, yielder: yielder)
         end
       end
@@ -256,6 +259,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
       # socket leaks until GC. close is idempotent and a no-op after EOF.
       stream.close
     end
+
+    return if stream_completed
+
+    raise Riffer::IncompleteStreamError,
+          "OpenAI Responses stream ended without a response.completed, response.incomplete, or response.failed event"
   end
 
   #--
