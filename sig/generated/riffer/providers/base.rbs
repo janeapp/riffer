@@ -105,6 +105,12 @@ class Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
+  # Defaults to no parts rather than raising — reasoning parts are optional, so
+  # providers that don't expose replayable reasoning stay valid.
+  # --
+  # : (untyped) -> Array[Riffer::Messages::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::ReasoningPart]
+
   # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String

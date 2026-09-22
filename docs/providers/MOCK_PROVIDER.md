@@ -47,6 +47,23 @@ provider.stub_response("Based on the tool result, here's my answer.")
 response = agent.generate("Use the tool")
 ```
 
+## Stubbing Reasoning
+
+Stub [reasoning parts](../MESSAGES.md#reasoning) to exercise a host's persistence of them. Hashes are normalized into `Riffer::Messages::ReasoningPart`s:
+
+```ruby
+provider.stub_response("42", reasoning: [
+  {type: :text, text: "The user wants the answer.", format: "mock-v1"},
+  {type: :encrypted, data: "b3BhcXVl", signature: "sig", format: "mock-v1"}
+])
+
+response = agent.generate("What is the answer?")
+response.reasoning.map(&:type)  # => [:text, :encrypted]
+agent.session.messages.last.reasoning_text  # => "The user wants the answer."
+```
+
+When streaming, each part is emitted as a `ReasoningDelta` (only when it carries `text`) followed by a `ReasoningDone` carrying the part, ahead of the text events.
+
 ## Queueing Multiple Responses
 
 Responses are consumed in order:

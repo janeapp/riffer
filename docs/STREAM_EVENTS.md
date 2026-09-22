@@ -108,10 +108,14 @@ event.content  # => "Let me think about "
 Emitted when reasoning is complete:
 
 ```ruby
-event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by step...")
+part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Let me think about this step by step...", format: "mock-v1")
+event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by step...", part: part)
 event.role     # => :assistant
 event.content  # => "Let me think about this step by step..."
+event.part     # => the ReasoningPart, or nil
 ```
+
+`part` is the replayable [reasoning part](MESSAGES.md#reasoning) behind `content`, and the agent loop accumulates it onto the assistant message. It is optional and `nil` for adapters that have not adopted the primitive, which report reasoning as `content` only.
 
 ### WebSearchStatus
 

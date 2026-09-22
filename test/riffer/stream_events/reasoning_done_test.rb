@@ -21,6 +21,19 @@ describe Riffer::StreamEvents::ReasoningDone do
 
       expect(event.role).must_equal :user
     end
+
+    it "leaves the part nil by default" do
+      event = Riffer::StreamEvents::ReasoningDone.new("Hello")
+
+      expect(event.part).must_be_nil
+    end
+
+    it "carries the reasoning part when given" do
+      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Hello", format: "mock-v1")
+      event = Riffer::StreamEvents::ReasoningDone.new("Hello", part: part)
+
+      expect(event.part).must_equal part
+    end
   end
 
   describe "#to_h" do
@@ -28,6 +41,15 @@ describe Riffer::StreamEvents::ReasoningDone do
       event = Riffer::StreamEvents::ReasoningDone.new("Hello")
 
       expect(event.to_h).must_equal({ role: :assistant, content: "Hello" })
+    end
+
+    it "includes the part when one is present" do
+      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Hello", format: "mock-v1")
+      event = Riffer::StreamEvents::ReasoningDone.new("Hello", part: part)
+
+      expect(event.to_h).must_equal(
+        { role: :assistant, content: "Hello", part: { type: :text, text: "Hello", format: "mock-v1" } },
+      )
     end
   end
 end

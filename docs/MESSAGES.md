@@ -124,6 +124,63 @@ msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_out
 msg.to_h  # => {role: :assistant, content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}}
 ```
 
+#### Reasoning
+
+Reasoning models emit thinking blocks alongside their answer, and several providers require those blocks back — verbatim — on the next turn of a tool-calling loop. `Riffer::Messages::ReasoningPart` is the neutral container riffer stores them in: a list of parts on the assistant message, in the order the provider emitted them.
+
+```ruby
+thinking = Riffer::Messages::ReasoningPart.new(type: :text, text: "The user wants the answer.", format: "mock-v1")
+opaque = Riffer::Messages::ReasoningPart.new(type: :encrypted, data: "b3BhcXVl", signature: "sig", format: "mock-v1")
+msg = Riffer::Messages::Assistant.new("42", reasoning: [thinking, opaque])
+
+msg.reasoning?            # => true
+msg.reasoning_text        # => "The user wants the answer."
+msg.reasoning.first.type  # => :text
+```
+
+`reasoning:` takes `ReasoningPart`s; `Riffer::Messages::Base.from_hash` is what turns persisted hashes back into parts.
+
+Each part carries:
+
+| Field       | Type      | Description                                                                                                       |
+| ----------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `type`      | `Symbol`  | One of `:text` (readable reasoning), `:summary` (a provider-condensed digest), `:encrypted` (an opaque payload)   |
+| `text`      | `String?` | The reasoning prose, for `:text` and `:summary` parts                                                             |
+| `data`      | `String?` | The opaque payload, for `:encrypted` parts                                                                        |
+| `signature` | `String?` | The provider's signature over the part, when it issues one                                                        |
+| `id`        | `String?` | The provider's identifier for the part, when it issues one                                                        |
+| `format`    | `String?` | The wire format, owned by the adapter that produced the part (e.g. `"anthropic-claude-v1"`)                       |
+
+A `type` outside the three values raises `Riffer::ArgumentError`. `format` is a free string riffer never validates — it exists so an adapter can tell its own parts apart from another adapter's.
+
+`reasoning?` is true when the message carries any part. `reasoning_text` joins the `text` of the `:text` and `:summary` parts with blank lines, skipping `:encrypted` parts, and is `nil` when there is nothing to join. The run's final assistant message projects its parts onto `response.reasoning` (see [Agent Lifecycle — Response Attributes](AGENT_LIFECYCLE.md#response-attributes)).
+
+Parts round-trip through `to_h` / `from_hash` like every other message field, so a host that persists sessions can store and replay them. The `reasoning` key is absent from `to_h` when the message has no parts, and each part omits the fields it doesn't carry:
+
+```ruby
+msg.to_h
+# => {role: :assistant, content: "42", reasoning: [
+#      {type: :text, text: "The user wants the answer.", format: "mock-v1"},
+#      {type: :encrypted, data: "b3BhcXVl", signature: "sig", format: "mock-v1"}
+#    ]}
+
+Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, ReasoningPart]
+```
+
+**The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
+
+In this release only the [Mock provider](providers/MOCK_PROVIDER.md) produces parts; the real provider adapters keep reporting reasoning as stream-event text and will adopt the primitive in follow-up releases. Persisting `reasoning` today is therefore forward-looking work, not a behaviour change.
+
+A host that would rather not store parts at all can drop them as messages arrive, with [message ids](#ids) enabled so `Session#update` can address the message:
+
+```ruby
+Riffer.configure { |c| c.message_id_strategy = :uuidv7 }
+
+agent.session.on_message do |message|
+  agent.session.update(id: message.id, reasoning: []) if message.is_a?(Riffer::Messages::Assistant)
+end
+```
+
 ### Tool
 
 Tool messages contain the results of tool executions:

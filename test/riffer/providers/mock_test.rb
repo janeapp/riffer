@@ -538,4 +538,49 @@ describe Riffer::Providers::Mock do
       expect(usage_done.token_usage.cost).must_equal 18.0
     end
   end
+  describe "reasoning" do
+    let(:part) { { type: :text, text: "Let me think", format: "mock-v1" } }
+
+    it "returns the stubbed parts from generate_text" do
+      provider.stub_response("Answer", reasoning: [part])
+      message = provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(message.reasoning.map(&:to_h)).must_equal [part]
+    end
+
+    it "accepts ReasoningPart instances" do
+      instance = Riffer::Messages::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1")
+      provider.stub_response("Answer", reasoning: [instance])
+      message = provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(message.reasoning).must_equal [instance]
+    end
+
+    it "returns no parts when none were stubbed" do
+      provider.stub_response("Answer")
+      message = provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(message.reasoning).must_equal []
+    end
+
+    it "emits ReasoningDelta then ReasoningDone with the part before the text" do
+      provider.stub_response("Answer", reasoning: [part])
+      events = provider.stream_text(prompt: "Hello", model: "riffer-1").to_a
+      types = events.map(&:class)
+
+      expect(types.index(Riffer::StreamEvents::ReasoningDelta)).must_equal 0
+      expect(types.index(Riffer::StreamEvents::ReasoningDone)).must_equal 1
+      expect(events[0].content).must_equal "Let me think"
+      expect(events[1].part.to_h).must_equal part
+      expect(types.index(Riffer::StreamEvents::TextDelta)).must_be :>, 1
+    end
+
+    it "skips the delta for a part without text" do
+      provider.stub_response("Answer", reasoning: [{ type: :encrypted, data: "ciphertext", format: "mock-v1" }])
+      events = provider.stream_text(prompt: "Hello", model: "riffer-1").to_a
+
+      expect(events.grep(Riffer::StreamEvents::ReasoningDelta)).must_be_empty
+      expect(events.grep(Riffer::StreamEvents::ReasoningDone).first.content).must_equal ""
+    end
+  end
 end

@@ -220,7 +220,7 @@ Riffer::StreamEvents::ToolCallDone.new(
   arguments: '{"complete":"args"}'
 )
 
-# Reasoning (if supported)
+# Reasoning (if supported); see the Reasoning section for the replayable part
 Riffer::StreamEvents::ReasoningDelta.new("thinking...")
 Riffer::StreamEvents::ReasoningDone.new("complete reasoning")
 
@@ -275,6 +275,36 @@ yielder << Riffer::StreamEvents::FinishReasonDone.new(finish_reason: :stop, raw_
 ```
 
 Also have `execute_stream` raise `Riffer::IncompleteStreamError` when the stream ends without the provider's terminal event, rather than returning normally. Otherwise a connection that drops mid-response looks identical to a finished one, and the agent loop accepts a truncated message as complete.
+
+## Reasoning
+
+`extract_reasoning` is the optional hook for reasoning models — return the response's thinking blocks as [`Riffer::Messages::ReasoningPart`s](../MESSAGES.md#reasoning) and the base class attaches them to the assistant message, where a host can persist them and hand them back on the next turn:
+
+```ruby
+def extract_reasoning(response)
+  response.thinking_blocks.map do |block|
+    Riffer::Messages::ReasoningPart.new(
+      type: :encrypted,
+      data: block.data,
+      signature: block.signature,
+      format: "my-provider-v1"
+    )
+  end
+end
+```
+
+The base class defaults to `[]`, so a provider without reasoning stays valid.
+
+Your adapter owns its `format` string: pick one value per wire shape, replay only the parts carrying a value you recognize, and skip the rest — history that travelled through another provider must never make a request fail. Never reorder or edit a part; the provider's signature covers its exact bytes.
+
+For streaming, carry the part on the `ReasoningDone` event so the agent loop can accumulate it:
+
+```ruby
+part = Riffer::Messages::ReasoningPart.new(type: :text, text: "complete reasoning", format: "my-provider-v1")
+
+yielder << Riffer::StreamEvents::ReasoningDelta.new("thinking...")
+yielder << Riffer::StreamEvents::ReasoningDone.new("complete reasoning", part: part)
+```
 
 ## Trace Provider Name
 

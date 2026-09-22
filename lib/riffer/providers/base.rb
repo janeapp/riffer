@@ -56,6 +56,7 @@ class Riffer::Providers::Base
 
       content = extract_content(response)
       tool_calls = extract_tool_calls(response)
+      reasoning = extract_reasoning(response)
       token_usage = extract_token_usage(response)
       finish_reason = extract_finish_reason(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
@@ -67,6 +68,7 @@ class Riffer::Providers::Base
       Riffer::Messages::Assistant.new(
         content,
         tool_calls: tool_calls,
+        reasoning: reasoning,
         token_usage: token_usage,
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
@@ -222,6 +224,14 @@ class Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(_response)
     nil
+  end
+
+  # Defaults to no parts rather than raising — reasoning parts are optional, so
+  # providers that don't expose replayable reasoning stay valid.
+  #--
+  #: (untyped) -> Array[Riffer::Messages::ReasoningPart]
+  def extract_reasoning(_response)
+    []
   end
 
   #--

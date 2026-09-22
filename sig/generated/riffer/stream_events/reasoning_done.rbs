@@ -6,9 +6,13 @@ class Riffer::StreamEvents::ReasoningDone < Riffer::StreamEvents::Base
   # The complete reasoning content.
   attr_reader content: String
 
+  # The structured reasoning block behind +content+, for adapters that produce
+  # replayable parts; nil for those that only report reasoning text.
+  attr_reader part: Riffer::Messages::ReasoningPart?
+
   # --
-  # : (String, ?role: Symbol) -> void
-  def initialize: (String, ?role: Symbol) -> void
+  # : (String, ?part: Riffer::Messages::ReasoningPart?, ?role: Symbol) -> void
+  def initialize: (String, ?part: Riffer::Messages::ReasoningPart?, ?role: Symbol) -> void
 
   # --
   # : () -> Hash[Symbol, untyped]

@@ -201,6 +201,25 @@ describe Riffer::Agent::Session do
       expect(result.token_usage).must_be_same_as usage
     end
 
+    it "preserves reasoning on assistant" do
+      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [part])
+      s = Riffer::Agent::Session.new(messages: [a])
+      result = s.update(id: "a_x", content: "new")
+
+      expect(result.reasoning).must_equal [part]
+    end
+
+    it "strips reasoning from an assistant when given an empty array" do
+      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [part])
+      s = Riffer::Agent::Session.new(messages: [a])
+      result = s.update(id: "a_x", reasoning: [])
+
+      expect(result.reasoning).must_equal []
+      expect(result.content).must_equal "old"
+    end
+
     it "preserves finish_reason and finish_reason_raw on assistant" do
       a = Riffer::Messages::Assistant.new("old", id: "a_x", finish_reason: :length, finish_reason_raw: "max_tokens")
       s = Riffer::Agent::Session.new(messages: [a])
