@@ -278,7 +278,7 @@ Also have `execute_stream` raise `Riffer::IncompleteStreamError` when the stream
 
 ## Reasoning
 
-`extract_reasoning` is the optional hook for reasoning models — return the response's thinking blocks as [`Riffer::Messages::Assistant::ReasoningPart`s](../MESSAGES.md#reasoning) and the base class attaches them to the assistant message, where a host can persist them and hand them back on the next turn:
+`extract_reasoning` is the optional hook for reasoning models — return the response's thinking blocks as [`Riffer::Messages::Assistant::ReasoningPart`s](../MESSAGES.md#reasoning) and the base class attaches them to the assistant message, where your application can persist them and hand them back on the next turn:
 
 ```ruby
 def extract_reasoning(response)

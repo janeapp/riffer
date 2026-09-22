@@ -129,14 +129,16 @@ msg.to_h  # => {role: :assistant, content: '{"sentiment":"positive"}', structure
 Reasoning models emit thinking blocks alongside their answer, and several providers require those blocks back on the next turn of a tool-calling loop. `Riffer::Messages::Assistant::ReasoningPart` is the normalized container riffer stores them in: a list of parts on the assistant message, in the order the provider emitted them.
 
 ```ruby
-thinking = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "The user wants the answer.", format: "mock-v1")
-opaque = Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "b3BhcXVl", signature: "sig", format: "mock-v1")
-msg = Riffer::Messages::Assistant.new("42", reasoning: [thinking, opaque])
+summary = Riffer::Messages::Assistant::ReasoningPart.new(type: :summary, text: "The user wants the answer.", format: "mock-v1")
+opaque = Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "b3BhcXVl", format: "mock-v1")
+msg = Riffer::Messages::Assistant.new("42", reasoning: [summary, opaque])
 
 msg.reasoning?            # => true
 msg.reasoning_text        # => "The user wants the answer."
-msg.reasoning.first.type  # => :text
+msg.reasoning.first.type  # => :summary
 ```
+
+A readable part next to an opaque one is the common shape, not a contrived one: OpenAI's Responses API returns a reasoning item as summary text plus an encrypted payload, and Anthropic pairs a `thinking` block with a `redacted_thinking` block when it redacts part of the chain of thought.
 
 `reasoning:` takes `ReasoningPart`s; `Riffer::Messages::Base.from_hash` is what turns persisted hashes back into parts.
 
@@ -155,13 +157,13 @@ A `type` outside the three values raises `Riffer::ArgumentError`. `format` is a 
 
 `reasoning?` is true when the message carries any part. `reasoning_text` joins the `text` of the `:text` and `:summary` parts with blank lines, skipping `:encrypted` parts, and is `nil` when there is nothing to join. The run's final assistant message projects its parts onto `response.reasoning` (see [Agent Lifecycle — Response Attributes](AGENT_LIFECYCLE.md#response-attributes)).
 
-Parts round-trip through `to_h` / `from_hash` like every other message field, so a host that persists sessions can store and replay them. The `reasoning` key is absent from `to_h` when the message has no parts, and each part omits the fields it doesn't carry:
+Parts round-trip through `to_h` / `from_hash` like every other message field, so an application that persists sessions can store and replay them. The `reasoning` key is absent from `to_h` when the message has no parts, and each part omits the fields it doesn't carry:
 
 ```ruby
 msg.to_h
 # => {role: :assistant, content: "42", reasoning: [
-#      {type: :text, text: "The user wants the answer.", format: "mock-v1"},
-#      {type: :encrypted, data: "b3BhcXVl", signature: "sig", format: "mock-v1"}
+#      {type: :summary, text: "The user wants the answer.", format: "mock-v1"},
+#      {type: :encrypted, data: "b3BhcXVl", format: "mock-v1"}
 #    ]}
 
 Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, ReasoningPart]
@@ -169,15 +171,13 @@ Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, Reaso
 
 **The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no `format` is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
 
-A host that would rather not store parts at all can drop them as messages arrive, with [message ids](#ids) enabled so `Session#update` can address the message:
+An application that would rather not store parts can leave the key out when it serializes:
 
 ```ruby
-Riffer.configure { |c| c.message_id_strategy = :uuidv7 }
-
-agent.session.on_message do |message|
-  agent.session.update(id: message.id, reasoning: []) if message.is_a?(Riffer::Messages::Assistant)
-end
+msg.to_h.except(:reasoning)
 ```
+
+To drop parts from the in-memory session mid-run instead, `Session#update(id:, reasoning: [])` rewrites the message in place; it needs [message ids](#ids) enabled to address it.
 
 ### Tool
 
