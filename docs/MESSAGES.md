@@ -126,7 +126,7 @@ msg.to_h  # => {role: :assistant, content: '{"sentiment":"positive"}', structure
 
 #### Reasoning
 
-Reasoning models emit thinking blocks alongside their answer, and several providers require those blocks back — verbatim — on the next turn of a tool-calling loop. `Riffer::Messages::Assistant::ReasoningPart` is the neutral container riffer stores them in: a list of parts on the assistant message, in the order the provider emitted them.
+Reasoning models emit thinking blocks alongside their answer, and several providers require those blocks back on the next turn of a tool-calling loop. `Riffer::Messages::Assistant::ReasoningPart` is the normalized container riffer stores them in: a list of parts on the assistant message, in the order the provider emitted them.
 
 ```ruby
 thinking = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "The user wants the answer.", format: "mock-v1")
