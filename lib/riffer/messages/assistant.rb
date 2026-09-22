@@ -118,7 +118,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     hash = { role: role, content: content } #: Hash[Symbol, untyped]
     hash[:id] = id if id
     hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
-    hash[:reasoning] = reasoning.map(&:to_h) unless reasoning.empty?
+    hash[:reasoning] = reasoning.map(&:to_h) unless reasoning?
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason
