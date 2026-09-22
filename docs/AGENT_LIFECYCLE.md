@@ -315,6 +315,7 @@ agent.context[:skills]        # the Skills::Context, if skills configured
 | `content`              | `String`                    | The response text                                                                                |
 | `outcome`              | `Outcome`                   | How the run ended — `reason` and optional `detail` (see below)                                   |
 | `structured_output`    | `Hash` / `nil`              | Parsed and validated structured output (see below)                                               |
+| `reasoning`            | `Array[ReasoningPart]`      | The [reasoning parts](MESSAGES.md#reasoning) on the final assistant message (else `[]`)          |
 | `tripwire`             | `Tripwire` / `nil`          | The guardrail tripwire that blocked the request                                                  |
 | `modified?`            | `Boolean`                   | `true` if a guardrail modified the content                                                       |
 | `modifications`        | `Array`                     | List of guardrail modifications applied                                                          |

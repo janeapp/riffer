@@ -24,6 +24,10 @@ class Riffer::Agent::Response
   # The modifications made by guardrails during processing.
   attr_reader :modifications #: Array[Riffer::Guardrails::Modification] # @dynamic modifications
 
+  # The reasoning parts on the final assistant message, if the provider
+  # produced any.
+  attr_reader :reasoning #: Array[Riffer::Messages::Assistant::ReasoningPart] # @dynamic reasoning
+
   # The parsed structured output, if structured output was configured.
   attr_reader :structured_output #: Hash[Symbol, untyped]? # @dynamic structured_output
 
@@ -47,6 +51,7 @@ class Riffer::Agent::Response
   #    outcome: Riffer::Agent::Outcome,
   #    ?tripwire: Riffer::Guardrails::Tripwire?,
   #    ?modifications: Array[Riffer::Guardrails::Modification],
+  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?messages: Array[Riffer::Messages::Base],
   #    ?healed_tool_call_ids: Array[String],
@@ -58,6 +63,7 @@ class Riffer::Agent::Response
     outcome:,
     tripwire: nil,
     modifications: [],
+    reasoning: [],
     structured_output: nil,
     messages: [],
     healed_tool_call_ids: [],
@@ -68,6 +74,7 @@ class Riffer::Agent::Response
     @outcome = outcome
     @tripwire = tripwire
     @modifications = modifications
+    @reasoning = reasoning
     @structured_output = structured_output
     @messages = messages
     @healed_tool_call_ids = healed_tool_call_ids

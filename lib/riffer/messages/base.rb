@@ -22,10 +22,14 @@ class Riffer::Messages::Base
       tool_calls = (msg[:tool_calls] || []).map do |tc|
         tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
       end
+      reasoning = (msg[:reasoning] || []).map do |part|
+        Riffer::Messages::Assistant::ReasoningPart.from_hash(part)
+      end
       Riffer::Messages::Assistant.new(
         msg[:content],
         id: msg[:id],
         tool_calls: tool_calls,
+        reasoning: reasoning,
         structured_output: msg[:structured_output],
         finish_reason: msg[:finish_reason]&.to_sym,
         finish_reason_raw: msg[:finish_reason_raw],

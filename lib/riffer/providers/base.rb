@@ -56,6 +56,7 @@ class Riffer::Providers::Base
 
       content = extract_content(response)
       tool_calls = extract_tool_calls(response)
+      reasoning = extract_reasoning(response)
       token_usage = extract_token_usage(response)
       finish_reason = extract_finish_reason(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
@@ -67,6 +68,7 @@ class Riffer::Providers::Base
       Riffer::Messages::Assistant.new(
         content,
         tool_calls: tool_calls,
+        reasoning: reasoning,
         token_usage: token_usage,
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
@@ -224,6 +226,14 @@ class Riffer::Providers::Base
     nil
   end
 
+  # Defaults to no parts rather than raising — reasoning parts are optional, so
+  # providers that don't expose replayable reasoning stay valid.
+  #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(_response)
+    []
+  end
+
   #--
   #: (untyped) -> String
   def extract_content(response)
@@ -346,6 +356,15 @@ class Riffer::Providers::Base
   #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
   def capture_messages?(span)
     Riffer.config.tracing.capture_messages && span.recording?
+  end
+
+  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
+  # with no +format+, so it persists for display but is never sent back.
+  #--
+  #: (Riffer::Providers::_EventSink, String) -> void
+  def yield_reasoning_done(yielder, text)
+    part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: text)
+    yielder << Riffer::StreamEvents::ReasoningDone.new(part)
   end
 
   #--

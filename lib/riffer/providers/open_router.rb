@@ -223,7 +223,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     emit_tool_call_done_events(state: state, yielder: yielder) unless state[:tool_calls].empty?
 
     yielder << Riffer::StreamEvents::TextDone.new(state[:text]) unless state[:text].empty?
-    yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning]) unless state[:reasoning].empty?
+    yield_reasoning_done(yielder, state[:reasoning]) unless state[:reasoning].empty?
     yield_finish_reason(yielder, build_finish_reason(state[:finish_reason], native: state[:native_finish_reason]))
   end
 

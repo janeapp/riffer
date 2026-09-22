@@ -742,6 +742,9 @@ describe Riffer::Providers::OpenAI do
           reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
 
           expect(reasoning_done).wont_be_nil
+          expect(reasoning_done.part.type).must_equal :text
+          expect(reasoning_done.part.text).wont_be_empty
+          expect(reasoning_done.part.format).must_be_nil
         end
       end
 

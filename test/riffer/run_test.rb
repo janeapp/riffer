@@ -3913,4 +3913,57 @@ describe Riffer::Agent::Run do
       end
     end
   end
+  describe "reasoning" do
+    let(:part) { { type: :text, text: "Let me think", format: "mock-v1" } }
+
+    it "attaches streamed reasoning parts to the accumulated assistant message" do
+      agent = agent_class.new
+      agent.provider.stub_response("Answer", reasoning: [part])
+      agent.stream("Hi").each { |_| }
+      assistant = agent.session.messages.last
+
+      expect(assistant.reasoning.map(&:to_h)).must_equal [part]
+      expect(assistant.reasoning_text).must_equal "Let me think"
+    end
+
+    it "yields ReasoningDelta and ReasoningDone before the text events" do
+      agent = agent_class.new
+      agent.provider.stub_response("Answer", reasoning: [part])
+      events = agent.stream("Hi").to_a
+      reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
+      reasoning_index = events.index { |e| e.is_a?(Riffer::StreamEvents::ReasoningDelta) }
+      text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
+
+      expect(reasoning_index).must_be :<, text_index
+      expect(reasoning_done.part.to_h).must_equal part
+    end
+
+    it "persists a streamed part that has no format" do
+      agent = agent_class.new
+      agent.provider.define_singleton_method(:execute_stream) do |_params, yielder|
+        yielder << Riffer::StreamEvents::ReasoningDelta.new("Let me think")
+        yield_reasoning_done(yielder, "Let me think")
+        yielder << Riffer::StreamEvents::TextDone.new("Answer")
+      end
+      agent.stream("Hi").each { |_| }
+
+      expect(agent.session.messages.last.reasoning.map(&:to_h)).must_equal [{ type: :text, text: "Let me think" }]
+    end
+
+    it "picks up the provider's reasoning parts when generating" do
+      agent = agent_class.new
+      agent.provider.stub_response("Answer", reasoning: [part])
+      response = agent.generate("Hi")
+
+      expect(agent.session.messages.last.reasoning.map(&:to_h)).must_equal [part]
+      expect(response.reasoning.map(&:to_h)).must_equal [part]
+    end
+
+    it "leaves the response reasoning empty when the provider reports none" do
+      agent = agent_class.new
+      agent.provider.stub_response("Answer")
+
+      expect(agent.generate("Hi").reasoning).must_equal []
+    end
+  end
 end

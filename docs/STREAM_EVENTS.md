@@ -105,13 +105,17 @@ event.content  # => "Let me think about "
 
 ### ReasoningDone
 
-Emitted when reasoning is complete:
+Emitted when one reasoning block is complete:
 
 ```ruby
-event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by step...")
-event.role     # => :assistant
-event.content  # => "Let me think about this step by step..."
+part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Let me think about this step by step...", format: "mock-v1")
+event = Riffer::StreamEvents::ReasoningDone.new(part)
+event.role       # => :assistant
+event.part       # => the ReasoningPart
+event.part.text  # => "Let me think about this step by step..."
 ```
+
+`part` is the [reasoning part](MESSAGES.md#reasoning) the preceding `ReasoningDelta` events added up to, and the agent loop accumulates it onto the assistant message. Adapters that cannot yet replay their reasoning emit it as a `:text` part with no `format`, so it is stored for display but never sent back to the provider.
 
 ### WebSearchStatus
 

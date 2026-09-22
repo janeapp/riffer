@@ -6,8 +6,15 @@
 class Riffer::Messages::Assistant < Riffer::Messages::Base
   ToolCall = Struct.new(:call_id, :name, :arguments)
 
+  # The reasoning part types +reasoning_text+ reads; the rest carry no prose.
+  REASONING_TEXT_TYPES = %i[text summary].freeze #: Array[Symbol]
+
   # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
+
+  # The model's reasoning blocks for this response, in the order the provider
+  # emitted them.
+  attr_reader :reasoning #: Array[Riffer::Messages::Assistant::ReasoningPart] # @dynamic reasoning
 
   # Token usage data for this response.
   attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
@@ -30,6 +37,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #    String,
   #    ?id: String?,
   #    ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall],
+  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?finish_reason: Symbol?,
@@ -39,6 +47,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     content,
     id: nil,
     tool_calls: [],
+    reasoning: [],
     token_usage: nil,
     structured_output: nil,
     finish_reason: nil,
@@ -51,6 +60,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
     super(content, id: id)
     @tool_calls = tool_calls
+    @reasoning = reasoning
     @token_usage = token_usage
     @structured_output = structured_output
     @finish_reason = finish_reason
@@ -76,9 +86,28 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   end
 
   #--
+  #: () -> bool
+  def reasoning?
+    !@reasoning.empty?
+  end
+
+  # The readable reasoning across this message's +:text+ and +:summary+ parts,
+  # joined by blank lines, or nil when it carries none.
+  #--
+  #: () -> String?
+  def reasoning_text
+    texts = reasoning.filter_map { |part| part.text if REASONING_TEXT_TYPES.include?(part.type) }
+    texts.empty? ? nil : texts.join("\n\n")
+  end
+
+  #--
   #: (Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
   def +(other)
-    self.class.new("#{content}\n\n#{other.content}", tool_calls: tool_calls + other.tool_calls)
+    self.class.new(
+      "#{content}\n\n#{other.content}",
+      tool_calls: tool_calls + other.tool_calls,
+      reasoning: reasoning + other.reasoning,
+    )
   end
 
   # Converts the message to a hash.
@@ -89,6 +118,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     hash = { role: role, content: content } #: Hash[Symbol, untyped]
     hash[:id] = id if id
     hash[:tool_calls] = tool_calls.map(&:to_h) unless tool_calls.empty?
+    hash[:reasoning] = reasoning.map(&:to_h) if reasoning?
     hash[:token_usage] = token_usage.to_h if token_usage
     hash[:structured_output] = structured_output if structured_output?
     hash[:finish_reason] = finish_reason if finish_reason

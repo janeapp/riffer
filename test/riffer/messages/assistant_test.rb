@@ -216,4 +216,68 @@ describe Riffer::Messages::Assistant do
       expect(error.message).must_include ":bogus"
     end
   end
+  describe "reasoning" do
+    let(:text_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Step one", format: "mock-v1") }
+    let(:summary_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :summary, text: "Step two", format: "mock-v1") }
+    let(:encrypted_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1") }
+
+    it "defaults to no parts" do
+      message = Riffer::Messages::Assistant.new("Answer")
+
+      expect(message.reasoning).must_equal []
+      expect(message.reasoning?).must_equal false
+    end
+
+    it "stores the parts in order" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part, encrypted_part])
+
+      expect(message.reasoning).must_equal [text_part, encrypted_part]
+      expect(message.reasoning?).must_equal true
+    end
+
+    it "joins text and summary parts in reasoning_text" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part, summary_part, encrypted_part])
+
+      expect(message.reasoning_text).must_equal "Step one\n\nStep two"
+    end
+
+    it "returns nil from reasoning_text when no part carries text" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [encrypted_part])
+
+      expect(message.reasoning_text).must_be_nil
+    end
+
+    it "returns nil from reasoning_text when there are no parts" do
+      message = Riffer::Messages::Assistant.new("Answer")
+
+      expect(message.reasoning_text).must_be_nil
+    end
+
+    it "includes the parts in to_h" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part])
+
+      expect(message.to_h[:reasoning]).must_equal [{ type: :text, text: "Step one", format: "mock-v1" }]
+    end
+
+    it "omits reasoning from to_h when there are no parts" do
+      message = Riffer::Messages::Assistant.new("Answer")
+
+      expect(message.to_h.key?(:reasoning)).must_equal false
+    end
+
+    it "round-trips through to_h and from_hash" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part, encrypted_part])
+
+      rebuilt = Riffer::Messages::Base.from_hash(message.to_h)
+
+      expect(rebuilt.reasoning).must_equal [text_part, encrypted_part]
+    end
+
+    it "concatenates the parts when merging messages" do
+      first = Riffer::Messages::Assistant.new("One", reasoning: [text_part])
+      second = Riffer::Messages::Assistant.new("Two", reasoning: [summary_part])
+
+      expect((first + second).reasoning).must_equal [text_part, summary_part]
+    end
+  end
 end

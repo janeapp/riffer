@@ -105,6 +105,12 @@ class Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
+  # Defaults to no parts rather than raising — reasoning parts are optional, so
+  # providers that don't expose replayable reasoning stay valid.
+  # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
   # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String
@@ -149,6 +155,12 @@ class Riffer::Providers::Base
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
   def capture_messages?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> bool
+
+  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
+  # with no +format+, so it persists for display but is never sent back.
+  # --
+  # : (Riffer::Providers::_EventSink, String) -> void
+  def yield_reasoning_done: (Riffer::Providers::_EventSink, String) -> void
 
   # --
   # : (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
