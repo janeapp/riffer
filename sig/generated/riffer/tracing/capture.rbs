@@ -41,6 +41,6 @@ module Riffer::Tracing::Capture
   # Semconv's tool_call part carries arguments as a JSON object; riffer holds
   # them as a string — parse so the captured payload isn't double-encoded.
   # --
-  # : (untyped) -> untyped
-  def parse_arguments: (untyped) -> untyped
+  # : (String) -> untyped
+  def parse_arguments: (String) -> untyped
 end

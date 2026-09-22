@@ -171,8 +171,8 @@ class Riffer::Providers::Base
   def parse_structured_output: (String) -> Hash[Symbol, untyped]?
 
   # --
-  # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
-  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  # : (String) -> Hash[String, untyped]
+  def parse_tool_arguments: (String) -> Hash[String, untyped]
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]

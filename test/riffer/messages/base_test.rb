@@ -212,7 +212,7 @@ describe Riffer::Messages::Base do
     end
 
     describe "with assistant tool_calls" do
-      let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(name: "search") }
+      let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "search", arguments: "{}") }
 
       it "preserves tool_calls in assistant messages" do
         result = Riffer::Messages::Base.from_hash(

@@ -402,7 +402,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           type: "function_call",
           call_id: tc.call_id,
           name: encode_tool_name(tc.name),
-          arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
+          arguments: tc.arguments,
         }
       end
       items

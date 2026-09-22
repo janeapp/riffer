@@ -4,13 +4,13 @@
 # Represents one tool invocation the model requested on an assistant message.
 class Riffer::Messages::Assistant::ToolCall
   # The provider's identifier for the call, echoed back on the tool result.
-  attr_reader :call_id #: untyped # @dynamic call_id
+  attr_reader :call_id #: String # @dynamic call_id
 
   # The name of the tool to invoke.
-  attr_reader :name #: untyped # @dynamic name
+  attr_reader :name #: String # @dynamic name
 
   # The JSON-encoded arguments, exactly as the provider emitted them.
-  attr_reader :arguments #: untyped # @dynamic arguments
+  attr_reader :arguments #: String # @dynamic arguments
 
   # Builds a ToolCall from a hash, or returns +call+ unchanged when it is
   # already a ToolCall.
@@ -23,8 +23,8 @@ class Riffer::Messages::Assistant::ToolCall
   end
 
   #--
-  #: (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> void
-  def initialize(call_id: nil, name: nil, arguments: nil)
+  #: (call_id: String, name: String, arguments: String) -> void
+  def initialize(call_id:, name:, arguments:)
     @call_id = call_id
     @name = name
     @arguments = arguments

@@ -15,14 +15,6 @@ describe Riffer::Messages::Assistant::ToolCall do
       expect(tool_call.name).must_equal "get_weather"
       expect(tool_call.arguments).must_equal '{"city":"Paris"}'
     end
-
-    it "defaults every field to nil" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new
-
-      expect(tool_call.call_id).must_be_nil
-      expect(tool_call.name).must_be_nil
-      expect(tool_call.arguments).must_be_nil
-    end
   end
 
   describe ".from_hash" do
@@ -39,17 +31,17 @@ describe Riffer::Messages::Assistant::ToolCall do
     end
 
     it "returns a tool call unchanged" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
 
       expect(Riffer::Messages::Assistant::ToolCall.from_hash(tool_call)).must_be_same_as tool_call
     end
   end
 
   describe "#to_h" do
-    it "includes every field, even the ones the call doesn't carry" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(name: "get_weather")
+    it "includes every field" do
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
 
-      expect(tool_call.to_h).must_equal({ call_id: nil, name: "get_weather", arguments: nil })
+      expect(tool_call.to_h).must_equal({ call_id: "c1", name: "get_weather", arguments: "{}" })
     end
 
     it "round-trips through from_hash" do
@@ -74,21 +66,21 @@ describe Riffer::Messages::Assistant::ToolCall do
     end
 
     it "differs when any field differs" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather")
-      other = Riffer::Messages::Assistant::ToolCall.new(call_id: "c2", name: "get_weather")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
+      other = Riffer::Messages::Assistant::ToolCall.new(call_id: "c2", name: "get_weather", arguments: "{}")
 
       expect(tool_call).wont_equal other
     end
 
     it "is not equal to a non-tool-call" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
 
-      expect(tool_call == { call_id: "c1", name: "get_weather" }).must_equal false
+      expect(tool_call == { call_id: "c1", name: "get_weather", arguments: "{}" }).must_equal false
     end
 
     it "dedupes equal tool calls in a set" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather")
-      other = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
+      other = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
 
       expect([tool_call, other].uniq.size).must_equal 1
     end

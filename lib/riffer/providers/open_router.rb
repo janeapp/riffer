@@ -362,7 +362,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
           type: "function",
           function: {
             name: encode_tool_name(tc.name),
-            arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
+            arguments: tc.arguments,
           },
         }
       end

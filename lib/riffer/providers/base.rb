@@ -387,11 +387,11 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  #: (String) -> Hash[String, untyped]
   def parse_tool_arguments(arguments)
-    return {} if arguments.nil? || arguments.empty?
+    return {} if arguments.empty?
 
-    arguments.is_a?(String) ? JSON.parse(arguments) : arguments
+    JSON.parse(arguments)
   end
 
   #--
