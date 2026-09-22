@@ -30,6 +30,13 @@ describe Riffer::Messages::Assistant::ToolCall do
       expect(tool_call.arguments).must_equal '{"city":"Paris"}'
     end
 
+    it "raises when the hash is missing a field" do
+      error = expect { Riffer::Messages::Assistant::ToolCall.from_hash(call_id: "c1", name: "get_weather") }.
+        must_raise(Riffer::ArgumentError)
+
+      expect(error.message).must_equal "Tool call hash must include :call_id, :name, and :arguments"
+    end
+
     it "returns a tool call unchanged" do
       tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "get_weather", arguments: "{}")
 

@@ -13,11 +13,16 @@ class Riffer::Messages::Assistant::ToolCall
   attr_reader :arguments #: String # @dynamic arguments
 
   # Builds a ToolCall from a hash, or returns +call+ unchanged when it is
-  # already a ToolCall.
+  # already a ToolCall. Raises Riffer::ArgumentError when the hash is missing
+  # a field.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ToolCall)) -> Riffer::Messages::Assistant::ToolCall
   def self.from_hash(call)
     return call if call.is_a?(Riffer::Messages::Assistant::ToolCall)
+
+    if call.values_at(:call_id, :name, :arguments).any?(&:nil?)
+      raise Riffer::ArgumentError, "Tool call hash must include :call_id, :name, and :arguments"
+    end
 
     new(call_id: call[:call_id], name: call[:name], arguments: call[:arguments])
   end

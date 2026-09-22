@@ -12,7 +12,8 @@ class Riffer::Messages::Assistant::ToolCall
   attr_reader arguments: String
 
   # Builds a ToolCall from a hash, or returns +call+ unchanged when it is
-  # already a ToolCall.
+  # already a ToolCall. Raises Riffer::ArgumentError when the hash is missing
+  # a field.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ToolCall)) -> Riffer::Messages::Assistant::ToolCall
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Assistant::ToolCall) -> Riffer::Messages::Assistant::ToolCall
