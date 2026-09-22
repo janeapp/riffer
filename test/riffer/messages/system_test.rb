@@ -11,6 +11,22 @@ describe Riffer::Messages::System do
     end
   end
 
+  describe ".from_hash" do
+    it "builds a System message with its id" do
+      message = Riffer::Messages::System.from_hash({ role: "system", content: "Be helpful", id: "s-1" })
+
+      expect(message).must_be_instance_of Riffer::Messages::System
+      expect(message.content).must_equal "Be helpful"
+      expect(message.id).must_equal "s-1"
+    end
+
+    it "returns a System message unchanged" do
+      message = Riffer::Messages::System.new("Be helpful")
+
+      expect(Riffer::Messages::System.from_hash(message)).must_be_same_as message
+    end
+  end
+
   describe "#+" do
     it "concatenates content" do
       a = Riffer::Messages::System.new("Rule one")

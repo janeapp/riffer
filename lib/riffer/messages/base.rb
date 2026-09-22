@@ -14,33 +14,16 @@ class Riffer::Messages::Base
 
     raise Riffer::ArgumentError, "Message hash must include a 'role' key" if msg[:role].nil? || msg[:role].empty?
 
-    case msg[:role].to_sym
-    when :user
-      files = (msg[:files] || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
-      Riffer::Messages::User.new(msg[:content], id: msg[:id], files: files)
-    when :assistant
-      tool_calls = (msg[:tool_calls] || []).map do |tc|
-        Riffer::Messages::Assistant::ToolCall.from_hash(tc)
+    message_class =
+      case msg[:role].to_sym
+      when :user then Riffer::Messages::User
+      when :assistant then Riffer::Messages::Assistant
+      when :system then Riffer::Messages::System
+      when :tool then Riffer::Messages::Tool
+      else raise Riffer::ArgumentError, "Unknown message role: #{msg[:role]}"
       end
-      reasoning = (msg[:reasoning] || []).map do |part|
-        Riffer::Messages::Assistant::ReasoningPart.from_hash(part)
-      end
-      Riffer::Messages::Assistant.new(
-        msg[:content],
-        id: msg[:id],
-        tool_calls: tool_calls,
-        reasoning: reasoning,
-        structured_output: msg[:structured_output],
-        finish_reason: msg[:finish_reason]&.to_sym,
-        finish_reason_raw: msg[:finish_reason_raw],
-      )
-    when :system
-      Riffer::Messages::System.new(msg[:content], id: msg[:id])
-    when :tool
-      Riffer::Messages::Tool.new(msg[:content], id: msg[:id], tool_call_id: msg[:tool_call_id], name: msg[:name])
-    else
-      raise Riffer::ArgumentError, "Unknown message role: #{msg[:role]}"
-    end
+
+    message_class.from_hash(msg)
   end
 
   # The message content.
