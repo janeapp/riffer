@@ -221,8 +221,6 @@ msg.error       # => "API rate limit exceeded"
 msg.error_type  # => :execution_error
 ```
 
-`error` and `error_type` round-trip through `to_h` / `from_hash`, including after a JSON round trip where symbol keys and values come back as strings.
-
 ## File Parts
 
 `Riffer::Messages::User::FilePart` represents a file attachment (image or document) that can be included with user messages.
