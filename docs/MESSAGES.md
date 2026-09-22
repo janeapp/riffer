@@ -167,7 +167,7 @@ msg.to_h
 Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, ReasoningPart]
 ```
 
-**The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
+**The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no `format` is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
 
 A host that would rather not store parts at all can drop them as messages arrive, with [message ids](#ids) enabled so `Session#update` can address the message:
 

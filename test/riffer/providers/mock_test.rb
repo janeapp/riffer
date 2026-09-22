@@ -580,7 +580,7 @@ describe Riffer::Providers::Mock do
       events = provider.stream_text(prompt: "Hello", model: "riffer-1").to_a
 
       expect(events.grep(Riffer::StreamEvents::ReasoningDelta)).must_be_empty
-      expect(events.grep(Riffer::StreamEvents::ReasoningDone).first.content).must_equal ""
+      expect(events.grep(Riffer::StreamEvents::ReasoningDone).first.part.type).must_equal :encrypted
     end
   end
 end

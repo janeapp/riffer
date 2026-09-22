@@ -156,6 +156,12 @@ class Riffer::Providers::Base
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
   def capture_messages?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> bool
 
+  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
+  # with no +format+, so it persists for display but is never sent back.
+  # --
+  # : (Riffer::Providers::_EventSink, String) -> void
+  def yield_reasoning_done: (Riffer::Providers::_EventSink, String) -> void
+
   # --
   # : (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
   def yield_finish_reason: (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void

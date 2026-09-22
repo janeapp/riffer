@@ -338,7 +338,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_thinking(_event, state:, yielder:)
-    yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
+    yield_reasoning_done(yielder, state[:reasoning])
     state[:reasoning] = nil
   end
 

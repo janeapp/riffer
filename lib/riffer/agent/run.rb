@@ -177,8 +177,7 @@ module Riffer::Agent::Run
           arguments: event.arguments,
         )
       when Riffer::StreamEvents::ReasoningDone
-        part = event.part
-        accumulated_reasoning << part if part
+        accumulated_reasoning << event.part
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage
       when Riffer::StreamEvents::FinishReasonDone

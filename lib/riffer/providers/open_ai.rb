@@ -296,7 +296,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_summary_text_done(event, state:, yielder:)
-    yielder << Riffer::StreamEvents::ReasoningDone.new(event.text)
+    yield_reasoning_done(yielder, event.text)
   end
 
   #--

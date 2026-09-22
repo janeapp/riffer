@@ -174,7 +174,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     reasoning.each do |part|
       text = part.text
       yielder << Riffer::StreamEvents::ReasoningDelta.new(text) if text
-      yielder << Riffer::StreamEvents::ReasoningDone.new(text || "", part: part)
+      yielder << Riffer::StreamEvents::ReasoningDone.new(part)
     end
 
     unless full_content.empty?

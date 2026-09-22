@@ -220,9 +220,9 @@ Riffer::StreamEvents::ToolCallDone.new(
   arguments: '{"complete":"args"}'
 )
 
-# Reasoning (if supported); see the Reasoning section for the replayable part
+# Reasoning (if supported); see the Reasoning section for building the part
 Riffer::StreamEvents::ReasoningDelta.new("thinking...")
-Riffer::StreamEvents::ReasoningDone.new("complete reasoning")
+Riffer::StreamEvents::ReasoningDone.new(part)
 
 # Web search (if supported)
 Riffer::StreamEvents::WebSearchStatus.new("searching", query: "search query")
@@ -297,14 +297,16 @@ The base class defaults to `[]`, so a provider without reasoning stays valid.
 
 Your adapter owns its `format` string: pick one value per wire shape, replay only the parts carrying a value you recognize, and skip the rest — history that travelled through another provider must never make a request fail. Never reorder or edit a part; the provider's signature covers its exact bytes.
 
-For streaming, carry the part on the `ReasoningDone` event so the agent loop can accumulate it:
+For streaming, emit one `ReasoningDone` per block, carrying the part so the agent loop can accumulate it:
 
 ```ruby
 part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "complete reasoning", format: "my-provider-v1")
 
 yielder << Riffer::StreamEvents::ReasoningDelta.new("thinking...")
-yielder << Riffer::StreamEvents::ReasoningDone.new("complete reasoning", part: part)
+yielder << Riffer::StreamEvents::ReasoningDone.new(part)
 ```
+
+If your adapter surfaces reasoning text but cannot yet replay it, call `yield_reasoning_done(yielder, text)` instead. It wraps the text in a `:text` part with no `format`, which persists for display and is skipped on replay.
 
 ## Trace Provider Name
 

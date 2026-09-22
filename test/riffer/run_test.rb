@@ -3938,16 +3938,16 @@ describe Riffer::Agent::Run do
       expect(reasoning_done.part.to_h).must_equal part
     end
 
-    it "ignores a streamed ReasoningDone without a part" do
+    it "persists a streamed part that has no format" do
       agent = agent_class.new
       agent.provider.define_singleton_method(:execute_stream) do |_params, yielder|
         yielder << Riffer::StreamEvents::ReasoningDelta.new("Let me think")
-        yielder << Riffer::StreamEvents::ReasoningDone.new("Let me think")
+        yield_reasoning_done(yielder, "Let me think")
         yielder << Riffer::StreamEvents::TextDone.new("Answer")
       end
       agent.stream("Hi").each { |_| }
 
-      expect(agent.session.messages.last.reasoning).must_equal []
+      expect(agent.session.messages.last.reasoning.map(&:to_h)).must_equal [{ type: :text, text: "Let me think" }]
     end
 
     it "picks up the provider's reasoning parts when generating" do

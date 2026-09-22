@@ -358,6 +358,15 @@ class Riffer::Providers::Base
     Riffer.config.tracing.capture_messages && span.recording?
   end
 
+  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
+  # with no +format+, so it persists for display but is never sent back.
+  #--
+  #: (Riffer::Providers::_EventSink, String) -> void
+  def yield_reasoning_done(yielder, text)
+    part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: text)
+    yielder << Riffer::StreamEvents::ReasoningDone.new(part)
+  end
+
   #--
   #: (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
   def yield_finish_reason(yielder, finish_reason)
