@@ -93,6 +93,8 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 
 - `cost` — the computed cost of the call, set when pricing is configured for the model in use (see [Configuration → Pricing](CONFIGURATION.md#pricing)); `nil` when the model is unpriced. It's for observability, not billing. Run-level usage sums per-call costs through `TokenUsage#+`, so `response.token_usage.cost` is the total spend across the run — but the sum is `nil` if any call in the run used an unpriced model, rather than silently under-reporting.
 
+`token_usage` round-trips through `to_h` / `from_hash` like the rest of the assistant message: `Riffer::Providers::TokenUsage.from_hash` rebuilds it from the persisted hash, or passes through an existing `TokenUsage` unchanged.
+
 #### Finish Reasons
 
 `finish_reason` carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic's `end_turn`, OpenAI's response status, Gemini's `STOP`, …) into a normalized vocabulary:
@@ -220,6 +222,8 @@ msg.error?      # => true
 msg.error       # => "API rate limit exceeded"
 msg.error_type  # => :execution_error
 ```
+
+`error` and `error_type` round-trip through `to_h` / `from_hash`, including after a JSON round trip where symbol keys and values come back as strings.
 
 ## File Parts
 

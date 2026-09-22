@@ -53,6 +53,35 @@ describe Riffer::Providers::TokenUsage do
     end
   end
 
+  describe ".from_hash" do
+    it "builds a TokenUsage from a hash with the optional keys" do
+      usage = Riffer::Providers::TokenUsage.from_hash(
+        { input_tokens: 100, output_tokens: 50, cache_write_tokens: 25, cache_read_tokens: 10, cost: 0.42 },
+      )
+
+      expect(usage).must_be_instance_of Riffer::Providers::TokenUsage
+      expect(usage.input_tokens).must_equal 100
+      expect(usage.output_tokens).must_equal 50
+      expect(usage.cache_write_tokens).must_equal 25
+      expect(usage.cache_read_tokens).must_equal 10
+      expect(usage.cost).must_equal 0.42
+    end
+
+    it "builds a TokenUsage from a hash without the optional keys" do
+      usage = Riffer::Providers::TokenUsage.from_hash({ input_tokens: 100, output_tokens: 50 })
+
+      expect(usage.cache_write_tokens).must_be_nil
+      expect(usage.cache_read_tokens).must_be_nil
+      expect(usage.cost).must_be_nil
+    end
+
+    it "returns a TokenUsage instance unchanged" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+
+      expect(Riffer::Providers::TokenUsage.from_hash(usage)).must_be_same_as usage
+    end
+  end
+
   describe "#total_tokens" do
     it "returns sum of input and output tokens" do
       usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)

@@ -50,6 +50,16 @@ describe Riffer::Messages::Assistant do
       expect(Riffer::Messages::Assistant.from_hash(message)).must_be_same_as message
     end
 
+    it "round-trips token_usage through to_h" do
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50, cost: 0.42)
+      message = Riffer::Messages::Assistant.new("I can help", token_usage: usage)
+
+      rebuilt = Riffer::Messages::Assistant.from_hash(message.to_h)
+
+      expect(rebuilt.token_usage).must_be_instance_of Riffer::Providers::TokenUsage
+      expect(rebuilt.token_usage.to_h).must_equal usage.to_h
+    end
+
     it "raises ArgumentError on an unknown finish_reason" do
       expect { Riffer::Messages::Assistant.from_hash({ content: "Hi", finish_reason: "bogus" }) }.must_raise(Riffer::ArgumentError)
     end

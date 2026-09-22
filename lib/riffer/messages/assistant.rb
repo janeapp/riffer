@@ -20,6 +20,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
       id: msg[:id],
       tool_calls: (msg[:tool_calls] || []).map { |tc| Riffer::Messages::Assistant::ToolCall.from_hash(tc) },
       reasoning: (msg[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
+      token_usage: msg[:token_usage] && Riffer::Providers::TokenUsage.from_hash(msg[:token_usage]),
       structured_output: msg[:structured_output],
       finish_reason: msg[:finish_reason]&.to_sym,
       finish_reason_raw: msg[:finish_reason_raw],

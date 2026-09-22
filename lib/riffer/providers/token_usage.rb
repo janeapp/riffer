@@ -4,6 +4,22 @@
 # Normalized token usage for an LLM API call. Buckets carry the same
 # meaning for every provider.
 class Riffer::Providers::TokenUsage
+  # Builds a TokenUsage from a hash, or returns +usage+ unchanged when it is
+  # already a TokenUsage.
+  #--
+  #: ((Hash[Symbol, untyped] | Riffer::Providers::TokenUsage)) -> Riffer::Providers::TokenUsage
+  def self.from_hash(usage)
+    return usage if usage.is_a?(Riffer::Providers::TokenUsage)
+
+    new(
+      input_tokens: usage[:input_tokens],
+      output_tokens: usage[:output_tokens],
+      cache_write_tokens: usage[:cache_write_tokens],
+      cache_read_tokens: usage[:cache_read_tokens],
+      cost: usage[:cost],
+    )
+  end
+
   # Number of tokens entering the context window, including cache reads and writes.
   attr_reader :input_tokens #: Integer # @dynamic input_tokens
 
