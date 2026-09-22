@@ -23,6 +23,12 @@ describe Riffer::Messages::User do
       expect(message.files.first).must_be_instance_of Riffer::Messages::User::FilePart
     end
 
+    it "defaults to empty files when absent" do
+      message = Riffer::Messages::User.from_hash({ role: "user", content: "Hello" })
+
+      expect(message.files).must_equal []
+    end
+
     it "returns a User message unchanged" do
       message = Riffer::Messages::User.new("Hello")
 

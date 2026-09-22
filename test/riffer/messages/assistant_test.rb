@@ -35,6 +35,15 @@ describe Riffer::Messages::Assistant do
       expect(message.finish_reason_raw).must_equal "tool_use"
     end
 
+    it "defaults optional fields when absent" do
+      message = Riffer::Messages::Assistant.from_hash({ role: "assistant", content: "Hi" })
+
+      expect(message.tool_calls).must_equal []
+      expect(message.reasoning).must_equal []
+      expect(message.structured_output).must_be_nil
+      expect(message.finish_reason).must_be_nil
+    end
+
     it "returns an Assistant message unchanged" do
       message = Riffer::Messages::Assistant.new("Hi")
 
