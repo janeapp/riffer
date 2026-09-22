@@ -444,7 +444,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_anthropic_format(file)
     type = file.image? ? "image" : "document"
 

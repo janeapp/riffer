@@ -35,8 +35,8 @@ module Riffer::Tracing::Capture
   def tool_call_part: (Riffer::Messages::Assistant::ToolCall) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
-  def file_part: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def file_part: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
   # Semconv's tool_call part carries arguments as a JSON object; riffer holds
   # them as a string — parse so the captured payload isn't double-encoded.

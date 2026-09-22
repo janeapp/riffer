@@ -7,15 +7,15 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
-  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Riffer::Agent::Response
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Riffer::Agent::Response
 
   # Runs the streaming loop for the given agent. See Riffer::Agent#stream
   # for prompt/files semantics.
   #
   # --
-  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
-  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
 
   private
 
@@ -118,8 +118,8 @@ module Riffer::Agent::Run
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.
   # --
-  # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
-  def append_user_message: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
+  # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void
+  def append_user_message: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void
 
   # --
   # : (Riffer::Agent, Riffer::Providers::TokenUsage?) -> void

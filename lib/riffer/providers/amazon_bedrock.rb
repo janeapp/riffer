@@ -47,7 +47,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Symbol
+  #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(file)
     file.url&.start_with?("s3://") ? :url : :bytes
   end
@@ -449,7 +449,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format(file)
     format = bedrock_format(file.media_type)
 

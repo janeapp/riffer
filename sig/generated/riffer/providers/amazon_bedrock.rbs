@@ -25,8 +25,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def initialize: () -> void
 
   # --
-  # : (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+  # : (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::User::FilePart) -> Symbol
 
   private
 
@@ -145,8 +145,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
   # --
-  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_bedrock_format: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_bedrock_format: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
   BEDROCK_FORMAT_MAP: Hash[String, String]
 

@@ -1,0 +1,41 @@
+# Generated from lib/riffer/messages/assistant/tool_call.rb with RBS::Inline
+
+# Represents one tool invocation the model requested on an assistant message.
+class Riffer::Messages::Assistant::ToolCall
+  # The provider's identifier for the call, echoed back on the tool result.
+  attr_reader call_id: untyped
+
+  # The name of the tool to invoke.
+  attr_reader name: untyped
+
+  # The JSON-encoded arguments, exactly as the provider emitted them.
+  attr_reader arguments: untyped
+
+  # Builds a ToolCall from a hash, or returns +call+ unchanged when it is
+  # already a ToolCall.
+  # --
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ToolCall)) -> Riffer::Messages::Assistant::ToolCall
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Assistant::ToolCall) -> Riffer::Messages::Assistant::ToolCall
+
+  # --
+  # : (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> void
+  def initialize: (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> void
+
+  # Serializes the call to a hash.
+  #
+  # --
+  # : () -> Hash[Symbol, untyped]
+  def to_h: () -> Hash[Symbol, untyped]
+
+  # --
+  # : (untyped) -> bool
+  def ==: (untyped) -> bool
+
+  # --
+  # : (untyped) -> bool
+  def eql?: (untyped) -> bool
+
+  # --
+  # : () -> Integer
+  def hash: () -> Integer
+end

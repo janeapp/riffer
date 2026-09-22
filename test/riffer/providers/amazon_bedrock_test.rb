@@ -1186,7 +1186,7 @@ describe Riffer::Providers::AmazonBedrock do
 
     it "places the moving cachePoint after the file parts of the last user message" do
       image_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-      file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+      file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
       messages = [Riffer::Messages::System.new("Be concise"), Riffer::Messages::User.new("Describe", files: [file])]
 
       params = provider.send(:build_request_params, messages, model, { cache_control: { type: "ephemeral" } })
@@ -1358,7 +1358,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1372,7 +1372,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1395,7 +1395,7 @@ describe Riffer::Providers::AmazonBedrock do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           result = provider.generate_text(
             prompt: "What is in this document?",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1416,7 +1416,7 @@ describe Riffer::Providers::AmazonBedrock do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           result = provider.generate_text(
             prompt: "What is in this document?",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1439,7 +1439,7 @@ describe Riffer::Providers::AmazonBedrock do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           events = provider.stream_text(
             prompt: "What is in this document?",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1460,7 +1460,7 @@ describe Riffer::Providers::AmazonBedrock do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
+          file = Riffer::Messages::User::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test")
           events = provider.stream_text(
             prompt: "What is in this document?",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1477,7 +1477,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(
             prompt: "Describe this image",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1491,7 +1491,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(
             prompt: "Describe this image",
             model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1513,7 +1513,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
           result = provider.generate_text(
             prompt: "Describe this image",
             model: "us.amazon.nova-lite-v1:0",
@@ -1527,7 +1527,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
           result = provider.generate_text(
             prompt: "Describe this image",
             model: "us.amazon.nova-lite-v1:0",
@@ -1545,7 +1545,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(
+          file = Riffer::Messages::User::FilePart.new(
             media_type: "application/pdf",
             filename: "super-secret-document",
             url: document_s3_uri,
@@ -1563,7 +1563,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_generate_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(
+          file = Riffer::Messages::User::FilePart.new(
             media_type: "application/pdf",
             filename: "super-secret-document",
             url: document_s3_uri,
@@ -1585,7 +1585,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
           events = provider.stream_text(
             prompt: "Describe this image",
             model: "us.amazon.nova-lite-v1:0",
@@ -1599,7 +1599,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_image") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.from_url(image_s3_uri)
+          file = Riffer::Messages::User::FilePart.from_url(image_s3_uri)
           events = provider.stream_text(
             prompt: "Describe this image",
             model: "us.amazon.nova-lite-v1:0",
@@ -1618,7 +1618,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(
+          file = Riffer::Messages::User::FilePart.new(
             media_type: "application/pdf",
             filename: "super-secret-document",
             url: document_s3_uri,
@@ -1636,7 +1636,7 @@ describe Riffer::Providers::AmazonBedrock do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_AmazonBedrock/file_handling/_stream_text/with_s3_uri_document") do
           provider = Riffer::Providers::AmazonBedrock.new
-          file = Riffer::Messages::FilePart.new(
+          file = Riffer::Messages::User::FilePart.new(
             media_type: "application/pdf",
             filename: "super-secret-document",
             url: document_s3_uri,
@@ -1656,7 +1656,7 @@ describe Riffer::Providers::AmazonBedrock do
     describe "with unsupported URL source" do
       it "raises FileDownloadsDisabledError for non-S3 URLs when downloads are disabled" do
         provider = Riffer::Providers::AmazonBedrock.new
-        file = Riffer::Messages::FilePart.from_url("https://example.com/image.png")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/image.png")
 
         expect do
           provider.generate_text(prompt: "Describe this", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",

@@ -3,17 +3,6 @@
 # Represents an assistant (LLM) message in a conversation; may include tool
 # calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
-  class ToolCall < Struct[untyped]
-    attr_accessor call_id(): untyped
-
-    attr_accessor name(): untyped
-
-    attr_accessor arguments(): untyped
-
-    def self.new: (?untyped call_id, ?untyped name, ?untyped arguments) -> instance
-                | (?call_id: untyped, ?name: untyped, ?arguments: untyped) -> instance
-  end
-
   # The reasoning part types +reasoning_text+ reads; the rest carry no prose.
   REASONING_TEXT_TYPES: Array[Symbol]
 

@@ -32,9 +32,9 @@ msg.to_h     # => {role: :user, content: "Hello, how are you?"}
 User messages can include file attachments:
 
 ```ruby
-file = Riffer::Messages::FilePart.from_path("photo.jpg")
+file = Riffer::Messages::User::FilePart.from_path("photo.jpg")
 msg = Riffer::Messages::User.new("Describe this image", files: [file])
-msg.files    # => [#<Riffer::Messages::FilePart ...>]
+msg.files    # => [#<Riffer::Messages::User::FilePart ...>]
 msg.to_h     # => {role: :user, content: "Describe this image", files: [{...}]}
 ```
 
@@ -65,6 +65,19 @@ if msg.token_usage
   puts "Output tokens: #{msg.token_usage.output_tokens}"
   puts "Total tokens: #{msg.token_usage.total_tokens}"
 end
+```
+
+#### Tool Calls
+
+`Riffer::Messages::Assistant::ToolCall` is the normalized container riffer stores a requested tool invocation in. Each call carries `call_id` (the provider's identifier, passed back as the tool result's `tool_call_id`), `name`, and `arguments` (the JSON-encoded argument string exactly as the provider emitted it); `to_h` serializes all three.
+
+```ruby
+tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_123", name: "weather_tool", arguments: '{"city":"Tokyo"}')
+msg = Riffer::Messages::Assistant.new("", tool_calls: [tool_call])
+
+msg.has_tool_calls?        # => true
+msg.tool_calls.first.name  # => "weather_tool"
+tool_call.to_h             # => {call_id: "call_123", name: "weather_tool", arguments: '{"city":"Tokyo"}'}
 ```
 
 #### Token Usage Semantics
@@ -210,7 +223,7 @@ msg.error_type  # => :execution_error
 
 ## File Parts
 
-`Riffer::Messages::FilePart` represents a file attachment (image or document) that can be included with user messages.
+`Riffer::Messages::User::FilePart` represents a file attachment (image or document) that can be included with user messages.
 
 ### Supported Media Types
 
@@ -222,21 +235,21 @@ msg.error_type  # => :execution_error
 
 ```ruby
 # From a file path (reads eagerly, detects media type from extension)
-file = Riffer::Messages::FilePart.from_path("photo.jpg")
+file = Riffer::Messages::User::FilePart.from_path("photo.jpg")
 file.media_type  # => "image/jpeg"
 file.filename    # => "photo.jpg"
 file.image?      # => true
 
 # From a URL (stored directly, resolved lazily if provider needs bytes)
-file = Riffer::Messages::FilePart.from_url("https://example.com/doc.pdf")
+file = Riffer::Messages::User::FilePart.from_url("https://example.com/doc.pdf")
 file.url?        # => true
 file.document?   # => true
 
 # From raw base64 data
-file = Riffer::Messages::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
+file = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
 
 # With an expected sha256 checksum of the file's contents
-file = Riffer::Messages::FilePart.from_url(
+file = Riffer::Messages::User::FilePart.from_url(
   "https://example.com/doc.pdf",
   sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 )

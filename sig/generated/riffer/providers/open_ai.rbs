@@ -19,8 +19,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def initialize: () -> void
 
   # --
-  # : (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+  # : (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::User::FilePart) -> Symbol
 
   private
 
@@ -125,8 +125,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
 
   # --
-  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_openai_format: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_openai_format: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
   # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

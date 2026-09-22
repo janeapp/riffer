@@ -40,7 +40,7 @@ class Riffer::Providers::Base
   # Generates text using the provider.
   #
   #--
-  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Riffer::Messages::Assistant
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
@@ -80,7 +80,7 @@ class Riffer::Providers::Base
   # Streams text from the provider.
   #
   #--
-  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
@@ -107,7 +107,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Symbol
+  #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(_file)
     :url
   end
@@ -416,7 +416,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Array[Riffer::Messages::Base]
+  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> Array[Riffer::Messages::Base]
   def normalize_messages(prompt:, system:, messages:, files: nil)
     if messages && files && !files.empty?
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
@@ -426,7 +426,7 @@ class Riffer::Providers::Base
 
     result = [] #: Array[Riffer::Messages::Base]
     result << Riffer::Messages::System.new(system) if system
-    file_parts = (files || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
+    file_parts = (files || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
     prompt_text = prompt #: String
     result << Riffer::Messages::User.new(prompt_text, files: file_parts)
     result

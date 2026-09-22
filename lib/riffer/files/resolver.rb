@@ -40,7 +40,7 @@ class Riffer::Files::Resolver
     raise Riffer::TooManyFilesError, "Too many files specified in user message"
   end
 
-  #: (Riffer::Messages::FilePart) -> void
+  #: (Riffer::Messages::User::FilePart) -> void
   def resolve_file!(file)
     delivery = @provider.file_delivery(file)
     if delivery == :unsupported
@@ -62,7 +62,7 @@ class Riffer::Files::Resolver
     end
   end
 
-  #: (Riffer::Messages::FilePart) -> void
+  #: (Riffer::Messages::User::FilePart) -> void
   def verify_inline!(file)
     return unless file.sha256
 
@@ -72,7 +72,7 @@ class Riffer::Files::Resolver
   # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
   # request still sends the URL, never the downloaded bytes, so caching them
   # would hold memory nothing reads and let later turns skip re-verifying.
-  #: (Riffer::Messages::FilePart, cache: (false | Symbol)) -> void
+  #: (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> void
   def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads
 

@@ -874,7 +874,7 @@ describe Riffer::Providers::Anthropic do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Anthropic.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image",
             model: "claude-haiku-4-5-20251001",
@@ -888,7 +888,7 @@ describe Riffer::Providers::Anthropic do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Anthropic.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image",
             model: "claude-haiku-4-5-20251001",
@@ -911,7 +911,11 @@ describe Riffer::Providers::Anthropic do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           result = provider.generate_text(
             prompt: "What is in this document?",
             model: "claude-haiku-4-5-20251001",
@@ -932,7 +936,11 @@ describe Riffer::Providers::Anthropic do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           result = provider.generate_text(
             prompt: "What is in this document?",
             model: "claude-haiku-4-5-20251001",
@@ -955,7 +963,11 @@ describe Riffer::Providers::Anthropic do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           events = provider.stream_text(
             prompt: "What is in this document?",
             model: "claude-haiku-4-5-20251001",
@@ -976,7 +988,11 @@ describe Riffer::Providers::Anthropic do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           events = provider.stream_text(
             prompt: "What is in this document?",
             model: "claude-haiku-4-5-20251001",
@@ -993,7 +1009,7 @@ describe Riffer::Providers::Anthropic do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::Anthropic.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(
             prompt: "Describe this image",
             model: "claude-haiku-4-5-20251001",
@@ -1007,7 +1023,7 @@ describe Riffer::Providers::Anthropic do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_Anthropic/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::Anthropic.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(
             prompt: "Describe this image",
             model: "claude-haiku-4-5-20251001",

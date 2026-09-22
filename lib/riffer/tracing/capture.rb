@@ -71,7 +71,7 @@ module Riffer::Tracing::Capture # :nodoc: all
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def file_part(file)
     part = { type: "file", media_type: file.media_type } #: Hash[Symbol, untyped]
     part[:name] = file.filename if file.filename

@@ -4,10 +4,10 @@
 # Represents a user message in a conversation.
 class Riffer::Messages::User < Riffer::Messages::Base
   # File attachments for this message.
-  attr_reader :files #: Array[Riffer::Messages::FilePart] # @dynamic files
+  attr_reader :files #: Array[Riffer::Messages::User::FilePart] # @dynamic files
 
   #--
-  #: (String, ?id: String?, ?files: Array[Riffer::Messages::FilePart]) -> void
+  #: (String, ?id: String?, ?files: Array[Riffer::Messages::User::FilePart]) -> void
   def initialize(content, id: nil, files: [])
     super(content, id: id)
     @files = files

@@ -111,7 +111,7 @@ class Riffer::Evals::Judge
   def parse_tool_response(response)
     tool_call = response.tool_calls.fetch(0) { raise Riffer::Error, "Invalid judge response: no tool call found" }
 
-    parsed = JSON.parse(tool_call[:arguments], symbolize_names: true)
+    parsed = JSON.parse(tool_call.arguments, symbolize_names: true)
     score = parsed[:score]
     reason = parsed[:reason]
 

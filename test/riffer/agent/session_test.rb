@@ -229,7 +229,7 @@ describe Riffer::Agent::Session do
     end
 
     it "preserves files on a user message" do
-      file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: "x")
+      file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: "x")
       u = Riffer::Messages::User.new("old", id: "u_x", files: [file])
       s = Riffer::Agent::Session.new(messages: [u])
       result = s.update(id: "u_x", content: "new")

@@ -16,11 +16,11 @@ class Riffer::Messages::Base
 
     case msg[:role].to_sym
     when :user
-      files = (msg[:files] || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
+      files = (msg[:files] || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
       Riffer::Messages::User.new(msg[:content], id: msg[:id], files: files)
     when :assistant
       tool_calls = (msg[:tool_calls] || []).map do |tc|
-        tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
+        Riffer::Messages::Assistant::ToolCall.from_hash(tc)
       end
       reasoning = (msg[:reasoning] || []).map do |part|
         Riffer::Messages::Assistant::ReasoningPart.from_hash(part)

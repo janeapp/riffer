@@ -380,7 +380,7 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "maps User messages with image files to multi-part content" do
-      file = Riffer::Messages::FilePart.new(data: "abc", media_type: "image/png")
+      file = Riffer::Messages::User::FilePart.new(data: "abc", media_type: "image/png")
       result = provider.send(
         :convert_messages_to_chat_completions_format,
         [Riffer::Messages::User.new("Look", files: [file])],
@@ -433,21 +433,21 @@ describe Riffer::Providers::OpenRouter do
     let(:provider) { Riffer::Providers::OpenRouter.new }
 
     it "encodes base64 images as a data URL" do
-      file = Riffer::Messages::FilePart.new(data: "xyz", media_type: "image/jpeg")
+      file = Riffer::Messages::User::FilePart.new(data: "xyz", media_type: "image/jpeg")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
 
       expect(result).must_equal({ type: "image_url", image_url: { url: "data:image/jpeg;base64,xyz" } })
     end
 
     it "passes through image URLs without re-encoding" do
-      file = Riffer::Messages::FilePart.new(url: "https://example.com/cat.png", media_type: "image/png")
+      file = Riffer::Messages::User::FilePart.new(url: "https://example.com/cat.png", media_type: "image/png")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
 
       expect(result[:image_url][:url]).must_equal "https://example.com/cat.png"
     end
 
     it "encodes documents under the file content type" do
-      file = Riffer::Messages::FilePart.new(data: "pdfdata", media_type: "application/pdf", filename: "doc.pdf")
+      file = Riffer::Messages::User::FilePart.new(data: "pdfdata", media_type: "application/pdf", filename: "doc.pdf")
       result = provider.send(:convert_file_part_to_chat_completions_format, file)
 
       expect(result[:type]).must_equal "file"
@@ -719,7 +719,7 @@ describe Riffer::Providers::OpenRouter do
       it "returns an Assistant message with content" do
         VCR.use_cassette("Riffer_Providers_OpenRouter/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::OpenRouter.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(
             prompt: "Describe this image briefly",
             model: "openai/gpt-4o-mini",

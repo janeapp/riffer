@@ -2093,7 +2093,7 @@ describe Riffer::Agent::Run do
   describe "#generate with files" do
     it "attaches files to user message" do
       agent = agent_class.new
-      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.generate("Describe this", files: [file])
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
 
@@ -2105,7 +2105,7 @@ describe Riffer::Agent::Run do
       agent.generate("Describe this", files: [{ data: "aGVsbG8=", media_type: "image/png" }])
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
 
-      expect(user_message.files.first).must_be_instance_of Riffer::Messages::FilePart
+      expect(user_message.files.first).must_be_instance_of Riffer::Messages::User::FilePart
     end
 
     it "defaults to empty files when not provided" do
@@ -2128,7 +2128,7 @@ describe Riffer::Agent::Run do
   describe "#stream with files" do
     it "attaches files to user message" do
       agent = agent_class.new
-      file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
       agent.stream("Describe this", files: [file]).each { |_| }
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
 
@@ -2140,7 +2140,7 @@ describe Riffer::Agent::Run do
       agent.stream("Describe this", files: [{ data: "aGVsbG8=", media_type: "image/png" }]).each { |_| }
       user_message = agent.session.messages.find { |msg| msg.is_a?(Riffer::Messages::User) }
 
-      expect(user_message.files.first).must_be_instance_of Riffer::Messages::FilePart
+      expect(user_message.files.first).must_be_instance_of Riffer::Messages::User::FilePart
     end
   end
 
