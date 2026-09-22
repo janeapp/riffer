@@ -14,16 +14,13 @@ class Riffer::Messages::Base
 
     raise Riffer::ArgumentError, "Message hash must include a 'role' key" if msg[:role].nil? || msg[:role].empty?
 
-    message_class =
-      case msg[:role].to_sym
-      when :user then Riffer::Messages::User
-      when :assistant then Riffer::Messages::Assistant
-      when :system then Riffer::Messages::System
-      when :tool then Riffer::Messages::Tool
-      else raise Riffer::ArgumentError, "Unknown message role: #{msg[:role]}"
-      end
-
-    message_class.from_hash(msg)
+    case msg[:role].to_sym
+    when :user then Riffer::Messages::User.from_hash(msg)
+    when :assistant then Riffer::Messages::Assistant.from_hash(msg)
+    when :system then Riffer::Messages::System.from_hash(msg)
+    when :tool then Riffer::Messages::Tool.from_hash(msg)
+    else raise Riffer::ArgumentError, "Unknown message role: #{msg[:role]}"
+    end
   end
 
   # The message content.
