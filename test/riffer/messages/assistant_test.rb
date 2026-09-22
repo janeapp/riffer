@@ -125,10 +125,10 @@ describe Riffer::Messages::Assistant do
     end
 
     it "includes tool_calls when provided" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(name: "test")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "test", arguments: "{}")
       message = Riffer::Messages::Assistant.new("Using tool", tool_calls: [tool_call])
 
-      expect(message.to_h[:tool_calls]).must_equal [{ call_id: nil, name: "test", arguments: nil }]
+      expect(message.to_h[:tool_calls]).must_equal [{ call_id: "c1", name: "test", arguments: "{}" }]
     end
 
     it "excludes tool_calls when empty" do

@@ -12,8 +12,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+  # : (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::User::FilePart) -> Symbol
 
   private
 
@@ -74,8 +74,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def convert_assistant_to_gemini_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
 
   # --
-  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_gemini_format: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_gemini_format: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
   # --
   # : (singleton(Riffer::Tool)) -> Hash[Symbol, untyped]

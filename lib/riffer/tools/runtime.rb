@@ -101,9 +101,9 @@ class Riffer::Tools::Runtime
   end
 
   #--
-  #: (String?) -> untyped
+  #: (String) -> untyped
   def parse_arguments(arguments)
-    return {} if arguments.nil? || arguments.empty?
+    return {} if arguments.empty?
 
     JSON.parse(arguments, symbolize_names: true)
   end
@@ -168,8 +168,7 @@ class Riffer::Tools::Runtime
   def capture_tool_arguments(span, tool_call)
     return unless capture_tool_content?(span)
 
-    arguments = tool_call.arguments
-    span.set_attribute("gen_ai.tool.call.arguments", arguments) if arguments
+    span.set_attribute("gen_ai.tool.call.arguments", tool_call.arguments)
   end
 
   #--

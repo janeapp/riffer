@@ -34,7 +34,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Symbol
+  #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(file)
     file.image? ? :url : :base64
   end
@@ -362,7 +362,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
           type: "function",
           function: {
             name: encode_tool_name(tc.name),
-            arguments: tc.arguments.is_a?(String) ? tc.arguments : tc.arguments.to_json,
+            arguments: tc.arguments,
           },
         }
       end
@@ -372,7 +372,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_chat_completions_format(file)
     if file.image?
       image_url = file.url? ? file.url : "data:#{file.media_type};base64,#{file.data}"

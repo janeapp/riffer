@@ -4,8 +4,6 @@
 # Represents an assistant (LLM) message in a conversation; may include tool
 # calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
-  ToolCall = Struct.new(:call_id, :name, :arguments)
-
   # The reasoning part types +reasoning_text+ reads; the rest carry no prose.
   REASONING_TEXT_TYPES = %i[text summary].freeze #: Array[Symbol]
 

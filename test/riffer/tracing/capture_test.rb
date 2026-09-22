@@ -51,7 +51,8 @@ describe Riffer::Tracing::Capture do
     end
 
     it "serializes file parts as metadata-only stubs" do
-      file = Riffer::Messages::FilePart.from_hash({ data: "aGVsbG8=", media_type: "image/png", filename: "photo.png" })
+      file = Riffer::Messages::User::FilePart.from_hash({ data: "aGVsbG8=", media_type: "image/png",
+                                                          filename: "photo.png", })
       json = Riffer::Tracing::Capture.input_messages([Riffer::Messages::User.new("Look", files: [file])])
 
       part = JSON.parse(json).dig(0, "parts", 1)

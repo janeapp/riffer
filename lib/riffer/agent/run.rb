@@ -10,7 +10,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
     run_loop(agent, tags: tags)
@@ -20,7 +20,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
@@ -429,12 +429,12 @@ module Riffer::Agent::Run
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.
   #--
-  #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
+  #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void
   def append_user_message(agent, prompt, files: nil)
     raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
     return unless prompt
 
-    file_parts = (files || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
+    file_parts = (files || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
     agent.session.add(Riffer::Messages::User.new(prompt, files: file_parts), silent: true)
   end
 

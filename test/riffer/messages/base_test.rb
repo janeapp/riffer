@@ -212,7 +212,7 @@ describe Riffer::Messages::Base do
     end
 
     describe "with assistant tool_calls" do
-      let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(name: "search") }
+      let(:tool_call) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "search", arguments: "{}") }
 
       it "preserves tool_calls in assistant messages" do
         result = Riffer::Messages::Base.from_hash(
@@ -251,11 +251,11 @@ describe Riffer::Messages::Base do
         )
 
         expect(result.files.length).must_equal 1
-        expect(result.files.first).must_be_instance_of Riffer::Messages::FilePart
+        expect(result.files.first).must_be_instance_of Riffer::Messages::User::FilePart
       end
 
       it "preserves FilePart objects" do
-        file = Riffer::Messages::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+        file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
         result = Riffer::Messages::Base.from_hash({ role: "user", content: "Describe this", files: [file] })
 
         expect(result.files.first).must_equal file

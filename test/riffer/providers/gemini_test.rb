@@ -899,7 +899,7 @@ describe Riffer::Providers::Gemini do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Gemini.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -909,7 +909,7 @@ describe Riffer::Providers::Gemini do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_Gemini/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::Gemini.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gemini-2.5-flash-lite", files: [file])
 
           expect(result.content).wont_be_empty
