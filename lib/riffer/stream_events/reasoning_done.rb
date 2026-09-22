@@ -9,10 +9,10 @@ class Riffer::StreamEvents::ReasoningDone < Riffer::StreamEvents::Base
 
   # The structured reasoning block behind +content+, for adapters that produce
   # replayable parts; nil for those that only report reasoning text.
-  attr_reader :part #: Riffer::Messages::ReasoningPart? # @dynamic part
+  attr_reader :part #: Riffer::Messages::Assistant::ReasoningPart? # @dynamic part
 
   #--
-  #: (String, ?part: Riffer::Messages::ReasoningPart?, ?role: Symbol) -> void
+  #: (String, ?part: Riffer::Messages::Assistant::ReasoningPart?, ?role: Symbol) -> void
   def initialize(content, part: nil, role: :assistant)
     super(role: role)
     @content = content

@@ -153,7 +153,7 @@ module Riffer::Agent::Run
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
     accumulated_content = +""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
-    accumulated_reasoning = [] #: Array[Riffer::Messages::ReasoningPart]
+    accumulated_reasoning = [] #: Array[Riffer::Messages::Assistant::ReasoningPart]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
     accumulated_finish_reason_raw = nil #: String?
@@ -394,7 +394,7 @@ module Riffer::Agent::Run
   #    outcome: Riffer::Agent::Outcome,
   #    ?tripwire: Riffer::Guardrails::Tripwire?,
   #    ?modifications: Array[Riffer::Guardrails::Modification],
-  #    ?reasoning: Array[Riffer::Messages::ReasoningPart],
+  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?healed_tool_call_ids: Array[String],
   #    ?token_usage: Riffer::Providers::TokenUsage?,

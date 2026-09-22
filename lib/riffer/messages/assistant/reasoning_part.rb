@@ -4,7 +4,7 @@
 # Represents one block of model reasoning attached to an assistant message.
 # riffer stores and replays a part verbatim rather than interpreting it, so a
 # provider that requires its own thinking blocks back gets them unchanged.
-class Riffer::Messages::ReasoningPart
+class Riffer::Messages::Assistant::ReasoningPart
   TYPES = %i[text summary encrypted].freeze #: Array[Symbol]
 
   # What the part carries: readable reasoning (+:text+), a provider-condensed
@@ -31,9 +31,9 @@ class Riffer::Messages::ReasoningPart
   # Builds a ReasoningPart from a hash, or returns +part+ unchanged when it is
   # already a ReasoningPart.
   #--
-  #: ((Hash[Symbol, untyped] | Riffer::Messages::ReasoningPart)) -> Riffer::Messages::ReasoningPart
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart)) -> Riffer::Messages::Assistant::ReasoningPart
   def self.from_hash(part)
-    return part if part.is_a?(Riffer::Messages::ReasoningPart)
+    return part if part.is_a?(Riffer::Messages::Assistant::ReasoningPart)
 
     new(
       type: part[:type].to_sym,
@@ -73,7 +73,7 @@ class Riffer::Messages::ReasoningPart
   #--
   #: (untyped) -> bool
   def ==(other)
-    other.is_a?(Riffer::Messages::ReasoningPart) && to_h == other.to_h
+    other.is_a?(Riffer::Messages::Assistant::ReasoningPart) && to_h == other.to_h
   end
 
   #--

@@ -107,13 +107,13 @@ module Riffer::Agent::Run
   #     outcome: Riffer::Agent::Outcome,
   #     ?tripwire: Riffer::Guardrails::Tripwire?,
   #     ?modifications: Array[Riffer::Guardrails::Modification],
-  #     ?reasoning: Array[Riffer::Messages::ReasoningPart],
+  #     ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #     ?structured_output: Hash[Symbol, untyped]?,
   #     ?healed_tool_call_ids: Array[String],
   #     ?token_usage: Riffer::Providers::TokenUsage?,
   #     ?steps: Integer
   #   ) -> Riffer::Agent::Response
-  def build_response: (Riffer::Agent, String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def build_response: (Riffer::Agent, String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.

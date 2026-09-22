@@ -46,8 +46,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #   provider.stub_response("Answer", reasoning: [{type: :text, text: "Thinking...", format: "mock-v1"}])
   #
   # --
-  # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::ReasoningPart]) -> void
-  def stub_response: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::ReasoningPart]) -> void
+  # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void
+  def stub_response: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void
 
   # Clears all stubbed responses.
   #
@@ -78,8 +78,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
   # --
-  # : (untyped) -> Array[Riffer::Messages::ReasoningPart]
-  def extract_reasoning: (untyped) -> Array[Riffer::Messages::ReasoningPart]
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
 
   # --
   # : (untyped) -> String

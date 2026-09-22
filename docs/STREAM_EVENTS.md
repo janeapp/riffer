@@ -108,7 +108,7 @@ event.content  # => "Let me think about "
 Emitted when reasoning is complete:
 
 ```ruby
-part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Let me think about this step by step...", format: "mock-v1")
+part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Let me think about this step by step...", format: "mock-v1")
 event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by step...", part: part)
 event.role     # => :assistant
 event.content  # => "Let me think about this step by step..."

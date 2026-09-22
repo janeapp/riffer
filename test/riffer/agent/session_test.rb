@@ -202,7 +202,7 @@ describe Riffer::Agent::Session do
     end
 
     it "preserves reasoning on assistant" do
-      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
       a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [part])
       s = Riffer::Agent::Session.new(messages: [a])
       result = s.update(id: "a_x", content: "new")
@@ -211,7 +211,7 @@ describe Riffer::Agent::Session do
     end
 
     it "strips reasoning from an assistant when given an empty array" do
-      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
       a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [part])
       s = Riffer::Agent::Session.new(messages: [a])
       result = s.update(id: "a_x", reasoning: [])

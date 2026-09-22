@@ -26,7 +26,7 @@ class Riffer::Agent::Response
 
   # The reasoning parts on the final assistant message, if the provider
   # produced any.
-  attr_reader :reasoning #: Array[Riffer::Messages::ReasoningPart] # @dynamic reasoning
+  attr_reader :reasoning #: Array[Riffer::Messages::Assistant::ReasoningPart] # @dynamic reasoning
 
   # The parsed structured output, if structured output was configured.
   attr_reader :structured_output #: Hash[Symbol, untyped]? # @dynamic structured_output
@@ -51,7 +51,7 @@ class Riffer::Agent::Response
   #    outcome: Riffer::Agent::Outcome,
   #    ?tripwire: Riffer::Guardrails::Tripwire?,
   #    ?modifications: Array[Riffer::Guardrails::Modification],
-  #    ?reasoning: Array[Riffer::Messages::ReasoningPart],
+  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?messages: Array[Riffer::Messages::Base],
   #    ?healed_tool_call_ids: Array[String],

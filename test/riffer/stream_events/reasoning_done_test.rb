@@ -29,7 +29,7 @@ describe Riffer::StreamEvents::ReasoningDone do
     end
 
     it "carries the reasoning part when given" do
-      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Hello", format: "mock-v1")
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Hello", format: "mock-v1")
       event = Riffer::StreamEvents::ReasoningDone.new("Hello", part: part)
 
       expect(event.part).must_equal part
@@ -44,7 +44,7 @@ describe Riffer::StreamEvents::ReasoningDone do
     end
 
     it "includes the part when one is present" do
-      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Hello", format: "mock-v1")
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Hello", format: "mock-v1")
       event = Riffer::StreamEvents::ReasoningDone.new("Hello", part: part)
 
       expect(event.to_h).must_equal(

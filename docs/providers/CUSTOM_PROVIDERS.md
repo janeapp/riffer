@@ -278,12 +278,12 @@ Also have `execute_stream` raise `Riffer::IncompleteStreamError` when the stream
 
 ## Reasoning
 
-`extract_reasoning` is the optional hook for reasoning models — return the response's thinking blocks as [`Riffer::Messages::ReasoningPart`s](../MESSAGES.md#reasoning) and the base class attaches them to the assistant message, where a host can persist them and hand them back on the next turn:
+`extract_reasoning` is the optional hook for reasoning models — return the response's thinking blocks as [`Riffer::Messages::Assistant::ReasoningPart`s](../MESSAGES.md#reasoning) and the base class attaches them to the assistant message, where a host can persist them and hand them back on the next turn:
 
 ```ruby
 def extract_reasoning(response)
   response.thinking_blocks.map do |block|
-    Riffer::Messages::ReasoningPart.new(
+    Riffer::Messages::Assistant::ReasoningPart.new(
       type: :encrypted,
       data: block.data,
       signature: block.signature,
@@ -300,7 +300,7 @@ Your adapter owns its `format` string: pick one value per wire shape, replay onl
 For streaming, carry the part on the `ReasoningDone` event so the agent loop can accumulate it:
 
 ```ruby
-part = Riffer::Messages::ReasoningPart.new(type: :text, text: "complete reasoning", format: "my-provider-v1")
+part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "complete reasoning", format: "my-provider-v1")
 
 yielder << Riffer::StreamEvents::ReasoningDelta.new("thinking...")
 yielder << Riffer::StreamEvents::ReasoningDone.new("complete reasoning", part: part)

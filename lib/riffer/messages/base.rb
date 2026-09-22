@@ -23,7 +23,7 @@ class Riffer::Messages::Base
         tc.is_a?(Riffer::Messages::Assistant::ToolCall) ? tc : Riffer::Messages::Assistant::ToolCall.new(**tc)
       end
       reasoning = (msg[:reasoning] || []).map do |part|
-        Riffer::Messages::ReasoningPart.from_hash(part)
+        Riffer::Messages::Assistant::ReasoningPart.from_hash(part)
       end
       Riffer::Messages::Assistant.new(
         msg[:content],

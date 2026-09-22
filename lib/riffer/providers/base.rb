@@ -229,7 +229,7 @@ class Riffer::Providers::Base
   # Defaults to no parts rather than raising — reasoning parts are optional, so
   # providers that don't expose replayable reasoning stay valid.
   #--
-  #: (untyped) -> Array[Riffer::Messages::ReasoningPart]
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
   def extract_reasoning(_response)
     []
   end

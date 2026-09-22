@@ -217,9 +217,9 @@ describe Riffer::Messages::Assistant do
     end
   end
   describe "reasoning" do
-    let(:text_part) { Riffer::Messages::ReasoningPart.new(type: :text, text: "Step one", format: "mock-v1") }
-    let(:summary_part) { Riffer::Messages::ReasoningPart.new(type: :summary, text: "Step two", format: "mock-v1") }
-    let(:encrypted_part) { Riffer::Messages::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1") }
+    let(:text_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Step one", format: "mock-v1") }
+    let(:summary_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :summary, text: "Step two", format: "mock-v1") }
+    let(:encrypted_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1") }
 
     it "defaults to no parts" do
       message = Riffer::Messages::Assistant.new("Answer")

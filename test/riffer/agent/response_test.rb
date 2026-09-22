@@ -150,7 +150,7 @@ describe Riffer::Agent::Response do
     end
 
     it "stores the reasoning parts" do
-      part = Riffer::Messages::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
       response = Riffer::Agent::Response.new("Hello!", outcome: completed, reasoning: [part])
 
       expect(response.reasoning).must_equal [part]

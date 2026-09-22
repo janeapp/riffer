@@ -57,7 +57,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   #   provider.stub_response("Answer", reasoning: [{type: :text, text: "Thinking...", format: "mock-v1"}])
   #
   #--
-  #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::ReasoningPart]) -> void
+  #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void
   def stub_response(content, tool_calls: [], token_usage: nil, finish_reason: nil, reasoning: [])
     @stubbed_responses << normalize_response(
       content: content,
@@ -94,7 +94,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
       role: response[:role] || "assistant",
       content: response[:content] || "",
       tool_calls: formatted_tool_calls,
-      reasoning: (response[:reasoning] || []).map { |part| Riffer::Messages::ReasoningPart.from_hash(part) },
+      reasoning: (response[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
       token_usage: response[:token_usage],
       finish_reason: response[:finish_reason] || (formatted_tool_calls.empty? ? :stop : :tool_calls),
     }
@@ -133,7 +133,7 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped) -> Array[Riffer::Messages::ReasoningPart]
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
   def extract_reasoning(response)
     response[:reasoning] || []
   end

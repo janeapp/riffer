@@ -49,7 +49,7 @@ response = agent.generate("Use the tool")
 
 ## Stubbing Reasoning
 
-Stub [reasoning parts](../MESSAGES.md#reasoning) to exercise a host's persistence of them. Hashes are normalized into `Riffer::Messages::ReasoningPart`s:
+Stub [reasoning parts](../MESSAGES.md#reasoning) to exercise a host's persistence of them. Hashes are normalized into `Riffer::Messages::Assistant::ReasoningPart`s:
 
 ```ruby
 provider.stub_response("42", reasoning: [

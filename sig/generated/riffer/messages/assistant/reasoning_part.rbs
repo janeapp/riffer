@@ -1,9 +1,9 @@
-# Generated from lib/riffer/messages/reasoning_part.rb with RBS::Inline
+# Generated from lib/riffer/messages/assistant/reasoning_part.rb with RBS::Inline
 
 # Represents one block of model reasoning attached to an assistant message.
 # riffer stores and replays a part verbatim rather than interpreting it, so a
 # provider that requires its own thinking blocks back gets them unchanged.
-class Riffer::Messages::ReasoningPart
+class Riffer::Messages::Assistant::ReasoningPart
   TYPES: Array[Symbol]
 
   # What the part carries: readable reasoning (+:text+), a provider-condensed
@@ -30,8 +30,8 @@ class Riffer::Messages::ReasoningPart
   # Builds a ReasoningPart from a hash, or returns +part+ unchanged when it is
   # already a ReasoningPart.
   # --
-  # : ((Hash[Symbol, untyped] | Riffer::Messages::ReasoningPart)) -> Riffer::Messages::ReasoningPart
-  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::ReasoningPart) -> Riffer::Messages::ReasoningPart
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart)) -> Riffer::Messages::Assistant::ReasoningPart
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart) -> Riffer::Messages::Assistant::ReasoningPart
 
   # Raises Riffer::ArgumentError on a +type+ outside TYPES.
   # --

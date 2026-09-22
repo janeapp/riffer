@@ -549,7 +549,7 @@ describe Riffer::Providers::Mock do
     end
 
     it "accepts ReasoningPart instances" do
-      instance = Riffer::Messages::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1")
+      instance = Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1")
       provider.stub_response("Answer", reasoning: [instance])
       message = provider.generate_text(prompt: "Hello", model: "riffer-1")
 

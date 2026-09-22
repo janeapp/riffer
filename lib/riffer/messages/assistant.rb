@@ -14,7 +14,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
 
   # The model's reasoning blocks for this response, in the order the provider
   # emitted them.
-  attr_reader :reasoning #: Array[Riffer::Messages::ReasoningPart] # @dynamic reasoning
+  attr_reader :reasoning #: Array[Riffer::Messages::Assistant::ReasoningPart] # @dynamic reasoning
 
   # Token usage data for this response.
   attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
@@ -37,7 +37,7 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   #    String,
   #    ?id: String?,
   #    ?tool_calls: Array[Riffer::Messages::Assistant::ToolCall],
-  #    ?reasoning: Array[Riffer::Messages::ReasoningPart],
+  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?finish_reason: Symbol?,
