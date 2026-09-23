@@ -21,13 +21,10 @@ class Riffer::Messages::User::FilePart
 
   attr_reader sha256: String?
 
-  # Raises Riffer::ArgumentError on an unsupported +media_type+.
   # --
   # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
   def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
 
-  # Raises Riffer::ArgumentError when +media_type+ is omitted and the URL's
-  # extension doesn't identify one.
   # --
   # : (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
   def self.from_url: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart

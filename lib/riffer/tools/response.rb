@@ -4,16 +4,6 @@
 require "json"
 
 # Every tool's +call+ must return one.
-#
-#   class MyTool < Riffer::Tool
-#     def call(context:, **kwargs)
-#       result = perform_operation
-#       Riffer::Tools::Response.success(result)
-#     rescue MyError => e
-#       Riffer::Tools::Response.error(e.message)
-#     end
-#   end
-#
 class Riffer::Tools::Response
   # @rbs @success: bool
 

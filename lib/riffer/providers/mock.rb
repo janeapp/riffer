@@ -33,8 +33,6 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
     @stubbed_responses = []
   end
 
-  #   provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
-  #   provider.stub_response("Final answer")
   #--
   #: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void
   def stub_response(content, tool_calls: [], token_usage: nil, finish_reason: nil, reasoning: [])

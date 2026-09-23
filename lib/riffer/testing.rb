@@ -9,16 +9,12 @@ module Riffer::Testing
   CONST_NAME_PATTERN = /\A[A-Z][A-Za-z0-9_]*\z/ #: Regexp
   private_constant :CONST_NAME_PATTERN
 
-  #   agent = stub_agent("SupportAgent") { model "mock/gpt-5-mini" }
-  #
   #--
   #: (?(String | Symbol)?, ?base: singleton(Riffer::Agent)) ?{ () [self: singleton(Riffer::Agent)] -> void } -> singleton(Riffer::Agent)
   def stub_agent(name = nil, base: Riffer::Agent, &body)
     build_stub(name, base: base, &body) #: singleton(Riffer::Agent)
   end
 
-  #   tool = stub_tool("KbSearch") { def call(context:, **) = text("stubbed") }
-  #
   #--
   #: (?(String | Symbol)?, ?base: singleton(Riffer::Tool)) ?{ () [self: singleton(Riffer::Tool)] -> void } -> singleton(Riffer::Tool)
   def stub_tool(name = nil, base: Riffer::Tool, &body)

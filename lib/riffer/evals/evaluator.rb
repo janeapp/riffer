@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-#   class MyEvaluator < Riffer::Evals::Evaluator
-#     instructions "Assess medical accuracy of the response..."
-#     higher_is_better true
-#     judge_model "anthropic/claude-opus-4-5-20251101"
-#   end
 class Riffer::Evals::Evaluator
   # @rbs self.@instructions: String?
   # @rbs self.@higher_is_better: bool?

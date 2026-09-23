@@ -47,7 +47,6 @@ class Riffer::Agent::Session
     self
   end
 
-  # Raises Riffer::ArgumentError on a +Tool+ message; use +#update+ instead.
   #--
   #: (id: String) -> Riffer::Messages::Base?
   def remove(id:)
@@ -70,7 +69,6 @@ class Riffer::Agent::Session
     target
   end
 
-  # Raises Riffer::ArgumentError when no message matches.
   #--
   #: (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base
   def update(id: nil, tool_call_id: nil, **attrs)

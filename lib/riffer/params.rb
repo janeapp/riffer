@@ -59,7 +59,6 @@ class Riffer::Params
     )
   end
 
-  # Raises Riffer::ValidationError if validation fails.
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate(arguments)

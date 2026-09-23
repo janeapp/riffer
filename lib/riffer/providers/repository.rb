@@ -21,9 +21,6 @@ module Riffer::Providers::Repository
 
   # Not synchronized — register during boot, before concurrent generation
   # begins.
-  #
-  #   Riffer::Providers::Repository.register(:jane) { MyApp::JaneProvider }
-  #
   #--
   #: ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
   def register(identifier, &factory)

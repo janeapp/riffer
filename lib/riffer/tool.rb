@@ -3,18 +3,6 @@
 
 require "timeout"
 
-#   class WeatherLookupTool < Riffer::Tool
-#     description "Provides current weather information for a specified city."
-#
-#     params do
-#       required :city, String, description: "The city to look up"
-#       optional :units, String, default: "celsius"
-#     end
-#
-#     def call(context:, city:, units: nil)
-#       # Implementation
-#     end
-#   end
 class Riffer::Tool
   extend Riffer::Tools::Toolable
   extend Riffer::Registrable

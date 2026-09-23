@@ -21,8 +21,6 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   # : (?responses: Array[Hash[Symbol, untyped]]) -> void
   def initialize: (?responses: Array[Hash[Symbol, untyped]]) -> void
 
-  # provider.stub_response("", tool_calls: [{name: "my_tool", arguments: '{"key":"value"}'}])
-  # provider.stub_response("Final answer")
   # --
   # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void
   def stub_response: (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void

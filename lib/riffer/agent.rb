@@ -3,14 +3,6 @@
 
 require "json"
 
-#   class MyAgent < Riffer::Agent
-#     model 'openai/gpt-4o'
-#     instructions 'You are a helpful assistant.'
-#   end
-#
-#   agent = MyAgent.new
-#   agent.generate('Hello!')
-#
 class Riffer::Agent
   extend Riffer::Registrable
 

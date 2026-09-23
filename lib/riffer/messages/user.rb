@@ -2,7 +2,6 @@
 # rbs_inline: enabled
 
 class Riffer::Messages::User < Riffer::Messages::Base
-  # Raises Riffer::ArgumentError on an invalid file.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::User)) -> Riffer::Messages::User
   def self.from_hash(msg)

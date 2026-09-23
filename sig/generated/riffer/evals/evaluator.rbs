@@ -1,10 +1,5 @@
 # Generated from lib/riffer/evals/evaluator.rb with RBS::Inline
 
-# class MyEvaluator < Riffer::Evals::Evaluator
-#   instructions "Assess medical accuracy of the response..."
-#   higher_is_better true
-#   judge_model "anthropic/claude-opus-4-5-20251101"
-# end
 class Riffer::Evals::Evaluator
   self.@instructions: String?
 

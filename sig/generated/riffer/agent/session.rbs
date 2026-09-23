@@ -27,12 +27,10 @@ class Riffer::Agent::Session
   # : () -> self
   def unset: () -> self
 
-  # Raises Riffer::ArgumentError on a +Tool+ message; use +#update+ instead.
   # --
   # : (id: String) -> Riffer::Messages::Base?
   def remove: (id: String) -> Riffer::Messages::Base?
 
-  # Raises Riffer::ArgumentError when no message matches.
   # --
   # : (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base
   def update: (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base

@@ -21,7 +21,6 @@ class Riffer::Params
   # : (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
 
-  # Raises Riffer::ValidationError if validation fails.
   # --
   # : (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]

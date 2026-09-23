@@ -4,7 +4,6 @@
 require "securerandom"
 
 class Riffer::Messages::Base
-  # Raises Riffer::ArgumentError on an invalid message.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def self.from_hash(msg)

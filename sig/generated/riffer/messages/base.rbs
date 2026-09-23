@@ -1,7 +1,6 @@
 # Generated from lib/riffer/messages/base.rb with RBS::Inline
 
 class Riffer::Messages::Base
-  # Raises Riffer::ArgumentError on an invalid message.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Base) -> Riffer::Messages::Base

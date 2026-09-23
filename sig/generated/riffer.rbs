@@ -55,10 +55,6 @@ module Riffer
   # : () -> Riffer::Config
   def config: () -> Riffer::Config
 
-  # Riffer.configure do |config|
-  #   config.openai.api_key = ENV['OPENAI_API_KEY']
-  # end
-  #
   # --
   # : () ?{ (Riffer::Config) -> void } -> void
   def configure: () ?{ (Riffer::Config) -> void } -> void
