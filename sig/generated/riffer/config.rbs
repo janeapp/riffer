@@ -231,7 +231,6 @@ class Riffer::Config
 
   attr_reader mcp: Riffer::Config::Mcp
 
-  # Experimental; the surface may change without notice.
   attr_reader tool_runtime: singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc
 
   # --

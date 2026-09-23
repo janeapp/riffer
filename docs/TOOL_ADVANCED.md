@@ -112,9 +112,7 @@ For expected failures, return `error(...)` or raise `Riffer::ToolExecutionError`
 
 The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).
 
-## Tool Runtime (Experimental)
-
-> **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
+## Tool Runtime
 
 By default, tool calls are executed sequentially in the current thread using `Riffer::Tools::Runtime::Inline`. You can change how tool calls are executed by configuring a different tool runtime.
 

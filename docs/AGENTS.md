@@ -251,9 +251,7 @@ A `Hash` param requires a block, and an `Array` param requires a block or `of:`.
 
 Structured output is not compatible with streaming — calling `stream` on an agent with structured output configured raises `Riffer::ArgumentError`.
 
-### tool_runtime (Experimental)
-
-> **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
+### tool_runtime
 
 Configures how tool calls are executed. Defaults to sequential (inline) execution:
 
@@ -265,7 +263,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, reads `Riffer.config.tool_runtime` at the point of use, so an agent that declares none follows a later change to the global. See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, reads `Riffer.config.tool_runtime` at the point of use, so an agent that declares none follows a later change to the global. See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime) for details.
 
 ### guardrail
 
@@ -446,5 +444,5 @@ Riffer does not validate tag count, key/value length, or charset — it forwards
 | Add packaged capabilities     | Skills            | [Skills](SKILLS.md)                                               |
 | Control the tool-use loop     | Agent Loop        | [Agent Loop](AGENT_LOOP.md)                                       |
 | Human-in-the-loop approval    | Interrupts        | [Agent Lifecycle](AGENT_LIFECYCLE.md#interrupting-the-agent-loop) |
-| Run tools concurrently        | Tool Runtime      | [Advanced Tools](TOOL_ADVANCED.md#tool-runtime-experimental)      |
+| Run tools concurrently        | Tool Runtime      | [Advanced Tools](TOOL_ADVANCED.md#tool-runtime)                   |
 | Stream responses in real time | Streaming         | [Agent Lifecycle](AGENT_LIFECYCLE.md#stream)                      |
