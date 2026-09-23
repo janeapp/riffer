@@ -742,6 +742,9 @@ describe Riffer::Providers::OpenAI do
           reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
 
           expect(reasoning_done).wont_be_nil
+          expect(reasoning_done.part.type).must_equal :text
+          expect(reasoning_done.part.text).wont_be_empty
+          expect(reasoning_done.part.format).must_be_nil
         end
       end
 
@@ -1074,7 +1077,7 @@ describe Riffer::Providers::OpenAI do
       it "returns an Assistant message" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file])
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -1084,7 +1087,7 @@ describe Riffer::Providers::OpenAI do
       it "returns content" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_generate_text/with_image") do
           provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           result = provider.generate_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file])
 
           expect(result.content).wont_be_empty
@@ -1103,7 +1106,11 @@ describe Riffer::Providers::OpenAI do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           result = provider.generate_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file])
 
           expect(result).must_be_instance_of Riffer::Messages::Assistant
@@ -1120,7 +1127,11 @@ describe Riffer::Providers::OpenAI do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           result = provider.generate_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file])
 
           expect(result.content).wont_be_empty
@@ -1139,7 +1150,11 @@ describe Riffer::Providers::OpenAI do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           events = provider.stream_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file]).to_a
 
           expect(events).wont_be_empty
@@ -1156,7 +1171,11 @@ describe Riffer::Providers::OpenAI do
             "xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" \
             "trailer<</Size 4/Root 1 0 R>>\nstartxref\n206\n%%EOF",
           )
-          file = Riffer::Messages::FilePart.new(data: pdf_data, media_type: "application/pdf", filename: "test.pdf")
+          file = Riffer::Messages::User::FilePart.new(
+            data: pdf_data,
+            media_type: "application/pdf",
+            filename: "test.pdf",
+          )
           events = provider.stream_text(prompt: "What is in this document?", model: "gpt-5-mini", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
@@ -1169,7 +1188,7 @@ describe Riffer::Providers::OpenAI do
       it "yields stream events" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file]).to_a
 
           expect(events).wont_be_empty
@@ -1179,7 +1198,7 @@ describe Riffer::Providers::OpenAI do
       it "yields TextDone event" do
         VCR.use_cassette("Riffer_Providers_OpenAI/file_handling/_stream_text/with_image") do
           provider = Riffer::Providers::OpenAI.new
-          file = Riffer::Messages::FilePart.new(data: image_base64, media_type: "image/png")
+          file = Riffer::Messages::User::FilePart.new(data: image_base64, media_type: "image/png")
           events = provider.stream_text(prompt: "Describe this image", model: "gpt-5-mini", files: [file]).to_a
           done = events.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
 
@@ -1447,10 +1466,24 @@ describe Riffer::Providers::OpenAI do
       expect(close_count).must_equal 1
     end
 
-    it "calls stream.close exactly once on happy path" do
+    it "calls stream.close exactly once when the stream ends without a terminal event" do
       close_count = 0
       stream_double = Object.new
       stream_double.define_singleton_method(:each) { |&_block| }
+      stream_double.define_singleton_method(:close) { close_count += 1 }
+      install_stream_double(provider, stream_double)
+
+      assert_raises(Riffer::IncompleteStreamError) do
+        provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+      end
+      expect(close_count).must_equal 1
+    end
+
+    it "calls stream.close exactly once on happy path" do
+      completed = Struct.new(:type, :response).new(:"response.completed", nil)
+      close_count = 0
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| block.call(completed) }
       stream_double.define_singleton_method(:close) { close_count += 1 }
       install_stream_double(provider, stream_double)
 

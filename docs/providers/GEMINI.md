@@ -148,7 +148,7 @@ response = provider.generate_text(
 Gemini's API only accepts inline base64-encoded files (images and documents), never a URL reference:
 
 ```ruby
-file = Riffer::Messages::FilePart.new(data: base64_data, media_type: "image/png")
+file = Riffer::Messages::User::FilePart.new(data: base64_data, media_type: "image/png")
 response = provider.generate_text(
   prompt: "Describe this image",
   model: "gemini-2.5-flash-lite",

@@ -32,18 +32,18 @@ class Riffer::Providers::Base
   # Generates text using the provider.
   #
   # --
-  # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Riffer::Messages::Assistant
-  def generate_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Riffer::Messages::Assistant
+  # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
+  def generate_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
 
   # Streams text from the provider.
   #
   # --
-  # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
-  def stream_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  def stream_text: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
 
   # --
-  # : (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+  # : (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::User::FilePart) -> Symbol
 
   private
 
@@ -105,6 +105,12 @@ class Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
+  # Defaults to no parts rather than raising — reasoning parts are optional, so
+  # providers that don't expose replayable reasoning stay valid.
+  # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
   # --
   # : (untyped) -> String
   def extract_content: (untyped) -> String
@@ -150,6 +156,12 @@ class Riffer::Providers::Base
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> bool
   def capture_messages?: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> bool
 
+  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
+  # with no +format+, so it persists for display but is never sent back.
+  # --
+  # : (Riffer::Providers::_EventSink, String) -> void
+  def yield_reasoning_done: (Riffer::Providers::_EventSink, String) -> void
+
   # --
   # : (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
   def yield_finish_reason: (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
@@ -159,8 +171,8 @@ class Riffer::Providers::Base
   def parse_structured_output: (String) -> Hash[Symbol, untyped]?
 
   # --
-  # : ((String | Hash[String, untyped])?) -> Hash[String, untyped]
-  def parse_tool_arguments: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  # : (String) -> Hash[String, untyped]
+  def parse_tool_arguments: (String) -> Hash[String, untyped]
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
@@ -171,8 +183,8 @@ class Riffer::Providers::Base
   def validate_input!: (prompt: String?, system: String?, messages: Array[Hash[Symbol | String, untyped] | Riffer::Messages::Base]?) -> void
 
   # --
-  # : (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Array[Riffer::Messages::Base]
-  def normalize_messages: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Array[Riffer::Messages::Base]
+  # : (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> Array[Riffer::Messages::Base]
+  def normalize_messages: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> Array[Riffer::Messages::Base]
 
   # --
   # : (Array[Riffer::Messages::Base]) -> void

@@ -105,13 +105,17 @@ event.content  # => "Let me think about "
 
 ### ReasoningDone
 
-Emitted when reasoning is complete:
+Emitted when one reasoning block is complete:
 
 ```ruby
-event = Riffer::StreamEvents::ReasoningDone.new("Let me think about this step by step...")
-event.role     # => :assistant
-event.content  # => "Let me think about this step by step..."
+part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Let me think about this step by step...", format: "mock-v1")
+event = Riffer::StreamEvents::ReasoningDone.new(part)
+event.role       # => :assistant
+event.part       # => the ReasoningPart
+event.part.text  # => "Let me think about this step by step..."
 ```
+
+`part` is the [reasoning part](MESSAGES.md#reasoning) the preceding `ReasoningDelta` events added up to, and the agent loop accumulates it onto the assistant message. Adapters that cannot yet replay their reasoning emit it as a `:text` part with no `format`, so it is stored for display but never sent back to the provider.
 
 ### WebSearchStatus
 
@@ -271,6 +275,29 @@ event.to_h               # => {role: :assistant, finish_reason: :length, raw_fin
 ```
 
 The agent loop stamps this value onto the accumulated assistant message's `finish_reason`.
+
+## Incomplete Streams
+
+If a provider's stream ends before its terminal event, the enumerator raises `Riffer::IncompleteStreamError` (a `Riffer::Error` subclass) instead of finishing normally, so a truncated or empty response is never returned as a complete message. Events already yielded before the raise were delivered as usual, but nothing from the failed step is added to the session: there is no partial assistant message to resume from, and messages from earlier completed steps (tool calls and their results) are untouched.
+
+Supported on Amazon Bedrock, Anthropic, and OpenAI / Azure OpenAI.
+
+The user prompt is added to the session before the run starts and stays there after the failure, so retry with `agent.stream` and no prompt. Passing the prompt again would add a second user turn.
+
+```ruby
+attempts = 0
+prompt = "Tell me a story"
+begin
+  agent.stream(prompt).each do |event|
+    print event.content if event.is_a?(Riffer::StreamEvents::TextDelta)
+  end
+rescue Riffer::IncompleteStreamError => e
+  warn "stream ended early: #{e.message}"
+  prompt = nil # already in the session; re-run on the existing history
+  retry if (attempts += 1) < 3
+  raise
+end
+```
 
 ## Streaming with Tools
 

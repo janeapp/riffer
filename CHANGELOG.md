@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.47.2](https://github.com/janeapp/riffer/compare/riffer/v0.47.1...riffer/v0.47.2) (2026-09-21)
+
+
+### Bug Fixes
+
+* **providers:** raise IncompleteStreamError when a stream ends without its terminal event ([#445](https://github.com/janeapp/riffer/issues/445)) ([d142e23](https://github.com/janeapp/riffer/commit/d142e23e80d30ce73e81474eee35c71df1856c40))
+* stop relying on the transitive cgi gem for CGI.escapeHTML ([#443](https://github.com/janeapp/riffer/issues/443)) ([821f3e3](https://github.com/janeapp/riffer/commit/821f3e3e405845b2cc275f86344e526cc2cf183a))
+
 ## [0.47.1](https://github.com/janeapp/riffer/compare/riffer/v0.47.0...riffer/v0.47.1) (2026-09-11)
 
 

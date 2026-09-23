@@ -37,7 +37,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Symbol
+  #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(_file)
     :base64
   end
@@ -287,7 +287,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_gemini_format(file)
     { inlineData: { mimeType: file.media_type, data: file.data } }
   end

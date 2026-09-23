@@ -50,7 +50,7 @@ describe Riffer::Files::Resolver do
       let(:sha256) { Digest::SHA256.hexdigest(body) }
 
       it "leaves the file untouched when no sha256 is given" do
-        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data)
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: data)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:base64).resolve!([message])
 
@@ -59,7 +59,7 @@ describe Riffer::Files::Resolver do
       end
 
       it "passes verification when the sha256 matches" do
-        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data, sha256: sha256)
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: data, sha256: sha256)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:base64).resolve!([message])
 
@@ -67,15 +67,15 @@ describe Riffer::Files::Resolver do
       end
 
       it "raises Riffer::FileChecksumMismatchError when the sha256 doesn't match" do
-        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data,
-                                              sha256: Digest::SHA256.hexdigest("something else"),)
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: data,
+                                                    sha256: Digest::SHA256.hexdigest("something else"),)
         message = Riffer::Messages::User.new("hi", files: [file])
 
         expect { resolver_for(:base64).resolve!([message]) }.must_raise Riffer::FileChecksumMismatchError
       end
 
       it "raises Riffer::FileUnsupportedError when the provider doesn't accept files, even with data inline" do
-        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: data)
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: data)
         message = Riffer::Messages::User.new("hi", files: [file])
 
         expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileUnsupportedError
@@ -83,7 +83,7 @@ describe Riffer::Files::Resolver do
 
       it "rejects data with smuggled content past a padding boundary instead of verifying a truncated prefix" do
         smuggled = Base64.strict_encode64(body) + Base64.strict_encode64("smuggled payload")
-        file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: smuggled, sha256: sha256)
+        file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: smuggled, sha256: sha256)
         message = Riffer::Messages::User.new("hi", files: [file])
 
         expect { resolver_for(:base64).resolve!([message]) }.must_raise Riffer::FileEncodingError
@@ -92,7 +92,7 @@ describe Riffer::Files::Resolver do
 
     describe "a url-only source with a provider that doesn't support files" do
       it "raises Riffer::FileUnsupportedError" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
 
         expect { resolver_for(:unsupported).resolve!([message]) }.must_raise Riffer::FileUnsupportedError
@@ -101,7 +101,7 @@ describe Riffer::Files::Resolver do
 
     describe "a url-only source with a provider returning an unrecognized file_delivery value" do
       it "raises Riffer::ArgumentError" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
 
         expect { resolver_for(:something_else).resolve!([message]) }.must_raise Riffer::ArgumentError
@@ -110,7 +110,7 @@ describe Riffer::Files::Resolver do
 
     describe "a url-only source with a provider that passes URLs through" do
       it "leaves the file untouched when no sha256 is given" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:url).resolve!([message])
 
@@ -120,8 +120,8 @@ describe Riffer::Files::Resolver do
 
       it "downloads and verifies when a sha256 is given, without caching the bytes" do
         sha256 = Digest::SHA256.hexdigest(downloaded_content)
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
-                                                                                   sha256: sha256,)
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                                         sha256: sha256,)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:url).resolve!([message])
 
@@ -131,7 +131,7 @@ describe Riffer::Files::Resolver do
 
       it "raises Riffer::FileChecksumMismatchError when the downloaded content doesn't match" do
         sha256 = Digest::SHA256.hexdigest("something else")
-        file = Riffer::Messages::FilePart.from_url(
+        file = Riffer::Messages::User::FilePart.from_url(
           "https://example.com/file.pdf", media_type: "application/pdf", sha256: sha256,
         )
         message = Riffer::Messages::User.new("hi", files: [file])
@@ -142,7 +142,7 @@ describe Riffer::Files::Resolver do
 
     describe "a url-only source with a provider that requires base64 data" do
       it "downloads and caches base64 even without a sha256" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:base64).resolve!([message])
 
@@ -150,7 +150,7 @@ describe Riffer::Files::Resolver do
       end
 
       it "never caches raw bytes, since a base64-only provider has no use for them" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:base64).resolve!([message])
 
@@ -160,7 +160,7 @@ describe Riffer::Files::Resolver do
 
     describe "a url-only source with a provider that requires raw bytes (e.g. Bedrock)" do
       it "downloads and caches raw bytes even without a sha256" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:bytes).resolve!([message])
 
@@ -168,7 +168,7 @@ describe Riffer::Files::Resolver do
       end
 
       it "never caches base64, closing the gap where downloading for Bedrock still encoded a copy nothing reads" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:bytes).resolve!([message])
 
@@ -177,8 +177,8 @@ describe Riffer::Files::Resolver do
 
       it "caches raw bytes from the sha256 check without decoding data again" do
         sha256 = Digest::SHA256.hexdigest(downloaded_content)
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
-                                                                                   sha256: sha256,)
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                                         sha256: sha256,)
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:bytes).resolve!([message])
 
@@ -192,7 +192,7 @@ describe Riffer::Files::Resolver do
       before { Riffer.config.files.allow_downloads = false }
 
       it "raises Riffer::FileDownloadsDisabledError instead of downloading" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
 
         expect { resolver_for(:base64).resolve!([message]) }.must_raise Riffer::FileDownloadsDisabledError
@@ -205,8 +205,8 @@ describe Riffer::Files::Resolver do
 
       it "raises Riffer::TooManyFilesError" do
         files = [
-          Riffer::Messages::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
-          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf"),
+          Riffer::Messages::User::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
+          Riffer::Messages::User::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf"),
         ]
         message = Riffer::Messages::User.new("hi", files: files)
 
@@ -216,7 +216,7 @@ describe Riffer::Files::Resolver do
 
     describe "resolving the same file again under a different provider" do
       it "still raises Riffer::FileUnsupportedError even after an earlier :base64 resolution cached data" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
 
         resolver_for(:base64).resolve!([message])
@@ -227,7 +227,7 @@ describe Riffer::Files::Resolver do
       end
 
       it "still raises Riffer::FileUnsupportedError even after an earlier :bytes resolution cached data" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf")
         message = Riffer::Messages::User.new("hi", files: [file])
 
         resolver_for(:bytes).resolve!([message])
@@ -238,8 +238,8 @@ describe Riffer::Files::Resolver do
       end
 
       it "re-downloads and re-verifies for :url + sha256 instead of trusting an earlier :base64 resolution's cache" do
-        file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
-                                                                                   sha256: Digest::SHA256.hexdigest(downloaded_content),)
+        file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", media_type: "application/pdf",
+                                                                                         sha256: Digest::SHA256.hexdigest(downloaded_content),)
         message = Riffer::Messages::User.new("hi", files: [file])
 
         resolver_for(:base64).resolve!([message])
@@ -267,8 +267,8 @@ describe Riffer::Files::Resolver do
 
       let(:files) do
         [
-          Riffer::Messages::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
-          Riffer::Messages::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf"),
+          Riffer::Messages::User::FilePart.from_url("https://example.com/a.pdf", media_type: "application/pdf"),
+          Riffer::Messages::User::FilePart.from_url("https://example.com/b.pdf", media_type: "application/pdf"),
         ]
       end
 

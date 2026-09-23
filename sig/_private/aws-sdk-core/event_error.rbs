@@ -1,0 +1,15 @@
+# aws-sdk-core ships no signature for EventError; ConverseStream delivers
+# `:message-type: error` frames to the on_event block as instances of it.
+module Aws
+  module Errors
+    class EventError < RuntimeError
+      def initialize: (Symbol event_type, String code, String message) -> void
+
+      attr_reader event_type: Symbol
+
+      attr_reader error_code: String
+
+      attr_reader error_message: String
+    end
+  end
+end

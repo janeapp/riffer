@@ -40,7 +40,7 @@ class Riffer::Providers::Base
   # Generates text using the provider.
   #
   #--
-  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Riffer::Messages::Assistant
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
@@ -56,6 +56,7 @@ class Riffer::Providers::Base
 
       content = extract_content(response)
       tool_calls = extract_tool_calls(response)
+      reasoning = extract_reasoning(response)
       token_usage = extract_token_usage(response)
       finish_reason = extract_finish_reason(response)
       structured_output = parse_structured_output(content) if options[:structured_output] && tool_calls.empty?
@@ -67,6 +68,7 @@ class Riffer::Providers::Base
       Riffer::Messages::Assistant.new(
         content,
         tool_calls: tool_calls,
+        reasoning: reasoning,
         token_usage: token_usage,
         structured_output: structured_output,
         finish_reason: finish_reason&.reason,
@@ -78,7 +80,7 @@ class Riffer::Providers::Base
   # Streams text from the provider.
   #
   #--
-  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
+  #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
     validate_input!(prompt: prompt, system: system, messages: messages)
     @current_tools = options[:tools] || [] #: Array[singleton(Riffer::Tool)]
@@ -105,7 +107,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Symbol
+  #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(_file)
     :url
   end
@@ -222,6 +224,14 @@ class Riffer::Providers::Base
   #: (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(_response)
     nil
+  end
+
+  # Defaults to no parts rather than raising — reasoning parts are optional, so
+  # providers that don't expose replayable reasoning stay valid.
+  #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(_response)
+    []
   end
 
   #--
@@ -348,6 +358,15 @@ class Riffer::Providers::Base
     Riffer.config.tracing.capture_messages && span.recording?
   end
 
+  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
+  # with no +format+, so it persists for display but is never sent back.
+  #--
+  #: (Riffer::Providers::_EventSink, String) -> void
+  def yield_reasoning_done(yielder, text)
+    part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: text)
+    yielder << Riffer::StreamEvents::ReasoningDone.new(part)
+  end
+
   #--
   #: (Riffer::Providers::_EventSink, Riffer::Providers::FinishReason?) -> void
   def yield_finish_reason(yielder, finish_reason)
@@ -368,11 +387,11 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: ((String | Hash[String, untyped])?) -> Hash[String, untyped]
+  #: (String) -> Hash[String, untyped]
   def parse_tool_arguments(arguments)
-    return {} if arguments.nil? || arguments.empty?
+    return {} if arguments.empty?
 
-    arguments.is_a?(String) ? JSON.parse(arguments) : arguments
+    JSON.parse(arguments)
   end
 
   #--
@@ -397,7 +416,7 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> Array[Riffer::Messages::Base]
+  #: (prompt: String?, system: String?, messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> Array[Riffer::Messages::Base]
   def normalize_messages(prompt:, system:, messages:, files: nil)
     if messages && files && !files.empty?
       raise Riffer::ArgumentError, "cannot provide both files and messages; attach files to individual messages instead"
@@ -407,7 +426,7 @@ class Riffer::Providers::Base
 
     result = [] #: Array[Riffer::Messages::Base]
     result << Riffer::Messages::System.new(system) if system
-    file_parts = (files || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
+    file_parts = (files || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
     prompt_text = prompt #: String
     result << Riffer::Messages::User.new(prompt_text, files: file_parts)
     result

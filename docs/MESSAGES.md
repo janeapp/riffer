@@ -32,9 +32,9 @@ msg.to_h     # => {role: :user, content: "Hello, how are you?"}
 User messages can include file attachments:
 
 ```ruby
-file = Riffer::Messages::FilePart.from_path("photo.jpg")
+file = Riffer::Messages::User::FilePart.from_path("photo.jpg")
 msg = Riffer::Messages::User.new("Describe this image", files: [file])
-msg.files    # => [#<Riffer::Messages::FilePart ...>]
+msg.files    # => [#<Riffer::Messages::User::FilePart ...>]
 msg.to_h     # => {role: :user, content: "Describe this image", files: [{...}]}
 ```
 
@@ -67,6 +67,19 @@ if msg.token_usage
 end
 ```
 
+#### Tool Calls
+
+`Riffer::Messages::Assistant::ToolCall` is the normalized container riffer stores a requested tool invocation in. Each call carries `call_id` (the provider's identifier, passed back as the tool result's `tool_call_id`), `name`, and `arguments` (the JSON-encoded argument string exactly as the provider emitted it); `to_h` serializes all three.
+
+```ruby
+tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_123", name: "weather_tool", arguments: '{"city":"Tokyo"}')
+msg = Riffer::Messages::Assistant.new("", tool_calls: [tool_call])
+
+msg.has_tool_calls?        # => true
+msg.tool_calls.first.name  # => "weather_tool"
+tool_call.to_h             # => {call_id: "call_123", name: "weather_tool", arguments: '{"city":"Tokyo"}'}
+```
+
 #### Token Usage Semantics
 
 `TokenUsage` buckets carry the same meaning for every provider, regardless of how the provider reports its raw usage:
@@ -84,16 +97,16 @@ The cache buckets are subsets of `input_tokens`, never additions to it — summi
 
 `finish_reason` carries the same meaning for every provider — each adapter maps its raw wire value (Anthropic's `end_turn`, OpenAI's response status, Gemini's `STOP`, …) into a normalized vocabulary:
 
-| Value               | Meaning                                                                                                                 |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                         |
-| `:length`           | Output was truncated at the max-token limit.                                                                            |
-| `:tool_calls`       | The model stopped to call tools.                                                                                        |
-| `:content_filter`   | A provider safety system blocked or cut the response.                                                                   |
-| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.             |
+| Value               | Meaning                                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `:stop`             | The model finished its turn naturally (or hit a stop sequence).                                                              |
+| `:length`           | Output was truncated at the max-token limit.                                                                                 |
+| `:tool_calls`       | The model stopped to call tools.                                                                                             |
+| `:content_filter`   | A provider safety system blocked or cut the response.                                                                        |
+| `:context_window`   | Input plus output hit the model's context window; trim or compact history rather than raising `max_tokens`.                  |
 | `:malformed_output` | The model emitted output the provider could not parse, such as an invalid tool call; retry or nudge rather than backing off. |
-| `:error`            | The provider reported an error finish.                                                                                  |
-| `:other`            | A provider-specific value with no normalized equivalent.                                                                |
+| `:error`            | The provider reported an error finish.                                                                                       |
+| `:other`            | A provider-specific value with no normalized equivalent.                                                                     |
 
 `finish_reason` is `nil` when the provider doesn't report one. The provider's raw wire value travels alongside as `finish_reason_raw` on the message (round-tripped through `to_h` / `from_hash`), on the `FinishReasonDone` stream event, and as the `riffer.finish_reason.raw` trace attribute — for OpenRouter that is the upstream model's `native_finish_reason`, and for a failed OpenAI response it is the error code. Use `finish_reason` to detect truncation without parsing provider responses:
 
@@ -123,6 +136,61 @@ The `to_h` representation includes `structured_output` only when present:
 msg = Riffer::Messages::Assistant.new('{"sentiment":"positive"}', structured_output: {sentiment: "positive"})
 msg.to_h  # => {role: :assistant, content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}}
 ```
+
+#### Reasoning
+
+Reasoning models emit thinking blocks alongside their answer, and several providers require those blocks back on the next turn of a tool-calling loop. `Riffer::Messages::Assistant::ReasoningPart` is the normalized container riffer stores them in: a list of parts on the assistant message, in the order the provider emitted them.
+
+```ruby
+summary = Riffer::Messages::Assistant::ReasoningPart.new(type: :summary, text: "The user wants the answer.", format: "mock-v1")
+opaque = Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "b3BhcXVl", format: "mock-v1")
+msg = Riffer::Messages::Assistant.new("42", reasoning: [summary, opaque])
+
+msg.reasoning?            # => true
+msg.reasoning_text        # => "The user wants the answer."
+msg.reasoning.first.type  # => :summary
+```
+
+A readable part next to an opaque one is the common shape, not a contrived one: OpenAI's Responses API returns a reasoning item as summary text plus an encrypted payload, and Anthropic pairs a `thinking` block with a `redacted_thinking` block when it redacts part of the chain of thought.
+
+`reasoning:` takes `ReasoningPart`s; `Riffer::Messages::Base.from_hash` is what turns persisted hashes back into parts.
+
+Each part carries:
+
+| Field       | Type      | Description                                                                                                     |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------------------- |
+| `type`      | `Symbol`  | One of `:text` (readable reasoning), `:summary` (a provider-condensed digest), `:encrypted` (an opaque payload) |
+| `text`      | `String?` | The reasoning prose, for `:text` and `:summary` parts                                                           |
+| `data`      | `String?` | The opaque payload, for `:encrypted` parts                                                                      |
+| `signature` | `String?` | The provider's signature over the part, when it issues one                                                      |
+| `id`        | `String?` | The provider's identifier for the part, when it issues one                                                      |
+| `format`    | `String?` | The wire format, owned by the adapter that produced the part (e.g. `"anthropic-claude-v1"`)                     |
+
+A `type` outside the three values raises `Riffer::ArgumentError`. `format` is a free string riffer never validates — it exists so an adapter can tell its own parts apart from another adapter's.
+
+`reasoning?` is true when the message carries any part. `reasoning_text` joins the `text` of the `:text` and `:summary` parts with blank lines, skipping `:encrypted` parts, and is `nil` when there is nothing to join. The run's final assistant message projects its parts onto `response.reasoning` (see [Agent Lifecycle — Response Attributes](AGENT_LIFECYCLE.md#response-attributes)).
+
+Parts round-trip through `to_h` / `from_hash` like every other message field, so an application that persists sessions can store and replay them. The `reasoning` key is absent from `to_h` when the message has no parts, and each part omits the fields it doesn't carry:
+
+```ruby
+msg.to_h
+# => {role: :assistant, content: "42", reasoning: [
+#      {type: :summary, text: "The user wants the answer.", format: "mock-v1"},
+#      {type: :encrypted, data: "b3BhcXVl", format: "mock-v1"}
+#    ]}
+
+Riffer::Messages::Base.from_hash(msg.to_h).reasoning  # => [ReasoningPart, ReasoningPart]
+```
+
+**The replay contract.** A provider adapter replays only the parts whose `format` it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no `format` is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider's signature covers their exact bytes.
+
+An application that would rather not store parts can leave the key out when it serializes:
+
+```ruby
+msg.to_h.except(:reasoning)
+```
+
+To drop parts from the in-memory session mid-run instead, `Session#update(id:, reasoning: [])` rewrites the message in place; it needs [message ids](#ids) enabled to address it.
 
 ### Tool
 
@@ -155,7 +223,7 @@ msg.error_type  # => :execution_error
 
 ## File Parts
 
-`Riffer::Messages::FilePart` represents a file attachment (image or document) that can be included with user messages.
+`Riffer::Messages::User::FilePart` represents a file attachment (image or document) that can be included with user messages.
 
 ### Supported Media Types
 
@@ -167,21 +235,21 @@ msg.error_type  # => :execution_error
 
 ```ruby
 # From a file path (reads eagerly, detects media type from extension)
-file = Riffer::Messages::FilePart.from_path("photo.jpg")
+file = Riffer::Messages::User::FilePart.from_path("photo.jpg")
 file.media_type  # => "image/jpeg"
 file.filename    # => "photo.jpg"
 file.image?      # => true
 
 # From a URL (stored directly, resolved lazily if provider needs bytes)
-file = Riffer::Messages::FilePart.from_url("https://example.com/doc.pdf")
+file = Riffer::Messages::User::FilePart.from_url("https://example.com/doc.pdf")
 file.url?        # => true
 file.document?   # => true
 
 # From raw base64 data
-file = Riffer::Messages::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
+file = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: base64_string, filename: "chart.png")
 
 # With an expected sha256 checksum of the file's contents
-file = Riffer::Messages::FilePart.from_url(
+file = Riffer::Messages::User::FilePart.from_url(
   "https://example.com/doc.pdf",
   sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 )

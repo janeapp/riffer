@@ -131,7 +131,7 @@ describe Riffer::Providers::Base do
 
     it "resolves file attachments in #generate_text before building request params" do
       Riffer.config.files.allow_downloads = false
-      file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", sha256: "a" * 64)
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", sha256: "a" * 64)
 
       error = expect { provider.generate_text(prompt: "Hello", files: [file]) }.must_raise(Riffer::FileDownloadsDisabledError)
       expect(error.message).must_equal "File attachments are disabled"
@@ -139,15 +139,15 @@ describe Riffer::Providers::Base do
 
     it "resolves file attachments in #stream_text before building request params" do
       Riffer.config.files.allow_downloads = false
-      file = Riffer::Messages::FilePart.from_url("https://example.com/file.pdf", sha256: "a" * 64)
+      file = Riffer::Messages::User::FilePart.from_url("https://example.com/file.pdf", sha256: "a" * 64)
 
       expect { provider.stream_text(prompt: "Hello", files: [file]) }.must_raise(Riffer::FileDownloadsDisabledError)
     end
 
     it "checks max_per_message against each original message, not the post-merge total" do
       Riffer.config.files.max_per_message = 1
-      file_a = Riffer::Messages::FilePart.new(media_type: "image/png", data: "YQ==")
-      file_b = Riffer::Messages::FilePart.new(media_type: "image/png", data: "Yg==")
+      file_a = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: "YQ==")
+      file_b = Riffer::Messages::User::FilePart.new(media_type: "image/png", data: "Yg==")
       messages = [
         Riffer::Messages::User.new("First", files: [file_a]),
         Riffer::Messages::User.new("Second", files: [file_b]),
@@ -226,8 +226,8 @@ describe Riffer::Providers::Base do
     end
 
     it "combines files when merging consecutive user messages" do
-      file_a = Riffer::Messages::FilePart.new(data: "abc", media_type: "image/png")
-      file_b = Riffer::Messages::FilePart.new(data: "def", media_type: "image/jpeg")
+      file_a = Riffer::Messages::User::FilePart.new(data: "abc", media_type: "image/png")
+      file_b = Riffer::Messages::User::FilePart.new(data: "def", media_type: "image/jpeg")
       messages = [
         Riffer::Messages::User.new("With image", files: [file_a]),
         Riffer::Messages::User.new("Another image", files: [file_b]),

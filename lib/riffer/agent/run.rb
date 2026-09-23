@@ -10,7 +10,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
     run_loop(agent, tags: tags)
@@ -20,7 +20,7 @@ module Riffer::Agent::Run
   # for prompt/files semantics.
   #
   #--
-  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
+  #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
@@ -153,6 +153,7 @@ module Riffer::Agent::Run
   def accumulate_streamed_response(agent, stream_yielder, tags = {})
     accumulated_content = +""
     accumulated_tool_calls = [] #: Array[Riffer::Messages::Assistant::ToolCall]
+    accumulated_reasoning = [] #: Array[Riffer::Messages::Assistant::ReasoningPart]
     accumulated_token_usage = nil #: Riffer::Providers::TokenUsage?
     accumulated_finish_reason = nil #: Symbol?
     accumulated_finish_reason_raw = nil #: String?
@@ -175,6 +176,8 @@ module Riffer::Agent::Run
           name: event.name,
           arguments: event.arguments,
         )
+      when Riffer::StreamEvents::ReasoningDone
+        accumulated_reasoning << event.part
       when Riffer::StreamEvents::TokenUsageDone
         accumulated_token_usage = event.token_usage
       when Riffer::StreamEvents::FinishReasonDone
@@ -186,6 +189,7 @@ module Riffer::Agent::Run
     Riffer::Messages::Assistant.new(
       accumulated_content,
       tool_calls: accumulated_tool_calls,
+      reasoning: accumulated_reasoning,
       token_usage: accumulated_token_usage,
       finish_reason: accumulated_finish_reason,
       finish_reason_raw: accumulated_finish_reason_raw,
@@ -228,6 +232,7 @@ module Riffer::Agent::Run
       message&.content || "",
       outcome: final_outcome(message, result, interrupted: interrupted, interrupt_reason: interrupt_reason),
       modifications: all_modifications,
+      reasoning: message&.reasoning || [],
       structured_output: result&.object,
       **extra,
     )
@@ -388,6 +393,7 @@ module Riffer::Agent::Run
   #    outcome: Riffer::Agent::Outcome,
   #    ?tripwire: Riffer::Guardrails::Tripwire?,
   #    ?modifications: Array[Riffer::Guardrails::Modification],
+  #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?healed_tool_call_ids: Array[String],
   #    ?token_usage: Riffer::Providers::TokenUsage?,
@@ -399,6 +405,7 @@ module Riffer::Agent::Run
     outcome:,
     tripwire: nil,
     modifications: [],
+    reasoning: [],
     structured_output: nil,
     healed_tool_call_ids: [],
     token_usage: nil,
@@ -410,6 +417,7 @@ module Riffer::Agent::Run
       outcome: outcome,
       tripwire: tripwire,
       modifications: modifications,
+      reasoning: reasoning,
       structured_output: structured_output,
       messages: messages.frozen? ? messages : messages.dup.freeze,
       healed_tool_call_ids: healed_tool_call_ids,
@@ -421,12 +429,12 @@ module Riffer::Agent::Run
   # Raises when +files+ are supplied without a +prompt+ — the provider needs
   # text to anchor the attachments.
   #--
-  #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::FilePart]?) -> void
+  #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void
   def append_user_message(agent, prompt, files: nil)
     raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
     return unless prompt
 
-    file_parts = (files || []).map { |f| Riffer::Messages::FilePart.from_hash(f) }
+    file_parts = (files || []).map { |f| Riffer::Messages::User::FilePart.from_hash(f) }
     agent.session.add(Riffer::Messages::User.new(prompt, files: file_parts), silent: true)
   end
 

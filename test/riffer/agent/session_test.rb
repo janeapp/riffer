@@ -201,6 +201,25 @@ describe Riffer::Agent::Session do
       expect(result.token_usage).must_be_same_as usage
     end
 
+    it "preserves reasoning on assistant" do
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [part])
+      s = Riffer::Agent::Session.new(messages: [a])
+      result = s.update(id: "a_x", content: "new")
+
+      expect(result.reasoning).must_equal [part]
+    end
+
+    it "strips reasoning from an assistant when given an empty array" do
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      a = Riffer::Messages::Assistant.new("old", id: "a_x", reasoning: [part])
+      s = Riffer::Agent::Session.new(messages: [a])
+      result = s.update(id: "a_x", reasoning: [])
+
+      expect(result.reasoning).must_equal []
+      expect(result.content).must_equal "old"
+    end
+
     it "preserves finish_reason and finish_reason_raw on assistant" do
       a = Riffer::Messages::Assistant.new("old", id: "a_x", finish_reason: :length, finish_reason_raw: "max_tokens")
       s = Riffer::Agent::Session.new(messages: [a])
@@ -210,7 +229,7 @@ describe Riffer::Agent::Session do
     end
 
     it "preserves files on a user message" do
-      file = Riffer::Messages::FilePart.new(media_type: "text/plain", data: "x")
+      file = Riffer::Messages::User::FilePart.new(media_type: "text/plain", data: "x")
       u = Riffer::Messages::User.new("old", id: "u_x", files: [file])
       s = Riffer::Agent::Session.new(messages: [u])
       result = s.update(id: "u_x", content: "new")

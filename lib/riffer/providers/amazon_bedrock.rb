@@ -47,7 +47,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Symbol
+  #: (Riffer::Messages::User::FilePart) -> Symbol
   def file_delivery(file)
     file.url&.start_with?("s3://") ? :url : :bytes
   end
@@ -252,6 +252,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       tool_call: nil,
     } #: Hash[Symbol, untyped]
 
+    stream_completed = false
+
     client.converse_stream(**params) do |stream|
       stream.on_event do |event|
         case event
@@ -264,20 +266,45 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
           handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
         when Aws::BedrockRuntime::Types::MessageStopEvent
+          stream_completed = true
           yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
+        when Aws::Errors::EventError
+          # The SDK turns an event-stream +:message-type: error+ frame into an
+          # EventError instance and hands it to this block as an event; it is
+          # never raised. Re-raise it here so the failure surfaces instead of
+          # truncating the stream.
+          raise_stream_event_error!(event)
         else
           raise_if_stream_exception!(event)
         end
       end
     end
+
+    return if stream_completed
+
+    raise Riffer::IncompleteStreamError, "Bedrock ConverseStream ended without a messageStop event"
+  end
+
+  # Re-raises an +Aws::Errors::EventError+ event with a message built from its
+  # error code and message. The SDK's own +#message+ is just the class name,
+  # so without this the failure would be unreadable.
+  #--
+  #: (untyped) -> void
+  def raise_stream_event_error!(event)
+    details = [event.error_code, event.error_message].compact.join(": ")
+    details = "Bedrock ConverseStream error event" if details.empty?
+
+    raise event.exception(details)
   end
 
   # Re-raises a Bedrock stream-exception event as the matching
   # +Aws::BedrockRuntime::Errors+ class. ConverseStream delivers API errors on
   # the same channel as content, so without this a mid-stream failure would
-  # silently end the stream with no content.
+  # silently end the stream with no content. Non-exception events that we do
+  # not consume (including the SDK's +:unknown_event+ struct) are ignored for
+  # forward compatibility.
   #--
   #: (untyped) -> void
   def raise_if_stream_exception!(event)
@@ -422,7 +449,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_bedrock_format(file)
     format = bedrock_format(file.media_type)
 

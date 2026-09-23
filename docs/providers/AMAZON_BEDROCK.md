@@ -171,7 +171,7 @@ end
 Bedrock accepts file attachments either as raw bytes, or as `s3://` URIs passed straight through to Converse — Bedrock fetches the S3 object itself:
 
 ```ruby
-file = Riffer::Messages::FilePart.from_url("s3://my-bucket/document.pdf", media_type: "application/pdf")
+file = Riffer::Messages::User::FilePart.from_url("s3://my-bucket/document.pdf", media_type: "application/pdf")
 response = provider.generate_text(
   prompt: "Summarize this document",
   model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",

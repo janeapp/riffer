@@ -115,7 +115,7 @@ class Riffer::Config
     end
   end
 
-  # File-attachment-download policy for +Riffer::Messages::FilePart+ URL sources
+  # File-attachment-download policy for +Riffer::Messages::User::FilePart+ URL sources
   class Files
     # Allow file attachments to be downloaded to send to providers.
     attr_reader :allow_downloads #: bool # @dynamic allow_downloads

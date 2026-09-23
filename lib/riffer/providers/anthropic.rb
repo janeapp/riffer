@@ -211,6 +211,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       web_search_query: nil,
     } #: Hash[Symbol, untyped]
 
+    stream_completed = false
+
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
     stream = client.messages.stream(
@@ -247,6 +249,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
             handle_content_block_stop_web_search_result(event, state: current_state, yielder: yielder)
           end
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
+          stream_completed = true
           handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
         end
       end
@@ -256,6 +259,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
       # socket leaks until GC. close is idempotent and a no-op after EOF.
       stream.close
     end
+
+    return if stream_completed
+
+    raise Riffer::IncompleteStreamError, "Anthropic stream ended without a message_stop event"
   end
 
   #--
@@ -331,7 +338,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_thinking(_event, state:, yielder:)
-    yielder << Riffer::StreamEvents::ReasoningDone.new(state[:reasoning])
+    yield_reasoning_done(yielder, state[:reasoning])
     state[:reasoning] = nil
   end
 
@@ -437,7 +444,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def convert_file_part_to_anthropic_format(file)
     type = file.image? ? "image" : "document"
 

@@ -142,4 +142,18 @@ describe Riffer::Agent::Response do
       expect(response.steps).must_equal 3
     end
   end
+  describe "#reasoning" do
+    it "defaults to no parts" do
+      response = Riffer::Agent::Response.new("Hello!", outcome: completed)
+
+      expect(response.reasoning).must_equal []
+    end
+
+    it "stores the reasoning parts" do
+      part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Thinking", format: "mock-v1")
+      response = Riffer::Agent::Response.new("Hello!", outcome: completed, reasoning: [part])
+
+      expect(response.reasoning).must_equal [part]
+    end
+  end
 end

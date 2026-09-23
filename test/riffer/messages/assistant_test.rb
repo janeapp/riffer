@@ -125,10 +125,10 @@ describe Riffer::Messages::Assistant do
     end
 
     it "includes tool_calls when provided" do
-      tool_call = Riffer::Messages::Assistant::ToolCall.new(name: "test")
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c1", name: "test", arguments: "{}")
       message = Riffer::Messages::Assistant.new("Using tool", tool_calls: [tool_call])
 
-      expect(message.to_h[:tool_calls]).must_equal [{ call_id: nil, name: "test", arguments: nil }]
+      expect(message.to_h[:tool_calls]).must_equal [{ call_id: "c1", name: "test", arguments: "{}" }]
     end
 
     it "excludes tool_calls when empty" do
@@ -214,6 +214,70 @@ describe Riffer::Messages::Assistant do
     it "raises on a value outside the normalized vocabulary" do
       error = expect { Riffer::Messages::Assistant.new("Bad", finish_reason: :bogus) }.must_raise(Riffer::ArgumentError)
       expect(error.message).must_include ":bogus"
+    end
+  end
+  describe "reasoning" do
+    let(:text_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: "Step one", format: "mock-v1") }
+    let(:summary_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :summary, text: "Step two", format: "mock-v1") }
+    let(:encrypted_part) { Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: "ciphertext", format: "mock-v1") }
+
+    it "defaults to no parts" do
+      message = Riffer::Messages::Assistant.new("Answer")
+
+      expect(message.reasoning).must_equal []
+      expect(message.reasoning?).must_equal false
+    end
+
+    it "stores the parts in order" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part, encrypted_part])
+
+      expect(message.reasoning).must_equal [text_part, encrypted_part]
+      expect(message.reasoning?).must_equal true
+    end
+
+    it "joins text and summary parts in reasoning_text" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part, summary_part, encrypted_part])
+
+      expect(message.reasoning_text).must_equal "Step one\n\nStep two"
+    end
+
+    it "returns nil from reasoning_text when no part carries text" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [encrypted_part])
+
+      expect(message.reasoning_text).must_be_nil
+    end
+
+    it "returns nil from reasoning_text when there are no parts" do
+      message = Riffer::Messages::Assistant.new("Answer")
+
+      expect(message.reasoning_text).must_be_nil
+    end
+
+    it "includes the parts in to_h" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part])
+
+      expect(message.to_h[:reasoning]).must_equal [{ type: :text, text: "Step one", format: "mock-v1" }]
+    end
+
+    it "omits reasoning from to_h when there are no parts" do
+      message = Riffer::Messages::Assistant.new("Answer")
+
+      expect(message.to_h.key?(:reasoning)).must_equal false
+    end
+
+    it "round-trips through to_h and from_hash" do
+      message = Riffer::Messages::Assistant.new("Answer", reasoning: [text_part, encrypted_part])
+
+      rebuilt = Riffer::Messages::Base.from_hash(message.to_h)
+
+      expect(rebuilt.reasoning).must_equal [text_part, encrypted_part]
+    end
+
+    it "concatenates the parts when merging messages" do
+      first = Riffer::Messages::Assistant.new("One", reasoning: [text_part])
+      second = Riffer::Messages::Assistant.new("Two", reasoning: [summary_part])
+
+      expect((first + second).reasoning).must_equal [text_part, summary_part]
     end
   end
 end

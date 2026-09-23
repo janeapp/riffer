@@ -25,8 +25,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def initialize: () -> void
 
   # --
-  # : (Riffer::Messages::FilePart) -> Symbol
-  def file_delivery: (Riffer::Messages::FilePart) -> Symbol
+  # : (Riffer::Messages::User::FilePart) -> Symbol
+  def file_delivery: (Riffer::Messages::User::FilePart) -> Symbol
 
   private
 
@@ -91,10 +91,19 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
+  # Re-raises an +Aws::Errors::EventError+ event with a message built from its
+  # error code and message. The SDK's own +#message+ is just the class name,
+  # so without this the failure would be unreadable.
+  # --
+  # : (untyped) -> void
+  def raise_stream_event_error!: (untyped) -> void
+
   # Re-raises a Bedrock stream-exception event as the matching
   # +Aws::BedrockRuntime::Errors+ class. ConverseStream delivers API errors on
   # the same channel as content, so without this a mid-stream failure would
-  # silently end the stream with no content.
+  # silently end the stream with no content. Non-exception events that we do
+  # not consume (including the SDK's +:unknown_event+ struct) are ignored for
+  # forward compatibility.
   # --
   # : (untyped) -> void
   def raise_if_stream_exception!: (untyped) -> void
@@ -136,8 +145,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def append_tool_result: (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void
 
   # --
-  # : (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
-  def convert_file_part_to_bedrock_format: (Riffer::Messages::FilePart) -> Hash[Symbol, untyped]
+  # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
+  def convert_file_part_to_bedrock_format: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
   BEDROCK_FORMAT_MAP: Hash[String, String]
 

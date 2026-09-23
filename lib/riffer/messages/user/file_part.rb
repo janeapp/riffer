@@ -6,7 +6,7 @@ require "uri"
 
 # Represents a file attachment (image or document) — from a URL (+from_url+) or
 # raw base64 data (+new+).
-class Riffer::Messages::FilePart
+class Riffer::Messages::User::FilePart
   # @rbs @url_string: String?
   # @rbs @data: String?
   # @rbs @downloaded_data: String?
@@ -62,7 +62,7 @@ class Riffer::Messages::FilePart
   # Creates a FilePart from a URL, detecting +media_type+ from the path
   # extension when omitted. Raises Riffer::ArgumentError if it can't be detected.
   #--
-  #: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::FilePart
+  #: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
   def self.from_url(url, media_type: nil, filename: nil, sha256: nil)
     unless media_type
       ext = ::File.extname(URI.parse(url).path.to_s).downcase
@@ -76,9 +76,9 @@ class Riffer::Messages::FilePart
   # or returns +file+ unchanged when it is already a FilePart. Raises
   # Riffer::ArgumentError on an invalid hash.
   #--
-  #: ((Hash[Symbol, untyped] | Riffer::Messages::FilePart)) -> Riffer::Messages::FilePart
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::User::FilePart)) -> Riffer::Messages::User::FilePart
   def self.from_hash(file)
-    return file if file.is_a?(Riffer::Messages::FilePart)
+    return file if file.is_a?(Riffer::Messages::User::FilePart)
 
     url = file[:url]
     data = file[:data]
