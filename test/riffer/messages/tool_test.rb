@@ -11,6 +11,72 @@ describe Riffer::Messages::Tool do
     end
   end
 
+  describe ".from_hash" do
+    it "builds a Tool message with its id, tool_call_id, and name" do
+      message = Riffer::Messages::Tool.from_hash(
+        { role: "tool", content: "Result", id: "t-1", tool_call_id: "123", name: "my_tool" },
+      )
+
+      expect(message).must_be_instance_of Riffer::Messages::Tool
+      expect(message.content).must_equal "Result"
+      expect(message.id).must_equal "t-1"
+      expect(message.tool_call_id).must_equal "123"
+      expect(message.name).must_equal "my_tool"
+    end
+
+    it "returns a Tool message unchanged" do
+      message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
+
+      expect(Riffer::Messages::Tool.from_hash(message)).must_be_same_as message
+    end
+
+    it "round-trips an errored message through to_h" do
+      message = Riffer::Messages::Tool.new(
+        "Error: Unknown tool 'foo'",
+        tool_call_id: "123",
+        name: "foo",
+        error: "Unknown tool 'foo'",
+        error_type: :unknown_tool,
+      )
+
+      rebuilt = Riffer::Messages::Tool.from_hash(message.to_h)
+
+      expect(rebuilt.error?).must_equal true
+      expect(rebuilt.error).must_equal "Unknown tool 'foo'"
+      expect(rebuilt.error_type).must_equal :unknown_tool
+    end
+
+    it "round-trips an errored message through a JSON round trip" do
+      message = Riffer::Messages::Tool.new(
+        "Error: Unknown tool 'foo'",
+        tool_call_id: "123",
+        name: "foo",
+        error: "Unknown tool 'foo'",
+        error_type: :unknown_tool,
+      )
+
+      json = JSON.parse(JSON.generate(message.to_h), symbolize_names: true)
+      rebuilt = Riffer::Messages::Tool.from_hash(json)
+
+      expect(rebuilt.error?).must_equal true
+      expect(rebuilt.error).must_equal "Unknown tool 'foo'"
+      expect(rebuilt.error_type).must_equal :unknown_tool
+    end
+
+    it "round-trips every attribute" do
+      message = Riffer::Messages::Tool.new(
+        "Error: Unknown tool 'foo'",
+        id: "t-1",
+        tool_call_id: "123",
+        name: "foo",
+        error: "Unknown tool 'foo'",
+        error_type: :unknown_tool,
+      )
+
+      assert_round_trips message
+    end
+  end
+
   describe "#to_h" do
     it "returns hash with role, content, tool_call_id, and name" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")

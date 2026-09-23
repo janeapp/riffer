@@ -311,7 +311,7 @@ agent = MyAgent.new(session: session)
 response = agent.generate   # session already carries the last user turn
 ```
 
-`Riffer::Agent::Session.new(messages:)` accepts `Riffer::Messages::Base` objects. If your persistence layer hands back hashes, normalize them first via `Riffer::Messages::Base.from_hash` or your own adapter.
+`Riffer::Agent::Session.new(messages:)` accepts `Riffer::Messages::Base` objects. If your persistence layer hands back hashes, normalize them first via `Riffer::Messages::Base.from_hash` (which dispatches on `:role`), a role's own `from_hash` such as `Riffer::Messages::User.from_hash` when the role is already known, or your own adapter.
 
 ### Accessing Message History
 

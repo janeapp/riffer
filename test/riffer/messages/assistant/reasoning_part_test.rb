@@ -73,6 +73,19 @@ describe Riffer::Messages::Assistant::ReasoningPart do
     it "raises on a hash with an unsupported type" do
       expect { Riffer::Messages::Assistant::ReasoningPart.from_hash(type: "bogus") }.must_raise(Riffer::ArgumentError)
     end
+
+    it "round-trips every attribute" do
+      part = Riffer::Messages::Assistant::ReasoningPart.new(
+        type: :encrypted,
+        text: "Thinking",
+        data: "opaque",
+        signature: "sig",
+        id: "r-1",
+        format: "anthropic-claude-v1",
+      )
+
+      assert_round_trips part
+    end
   end
 
   describe "#to_h" do

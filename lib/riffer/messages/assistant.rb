@@ -7,6 +7,26 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # The reasoning part types +reasoning_text+ reads; the rest carry no prose.
   REASONING_TEXT_TYPES = %i[text summary].freeze #: Array[Symbol]
 
+  # Builds an Assistant message from a hash, or returns +msg+ unchanged when it
+  # is already an Assistant message. Raises Riffer::ArgumentError on an invalid
+  # tool call, reasoning part, or +finish_reason+.
+  #--
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant)) -> Riffer::Messages::Assistant
+  def self.from_hash(msg)
+    return msg if msg.is_a?(Riffer::Messages::Assistant)
+
+    new(
+      msg[:content],
+      id: msg[:id],
+      tool_calls: (msg[:tool_calls] || []).map { |tc| Riffer::Messages::Assistant::ToolCall.from_hash(tc) },
+      reasoning: (msg[:reasoning] || []).map { |part| Riffer::Messages::Assistant::ReasoningPart.from_hash(part) },
+      token_usage: msg[:token_usage] && Riffer::Providers::TokenUsage.from_hash(msg[:token_usage]),
+      structured_output: msg[:structured_output],
+      finish_reason: msg[:finish_reason]&.to_sym,
+      finish_reason_raw: msg[:finish_reason_raw],
+    )
+  end
+
   # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
 

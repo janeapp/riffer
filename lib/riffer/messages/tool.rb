@@ -3,6 +3,23 @@
 
 # Represents a tool execution result in a conversation.
 class Riffer::Messages::Tool < Riffer::Messages::Base
+  # Builds a Tool message from a hash, or returns +msg+ unchanged when it is
+  # already a Tool message.
+  #--
+  #: ((Hash[Symbol, untyped] | Riffer::Messages::Tool)) -> Riffer::Messages::Tool
+  def self.from_hash(msg)
+    return msg if msg.is_a?(Riffer::Messages::Tool)
+
+    new(
+      msg[:content],
+      id: msg[:id],
+      tool_call_id: msg[:tool_call_id],
+      name: msg[:name],
+      error: msg[:error],
+      error_type: msg[:error_type]&.to_sym,
+    )
+  end
+
   # The ID of the tool call this result responds to.
   attr_reader :tool_call_id #: String # @dynamic tool_call_id
 

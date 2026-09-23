@@ -6,6 +6,13 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
   # The reasoning part types +reasoning_text+ reads; the rest carry no prose.
   REASONING_TEXT_TYPES: Array[Symbol]
 
+  # Builds an Assistant message from a hash, or returns +msg+ unchanged when it
+  # is already an Assistant message. Raises Riffer::ArgumentError on an invalid
+  # tool call, reasoning part, or +finish_reason+.
+  # --
+  # : ((Hash[Symbol, untyped] | Riffer::Messages::Assistant)) -> Riffer::Messages::Assistant
+  def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Assistant) -> Riffer::Messages::Assistant
+
   # Array of tool calls requested by the assistant.
   attr_reader tool_calls: Array[Riffer::Messages::Assistant::ToolCall]
 
