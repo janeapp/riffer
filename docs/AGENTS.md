@@ -425,6 +425,8 @@ A tag you pass with the same key wins. The default tags count towards the provid
 | Anthropic             | `metadata.user_id` **only**   | The only tag forwarded                  |
 | Gemini                | _(none — observability only)_ | Tag only; no request field              |
 
+If `model_options` already sets the native field (`metadata` or `request_metadata`), the tags are merged into it; a tag wins on a shared key.
+
 **Anthropic silently drops non-`user_id` tags.** The Messages API has no free-form request-metadata field — only `metadata.user_id`. So for Anthropic, `user_id` is forwarded as `metadata: {user_id: …}` and **every other tag is dropped from the request** (it still appears on spans). This is intentional.
 
 **Gemini is observability-only.** Riffer's Gemini adapter targets the Gemini Developer API (`generativelanguage.googleapis.com`), whose `generateContent` request has **no** `labels` field — sending unknown fields is rejected. So tags are **not** added to the Gemini request; they propagate to spans only. Native request labels (`labels`, lowercase `[a-z0-9_-]`, ≤63 chars each) are a Vertex AI feature and would arrive with a future Vertex adapter.

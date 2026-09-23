@@ -601,6 +601,17 @@ describe Riffer::Providers::AmazonBedrock do
       expect(params[:request_metadata]).must_equal({ "team" => "growth", "user_id" => "u_1" })
     end
 
+    it "merges tags over request_metadata set in model_options" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        model,
+        { request_metadata: { "env" => "prod", "team" => "ops" }, tags: { "team" => "growth" } },
+      )
+
+      expect(params[:request_metadata]).must_equal({ "env" => "prod", "team" => "growth" })
+    end
+
     it "omits request_metadata when no tags are given" do
       params = provider.send(:build_request_params, messages, model, {})
 
