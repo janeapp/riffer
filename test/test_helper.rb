@@ -62,6 +62,22 @@ def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
 
+# Asserts +object+ survives a to_h -> JSON -> from_hash round trip. It also
+# requires to_h to emit every constructor keyword, so a fixture that doesn't
+# populate a newly added attribute fails rather than silently skipping it.
+def assert_round_trips(object)
+  hash = object.to_h
+  parameters = object.class.instance_method(:initialize).parameters
+  keywords = parameters.filter_map { |kind, name| name if kind in :key | :keyreq }
+  missing = keywords - hash.keys
+
+  expect(missing).must_be_empty "#{object.class}#to_h omits #{missing.inspect}; populate them in the fixture"
+
+  reloaded = object.class.from_hash(JSON.parse(JSON.generate(hash), symbolize_names: true))
+
+  expect(reloaded.to_h).must_equal hash
+end
+
 def install_in_memory_tracer_provider
   exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
   provider = OpenTelemetry::SDK::Trace::TracerProvider.new

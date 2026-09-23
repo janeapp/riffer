@@ -25,6 +25,10 @@ describe Riffer::Messages::System do
 
       expect(Riffer::Messages::System.from_hash(message)).must_be_same_as message
     end
+
+    it "round-trips every attribute" do
+      assert_round_trips Riffer::Messages::System.new("Be helpful", id: "s-1")
+    end
   end
 
   describe "#+" do

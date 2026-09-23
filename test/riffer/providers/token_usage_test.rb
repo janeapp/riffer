@@ -80,6 +80,18 @@ describe Riffer::Providers::TokenUsage do
 
       expect(Riffer::Providers::TokenUsage.from_hash(usage)).must_be_same_as usage
     end
+
+    it "round-trips every attribute" do
+      usage = Riffer::Providers::TokenUsage.new(
+        input_tokens: 100,
+        output_tokens: 50,
+        cache_write_tokens: 10,
+        cache_read_tokens: 20,
+        cost: 0.42,
+      )
+
+      assert_round_trips usage
+    end
   end
 
   describe "#total_tokens" do

@@ -62,6 +62,19 @@ describe Riffer::Messages::Tool do
       expect(rebuilt.error).must_equal "Unknown tool 'foo'"
       expect(rebuilt.error_type).must_equal :unknown_tool
     end
+
+    it "round-trips every attribute" do
+      message = Riffer::Messages::Tool.new(
+        "Error: Unknown tool 'foo'",
+        id: "t-1",
+        tool_call_id: "123",
+        name: "foo",
+        error: "Unknown tool 'foo'",
+        error_type: :unknown_tool,
+      )
+
+      assert_round_trips message
+    end
   end
 
   describe "#to_h" do
