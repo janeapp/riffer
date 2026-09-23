@@ -3404,6 +3404,14 @@ describe Riffer::Agent::Run do
       expect(run_span.name).must_equal "invoke_agent traced-agent"
     end
 
+    it "uses the restored identifier for the span name and gen_ai.agent.name" do
+      Riffer::Agent.from_h(agent_class.new.to_h).generate("Hello")
+
+      expect([run_span.name, run_span.attributes["gen_ai.agent.name"]]).must_equal(
+        ["invoke_agent traced-agent", "traced-agent"],
+      )
+    end
+
     it "marks the span as internal" do
       agent_class.new.generate("Hello")
 
@@ -3857,6 +3865,13 @@ describe Riffer::Agent::Run do
         agent.generate("Hello", tags: { kind: "workflow", agent: "custom" })
 
         expect(agent.provider.calls.last[:tags]).must_equal({ "kind" => "workflow", "agent" => "custom" })
+      end
+
+      it "uses the restored identifier for an agent rebuilt from its wire hash" do
+        agent = Riffer::Agent.from_h(agent_class.new.to_h)
+        agent.generate("Hello")
+
+        expect(agent.provider.calls.last[:tags]).must_equal defaults
       end
     end
 

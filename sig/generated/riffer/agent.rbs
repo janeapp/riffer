@@ -197,6 +197,14 @@ class Riffer::Agent
   # : (?session: Riffer::Agent::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
   def initialize: (?session: Riffer::Agent::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
 
+  # The identifier for this agent: the instance config's identifier when set
+  # (e.g. an agent restored with +Riffer::Agent.from_h+), otherwise the class
+  # identifier.
+  #
+  # --
+  # : () -> String
+  def identifier: () -> String
+
   # Generates a response from the agent.
   #
   # With +prompt+, a new user message is appended (silently — +on_message+ does

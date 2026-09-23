@@ -297,6 +297,16 @@ class Riffer::Agent
     @session.set(Riffer::Agent::Session::Repair.prune_orphans(@session.messages))
   end
 
+  # The identifier for this agent: the instance config's identifier when set
+  # (e.g. an agent restored with +Riffer::Agent.from_h+), otherwise the class
+  # identifier.
+  #
+  #--
+  #: () -> String
+  def identifier
+    config.identifier || self.class.identifier
+  end
+
   # Generates a response from the agent.
   #
   # With +prompt+, a new user message is appended (silently — +on_message+ does

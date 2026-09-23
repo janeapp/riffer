@@ -46,7 +46,7 @@ module Riffer::Agent::Run
   def run_loop(agent, tags: {}, stream_yielder: nil)
     tags = default_tags(agent).merge(normalize_tags(tags))
     Riffer::Tracing.in_span(
-      "invoke_agent #{agent.class.identifier}",
+      "invoke_agent #{agent.identifier}",
       attributes: run_span_attributes(agent, tags),
       kind: :internal,
     ) do |span|
@@ -391,7 +391,7 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent) -> Hash[String, String]
   def default_tags(agent)
-    { "kind" => "agent", "agent" => agent.class.identifier }
+    { "kind" => "agent", "agent" => agent.identifier }
   end
 
   #--
@@ -467,7 +467,7 @@ module Riffer::Agent::Run
   def run_span_attributes(agent, tags = {})
     {
       "gen_ai.operation.name" => "invoke_agent",
-      "gen_ai.agent.name" => agent.class.identifier,
+      "gen_ai.agent.name" => agent.identifier,
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name,
     }.merge(tag_attributes(tags))
