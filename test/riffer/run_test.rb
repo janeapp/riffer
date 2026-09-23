@@ -3404,6 +3404,14 @@ describe Riffer::Agent::Run do
       expect(run_span.name).must_equal "invoke_agent traced-agent"
     end
 
+    it "uses the restored identifier for the span name and gen_ai.agent.name" do
+      Riffer::Agent.from_h(agent_class.new.to_h).generate("Hello")
+
+      expect([run_span.name, run_span.attributes["gen_ai.agent.name"]]).must_equal(
+        ["invoke_agent traced-agent", "traced-agent"],
+      )
+    end
+
     it "marks the span as internal" do
       agent_class.new.generate("Hello")
 
@@ -3805,18 +3813,20 @@ describe Riffer::Agent::Run do
     end
 
     describe "provider threading" do
+      let(:defaults) { { "kind" => "agent", "agent" => "tagged-agent" } }
+
       it "passes normalized tags to the provider on generate" do
         agent = agent_class.new
         agent.generate("Hello", tags: { team: "growth", user_id: "u_1" })
 
-        expect(agent.provider.calls.last[:tags]).must_equal({ "team" => "growth", "user_id" => "u_1" })
+        expect(agent.provider.calls.last[:tags]).must_equal defaults.merge("team" => "growth", "user_id" => "u_1")
       end
 
       it "stringifies symbol values and drops nil-valued entries" do
         agent = agent_class.new
         agent.generate("Hello", tags: { team: :growth, region: nil })
 
-        expect(agent.provider.calls.last[:tags]).must_equal({ "team" => "growth" })
+        expect(agent.provider.calls.last[:tags]).must_equal defaults.merge("team" => "growth")
       end
 
       it "passes tags on every provider call across the tool loop" do
@@ -3826,28 +3836,42 @@ describe Riffer::Agent::Run do
         agent.generate("Call the tool", tags: { team: "growth" })
         tags_per_call = agent.provider.calls.map { |c| c[:tags] }
 
-        expect(tags_per_call).must_equal([{ "team" => "growth" }, { "team" => "growth" }])
+        expect(tags_per_call).must_equal([defaults.merge("team" => "growth")] * 2)
       end
 
       it "passes tags to the provider on stream" do
         agent = agent_class.new
         agent.stream("Hello", tags: { team: "growth" }).each { |_| }
 
-        expect(agent.provider.calls.last[:tags]).must_equal({ "team" => "growth" })
+        expect(agent.provider.calls.last[:tags]).must_equal defaults.merge("team" => "growth")
       end
 
-      it "omits the tags option entirely when none are given" do
+      it "passes only the default tags when none are given" do
         agent = agent_class.new
         agent.generate("Hello")
 
-        expect(agent.provider.calls.last.key?(:tags)).must_equal false
+        expect(agent.provider.calls.last[:tags]).must_equal defaults
       end
 
-      it "omits the tags option for an empty hash" do
+      it "passes only the default tags for an empty hash" do
         agent = agent_class.new
         agent.generate("Hello", tags: {})
 
-        expect(agent.provider.calls.last.key?(:tags)).must_equal false
+        expect(agent.provider.calls.last[:tags]).must_equal defaults
+      end
+
+      it "lets caller tags override the default tags" do
+        agent = agent_class.new
+        agent.generate("Hello", tags: { kind: "workflow", agent: "custom" })
+
+        expect(agent.provider.calls.last[:tags]).must_equal({ "kind" => "workflow", "agent" => "custom" })
+      end
+
+      it "uses the restored identifier for an agent rebuilt from its wire hash" do
+        agent = Riffer::Agent.from_h(agent_class.new.to_h)
+        agent.generate("Hello")
+
+        expect(agent.provider.calls.last[:tags]).must_equal defaults
       end
     end
 
@@ -3905,11 +3929,11 @@ describe Riffer::Agent::Run do
         expect(span_named("execute_guardrail").attributes["riffer.tag.team"]).must_equal "growth"
       end
 
-      it "leaves spans untagged when no tags are given" do
+      it "stamps only the default tags when no tags are given" do
         agent_class.new.generate("Hello")
-        tag_keys = span_named("invoke_agent").attributes.keys.grep(/\Ariffer\.tag\./)
+        tag_attributes = span_named("invoke_agent").attributes.select { |key, _| key.start_with?("riffer.tag.") }
 
-        expect(tag_keys).must_be_empty
+        expect(tag_attributes).must_equal({ "riffer.tag.kind" => "agent", "riffer.tag.agent" => "tagged-agent" })
       end
     end
   end

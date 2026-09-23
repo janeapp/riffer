@@ -74,7 +74,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
-      params[:metadata] = tags
+      # Merged over any metadata set in model_options; a tag wins on a shared key.
+      params[:metadata] = (params[:metadata] || {}).merge(tags)
       # OpenRouter exposes the legacy Chat Completions user field rather than
       # safety_identifier; the reserved user_id maps there and stays in metadata.
       user = tags["user_id"]

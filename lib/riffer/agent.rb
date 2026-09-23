@@ -297,6 +297,16 @@ class Riffer::Agent
     @session.set(Riffer::Agent::Session::Repair.prune_orphans(@session.messages))
   end
 
+  # The identifier for this agent: the instance config's identifier when set
+  # (e.g. an agent restored with +Riffer::Agent.from_h+), otherwise the class
+  # identifier.
+  #
+  #--
+  #: () -> String
+  def identifier
+    config.identifier || self.class.identifier
+  end
+
   # Generates a response from the agent.
   #
   # With +prompt+, a new user message is appended (silently — +on_message+ does
@@ -309,7 +319,8 @@ class Riffer::Agent
   # are stamped as +riffer.tag.*+ on every span the call emits. See
   # +docs/AGENTS.md+ for the per-provider mapping. The reserved key
   # +user_id+ also maps to the provider's native user identifier where one
-  # exists.
+  # exists. Riffer adds the default tags +kind+ (+"agent"+) and +agent+ (the
+  # agent identifier); a caller tag with the same key wins.
   #
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response

@@ -194,11 +194,12 @@ Class methods:
 - `instructions(value)` - Evaluation criteria and scoring rubric (enables default `evaluate`)
 - `higher_is_better(value)` - Whether higher scores are better (default: true)
 - `judge_model(value)` - Override the global judge model
+- `identifier(value)` - Override the identifier sent with judge calls (default: the snake_cased class name, or `riffer/judge` for an anonymous class)
 
 Instance methods:
 
 - `evaluate(input:, output:, ground_truth:, messages:)` - Override for custom logic; default calls judge with `instructions`
-- `judge` - Returns a Judge instance for LLM-as-judge calls
+- `judge` - Returns a Judge instance for LLM-as-judge calls. Its calls carry the [default tags](AGENTS.md#default-tags) `kind: "judge"` and `agent: <identifier>`
 - `result(score:, reason:, metadata:, token_usage:)` - Helper to build Result objects
 
 ### Advanced: Custom Evaluate Override

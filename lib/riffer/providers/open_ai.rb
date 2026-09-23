@@ -80,7 +80,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
-      params[:metadata] = tags
+      # Merged over any metadata set in model_options; a tag wins on a shared key.
+      params[:metadata] = (params[:metadata] || {}).merge(tags)
       # The reserved user_id also maps to the native safety identifier while
       # staying in metadata as an ordinary tag.
       user_id = tags["user_id"]

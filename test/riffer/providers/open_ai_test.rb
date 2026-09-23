@@ -620,6 +620,17 @@ describe Riffer::Providers::OpenAI do
       expect(params[:metadata]).must_equal({ "team" => "growth", "user_id" => "u_1" })
     end
 
+    it "merges tags over metadata set in model_options" do
+      params = provider.send(
+        :build_request_params,
+        messages,
+        "gpt-5-mini",
+        { metadata: { "env" => "prod", "team" => "ops" }, tags: { "team" => "growth" } },
+      )
+
+      expect(params[:metadata]).must_equal({ "env" => "prod", "team" => "growth" })
+    end
+
     it "maps the reserved user_id to safety_identifier while keeping it in metadata" do
       params = provider.send(:build_request_params, messages, "gpt-5-mini", { tags: { "user_id" => "u_1" } })
 

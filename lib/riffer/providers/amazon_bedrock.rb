@@ -98,8 +98,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
     # requestMetadata is a flat String=>String map used to filter invocation
     # logs; every tag (including the reserved user_id) rides along, since
-    # Converse has no dedicated end-user field.
-    params[:request_metadata] = tags unless tags.empty?
+    # Converse has no dedicated end-user field. Merged over any request_metadata
+    # set in model_options; a tag wins on a shared key.
+    params[:request_metadata] = (params[:request_metadata] || {}).merge(tags) unless tags.empty?
 
     if tools && !tools.empty?
       params[:tool_config] = {

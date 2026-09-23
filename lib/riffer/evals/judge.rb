@@ -30,16 +30,20 @@ class Riffer::Evals::Judge
   # The model string (provider/model format).
   attr_reader :model #: String # @dynamic model
 
+  # The tags passed to the provider on every call.
+  attr_reader :tags #: Hash[String, String] # @dynamic tags
+
   # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   #--
-  #: (model: String) -> void
-  def initialize(model:)
+  #: (model: String, ?tags: Hash[String, String]) -> void
+  def initialize(model:, tags: {})
     provider_name, model_name = model.split("/", 2)
     unless [provider_name, model_name].all? { |part| part.is_a?(String) && !part.strip.empty? }
       raise Riffer::ArgumentError, "Invalid model string: #{model}"
     end
 
     @model = model
+    @tags = tags
   end
 
   # Evaluates an input/output pair using the configured LLM.
@@ -49,12 +53,14 @@ class Riffer::Evals::Judge
     system_message = build_system_message(instructions)
     user_message = build_user_message(input: input, output: output, ground_truth: ground_truth)
 
-    response = provider_instance.generate_text(
+    options = {
       system: system_message,
       prompt: user_message,
       model: model_name,
       tools: [EvaluationTool],
-    )
+    } #: Hash[Symbol, untyped]
+    options[:tags] = tags unless tags.empty?
+    response = provider_instance.generate_text(**options)
 
     parse_tool_response(response)
   end

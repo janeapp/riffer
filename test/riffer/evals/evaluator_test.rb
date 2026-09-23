@@ -2,6 +2,10 @@
 
 require "test_helper"
 
+class IdentifierTestEvaluator < Riffer::Evals::Evaluator
+  judge_model "mock/eval-model"
+end
+
 describe Riffer::Evals::Evaluator do
   let(:evaluator_class) do
     Class.new(Riffer::Evals::Evaluator) do
@@ -56,6 +60,22 @@ describe Riffer::Evals::Evaluator do
 
     it "returns nil when not set" do
       expect(evaluator_class.judge_model).must_be_nil
+    end
+  end
+
+  describe ".identifier" do
+    it "derives the identifier from the class name" do
+      expect(IdentifierTestEvaluator.identifier).must_equal "identifier_test_evaluator"
+    end
+
+    it "returns the set identifier" do
+      klass = Class.new(Riffer::Evals::Evaluator) { identifier "accuracy" }
+
+      expect(klass.identifier).must_equal "accuracy"
+    end
+
+    it "falls back to the default identifier for anonymous classes" do
+      expect(evaluator_class.identifier).must_equal "riffer/judge"
     end
   end
 
@@ -143,6 +163,14 @@ describe Riffer::Evals::Evaluator do
       result = evaluator.evaluate(input: "test input", output: "test output")
 
       expect(result.token_usage.total_tokens).must_equal 42
+    end
+  end
+
+  describe "#judge (protected)" do
+    it "tags judge calls with the judge kind and the evaluator identifier" do
+      judge = IdentifierTestEvaluator.new.send(:judge)
+
+      expect(judge.tags).must_equal({ "kind" => "judge", "agent" => "identifier_test_evaluator" })
     end
   end
 

@@ -21,6 +21,24 @@ describe Riffer::Agent do
     end
   end
 
+  describe "#identifier" do
+    it "returns the class identifier by default" do
+      expect(agent_class.new.identifier).must_equal "test-agent"
+    end
+
+    it "prefers the instance config's identifier" do
+      config = Riffer::Agent::Config.new(identifier: "restored-agent", model: "mock/riffer-1")
+
+      expect(Riffer::Agent.new(config: config).identifier).must_equal "restored-agent"
+    end
+
+    it "falls back to the class identifier when the instance config has none" do
+      config = Riffer::Agent::Config.new(model: "mock/riffer-1")
+
+      expect(agent_class.new(config: config).identifier).must_equal "test-agent"
+    end
+  end
+
   describe ".model" do
     it "sets the model" do
       expect(agent_class.model).must_equal "mock/riffer-1"
