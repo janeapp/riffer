@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.48.0](https://github.com/janeapp/riffer/compare/riffer/v0.47.2...riffer/v0.48.0) (2026-09-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **messages:** Riffer::Messages::FilePart is renamed to Riffer::Messages::User::FilePart with no alias. ToolCall no longer responds to Struct-only methods such as [] or to_a; use its readers instead.
+
+### Features
+
+* **agent:** inherit configuration on subclass ([#440](https://github.com/janeapp/riffer/issues/440)) ([a45c457](https://github.com/janeapp/riffer/commit/a45c45756108cfac7970e88b9f6f5b64638896c8))
+* identify agents and evals with default tags ([#452](https://github.com/janeapp/riffer/issues/452)) ([22ab54c](https://github.com/janeapp/riffer/commit/22ab54c5225a45c38e255b1a2aa32be0ac28cb12))
+* **messages:** persist reasoning on assistant messages ([#446](https://github.com/janeapp/riffer/issues/446)) ([7fc64ab](https://github.com/janeapp/riffer/commit/7fc64ab416feb47ccff575518378c58bbcc74d63))
+
+
+### Bug Fixes
+
+* **messages:** preserve tool errors and token usage through from_hash ([#450](https://github.com/janeapp/riffer/issues/450)) ([6e2bd90](https://github.com/janeapp/riffer/commit/6e2bd90926d7c3c071ac95f708875652268c767f))
+
+
+### Code Refactoring
+
+* **messages:** make nested message objects follow one pattern ([#448](https://github.com/janeapp/riffer/issues/448)) ([e9e63db](https://github.com/janeapp/riffer/commit/e9e63dba16121692f734b476569b062c09cc959d))
+
 ## [0.47.2](https://github.com/janeapp/riffer/compare/riffer/v0.47.1...riffer/v0.47.2) (2026-09-21)
 
 
