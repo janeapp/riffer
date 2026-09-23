@@ -823,4 +823,39 @@ describe Riffer::Params do
       expect(rebuilt.validate({ answer: "yes" })).must_equal({ answer: "yes", score: 0.0 })
     end
   end
+  describe "#dup" do
+    it "holds no collection in common with the original, at any depth" do
+      original = Riffer::Params.new
+      original.required(:claim, Hash) { required :id, String }
+
+      copy = original.dup
+      copy.required(:verdict, String)
+      copy.parameters.first.nested_params.required(:amount, Float)
+
+      expect(original.parameters.map(&:name)).must_equal %i[claim]
+      expect(original.parameters.first.nested_params.parameters.map(&:name)).must_equal %i[id]
+      expect(copy.parameters.map(&:name)).must_equal %i[claim verdict]
+    end
+
+    it "does not share a mutable enum or default with the original" do
+      original = Riffer::Params.new
+      original.optional(:status, String, enum: %w[open closed], default: { note: ["seen"] })
+
+      copy = original.dup
+      copy.parameters.first.enum << "archived"
+      copy.parameters.first.default[:note] << "edited"
+
+      expect(original.parameters.first.enum).must_equal %w[open closed]
+      expect(original.parameters.first.default).must_equal({ note: ["seen"] })
+    end
+
+    it "produces an equivalent schema" do
+      original = Riffer::Params.new
+      original.required(:answer, String, description: "the answer")
+      original.optional(:score, Float, default: 0.0)
+
+      expect(original.dup.to_json_schema(strict: false)).
+        must_equal original.to_json_schema(strict: false)
+    end
+  end
 end

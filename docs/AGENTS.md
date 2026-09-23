@@ -126,7 +126,7 @@ end
 
 ### use_mcp
 
-Loads tools from registered [MCP](MCP.md) servers by tag. Like `uses_tools`, **`use_mcp` is not inherited**—add it on each subclass that should include MCP tools.
+Loads tools from registered [MCP](MCP.md) servers by tag.
 
 ### model_options
 
@@ -265,7 +265,7 @@ class MyAgent < Riffer::Agent
 end
 ```
 
-Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, defaults to `Riffer.config.tool_runtime` (captured at agent class definition time). See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Accepts a `Riffer::Tools::Runtime` subclass, a `Riffer::Tools::Runtime` instance, or a `Proc`. When unset, reads `Riffer.config.tool_runtime` at the point of use, so an agent that declares none follows a later change to the global. See [Tools — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
 
 ### guardrail
 
@@ -303,6 +303,27 @@ MyAgent.config.max_steps  # => 8
 ```
 
 The DSL methods read and mutate this Config in place.
+
+### Inheritance
+
+A subclass starts from a copy of its parent's Config, so it inherits every setting the parent declared and overrides only what its own body declares:
+
+```ruby
+class BaseAgent < Riffer::Agent
+  model 'openai/gpt-5-mini'
+  max_steps 8
+end
+
+class TerseAgent < BaseAgent
+  max_steps 2
+end
+
+TerseAgent.config.model      # => 'openai/gpt-5-mini'
+TerseAgent.config.max_steps  # => 2
+BaseAgent.config.max_steps   # => 8
+```
+
+`identifier` is not inherited. A subclass derives its own from its class name, since two classes claiming one identifier would raise `Riffer::DuplicateIdentifierError` at the first lookup.
 
 For advanced composition or testing, build a Config directly and pass it via `config:` to bypass class-level DSL entirely:
 

@@ -204,8 +204,217 @@ describe Riffer::Agent do
       child = stub_agent("ChildAgent", base: parent)
 
       expect(child.config).wont_be_same_as parent.config
-      # Each subclass starts fresh; only tool_runtime walks the chain.
-      expect(child.config.max_steps).must_equal Riffer::Agent::Config::DEFAULT_MAX_STEPS
+      expect(child.config.max_steps).must_equal 3
+    end
+
+    it "lets a subclass override an inherited setting without touching the parent" do
+      parent = stub_agent("OverrideParentAgent") do
+        model "mock/riffer-1"
+        max_steps 3
+      end
+      child = stub_agent("OverrideChildAgent", base: parent) { max_steps 9 }
+
+      expect(child.config.max_steps).must_equal 9
+      expect(parent.config.max_steps).must_equal 3
+    end
+
+    it "inherits through more than one level" do
+      grandparent = stub_agent("GrandparentAgent") do
+        model "mock/riffer-1"
+        instructions "You are inherited."
+      end
+      parent = stub_agent("MiddleAgent", base: grandparent)
+      child = stub_agent("GrandchildAgent", base: parent)
+
+      expect(child.config.instructions).must_equal "You are inherited."
+    end
+
+    # Subclassed directly rather than through stub_agent, which assigns an
+    # identifier of its own and would hide a copied one.
+    it "does not copy the identifier, leaving a subclass to derive its own" do
+      parent = stub_agent("IdentityParentAgent") { model "mock/riffer-1" }
+
+      expect(Class.new(parent).config.identifier).must_be_nil
+    end
+
+    it "inherits a declared tool_runtime" do
+      parent = stub_agent("RuntimeParentAgent") do
+        model "mock/riffer-1"
+        tool_runtime Riffer::Tools::Runtime::Inline
+      end
+      child = stub_agent("RuntimeChildAgent", base: parent)
+
+      expect(child.config.tool_runtime).must_equal Riffer::Tools::Runtime::Inline
+    end
+
+    it "falls back to the global runtime when the parent declared none" do
+      parent = stub_agent("NoRuntimeParentAgent") { model "mock/riffer-1" }
+      child = stub_agent("NoRuntimeChildAgent", base: parent)
+
+      expect(child.config.tool_runtime).must_be_same_as Riffer.config.tool_runtime
+    end
+
+    # The global resolves on read rather than at construction, so a config that
+    # declared no runtime follows a later change to it.
+    it "follows a change to the global runtime when none was declared" do
+      agent = stub_agent("LateGlobalAgent") { model "mock/riffer-1" }
+      replacement = Riffer::Tools::Runtime::Inline.new
+      original = Riffer.config.tool_runtime
+
+      begin
+        Riffer.config.tool_runtime = replacement
+
+        expect(agent.config.tool_runtime).must_be_same_as replacement
+      ensure
+        Riffer.config.tool_runtime = original
+      end
+    end
+
+    it "does not let a subclass append to the parent's mcp registrations" do
+      parent = stub_agent("McpParentAgent") do
+        model "mock/riffer-1"
+        use_mcp :parent_tag
+      end
+      child = stub_agent("McpChildAgent", base: parent) { use_mcp :child_tag }
+
+      expect(child.mcp_configs.length).must_equal 2
+      expect(parent.mcp_configs.length).must_equal 1
+    end
+
+    it "does not let a subclass append to the parent's guardrails" do
+      parent = stub_agent("GuardrailParentAgent") { model "mock/riffer-1" }
+      guardrail_class = Class.new(Riffer::Guardrail)
+      child = stub_agent("GuardrailChildAgent", base: parent) do
+        guardrail :before, with: guardrail_class
+      end
+
+      expect(child.guardrails_for(:before).length).must_equal 1
+      expect(parent.guardrails_for(:before)).must_be_empty
+    end
+
+    it "does not let a mutation of a subclass's tool list reach the parent" do
+      first_tool = stub_tool("FirstInheritedTool")
+      second_tool = stub_tool("SecondInheritedTool")
+      parent = stub_agent("ToolsParentAgent") do
+        model "mock/riffer-1"
+        uses_tools [first_tool]
+      end
+      child = stub_agent("ToolsChildAgent", base: parent)
+
+      child.config.tools_config << second_tool
+
+      expect(child.config.tools_config).must_equal [first_tool, second_tool]
+      expect(parent.config.tools_config).must_equal [first_tool]
+    end
+
+    # A Proc has nothing to alias, and duplicating it would only allocate.
+    it "shares a Proc tool list rather than duplicating it" do
+      resolver = ->(_context) { [] }
+      parent = stub_agent("ProcToolsParentAgent") do
+        model "mock/riffer-1"
+        uses_tools resolver
+      end
+      child = stub_agent("ProcToolsChildAgent", base: parent)
+
+      expect(child.config.tools_config).must_be_same_as resolver
+    end
+
+    it "does not let a subclass's added schema field reach the parent" do
+      parent = stub_agent("SchemaParentAgent") do
+        model "mock/riffer-1"
+        structured_output { required :verdict, String }
+      end
+      child = stub_agent("SchemaChildAgent", base: parent)
+
+      child.config.structured_output.required(:confidence, Float)
+
+      expect(child.config.structured_output.parameters.map(&:name)).must_equal %i[verdict confidence]
+      expect(parent.config.structured_output.parameters.map(&:name)).must_equal %i[verdict]
+    end
+
+    # Param#nested_params is a Params of its own, so the copy has to follow it.
+    it "does not let a subclass's nested schema field reach the parent" do
+      parent = stub_agent("NestedSchemaParentAgent") do
+        model "mock/riffer-1"
+        structured_output do
+          required :claim, Hash do
+            required :id, String
+          end
+        end
+      end
+      child = stub_agent("NestedSchemaChildAgent", base: parent)
+
+      child.config.structured_output.parameters.first.nested_params.required(:amount, Float)
+
+      child_nested = child.config.structured_output.parameters.first.nested_params
+      parent_nested = parent.config.structured_output.parameters.first.nested_params
+
+      expect(child_nested.parameters.map(&:name)).must_equal %i[id amount]
+      expect(parent_nested.parameters.map(&:name)).must_equal %i[id]
+    end
+
+    it "does not let a subclass reach the tags inside a parent's mcp entry" do
+      parent = stub_agent("McpTagsParentAgent") do
+        model "mock/riffer-1"
+        use_mcp :shared_tag
+      end
+      child = stub_agent("McpTagsChildAgent", base: parent)
+
+      child.config.mcp_configs.first[:tags] << :extra_tag
+
+      expect(child.config.mcp_configs.first[:tags]).must_equal %i[shared_tag extra_tag]
+      expect(parent.config.mcp_configs.first[:tags]).must_equal %i[shared_tag]
+    end
+
+    it "does not let a subclass reach the options inside a parent's guardrail entry" do
+      guardrail_class = Class.new(Riffer::Guardrail)
+      parent = stub_agent("GuardrailOptionsParentAgent") do
+        model "mock/riffer-1"
+        guardrail :before, with: guardrail_class, threshold: 1
+      end
+      child = stub_agent("GuardrailOptionsChildAgent", base: parent)
+
+      child.config.guardrails_for(:before).first[:options][:threshold] = 99
+
+      expect(child.config.guardrails_for(:before).first[:options][:threshold]).must_equal 99
+      expect(parent.config.guardrails_for(:before).first[:options][:threshold]).must_equal 1
+    end
+
+    it "does not let a subclass reach a nested value in the parent's model options" do
+      parent = stub_agent("ModelOptionsParentAgent") do
+        model "mock/riffer-1"
+        model_options({ thinking: { budget_tokens: 100 } })
+      end
+      child = stub_agent("ModelOptionsChildAgent", base: parent)
+
+      child.config.model_options[:thinking][:budget_tokens] = 999
+
+      expect(child.config.model_options[:thinking][:budget_tokens]).must_equal 999
+      expect(parent.config.model_options[:thinking][:budget_tokens]).must_equal 100
+    end
+
+    it "gives a subclass its own skills config" do
+      parent = stub_agent("SkillsParentAgent") do
+        model "mock/riffer-1"
+        skills { activate ["parent-skill"] }
+      end
+      child = stub_agent("SkillsChildAgent", base: parent)
+
+      expect(child.config.skills_config).wont_be_same_as parent.config.skills_config
+      expect(child.config.skills_config.activate).must_equal ["parent-skill"]
+    end
+
+    # Fails when a field is added to Config, so the new one gets a deliberate
+    # copy-or-exclude decision rather than being dropped from every subclass.
+    it "accounts for every field on Config" do
+      known = %i[
+        identifier model instructions model_options structured_output max_steps
+        tools_config mcp_configs tool_runtime skills_config guardrails
+      ]
+
+      declared = Riffer::Agent::Config.instance_method(:initialize).parameters.map(&:last)
+
+      expect(declared.sort).must_equal known.sort
     end
   end
 

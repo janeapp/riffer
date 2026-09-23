@@ -151,6 +151,15 @@ class Riffer::Params
 
   private
 
+  # +dup+ would leave the copy sharing this one's parameters, so a caller
+  # defining a parameter on either would reach the other.
+  #--
+  #: (Riffer::Params) -> void
+  def initialize_copy(source)
+    super
+    @parameters = source.parameters.map(&:dup)
+  end
+
   #--
   #: (Module, Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def build_nested(type, of, &block)

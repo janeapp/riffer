@@ -67,4 +67,16 @@ class Riffer::Skills::Config
 
     @activate_tool = value
   end
+
+  private
+
+  # +dup+ would leave the copy sharing this one's activation list, so activating
+  # a skill on either would reach the other. DeepDup rebuilds the list and
+  # returns a Proc as-is, which has nothing to alias.
+  #--
+  #: (Riffer::Skills::Config) -> void
+  def initialize_copy(source)
+    super
+    @activate = Riffer::Helpers::DeepDup.call(source.activate)
+  end
 end

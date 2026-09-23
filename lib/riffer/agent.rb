@@ -28,6 +28,19 @@ class Riffer::Agent
     @config ||= Riffer::Agent::Config.new
   end
 
+  # +identifier+ is cleared because it is configuration here but identity on the
+  # subclass; two classes claiming one raise Riffer::DuplicateIdentifierError at
+  # the next registry lookup.
+  #--
+  #: (Class) -> void
+  def self.inherited(subclass)
+    super
+    copy = config.dup
+    copy.identifier = nil
+    subclass.instance_variable_set(:@config, copy)
+  end
+  private_class_method :inherited
+
   # Gets or sets the agent identifier.
   #
   #--
