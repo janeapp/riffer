@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -196,6 +196,8 @@
               <li><a href="#stream-events">Stream Events</a></li>
               <li><a href="#token-usage-semantics">Token Usage Semantics</a></li>
               <li><a href="#finish-reasons">Finish Reasons</a></li>
+              <li><a href="#reasoning">Reasoning</a></li>
+              <li><a href="#tags">Tags</a></li>
               <li><a href="#trace-provider-name">Trace Provider Name</a></li>
               <li><a href="#error-handling">Error Handling</a></li>
               <li><a href="#complete-example">Complete Example</a></li>
@@ -225,7 +227,7 @@
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
       <span class="ss">model: </span><span class="n">model</span><span class="p">,</span>
       <span class="ss">messages: </span><span class="n">convert_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">),</span>
-      <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">)</span>
+      <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">,</span> <span class="ss">:tags</span><span class="p">)</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">tools</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">tools</span><span class="p">.</span><span class="nf">empty?</span>
@@ -418,9 +420,9 @@
   <span class="ss">arguments: </span><span class="s1">'{"complete":"args"}'</span>
 <span class="p">)</span>
 
-<span class="c1"># Reasoning (if supported)</span>
+<span class="c1"># Reasoning (if supported); see the Reasoning section for building the part</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"thinking..."</span><span class="p">)</span>
-<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"complete reasoning"</span><span class="p">)</span>
+<span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
 
 <span class="c1"># Web search (if supported)</span>
 <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">WebSearchStatus</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"searching"</span><span class="p">,</span> <span class="ss">query: </span><span class="s2">"search query"</span><span class="p">)</span>
@@ -471,6 +473,55 @@
 </code></pre></div></div>
 
 <p>Also have <code>execute_stream</code> raise <code>Riffer::IncompleteStreamError</code> when the stream ends without the provider’s terminal event, rather than returning normally. Otherwise a connection that drops mid-response looks identical to a finished one, and the agent loop accepts a truncated message as complete.</p>
+
+<h2 id="reasoning">Reasoning</h2>
+
+<p><code>extract_reasoning</code> is the optional hook for reasoning models — return the response’s thinking blocks as <a href="/guides/messages/#reasoning"><code>Riffer::Messages::Assistant::ReasoningPart</code>s</a> and the base class attaches them to the assistant message, where your application can persist them and hand them back on the next turn:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_reasoning</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">response</span><span class="p">.</span><span class="nf">thinking_blocks</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">block</span><span class="o">|</span>
+    <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="ss">type: :encrypted</span><span class="p">,</span>
+      <span class="ss">data: </span><span class="n">block</span><span class="p">.</span><span class="nf">data</span><span class="p">,</span>
+      <span class="ss">signature: </span><span class="n">block</span><span class="p">.</span><span class="nf">signature</span><span class="p">,</span>
+      <span class="ss">format: </span><span class="s2">"my-provider-v1"</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The base class defaults to <code>[]</code>, so a provider without reasoning stays valid.</p>
+
+<p>Your adapter owns its <code>format</code> string: pick one value per wire shape, replay only the parts carrying a value you recognize, and skip the rest — history that travelled through another provider must never make a request fail. Never reorder or edit a part; the provider’s signature covers its exact bytes.</p>
+
+<p>For streaming, emit one <code>ReasoningDone</code> per block, carrying the part so the agent loop can accumulate it:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">part</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">type: :text</span><span class="p">,</span> <span class="ss">text: </span><span class="s2">"complete reasoning"</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"my-provider-v1"</span><span class="p">)</span>
+
+<span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"thinking..."</span><span class="p">)</span>
+<span class="n">yielder</span> <span class="o">&lt;&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>If your adapter surfaces reasoning text but cannot yet replay it, call <code>yield_reasoning_done(yielder, text)</code> instead. It wraps the text in a <code>:text</code> part with no <code>format</code>, which persists for display and is skipped on replay.</p>
+
+<h2 id="tags">Tags</h2>
+
+<p>Every agent and judge call passes a <code>:tags</code> option: a flat <code>String =&gt; String</code> hash of the caller’s <a href="/guides/agents/#per-call-tags">per-call tags</a> plus the <a href="/guides/agents/#default-tags">default tags</a>. <code>kind</code> (<code>"agent"</code> or <code>"judge"</code>) and <code>agent</code> (the agent or evaluator identifier) tell you who the call is on behalf of:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build_request_params</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+  <span class="n">tags</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:tags</span><span class="p">]</span> <span class="o">||</span> <span class="p">{}</span>
+
+  <span class="p">{</span>
+    <span class="ss">agent: </span><span class="n">tags</span><span class="p">[</span><span class="s2">"agent"</span><span class="p">],</span>
+    <span class="ss">user: </span><span class="n">tags</span><span class="p">[</span><span class="s2">"user_id"</span><span class="p">],</span>
+    <span class="ss">messages: </span><span class="n">convert_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">),</span>
+    <span class="ss">model: </span><span class="n">model</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">,</span> <span class="ss">:tags</span><span class="p">),</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Map tags to your service’s native request field, or drop them, but don’t pass <code>:tags</code> on to an SDK verbatim.</p>
 
 <h2 id="trace-provider-name">Trace Provider Name</h2>
 
@@ -523,7 +574,7 @@
       <span class="ss">messages: </span><span class="n">convert_messages</span><span class="p">(</span><span class="n">conversation</span><span class="p">),</span>
       <span class="ss">system: </span><span class="n">system_message</span><span class="p">,</span>
       <span class="ss">max_tokens: </span><span class="n">options</span><span class="p">[</span><span class="ss">:max_tokens</span><span class="p">]</span> <span class="o">||</span> <span class="mi">4096</span><span class="p">,</span>
-      <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">,</span> <span class="ss">:max_tokens</span><span class="p">)</span>
+      <span class="o">**</span><span class="n">options</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:tools</span><span class="p">,</span> <span class="ss">:max_tokens</span><span class="p">,</span> <span class="ss">:tags</span><span class="p">)</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">tools</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">tools</span><span class="p">.</span><span class="nf">empty?</span>

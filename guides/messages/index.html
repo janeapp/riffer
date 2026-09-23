@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -228,9 +228,9 @@
 
 <p>User messages can include file attachments:</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_path</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_path</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
 <span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Describe this image"</span><span class="p">,</span> <span class="ss">files: </span><span class="p">[</span><span class="n">file</span><span class="p">])</span>
-<span class="n">msg</span><span class="p">.</span><span class="nf">files</span>    <span class="c1"># =&gt; [#&lt;Riffer::Messages::FilePart ...&gt;]</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">files</span>    <span class="c1"># =&gt; [#&lt;Riffer::Messages::User::FilePart ...&gt;]</span>
 <span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :user, content: "Describe this image", files: [{...}]}</span>
 </code></pre></div></div>
 
@@ -260,6 +260,18 @@
   <span class="nb">puts</span> <span class="s2">"Output tokens: </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">output_tokens</span><span class="si">}</span><span class="s2">"</span>
   <span class="nb">puts</span> <span class="s2">"Total tokens: </span><span class="si">#{</span><span class="n">msg</span><span class="p">.</span><span class="nf">token_usage</span><span class="p">.</span><span class="nf">total_tokens</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="tool-calls">Tool Calls</h4>
+
+<p><code>Riffer::Messages::Assistant::ToolCall</code> is the normalized container riffer stores a requested tool invocation in. Each call carries <code>call_id</code> (the provider’s identifier, passed back as the tool result’s <code>tool_call_id</code>), <code>name</code>, and <code>arguments</code> (the JSON-encoded argument string exactly as the provider emitted it); <code>to_h</code> serializes all three.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tool_call</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ToolCall</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">call_id: </span><span class="s2">"call_123"</span><span class="p">,</span> <span class="ss">name: </span><span class="s2">"weather_tool"</span><span class="p">,</span> <span class="ss">arguments: </span><span class="s1">'{"city":"Tokyo"}'</span><span class="p">)</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="ss">tool_calls: </span><span class="p">[</span><span class="n">tool_call</span><span class="p">])</span>
+
+<span class="n">msg</span><span class="p">.</span><span class="nf">has_tool_calls?</span>        <span class="c1"># =&gt; true</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">tool_calls</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">name</span>  <span class="c1"># =&gt; "weather_tool"</span>
+<span class="n">tool_call</span><span class="p">.</span><span class="nf">to_h</span>             <span class="c1"># =&gt; {call_id: "call_123", name: "weather_tool", arguments: '{"city":"Tokyo"}'}</span>
 </code></pre></div></div>
 
 <h4 id="token-usage-semantics">Token Usage Semantics</h4>
@@ -352,6 +364,91 @@
 <span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>  <span class="c1"># =&gt; {role: :assistant, content: '{"sentiment":"positive"}', structured_output: {sentiment: "positive"}}</span>
 </code></pre></div></div>
 
+<h4 id="reasoning">Reasoning</h4>
+
+<p>Reasoning models emit thinking blocks alongside their answer, and several providers require those blocks back on the next turn of a tool-calling loop. <code>Riffer::Messages::Assistant::ReasoningPart</code> is the normalized container riffer stores them in: a list of parts on the assistant message, in the order the provider emitted them.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">summary</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">type: :summary</span><span class="p">,</span> <span class="ss">text: </span><span class="s2">"The user wants the answer."</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"mock-v1"</span><span class="p">)</span>
+<span class="n">opaque</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">type: :encrypted</span><span class="p">,</span> <span class="ss">data: </span><span class="s2">"b3BhcXVl"</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"mock-v1"</span><span class="p">)</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"42"</span><span class="p">,</span> <span class="ss">reasoning: </span><span class="p">[</span><span class="n">summary</span><span class="p">,</span> <span class="n">opaque</span><span class="p">])</span>
+
+<span class="n">msg</span><span class="p">.</span><span class="nf">reasoning?</span>            <span class="c1"># =&gt; true</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">reasoning_text</span>        <span class="c1"># =&gt; "The user wants the answer."</span>
+<span class="n">msg</span><span class="p">.</span><span class="nf">reasoning</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">type</span>  <span class="c1"># =&gt; :summary</span>
+</code></pre></div></div>
+
+<p>A readable part next to an opaque one is the common shape, not a contrived one: OpenAI’s Responses API returns a reasoning item as summary text plus an encrypted payload, and Anthropic pairs a <code>thinking</code> block with a <code>redacted_thinking</code> block when it redacts part of the chain of thought.</p>
+
+<p><code>reasoning:</code> takes <code>ReasoningPart</code>s; <code>Riffer::Messages::Base.from_hash</code> is what turns persisted hashes back into parts.</p>
+
+<p>Each part carries:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>type</code></td>
+      <td><code>Symbol</code></td>
+      <td>One of <code>:text</code> (readable reasoning), <code>:summary</code> (a provider-condensed digest), <code>:encrypted</code> (an opaque payload)</td>
+    </tr>
+    <tr>
+      <td><code>text</code></td>
+      <td><code>String?</code></td>
+      <td>The reasoning prose, for <code>:text</code> and <code>:summary</code> parts</td>
+    </tr>
+    <tr>
+      <td><code>data</code></td>
+      <td><code>String?</code></td>
+      <td>The opaque payload, for <code>:encrypted</code> parts</td>
+    </tr>
+    <tr>
+      <td><code>signature</code></td>
+      <td><code>String?</code></td>
+      <td>The provider’s signature over the part, when it issues one</td>
+    </tr>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>String?</code></td>
+      <td>The provider’s identifier for the part, when it issues one</td>
+    </tr>
+    <tr>
+      <td><code>format</code></td>
+      <td><code>String?</code></td>
+      <td>The wire format, owned by the adapter that produced the part (e.g. <code>"anthropic-claude-v1"</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A <code>type</code> outside the three values raises <code>Riffer::ArgumentError</code>. <code>format</code> is a free string riffer never validates — it exists so an adapter can tell its own parts apart from another adapter’s.</p>
+
+<p><code>reasoning?</code> is true when the message carries any part. <code>reasoning_text</code> joins the <code>text</code> of the <code>:text</code> and <code>:summary</code> parts with blank lines, skipping <code>:encrypted</code> parts, and is <code>nil</code> when there is nothing to join. The run’s final assistant message projects its parts onto <code>response.reasoning</code> (see <a href="/guides/agent-lifecycle/#response-attributes">Agent Lifecycle — Response Attributes</a>).</p>
+
+<p>Parts round-trip through <code>to_h</code> / <code>from_hash</code> like every other message field, so an application that persists sessions can store and replay them. The <code>reasoning</code> key is absent from <code>to_h</code> when the message has no parts, and each part omits the fields it doesn’t carry:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span>
+<span class="c1"># =&gt; {role: :assistant, content: "42", reasoning: [</span>
+<span class="c1">#      {type: :summary, text: "The user wants the answer.", format: "mock-v1"},</span>
+<span class="c1">#      {type: :encrypted, data: "b3BhcXVl", format: "mock-v1"}</span>
+<span class="c1">#    ]}</span>
+
+<span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Base</span><span class="p">.</span><span class="nf">from_hash</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span><span class="p">).</span><span class="nf">reasoning</span>  <span class="c1"># =&gt; [ReasoningPart, ReasoningPart]</span>
+</code></pre></div></div>
+
+<p><strong>The replay contract.</strong> A provider adapter replays only the parts whose <code>format</code> it recognizes and silently skips the rest, so history that travelled through another provider is never rejected. A part with no <code>format</code> is never replayed; adapters that surface reasoning text but cannot yet send it back emit their parts that way, so the text is kept for display without risking a rejected request. Parts are never reordered, merged, or edited — riffer treats them as opaque, because the provider’s signature covers their exact bytes.</p>
+
+<p>An application that would rather not store parts can leave the key out when it serializes:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msg</span><span class="p">.</span><span class="nf">to_h</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:reasoning</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>To drop parts from the in-memory session mid-run instead, <code>Session#update(id:, reasoning: [])</code> rewrites the message in place; it needs <a href="#ids">message ids</a> enabled to address it.</p>
+
 <h3 id="tool">Tool</h3>
 
 <p>Tool messages contain the results of tool executions:</p>
@@ -382,7 +479,7 @@
 
 <h2 id="file-parts">File Parts</h2>
 
-<p><code>Riffer::Messages::FilePart</code> represents a file attachment (image or document) that can be included with user messages.</p>
+<p><code>Riffer::Messages::User::FilePart</code> represents a file attachment (image or document) that can be included with user messages.</p>
 
 <h3 id="supported-media-types">Supported Media Types</h3>
 
@@ -393,21 +490,21 @@
 <h3 id="creating-file-parts">Creating File Parts</h3>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># From a file path (reads eagerly, detects media type from extension)</span>
-<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_path</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_path</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">media_type</span>  <span class="c1"># =&gt; "image/jpeg"</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">filename</span>    <span class="c1"># =&gt; "photo.jpg"</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">image?</span>      <span class="c1"># =&gt; true</span>
 
 <span class="c1"># From a URL (stored directly, resolved lazily if provider needs bytes)</span>
-<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">"https://example.com/doc.pdf"</span><span class="p">)</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">"https://example.com/doc.pdf"</span><span class="p">)</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">url?</span>        <span class="c1"># =&gt; true</span>
 <span class="n">file</span><span class="p">.</span><span class="nf">document?</span>   <span class="c1"># =&gt; true</span>
 
 <span class="c1"># From raw base64 data</span>
-<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">)</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">media_type: </span><span class="s2">"image/png"</span><span class="p">,</span> <span class="ss">data: </span><span class="n">base64_string</span><span class="p">,</span> <span class="ss">filename: </span><span class="s2">"chart.png"</span><span class="p">)</span>
 
 <span class="c1"># With an expected sha256 checksum of the file's contents</span>
-<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span>
+<span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span>
   <span class="s2">"https://example.com/doc.pdf"</span><span class="p">,</span>
   <span class="ss">sha256: </span><span class="s2">"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"</span>
 <span class="p">)</span>
@@ -465,7 +562,7 @@
 <span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span>   <span class="c1"># session already carries the last user turn</span>
 </code></pre></div></div>
 
-<p><code>Riffer::Agent::Session.new(messages:)</code> accepts <code>Riffer::Messages::Base</code> objects. If your persistence layer hands back hashes, normalize them first via <code>Riffer::Messages::Base.from_hash</code> or your own adapter.</p>
+<p><code>Riffer::Agent::Session.new(messages:)</code> accepts <code>Riffer::Messages::Base</code> objects. If your persistence layer hands back hashes, normalize them first via <code>Riffer::Messages::Base.from_hash</code> (which dispatches on <code>:role</code>), a role’s own <code>from_hash</code> such as <code>Riffer::Messages::User.from_hash</code> when the role is already known, or your own adapter.</p>
 
 <h3 id="accessing-message-history">Accessing Message History</h3>
 

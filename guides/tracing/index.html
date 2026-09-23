@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -297,7 +297,7 @@
 
 <h3 id="per-call-tags-riffertag">Per-call tags (<code>riffer.tag.*</code>)</h3>
 
-<p>Any tags passed to <code>#generate</code> / <code>#stream</code> via <code>tags:</code> are stamped on <strong>all four</strong> span types as <code>riffer.tag.&lt;key&gt;</code> (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: <code>tags: {team: "growth"}</code> adds <code>riffer.tag.team</code> → <code>"growth"</code> to the <code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, and <code>execute_guardrail</code> spans. See <a href="/guides/agents/#per-call-tags">Per-Call Tags</a> for the full surface and the per-provider request-metadata mapping.</p>
+<p>Any tags passed to <code>#generate</code> / <code>#stream</code> via <code>tags:</code> are stamped on <strong>all four</strong> span types as <code>riffer.tag.&lt;key&gt;</code> (string), so the per-span tables below omit them. They appear on every span the tagged call emits and are absent otherwise. Example: <code>tags: {team: "growth"}</code> adds <code>riffer.tag.team</code> → <code>"growth"</code> to the <code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, and <code>execute_guardrail</code> spans. The <a href="/guides/agents/#default-tags">default tags</a> are always present, e.g. <code>riffer.tag.kind</code> → <code>"agent"</code> and <code>riffer.tag.agent</code> → the agent identifier. See <a href="/guides/agents/#per-call-tags">Per-Call Tags</a> for the full surface and the per-provider request-metadata mapping.</p>
 
 <h2 id="invoke_agent-agent--the-run-span"><code>invoke_agent {agent}</code> — the run span</h2>
 

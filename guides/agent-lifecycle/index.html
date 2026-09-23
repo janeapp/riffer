@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -518,6 +518,11 @@
       <td><code>structured_output</code></td>
       <td><code>Hash</code> / <code>nil</code></td>
       <td>Parsed and validated structured output (see below)</td>
+    </tr>
+    <tr>
+      <td><code>reasoning</code></td>
+      <td><code>Array[ReasoningPart]</code></td>
+      <td>The <a href="/guides/messages/#reasoning">reasoning parts</a> on the final assistant message (else <code>[]</code>)</td>
     </tr>
     <tr>
       <td><code>tripwire</code></td>

@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -390,13 +390,14 @@
   <li><code>instructions(value)</code> - Evaluation criteria and scoring rubric (enables default <code>evaluate</code>)</li>
   <li><code>higher_is_better(value)</code> - Whether higher scores are better (default: true)</li>
   <li><code>judge_model(value)</code> - Override the global judge model</li>
+  <li><code>identifier(value)</code> - Override the identifier sent with judge calls (default: the snake_cased class name, or <code>riffer/judge</code> for an anonymous class)</li>
 </ul>
 
 <p>Instance methods:</p>
 
 <ul>
   <li><code>evaluate(input:, output:, ground_truth:, messages:)</code> - Override for custom logic; default calls judge with <code>instructions</code></li>
-  <li><code>judge</code> - Returns a Judge instance for LLM-as-judge calls</li>
+  <li><code>judge</code> - Returns a Judge instance for LLM-as-judge calls. Its calls carry the <a href="/guides/agents/#default-tags">default tags</a> <code>kind: "judge"</code> and <code>agent: &lt;identifier&gt;</code></li>
   <li><code>result(score:, reason:, metadata:, token_usage:)</code> - Helper to build Result objects</li>
 </ul>
 

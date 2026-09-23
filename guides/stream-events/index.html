@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -295,12 +295,16 @@
 
 <h3 id="reasoningdone">ReasoningDone</h3>
 
-<p>Emitted when reasoning is complete:</p>
+<p>Emitted when one reasoning block is complete:</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Let me think about this step by step..."</span><span class="p">)</span>
-<span class="n">event</span><span class="p">.</span><span class="nf">role</span>     <span class="c1"># =&gt; :assistant</span>
-<span class="n">event</span><span class="p">.</span><span class="nf">content</span>  <span class="c1"># =&gt; "Let me think about this step by step..."</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">part</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Assistant</span><span class="o">::</span><span class="no">ReasoningPart</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">type: :text</span><span class="p">,</span> <span class="ss">text: </span><span class="s2">"Let me think about this step by step..."</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"mock-v1"</span><span class="p">)</span>
+<span class="n">event</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDone</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">role</span>       <span class="c1"># =&gt; :assistant</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">part</span>       <span class="c1"># =&gt; the ReasoningPart</span>
+<span class="n">event</span><span class="p">.</span><span class="nf">part</span><span class="p">.</span><span class="nf">text</span>  <span class="c1"># =&gt; "Let me think about this step by step..."</span>
 </code></pre></div></div>
+
+<p><code>part</code> is the <a href="/guides/messages/#reasoning">reasoning part</a> the preceding <code>ReasoningDelta</code> events added up to, and the agent loop accumulates it onto the assistant message. Adapters that cannot yet replay their reasoning emit it as a <code>:text</code> part with no <code>format</code>, so it is stored for display but never sent back to the provider.</p>
 
 <h3 id="websearchstatus">WebSearchStatus</h3>
 

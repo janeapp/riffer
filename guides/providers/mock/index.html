@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -190,6 +190,7 @@
               <li><a href="#usage">Usage</a></li>
               <li><a href="#stubbing-responses">Stubbing Responses</a></li>
               <li><a href="#stubbing-tool-calls">Stubbing Tool Calls</a></li>
+              <li><a href="#stubbing-reasoning">Stubbing Reasoning</a></li>
               <li><a href="#queueing-multiple-responses">Queueing Multiple Responses</a></li>
               <li><a href="#inspecting-calls">Inspecting Calls</a></li>
               <li><a href="#clearing-state">Clearing State</a></li>
@@ -244,6 +245,22 @@
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"Use the tool"</span><span class="p">)</span>
 </code></pre></div></div>
+
+<h2 id="stubbing-reasoning">Stubbing Reasoning</h2>
+
+<p>Stub <a href="/guides/messages/#reasoning">reasoning parts</a> to exercise your application’s persistence of them. Hashes are normalized into <code>Riffer::Messages::Assistant::ReasoningPart</code>s:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">provider</span><span class="p">.</span><span class="nf">stub_response</span><span class="p">(</span><span class="s2">"42"</span><span class="p">,</span> <span class="ss">reasoning: </span><span class="p">[</span>
+  <span class="p">{</span><span class="ss">type: :text</span><span class="p">,</span> <span class="ss">text: </span><span class="s2">"The user wants the answer."</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"mock-v1"</span><span class="p">},</span>
+  <span class="p">{</span><span class="ss">type: :encrypted</span><span class="p">,</span> <span class="ss">data: </span><span class="s2">"b3BhcXVl"</span><span class="p">,</span> <span class="ss">signature: </span><span class="s2">"sig"</span><span class="p">,</span> <span class="ss">format: </span><span class="s2">"mock-v1"</span><span class="p">}</span>
+<span class="p">])</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">"What is the answer?"</span><span class="p">)</span>
+<span class="n">response</span><span class="p">.</span><span class="nf">reasoning</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:type</span><span class="p">)</span>  <span class="c1"># =&gt; [:text, :encrypted]</span>
+<span class="n">agent</span><span class="p">.</span><span class="nf">session</span><span class="p">.</span><span class="nf">messages</span><span class="p">.</span><span class="nf">last</span><span class="p">.</span><span class="nf">reasoning_text</span>  <span class="c1"># =&gt; "The user wants the answer."</span>
+</code></pre></div></div>
+
+<p>When streaming, each part is emitted as a <code>ReasoningDelta</code> (only when it carries <code>text</code>) followed by a <code>ReasoningDone</code> carrying the part, ahead of the text events.</p>
 
 <h2 id="queueing-multiple-responses">Queueing Multiple Responses</h2>
 

@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -289,10 +289,6 @@
 <p>MCP tools are appended after any tools declared with <code>uses_tools</code>.</p>
 
 <p>Tool names must be unique across <code>uses_tools</code> and all included MCP servers; duplicate names raise <code>Riffer::ArgumentError</code> when tools are resolved.</p>
-
-<h3 id="subclassing">Subclassing</h3>
-
-<p>Like <a href="/guides/agents/#uses_tools"><code>uses_tools</code></a>, <strong><code>use_mcp</code> is not inherited</strong> from the superclass. Declare <code>use_mcp</code> on each agent class that should load MCP tools.</p>
 
 <h2 id="progressive-tool-discovery">Progressive Tool Discovery</h2>
 

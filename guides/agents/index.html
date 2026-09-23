@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -313,7 +313,7 @@
 
 <h3 id="use_mcp">use_mcp</h3>
 
-<p>Loads tools from registered <a href="/guides/mcp/">MCP</a> servers by tag. Like <code>uses_tools</code>, <strong><code>use_mcp</code> is not inherited</strong>—add it on each subclass that should include MCP tools.</p>
+<p>Loads tools from registered <a href="/guides/mcp/">MCP</a> servers by tag.</p>
 
 <h3 id="model_options">model_options</h3>
 
@@ -445,7 +445,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Accepts a <code>Riffer::Tools::Runtime</code> subclass, a <code>Riffer::Tools::Runtime</code> instance, or a <code>Proc</code>. When unset, defaults to <code>Riffer.config.tool_runtime</code> (captured at agent class definition time). See <a href="/guides/advanced-tools/#tool-runtime-experimental">Tools — Tool Runtime</a> for details.</p>
+<p>Accepts a <code>Riffer::Tools::Runtime</code> subclass, a <code>Riffer::Tools::Runtime</code> instance, or a <code>Proc</code>. When unset, reads <code>Riffer.config.tool_runtime</code> at the point of use, so an agent that declares none follows a later change to the global. See <a href="/guides/advanced-tools/#tool-runtime-experimental">Tools — Tool Runtime</a> for details.</p>
 
 <h3 id="guardrail">guardrail</h3>
 
@@ -481,6 +481,26 @@
 </code></pre></div></div>
 
 <p>The DSL methods read and mutate this Config in place.</p>
+
+<h3 id="inheritance">Inheritance</h3>
+
+<p>A subclass starts from a copy of its parent’s Config, so it inherits every setting the parent declared and overrides only what its own body declares:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">BaseAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'openai/gpt-5-mini'</span>
+  <span class="n">max_steps</span> <span class="mi">8</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">TerseAgent</span> <span class="o">&lt;</span> <span class="no">BaseAgent</span>
+  <span class="n">max_steps</span> <span class="mi">2</span>
+<span class="k">end</span>
+
+<span class="no">TerseAgent</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">model</span>      <span class="c1"># =&gt; 'openai/gpt-5-mini'</span>
+<span class="no">TerseAgent</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">max_steps</span>  <span class="c1"># =&gt; 2</span>
+<span class="no">BaseAgent</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">max_steps</span>   <span class="c1"># =&gt; 8</span>
+</code></pre></div></div>
+
+<p><code>identifier</code> is not inherited. A subclass derives its own from its class name, since two classes claiming one identifier would raise <code>Riffer::DuplicateIdentifierError</code> at the first lookup.</p>
 
 <p>For advanced composition or testing, build a Config directly and pass it via <code>config:</code> to bypass class-level DSL entirely:</p>
 
@@ -550,7 +570,7 @@
 <span class="n">agent</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s2">"..."</span><span class="p">,</span> <span class="ss">tags: </span><span class="p">{</span><span class="ss">team: </span><span class="s2">"growth"</span><span class="p">,</span> <span class="ss">environment: </span><span class="s2">"production"</span><span class="p">})</span>
 </code></pre></div></div>
 
-<p>Keys and values may be <code>String</code> or <code>Symbol</code>; both are stringified, and entries with a <code>nil</code> value are dropped. An omitted or empty <code>tags:</code> is a complete no-op.</p>
+<p>Keys and values may be <code>String</code> or <code>Symbol</code>; both are stringified, and entries with a <code>nil</code> value are dropped.</p>
 
 <p>Tags propagate to <strong>two</strong> places:</p>
 
@@ -558,6 +578,31 @@
   <li>The provider’s native per-request metadata field (see the mapping below).</li>
   <li>Observability — stamped as <code>riffer.tag.&lt;key&gt;</code> on <strong>every</strong> span the call emits (<code>invoke_agent</code>, <code>chat</code>, <code>execute_tool</code>, <code>execute_guardrail</code>). See <a href="/guides/tracing/">Tracing</a>.</li>
 </ol>
+
+<h3 id="default-tags">Default tags</h3>
+
+<p>Every call also carries two tags riffer adds itself, so a provider can tell who the call is on behalf of:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tag</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>"agent"</code> (<code>"judge"</code> for <a href="/guides/evals/">evaluator</a> judge calls)</td>
+    </tr>
+    <tr>
+      <td><code>agent</code></td>
+      <td>The agent’s <code>identifier</code> (the evaluator’s <code>identifier</code> for judge calls)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A tag you pass with the same key wins. The default tags count towards the provider limits below.</p>
 
 <h3 id="reserved-key-user_id">Reserved key: <code>user_id</code></h3>
 
@@ -601,6 +646,8 @@
     </tr>
   </tbody>
 </table>
+
+<p>If <code>model_options</code> already sets the native field (<code>metadata</code> or <code>request_metadata</code>), the tags are merged into it; a tag wins on a shared key.</p>
 
 <p><strong>Anthropic silently drops non-<code>user_id</code> tags.</strong> The Messages API has no free-form request-metadata field — only <code>metadata.user_id</code>. So for Anthropic, <code>user_id</code> is forwarded as <code>metadata: {user_id: …}</code> and <strong>every other tag is dropped from the request</strong> (it still appears on spans). This is intentional.</p>
 

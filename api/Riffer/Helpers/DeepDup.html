@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class Riffer::Providers::Base - Riffer API Reference</title>
+<title>module Riffer::Helpers::DeepDup - Riffer API Reference</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,Riffer::Providers::Base"
+    content="ruby,module,Riffer::Helpers::DeepDup"
   >
 
     <meta
       name="description"
-      content="class Riffer::Providers::Base: Base class for all LLM providers. subclasses implement the hooks (+build_request_params+, +execute_generate+, +execute_stream+, +extract_token_usage+,"
+      content="module Riffer::Helpers::DeepDup: Copying for the nested Hashes and Arrays a configuration object holds."
     >
 
 
@@ -24,11 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class Riffer::Providers::Base - Riffer API Reference">
+<meta property="og:title" content="module Riffer::Helpers::DeepDup - Riffer API Reference">
 
 
 
-    <meta property="og:description" content="Base class for all LLM providers. subclasses implement the hooks (+build_request_params+, +execute_generate+, +execute_stream+, +extract_token_usage+,">
+    <meta property="og:description" content="Copying for the nested Hashes and Arrays a configuration object holds.">
 
 
 
@@ -36,11 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class Riffer::Providers::Base - Riffer API Reference">
+<meta name="twitter:title" content="module Riffer::Helpers::DeepDup - Riffer API Reference">
 
 
 
-    <meta name="twitter:description" content="Base class for all LLM providers. subclasses implement the hooks (+build_request_params+, +execute_generate+, +execute_stream+, +extract_token_usage+,">
+    <meta name="twitter:description" content="Copying for the nested Hashes and Arrays a configuration object holds.">
 
 
 
@@ -96,7 +96,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="module has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -431,48 +431,12 @@
   
 
   
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li><a href="../../Object.html">Object</a><ul><li>BasicObject</li></ul></li></ul>
-  </details>
-</div>
-
 
   
 
   
 
   
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-class-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Class Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-c-semconv_provider_name">semconv_provider_name</a></li>
-
-        <li ><a href="#method-c-skills_adapter">skills_adapter</a></li>
-
-      </ul>
-    </details>
-  </div>
-
 
 
   <div class="nav-section">
@@ -488,11 +452,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-file_delivery">file_delivery</a></li>
-
-        <li ><a href="#method-i-generate_text">generate_text</a></li>
-
-        <li ><a href="#method-i-stream_text">stream_text</a></li>
+        <li ><a href="#method-i-call">call</a></li>
 
       </ul>
     </details>
@@ -517,7 +477,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-riffer-providers-base">
+<main role="main" aria-labelledby="module-riffer-helpers-deepdup">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -530,27 +490,27 @@
       
       <li>
         
-        <a href="../../Riffer/Providers.html">Providers</a><span>::</span>
+        <a href="../../Riffer/Helpers.html">Helpers</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Base</span>
+        <span>DeepDup</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-Riffer::Providers::Base" class="legacy-anchor"></span>
-  <h1 id="class-riffer-providers-base" class="anchor-link class">
-    class Riffer::Providers::Base
+  <span id="module-Riffer::Helpers::DeepDup" class="legacy-anchor"></span>
+  <h1 id="module-riffer-helpers-deepdup" class="anchor-link module">
+    module Riffer::Helpers::DeepDup
   </h1>
 
   <section class="description">
     
-<p><a href="Base.html"><code>Base</code></a> class for all LLM providers. A template-method flow: subclasses implement the hooks (<code>build_request_params</code>, <code>execute_generate</code>, <code>execute_stream</code>, <code>extract_token_usage</code>, <code>extract_content</code>, <code>extract_tool_calls</code>) and the base class orchestrates them.</p>
+<p>Copying for the nested Hashes and Arrays a configuration object holds.</p>
 
   </section>
 
@@ -562,125 +522,12 @@
 
 
 
-    <section class="constants-list">
-      <header>
-        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
-      </header>
-      <dl>
-
-        <dt id="WIRE_SEPARATOR">WIRE_SEPARATOR</dt>
-
-        <dd>
-
-          <p>@rbs @current_tools: <a href="singleton(Riffer::Tool)">Array</a> @rbs @current_model: String? @rbs @client: untyped @rbs self.@semconv_provider_name: String?</p>
-        </dd>
-
-
-      </dl>
-    </section>
 
 
 
 
 
 
-
-
-     <section id="public-class-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
-       </header>
-
-
-      <div id="method-c-semconv_provider_name" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-semconv_provider_name" title="Link to this method">
-                <span class="method-name">semconv_provider_name</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="semconv_provider_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">semconv_provider_name</span>
-  <span class="ruby-comment"># Anonymous classes stay uncached: a class assigned to a constant</span>
-  <span class="ruby-comment"># later must pick up its real name, not a frozen &quot;unknown&quot;.</span>
-  <span class="ruby-identifier">class_name</span> = <span class="ruby-identifier">name</span> <span class="ruby-keyword">or</span> <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;unknown&quot;</span>
-
-  <span class="ruby-ivar">@semconv_provider_name</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Helpers</span><span class="ruby-operator">::</span><span class="ruby-constant">Identifier</span>.<span class="ruby-identifier">derive</span>(<span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;::&quot;</span>).<span class="ruby-identifier">last</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the provider name stamped as <code>gen_ai.provider.name</code> on trace spans, ideally a GenAI semconv well-known value. Defaults to the snake_cased class name rather than raising like the abstract provider methods, so enabling tracing never breaks an otherwise-working custom provider.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-c-skills_adapter" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-skills_adapter" title="Link to this method">
-                <span class="method-name">skills_adapter</span>
-                <span class="method-args">(_model = nil)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="skills_adapter-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 22</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">skills_adapter</span>(<span class="ruby-identifier">_model</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Skills</span><span class="ruby-operator">::</span><span class="ruby-constant">MarkdownAdapter</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Returns the preferred skill adapter for this provider; override in subclasses (optionally introspecting <code>model</code>) for provider-specific formats.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
 
 
 
@@ -694,13 +541,13 @@
        </header>
 
 
-      <div id="method-i-file_delivery" class="method-detail anchor-link ">
+      <div id="method-i-call" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-file_delivery" title="Link to this method">
-                <span class="method-name">file_delivery</span>
-                <span class="method-args">(_file)</span>
+              <a href="#method-i-call" title="Link to this method">
+                <span class="method-name">call</span>
+                <span class="method-args">(value)</span>
               </a>
             </div>
 
@@ -712,10 +559,12 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="file_delivery-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 111</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">file_delivery</span>(<span class="ruby-identifier">_file</span>)
-  <span class="ruby-value">:url</span>
+          <div class="method-source-code" id="call-source">
+            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/helpers/deep_dup.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-identifier">seen</span> = {} <span class="ruby-comment">#: Hash[untyped, untyped]</span>
+
+  <span class="ruby-identifier">rebuild</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">seen</span>.<span class="ruby-identifier">compare_by_identity</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -724,144 +573,9 @@
         <div class="method-description">
 
 
-          
+          <p>Returns <code>value</code> with every Hash and Array rebuilt, so a copy shares no collection with its source.</p>
 
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-generate_text" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-generate_text" title="Link to this method">
-                <span class="method-name">generate_text</span>
-                <span class="method-args">(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="generate_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 44</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
-  <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
-  <span class="ruby-ivar">@current_tools</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tools</span>] <span class="ruby-operator">||</span> [] <span class="ruby-comment">#: Array[singleton(Riffer::Tool)]</span>
-  <span class="ruby-ivar">@current_model</span> = <span class="ruby-identifier">model</span>
-  <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">normalize_messages</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
-  <span class="ruby-identifier">validate_normalized_messages!</span>(<span class="ruby-identifier">messages</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Files</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolver</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">provider:</span> <span class="ruby-keyword">self</span>).<span class="ruby-identifier">resolve!</span>(<span class="ruby-identifier">messages</span>)
-  <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">merge_consecutive_messages</span>(<span class="ruby-identifier">messages</span>)
-  <span class="ruby-identifier">params</span> = <span class="ruby-identifier">build_request_params</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-identifier">model</span>, <span class="ruby-identifier">options</span>)
-
-  <span class="ruby-identifier">in_chat_span</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">messages</span>, <span class="ruby-identifier">options</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">span</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">response</span> = <span class="ruby-identifier">execute_generate</span>(<span class="ruby-identifier">params</span>)
-
-    <span class="ruby-identifier">content</span> = <span class="ruby-identifier">extract_content</span>(<span class="ruby-identifier">response</span>)
-    <span class="ruby-identifier">tool_calls</span> = <span class="ruby-identifier">extract_tool_calls</span>(<span class="ruby-identifier">response</span>)
-    <span class="ruby-identifier">reasoning</span> = <span class="ruby-identifier">extract_reasoning</span>(<span class="ruby-identifier">response</span>)
-    <span class="ruby-identifier">token_usage</span> = <span class="ruby-identifier">extract_token_usage</span>(<span class="ruby-identifier">response</span>)
-    <span class="ruby-identifier">finish_reason</span> = <span class="ruby-identifier">extract_finish_reason</span>(<span class="ruby-identifier">response</span>)
-    <span class="ruby-identifier">structured_output</span> = <span class="ruby-identifier">parse_structured_output</span>(<span class="ruby-identifier">content</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:structured_output</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tool_calls</span>.<span class="ruby-identifier">empty?</span>
-
-    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">record_usage</span>(<span class="ruby-identifier">span</span>, <span class="ruby-identifier">token_usage</span>)
-    <span class="ruby-identifier">record_finish_reason</span>(<span class="ruby-identifier">span</span>, <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">reason</span>, <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">raw</span>)
-    <span class="ruby-identifier">capture_output</span>(<span class="ruby-identifier">span</span>, <span class="ruby-value">content:</span> <span class="ruby-identifier">content</span>, <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">tool_calls</span>, <span class="ruby-value">finish_reason:</span> <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">reason</span>)
-
-    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Messages</span><span class="ruby-operator">::</span><span class="ruby-constant">Assistant</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-identifier">content</span>,
-      <span class="ruby-value">tool_calls:</span> <span class="ruby-identifier">tool_calls</span>,
-      <span class="ruby-value">reasoning:</span> <span class="ruby-identifier">reasoning</span>,
-      <span class="ruby-value">token_usage:</span> <span class="ruby-identifier">token_usage</span>,
-      <span class="ruby-value">structured_output:</span> <span class="ruby-identifier">structured_output</span>,
-      <span class="ruby-value">finish_reason:</span> <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">reason</span>,
-      <span class="ruby-value">finish_reason_raw:</span> <span class="ruby-identifier">finish_reason</span>&amp;.<span class="ruby-identifier">raw</span>,
-    )
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Generates text using the provider.</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-stream_text" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-stream_text" title="Link to this method">
-                <span class="method-name">stream_text</span>
-                <span class="method-args">(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="stream_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File lib/riffer/providers/base.rb, line 84</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stream_text</span>(<span class="ruby-value">prompt:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">system:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">messages:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">model:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">files:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">options</span>)
-  <span class="ruby-identifier">validate_input!</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>)
-  <span class="ruby-ivar">@current_tools</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:tools</span>] <span class="ruby-operator">||</span> [] <span class="ruby-comment">#: Array[singleton(Riffer::Tool)]</span>
-  <span class="ruby-ivar">@current_model</span> = <span class="ruby-identifier">model</span>
-  <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">normalize_messages</span>(<span class="ruby-value">prompt:</span> <span class="ruby-identifier">prompt</span>, <span class="ruby-value">system:</span> <span class="ruby-identifier">system</span>, <span class="ruby-value">messages:</span> <span class="ruby-identifier">messages</span>, <span class="ruby-value">files:</span> <span class="ruby-identifier">files</span>)
-  <span class="ruby-identifier">validate_normalized_messages!</span>(<span class="ruby-identifier">messages</span>)
-  <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Files</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolver</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">provider:</span> <span class="ruby-keyword">self</span>).<span class="ruby-identifier">resolve!</span>(<span class="ruby-identifier">messages</span>)
-  <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">merge_consecutive_messages</span>(<span class="ruby-identifier">messages</span>)
-  <span class="ruby-identifier">params</span> = <span class="ruby-identifier">build_request_params</span>(<span class="ruby-identifier">messages</span>, <span class="ruby-identifier">model</span>, <span class="ruby-identifier">options</span>)
-
-  <span class="ruby-comment"># The enumerator body runs in its own fiber, where the fiber-local OTEL</span>
-  <span class="ruby-comment"># context is empty — capture here so the chat span parents to the caller&#39;s</span>
-  <span class="ruby-comment"># trace.</span>
-  <span class="ruby-identifier">trace_context</span> = <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">current_context</span>
-  <span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">yielder</span><span class="ruby-operator">|</span>
-    <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span>.<span class="ruby-identifier">with_context</span>(<span class="ruby-identifier">trace_context</span>) <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">in_chat_span</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">messages</span>, <span class="ruby-identifier">options</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">span</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">sink</span> = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">recording?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamRecorder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">yielder</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">yielder</span>
-        <span class="ruby-identifier">execute_stream</span>(<span class="ruby-identifier">params</span>, <span class="ruby-identifier">sink</span>)
-        <span class="ruby-identifier">record_stream_outcome</span>(<span class="ruby-identifier">span</span>, <span class="ruby-identifier">sink</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Riffer</span><span class="ruby-operator">::</span><span class="ruby-constant">Tracing</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamRecorder</span>)
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Streams text from the provider.</p>
+<p>Anything else is returned as-is, which a Class or a Proc needs: +Class#dup+ answers a new anonymous class. One source collection maps to one copy, so references shared within <code>value</code> stay shared in the result — an <code>:around</code> guardrail registered under two phases is still one registration afterwards.</p>
 
 
         </div>

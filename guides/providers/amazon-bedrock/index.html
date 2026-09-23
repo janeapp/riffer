@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.47.2</span>
+            <span class="version">v0.48.0</span>
           </div>
         </nav>
       </div>
@@ -362,7 +362,7 @@
 
 <p>Bedrock accepts file attachments either as raw bytes, or as <code>s3://</code> URIs passed straight through to Converse — Bedrock fetches the S3 object itself:</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">"s3://my-bucket/document.pdf"</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">file</span> <span class="o">=</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">User</span><span class="o">::</span><span class="no">FilePart</span><span class="p">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">"s3://my-bucket/document.pdf"</span><span class="p">,</span> <span class="ss">media_type: </span><span class="s2">"application/pdf"</span><span class="p">)</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">provider</span><span class="p">.</span><span class="nf">generate_text</span><span class="p">(</span>
   <span class="ss">prompt: </span><span class="s2">"Summarize this document"</span><span class="p">,</span>
   <span class="ss">model: </span><span class="s2">"us.anthropic.claude-haiku-4-5-20251001-v1:0"</span><span class="p">,</span>
