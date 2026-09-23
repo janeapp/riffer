@@ -26,27 +26,17 @@ module Riffer
 end
 ```
 
-## RDoc Conventions
+## The `#--` stop directive
 
-**The `#--` stop directive.** Place `#--` on the line immediately before a **standalone** `#:` type annotation. Without it, RDoc treats `#:` as a label-list marker and corrupts the preceding description into a `<pre>` block. Inline `#:` on the same line as code (attributes, constants) does not need it.
+Place `#--` on the line immediately before a **standalone** `#:` type annotation, even when no comment precedes it. Without it, RDoc treats `#:` as a label-list marker and mangles the method's rendered docs. Inline `#:` on the same line as code (attributes, constants) does not need it.
 
 ```ruby
-# Serializes the agent definition to a transferable JSON payload.
 #--
 #: (Riffer::Agent) -> String
 def serialize(agent)
 
-# The agent's display name.
 attr_reader :name #: String
 ```
-
-**Raises.** Document a raise **only when it's part of the caller's contract** — something a caller should reasonably anticipate and handle. Skip programmer-error guards and "should never happen" assertions. When the raise condition merely restates the declared `#:` type, phrase it by intent ("Raises Riffer::ArgumentError on an invalid value") rather than re-listing the type union.
-
-**Examples.** Include an example only when a **consumer is likely to use the thing themselves** — a public entry point they construct, subclass, or call. Keep them sparing and write them as indented code blocks (2 extra spaces of indent). Usage walkthroughs belong in `docs/`.
-
-**Inline code formatting.** Use `+word+` for single-word inline code; for multi-word expressions (spaces, colons, brackets) use `<tt>multi word expression</tt>`.
-
-**Internal APIs.** Mark with `# :nodoc:` to exclude from generated documentation.
 
 ## Optional-dependency types (consumer-safe signatures)
 
