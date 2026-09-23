@@ -5,6 +5,13 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
   FINISH_REASONS: Hash[String, Symbol]
 
+  REASONING_TYPES: Hash[String, Symbol]
+
+  # The +reasoning_details+ formats OpenRouter documents. Only parts tagged with
+  # one of them are replayed, so parts from other adapters, or with no format,
+  # never reach the request.
+  REASONING_FORMATS: Array[String]
+
   # --
   # : () -> String
   def self.semconv_provider_name: () -> String
@@ -64,6 +71,20 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # The openai gem's typed models strip fields outside OpenAI's spec, so
+  # +reasoning_details+ is only reachable through the model's raw data hash.
+  # --
+  # : (untyped) -> Array[Hash[Symbol, untyped]]?
+  def reasoning_details: (untyped) -> Array[Hash[Symbol, untyped]]?
+
+  # --
+  # : (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_reasoning_part: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
@@ -78,6 +99,14 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+
+  # OpenRouter streams one reasoning block as many fragments sharing an
+  # +index+: prose and payload arrive in pieces to concatenate, while the
+  # signature, id, and format arrive once, often on the last fragment. Keying
+  # on +type+ as well keeps index-less fragments of different kinds apart.
+  # --
+  # : (Hash[untyped, Hash[Symbol, untyped]], Hash[Symbol, untyped]) -> void
+  def accumulate_reasoning_detail: (Hash[untyped, Hash[Symbol, untyped]], Hash[Symbol, untyped]) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
@@ -98,6 +127,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_chat_completions_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part_to_detail: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]

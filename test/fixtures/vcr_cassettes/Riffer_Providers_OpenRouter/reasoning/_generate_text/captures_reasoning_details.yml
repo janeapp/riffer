@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-5-nano","messages":[{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"reasoning":{"effort":"low"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - openrouter.ai
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENROUTER_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '148'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 23 Sep 2026 00:30:53 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1790123452-nPjNFGokO5io3A986qKQ
+      Access-Control-Expose-Headers:
+      - X-Generation-Id,X-Provider-Name,request-id,cf-ray
+      Set-Cookie:
+      - __cf_bm=Eis5ihUfsSmFUq_IUeDCve7AUlvMq4Syjsf2u593MCM-1790123452.5615554-1.0.1.1-KBtcd_mWTJeZ3J4PrEyqB_lsyxZdKXl78m8o3qIAnivZsfRsjYFXpkixk7WRoOHfIbZkmVkMkY9R.2aTSFaZPef7idRxgxcoGkOOmD6X7XHZAArB6hYkyz115yiyd81m;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
+        23 Sep 2026 01:00:53 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a3f5717a7b177664-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1790123452-nPjNFGokO5io3A986qKQ\",\"object\":\"chat.completion\",\"created\":1790123452,\"model\":\"openai/gpt-5-nano\",\"provider\":\"OpenAI\",\"system_fingerprint\":null,\"service_tier\":\"default\",\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"completed\",\"message\":{\"role\":\"assistant\",\"content\":\"391\",\"refusal\":null,\"reasoning\":\"**Calculating
+        the result**\\n\\nI need to compute 17 multiplied by 23. One approach is using
+        distribution: I can think of it as (17 times 20) plus (17 times 3), which
+        comes to 340 plus 51. So, the total adds up to 391. Therefore, the final answer
+        is simply \\\"391.\\\" Keeping it straightforward is key here! I'll just provide
+        the number as requested.\",\"reasoning_details\":[{\"type\":\"reasoning.summary\",\"summary\":\"**Calculating
+        the result**\\n\\nI need to compute 17 multiplied by 23. One approach is using
+        distribution: I can think of it as (17 times 20) plus (17 times 3), which
+        comes to 340 plus 51. So, the total adds up to 391. Therefore, the final answer
+        is simply \\\"391.\\\" Keeping it straightforward is key here! I'll just provide
+        the number as requested.\",\"format\":\"openai-responses-v1\",\"index\":0},{\"type\":\"reasoning.encrypted\",\"data\":\"gAAAAABqsx2-6cWEp3H2Kq_8th_s4cZTdmhG4XBBLS5Bz8d1WPoZH20D67oSUAs3A5je2pxa-BU4dZA7R5wCLmKnhmhI3Ok-1eFMrLFOAUcpWjwtRmfFrVA6Cm19Yqmf-SSjE9G-pyjoFXNGNoFR_N8nxID57Ly5Ka7KNFs6B_xdwQus5H1M7WoyrXWEb_SXHs0Zt3DRjeTMU0pQuTmvqg102CSa_GWUuUur-XSGGyD-a7KkyNPQqkDTKUQz3qCFoi6tbtZvCK106KQ5Y-ooxvQSKVUF6CiRxdKgH3kBM-ANnPdaMGcFXbGQwXIhCjkSx1RtR1Er7HKTQkQ4eFAP5PAQ1rH28Wr7MQAF6_KwCqk7cUagOWyAL8zxLitApZIOZZGrl7CEo7mol2TmgVHlDgko25LDG6QNCR2YWisWEqYdf2AVx9NXofQSOKRUw-h_DSFC2IT1oo27T_RaJlsnLIaNW4cvWwV7_jk8aHCa6wr1fB4I4SVGWLvttobHdGHE761dOGuuVM3eCKJL9JBOs2Amh2O4A2r_MmQogYf0AElX7doFZKBQfbsXBRH4hFOTRXQvPSqUFqhbPPkEJ98E1caHBBqgKgnUHEFHJs9iLa7D3fSkUsXs2gRt6863Bs9b97JEuGAmYjHtZDdNPk2ZrG-2aaoJyq-LCANsolagijuS2pTPvPncZMVRBHKJxjZ-2nP-AH-2V5W0UBJYsuAF0PUBMTWYQIImJPJFkAvZ8sOL7xrHbAX94lVhkhtK3yIulCe-roaygtFM0CIDqM5kZZ3AdYK38qnAK037facxweqT7jX6qUS4X5KaREVE3uxoVjWVa9vHJ-cbf-7JbVCQUNUAJ2WGumzpqrvr5IRIW-Sn2iB33NYjESMXYKqXqOwqI8F3Jbsn0M73yRCewyPXzsgbFj_UrkcVFOsXdkvdtaOVYMgb9WXWflESOSFbSlmWqXNVBTYB-tT-BGCApiB5U4frQqnaZt-1DzNB1-LBJc2HDeA7gelZqywrDwvGms6up8c3hNouN0r2ItbymatX0i5CirpiHOYzDpCNeDvkJZW5Yu9RDqaFkkBd96wFvsFAfrZMpe6uQMp1kaxXGlBsh9jgm1zmBt7ZSxvotpal-cX_V_hdub7f-j1r1TodaRS6bZA0t7cj3nVmCMozum03ilLLh0mKHapffApVLcnc9ofLzHgas8codf1JvaHCj8qn23RQAMor2ADTcz-ZdeKfvzOHWL5udU7Q05avhvk-9_LjcZCiIjRf3HUqTx6sfwgDBYmTQkXACS-mTOypWAWmz2MAmvalbpr6D5hVgK9pl72pNrGBJzea9YhliKpAsDAZDQEl6mD2Qp5VAprHHU2KcxPKwJqRj-o-bUcHg1jxAxgwXutgm6RV6TGgDFkhs-0ZFPxoWHtsjSUP7zI1_qEvplVPSOX5ImPIZfNhJ5alhqRr6sXo-NjAu6dE1Fws16BBIF_NTWoW3lSZybYejtHpZS-Xo_3mDqtsuA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LW5hbm8tMjAyNS0wOC0wN3xvcGVuYWkifQ\",\"format\":\"openai-responses-v1\",\"id\":\"rs_0e338d9e6e7a9be5016ab31dbd528887d1b41e37b90f4c2ce9\",\"index\":1}]}}],\"usage\":{\"prompt_tokens\":20,\"completion_tokens\":45,\"total_tokens\":65,\"cost\":0.000019,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.000019,\"upstream_inference_prompt_cost\":0.000001,\"upstream_inference_completions_cost\":0.000018},\"completion_tokens_details\":{\"reasoning_tokens\":86,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 23 Sep 2026 00:30:54 GMT
+recorded_with: VCR 6.4.0

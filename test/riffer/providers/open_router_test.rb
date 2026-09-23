@@ -12,6 +12,26 @@ describe Riffer::Providers::OpenRouter do
     Riffer.config.openrouter.client = nil
   end
 
+  # +:reasoning_details+ is a member of delta_struct so
+  # +delta[:reasoning_details]+ returns nil (rather than raising NameError)
+  # for non-reasoning chunks.
+  let(:delta_struct) { Struct.new(:content, :reasoning_details, :tool_calls) }
+  let(:choice_struct) { Struct.new(:delta, :finish_reason) }
+  let(:chunk_struct) { Struct.new(:choices, :usage) }
+
+  def install_chunks(provider, chunks)
+    stream_double = Object.new
+    stream_double.define_singleton_method(:each) { |&block| chunks.each(&block) }
+    stream_double.define_singleton_method(:close) {}
+    completions_double = Object.new
+    completions_double.define_singleton_method(:stream_raw) { |**_kwargs| stream_double }
+    chat_double = Object.new
+    chat_double.define_singleton_method(:completions) { completions_double }
+    client_double = Object.new
+    client_double.define_singleton_method(:chat) { chat_double }
+    provider.instance_variable_set(:@client, client_double)
+  end
+
   describe ".semconv_provider_name" do
     it "returns the semconv well-known value" do
       expect(Riffer::Providers::OpenRouter.semconv_provider_name).must_equal "openrouter"
@@ -769,8 +789,214 @@ describe Riffer::Providers::OpenRouter do
           expect(reasoning_done).wont_be_nil
           expect(reasoning_done.part.type).must_equal :text
           expect(reasoning_done.part.text).wont_be_empty
-          expect(reasoning_done.part.format).must_be_nil
+          expect(reasoning_done.part.format).must_equal "unknown"
         end
+      end
+    end
+
+    describe "#stream_text replaying reasoning on the next turn" do
+      it "sends turn one's signed reasoning back and gets an answer" do
+        VCR.use_cassette("Riffer_Providers_OpenRouter/reasoning/_stream_text/replays_reasoning_details") do
+          provider = Riffer::Providers::OpenRouter.new
+          options = { model: "anthropic/claude-haiku-4.5", reasoning: { max_tokens: 1024 }, max_tokens: 1200 }
+          question = Riffer::Messages::User.new("What is 17 times 23? Reply with just the number.")
+
+          first = provider.stream_text(messages: [question], **options).to_a
+          parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
+          answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
+
+          expect(parts).wont_be_empty
+          expect(parts.map(&:format).uniq).must_equal ["anthropic-claude-v1"]
+          expect(parts.first.signature).wont_be_nil
+
+          history = [
+            question,
+            Riffer::Messages::Assistant.new(answer, reasoning: parts),
+            Riffer::Messages::User.new("Now add 10. Reply with just the number."),
+          ]
+          second = provider.stream_text(messages: history, **options).to_a
+          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+          expect(text_done.content).must_include "401"
+        end
+      end
+    end
+
+    describe "#generate_text with reasoning enabled" do
+      it "captures reasoning_details as reasoning parts" do
+        VCR.use_cassette("Riffer_Providers_OpenRouter/reasoning/_generate_text/captures_reasoning_details") do
+          provider = Riffer::Providers::OpenRouter.new
+          result = provider.generate_text(
+            prompt: "What is 17 times 23? Reply with just the number.",
+            model: "openai/gpt-5-nano",
+            reasoning: "low",
+          )
+
+          expect(result.reasoning).wont_be_empty
+          expect(result.reasoning.map(&:format).uniq).must_equal ["openai-responses-v1"]
+          expect(result.reasoning.map(&:type)).must_equal %i[summary encrypted]
+        end
+      end
+
+      it "replays reasoning across a tool call round trip" do
+        VCR.use_cassette("Riffer_Providers_OpenRouter/reasoning/_generate_text/replays_reasoning_with_tool_result") do
+          weather_tool = stub_tool("GetWeather") do
+            description "Get the current weather for a city"
+            params do
+              required :city, String, description: "The city name"
+            end
+          end
+          provider = Riffer::Providers::OpenRouter.new
+          options = {
+            model: "anthropic/claude-haiku-4.5",
+            reasoning: { max_tokens: 1024 },
+            max_tokens: 1200,
+            tools: [weather_tool],
+          }
+          question = Riffer::Messages::User.new("What is the weather in Toronto?")
+
+          first = provider.generate_text(messages: [question], **options)
+          tool_call = first.tool_calls.first
+
+          expect(first.reasoning).wont_be_empty
+          expect(first.reasoning.first.signature).wont_be_nil
+          expect(tool_call.name).must_equal "get_weather"
+
+          history = [
+            question,
+            first,
+            Riffer::Messages::Tool.new(
+              "15 degrees Celsius and sunny.",
+              tool_call_id: tool_call.call_id,
+              name: tool_call.name,
+            ),
+          ]
+          second = provider.generate_text(messages: history, **options)
+
+          expect(second.content).must_include "15"
+        end
+      end
+    end
+
+    describe "capturing reasoning_details" do
+      let(:provider) { Riffer::Providers::OpenRouter.new }
+
+      def completion_with(details)
+        message = OpenAI::Models::Chat::ChatCompletionMessage.new(
+          content: "42",
+          role: :assistant,
+          reasoning_details: details,
+        )
+        choice = OpenAI::Models::Chat::ChatCompletion::Choice.new(message: message)
+        OpenAI::Models::Chat::ChatCompletion.new(choices: [choice])
+      end
+
+      it "maps each detail type onto a part, keeping every field" do
+        response = completion_with(
+          [
+            { type: "reasoning.summary", summary: "Sum", id: "rs_1", format: "openai-responses-v1", index: 0 },
+            { type: "reasoning.encrypted", data: "b3BhcXVl", id: "rs_1", format: "openai-responses-v1", index: 1 },
+            { type: "reasoning.text", text: "Think", signature: "sig", format: "anthropic-claude-v1", index: 2 },
+          ],
+        )
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :summary, text: "Sum", id: "rs_1", format: "openai-responses-v1" },
+          { type: :encrypted, data: "b3BhcXVl", id: "rs_1", format: "openai-responses-v1" },
+          { type: :text, text: "Think", signature: "sig", format: "anthropic-claude-v1" },
+        ]
+      end
+
+      it "skips detail types it does not know" do
+        response = completion_with([{ type: "reasoning.future", format: "unknown" }])
+
+        expect(provider.send(:extract_reasoning, response)).must_equal []
+      end
+
+      it "returns no parts when the response carries no reasoning_details" do
+        expect(provider.send(:extract_reasoning, completion_with(nil))).must_equal []
+      end
+    end
+
+    describe "streaming reasoning_details" do
+      let(:provider) { Riffer::Providers::OpenRouter.new }
+
+      def stream_details(*fragments)
+        chunks = fragments.map do |detail|
+          delta = delta_struct.new(content: nil, reasoning_details: [detail], tool_calls: nil)
+          chunk_struct.new(choices: [choice_struct.new(delta: delta, finish_reason: nil)], usage: nil)
+        end
+        install_chunks(provider, chunks)
+        provider.stream_text(prompt: "hi", model: "x/y").to_a
+      end
+
+      it "merges fragments sharing an index into one part" do
+        events = stream_details(
+          { type: "reasoning.text", text: "Let me ", format: "anthropic-claude-v1", index: 0 },
+          { type: "reasoning.text", text: "think.", format: "anthropic-claude-v1", index: 0 },
+          { type: "reasoning.text", text: "", signature: "sig", format: "anthropic-claude-v1", index: 0 },
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)).must_equal ["Let me ", "think."]
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :text, text: "Let me think.", signature: "sig", format: "anthropic-claude-v1" },
+        ]
+      end
+
+      it "emits one part per index in stream order" do
+        events = stream_details(
+          { type: "reasoning.summary", summary: "Sum", id: "rs_1", format: "openai-responses-v1", index: 0 },
+          { type: "reasoning.encrypted", data: "b3Bh", id: "rs_1", format: "openai-responses-v1", index: 1 },
+        )
+
+        types = events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.type }
+
+        expect(types).must_equal %i[summary encrypted]
+      end
+    end
+
+    describe "replaying reasoning" do
+      let(:provider) { Riffer::Providers::OpenRouter.new }
+
+      def part(**attributes)
+        Riffer::Messages::Assistant::ReasoningPart.new(**attributes)
+      end
+
+      def convert(reasoning)
+        assistant = Riffer::Messages::Assistant.new("42", reasoning: reasoning)
+        provider.send(:convert_messages_to_chat_completions_format, [assistant]).first
+      end
+
+      it "sends recognized parts back as reasoning_details in their original order" do
+        reasoning = [
+          part(type: :summary, text: "Sum", id: "rs_1", format: "openai-responses-v1"),
+          part(type: :encrypted, data: "b3Bh", id: "rs_1", format: "openai-responses-v1"),
+          part(type: :text, text: "Think", signature: "sig", format: "anthropic-claude-v1"),
+        ]
+
+        expect(convert(reasoning)[:reasoning_details]).must_equal [
+          { type: "reasoning.summary", summary: "Sum", id: "rs_1", format: "openai-responses-v1" },
+          { type: "reasoning.encrypted", data: "b3Bh", id: "rs_1", format: "openai-responses-v1" },
+          { type: "reasoning.text", text: "Think", signature: "sig", format: "anthropic-claude-v1" },
+        ]
+      end
+
+      it "skips parts with no format or a format OpenRouter does not produce" do
+        reasoning = [
+          part(type: :text, text: "legacy"),
+          part(type: :text, text: "mock", format: "mock-v1"),
+          part(type: :text, text: "kept", format: "unknown"),
+        ]
+
+        expect(convert(reasoning)[:reasoning_details]).must_equal [
+          { type: "reasoning.text", text: "kept", format: "unknown" },
+        ]
+      end
+
+      it "omits reasoning_details when no part is replayable" do
+        reasoning = [part(type: :text, text: "legacy")]
+
+        expect(convert(reasoning).key?(:reasoning_details)).must_equal false
       end
     end
   end
@@ -874,30 +1100,12 @@ describe Riffer::Providers::OpenRouter do
     let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:fn_struct) { Struct.new(:name, :arguments) }
     let(:tc_struct) { Struct.new(:index, :id, :function) }
-    # +:reasoning+ is a member so +delta[:reasoning]+ returns nil rather than
-    # raising NameError, as on real ChatCompletionChunk deltas.
-    let(:delta_struct) { Struct.new(:content, :reasoning, :tool_calls) }
-    let(:choice_struct) { Struct.new(:delta, :finish_reason) }
-    let(:chunk_struct) { Struct.new(:choices, :usage) }
-
-    def install_chunks(provider, chunks)
-      stream_double = Object.new
-      stream_double.define_singleton_method(:each) { |&block| chunks.each(&block) }
-      stream_double.define_singleton_method(:close) {}
-      completions_double = Object.new
-      completions_double.define_singleton_method(:stream_raw) { |**_kwargs| stream_double }
-      chat_double = Object.new
-      chat_double.define_singleton_method(:completions) { completions_double }
-      client_double = Object.new
-      client_double.define_singleton_method(:chat) { chat_double }
-      provider.instance_variable_set(:@client, client_double)
-    end
 
     it "flushes accumulated tool calls when the stream ends with finish_reason other than tool_calls" do
       # Non-compliant upstreams can end a tool call with finish_reason: "stop".
       fn = fn_struct.new(name: "get_weather", arguments: '{"city":"Toronto"}')
       tc = tc_struct.new(index: 0, id: "call_abc", function: fn)
-      delta = delta_struct.new(content: nil, reasoning: nil, tool_calls: [tc])
+      delta = delta_struct.new(content: nil, reasoning_details: nil, tool_calls: [tc])
       tool_chunk = chunk_struct.new(choices: [choice_struct.new(delta: delta, finish_reason: nil)], usage: nil)
       stop_chunk = chunk_struct.new(choices: [choice_struct.new(delta: nil, finish_reason: "stop")], usage: nil)
       install_chunks(provider, [tool_chunk, stop_chunk])
@@ -926,7 +1134,7 @@ describe Riffer::Providers::OpenRouter do
       fn1 = fn_struct.new(name: "tool_b", arguments: "{}")
       tc0 = tc_struct.new(index: 0, id: nil, function: fn0)
       tc1 = tc_struct.new(index: 1, id: nil, function: fn1)
-      delta = delta_struct.new(content: nil, reasoning: nil, tool_calls: [tc0, tc1])
+      delta = delta_struct.new(content: nil, reasoning_details: nil, tool_calls: [tc0, tc1])
       chunk = chunk_struct.new(choices: [choice_struct.new(delta: delta, finish_reason: "tool_calls")], usage: nil)
       install_chunks(provider, [chunk])
 

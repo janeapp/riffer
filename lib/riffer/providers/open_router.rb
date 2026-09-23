@@ -15,6 +15,27 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     "error" => :error,
   }.freeze #: Hash[String, Symbol]
 
+  REASONING_TYPES = {
+    "reasoning.text" => :text,
+    "reasoning.summary" => :summary,
+    "reasoning.encrypted" => :encrypted,
+  }.freeze #: Hash[String, Symbol]
+
+  # The +reasoning_details+ formats OpenRouter documents. Only parts tagged with
+  # one of them are replayed, so parts from other adapters, or with no format,
+  # never reach the request.
+  REASONING_FORMATS = %w[
+    unknown
+    openai-responses-v1
+    azure-openai-responses-v1
+    bedrock-openai-responses-v1
+    bedrock-xai-responses-v1
+    xai-responses-v1
+    meta-responses-v1
+    anthropic-claude-v1
+    google-gemini-v1
+  ].freeze #: Array[String]
+
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -180,6 +201,39 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    typed_response = response #: OpenAI::Models::Chat::ChatCompletion
+    message = typed_response.choices.first&.message
+    details = message && reasoning_details(message)
+    (details || []).filter_map { |detail| build_reasoning_part(detail) }
+  end
+
+  # The openai gem's typed models strip fields outside OpenAI's spec, so
+  # +reasoning_details+ is only reachable through the model's raw data hash.
+  #--
+  #: (untyped) -> Array[Hash[Symbol, untyped]]?
+  def reasoning_details(model)
+    model[:reasoning_details]
+  end
+
+  #--
+  #: (Hash[Symbol, untyped]) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_reasoning_part(detail)
+    type = REASONING_TYPES.fetch(detail[:type], nil)
+    return nil unless type
+
+    Riffer::Messages::Assistant::ReasoningPart.new(
+      type: type,
+      text: detail[:text] || detail[:summary],
+      data: detail[:data],
+      signature: detail[:signature],
+      id: detail[:id],
+      format: detail[:format],
+    )
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     # OpenRouter omits usage from streams unless explicitly opted in.
@@ -188,7 +242,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     state = {
       text: +"",
-      reasoning: +"",
+      reasoning_details: {},
       tool_calls: {},
       finish_reason: nil,
       native_finish_reason: nil,
@@ -212,7 +266,10 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     emit_tool_call_done_events(state: state, yielder: yielder) unless state[:tool_calls].empty?
 
     yielder << Riffer::StreamEvents::TextDone.new(state[:text]) unless state[:text].empty?
-    yield_reasoning_done(yielder, state[:reasoning]) unless state[:reasoning].empty?
+    state[:reasoning_details].each_value do |detail|
+      part = build_reasoning_part(detail)
+      yielder << Riffer::StreamEvents::ReasoningDone.new(part) if part
+    end
     yield_finish_reason(yielder, build_finish_reason(state[:finish_reason], native: state[:native_finish_reason]))
   end
 
@@ -253,13 +310,26 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_delta(delta, state:, yielder:)
-    # The typed Delta model strips fields outside OpenAI's spec (so
-    # +delta.reasoning+ raises NoMethodError); +#[]+ reads the raw data hash.
-    reasoning = delta[:reasoning] if delta.respond_to?(:[])
-    return if reasoning.nil? || reasoning.empty?
+    details = reasoning_details(delta)
+    return if details.nil?
 
-    state[:reasoning] << reasoning
-    yielder << Riffer::StreamEvents::ReasoningDelta.new(reasoning)
+    details.each do |detail|
+      accumulate_reasoning_detail(state[:reasoning_details], detail)
+      text = detail[:text] || detail[:summary]
+      yielder << Riffer::StreamEvents::ReasoningDelta.new(text) unless text.nil? || text.empty?
+    end
+  end
+
+  # OpenRouter streams one reasoning block as many fragments sharing an
+  # +index+: prose and payload arrive in pieces to concatenate, while the
+  # signature, id, and format arrive once, often on the last fragment. Keying
+  # on +type+ as well keeps index-less fragments of different kinds apart.
+  #--
+  #: (Hash[untyped, Hash[Symbol, untyped]], Hash[Symbol, untyped]) -> void
+  def accumulate_reasoning_detail(accumulated, detail)
+    entry = accumulated[[detail[:index], detail[:type]]] ||= { type: detail[:type] }
+    %i[text summary data].each { |key| (entry[key] ||= +"") << detail[key] if detail[key] }
+    %i[signature id format].each { |key| entry[key] = detail[key] if detail[key] }
   end
 
   #--
@@ -356,7 +426,25 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       end
     end
 
+    details = message.reasoning.filter_map do |part|
+      convert_reasoning_part_to_detail(part) if REASONING_FORMATS.include?(part.format)
+    end
+    msg[:reasoning_details] = details unless details.empty?
+
     msg
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part_to_detail(part)
+    {
+      type: REASONING_TYPES.key(part.type),
+      (part.type == :summary ? :summary : :text) => part.text,
+      data: part.data,
+      signature: part.signature,
+      id: part.id,
+      format: part.format,
+    }.compact
   end
 
   #--
