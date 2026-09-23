@@ -45,6 +45,11 @@ class Riffer::Messages::User::FilePart
   # : ((Hash[Symbol, untyped] | Riffer::Messages::User::FilePart)) -> Riffer::Messages::User::FilePart
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::User::FilePart) -> Riffer::Messages::User::FilePart
 
+  # Raises Riffer::ArgumentError when the URL's extension isn't a known media type.
+  # --
+  # : (String) -> String
+  def self.detect_media_type: (String) -> String
+
   # The base64-encoded contents - caller-supplied, or filled in by the file
   # resolver after a download.  Nil for a URL source riffer hasn't fetched.
   # --

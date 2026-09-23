@@ -42,6 +42,16 @@ describe Riffer::Messages::Assistant::ToolCall do
 
       expect(Riffer::Messages::Assistant::ToolCall.from_hash(tool_call)).must_be_same_as tool_call
     end
+
+    it "round-trips every attribute" do
+      tool_call = Riffer::Messages::Assistant::ToolCall.new(
+        call_id: "c1",
+        name: "get_weather",
+        arguments: '{"city":"Paris"}',
+      )
+
+      assert_round_trips tool_call
+    end
   end
 
   describe "#to_h" do

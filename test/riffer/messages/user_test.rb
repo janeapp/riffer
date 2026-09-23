@@ -41,6 +41,12 @@ describe Riffer::Messages::User do
 
       expect(Riffer::Messages::User.from_hash(message.to_h).to_h).must_equal message.to_h
     end
+
+    it "round-trips every attribute" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png", filename: "a.png")
+
+      assert_round_trips Riffer::Messages::User.new("Look at this", id: "u-1", files: [file])
+    end
   end
 
   describe "#files" do

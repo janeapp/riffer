@@ -10,7 +10,14 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   def self.from_hash(msg)
     return msg if msg.is_a?(Riffer::Messages::Tool)
 
-    new(msg[:content], id: msg[:id], tool_call_id: msg[:tool_call_id], name: msg[:name])
+    new(
+      msg[:content],
+      id: msg[:id],
+      tool_call_id: msg[:tool_call_id],
+      name: msg[:name],
+      error: msg[:error],
+      error_type: msg[:error_type]&.to_sym,
+    )
   end
 
   # The ID of the tool call this result responds to.

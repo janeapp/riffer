@@ -141,6 +141,18 @@ describe Riffer::Messages::User::FilePart do
       end.must_raise(Riffer::ArgumentError)
       expect(error.message).must_match(/Invalid sha256/)
     end
+
+    it "round-trips every attribute" do
+      file = Riffer::Messages::User::FilePart.new(
+        media_type: "image/png",
+        data: "aGVsbG8=",
+        filename: "a.png",
+        url: "https://example.com/a.png",
+        sha256: "a" * 64,
+      )
+
+      assert_round_trips file
+    end
   end
 
   describe "#url?" do
