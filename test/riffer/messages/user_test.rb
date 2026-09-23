@@ -11,6 +11,38 @@ describe Riffer::Messages::User do
     end
   end
 
+  describe ".from_hash" do
+    it "builds a User message with its id and files" do
+      message = Riffer::Messages::User.from_hash(
+        { role: "user", content: "Describe this", id: "u-1", files: [{ data: "aGVsbG8=", media_type: "image/png" }] },
+      )
+
+      expect(message).must_be_instance_of Riffer::Messages::User
+      expect(message.content).must_equal "Describe this"
+      expect(message.id).must_equal "u-1"
+      expect(message.files.first).must_be_instance_of Riffer::Messages::User::FilePart
+    end
+
+    it "defaults to empty files when absent" do
+      message = Riffer::Messages::User.from_hash({ role: "user", content: "Hello" })
+
+      expect(message.files).must_equal []
+    end
+
+    it "returns a User message unchanged" do
+      message = Riffer::Messages::User.new("Hello")
+
+      expect(Riffer::Messages::User.from_hash(message)).must_be_same_as message
+    end
+
+    it "round-trips through to_h" do
+      file = Riffer::Messages::User::FilePart.new(data: "aGVsbG8=", media_type: "image/png")
+      message = Riffer::Messages::User.new("Hello", id: "u-1", files: [file])
+
+      expect(Riffer::Messages::User.from_hash(message.to_h).to_h).must_equal message.to_h
+    end
+  end
+
   describe "#files" do
     it "defaults to empty array" do
       message = Riffer::Messages::User.new("Hello")

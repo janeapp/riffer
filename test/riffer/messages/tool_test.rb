@@ -11,6 +11,26 @@ describe Riffer::Messages::Tool do
     end
   end
 
+  describe ".from_hash" do
+    it "builds a Tool message with its id, tool_call_id, and name" do
+      message = Riffer::Messages::Tool.from_hash(
+        { role: "tool", content: "Result", id: "t-1", tool_call_id: "123", name: "my_tool" },
+      )
+
+      expect(message).must_be_instance_of Riffer::Messages::Tool
+      expect(message.content).must_equal "Result"
+      expect(message.id).must_equal "t-1"
+      expect(message.tool_call_id).must_equal "123"
+      expect(message.name).must_equal "my_tool"
+    end
+
+    it "returns a Tool message unchanged" do
+      message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
+
+      expect(Riffer::Messages::Tool.from_hash(message)).must_be_same_as message
+    end
+  end
+
   describe "#to_h" do
     it "returns hash with role, content, tool_call_id, and name" do
       message = Riffer::Messages::Tool.new("Result", tool_call_id: "123", name: "my_tool")
