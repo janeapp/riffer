@@ -99,8 +99,6 @@ end
 MyAgent.identifier  # => "custom_agent_name"
 ```
 
-An agent instance also answers `#identifier`. It returns the class identifier, unless the instance was built with its own config (e.g. restored with `Riffer::Agent.from_h`), in which case that config's identifier wins. This is the value used for the default `agent` tag and the `invoke_agent` span.
-
 ### uses_tools
 
 Registers tools the agent can use:
