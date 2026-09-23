@@ -3,11 +3,8 @@
 
 require "base64"
 
-# Amazon Bedrock provider for Claude and other foundation models. Requires the
-# +aws-sdk-bedrockruntime+ gem.
 class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
-  # Matches Anthropic models on Bedrock — bare (+anthropic.claude-...+) and
-  # cross-region (+us.anthropic.claude-...+) ids.
+  # Bedrock ids are bare (+anthropic.claude-...+) or cross-region (+us.anthropic.claude-...+).
   ANTHROPIC_MODEL_PATTERN = /(?:^|\.)anthropic\./ #: Regexp
 
   FINISH_REASONS = {
@@ -22,8 +19,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "model_context_window_exceeded" => :context_window,
   }.freeze #: Hash[String, Symbol]
 
-  # Returns the skill adapter for the Bedrock model — XML for Anthropic models
-  # (which Bedrock hosts alongside other vendors'), else Markdown.
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(model = nil)
@@ -32,7 +27,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer::Skills::MarkdownAdapter
   end
 
-  # The GenAI semconv well-known provider name.
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -60,13 +54,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     Riffer.config.amazon_bedrock.client
   end
 
-  # Compacted so an unset region stays absent: the AWS SDK resolves +AWS_REGION+
-  # and the shared config only for a missing argument, and raises
-  # +Aws::Errors::MissingRegionError+ on an explicit nil.
   #--
   #: () -> untyped
   def build_client
     api_token = Riffer.config.amazon_bedrock.api_token
+    # Compacted out when unset: the AWS SDK resolves +AWS_REGION+ and the shared
+    # config only for a missing argument, and raises
+    # +Aws::Errors::MissingRegionError+ on an explicit nil.
     region = Riffer.config.amazon_bedrock.region
 
     if api_token && !api_token.empty?
@@ -96,10 +90,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
       **options.except(:tools, :structured_output, :cache_control, :tags),
     } #: Hash[Symbol, untyped]
 
-    # requestMetadata is a flat String=>String map used to filter invocation
-    # logs; every tag (including the reserved user_id) rides along, since
-    # Converse has no dedicated end-user field. Merged over any request_metadata
-    # set in model_options; a tag wins on a shared key.
+    # Converse has no dedicated end-user field, so every tag (including the
+    # reserved user_id) rides along in requestMetadata; a tag wins over a
+    # model_options request_metadata key.
     params[:request_metadata] = (params[:request_metadata] || {}).merge(tags) unless tags.empty?
 
     if tools && !tools.empty?
@@ -109,9 +102,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
 
     if structured_output
-      # Use strict schema to make optional fields nullable. Without this,
-      # Bedrock may return string literals like ": null," instead of actual
-      # null values for optional fields that the model has no value for.
+      # Strict makes optional fields nullable; otherwise Bedrock may return
+      # string literals like ": null," for optional fields with no value.
       params[:output_config] = {
         text_format: {
           type: "json_schema",
@@ -130,13 +122,13 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     params
   end
 
-  # Converse treats +tools -> system -> messages+ as one prefix and looks back
-  # from a +cachePoint+ for the longest cached run, so the point on the final
-  # message reuses the previous step's cache wherever that point sat. Mixed
-  # ttls must be ordered 1h before 5m, so both points share one.
   #--
   #: (Hash[Symbol, untyped], untyped) -> void
   def apply_cache_point(params, cache_control)
+    # Converse treats +tools -> system -> messages+ as one prefix and looks back
+    # from a +cachePoint+ for the longest cached run, so the point on the final
+    # message reuses the previous step's cache wherever that point sat. Mixed
+    # ttls must be ordered 1h before 5m, so both points share one.
     cache_point = { cache_point: build_cache_point(cache_control) }
     system = params[:system]
     tools = params.dig(:tool_config, :tools)
@@ -173,8 +165,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     build_token_usage(typed_response.usage)
   end
 
-  # Converse's +input_tokens+ excludes the cache buckets; TokenUsage's
-  # input includes them.
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
@@ -183,6 +173,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
     apply_pricing(
       Riffer::Providers::TokenUsage.new(
+        # Converse's +input_tokens+ excludes the cache buckets; TokenUsage's includes them.
         input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
         output_tokens: usage.output_tokens,
         cache_write_tokens: cache_write,
@@ -272,10 +263,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
         when Aws::Errors::EventError
-          # The SDK turns an event-stream +:message-type: error+ frame into an
-          # EventError instance and hands it to this block as an event; it is
-          # never raised. Re-raise it here so the failure surfaces instead of
-          # truncating the stream.
+          # The SDK hands an event-stream +:message-type: error+ frame to this
+          # block as an EventError event rather than raising it.
           raise_stream_event_error!(event)
         else
           raise_if_stream_exception!(event)
@@ -288,27 +277,22 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     raise Riffer::IncompleteStreamError, "Bedrock ConverseStream ended without a messageStop event"
   end
 
-  # Re-raises an +Aws::Errors::EventError+ event with a message built from its
-  # error code and message. The SDK's own +#message+ is just the class name,
-  # so without this the failure would be unreadable.
   #--
   #: (untyped) -> void
   def raise_stream_event_error!(event)
+    # The SDK's own +#message+ is just the class name.
     details = [event.error_code, event.error_message].compact.join(": ")
     details = "Bedrock ConverseStream error event" if details.empty?
 
     raise event.exception(details)
   end
 
-  # Re-raises a Bedrock stream-exception event as the matching
-  # +Aws::BedrockRuntime::Errors+ class. ConverseStream delivers API errors on
-  # the same channel as content, so without this a mid-stream failure would
-  # silently end the stream with no content. Non-exception events that we do
-  # not consume (including the SDK's +:unknown_event+ struct) are ignored for
-  # forward compatibility.
   #--
   #: (untyped) -> void
   def raise_if_stream_exception!(event)
+    # ConverseStream delivers API errors on the same channel as content.
+    # Unconsumed non-exception events (including the SDK's +:unknown_event+
+    # struct) are ignored for forward compatibility.
     klass_name = event.class.name&.split("::")&.last
     return unless klass_name&.end_with?("Exception")
 
@@ -333,11 +317,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_content_block_delta_text_delta(event, state:, yielder:)
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     delta_text = typed_event.delta.text
-    # Mutating append: += would reallocate and copy the whole accumulated
-    # buffer on every delta (O(n^2) per content block). state[:text] is handed
-    # off to TextDone and then cleared on block stop, so nothing reads the
-    # pre-append string, making in-place mutation safe. Seed with an unfrozen
-    # String (+"") so << does not raise under frozen_string_literal.
+    # << avoids += copying the whole buffer per delta (O(n^2)); safe because
+    # nothing reads the pre-append string before block stop clears it.
     state[:text] ||= +""
     state[:text] << delta_text
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)

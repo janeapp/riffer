@@ -1,16 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# A DSL for defining tool parameters and structured-output schemas, used within
-# a Tool's +params+ block.
-#
-#   params do
-#     required :city, String, description: "The city name"
-#     optional :units, String, default: "celsius", enum: ["celsius", "fahrenheit"]
-#   end
-#
 class Riffer::Params
-  # The defined parameters.
   attr_reader :parameters #: Array[Riffer::Params::Param] # @dynamic parameters
 
   #--
@@ -19,13 +10,8 @@ class Riffer::Params
     @parameters = []
   end
 
-  # Reconstructs a Params from a JSON Schema object — the inverse of
-  # +to_json_schema(strict: false)+. Raises Riffer::ArgumentError on features
-  # outside the Params-expressible subset of JSON Schema.
-  #
-  #   schema = params.to_json_schema(strict: false)
-  #   Riffer::Params.from_json_schema(schema) # => equivalent Riffer::Params
-  #
+  # The inverse of +to_json_schema(strict: false)+. Raises Riffer::ArgumentError
+  # on features outside the Params-expressible subset of JSON Schema.
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Params
   def self.from_json_schema(schema)
@@ -42,8 +28,6 @@ class Riffer::Params
     params
   end
 
-  # Defines a required parameter.
-  #
   #--
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def required(name, type, description: nil, enum: nil, of: nil, &)
@@ -59,8 +43,6 @@ class Riffer::Params
     )
   end
 
-  # Defines an optional parameter.
-  #
   #--
   #: (Symbol, Module, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Module?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> void
   def optional(name, type, description: nil, enum: nil, default: nil, of: nil, &)
@@ -77,15 +59,7 @@ class Riffer::Params
     )
   end
 
-  # Validates arguments against parameter definitions.
-  #
-  # A Float param accepts an Integer (JSON Schema <tt>"number"</tt> covers
-  # integers) and its value is coerced with +to_f+, so callers always get a
-  # Float. The same holds for the items of an <tt>of: Float</tt> array. No other
-  # type is coerced.
-  #
   # Raises Riffer::ValidationError if validation fails.
-  #
   #--
   #: (Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def validate(arguments)
@@ -125,11 +99,6 @@ class Riffer::Params
     validated
   end
 
-  # Converts all parameters to JSON Schema format. When +strict+ is true, every
-  # property is listed in +required+ and optional ones are made nullable
-  # instead, satisfying providers that enforce strict structured output schemas.
-  # Raises Riffer::ArgumentError when +strict+ and a Hash param (at any depth)
-  # has no block or an Array param has neither a block nor <tt>of:</tt>.
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)
@@ -138,6 +107,8 @@ class Riffer::Params
 
     @parameters.each do |param|
       properties[param.name.to_s] = param.to_json_schema(strict: strict)
+      # Providers enforcing strict structured output require every property in
+      # +required+; strict mode makes optional ones nullable instead.
       required_params << param.name.to_s if strict || param.required
     end
 
@@ -151,8 +122,8 @@ class Riffer::Params
 
   private
 
-  # +dup+ would leave the copy sharing this one's parameters, so a caller
-  # defining a parameter on either would reach the other.
+  # Without this, +dup+ shares parameters, so defining one on either copy
+  # would reach the other.
   #--
   #: (Riffer::Params) -> void
   def initialize_copy(source)
@@ -233,7 +204,6 @@ class Riffer::Params
     end
   end
 
-  # Returns the array with its valid items coerced by +coerce_value+.
   #--
   #: (Riffer::Params::Param, Array[untyped], Array[String]) -> Array[untyped]
   def validate_typed_array(param, value, errors)
@@ -258,13 +228,11 @@ class Riffer::Params
     end
   end
 
-  # Coerces an already-validated value to the Ruby type its param declares.
-  # Only Float coerces today, because JSON Schema "number" accepts integers and
-  # callers should not get a type that depends on whether the model wrote a
-  # decimal point. Add a branch here rather than inline at a call site.
   #--
   #: (Module, untyped) -> untyped
   def coerce_value(type, value)
+    # JSON Schema "number" accepts integers; callers shouldn't get a type that
+    # depends on whether the model wrote a decimal point.
     return value.to_f if type == Float
 
     value

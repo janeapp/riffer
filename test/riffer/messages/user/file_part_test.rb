@@ -297,8 +297,6 @@ describe Riffer::Messages::User::FilePart do
       first = file.data_bytes
       second = file.data_bytes
 
-      # A fresh decode would allocate a new String; identity proves the
-      # second call returned the memoized one instead of decoding again.
       expect(second).must_be_same_as first
     end
 
@@ -317,13 +315,12 @@ describe Riffer::Messages::User::FilePart do
     end
 
     it "raises Riffer::FileEncodingError instead of silently truncating data with embedded padding" do
-      # Base64.decode64 (lenient) stops at the first `=`, so naively decoding
-      # this would yield "hello world" and hide the appended second payload
-      # from anything that hashes the result — strict decoding must reject it.
+      # Lenient Base64.decode64 stops at the first `=`, hiding the appended
+      # payload from anything that hashes the result.
       smuggled = Base64.strict_encode64("hello world") + Base64.strict_encode64("second payload")
       file = Riffer::Messages::User::FilePart.new(data: smuggled, media_type: "text/plain")
 
-      expect(Base64.decode64(smuggled)).must_equal "hello world" # confirms the lenient decode would hide data
+      expect(Base64.decode64(smuggled)).must_equal "hello world"
       expect { file.data_bytes }.must_raise Riffer::FileEncodingError
     end
 

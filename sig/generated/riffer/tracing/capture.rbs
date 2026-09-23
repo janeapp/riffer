@@ -1,8 +1,5 @@
 # Generated from lib/riffer/tracing/capture.rb with RBS::Inline
 
-# Serializes riffer messages into the GenAI semconv JSON message structure
-# for opt-in span content capture. File parts become metadata-only stubs —
-# bytes and URLs never reach a span attribute.
 module Riffer::Tracing::Capture
   # --
   # : (Array[Riffer::Messages::Base]) -> String
@@ -38,8 +35,8 @@ module Riffer::Tracing::Capture
   # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def file_part: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
 
-  # Semconv's tool_call part carries arguments as a JSON object; riffer holds
-  # them as a string — parse so the captured payload isn't double-encoded.
+  # Semconv's tool_call part carries arguments as a JSON object, so a string
+  # would be double-encoded.
   # --
   # : (String) -> untyped
   def parse_arguments: (String) -> untyped

@@ -1,22 +1,5 @@
 # frozen_string_literal: true
 
-# Tone Consistency Evaluator
-#
-# Evaluates whether the response maintains a consistent tone, formality, and style.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [{ input: "Explain quantum computing in a professional tone." }],
-#     evals: [ToneConsistencyEvaluator]
-#   )
-#
-#   result.scores  # => { ToneConsistencyEvaluator => 0.9 }
-#
 class ToneConsistencyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

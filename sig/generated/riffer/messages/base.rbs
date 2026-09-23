@@ -1,42 +1,31 @@
 # Generated from lib/riffer/messages/base.rb with RBS::Inline
 
-# Base class for all message types. Subclasses must implement +role+.
 class Riffer::Messages::Base
-  # Builds the matching message subclass from a hash, or returns +msg+ unchanged
-  # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
+  # Raises Riffer::ArgumentError on an invalid message.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Base) -> Riffer::Messages::Base
 
-  # The message content.
   attr_reader content: String
 
-  # The message id, or nil when +Riffer.config.message_id_strategy+ is +:none+.
   attr_reader id: String?
 
   # --
   # : (String, ?id: String?) -> void
   def initialize: (String, ?id: String?) -> void
 
-  # Converts the message to a hash.
-  #
   # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]
 
-  # Returns the message role.
   # --
   # : () -> Symbol
   def role: () -> Symbol
 
-  # Whether this message carries pending tool calls (overridden by
-  # +Riffer::Messages::Assistant+).
   # --
   # : () -> bool
   def has_tool_calls?: () -> bool
 
-  # Merges another same-role message into this one. +Tool+ messages are never
-  # merged.
   # --
   # : (untyped) -> Riffer::Messages::Base
   def +: (untyped) -> Riffer::Messages::Base

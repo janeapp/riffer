@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Anthropic provider for Claude models via the Anthropic API. Requires the
-# +anthropic+ gem.
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_20250305" #: String
 
@@ -18,15 +16,12 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     "pause_turn" => :other,
   }.freeze #: Hash[String, Symbol]
 
-  # Returns the XML skill adapter for Anthropic/Claude.
-  #
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(_model = nil)
     Riffer::Skills::XmlAdapter
   end
 
-  # The GenAI semconv well-known provider name.
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -48,12 +43,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     Riffer.config.anthropic.client
   end
 
-  # Compacted for the same reason as the other providers: never hand an SDK an
-  # explicit nil credential, so its own +ANTHROPIC_API_KEY+ resolution stays
-  # reachable regardless of how that SDK distinguishes nil from absent.
   #--
   #: () -> untyped
   def build_client
+    # Never pass an explicit nil credential, so the SDK's own
+    # ANTHROPIC_API_KEY resolution stays reachable.
     ::Anthropic::Client.new(**{ api_key: Riffer.config.anthropic.api_key }.compact)
   end
 
@@ -78,8 +72,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     params[:system] = partitioned_messages[:system] if partitioned_messages[:system]
 
     # Anthropic's only request-metadata field is metadata.user_id (opaque, no
-    # PII). It carries the reserved user_id tag; all other tags are dropped
-    # here and survive only on spans.
+    # PII); all other tags survive only on spans.
     user_id = tags["user_id"]
     params[:metadata] = { user_id: user_id } if user_id
 
@@ -93,13 +86,9 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     if structured_output
-      # Use strict schema to make optional fields nullable. Without this,
-      # Anthropic may return empty strings or whitespace instead of null
-      # for optional fields that the model has no value for.
-      #
-      # Merged over any caller-supplied output_config (e.g. effort) so those
-      # keys survive; the structured-output format wins because the run loop
-      # validates the response against it.
+      # Strict schema makes optional fields nullable; otherwise Anthropic may
+      # return empty strings or whitespace instead of null. The format wins
+      # over caller output_config keys because the run loop validates against it.
       params[:output_config] = {
         **(params[:output_config] || {}),
         format: {
@@ -143,8 +132,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(raw, :other), raw: raw)
   end
 
-  # Anthropic's +input_tokens+ excludes the cache buckets; TokenUsage's
-  # input includes them.
   #--
   #: (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
@@ -153,6 +140,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     apply_pricing(
       Riffer::Providers::TokenUsage.new(
+        # Anthropic's input_tokens excludes the cache buckets; TokenUsage's includes them.
         input_tokens: usage.input_tokens + (cache_write || 0) + (cache_read || 0),
         output_tokens: usage.output_tokens,
         cache_write_tokens: cache_write,
@@ -287,11 +275,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_text_event(event, state:, yielder:)
-    # Mutating append instead of += to avoid reallocating and copying the whole
-    # accumulated buffer on every delta (O(n^2) per content block). The buffer
-    # is handed to TextDone and cleared on block stop, so no reader observes the
-    # pre-append string. Seed with an unfrozen String so << is legal under
-    # frozen_string_literal.
+    # Mutating append avoids O(n^2) copying per content block; the buffer is
+    # handed to TextDone and cleared on block stop, so no reader sees it mid-append.
     state[:text] ||= +""
     state[:text] << event.text
     yielder << Riffer::StreamEvents::TextDelta.new(event.text)

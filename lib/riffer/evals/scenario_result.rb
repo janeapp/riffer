@@ -1,24 +1,12 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents the result of evaluating a single scenario.
 class Riffer::Evals::ScenarioResult
-  # The input that was evaluated.
   attr_reader :input #: String # @dynamic input
-
-  # The agent output for this scenario.
   attr_reader :output #: String # @dynamic output
-
-  # The ground truth used during evaluation.
   attr_reader :ground_truth #: String? # @dynamic ground_truth
-
-  # Individual evaluation results.
   attr_reader :results #: Array[Riffer::Evals::Result] # @dynamic results
-
-  # The full message history from the agent conversation.
   attr_reader :messages #: Array[Riffer::Messages::Base] # @dynamic messages
-
-  # Token usage the agent under test spent generating this scenario's output.
   attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
 
   #--
@@ -32,8 +20,6 @@ class Riffer::Evals::ScenarioResult
     @token_usage = token_usage
   end
 
-  # Returns scores keyed by evaluator class.
-  #
   #--
   #: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores
@@ -43,17 +29,12 @@ class Riffer::Evals::ScenarioResult
     end
   end
 
-  # Returns the summed token usage across this scenario's LLM-as-judge
-  # evaluators, or nil when none reported usage.
-  #
   #--
   #: () -> Riffer::Providers::TokenUsage?
   def evaluator_token_usage
     results.filter_map(&:token_usage).reduce(:+)
   end
 
-  # Returns a hash representation of the scenario result.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

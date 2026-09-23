@@ -1,8 +1,5 @@
 # Generated from lib/riffer/runner/threaded.rb with RBS::Inline
 
-# Processes items concurrently using a thread pool of up to +max_concurrency+
-# workers pulling from a shared queue, so a slow item doesn't block others. If
-# multiple workers raise, only the first exception is re-raised after all finish.
 class Riffer::Runner::Threaded < Riffer::Runner
   @max_concurrency: Integer
 

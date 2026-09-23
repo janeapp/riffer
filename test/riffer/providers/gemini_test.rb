@@ -5,8 +5,6 @@ require "test_helper"
 describe Riffer::Providers::Gemini do
   let(:api_key) { ENV.fetch("GEMINI_API_KEY", "test_api_key") }
 
-  # Credentials now reach the provider only through config, so every test that
-  # builds a client needs one configured.
   before { Riffer.config.gemini.api_key = api_key }
 
   after do
@@ -611,10 +609,8 @@ describe Riffer::Providers::Gemini do
   describe "per-call tags (end-to-end)" do
     let(:provider) { Riffer::Providers::Gemini.new }
 
-    # Gemini drops tags, so a tagged call must reproduce the untagged request
-    # body. Replaying the existing untagged cassette with record: :none means
-    # any future leak into the Gemini request changes the body and fails the
-    # :body matcher — confirming no regression. No new cassette needed.
+    # Gemini drops tags, so a tagged call must match the untagged cassette's
+    # request body; record: :none makes any leak fail the :body matcher.
     it "sends no tags on the wire, matching the untagged request" do
       VCR.use_cassette(
         "Riffer_Providers_Gemini/_generate_text/when_prompt_is_provided/returns_an_Assistant_message",

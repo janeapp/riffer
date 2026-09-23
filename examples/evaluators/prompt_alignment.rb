@@ -1,22 +1,5 @@
 # frozen_string_literal: true
 
-# Prompt Alignment Evaluator
-#
-# Evaluates how well the response aligns with the prompt's intent and requirements.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [{ input: "Write a haiku about spring." }],
-#     evals: [PromptAlignmentEvaluator]
-#   )
-#
-#   result.scores  # => { PromptAlignmentEvaluator => 0.9 }
-#
 class PromptAlignmentEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

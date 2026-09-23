@@ -1,10 +1,6 @@
 # Generated from lib/riffer/tracing/no_op.rb with RBS::Inline
 
-# No-op tracing backend, used when OTEL is unavailable or tracing is
-# disabled.
 module Riffer::Tracing::NoOp
-  # No-op stand-in for a span; answers <tt>recording?</tt> with +false+ so
-  # callers can skip expensive attribute serialization.
   class Span
     # --
     # : (String, untyped) -> void
@@ -29,17 +25,14 @@ module Riffer::Tracing::NoOp
 
   SPAN: Riffer::Tracing::NoOp::Span
 
-  # Yields the no-op span, ignoring all span options.
   # --
   # : [R] (String, **untyped) { (Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_span: [R] (String, **untyped) { (Riffer::Tracing::NoOp::Span) -> R } -> R
 
-  # Returns +nil+; there is no trace context without OTEL.
   # --
   # : () -> nil
   def current_context: () -> nil
 
-  # Yields immediately; there is no context to attach.
   # --
   # : [R] (untyped) { () -> R } -> R
   def with_context: [R] (untyped) { () -> R } -> R

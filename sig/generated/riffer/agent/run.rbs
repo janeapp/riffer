@@ -1,30 +1,16 @@
 # Generated from lib/riffer/agent/run.rb with RBS::Inline
 
-# The generation loop — a pure module of functions over an +agent+, which owns
-# every per-call value; Run just orchestrates.
 module Riffer::Agent::Run
-  # Runs the generate loop for the given agent. See Riffer::Agent#generate
-  # for prompt/files semantics.
-  #
   # --
   # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Riffer::Agent::Response
 
-  # Runs the streaming loop for the given agent. See Riffer::Agent#stream
-  # for prompt/files semantics.
-  #
   # --
   # : (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[String | Symbol, untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
 
   private
 
-  # Both +generate+ and +stream+ funnel here, so this is the single place raw
-  # +tags+ are normalized and merged over the default tags (a caller tag wins
-  # on a shared key). The clean <tt>String => String</tt> map is then
-  # threaded to every span builder in the run as +riffer.tag.*+ and to each
-  # provider call (via +merged_model_options+) for native request-metadata
-  # mapping.
   # --
   # : (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop: (Riffer::Agent, ?tags: Hash[String | Symbol, untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
@@ -49,10 +35,6 @@ module Riffer::Agent::Run
   # : (Riffer::Agent, Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, **untyped) -> Riffer::Agent::Response
   def final_response: (Riffer::Agent, Array[Riffer::Guardrails::Modification], ?interrupted: bool, ?interrupt_reason: (String | Symbol)?, **untyped) -> Riffer::Agent::Response
 
-  # Checked in the order things happened. The loop being stopped (max_steps or
-  # an interrupt) beats the provider's finish reason, which beats riffer's own
-  # validation of the content. A truncated response that also fails the schema
-  # therefore reports :length, not :invalid_structured_output.
   # --
   # : (Riffer::Messages::Assistant?, Riffer::Agent::StructuredOutput::Result?, interrupted: bool, interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Outcome
   def final_outcome: (Riffer::Messages::Assistant?, Riffer::Agent::StructuredOutput::Result?, interrupted: bool, interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Outcome
@@ -93,15 +75,10 @@ module Riffer::Agent::Run
   # : (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
   def effective_tools: (Riffer::Agent) -> Array[singleton(Riffer::Tool)]
 
-  # +tags+ rides in the options hash as a curated key the providers extract for
-  # native request-metadata mapping (alongside +:structured_output+); it never
-  # reaches an SDK call verbatim. Span tagging is threaded separately to each
-  # builder.
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
   def merged_model_options: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
 
-  # The tags riffer adds to every run, identifying the agent it's on behalf of.
   # --
   # : (Riffer::Agent) -> Hash[String, String]
   def default_tags: (Riffer::Agent) -> Hash[String, String]
@@ -121,8 +98,6 @@ module Riffer::Agent::Run
   #   ) -> Riffer::Agent::Response
   def build_response: (Riffer::Agent, String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
-  # Raises when +files+ are supplied without a +prompt+ — the provider needs
-  # text to anchor the attachments.
   # --
   # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void
   def append_user_message: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void

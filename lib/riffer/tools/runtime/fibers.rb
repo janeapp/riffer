@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Executes tool calls concurrently using fibers via the +async+ gem.
-#
-#   class MyAgent < Riffer::Agent
-#     tool_runtime Riffer::Tools::Runtime::Fibers
-#   end
-#
 class Riffer::Tools::Runtime::Fibers < Riffer::Tools::Runtime
   #--
   #: (?max_concurrency: Integer?) -> void

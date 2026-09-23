@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Builds the docs site — landing page, guide pages, 404, and assets — into
-# _site/ at the repo root. Pages are declared in manifest.yml; the build fails
-# if the manifest and docs/**/*.md ever disagree.
-
 require "erb"
 require "fileutils"
 require "yaml"
@@ -89,8 +85,6 @@ def build_groups(manifest)
   end
 end
 
-# Numbering restarts per docs/ subdirectory, so the providers pages read as
-# their own sequence rather than continuing the main chapters.
 def chapter_numbers(manifest)
   manifest.
     flat_map { |group| group[:pages] }.

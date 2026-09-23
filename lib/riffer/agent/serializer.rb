@@ -3,32 +3,20 @@
 
 require "json"
 
-# Turns a resolved agent into a self-contained, provider-neutral data hash and
-# back into a runnable agent, behind the +Riffer::Agent#to_h+ /
-# +Riffer::Agent.from_h+ delegators.
-#
-#   hash    = Riffer::Agent::Serializer.to_h(agent: agent)
-#   rebuilt = Riffer::Agent::Serializer.from_h(hash, context: {tenant: "acme"})
 module Riffer::Agent::Serializer
   extend self
 
-  # The wire format version, bumped only on an incompatible change to the hash
-  # shape; +from_h+ refuses any other version.
+  # Bump only on an incompatible change to the hash shape.
   SCHEMA_VERSION = 1 #: Integer
 
-  # Raised by +from_h+ when the hash's +schema_version+ is unsupported.
   class VersionError < Riffer::ArgumentError; end
 
-  # The default +tool_resolver+: synthesizes a body-less tool shell from a
-  # descriptor. Its +#call+ raises — route shells through a remote runtime.
   DEFAULT_TOOL_RESOLVER = ->(descriptor) { build_tool_shell(descriptor) } #: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool)
 
-  # Snapshots a resolved agent into a self-contained wire hash. Proc-based
-  # settings are already evaluated against the agent's context, so the hash
-  # carries plain data, never Procs.
   #--
   #: (agent: Riffer::Agent) -> Hash[Symbol, untyped]
   def to_h(agent:)
+    # Already resolved against the agent's context, so the hash carries plain data, never Procs.
     config = agent.config
     {
       schema_version: SCHEMA_VERSION,
@@ -43,17 +31,11 @@ module Riffer::Agent::Serializer
     }
   end
 
-  # Reconstructs a runnable agent from a wire hash. +context+ is threaded into
-  # tool dispatch (not used to re-resolve the already-resolved config);
-  # +session+ seeds conversation history (the hash carries the agent definition,
-  # not its history). Raises Riffer::Agent::Serializer::VersionError on an
-  # unsupported +schema_version+.
-  #
+  # Raises Riffer::Agent::Serializer::VersionError on an unsupported +schema_version+.
   #--
   #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def from_h(hash, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
-    # Version -> decoder dispatch. Adding a +when 2+ arm (a backwards-compatible
-    # decoder) is how a future breaking change keeps older hashes readable.
+    # One arm per supported version keeps older hashes decodable after a breaking change.
     case hash[:schema_version]
     when SCHEMA_VERSION
       decode_v1(hash, context: context, session: session, tool_resolver: tool_resolver, tool_runtime: tool_runtime)
@@ -63,15 +45,12 @@ module Riffer::Agent::Serializer
     end
   end
 
-  # Snapshots a resolved agent to a JSON string.
   #--
   #: (agent: Riffer::Agent) -> String
   def to_json(agent:)
     JSON.generate(to_h(agent: agent))
   end
 
-  # Reconstructs a runnable agent from a JSON string produced by +to_json+. See
-  # +from_h+ for the arguments.
   #--
   #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def from_json(json, context: nil, session: nil, tool_resolver: DEFAULT_TOOL_RESOLVER, tool_runtime: nil)
@@ -100,14 +79,11 @@ module Riffer::Agent::Serializer
       max_steps: decode_max_steps(hash),
       tools_config: tools,
     } #: Hash[Symbol, untyped]
-    # tool_runtime= rejects nil, so only inject when supplied; otherwise the
-    # Config default (Riffer.config.tool_runtime) applies.
+    # Config#tool_runtime= rejects nil.
     config_args[:tool_runtime] = tool_runtime if tool_runtime
 
-    # +session+ is forwarded verbatim: when nil, Agent.new seeds a fresh session
-    # from the decoded instructions; when supplied, Agent.new uses it as-is to
-    # resume persisted history. The hash never carries history (see "What does
-    # not transfer"), so this is the only seam for rehydrating a conversation.
+    # The hash never carries history, so +session+ is the only seam for rehydrating a conversation.
+    # +context+ feeds tool dispatch only; the config was resolved before serialization.
     Riffer::Agent.new(config: Riffer::Agent::Config.new(**config_args), context: context, session: session)
   end
 
@@ -119,19 +95,17 @@ module Riffer::Agent::Serializer
     Riffer::Params.from_json_schema(schema)
   end
 
-  # Encodes unlimited steps (+nil+ in the DSL) as +-1+ on the wire, where a
-  # JSON +null+ is awkward across transports (e.g. proto3).
   #--
   #: (Numeric?) -> Numeric
   def encode_max_steps(value)
+    # A JSON null is awkward across transports (e.g. proto3), so unlimited travels as -1.
     value.nil? ? -1 : value
   end
 
-  # Reverses +encode_max_steps+; a missing key falls back to the default so a
-  # partial hash can't become an unbounded loop.
   #--
   #: (Hash[Symbol, untyped]) -> Numeric?
   def decode_max_steps(hash)
+    # A partial hash must not become an unbounded loop.
     return Riffer::Agent::Config::DEFAULT_MAX_STEPS unless hash.key?(:max_steps)
 
     hash[:max_steps] == -1 ? nil : hash[:max_steps]
@@ -151,10 +125,7 @@ module Riffer::Agent::Serializer
     schema = descriptor[:parameters_schema]
     tool_timeout = descriptor[:timeout]
 
-    # An anonymous Riffer::Tool subclass is the idiom for synthesizing a tool
-    # from data — the tool DSL is class-level, so there is no value-level
-    # builder to type against. Same approach as Riffer::Mcp::ToolFactory;
-    # steep can't type the dynamic class body, hence the ignore block.
+    # The tool DSL is class-level, so there is no value-level builder to synthesize a tool from data.
     Class.new(Riffer::Tool) do
       # steep:ignore:start
       identifier tool_name

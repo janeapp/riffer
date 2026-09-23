@@ -3,10 +3,8 @@
 
 require "securerandom"
 
-# Base class for all message types. Subclasses must implement +role+.
 class Riffer::Messages::Base
-  # Builds the matching message subclass from a hash, or returns +msg+ unchanged
-  # when it is already a message. Raises Riffer::ArgumentError on an invalid message.
+  # Raises Riffer::ArgumentError on an invalid message.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Base)) -> Riffer::Messages::Base
   def self.from_hash(msg)
@@ -23,10 +21,8 @@ class Riffer::Messages::Base
     end
   end
 
-  # The message content.
   attr_reader :content #: String # @dynamic content
 
-  # The message id, or nil when +Riffer.config.message_id_strategy+ is +:none+.
   attr_reader :id #: String? # @dynamic id
 
   #--
@@ -36,8 +32,6 @@ class Riffer::Messages::Base
     @id = id || generate_id
   end
 
-  # Converts the message to a hash.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
@@ -46,23 +40,18 @@ class Riffer::Messages::Base
     hash
   end
 
-  # Returns the message role.
   #--
   #: () -> Symbol
   def role
     raise NotImplementedError, "Subclasses must implement #role"
   end
 
-  # Whether this message carries pending tool calls (overridden by
-  # +Riffer::Messages::Assistant+).
   #--
   #: () -> bool
   def has_tool_calls?
     false
   end
 
-  # Merges another same-role message into this one. +Tool+ messages are never
-  # merged.
   #--
   #: (untyped) -> Riffer::Messages::Base
   def +(other)

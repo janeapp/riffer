@@ -1,57 +1,23 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Registry of a class's direct subclasses, keyed by identifier. Extend it
-# onto a base class to look up subclasses in constant time via +find+ and +all+.
-# Subclasses join implicitly by inheriting; +register+ adds one explicitly, for
-# ephemeral classes a test suite builds and tears down. Registration is not
-# synchronized — register during boot or from a single-threaded test, before
-# concurrent lookups begin.
-#
-#   class Riffer::Tool
-#     extend Riffer::Registrable
-#   end
-#
-#   Riffer::Tool.find("weather_tool") # => WeatherTool
-#
 # @rbs module-self Class
 module Riffer::Registrable
   # @rbs @identifier_registry: Hash[String, Class]?
   # @rbs @explicit_registrations: Hash[String, Class]?
 
-  # Finds a registered subclass by identifier, or +nil+ when none matches.
-  # Implicit registration covers only *named direct* subclasses: grandchildren
-  # are not visible to a grandparent's +find+ (call +find+ on their direct
-  # parent instead), anonymous classes are never registered implicitly, and a
-  # subclass whose name no longer resolves back to it is dropped at the next
-  # registry rebuild. Duplicate identifiers raise
-  # Riffer::DuplicateIdentifierError at first lookup.
-  #
   #--
   #: (String | Symbol) -> Class?
   def find(identifier)
     identifier_registry[identifier.to_s]
   end
 
-  # Returns all registered subclasses, implicit and explicit. Carries the same
-  # registration rules as +find+.
-  #
   #--
   #: () -> Array[Class]
   def all
     identifier_registry.values
   end
 
-  # Registers a direct subclass under its +identifier+, whether or not it is
-  # named — unlike implicit registration, it survives a name that no longer
-  # resolves, so an ephemeral class stays findable until +unregister+. Prefer
-  # Riffer::Testing for ordinary test setup, which stubs and cleans up
-  # automatically.
-  #
-  # Raises Riffer::ArgumentError when the identifier is blank or the class is
-  # not a direct subclass, and Riffer::DuplicateIdentifierError when the
-  # identifier is already taken — including by this same class.
-  #
   #--
   #: (Class) -> void
   def register(klass)
@@ -65,12 +31,12 @@ module Riffer::Registrable
     existing = identifier_registry[key]
     raise_duplicate_identifier!(key, existing, klass) if existing
 
+    # Not synchronized: register during boot or from a single-threaded test,
+    # before concurrent lookups begin.
     explicit_registrations[key] = klass
     @identifier_registry = nil
   end
 
-  # Removes an explicit registration of +klass+, leaving implicit registrations
-  # untouched.
   #--
   #: (Class) -> void
   def unregister(klass)
@@ -83,13 +49,12 @@ module Riffer::Registrable
 
   private
 
-  # Ruby invokes +inherited+ with +self+ bound to the direct superclass — the
-  # only registry the new subclass joins — so busting self's memo is exactly
-  # sufficient.
   #--
   #: (Class) -> void
   def inherited(subclass)
     super
+    # +self+ is the direct superclass — the only registry the new subclass
+    # joins — so busting self's memo is exactly sufficient.
     @identifier_registry = nil
   end
 
@@ -108,6 +73,8 @@ module Riffer::Registrable
   #--
   #: () -> Hash[String, Class]
   def build_identifier_registry
+    # Explicit entries skip +live?+ so an ephemeral class stays findable until
+    # +unregister+, even once its name no longer resolves.
     subclasses.each_with_object(explicit_registrations.dup) do |subclass, acc|
       next unless live?(subclass)
 
@@ -121,15 +88,14 @@ module Riffer::Registrable
     end.freeze
   end
 
-  # Class#subclasses keeps returning superseded generations of a reloaded or
-  # stubbed class, so a subclass counts only while its own name still resolves
-  # back to it. An anonymous class has no name to resolve and is skipped even
-  # with an explicit identifier — the MCP factory and serializer shells
-  # synthesize short-lived anonymous classes whose registration would flake
-  # with GC timing.
   #--
   #: (Class) -> bool
   def live?(subclass)
+    # Class#subclasses keeps returning superseded generations of a reloaded or
+    # stubbed class, so a subclass counts only while its own name still
+    # resolves back to it. Anonymous classes are skipped even with an
+    # identifier: the MCP factory and serializer shells synthesize short-lived
+    # anonymous classes whose registration would flake with GC timing.
     real_name = Riffer::Helpers::Identifier.real_name(subclass)
     return false if real_name.nil?
 

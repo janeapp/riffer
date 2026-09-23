@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# OTEL-backed tracing backend. <tt>::OpenTelemetry</tt> constants appear only
-# inside method bodies here, so the gem loads and eager-loads cleanly when the
-# OpenTelemetry API is absent.
+# <tt>::OpenTelemetry</tt> constants must appear only inside method bodies, so
+# the gem eager-loads cleanly when the OpenTelemetry API is absent.
 class Riffer::Tracing::Otel # :nodoc: all
   SUPPORTED_API_VERSIONS = Gem::Requirement.new(">= 1.1", "< 2") #: Gem::Requirement
 
-  # Wraps a live OTEL span behind the port's span surface, so callers never
-  # touch <tt>::OpenTelemetry</tt> constants (status objects in particular).
+  # Keeps callers from touching <tt>::OpenTelemetry</tt> constants (status
+  # objects in particular).
   class Span
     # @rbs @otel_span: untyped
 
@@ -36,7 +35,6 @@ class Riffer::Tracing::Otel # :nodoc: all
       @otel_span.record_exception(exception)
     end
 
-    # Marks the span status as error.
     #--
     #: (?String) -> void
     def error!(description = "")
@@ -51,9 +49,7 @@ class Riffer::Tracing::Otel # :nodoc: all
   end
 
   class << self
-    # Builds a backend when the OpenTelemetry API is loadable at a supported
-    # version; returns +nil+ so resolution falls back to NoOp. +provider+
-    # defaults to the global <tt>OpenTelemetry.tracer_provider</tt>.
+    # Returns +nil+ so resolution falls back to NoOp.
     #--
     #: (?provider: untyped) -> Riffer::Tracing::Otel?
     def build(provider: nil)
@@ -69,7 +65,6 @@ class Riffer::Tracing::Otel # :nodoc: all
       new(provider: provider || ::OpenTelemetry.tracer_provider)
     end
 
-    # Whether the OpenTelemetry API gem is loadable at a supported version.
     #--
     #: () -> bool
     def available?
@@ -79,9 +74,8 @@ class Riffer::Tracing::Otel # :nodoc: all
       supported?(version)
     end
 
-    # Whether the given opentelemetry-api version is one riffer codes
-    # against. The gem is undeclared, so this guard is the only protection
-    # against an incompatible API.
+    # opentelemetry-api is undeclared, so this is the only protection against
+    # an incompatible API.
     #--
     #: (Gem::Version) -> bool
     def supported?(version)
@@ -109,7 +103,6 @@ class Riffer::Tracing::Otel # :nodoc: all
     @tracer = provider.tracer("riffer", Riffer::VERSION)
   end
 
-  # Opens an OTEL span around the block, yielding the wrapped span.
   #--
   #: [R] (String, attributes: Hash[String, untyped]?, kind: Symbol) { (Riffer::Tracing::Otel::Span) -> R } -> R
   def in_span(name, attributes:, kind:)
@@ -118,14 +111,12 @@ class Riffer::Tracing::Otel # :nodoc: all
     end
   end
 
-  # Returns the active OTEL context.
   #--
   #: () -> untyped
   def current_context
     ::OpenTelemetry::Context.current
   end
 
-  # Runs the block with the given OTEL context active.
   #--
   #: [R] (untyped) { () -> R } -> R
   def with_context(context, &)

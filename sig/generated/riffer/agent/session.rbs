@@ -1,94 +1,60 @@
 # Generated from lib/riffer/agent/session.rb with RBS::Inline
 
-# Owns the conversation handle for an agent: the message array, the
-# +on_message+ callbacks, and the +tool_use+ ↔ +tool_result+ invariant that
-# keeps tool calls and their results consistent.
-#
-#   agent.session.add(msg)                  # append + fire callbacks
-#   agent.session.set([msg1, msg2])         # bulk replace (silent)
-#   agent.session.unset                     # clear (silent)
-#   agent.session.remove(id: "a_1")
-#   agent.session.update(id: "a_1", content: "...")
-#   agent.session.find { |m| m.id == "a_1" }
 class Riffer::Agent::Session
   include Enumerable[Riffer::Messages::Base]
 
   @callbacks: Array[^(Riffer::Messages::Base) -> void]
 
-  # The message history.
   attr_reader messages: Array[Riffer::Messages::Base]
 
   # --
   # : (?messages: Array[Riffer::Messages::Base]) -> void
   def initialize: (?messages: Array[Riffer::Messages::Base]) -> void
 
-  # Registers a callback invoked once per message appended via +#add+.
   # --
   # : () { (Riffer::Messages::Base) -> void } -> self
   def on_message: () { (Riffer::Messages::Base) -> void } -> self
 
-  # Appends +message+ and fires every registered callback once with it. Pass
-  # +silent: true+ to skip callbacks — used for non-inference inputs like user
-  # messages that subscribers don't expect on the callback channel.
   # --
   # : (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
   def add: (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
 
-  # Replaces the message history wholesale
   # --
   # : (Array[Riffer::Messages::Base]) -> self
   def set: (Array[Riffer::Messages::Base]) -> self
 
-  # Clears the session.
   # --
   # : () -> self
   def unset: () -> self
 
-  # Removes a message by id, cascading to drop the +Tool+ results of a removed
-  # assistant's +tool_calls+ so the +tool_use+ ↔ +tool_result+ invariant holds.
-  # Raises on a +Tool+ message — that would orphan its parent; use +#update+
-  # instead. Returns +nil+ if no message matches.
+  # Raises Riffer::ArgumentError on a +Tool+ message; use +#update+ instead.
   # --
   # : (id: String) -> Riffer::Messages::Base?
   def remove: (id: String) -> Riffer::Messages::Base?
 
-  # Partial in-place update: looks up a message by +id:+ or +tool_call_id:+
-  # (exactly one), overlays +attrs+ onto a same-type replacement, and swaps it
-  # in. Dropping +tool_calls+ from an assistant cascades to remove their +Tool+
-  # results, preserving the invariant. Raises on neither/both keys or no match.
+  # Raises Riffer::ArgumentError when no message matches.
   # --
   # : (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base
   def update: (?id: String?, ?tool_call_id: String?, **untyped) -> Riffer::Messages::Base
 
-  # Returns the call_ids of every +tool_call+ with no matching
-  # +Riffer::Messages::Tool+ result anywhere in history — a hook for checking
-  # the +tool_use+ ↔ +tool_result+ invariant before mutating or persisting.
   # --
   # : () -> Array[String]
   def orphaned_tool_call_ids: () -> Array[String]
 
-  # Returns +[last_assistant, pending_tool_calls]+; the second element is empty
-  # when there's no assistant message or no pending calls.
   # --
   # : () -> [Riffer::Messages::Assistant?, Array[Riffer::Messages::Assistant::ToolCall]]
   def pending_tool_calls: () -> [ Riffer::Messages::Assistant?, Array[Riffer::Messages::Assistant::ToolCall] ]
 
-  # Yields each message in order, or returns an Enumerator without a block.
   # --
   # : () -> Enumerator[Riffer::Messages::Base, self]
   # : () { (Riffer::Messages::Base) -> void } -> untyped
   def each: () -> Enumerator[Riffer::Messages::Base, self]
           | () { (Riffer::Messages::Base) -> void } -> untyped
 
-  # The number of LLM steps completed, used by the agent loop to enforce
-  # +max_steps+ on resume.
   # --
   # : () -> Integer
   def steps: () -> Integer
 
-  # The most recent +Riffer::Messages::Assistant+ in the session, or +nil+
-  # when none exists.
-  #
   # --
   # : () -> Riffer::Messages::Assistant?
   def final_assistant_message: () -> Riffer::Messages::Assistant?

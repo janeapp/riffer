@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents one completed reasoning block during streaming; only emitted by
-# providers that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDone < Riffer::StreamEvents::Base
-  # The reasoning block, which the agent loop accumulates onto the assistant
-  # message. Its +text+ is the content the preceding ReasoningDelta events
-  # added up to.
+  # +text+ is the concatenation of the preceding ReasoningDelta events.
   attr_reader :part #: Riffer::Messages::Assistant::ReasoningPart # @dynamic part
 
   #--

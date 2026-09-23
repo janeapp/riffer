@@ -182,7 +182,6 @@ describe Riffer::Runner::Threaded do
         n
       end
 
-      # Each item runs in its own thread, so we should see distinct thread ids
       expect(seen.uniq.length).must_equal 3
     end
 

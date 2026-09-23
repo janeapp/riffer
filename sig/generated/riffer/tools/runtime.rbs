@@ -1,8 +1,5 @@
 # Generated from lib/riffer/tools/runtime.rb with RBS::Inline
 
-# Handles tool call execution for an agent, composing with a Riffer::Runner for
-# concurrency. Subclass and override +dispatch_tool_call+ to customize dispatch
-# (e.g. HTTP, gRPC).
 class Riffer::Tools::Runtime
   @runner: Riffer::Runner
 
@@ -10,25 +7,11 @@ class Riffer::Tools::Runtime
   # : (runner: Riffer::Runner) -> void
   def initialize: (runner: Riffer::Runner) -> void
 
-  # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
   # --
   # : (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?, ?tags: Hash[String, String]) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?, ?tags: Hash[String, String]) -> Array[[ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]]
 
-  # Hook wrapping each tool call; override in subclasses to instrument or
-  # customize. Must +yield+ to continue.
-  #
-  #   class InstrumentedRuntime < Riffer::Tools::Runtime::Inline
-  #     private
-  #
-  #     def around_tool_call(tool_call, context:, assistant_message: nil)
-  #       start = Time.now
-  #       result = yield
-  #       Rails.logger.info("Tool #{tool_call.name} took #{Time.now - start}s")
-  #       result
-  #     end
-  #   end
-  #
+  # Overrides must +yield+ and return its Response.
   # --
   # : (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
   def around_tool_call: (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
@@ -39,6 +22,7 @@ class Riffer::Tools::Runtime
   # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   def instrument_tool_call: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { () -> Riffer::Tools::Response } -> [ Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response ]
 
+  # Subclasses override this to dispatch elsewhere (e.g. HTTP, gRPC).
   # --
   # : (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
   def dispatch_tool_call: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
@@ -47,7 +31,6 @@ class Riffer::Tools::Runtime
   # : (String) -> untyped
   def parse_arguments: (String) -> untyped
 
-  # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
   # --
   # : [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
   def in_tool_span: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
@@ -56,15 +39,10 @@ class Riffer::Tools::Runtime
   # : (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
   def tool_span_attributes: (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) -> Hash[String, untyped]
 
-  # Maps normalized tags to their namespaced span attribute form. An empty map
-  # yields an empty hash, so merging it is a no-op.
   # --
   # : (Hash[String, String]) -> Hash[String, String]
   def tag_attributes: (Hash[String, String]) -> Hash[String, String]
 
-  # A deliberate error Response is a handled outcome, so its status stays unset.
-  # An error status is reserved for a Response carrying the exception it was
-  # folded from — the tool failed for a reason nobody anticipated.
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
   def record_tool_outcome: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Tools::Response) -> void

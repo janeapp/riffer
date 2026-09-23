@@ -82,8 +82,7 @@ describe "Agent skills integration" do
     end
 
     it "explicit adapter wins over model-aware default" do
-      # Mock with a "claude" model name would default to XML; explicit
-      # MarkdownAdapter must still take precedence.
+      # A "claude" model name defaults to the XML adapter.
       agent_class = stub_agent("Agent") do
         model "mock/claude-sonnet-4-6"
         skills do
@@ -270,7 +269,6 @@ describe "Agent skills integration" do
       agent_class = stub_agent("Agent") do
         model "mock/riffer-1"
         skills do
-          # no per-agent backend; should pick up the global default
         end
       end
 
@@ -388,9 +386,7 @@ describe "Agent skills integration" do
       skills_msg = system_messages[1]
 
       assert_includes skills_msg.content, "code review assistant"
-      # Pre-activated skill should not appear in the catalog
       refute_includes skills_msg.content, "- **code-review**"
-      # Non-activated skill should still be in the catalog
       assert_includes skills_msg.content, "- **data-analysis**"
     end
 

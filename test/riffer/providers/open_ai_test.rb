@@ -5,8 +5,6 @@ require "test_helper"
 describe Riffer::Providers::OpenAI do
   let(:api_key) { ENV.fetch("OPENAI_API_KEY", "test_api_key") }
 
-  # Credentials now reach the provider only through config, so every test that
-  # builds a client needs one configured.
   before { Riffer.config.openai.api_key = api_key }
 
   after do
@@ -608,7 +606,7 @@ describe Riffer::Providers::OpenAI do
     let(:provider) { Riffer::Providers::OpenAI.new }
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
 
-    # Tags arrive already normalized from Run, so these pass clean String maps.
+    # Run normalizes tags before they reach the provider, so these pass clean String maps.
     it "maps all tags to metadata" do
       params = provider.send(
         :build_request_params,

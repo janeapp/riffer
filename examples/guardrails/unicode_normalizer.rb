@@ -1,20 +1,7 @@
 # frozen_string_literal: true
 
-# Unicode Normalizer Guardrail
-#
-# Normalizes input text to NFC form, strips control characters,
-# collapses consecutive whitespace, and trims leading/trailing whitespace.
-#
-# Usage:
-#
-#   class MyAgent < Riffer::Agent
-#     model "openai/gpt-4o"
-#
-#     guardrail :before, with: UnicodeNormalizerGuardrail
-#   end
-#
 class UnicodeNormalizerGuardrail < Riffer::Guardrail
-  # Unicode control characters (C0/C1) except common whitespace (tab, newline, carriage return)
+  # C0/C1 controls, sparing tab, newline, and carriage return
   CONTROL_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\u0080-\u009F]/
 
   def process_input(messages, context:)

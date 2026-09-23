@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents an incremental text chunk during streaming.
 class Riffer::StreamEvents::TextDelta < Riffer::StreamEvents::Base
-  # The incremental text content.
   attr_reader :content #: String # @dynamic content
 
   #--

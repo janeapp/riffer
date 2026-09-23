@@ -7,7 +7,6 @@ describe Riffer::Mcp::Registration do
     Riffer::Mcp::Manifest.new(name: "test-srv", tags: [:test], endpoint: "https://test.example.com")
   end
 
-  # Build a registration whose discovery is bypassed so tests control state directly.
   def build_stub_registration(manifest, tools: [])
     reg = Riffer::Mcp::Registration.allocate
     reg.instance_variable_set(:@manifest, manifest)

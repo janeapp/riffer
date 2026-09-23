@@ -2,8 +2,7 @@
 
 require "test_helper"
 
-# Named container so classes assigned beneath it get permanent names; each test
-# removes the constants it creates (the classes stay named — that's fine).
+# Named container so classes assigned beneath it get permanent names.
 module IdentifierTestNamespace; end
 
 describe Riffer::Helpers::Identifier do

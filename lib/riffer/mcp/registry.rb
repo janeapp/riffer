@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Thread-safe global store for MCP server registrations, keyed by manifest name.
 module Riffer::Mcp::Registry
   extend self
 
@@ -11,8 +10,6 @@ module Riffer::Mcp::Registry
   @mutex = Mutex.new
   @store = {} #: Hash[String, Riffer::Mcp::Registration]
 
-  # Registers an MCP server and starts async tool discovery, replacing any
-  # existing registration with the same name.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Mcp::Manifest)) -> Riffer::Mcp::Registration
   def register(manifest_or_hash)
@@ -33,8 +30,6 @@ module Riffer::Mcp::Registry
     registration
   end
 
-  # Removes a registration by name.
-  #
   #--
   #: ((String | Symbol)) -> void
   def unregister(name)
@@ -42,16 +37,12 @@ module Riffer::Mcp::Registry
     removed&.retire!
   end
 
-  # Returns a frozen snapshot of all current registrations.
-  #
   #--
   #: () -> Hash[String, Riffer::Mcp::Registration]
   def registrations
     @mutex.synchronize { @store.dup.freeze }
   end
 
-  # Returns all registrations whose manifest tags intersect the given tags
-  # (normalized to symbols).
   #--
   #: (Array[Symbol]) -> Array[Riffer::Mcp::Registration]
   def find_by_tags(tags)

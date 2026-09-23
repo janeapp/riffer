@@ -1,8 +1,7 @@
 # Generated from lib/riffer/tracing.rb with RBS::Inline
 
-# Internal tracing port — emits OTEL spans when the host bundles the
-# OpenTelemetry API and no-ops otherwise, so riffer never declares an OTEL
-# dependency.
+# No-ops unless the host bundles the OpenTelemetry API, so riffer never
+# declares an OTEL dependency.
 module Riffer::Tracing
   @backend: untyped
 
@@ -12,30 +11,24 @@ module Riffer::Tracing
   # lives here as the documented contract version.
   SCHEMA_URL: String
 
-  # Opens a span around the block, yielding the span.
   # --
   # : [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_span: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
 
-  # Returns the active trace context, for re-attachment across fiber or
-  # thread boundaries.
+  # For re-attachment across fiber or thread boundaries.
   # --
   # : () -> untyped
   def current_context: () -> untyped
 
-  # Runs the block with the given trace context active; +nil+ passes through
-  # so captures taken while tracing was dark stay harmless.
+  # +nil+ passes through so captures taken while tracing was off stay harmless.
   # --
   # : [R] (untyped) { () -> R } -> R
   def with_context: [R] (untyped) { () -> R } -> R
 
-  # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
-  # when the model was priced, <tt>riffer.cost</tt>.
   # --
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Providers::TokenUsage?) -> void
   def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Providers::TokenUsage?) -> void
 
-  # Discards the resolved backend so the next span re-resolves it.
   # --
   # : () -> void
   def reset!: () -> void

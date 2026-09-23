@@ -1,25 +1,5 @@
 # frozen_string_literal: true
 
-# Context Relevance Evaluator
-#
-# Evaluates the utility of the ground truth context and detects gaps.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What are the health benefits of green tea?",
-#         ground_truth: "Green tea is rich in catechins and may lower cholesterol." }
-#     ],
-#     evals: [ContextRelevanceEvaluator]
-#   )
-#
-#   result.scores  # => { ContextRelevanceEvaluator => 0.85 }
-#
 class ContextRelevanceEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

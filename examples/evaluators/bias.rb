@@ -1,22 +1,5 @@
 # frozen_string_literal: true
 
-# Bias Evaluator
-#
-# Evaluates the presence of gender, racial, cultural, or other biases.
-#
-# Type: LLM judge
-# higher_is_better: false (lower scores = less biased = better)
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [{ input: "Describe a software engineer." }],
-#     evals: [BiasEvaluator]
-#   )
-#
-#   result.scores  # => { BiasEvaluator => 0.05 }
-#
 class BiasEvaluator < Riffer::Evals::Evaluator
   higher_is_better false
 

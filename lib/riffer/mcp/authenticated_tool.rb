@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Wraps MCP-generated tool classes so +tools/call+ resolves
-# +Riffer.config.mcp.credentials+ per invocation, copying metadata from the
-# inner class at wrap time.
 module Riffer::Mcp::AuthenticatedTool
   extend self
 
-  # Returns one wrapper class per inner tool, sharing +manifest+ and +matched_tags+.
-  #
   #--
   #: (Array[singleton(Riffer::Mcp::Tool)], Riffer::Mcp::Manifest, Array[Symbol]) -> Array[singleton(Riffer::Mcp::Tool)]
   def wrap_all(tool_classes, manifest, matched_tags)
@@ -23,8 +18,7 @@ module Riffer::Mcp::AuthenticatedTool
     tags = matched_tags
 
     # steep does not model Class.new's class_eval semantics — the block body
-    # typechecks against the enclosing module, so the ivar assignments and the
-    # define_method bodies are unresolvable.
+    # typechecks against the enclosing module.
     Class.new(Riffer::Mcp::Tool) do
       # steep:ignore:start
       @identifier = inner.identifier
@@ -32,11 +26,9 @@ module Riffer::Mcp::AuthenticatedTool
       @input_schema = inner.parameters_schema
       @mcp_server_tool_name = inner.mcp_server_tool_name
 
-      # Creates a fresh client per +tools/call+ so headers from the credentials
-      # proc stay current.
-      # TODO: A per-headers cache would reduce connection churn under load, and
-      # requires a follow-up investigation to determine how to invalidate failing
-      # clients.
+      # A fresh client per +tools/call+ keeps credentials-proc headers current at
+      # the cost of connection churn; a per-headers cache would first need a way
+      # to invalidate failing clients.
       define_method(:build_call_client) do |endpoint, headers|
         Riffer::Mcp::Client.new(endpoint: endpoint, headers: headers)
       end

@@ -6,8 +6,6 @@ describe Riffer::Providers::AzureOpenAI do
   let(:api_key) { ENV.fetch("AZURE_OPENAI_API_KEY", "test_api_key") }
   let(:endpoint) { ENV.fetch("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com/") }
 
-  # Credentials now reach the provider only through config, so every test that
-  # builds a client needs them configured.
   before do
     Riffer.config.azure_openai.api_key = api_key
     Riffer.config.azure_openai.endpoint = endpoint
@@ -77,9 +75,6 @@ describe Riffer::Providers::AzureOpenAI do
       expect(provider.send(:client)).must_be_same_as provider.send(:client)
     end
 
-    # Guards the deliberate non-compacting in build_client: borrowing the
-    # OpenAI SDK must never route Azure traffic, or an OpenAI credential, to
-    # whatever OPENAI_API_KEY / OPENAI_BASE_URL name.
     it "never falls back to OPENAI_API_KEY or OPENAI_BASE_URL" do
       originals = ENV.to_hash.slice("OPENAI_API_KEY", "OPENAI_BASE_URL", "AZURE_OPENAI_API_KEY")
       ENV["OPENAI_API_KEY"] = "sk-openai-secret"
@@ -194,18 +189,6 @@ describe Riffer::Providers::AzureOpenAI do
       ).must_equal([{ "team" => "growth", "user_id" => "u_1" }, "u_1"])
     end
   end
-
-  # Currently unable to access azure, keeping commented out for now.
-  # describe "per-call tags (end-to-end)" do
-  #   it "forwards per-call tags to the request" do
-  #     provider = Riffer::Providers::AzureOpenAI.new
-  #     VCR.use_cassette("Riffer_Providers_AzureOpenAI/tags/forwards_metadata_and_safety_identifier") do
-  #       result = provider.generate_text(prompt: "Say hello", model: "gpt-5-mini",
-  #                                       tags: {"user_id" => "u_1", "team" => "growth"})
-  #       expect(result).must_be_instance_of Riffer::Messages::Assistant
-  #     end
-  #   end
-  # end
 
   describe "#stream_text" do
     describe "when prompt is provided" do

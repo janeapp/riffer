@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Helper module for deriving snake_case identifiers from class names.
 module Riffer::Helpers::Identifier
   extend self
 
-  # Derives a snake_case identifier from a class name string.
-  #
   #--
   #: (String?) -> String
   def derive(class_name)
@@ -18,11 +15,6 @@ module Riffer::Helpers::Identifier
       downcase
   end
 
-  # Derives and memoizes the identifier for a class or module. Anonymous
-  # classes return "" without caching, so a class named later still derives its
-  # real identifier — a guard that must travel with the cache, so callers never
-  # memoize their own.
-  #
   #--
   #: (Module) -> String
   def for(klass)
@@ -30,6 +22,8 @@ module Riffer::Helpers::Identifier
     return cached if cached
 
     real_name = real_name(klass)
+    # Anonymous classes skip the cache so a class named later still derives its
+    # real identifier; callers must not memoize their own for the same reason.
     return "" if real_name.nil?
 
     derived = derive(real_name)
@@ -37,13 +31,10 @@ module Riffer::Helpers::Identifier
     derived
   end
 
-  # Returns the class-path name of a class or module, or +nil+ when anonymous.
-  # Tool classes shadow Module#name with the identifier DSL, so the real name
-  # must come from Module's own implementation.
-  #
   #--
   #: (Module) -> String?
   def real_name(klass)
+    # Tool classes shadow Module#name with the identifier DSL.
     Module.instance_method(:name).bind_call(klass) #: String?
   end
 end

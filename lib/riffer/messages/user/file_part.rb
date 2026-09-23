@@ -4,8 +4,6 @@
 require "base64"
 require "uri"
 
-# Represents a file attachment (image or document) — from a URL (+from_url+) or
-# raw base64 data (+new+).
 class Riffer::Messages::User::FilePart
   # @rbs @url_string: String?
   # @rbs @data: String?
@@ -28,17 +26,13 @@ class Riffer::Messages::User::FilePart
   SUPPORTED_MEDIA_TYPES = MEDIA_TYPES.values.uniq.freeze #: Array[String]
   SHA256_PATTERN = /\A[0-9a-f]{64}\z/i #: Regexp
 
-  # The MIME type of the file.
   attr_reader :media_type #: String # @dynamic media_type
 
-  # The filename, if available.
   attr_reader :filename #: String? # @dynamic filename
 
-  # The expected SHA-256 of the file contents, if the caller supplied one.
   attr_reader :sha256 #: String? # @dynamic sha256
 
-  # Raises Riffer::ArgumentError unless +data+ or +url+ is given and
-  # +media_type+ is supported.
+  # Raises Riffer::ArgumentError on an unsupported +media_type+.
   #--
   #: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
   def initialize(media_type:, data: nil, filename: nil, url: nil, sha256: nil)
@@ -59,17 +53,14 @@ class Riffer::Messages::User::FilePart
     @url_string = url
   end
 
-  # Creates a FilePart from a URL, detecting +media_type+ from the path
-  # extension when omitted. Raises Riffer::ArgumentError if it can't be detected.
+  # Raises Riffer::ArgumentError when +media_type+ is omitted and the URL's
+  # extension doesn't identify one.
   #--
   #: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
   def self.from_url(url, media_type: nil, filename: nil, sha256: nil)
     new(url: url, media_type: media_type || detect_media_type(url), filename: filename, sha256: sha256)
   end
 
-  # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
-  # or returns +file+ unchanged when it is already a FilePart. Raises
-  # Riffer::ArgumentError on an invalid hash.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::User::FilePart)) -> Riffer::Messages::User::FilePart
   def self.from_hash(file)
@@ -90,7 +81,6 @@ class Riffer::Messages::User::FilePart
     end
   end
 
-  # Raises Riffer::ArgumentError when the URL's extension isn't a known media type.
   #--
   #: (String) -> String
   def self.detect_media_type(url)
@@ -99,8 +89,6 @@ class Riffer::Messages::User::FilePart
   end
   private_class_method :detect_media_type
 
-  # The base64-encoded contents - caller-supplied, or filled in by the file
-  # resolver after a download.  Nil for a URL source riffer hasn't fetched.
   #--
   #: () -> String?
   def data
@@ -124,60 +112,47 @@ class Riffer::Messages::User::FilePart
     @data_bytes = bytes
   end
 
-  # Whether data was supplied directly, as opposed to filled in later by the
-  # file resolver after a download
   #: () -> bool
   def inline_data?
     !@data.nil?
   end
 
-  # Caches bytes fetched for a URL source.  Deliberately absent from +to_h+:
-  # the agent loop re-sends history on every turn, so the cache saves refreshing
-  # the same file, while persisted history stays free of megabytes of base64
   #--
   #: (String) -> void
   def cache_downloaded_data(data)
     @downloaded_data = data
   end
 
-  # Returns the URL if the source was a URL, nil otherwise.
-  #
   #--
   #: () -> String?
   def url
     @url_string
   end
 
-  # Returns true if the source was a URL.
-  #
   #--
   #: () -> bool
   def url?
     !@url_string.nil?
   end
 
-  # Returns true if the file is an image.
-  #
   #--
   #: () -> bool
   def image?
     media_type.start_with?("image/")
   end
 
-  # Returns true if the file is a document (not an image).
-  #
   #--
   #: () -> bool
   def document?
     !image?
   end
 
-  # Serializes the FilePart to a hash.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     hash = { media_type: media_type } #: Hash[Symbol, untyped]
+    # Downloaded data is left out so persisted history stays free of megabytes
+    # of base64; the in-memory cache still spares refetching on every turn.
     hash[:data] = @data if @data
     hash[:url] = @url_string if @url_string
     hash[:filename] = filename if filename

@@ -1,15 +1,12 @@
 # Generated from lib/riffer/providers/open_ai.rb with RBS::Inline
 
-# OpenAI provider for GPT models. Requires the +openai+ gem.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
-  # The Responses API has no finish_reason field. The response +status+ is
-  # the primary signal; an +incomplete+ status is only meaningful together
-  # with <tt>incomplete_details.reason</tt>, so that branch nests one level.
+  # The Responses API has no finish_reason field, and an +incomplete+ status is only meaningful
+  # together with <tt>incomplete_details.reason</tt>.
   FINISH_REASONS: Hash[String, Symbol | Hash[String, Symbol]]
 
-  # The GenAI semconv well-known provider name.
   # --
   # : () -> String
   def self.semconv_provider_name: () -> String
@@ -28,9 +25,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : () -> untyped
   def global_client: () -> untyped
 
-  # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /
-  # +OPENAI_BASE_URL+ only for a missing argument, and an explicit nil would
-  # suppress that fallback.
   # --
   # : () -> untyped
   def build_client: () -> untyped
@@ -59,7 +53,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def build_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
-  # The nested field that names the cause behind an ambiguous status.
   # --
   # : (untyped, String) -> String?
   def finish_detail: (untyped, String) -> String?

@@ -4,7 +4,6 @@
 require "json"
 require "securerandom"
 
-# Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN = /\A[a-zA-Z0-9._-]+\z/ #: Regexp
 
@@ -29,7 +28,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     "FINISH_REASON_UNSPECIFIED" => :other,
   }.freeze #: Hash[String, Symbol]
 
-  # The GenAI semconv well-known provider name.
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -76,10 +74,8 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
       }]
     end
 
-    # tags propagate to observability only: the Gemini Developer API has no
-    # request labels field (unknown body fields are rejected), so :tags is
-    # stripped here rather than mapped. Native labels would arrive with a Vertex
-    # adapter. See docs/CONFIGURATION.md.
+    # The Gemini Developer API has no request labels field and rejects unknown
+    # body fields, so :tags reach observability only.
     generation_config = options.except(:tools, :structured_output, :tags)
 
     if structured_output
@@ -144,8 +140,6 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     build_finish_reason(response.dig(:candidates, 0, :finishReason), tool_calls: has_function_call)
   end
 
-  # Gemini reports STOP even when the candidate carries functionCall parts,
-  # so tool-call presence overrides the raw value.
   #--
   #: (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
   def build_finish_reason(raw_reason, tool_calls:)
@@ -153,18 +147,18 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
 
     raw = raw_reason.to_s
     reason = FINISH_REASONS.fetch(raw, :other)
+    # Gemini reports STOP even when the candidate carries functionCall parts.
     reason = :tool_calls if reason == :stop && tool_calls
     Riffer::Providers::FinishReason.new(reason: reason, raw: raw)
   end
 
-  # Gemini reports thinking tokens outside +candidatesTokenCount+;
-  # TokenUsage's output includes them.
   #--
   #: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
   def build_token_usage(usage)
     apply_pricing(
       Riffer::Providers::TokenUsage.new(
         input_tokens: usage[:promptTokenCount] || 0,
+        # Gemini reports thinking tokens outside candidatesTokenCount.
         output_tokens: (usage[:candidatesTokenCount] || 0) + (usage[:thoughtsTokenCount] || 0),
         cache_read_tokens: usage[:cachedContentTokenCount],
       ),

@@ -3,7 +3,7 @@
 
 require "json"
 
-# Represents the result of a tool execution; every tool's +call+ must return one.
+# Every tool's +call+ must return one.
 #
 #   class MyTool < Riffer::Tool
 #     def call(context:, **kwargs)
@@ -19,23 +19,14 @@ class Riffer::Tools::Response
 
   VALID_FORMATS = %i[text json].freeze #: Array[Symbol]
 
-  # The response content.
   attr_reader :content #: String # @dynamic content
-
-  # The error message, or +nil+ on success.
   attr_reader :error_message #: String? # @dynamic error_message
-
-  # The error type, or +nil+ on success.
   attr_reader :error_type #: Symbol? # @dynamic error_type
 
-  # The exception an unhandled failure was folded from, or +nil+. Kept out of
-  # every serialized form so it never reaches an LLM or a message payload.
+  # Kept out of every serialized form so it never reaches an LLM or a message
+  # payload.
   attr_reader :exception #: Exception? # @dynamic exception
 
-  # Creates a success response.
-  #
-  # Raises Riffer::ArgumentError if format is invalid.
-  #
   #--
   #: (untyped, ?format: Symbol) -> Riffer::Tools::Response
   def self.success(result, format: :text)
@@ -47,42 +38,32 @@ class Riffer::Tools::Response
     new(content: content, success: true)
   end
 
-  # Creates a success response with text format.
-  #
   #--
   #: (untyped) -> Riffer::Tools::Response
   def self.text(result)
     success(result, format: :text)
   end
 
-  # Creates a success response with JSON format.
-  #
   #--
   #: (untyped) -> Riffer::Tools::Response
   def self.json(result)
     success(result, format: :json)
   end
 
-  # Creates an error response.
-  #
   #--
   #: (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
   def self.error(message, type: :execution_error, exception: nil)
     new(content: message, success: false, error_message: message, error_type: type, exception: exception)
   end
 
-  # Returns true if the tool execution succeeded.
   #--
   #: () -> bool
   def success? = @success
 
-  # Returns true if the tool execution failed.
   #--
   #: () -> bool
   def error? = !@success
 
-  # Returns a hash representation of the response.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

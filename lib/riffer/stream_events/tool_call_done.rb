@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents a completed tool call during streaming.
 class Riffer::StreamEvents::ToolCallDone < Riffer::StreamEvents::Base
-  # The tool call item identifier.
   attr_reader :item_id #: String # @dynamic item_id
 
-  # The call identifier for response matching.
   attr_reader :call_id #: String # @dynamic call_id
 
-  # The tool name.
   attr_reader :name #: String # @dynamic name
 
-  # The complete arguments JSON string.
   attr_reader :arguments #: String # @dynamic arguments
 
   #--

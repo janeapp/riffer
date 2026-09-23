@@ -1,28 +1,20 @@
 # Generated from lib/riffer/skills/adapter.rb with RBS::Inline
 
-# Interface for skill adapters — provider-specific rendering of the
-# available-skills section in the system prompt. Subclass and override
-# +render_catalog+; the activation tool is exposed via +#skill_activate_tool+
-# for the rendered output.
 class Riffer::Skills::Adapter
-  # The activation tool class for this adapter.
   attr_reader skill_activate_tool: singleton(Riffer::Tool)
 
   # --
   # : (skill_activate_tool: singleton(Riffer::Tool)) -> void
   def initialize: (skill_activate_tool: singleton(Riffer::Tool)) -> void
 
-  # Renders a skill catalog section for the system prompt.
   # --
   # : (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog: (Array[Riffer::Skills::Frontmatter]) -> String
 
-  # Renders an activated skill body wrapped in identifying tags.
   # --
   # : (Riffer::Skills::Frontmatter, String) -> String
   def render_activation: (Riffer::Skills::Frontmatter, String) -> String
 
-  # The behavioral instructions rendered alongside the catalog.
   # --
   # : () -> String
   def catalog_instructions: () -> String

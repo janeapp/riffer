@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents an assistant (LLM) message in a conversation; may include tool
-# calls when the LLM requests tool execution.
 class Riffer::Messages::Assistant < Riffer::Messages::Base
-  # The reasoning part types +reasoning_text+ reads; the rest carry no prose.
+  # The other reasoning part types carry no prose.
   REASONING_TEXT_TYPES = %i[text summary].freeze #: Array[Symbol]
 
-  # Builds an Assistant message from a hash, or returns +msg+ unchanged when it
-  # is already an Assistant message. Raises Riffer::ArgumentError on an invalid
-  # tool call, reasoning part, or +finish_reason+.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant)) -> Riffer::Messages::Assistant
   def self.from_hash(msg)
@@ -27,29 +22,18 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     )
   end
 
-  # Array of tool calls requested by the assistant.
   attr_reader :tool_calls #: Array[Riffer::Messages::Assistant::ToolCall] # @dynamic tool_calls
 
-  # The model's reasoning blocks for this response, in the order the provider
-  # emitted them.
   attr_reader :reasoning #: Array[Riffer::Messages::Assistant::ReasoningPart] # @dynamic reasoning
 
-  # Token usage data for this response.
   attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
 
-  # Parsed structured output hash, or nil when not applicable.
   attr_reader :structured_output #: Hash[Symbol, untyped]? # @dynamic structured_output
 
-  # Normalized reason the provider finished this response, when reported (see
-  # <tt>Riffer::Providers::FinishReason::VALUES</tt>).
   attr_reader :finish_reason #: Symbol? # @dynamic finish_reason
 
-  # The provider's raw finish-reason value behind +finish_reason+, when one
-  # exists on the wire.
   attr_reader :finish_reason_raw #: String? # @dynamic finish_reason_raw
 
-  # Raises Riffer::ArgumentError when +finish_reason+ is outside the
-  # normalized vocabulary.
   #--
   #: (
   #    String,
@@ -109,8 +93,6 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     !@reasoning.empty?
   end
 
-  # The readable reasoning across this message's +:text+ and +:summary+ parts,
-  # joined by blank lines, or nil when it carries none.
   #--
   #: () -> String?
   def reasoning_text
@@ -128,8 +110,6 @@ class Riffer::Messages::Assistant < Riffer::Messages::Base
     )
   end
 
-  # Converts the message to a hash.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

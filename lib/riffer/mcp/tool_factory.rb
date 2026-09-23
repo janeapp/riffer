@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Generates anonymous Riffer::Mcp::Tool subclasses from MCP tool definitions.
-# Generated tools delegate +#call+ to the MCP client and skip Riffer's param
-# validation — the MCP server validates inputs.
 module Riffer::Mcp::ToolFactory
   extend self
 
-  # Builds one Riffer::Mcp::Tool subclass per tool definition, prefixing names
-  # with the manifest name to avoid cross-server collisions (e.g.
-  # +jira__search+); the server-side name stays on +.mcp_server_tool_name+.
   #--
   #: (String, Riffer::Mcp::Client, Array[Hash[Symbol, untyped]]) -> Array[singleton(Riffer::Mcp::Tool)]
   def build(manifest_name, client, tool_defs)
@@ -25,6 +19,8 @@ module Riffer::Mcp::ToolFactory
 
   #: (String, Riffer::Mcp::Client, Hash[Symbol, untyped]) -> singleton(Riffer::Mcp::Tool)
   def build_tool_class(manifest_name, client, descriptor)
+    # Prefixed to avoid cross-server collisions; the server-side name stays on
+    # mcp_server_tool_name.
     prefixed = "#{sanitize_name_component(manifest_name)}__#{sanitize_name_component(descriptor[:name])}"
 
     # steep does not model Class.new's class_eval semantics — the block body
@@ -37,6 +33,7 @@ module Riffer::Mcp::ToolFactory
       @description = descriptor[:description]
       @input_schema = descriptor[:input_schema]
 
+      # No Riffer param validation — the MCP server validates inputs.
       define_method(:call) do |context:, **kwargs|
         text(client.tools_call(self.class.mcp_server_tool_name, kwargs))
       end

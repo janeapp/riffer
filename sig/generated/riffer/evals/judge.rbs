@@ -1,7 +1,5 @@
 # Generated from lib/riffer/evals/judge.rb with RBS::Inline
 
-# Executes LLM-as-judge evaluations, using tool calling internally to get
-# structured output from the judge model.
 class Riffer::Evals::Judge
   @provider_instance: Riffer::Providers::Base?
 
@@ -9,25 +7,20 @@ class Riffer::Evals::Judge
 
   @model_name: String?
 
-  # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
     # --
     # : (context: Riffer::Agent::Context?, score: Float, reason: String) -> Riffer::Tools::Response
     def call: (context: Riffer::Agent::Context?, score: Float, reason: String) -> Riffer::Tools::Response
   end
 
-  # The model string (provider/model format).
   attr_reader model: String
 
-  # The tags passed to the provider on every call.
   attr_reader tags: Hash[String, String]
 
-  # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   # --
   # : (model: String, ?tags: Hash[String, String]) -> void
   def initialize: (model: String, ?tags: Hash[String, String]) -> void
 
-  # Evaluates an input/output pair using the configured LLM.
   # --
   # : (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
   def evaluate: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]

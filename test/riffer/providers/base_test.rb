@@ -153,9 +153,8 @@ describe Riffer::Providers::Base do
         Riffer::Messages::User.new("Second", files: [file_b]),
       ]
 
-      # These two messages would merge into a single 2-file message, which would
-      # exceed max_per_message if the cap were checked post-merge — reaching
-      # NotImplementedError (not TooManyFilesError) proves it's checked before.
+      # These would merge into one 2-file message over max_per_message, so
+      # reaching NotImplementedError proves the cap is checked pre-merge.
       error = expect { provider.generate_text(messages: messages) }.must_raise(NotImplementedError)
       expect(error.message).must_equal "Subclasses must implement #build_request_params"
     end

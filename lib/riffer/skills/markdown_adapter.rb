@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Default skill adapter — renders a skill catalog as Markdown for the system
-# prompt.
 class Riffer::Skills::MarkdownAdapter < Riffer::Skills::Adapter
-  # Renders a skill catalog as Markdown.
   #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)
@@ -21,12 +18,12 @@ class Riffer::Skills::MarkdownAdapter < Riffer::Skills::Adapter
 
   private
 
-  # Collapses whitespace so a multi-line (block scalar) description stays within
-  # its `-` list item instead of breaking out to column 0, where continuation
-  # lines would read as top-level prompt text or fabricated catalog entries.
   #--
   #: (String) -> String
   def single_line(description)
+    # A multi-line (block scalar) description must stay within its `-` list
+    # item; continuation lines at column 0 would read as top-level prompt text
+    # or fabricated catalog entries.
     description.gsub(/\s+/, " ").strip
   end
 end

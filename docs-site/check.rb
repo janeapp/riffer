@@ -1,9 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Validates every internal link and anchor in the built _site/ HTML. Exits
-# non-zero with a list of broken links on failure.
-
 SITE = Pathname(__dir__).join("../_site").expand_path
 
 EXTERNAL = %r{\A(?:https?:|mailto:|//)}
@@ -33,11 +30,10 @@ def ids(html)
   html.scan(/\bid="([^"]+)"/).flatten
 end
 
-# Links into /api/ are skipped: RDoc builds that tree in a separate task, so
-# it is absent when only the site has been built.
 def page_errors(file, id_index)
   links(file.read).
     grep_v(EXTERNAL).
+    # RDoc builds /api/ in a separate task, so it is absent when only the site has been built.
     reject { |link| link.start_with?("/api/") }.
     filter_map { |link| link_error(file, link, id_index) }
 end

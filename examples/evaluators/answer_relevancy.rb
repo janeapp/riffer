@@ -1,22 +1,5 @@
 # frozen_string_literal: true
 
-# Answer Relevancy Evaluator
-#
-# Evaluates how well a response addresses the input question.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [{ input: "What is Ruby?" }],
-#     evals: [AnswerRelevancyEvaluator]
-#   )
-#
-#   result.scores  # => { AnswerRelevancyEvaluator => 0.85 }
-#
 class AnswerRelevancyEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

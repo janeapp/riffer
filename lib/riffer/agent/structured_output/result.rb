@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Wraps the result of structured output parsing and validation.
 class Riffer::Agent::StructuredOutput::Result
-  # The validated object, or +nil+ on failure.
   attr_reader :object #: Hash[Symbol, untyped]? # @dynamic object
-
-  # The error message, or +nil+ on success.
   attr_reader :error #: String? # @dynamic error
 
   #--
@@ -16,14 +12,10 @@ class Riffer::Agent::StructuredOutput::Result
     @error = error
   end
 
-  # Returns true when parsing and validation succeeded.
-  #
   #--
   #: () -> bool
   def success? = @error.nil?
 
-  # Returns true when parsing or validation failed.
-  #
   #--
   #: () -> bool
   def failure? = !success?

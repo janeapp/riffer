@@ -1,10 +1,5 @@
 # Generated from lib/riffer/tools/runtime/fibers.rb with RBS::Inline
 
-# Executes tool calls concurrently using fibers via the +async+ gem.
-#
-#   class MyAgent < Riffer::Agent
-#     tool_runtime Riffer::Tools::Runtime::Fibers
-#   end
 class Riffer::Tools::Runtime::Fibers < Riffer::Tools::Runtime
   # --
   # : (?max_concurrency: Integer?) -> void

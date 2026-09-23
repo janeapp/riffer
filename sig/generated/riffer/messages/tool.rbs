@@ -1,32 +1,22 @@
 # Generated from lib/riffer/messages/tool.rb with RBS::Inline
 
-# Represents a tool execution result in a conversation.
 class Riffer::Messages::Tool < Riffer::Messages::Base
-  # Builds a Tool message from a hash, or returns +msg+ unchanged when it is
-  # already a Tool message.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::Tool)) -> Riffer::Messages::Tool
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::Tool) -> Riffer::Messages::Tool
 
-  # The ID of the tool call this result responds to.
   attr_reader tool_call_id: String
 
-  # The name of the tool that was called.
   attr_reader name: String
 
-  # The error message if the tool execution failed.
   attr_reader error: String?
 
-  # The type of error (:unknown_tool, :validation_error, :execution_error,
-  # :timeout_error, :unhandled_error).
   attr_reader error_type: Symbol?
 
   # --
   # : (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void
   def initialize: (String, tool_call_id: String, name: String, ?id: String?, ?error: String?, ?error_type: Symbol?) -> void
 
-  # Returns true if the tool execution resulted in an error.
-  #
   # --
   # : () -> bool
   def error?: () -> bool
@@ -35,8 +25,6 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
   # : () -> Symbol
   def role: () -> Symbol
 
-  # Converts the message to a hash.
-  #
   # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]

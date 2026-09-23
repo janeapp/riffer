@@ -417,7 +417,6 @@ describe Riffer::Tools::Runtime do
     describe "returned error responses" do
       before do
         runtime = Riffer::Tools::Runtime::Inline.new
-        # Empty args fail validation, which dispatch turns into an error Response.
         tool_call = make_tool_call(name: "weather_tool", arguments: "{}")
         runtime.execute([tool_call], tools: [weather_tool_class], context: nil)
       end

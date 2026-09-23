@@ -33,9 +33,8 @@ class Riffer::Files::Downloader
     http.open_timeout = timeout
     http.read_timeout = timeout
 
-    # request_get without a block reads (and discards our chance to cap) the
-    # whole body before returning; the cap/read has to happen inside the
-    # block it yields to, where the body hasn't been consumed yet.
+    # request_get without a block reads the whole body before returning, so the
+    # size cap has to run inside the block, before the body is consumed.
     redirect_location = nil #: String?
     content = nil #: String?
 

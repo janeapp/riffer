@@ -1,19 +1,5 @@
 # Generated from lib/riffer/tools/toolable.rb with RBS::Inline
 
-# Shared class-level DSL for anything that presents as a tool to an LLM. Extend
-# it to make a class discoverable as a tool; instance-level execution (+call+,
-# +call_with_validation+) lives on Riffer::Tool instead.
-#
-#   class MyTool
-#     extend Riffer::Tools::Toolable
-#
-#     description "Does something useful"
-#
-#     params do
-#       required :input, String
-#     end
-#   end
-#
 # @rbs module-self Module
 module Riffer::Tools::Toolable : Module
   @kind: Symbol?
@@ -30,69 +16,46 @@ module Riffer::Tools::Toolable : Module
 
   DEFAULT_TIMEOUT: Integer
 
-  # Tracks all classes that extend Toolable.
-  #
   # --
   # : (Module) -> void
   def self.extended: (Module) -> void
 
-  # Returns all classes that have extended Toolable.
-  #
   # --
   # : () -> Array[Module]
   def self.all: () -> Array[Module]
 
-  # Gets or sets the tool description.
-  #
   # --
   # : (?String?) -> String?
   def description: (?String?) -> String?
 
-  # Gets or sets the tool identifier/name.
-  #
   # --
   # : (?String?) -> String
   def identifier: (?String?) -> String
 
-  # Alias for identifier — used by providers.
-  #
   # --
   # : (?String?) -> String
   def name: (?String?) -> String
 
-  # Gets or sets the tool timeout in seconds.
-  #
   # --
   # : (?(Integer | Float)?) -> (Integer | Float)
   def timeout: (?(Integer | Float)?) -> (Integer | Float)
 
-  # Defines parameters using the Params DSL.
-  #
   # --
   # : () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def params: () ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
 
-  # Returns the JSON Schema for the tool's parameters.
-  #
   # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def parameters_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
-  # Returns the kind of toolable entity; defaults to +:tool+.
   # --
   # : (?Symbol?) -> Symbol
   def kind: (?Symbol?) -> Symbol
 
-  # Returns a provider-agnostic tool schema hash.
-  #
   # --
   # : (?strict: bool) -> Hash[Symbol, untyped]
   def to_tool_schema: (?strict: bool) -> Hash[Symbol, untyped]
 
-  # Validates that the minimum required metadata is present for LLM tool use.
-  #
-  # Raises Riffer::ArgumentError if validation fails.
-  #
   # --
   # : () -> true
   def validate_as_tool!: () -> true

@@ -1,12 +1,10 @@
 # Generated from lib/riffer/providers/gemini.rb with RBS::Inline
 
-# Google Gemini provider for Gemini models via the Gemini REST API.
 class Riffer::Providers::Gemini < Riffer::Providers::Base
   VALID_MODEL_PATTERN: Regexp
 
   FINISH_REASONS: Hash[String, Symbol]
 
-  # The GenAI semconv well-known provider name.
   # --
   # : () -> String
   def self.semconv_provider_name: () -> String
@@ -49,14 +47,10 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
   def extract_finish_reason: (Hash[Symbol, untyped]) -> Riffer::Providers::FinishReason?
 
-  # Gemini reports STOP even when the candidate carries functionCall parts,
-  # so tool-call presence overrides the raw value.
   # --
   # : (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
   def build_finish_reason: (String?, tool_calls: bool) -> Riffer::Providers::FinishReason?
 
-  # Gemini reports thinking tokens outside +candidatesTokenCount+;
-  # TokenUsage's output includes them.
   # --
   # : (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage
   def build_token_usage: (Hash[Symbol, untyped]) -> Riffer::Providers::TokenUsage

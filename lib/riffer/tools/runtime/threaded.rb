@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Executes tool calls concurrently using threads.
-#
-#   class MyAgent < Riffer::Agent
-#     tool_runtime Riffer::Tools::Runtime::Threaded
-#   end
-#
 class Riffer::Tools::Runtime::Threaded < Riffer::Tools::Runtime
   DEFAULT_MAX_CONCURRENCY = 5 #: Integer
 

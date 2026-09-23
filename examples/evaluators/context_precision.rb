@@ -1,25 +1,5 @@
 # frozen_string_literal: true
 
-# Context Precision Evaluator
-#
-# Evaluates the relevance and ranking quality of the provided ground truth context.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What is the capital of France?",
-#         ground_truth: "Paris is the capital and most populous city of France." }
-#     ],
-#     evals: [ContextPrecisionEvaluator]
-#   )
-#
-#   result.scores  # => { ContextPrecisionEvaluator => 0.9 }
-#
 class ContextPrecisionEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

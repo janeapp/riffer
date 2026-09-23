@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents an incremental reasoning chunk during streaming; only emitted by
-# providers that support reasoning (e.g. OpenAI with the reasoning option).
 class Riffer::StreamEvents::ReasoningDelta < Riffer::StreamEvents::Base
-  # The incremental reasoning content.
   attr_reader :content #: String # @dynamic content
 
   #--

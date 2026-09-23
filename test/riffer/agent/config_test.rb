@@ -298,10 +298,9 @@ describe Riffer::Agent::Config do
       expect(Riffer::Agent::Config.new.guardrails_for(:unknown)).must_equal []
     end
   end
-  # Enumerating the fields to isolate has missed one every time it was tried, so
-  # this asserts the invariant instead: no unfrozen collection is reachable from
-  # both a config and its copy. A field or collaborator added later is covered
-  # without anyone remembering to cover it.
+
+  # Asserts the invariant rather than enumerating fields, so a field or
+  # collaborator added later is covered without anyone remembering to.
   describe "#dup isolation" do
     let(:populated) do
       config = Riffer::Agent::Config.new(
@@ -330,9 +329,8 @@ describe Riffer::Agent::Config do
       expect(shared).must_equal []
     end
 
-    # Isolation from the source is not the only property: an +:around+ guardrail
-    # is one registration listed under two phases, and rebuilding each occurrence
-    # separately would silently make it two.
+    # An +:around+ guardrail is one registration listed under two phases;
+    # rebuilding each occurrence separately would silently make it two.
     it "keeps a reference shared within the config shared within the copy" do
       copy = populated.dup
 
@@ -342,10 +340,8 @@ describe Riffer::Agent::Config do
 
   private
 
-  # Walks two object graphs in parallel and collects the paths at which both
-  # reach one unfrozen Hash or Array. Frozen ones are exempt, sharing those being
-  # safe. Recursion continues through a shared object rather than stopping at it,
-  # so an uncopied collaborator is caught as well as an uncopied collection.
+  # Frozen collections are exempt since sharing them is safe. Recursion
+  # continues through a shared object so an uncopied collaborator is caught too.
   def shared_mutable_paths(original, copy, path = "config", seen = {}.compare_by_identity, found = [])
     return found if original.nil? || original.is_a?(Module) || original.is_a?(Proc)
     return found if seen.key?(original)

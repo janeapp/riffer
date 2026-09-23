@@ -6,7 +6,6 @@ describe Riffer::Mcp::Registry do
   before { clear_mcp_registry! }
   after { clear_mcp_registry! }
 
-  # Injects a stub registration directly into the registry store, bypassing discovery.
   def inject_stub_registration(name:, tags:, endpoint: "https://x.com")
     manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: endpoint)
     reg = Riffer::Mcp::Registration.allocate
