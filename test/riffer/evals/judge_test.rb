@@ -19,6 +19,30 @@ describe Riffer::Evals::Judge do
     end
   end
 
+  describe "tags" do
+    def evaluate_with(judge)
+      judge.send(:provider_instance).stub_response(
+        "",
+        tool_calls: [{ name: "evaluation", arguments: { score: 0.85, reason: "Good response." } }],
+      )
+      judge.evaluate(instructions: "Assess.", input: "What is Ruby?", output: "A language.")
+      judge.send(:provider_instance).calls.last
+    end
+
+    it "passes its tags to the provider" do
+      tags = { "kind" => "judge", "agent" => "accuracy_evaluator" }
+      call = evaluate_with(Riffer::Evals::Judge.new(model: "mock/eval-model", tags: tags))
+
+      expect(call[:tags]).must_equal tags
+    end
+
+    it "omits the tags option when it has none" do
+      call = evaluate_with(Riffer::Evals::Judge.new(model: "mock/eval-model"))
+
+      expect(call.key?(:tags)).must_equal false
+    end
+  end
+
   describe "#evaluate" do
     it "evaluates with instructions, input, and output" do
       judge = Riffer::Evals::Judge.new(model: "mock/eval-model")

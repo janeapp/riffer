@@ -19,10 +19,13 @@ class Riffer::Evals::Judge
   # The model string (provider/model format).
   attr_reader model: String
 
+  # The tags passed to the provider on every call.
+  attr_reader tags: Hash[String, String]
+
   # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   # --
-  # : (model: String) -> void
-  def initialize: (model: String) -> void
+  # : (model: String, ?tags: Hash[String, String]) -> void
+  def initialize: (model: String, ?tags: Hash[String, String]) -> void
 
   # Evaluates an input/output pair using the configured LLM.
   # --

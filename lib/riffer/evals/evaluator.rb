@@ -15,7 +15,11 @@ class Riffer::Evals::Evaluator
   # @rbs self.@instructions: String?
   # @rbs self.@higher_is_better: bool?
   # @rbs self.@judge_model: String?
+  # @rbs self.@identifier: String?
   # @rbs @judge: Riffer::Evals::Judge?
+
+  # The identifier for an anonymous evaluator class.
+  DEFAULT_IDENTIFIER = "riffer/judge" #: String
 
   class << self
     # Gets or sets the evaluation instructions (criteria and scoring rubric).
@@ -50,6 +54,28 @@ class Riffer::Evals::Evaluator
       return @judge_model if value.nil?
 
       @judge_model = value.to_s
+    end
+
+    # Gets or sets the evaluator identifier, sent as the +agent+ tag on judge
+    # calls. Defaults to the snake_cased class name, or DEFAULT_IDENTIFIER for
+    # an anonymous class.
+    #
+    #--
+    #: (?String?) -> String
+    def identifier(value = nil)
+      return @identifier = value.to_s if value
+
+      @identifier || derived_identifier
+    end
+
+    private
+
+    # Anonymous classes derive an empty identifier.
+    #--
+    #: () -> String
+    def derived_identifier
+      derived = Riffer::Helpers::Identifier.for(self)
+      derived.empty? ? DEFAULT_IDENTIFIER : derived
     end
   end
 
@@ -94,7 +120,8 @@ class Riffer::Evals::Evaluator
 
   protected
 
-  # Returns a Judge instance configured for this evaluator.
+  # Returns a Judge instance configured for this evaluator. Its calls carry
+  # the +kind+ (+"judge"+) and +agent+ (the evaluator identifier) tags.
   #
   #--
   #: () -> Riffer::Evals::Judge
@@ -106,7 +133,7 @@ class Riffer::Evals::Evaluator
               "No judge model configured. Set judge_model on the evaluator or Riffer.config.evals.judge_model"
       end
 
-      Riffer::Evals::Judge.new(model: model)
+      Riffer::Evals::Judge.new(model: model, tags: { "kind" => "judge", "agent" => self.class.identifier })
     end
   end
 

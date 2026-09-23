@@ -16,7 +16,12 @@ class Riffer::Evals::Evaluator
 
   self.@judge_model: String?
 
+  self.@identifier: String?
+
   @judge: Riffer::Evals::Judge?
+
+  # The identifier for an anonymous evaluator class.
+  DEFAULT_IDENTIFIER: String
 
   # Gets or sets the evaluation instructions (criteria and scoring rubric).
   #
@@ -36,6 +41,19 @@ class Riffer::Evals::Evaluator
   # : (?String?) -> String?
   def self.judge_model: (?String?) -> String?
 
+  # Gets or sets the evaluator identifier, sent as the +agent+ tag on judge
+  # calls. Defaults to the snake_cased class name, or DEFAULT_IDENTIFIER for
+  # an anonymous class.
+  #
+  # --
+  # : (?String?) -> String
+  def self.identifier: (?String?) -> String
+
+  # Anonymous classes derive an empty identifier.
+  # --
+  # : () -> String
+  private def self.derived_identifier: () -> String
+
   # Evaluates an input/output pair. The default calls the judge with the
   # class-level +instructions+; override for custom logic (e.g. rule-based
   # evaluators).
@@ -49,7 +67,8 @@ class Riffer::Evals::Evaluator
   # : (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
   def format_input: (String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base]) -> String
 
-  # Returns a Judge instance configured for this evaluator.
+  # Returns a Judge instance configured for this evaluator. Its calls carry
+  # the +kind+ (+"judge"+) and +agent+ (the evaluator identifier) tags.
   #
   # --
   # : () -> Riffer::Evals::Judge
