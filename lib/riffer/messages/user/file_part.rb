@@ -64,12 +64,7 @@ class Riffer::Messages::User::FilePart
   #--
   #: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
   def self.from_url(url, media_type: nil, filename: nil, sha256: nil)
-    unless media_type
-      ext = ::File.extname(URI.parse(url).path.to_s).downcase
-      media_type = MEDIA_TYPES.fetch(ext) { raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" }
-    end
-
-    new(url: url, media_type: media_type, filename: filename, sha256: sha256)
+    new(url: url, media_type: media_type || detect_media_type(url), filename: filename, sha256: sha256)
   end
 
   # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
@@ -87,13 +82,22 @@ class Riffer::Messages::User::FilePart
     sha256 = file[:sha256]
 
     if url
-      from_url(url, media_type: media_type, filename: filename, sha256: sha256)
+      new(url: url, data: data, media_type: media_type || detect_media_type(url), filename: filename, sha256: sha256)
     elsif data && media_type
       new(data: data, media_type: media_type, filename: filename, sha256: sha256)
     else
       raise Riffer::ArgumentError, "File hash must include :url or :data with :media_type"
     end
   end
+
+  # Raises Riffer::ArgumentError when the URL's extension isn't a known media type.
+  #--
+  #: (String) -> String
+  def self.detect_media_type(url)
+    ext = ::File.extname(URI.parse(url).path.to_s).downcase
+    MEDIA_TYPES.fetch(ext) { raise Riffer::ArgumentError, "Cannot detect media type from URL; provide media_type explicitly" }
+  end
+  private_class_method :detect_media_type
 
   # The base64-encoded contents - caller-supplied, or filled in by the file
   # resolver after a download.  Nil for a URL source riffer hasn't fetched.
