@@ -20,7 +20,8 @@ module Riffer::Agent::Run
   private
 
   # Both +generate+ and +stream+ funnel here, so this is the single place raw
-  # +tags+ are normalized. The clean <tt>String => String</tt> map is then
+  # +tags+ are normalized and merged over the default tags (a caller tag wins
+  # on a shared key). The clean <tt>String => String</tt> map is then
   # threaded to every span builder in the run as +riffer.tag.*+ and to each
   # provider call (via +merged_model_options+) for native request-metadata
   # mapping.
@@ -99,6 +100,11 @@ module Riffer::Agent::Run
   # --
   # : (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
   def merged_model_options: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
+
+  # The tags riffer adds to every run, identifying the agent it's on behalf of.
+  # --
+  # : (Riffer::Agent) -> Hash[String, String]
+  def default_tags: (Riffer::Agent) -> Hash[String, String]
 
   # --
   # : (

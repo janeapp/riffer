@@ -393,12 +393,23 @@ agent.generate("Summarize this ticket.",
 agent.stream("...", tags: {team: "growth", environment: "production"})
 ```
 
-Keys and values may be `String` or `Symbol`; both are stringified, and entries with a `nil` value are dropped. An omitted or empty `tags:` is a complete no-op.
+Keys and values may be `String` or `Symbol`; both are stringified, and entries with a `nil` value are dropped.
 
 Tags propagate to **two** places:
 
 1. The provider's native per-request metadata field (see the mapping below).
 2. Observability — stamped as `riffer.tag.<key>` on **every** span the call emits (`invoke_agent`, `chat`, `execute_tool`, `execute_guardrail`). See [Tracing](TRACING.md).
+
+### Default tags
+
+Every call also carries two tags riffer adds itself, so a provider can tell who the call is on behalf of:
+
+| Tag     | Value                                                                   |
+| ------- | ----------------------------------------------------------------------- |
+| `kind`  | `"agent"` (`"judge"` for [evaluator](EVALS.md) judge calls)             |
+| `agent` | The agent's `identifier` (the evaluator's `identifier` for judge calls) |
+
+A tag you pass with the same key wins. The default tags count towards the provider limits below.
 
 ### Reserved key: `user_id`
 

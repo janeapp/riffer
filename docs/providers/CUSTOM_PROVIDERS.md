@@ -24,7 +24,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
     params = {
       model: model,
       messages: convert_messages(messages),
-      **options.except(:tools)
+      **options.except(:tools, :tags)
     }
 
     if tools && !tools.empty?
@@ -308,6 +308,26 @@ yielder << Riffer::StreamEvents::ReasoningDone.new(part)
 
 If your adapter surfaces reasoning text but cannot yet replay it, call `yield_reasoning_done(yielder, text)` instead. It wraps the text in a `:text` part with no `format`, which persists for display and is skipped on replay.
 
+## Tags
+
+Every agent and judge call passes a `:tags` option: a flat `String => String` hash of the caller's [per-call tags](../AGENTS.md#per-call-tags) plus the [default tags](../AGENTS.md#default-tags). `kind` (`"agent"` or `"judge"`) and `agent` (the agent or evaluator identifier) tell you who the call is on behalf of:
+
+```ruby
+def build_request_params(messages, model, options)
+  tags = options[:tags] || {}
+
+  {
+    agent: tags["agent"],
+    user: tags["user_id"],
+    messages: convert_messages(messages),
+    model: model,
+    **options.except(:tools, :tags),
+  }
+end
+```
+
+Map tags to your service's native request field, or drop them, but don't pass `:tags` on to an SDK verbatim.
+
 ## Trace Provider Name
 
 LLM-call and agent-run spans stamp `gen_ai.provider.name` from the `semconv_provider_name` class method. The default is your snake_cased class name; override it when a [GenAI semconv well-known value](https://opentelemetry.io/docs/specs/semconv/gen-ai/) exists for your provider:
@@ -362,7 +382,7 @@ class Riffer::Providers::MyProvider < Riffer::Providers::Base
       messages: convert_messages(conversation),
       system: system_message,
       max_tokens: options[:max_tokens] || 4096,
-      **options.except(:tools, :max_tokens)
+      **options.except(:tools, :max_tokens, :tags)
     }
 
     if tools && !tools.empty?

@@ -36,14 +36,15 @@ module Riffer::Agent::Run
   private
 
   # Both +generate+ and +stream+ funnel here, so this is the single place raw
-  # +tags+ are normalized. The clean <tt>String => String</tt> map is then
+  # +tags+ are normalized and merged over the default tags (a caller tag wins
+  # on a shared key). The clean <tt>String => String</tt> map is then
   # threaded to every span builder in the run as +riffer.tag.*+ and to each
   # provider call (via +merged_model_options+) for native request-metadata
   # mapping.
   #--
   #: (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, tags: {}, stream_yielder: nil)
-    tags = normalize_tags(tags)
+    tags = default_tags(agent).merge(normalize_tags(tags))
     Riffer::Tracing.in_span(
       "invoke_agent #{agent.class.identifier}",
       attributes: run_span_attributes(agent, tags),
@@ -384,6 +385,13 @@ module Riffer::Agent::Run
     opts[:structured_output] = agent.structured_output if agent.structured_output
     opts[:tags] = tags unless tags.empty?
     opts
+  end
+
+  # The tags riffer adds to every run, identifying the agent it's on behalf of.
+  #--
+  #: (Riffer::Agent) -> Hash[String, String]
+  def default_tags(agent)
+    { "kind" => "agent", "agent" => agent.class.identifier }
   end
 
   #--
