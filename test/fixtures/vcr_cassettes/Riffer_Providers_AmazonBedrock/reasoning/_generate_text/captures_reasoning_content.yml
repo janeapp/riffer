@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[],"inferenceConfig":{"maxTokens":2048},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 998ca6bb-5bd6-4d56-88a3-69d072e9900b
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '235'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Sep 2026 22:17:39 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '884'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 49b4785b-3894-4e0c-a922-1a079d7ad019
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6Nzg1fSwib3V0cHV0Ijp7Im1lc3NhZ2UiOnsiY29udGVudCI6W3sicmVhc29uaW5nQ29udGVudCI6eyJyZWFzb25pbmdUZXh0Ijp7InNpZ25hdHVyZSI6IkVyUUNDb1FCQ0JJUUFSZ0NLa0E1NEtQVndPVERZK09aRVRVUHpJbGppSTFwTHJLZjFyV3BCaHppTStRWWVWRjlsaFdFUE8zSUNwQlNzem9sNURzV1pSZmhKamVKSU1zKy95TE0zano0TWhsamJHRjFaR1V0YUdGcGEzVXROQzAxTFRJd01qVXhNREF4T0FCQ0NIUm9hVzVyYVc1bldndzNNREk1TWprNU9EZzFNak9vQVlQRDF0VUdFZ3lqWlRLcEdmT1o4Zjh6OTlBYUROTzh5VWdIYzFvdjNibFJCU0l3cEJCd3FrS1hZb2hpVFJIWnVLN1lFdWFkSEhBdWZXLzJwQ09vVFgyaDFFK25RQU1RNGVNNm1nZnFyLzB0SEVoWUtsMGFvdmZ5d0ZRZ0R2U2Q4dW5Xc0EvZXI0QUFWblUxU0dkWFc1SjdzUDc2Nnd5clgzV3VjeWpVa09Jaysrb0gyZTVrR2tUOXBxakxwakx6U0YyR3U0WG9mQ2I2SG5lSllrTmZpUWFxakt0cVpqY1laNTR3NHpaTVZod3Q1UXNZQVE9PSIsInRleHQiOiIxNyB0aW1lcyAyM1xuPSAxNyDDlyAyM1xuPSAxNyDDlyAoMjAgKyAzKVxuPSAxNyDDlyAyMCArIDE3IMOXIDNcbj0gMzQwICsgNTFcbj0gMzkxIn19fSx7InRleHQiOiIzOTEifV0sInJvbGUiOiJhc3Npc3RhbnQifX0sInN0b3BSZWFzb24iOiJlbmRfdHVybiIsInVzYWdlIjp7ImNhY2hlUmVhZElucHV0VG9rZW5Db3VudCI6MCwiY2FjaGVSZWFkSW5wdXRUb2tlbnMiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VuQ291bnQiOjAsImNhY2hlV3JpdGVJbnB1dFRva2VucyI6MCwiaW5wdXRUb2tlbnMiOjUxLCJvdXRwdXRUb2tlbnMiOjY2LCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MTE3fX0=
+  recorded_at: Thu, 24 Sep 2026 22:17:39 GMT
+recorded_with: VCR 6.4.0

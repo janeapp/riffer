@@ -1248,6 +1248,90 @@ describe Riffer::Providers::AmazonBedrock do
         expect(convert([part(type: :text, text: "legacy", format: "mock-v1")])[:content]).must_equal [{ text: "42" }]
       end
     end
+
+    describe "with thinking enabled" do
+      let(:thinking_options) do
+        {
+          model: model,
+          inference_config: { max_tokens: 2048 },
+          additional_model_request_fields: { thinking: { type: "enabled", budget_tokens: 1024 } },
+        }
+      end
+
+      it "captures signed reasoning from #generate_text" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/_generate_text/captures_reasoning_content") do
+          result = provider.generate_text(
+            prompt: "What is 17 times 23? Reply with just the number.",
+            **thinking_options,
+          )
+
+          expect(result.reasoning).wont_be_empty
+          expect(result.reasoning.map(&:format).uniq).must_equal [Riffer::Providers::AmazonBedrock::REASONING_FORMAT]
+          expect(result.reasoning.first.type).must_equal :text
+          expect(result.reasoning.first.text).wont_be_empty
+          expect(result.reasoning.first.signature).wont_be_nil
+        end
+      end
+
+      it "sends turn one's streamed reasoning back and gets an answer" do
+        VCR.use_cassette("Riffer_Providers_AmazonBedrock/reasoning/_stream_text/replays_reasoning_content") do
+          question = Riffer::Messages::User.new("What is 17 times 23? Reply with just the number.")
+
+          first = provider.stream_text(messages: [question], **thinking_options).to_a
+          parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
+          answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
+
+          expect(first.grep(Riffer::StreamEvents::ReasoningDelta)).wont_be_empty
+          expect(parts).wont_be_empty
+          expect(parts.first.signature).wont_be_nil
+
+          history = [
+            question,
+            Riffer::Messages::Assistant.new(answer, reasoning: parts),
+            Riffer::Messages::User.new("Now add 10. Reply with just the number."),
+          ]
+          second = provider.stream_text(messages: history, **thinking_options).to_a
+          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+          expect(text_done.content).must_include "401"
+        end
+      end
+
+      it "replays reasoning across a tool call round trip" do
+        VCR.use_cassette(
+          "Riffer_Providers_AmazonBedrock/reasoning/_generate_text/replays_reasoning_with_tool_result",
+        ) do
+          weather_tool = stub_tool("GetWeather") do
+            description "Get the current weather for a city"
+            params do
+              required :city, String, description: "The city name"
+            end
+          end
+          options = thinking_options.merge(tools: [weather_tool])
+          question = Riffer::Messages::User.new("What is the weather in Toronto?")
+
+          first = provider.generate_text(messages: [question], **options)
+          tool_call = first.tool_calls.first
+
+          expect(first.reasoning).wont_be_empty
+          expect(first.reasoning.first.signature).wont_be_nil
+          expect(tool_call.name).must_equal "get_weather"
+
+          history = [
+            question,
+            first,
+            Riffer::Messages::Tool.new(
+              "15 degrees Celsius and sunny.",
+              tool_call_id: tool_call.call_id,
+              name: tool_call.name,
+            ),
+          ]
+          second = provider.generate_text(messages: history, **options)
+
+          expect(second.content).must_include "15"
+        end
+      end
+    end
   end
 
   describe "usage" do
