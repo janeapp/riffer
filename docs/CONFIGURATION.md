@@ -116,9 +116,7 @@ end
 
 See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
 
-### Tool Runtime (Experimental)
-
-> **Warning:** This feature is experimental and may be removed or changed without warning in a future release.
+### Tool Runtime
 
 Configure the default tool runtime for all agents:
 
@@ -134,7 +132,7 @@ end
 | `Riffer::Tools::Runtime` instance | Custom runtime with specific options                                                                    |
 | `Proc`                            | Dynamic resolution                                                                                      |
 
-Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](TOOL_ADVANCED.md#tool-runtime-experimental) for details.
+Per-agent configuration overrides this global default. See [Advanced Tool Configuration — Tool Runtime](TOOL_ADVANCED.md#tool-runtime) for details.
 
 ### Skills
 

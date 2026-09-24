@@ -285,7 +285,6 @@ class Riffer::Config
 
   attr_reader :mcp #: Riffer::Config::Mcp # @dynamic mcp
 
-  # Experimental; the surface may change without notice.
   attr_reader :tool_runtime #: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc) # @dynamic tool_runtime
 
   #--
