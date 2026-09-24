@@ -121,6 +121,24 @@ describe Riffer::Agent::Session do
 
       expect(s.messages).must_equal [user]
     end
+
+    it "places a tool result after its parent's tool results, ahead of later messages" do
+      second_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_2", name: "weather", arguments: "{}")
+      parent = Riffer::Messages::Assistant.new("", id: "a_3", tool_calls: [tc, second_call])
+      follow_up = Riffer::Messages::User.new("next", id: "u_2")
+      second = Riffer::Messages::Tool.new("rainy", id: "t_2", tool_call_id: "c_2", name: "weather")
+      s = Riffer::Agent::Session.new(messages: [user, parent, tool_msg, follow_up])
+      s.add(second)
+
+      expect(s.messages).must_equal [user, parent, tool_msg, second, follow_up]
+    end
+
+    it "appends a tool result whose parent is not in history" do
+      s = Riffer::Agent::Session.new(messages: [user])
+      s.add(tool_msg)
+
+      expect(s.messages).must_equal [user, tool_msg]
+    end
   end
 
   describe "#set" do

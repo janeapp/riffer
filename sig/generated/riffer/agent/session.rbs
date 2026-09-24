@@ -63,6 +63,12 @@ class Riffer::Agent::Session
 
   private
 
+  # Providers require tool results to directly follow their tool_use, but a
+  # resumed turn appends the new user message before pending calls execute.
+  # --
+  # : (Riffer::Messages::Base) -> Integer
+  def insertion_index: (Riffer::Messages::Base) -> Integer
+
   # --
   # : (Riffer::Messages::Base, Riffer::Messages::Base) -> void
   def cascade_dropped_tool_calls: (Riffer::Messages::Base, Riffer::Messages::Base) -> void

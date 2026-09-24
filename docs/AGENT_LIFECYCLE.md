@@ -187,7 +187,7 @@ end
 
 There are two ways to resume after an interrupt, depending on whether the agent is still in memory or you're restoring from persisted data.
 
-**In-memory resume** — call `generate` (or `stream`) again. With a prompt, the new user message is appended and the loop runs. Without a prompt, the loop runs against the current session — useful for picking up pending tool calls after the user has approved.
+**In-memory resume** — call `generate` (or `stream`) again. With a prompt, the new user message is appended and the loop runs; results for any pending tool calls are placed ahead of it, directly after the assistant message that requested them. Without a prompt, the loop runs against the current session — useful for picking up pending tool calls after the user has approved.
 
 ```ruby
 agent = MyAgent.new(context: {user_id: 123})

@@ -2979,6 +2979,40 @@ describe Riffer::Agent::Run do
       expect(tool_messages.length).must_equal 2
     end
 
+    it "places resumed tool results before the new user message" do
+      tc = stub_tool("ContinuationOrderTool") do
+        description "Simple tool"
+        def call(context:)
+          text("done")
+        end
+      end
+
+      tool = tc
+      custom_agent_class = stub_agent("CustomAgent") do
+        model "mock/riffer-1"
+        uses_tools [tool]
+      end
+
+      agent = custom_agent_class.new
+      agent.provider.stub_response("", tool_calls: [{ name: "continuation_order_tool", arguments: "{}" }])
+      agent.provider.stub_response("Done!")
+      agent.session.on_message do |msg|
+        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && msg.has_tool_calls?
+      end
+
+      expect(agent.generate("Call tool").outcome.reason).must_equal :interrupted
+
+      agent.generate("Go ahead")
+      roles = agent.session.messages.map(&:class)
+
+      expect(roles.last(4)).must_equal [
+        Riffer::Messages::Assistant,
+        Riffer::Messages::Tool,
+        Riffer::Messages::User,
+        Riffer::Messages::Assistant,
+      ]
+    end
+
     it "enforces max_steps across continuations" do
       tc = stub_tool("ContinuationStepTool") do
         description "Simple tool"
