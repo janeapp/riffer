@@ -1,0 +1,21 @@
+# Generated from lib/riffer/config/amazon_bedrock.rb with RBS::Inline
+
+class Riffer::Config::AmazonBedrock
+  attr_reader api_token: String?
+
+  attr_reader region: String?
+
+  attr_accessor client: untyped
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def api_token=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def region=: (untyped) -> void
+end

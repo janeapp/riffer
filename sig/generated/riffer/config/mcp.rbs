@@ -1,0 +1,19 @@
+# Generated from lib/riffer/config/mcp.rb with RBS::Inline
+
+class Riffer::Config::Mcp
+  attr_reader credentials: untyped
+
+  attr_reader discovery_runner: Riffer::Runner
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def credentials=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def discovery_runner=: (untyped) -> void
+end

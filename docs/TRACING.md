@@ -58,7 +58,7 @@ Riffer.configure do |config|
 end
 ```
 
-The backend is duck-typed — any object satisfying the contract works, and the setter validates only that it responds to `in_span` (otherwise it raises `Riffer::ArgumentError`). It must respond to:
+The backend is duck-typed — any object satisfying the contract works, and the setter validates that it responds to `in_span`, `current_context`, and `with_context` (otherwise it raises `Riffer::ArgumentError`). It must respond to:
 
 - `in_span(name, attributes:, kind:) { |span| … }` — open a span around the block, yield a span object, and return the block's value.
 - `current_context` — return the active trace context (for re-attaching across fiber/thread boundaries), or `nil` when there is none.

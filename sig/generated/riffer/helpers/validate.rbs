@@ -1,0 +1,21 @@
+# Generated from lib/riffer/helpers/validate.rb with RBS::Inline
+
+module Riffer::Helpers::Validate
+  # The error names the class, not the value, so a misassigned secret never
+  # lands in a log.
+  # --
+  # : (untyped, attribute: String) -> String?
+  def optional_string: (untyped, attribute: String) -> String?
+
+  # --
+  # : (untyped, attribute: String) -> Integer
+  def positive_integer: (untyped, attribute: String) -> Integer
+
+  # --
+  # : (untyped, attribute: String) -> Riffer::Runner
+  def runner: (untyped, attribute: String) -> Riffer::Runner
+
+  # --
+  # : (untyped, attribute: String) -> String
+  def model_id: (untyped, attribute: String) -> String
+end

@@ -1,0 +1,25 @@
+# Generated from lib/riffer/config/tracing.rb with RBS::Inline
+
+class Riffer::Config::Tracing
+  attr_reader enabled: bool
+
+  attr_reader capture_messages: bool
+
+  attr_reader backend: untyped
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def enabled=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def capture_messages=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def backend=: (untyped) -> void
+end

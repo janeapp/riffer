@@ -1,0 +1,13 @@
+# Generated from lib/riffer/config/evals.rb with RBS::Inline
+
+class Riffer::Config::Evals
+  attr_reader judge_model: String?
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def judge_model=: (untyped) -> void
+end

@@ -1,0 +1,19 @@
+# Generated from lib/riffer/config/skills.rb with RBS::Inline
+
+class Riffer::Config::Skills
+  attr_reader default_activate_tool: singleton(Riffer::Tool)
+
+  attr_reader default_backend: (Riffer::Skills::Backend | Proc)?
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (singleton(Riffer::Tool)) -> void
+  def default_activate_tool=: (singleton(Riffer::Tool)) -> void
+
+  # --
+  # : ((Riffer::Skills::Backend | Proc)?) -> void
+  def default_backend=: ((Riffer::Skills::Backend | Proc)?) -> void
+end

@@ -1,0 +1,43 @@
+# Generated from lib/riffer/config/files.rb with RBS::Inline
+
+class Riffer::Config::Files
+  attr_reader allow_downloads: bool
+
+  attr_reader max_bytes: Integer
+
+  attr_reader timeout: Integer
+
+  attr_reader max_per_message: Integer?
+
+  attr_reader runner: Riffer::Runner
+
+  attr_reader downloader: untyped
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def allow_downloads=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def max_bytes=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def timeout=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def max_per_message=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def runner=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def downloader=: (untyped) -> void
+end
