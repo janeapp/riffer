@@ -32,6 +32,33 @@ class Riffer::Config
                 | (?api_key: untyped, ?endpoint: untyped, ?client: untyped) -> instance
   end
 
+  class ClaudeCode < Struct[untyped]
+    attr_accessor binary(): untyped
+
+    attr_accessor auth(): untyped
+
+    attr_accessor default_model(): untyped
+
+    attr_accessor cwd(): untyped
+
+    attr_accessor timeout(): untyped
+
+    attr_accessor scrub_env(): untyped
+
+    attr_accessor setting_sources(): untyped
+
+    attr_accessor system_prompt_mode(): untyped
+
+    attr_accessor session_persistence(): untyped
+
+    attr_accessor allowed_tools(): untyped
+
+    attr_accessor client(): untyped
+
+    def self.new: (?untyped binary, ?untyped auth, ?untyped default_model, ?untyped cwd, ?untyped timeout, ?untyped scrub_env, ?untyped setting_sources, ?untyped system_prompt_mode, ?untyped session_persistence, ?untyped allowed_tools, ?untyped client) -> instance
+                | (?binary: untyped, ?auth: untyped, ?default_model: untyped, ?cwd: untyped, ?timeout: untyped, ?scrub_env: untyped, ?setting_sources: untyped, ?system_prompt_mode: untyped, ?session_persistence: untyped, ?allowed_tools: untyped, ?client: untyped) -> instance
+  end
+
   class Gemini < Struct[untyped]
     attr_accessor api_key(): untyped
 
@@ -220,6 +247,8 @@ class Riffer::Config
   attr_reader anthropic: Riffer::Config::Anthropic
 
   attr_reader azure_openai: Riffer::Config::AzureOpenAI
+
+  attr_reader claude_code: Riffer::Config::ClaudeCode
 
   attr_reader gemini: Riffer::Config::Gemini
 

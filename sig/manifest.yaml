@@ -2,3 +2,4 @@ dependencies:
   - name: uri
   - name: net-http
   - name: digest
+  - name: open3

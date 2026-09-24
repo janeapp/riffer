@@ -79,6 +79,9 @@ groups:
       - source: providers/ANTHROPIC.md
         slug: providers/anthropic
         description: Claude via the Anthropic API
+      - source: providers/CLAUDE_CODE.md
+        slug: providers/claude-code
+        description: Claude via the Claude Code CLI
       - source: providers/OPENAI.md
         slug: providers/openai
         description: GPT models via the OpenAI API

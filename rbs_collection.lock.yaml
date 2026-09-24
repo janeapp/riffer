@@ -169,6 +169,10 @@ gems:
   version: '0'
   source:
     type: stdlib
+- name: open3
+  version: '0'
+  source:
+    type: stdlib
 - name: openai
   version: 0.91.0
   source:

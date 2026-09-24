@@ -5,6 +5,10 @@ class Riffer::Config
   AmazonBedrock = Struct.new(:api_token, :region, :client)
   Anthropic = Struct.new(:api_key, :client)
   AzureOpenAI = Struct.new(:api_key, :endpoint, :client)
+  ClaudeCode = Struct.new(
+    :binary, :auth, :default_model, :cwd, :timeout, :scrub_env,
+    :setting_sources, :system_prompt_mode, :session_persistence, :allowed_tools, :client,
+  )
   Gemini = Struct.new(:api_key, :client)
   OpenAI = Struct.new(:api_key, :base_url, :client)
   OpenRouter = Struct.new(:api_key, :client)
@@ -275,6 +279,8 @@ class Riffer::Config
 
   attr_reader :azure_openai #: Riffer::Config::AzureOpenAI # @dynamic azure_openai
 
+  attr_reader :claude_code #: Riffer::Config::ClaudeCode # @dynamic claude_code
+
   attr_reader :gemini #: Riffer::Config::Gemini # @dynamic gemini
 
   attr_reader :openai #: Riffer::Config::OpenAI # @dynamic openai
@@ -339,6 +345,7 @@ class Riffer::Config
     @amazon_bedrock = AmazonBedrock.new
     @anthropic = Anthropic.new
     @azure_openai = AzureOpenAI.new
+    @claude_code = ClaudeCode.new
     @gemini = Gemini.new
     @openai = OpenAI.new
     @openrouter = OpenRouter.new

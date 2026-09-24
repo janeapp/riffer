@@ -62,6 +62,7 @@ Every provider accepts a client instance or a `Proc` returning one:
 | OpenAI         | `config.openai.client`         | `OpenAI::Client`                                              |
 | Azure OpenAI   | `config.azure_openai.client`   | `OpenAI::Client` (with the Azure endpoint as `base_url`)      |
 | Anthropic      | `config.anthropic.client`      | `Anthropic::Client`                                           |
+| Claude Code    | `config.claude_code.client`    | `Riffer::Providers::ClaudeCode::Client` (riffer-owned, see below) |
 | Amazon Bedrock | `config.amazon_bedrock.client` | `Aws::BedrockRuntime::Client`                                 |
 | Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below) |
 | OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)          |
@@ -96,6 +97,8 @@ A credential you leave unset in riffer is omitted from the default client rather
 Two providers deliberately opt out: `OpenRouter` and `AzureOpenAI` borrow `OpenAI::Client` to reach a **different** vendor, so they always pass their credential and endpoint explicitly. Falling through would let the OpenAI SDK pick up `OPENAI_API_KEY` / `OPENAI_BASE_URL` and send an OpenAI credential to `openrouter.ai` or your Azure endpoint. With nothing configured they raise instead — set `config.openrouter.api_key` / `OPENROUTER_API_KEY`, or `config.azure_openai.api_key` and `.endpoint` / `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
 
 The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffer::Providers::Gemini::Client` exposes `base_url`, `open_timeout`, `read_timeout`, `write_timeout`, and `proxy_address`/`proxy_port`. Anything implementing its two-method contract (`post`, `post_stream`) can be assigned to `config.gemini.client` — see [Gemini](providers/GEMINI.md).
+
+Claude Code shells out to the `claude` binary rather than calling an SDK, so riffer ships its own runner: `Riffer::Providers::ClaudeCode::Client#call(argv, env:, stdin:, chdir:, timeout:)` runs `argv` to completion and returns `[stdout, stderr, status]`; `#stream(argv, env:, stdin:, chdir:, timeout:) { |line| ... }` runs it in streaming mode, yielding each stdout line as it arrives, and returns `[stderr, status]`. Both raise `Riffer::TimeoutError` past `timeout` seconds and `Riffer::Error` if the process cannot be spawned. Anything implementing this two-method contract can be assigned to `config.claude_code.client` — see [Claude Code](providers/CLAUDE_CODE.md).
 
 ### MCP (Model Context Protocol)
 
@@ -369,6 +372,16 @@ end
 class EffortAgent < Riffer::Agent
   model 'anthropic/claude-opus-5'
   model_options output_config: {effort: "high"}
+end
+```
+
+### Claude Code
+
+Runs against the installed `claude` CLI rather than the API. See [Claude Code](providers/CLAUDE_CODE.md) for CLI setup, auth modes, and the full option list.
+
+```ruby
+class MyAgent < Riffer::Agent
+  model 'claude_code/sonnet'
 end
 ```
 

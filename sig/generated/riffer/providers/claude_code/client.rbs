@@ -1,0 +1,46 @@
+# Generated from lib/riffer/providers/claude_code/client.rb with RBS::Inline
+
+# Default +client+ for Riffer::Providers::ClaudeCode; any object implementing
+# +#call+/+#stream+ with the same contract works. Spawns the CLI via Open3
+# with +unsetenv_others+, so scrubbed env vars cannot leak back in from the
+# parent process.
+class Riffer::Providers::ClaudeCode::Client
+  # A single monotonic deadline bounds child exit AND pipe drains, so a
+  # grandchild that inherits the pipes cannot hang the call after the child
+  # itself exits in time.
+  # --
+  # : (Array[String], env: Hash[String, String], stdin: String, chdir: String, timeout: Numeric) -> [String, String, Process::Status]
+  def call: (Array[String], env: Hash[String, String], stdin: String, chdir: String, timeout: Numeric) -> [ String, String, Process::Status ]
+
+  # Any exit that doesn't drain the stream kills the process group and reaps
+  # the pipe threads first, so popen3's ensure never closes the IOs out from
+  # under a live reader thread.
+  # --
+  # : (Array[String], env: Hash[String, String], stdin: String, chdir: String, timeout: Numeric) { (String) -> void } -> [String, Process::Status]
+  def stream: (Array[String], env: Hash[String, String], stdin: String, chdir: String, timeout: Numeric) { (String) -> void } -> [ String, Process::Status ]
+
+  private
+
+  # Seconds left until +deadline+, floored at zero so an expired deadline
+  # turns the next join into a non-blocking check.
+  # --
+  # : (Float) -> Float
+  def remaining: (Float) -> Float
+
+  # Group-kills the child (covering grandchildren that inherited the pipes)
+  # and reaps the pipe threads before popen3's ensure closes their IOs under
+  # them — the group kill unblocks the reads with EOF.
+  # --
+  # : (Process::Waiter, Array[Thread], Numeric) -> void
+  def expire!: (Process::Waiter, Array[Thread], Numeric) -> void
+
+  # --
+  # : (Integer) -> void
+  def kill_process_group: (Integer) -> void
+
+  # Thread#join is typed to always return the thread, never nil, even
+  # though a timed-out join returns nil at runtime — assert the real type.
+  # --
+  # : (Thread, Numeric) -> bool
+  def joined?: (Thread, Numeric) -> bool
+end
