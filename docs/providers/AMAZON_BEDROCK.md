@@ -168,7 +168,7 @@ end
 
 ## Reasoning Models
 
-Models that reason through Converse, such as Claude with extended thinking, return their thought process as `reasoningContent` blocks. For Claude, enable thinking through `additional_model_request_fields`:
+Claude models on Bedrock can think before they answer. Enable extended thinking through `additional_model_request_fields`:
 
 ```ruby
 class ThinkAgent < Riffer::Agent
@@ -187,19 +187,15 @@ ThinkAgent.new.stream('What is 2+2? Think step by step.').each do |event|
 end
 ```
 
+The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.md#reasoning), whether you call `generate` or `stream`. Read it with `response.reasoning`, or as plain text with `reasoning_text` on the message. Bedrock sometimes redacts part of Claude's reasoning. Those parts are stored and sent back like any other, but they have no readable text, so `reasoning_text` leaves them out.
+
 ### Reasoning Replay
 
-Each `reasoningContent` block becomes a [`ReasoningPart`](../MESSAGES.md#reasoning) on the assistant message, on both `generate_text` and `stream_text`, tagged with `format: "bedrock-converse-v1"` (`Riffer::Providers::AmazonBedrock::REASONING_FORMAT`):
+Riffer sends the reasoning back to Bedrock on every later turn, so Claude keeps its train of thought across a conversation. For tool calls this is required: when thinking is enabled, Claude needs its earlier reasoning back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
 
-| `reasoningContent` member     | `ReasoningPart` fields                                                 |
-| ----------------------------- | ---------------------------------------------------------------------- |
-| `reasoningText.text`          | `type: :text`, `text`                                                  |
-| `reasoningText.signature`     | `signature`                                                            |
-| `redactedContent` (raw bytes) | `type: :encrypted`, `data` (Base64-encoded, so the part survives JSON) |
+If you persist sessions, keep the `reasoning` key when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop it, later turns lose the model's earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.
 
-When streaming, a reasoning block arrives as several `reasoningContent` deltas: text in pieces, then the signature (or the redacted bytes) on its own. The provider concatenates them and yields one `ReasoningDone` part when the block stops. Each non-empty text fragment is also yielded as a `ReasoningDelta`.
-
-On the next request, the assistant message's parts go back as `reasoningContent` blocks ahead of its text and `toolUse` blocks, in their original order and unchanged, with encrypted parts decoded back to `redactedContent` bytes. This is what lets Claude continue signed thinking across a tool-call loop. Following the [replay contract](../MESSAGES.md#reasoning), only parts tagged `bedrock-converse-v1` are sent; parts with no `format`, or one produced by another adapter such as `anthropic-claude-v1` from OpenRouter, are skipped.
+Only reasoning that Bedrock produced is sent back to Bedrock. A conversation that switches providers midway still works: reasoning from other providers is kept on the messages but left out of Bedrock requests.
 
 ## File Support
 
