@@ -8,7 +8,7 @@
 Agent.new(session: nil, context: nil)
 ```
 
-- **`session:`** — an existing `Riffer::Agent::Session`. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. With `Riffer.config.experimental_history_healing` on, a provided session is healed at construction time so the `tool_use` ↔ `tool_result` invariant holds before the next inference call.
+- **`session:`** — an existing `Riffer::Agent::Session`. When given, the agent uses it as-is (no system/skills seeding). Typical use case: cross-process resume from persisted history. A provided session is repaired at construction time so the `tool_use` ↔ `tool_result` invariant holds before the next inference call: orphaned `tool_use` exchanges (an assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages are dropped. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved so `generate`/`stream` can execute them.
 - **`context:`** — a `Hash` carried for the lifetime of the agent. Used to evaluate Proc-based `instructions`, `model`, `uses_tools`, and skill activation at construction time, and threaded through tool execution and guardrails on every `generate`/`stream` call.
 
 When `session:` is omitted, the agent constructs a fresh session and seeds it with `[instruction_message, skills_message].compact` eagerly. To swap context, construct a new agent — context is fixed for the lifetime of an agent instance.
@@ -244,38 +244,36 @@ agent.session.on_message do |msg|
 end
 ```
 
-#### Healing pending tool results on interrupt (experimental)
+#### Discarding pending tool calls after an interrupt
 
-When an interrupt fires while the assistant has a `tool_use` block that hasn't been answered yet, the LLM will reject the next request unless every `tool_use` has a matching `tool_result`. By default, the next `generate` call re-executes those pending tools (see "Resuming an Interrupted Loop" above).
+An interrupt only stops the loop. Any `tool_use` the assistant emitted that hasn't been answered yet stays in history, and the next `generate`/`stream` call executes it (see "Resuming an Interrupted Loop" above). This applies to caller-issued `interrupt!` and the built-in `INTERRUPT_MAX_STEPS` ceiling alike.
 
-When the interrupt represents a course-change rather than a pause — e.g. a voice barge-in where the user has moved on — re-execution is the wrong behavior. Opt into history healing to have riffer fill any orphan `tool_use` with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted`, leaving history valid for the next turn:
+When the interrupt represents a course-change rather than a pause — e.g. a voice barge-in or a cancel where the user has moved on — re-execution is the wrong behavior. Call `agent.session.discard_pending_tool_calls` to answer every unanswered `tool_use` with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted`, leaving history valid for the next turn. It returns the filled `call_id`s:
 
 ```ruby
-Riffer.configure { |c| c.experimental_history_healing = true }
-
 agent.session.on_message do |msg|
   agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && barge_in?
 end
 
 response = agent.generate("Tell me a story")
-response.healed_tool_call_ids  # => ["call_abc123", ...]
+agent.session.discard_pending_tool_calls  # => ["call_abc123", ...]
+agent.generate("Actually, tell me a joke")
 ```
 
-The placeholder content is fixed: `"Tool call interrupted before completion."` with `error_type: :interrupted`. Each placeholder is inserted immediately after its parent assistant message. The list of filled `call_id`s is exposed on `response.healed_tool_call_ids` (and on `Riffer::StreamEvents::Interrupt#healed_tool_call_ids` when streaming).
+The placeholder content is fixed: `"Tool call interrupted before completion."` with `error_type: :interrupted`. Each placeholder is inserted immediately after its parent assistant message. When nothing is pending, the method returns `[]` and leaves history untouched.
 
-Healing covers all interrupts uniformly — caller-issued `interrupt!` and the built-in `INTERRUPT_MAX_STEPS` ceiling alike. When the flag is off (the default), orphans remain in history and `execute_pending_tool_calls` re-runs them on the next `generate` call.
+The method works purely on the session's current messages, so it also applies when a run was cancelled without going through riffer's interrupt handling (e.g. the surrounding task was stopped with `Async::Stop` or an exception escaped a callback).
 
-If you need finer control over placeholder content (per-call shape, structured metadata, etc.), use the `update` mutator below to upgrade a placeholder after the interrupt returns.
+If you need finer control over placeholder content (per-call shape, structured metadata, etc.), use the `update` mutator below to upgrade a placeholder afterwards.
 
 ### Mutating history
 
 The session exposes a small set of in-place mutators that enforce the `tool_use` ↔ `tool_result` invariant on every operation. Use these to align history with external state (persisted transcript, partial output that wasn't actually delivered, etc.) without rebuilding the agent.
 
 - **`agent.session.update(id:, **attrs)`** — In-place partial update. Looks up by message `id:`; builds a replacement of the same type with `attrs` overlaid on the existing fields. Use this to edit assistant content (`update(id:, content:)`), restate a system message, etc. When the target is an assistant and the update drops entries from `tool_calls`, matching `Tool` children are removed atomically.
-- **`agent.session.update(tool_call_id:, **attrs)`** — Same as above but looks up the tool result by `tool_call_id:`. Preserves `name` and `id`. Use this to upgrade an interrupt-time placeholder once the real result is available (`update(tool_call_id:, content:, error: nil, error_type: nil)`).
+- **`agent.session.update(tool_call_id:, **attrs)`** — Same as above but looks up the tool result by `tool_call_id:`. Preserves `name` and `id`. Use this to upgrade a `discard_pending_tool_calls` placeholder once the real result is available (`update(tool_call_id:, content:, error: nil, error_type: nil)`).
 - **`agent.session.remove(id:)`** — Removes a message; cascades to its `Tool` children when the target carries `tool_calls`. Raises if called on a `Tool` message (use `update(tool_call_id:, ...)` to rewrite a tool result instead).
-
-Bulk filling of orphan `tool_use` blocks is handled by `Riffer.config.experimental_history_healing` (see "Healing pending tool results on interrupt" above) — there is no public synthesizer hook.
+- **`agent.session.discard_pending_tool_calls`** — Answers every unanswered `tool_use` with an `:interrupted` placeholder result and returns the filled `call_id`s (see "Discarding pending tool calls after an interrupt" above).
 
 Lookup patterns that pair with the mutators (via `Enumerable`):
 
@@ -288,7 +286,7 @@ agent.session.orphaned_tool_call_ids                                            
 
 Mutating history while a `stream` enumerator is being consumed is undefined; mutators are intended for use between turns.
 
-Mutators do **not** fire `on_message` — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Healing placeholders bypass `on_message` for the same reason; consumers learn that healing happened via `Response#healed_tool_call_ids` (and `StreamEvents::Interrupt#healed_tool_call_ids`).
+Mutators do **not** fire `on_message` — that callback is reserved for messages produced by inference (LLM responses, tool execution results). Placeholders added by `discard_pending_tool_calls` bypass `on_message` for the same reason; use its return value to learn which calls were filled.
 
 ### context
 
@@ -320,7 +318,6 @@ agent.context[:skills]        # the Skills::Context, if skills configured
 | `modified?`            | `Boolean`                   | `true` if a guardrail modified the content                                                       |
 | `modifications`        | `Array`                     | List of guardrail modifications applied                                                          |
 | `messages`             | `Array`                     | Full message history from the conversation                                                       |
-| `healed_tool_call_ids` | `Array[String]`             | `tool_call` ids filled with placeholder results during interrupt healing (else `[]`)             |
 | `token_usage`          | `TokenUsage` / `nil`        | Aggregate `Riffer::Providers::TokenUsage` across this run's LLM calls (`nil` when none reported) |
 | `steps`                | `Integer`                   | LLM calls made during this run (`0` when a before-guardrail blocks first); not the session's cumulative count |
 

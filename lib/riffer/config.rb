@@ -322,17 +322,6 @@ class Riffer::Config
     @message_id_strategy = value
   end
 
-  # Experimental: riffer maintains the +tool_use+ ↔ +tool_result+ invariant by
-  # stripping orphaned exchanges and filling interrupted ones. The surface may
-  # change without notice.
-  attr_reader :experimental_history_healing #: bool # @dynamic experimental_history_healing
-
-  #--
-  #: (untyped) -> void
-  def experimental_history_healing=(value)
-    @experimental_history_healing = Riffer::Helpers::Boolean.coerce(value, attribute: "experimental_history_healing")
-  end
-
   #--
   #: () -> void
   def initialize
@@ -350,6 +339,5 @@ class Riffer::Config
     @files = Files.new
     @pricing = Pricing.new
     @message_id_strategy = :none
-    @experimental_history_healing = false
   end
 end

@@ -92,11 +92,10 @@ module Riffer::Agent::Run
   #     ?modifications: Array[Riffer::Guardrails::Modification],
   #     ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #     ?structured_output: Hash[Symbol, untyped]?,
-  #     ?healed_tool_call_ids: Array[String],
   #     ?token_usage: Riffer::Providers::TokenUsage?,
   #     ?steps: Integer
   #   ) -> Riffer::Agent::Response
-  def build_response: (Riffer::Agent, String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
+  def build_response: (Riffer::Agent, String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> Riffer::Agent::Response
 
   # --
   # : (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void

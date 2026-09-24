@@ -268,27 +268,6 @@ When constructing a `Riffer::Agent::Session` from persisted history with the str
 
 See [Messages — IDs](MESSAGES.md#ids) for more details.
 
-### Experimental: History Healing
-
-> **Warning:** This feature is experimental and may change without notice.
-
-Opts the agent into keeping the `tool_use` ↔ `tool_result` invariant intact on its own:
-
-```ruby
-Riffer.configure do |config|
-  config.experimental_history_healing = true
-end
-```
-
-When enabled, two repairs run automatically:
-
-1. **Seeded session.** Passing a pre-populated `Riffer::Agent::Session` to `Agent.new(session: ...)` silently drops orphaned `tool_use` exchanges (assistant `tool_call` with no matching `Tool` result) and parentless `Tool` messages before the next inference call. Pending tool calls on the **resume boundary** — the last assistant whose tail is purely `Tool` results (or none) — are preserved; `execute_pending_tool_calls` runs them on the next LLM call.
-2. **Interrupts.** Any orphan `tool_use` left when the loop is interrupted (caller-issued `interrupt!` or the built-in `INTERRUPT_MAX_STEPS` ceiling) is filled with a placeholder `Riffer::Messages::Tool` carrying `error_type: :interrupted` and the content `"Tool call interrupted before completion."`. Filled `call_id`s are exposed on `Riffer::Agent::Response#healed_tool_call_ids` (and `Riffer::StreamEvents::Interrupt#healed_tool_call_ids` when streaming).
-
-Defaults to `false` — pre-healing behavior. Seeded sessions pass through untouched, and orphan `tool_use` left by an interrupt remain in history for `execute_pending_tool_calls` to re-run on the next call.
-
-There is no per-call override and no customizable placeholder. Callers needing finer control can call `agent.session.update(tool_call_id:, ...)` after the interrupt returns to upgrade a placeholder in place. See [Agent Lifecycle — Healing pending tool results on interrupt](AGENT_LIFECYCLE.md#healing-pending-tool-results-on-interrupt-experimental).
-
 ## Agent-Level Configuration
 
 Override global configuration at the agent level:

@@ -110,20 +110,12 @@ module Riffer::Agent::Run
         return final_response(agent, all_modifications, token_usage: run_usage, steps: run_steps)
       end
 
-      new_messages, filled = Riffer::Agent::Session::Repair.fill_orphans(agent.session.messages)
-      agent.session.set(new_messages)
-      if stream_yielder
-        stream_yielder << Riffer::StreamEvents::Interrupt.new(
-          reason: reason,
-          healed_tool_call_ids: filled,
-        )
-      end
+      stream_yielder << Riffer::StreamEvents::Interrupt.new(reason: reason) if stream_yielder
       final_response(
         agent,
         all_modifications,
         interrupted: true,
         interrupt_reason: reason,
-        healed_tool_call_ids: filled,
         token_usage: run_usage,
         steps: run_steps,
       )
@@ -383,7 +375,6 @@ module Riffer::Agent::Run
   #    ?modifications: Array[Riffer::Guardrails::Modification],
   #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?structured_output: Hash[Symbol, untyped]?,
-  #    ?healed_tool_call_ids: Array[String],
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?steps: Integer
   #  ) -> Riffer::Agent::Response
@@ -395,7 +386,6 @@ module Riffer::Agent::Run
     modifications: [],
     reasoning: [],
     structured_output: nil,
-    healed_tool_call_ids: [],
     token_usage: nil,
     steps: 0
   )
@@ -408,7 +398,6 @@ module Riffer::Agent::Run
       reasoning: reasoning,
       structured_output: structured_output,
       messages: messages.frozen? ? messages : messages.dup.freeze,
-      healed_tool_call_ids: healed_tool_call_ids,
       token_usage: token_usage,
       steps: steps,
     )

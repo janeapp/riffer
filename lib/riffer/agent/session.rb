@@ -121,6 +121,14 @@ class Riffer::Agent::Session
   end
 
   #--
+  #: () -> Array[String]
+  def discard_pending_tool_calls
+    messages, filled = Repair.fill_orphans(@messages)
+    set(messages)
+    filled
+  end
+
+  #--
   #: () -> Enumerator[Riffer::Messages::Base, self]
   #: () { (Riffer::Messages::Base) -> void } -> untyped
   def each(&block)

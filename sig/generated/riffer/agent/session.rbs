@@ -44,6 +44,10 @@ class Riffer::Agent::Session
   def pending_tool_calls: () -> [ Riffer::Messages::Assistant?, Array[Riffer::Messages::Assistant::ToolCall] ]
 
   # --
+  # : () -> Array[String]
+  def discard_pending_tool_calls: () -> Array[String]
+
+  # --
   # : () -> Enumerator[Riffer::Messages::Base, self]
   # : () { (Riffer::Messages::Base) -> void } -> untyped
   def each: () -> Enumerator[Riffer::Messages::Base, self]
