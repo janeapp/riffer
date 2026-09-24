@@ -272,8 +272,6 @@ describe Riffer::Agent do
       expect(child.config.tool_runtime).must_be_same_as Riffer.config.tool_runtime
     end
 
-    # The global resolves on read rather than at construction, so a config that
-    # declared no runtime follows a later change to it.
     it "follows a change to the global runtime when none was declared" do
       agent = stub_agent("LateGlobalAgent") { model "mock/riffer-1" }
       replacement = Riffer::Tools::Runtime::Inline.new
@@ -1103,8 +1101,8 @@ describe Riffer::Agent do
 
       it "mcp_configs stores the progressive flag" do
         klass = stub_agent("Agent") do
-          use_mcp :foo                       # default: true
-          use_mcp :bar, progressive: false   # explicit opt-out
+          use_mcp :foo
+          use_mcp :bar, progressive: false
         end
         configs = klass.mcp_configs
 

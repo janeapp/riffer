@@ -1,17 +1,7 @@
 # Generated from lib/riffer/providers/gemini/client.rb with RBS::Inline
 
-# HTTP transport for the Gemini REST API. Riffer builds one from the
-# configured +api_key+ by default; construct your own to tune the HTTP knobs
-# and assign it to <tt>Riffer.config.gemini.client</tt>. Any object
-# implementing +post+ and +post_stream+ with these contracts works there —
-# the class is a default implementation, not a required base.
-#
-#   Riffer.configure do |config|
-#     config.gemini.client = Riffer::Providers::Gemini::Client.new(
-#       api_key: ENV["GEMINI_API_KEY"],
-#       read_timeout: 120
-#     )
-#   end
+# <tt>Riffer.config.gemini.client</tt> accepts any object implementing +post+ and +post_stream+
+# with these contracts; this class is the default, not a required base.
 class Riffer::Providers::Gemini::Client
   @proxy_port: Integer?
 
@@ -36,15 +26,12 @@ class Riffer::Providers::Gemini::Client
   # : (?api_key: String?, ?base_url: String, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
   def initialize: (?api_key: String?, ?base_url: String, ?open_timeout: Integer, ?read_timeout: Integer, ?write_timeout: Integer?, ?proxy_address: String?, ?proxy_port: Integer?) -> void
 
-  # POSTs a JSON body to an API path and returns the parsed response hash.
-  # Raises Riffer::Error when the API responds with a non-success status.
+  # Raises Riffer::Error on a non-success status.
   # --
   # : (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def post: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
 
-  # POSTs a JSON body to an API path, yielding raw response body chunks as
-  # they arrive. Raises Riffer::Error when the API responds with a
-  # non-success status.
+  # Raises Riffer::Error on a non-success status.
   # --
   # : (String, Hash[Symbol, untyped]) { (String) -> void } -> void
   def post_stream: (String, Hash[Symbol, untyped]) { (String) -> void } -> void

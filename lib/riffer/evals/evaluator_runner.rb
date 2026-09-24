@@ -1,24 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Orchestrates running evaluators against an agent across multiple scenarios.
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What is Ruby?", ground_truth: "A programming language" },
-#       { input: "What is Python?" }
-#     ],
-#     evaluators: [AnswerRelevancyEvaluator]
-#   )
-#
-#   result.scores   # => { AnswerRelevancyEvaluator => 0.85 }
-#
 module Riffer::Evals::EvaluatorRunner
   extend self
 
-  # Runs evaluators against an agent for the given scenarios. Raises
-  # Riffer::ArgumentError on an invalid agent or evaluator.
   #--
   #: (agent: singleton(Riffer::Agent), scenarios: Array[Hash[Symbol, untyped]], evaluators: Array[singleton(Riffer::Evals::Evaluator)], ?context: Hash[Symbol, untyped]?) -> Riffer::Evals::RunResult
   def run(agent:, scenarios:, evaluators:, context: nil)

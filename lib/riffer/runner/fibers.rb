@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Processes items concurrently using fibers via the +async+ gem.
-# +max_concurrency+ caps simultaneous fibers via an <tt>Async::Semaphore</tt>.
-# If multiple fibers raise, only the first exception is re-raised after all
-# finish.
-# Joins the current reactor task when one is already running, and otherwise
-# starts its own.
 class Riffer::Runner::Fibers < Riffer::Runner
   # @rbs @max_concurrency: Integer?
 
@@ -35,6 +29,7 @@ class Riffer::Runner::Fibers < Riffer::Runner
                barrier
              end
 
+    # Sync joins the running reactor task if there is one, otherwise starts its own.
     Sync do
       items.each_with_index do |item, index|
         parent.async do

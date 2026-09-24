@@ -3,10 +3,6 @@
 
 require "json"
 
-# Base class for all LLM providers. A template-method flow: subclasses implement
-# the hooks (+build_request_params+, +execute_generate+, +execute_stream+,
-# +extract_token_usage+, +extract_content+, +extract_tool_calls+) and the base
-# class orchestrates them.
 class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
@@ -15,18 +11,12 @@ class Riffer::Providers::Base
 
   WIRE_SEPARATOR = "__" #: String
 
-  # Returns the preferred skill adapter for this provider; override in
-  # subclasses (optionally introspecting +model+) for provider-specific formats.
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(_model = nil)
     Riffer::Skills::MarkdownAdapter
   end
 
-  # Returns the provider name stamped as <tt>gen_ai.provider.name</tt> on trace
-  # spans, ideally a GenAI semconv well-known value. Defaults to the snake_cased
-  # class name rather than raising like the abstract provider methods, so
-  # enabling tracing never breaks an otherwise-working custom provider.
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -34,11 +24,11 @@ class Riffer::Providers::Base
     # later must pick up its real name, not a frozen "unknown".
     class_name = name or return "unknown"
 
+    # A default rather than NotImplementedError, so enabling tracing never
+    # breaks an otherwise-working custom provider.
     @semconv_provider_name ||= Riffer::Helpers::Identifier.derive(class_name.split("::").last)
   end
 
-  # Generates text using the provider.
-  #
   #--
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant
   def generate_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
@@ -77,8 +67,6 @@ class Riffer::Providers::Base
     end
   end
 
-  # Streams text from the provider.
-  #
   #--
   #: (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Enumerator[Riffer::StreamEvents::Base, void]
   def stream_text(prompt: nil, system: nil, messages: nil, model: nil, files: nil, **options)
@@ -119,21 +107,17 @@ class Riffer::Providers::Base
     Riffer::Helpers::Dependencies.depends_on(gem_name)
   end
 
-  # Returns the client for the current LLM call. A configured client wins,
-  # resolved on every call so a Proc can vary the client by process or
-  # credential lifetime; otherwise the provider builds one from the configured
-  # credentials, memoized for the life of the provider.
   #--
   #: () -> untyped
   def client
     configured = global_client
+    # Resolved on every call, never memoized, so a Proc can vary the client by
+    # process or credential lifetime.
     return Riffer::Helpers::CallOrValue.resolve(configured) if configured
 
     @client ||= build_client
   end
 
-  # Returns the consumer-configured client for this provider; nil when none is
-  # configured, and for providers that take no configuration at all.
   #--
   #: () -> untyped
   def global_client
@@ -218,19 +202,17 @@ class Riffer::Providers::Base
     pricing.rates_for("#{key}/#{model}")
   end
 
-  # Defaults to nil rather than raising — finish reasons are optional, so
-  # providers that don't report one stay valid.
   #--
   #: (untyped) -> Riffer::Providers::FinishReason?
   def extract_finish_reason(_response)
+    # Optional hook, so providers that don't report a finish reason stay valid.
     nil
   end
 
-  # Defaults to no parts rather than raising — reasoning parts are optional, so
-  # providers that don't expose replayable reasoning stay valid.
   #--
   #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
   def extract_reasoning(_response)
+    # Optional hook, so providers that don't expose replayable reasoning stay valid.
     []
   end
 
@@ -295,8 +277,6 @@ class Riffer::Providers::Base
     attributes.merge(tag_attributes(options[:tags] || {}))
   end
 
-  # Maps normalized tags to their namespaced span attribute form. An empty map
-  # yields an empty hash, so merging it is a no-op.
   #--
   #: (Hash[String, String]) -> Hash[String, String]
   def tag_attributes(tags)
@@ -358,11 +338,10 @@ class Riffer::Providers::Base
     Riffer.config.tracing.capture_messages && span.recording?
   end
 
-  # Wraps reasoning text that an adapter cannot yet replay in a +:text+ part
-  # with no +format+, so it persists for display but is never sent back.
   #--
   #: (Riffer::Providers::_EventSink, String) -> void
   def yield_reasoning_done(yielder, text)
+    # No +format+, so the reasoning persists for display but is never replayed.
     part = Riffer::Messages::Assistant::ReasoningPart.new(type: :text, text: text)
     yielder << Riffer::StreamEvents::ReasoningDone.new(part)
   end

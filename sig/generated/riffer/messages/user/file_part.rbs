@@ -1,7 +1,5 @@
 # Generated from lib/riffer/messages/user/file_part.rb with RBS::Inline
 
-# Represents a file attachment (image or document) — from a URL (+from_url+) or
-# raw base64 data (+new+).
 class Riffer::Messages::User::FilePart
   @data_bytes: String?
 
@@ -17,41 +15,28 @@ class Riffer::Messages::User::FilePart
 
   SHA256_PATTERN: Regexp
 
-  # The MIME type of the file.
   attr_reader media_type: String
 
-  # The filename, if available.
   attr_reader filename: String?
 
-  # The expected SHA-256 of the file contents, if the caller supplied one.
   attr_reader sha256: String?
 
-  # Raises Riffer::ArgumentError unless +data+ or +url+ is given and
-  # +media_type+ is supported.
   # --
   # : (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
   def initialize: (media_type: String, ?data: String?, ?filename: String?, ?url: String?, ?sha256: String?) -> void
 
-  # Creates a FilePart from a URL, detecting +media_type+ from the path
-  # extension when omitted. Raises Riffer::ArgumentError if it can't be detected.
   # --
   # : (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
   def self.from_url: (String, ?media_type: String?, ?filename: String?, ?sha256: String?) -> Riffer::Messages::User::FilePart
 
-  # Builds a FilePart from a +{url:, media_type:}+ or +{data:, media_type:}+ hash,
-  # or returns +file+ unchanged when it is already a FilePart. Raises
-  # Riffer::ArgumentError on an invalid hash.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::User::FilePart)) -> Riffer::Messages::User::FilePart
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::User::FilePart) -> Riffer::Messages::User::FilePart
 
-  # Raises Riffer::ArgumentError when the URL's extension isn't a known media type.
   # --
   # : (String) -> String
   def self.detect_media_type: (String) -> String
 
-  # The base64-encoded contents - caller-supplied, or filled in by the file
-  # resolver after a download.  Nil for a URL source riffer hasn't fetched.
   # --
   # : () -> String?
   def data: () -> String?
@@ -62,44 +47,29 @@ class Riffer::Messages::User::FilePart
   # : (String) -> void
   def cache_data_bytes: (String) -> void
 
-  # Whether data was supplied directly, as opposed to filled in later by the
-  # file resolver after a download
   # : () -> bool
   def inline_data?: () -> bool
 
-  # Caches bytes fetched for a URL source.  Deliberately absent from +to_h+:
-  # the agent loop re-sends history on every turn, so the cache saves refreshing
-  # the same file, while persisted history stays free of megabytes of base64
   # --
   # : (String) -> void
   def cache_downloaded_data: (String) -> void
 
-  # Returns the URL if the source was a URL, nil otherwise.
-  #
   # --
   # : () -> String?
   def url: () -> String?
 
-  # Returns true if the source was a URL.
-  #
   # --
   # : () -> bool
   def url?: () -> bool
 
-  # Returns true if the file is an image.
-  #
   # --
   # : () -> bool
   def image?: () -> bool
 
-  # Returns true if the file is a document (not an image).
-  #
   # --
   # : () -> bool
   def document?: () -> bool
 
-  # Serializes the FilePart to a hash.
-  #
   # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]

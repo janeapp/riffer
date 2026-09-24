@@ -3,9 +3,6 @@
 
 require "json"
 
-# Handles tool call execution for an agent, composing with a Riffer::Runner for
-# concurrency. Subclass and override +dispatch_tool_call+ to customize dispatch
-# (e.g. HTTP, gRPC).
 class Riffer::Tools::Runtime
   # @rbs @runner: Riffer::Runner
 
@@ -20,17 +17,15 @@ class Riffer::Tools::Runtime
     @runner = runner
   end
 
-  # Executes a batch of tool calls, returning <tt>[tool_call, response]</tt> pairs.
   #--
   #: (Array[Riffer::Messages::Assistant::ToolCall], tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?, ?tags: Hash[String, String]) -> Array[[Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]]
   def execute(tool_calls, tools:, context:, assistant_message: nil, tags: {})
     # Each Runner worker runs in its own thread/fiber, where the OTEL context
     # starts empty — capture here so the execute_tool span parents correctly.
-    # tags are an ordinary local captured in the block, so they reach the
-    # worker's span without re-propagation.
     trace_context = Riffer::Tracing.current_context
     @runner.map(tool_calls, context: context) do |tool_call|
       Riffer::Tracing.with_context(trace_context) do
+        # Outside around_tool_call so host enrichment spans nest beneath it.
         instrument_tool_call(tool_call, tags) do
           around_tool_call(tool_call, context: context, assistant_message: assistant_message) do
             dispatch_tool_call(tool_call, tools: tools, context: context, assistant_message: assistant_message)
@@ -40,20 +35,7 @@ class Riffer::Tools::Runtime
     end
   end
 
-  # Hook wrapping each tool call; override in subclasses to instrument or
-  # customize. Must +yield+ to continue.
-  #
-  #   class InstrumentedRuntime < Riffer::Tools::Runtime::Inline
-  #     private
-  #
-  #     def around_tool_call(tool_call, context:, assistant_message: nil)
-  #       start = Time.now
-  #       result = yield
-  #       Rails.logger.info("Tool #{tool_call.name} took #{Time.now - start}s")
-  #       result
-  #     end
-  #   end
-  #
+  # Overrides must +yield+ and return its Response.
   #--
   #: (Riffer::Messages::Assistant::ToolCall, context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) { () -> Riffer::Tools::Response } -> Riffer::Tools::Response
   def around_tool_call(_tool_call, context:, assistant_message: nil)
@@ -73,6 +55,7 @@ class Riffer::Tools::Runtime
     [tool_call, result] #: [Riffer::Messages::Assistant::ToolCall, Riffer::Tools::Response]
   end
 
+  # Subclasses override this to dispatch elsewhere (e.g. HTTP, gRPC).
   #--
   #: (Riffer::Messages::Assistant::ToolCall, tools: Array[singleton(Riffer::Tool)], context: Riffer::Agent::Context?, ?assistant_message: Riffer::Messages::Assistant?) -> Riffer::Tools::Response
   def dispatch_tool_call(tool_call, tools:, context:, assistant_message: nil)
@@ -108,7 +91,6 @@ class Riffer::Tools::Runtime
     JSON.parse(arguments, symbolize_names: true)
   end
 
-  # Emitted outside +around_tool_call+ so host enrichment spans nest beneath it.
   #--
   #: [R] (Riffer::Messages::Assistant::ToolCall, ?Hash[String, String]) { ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span)) -> R } -> R
   def in_tool_span(tool_call, tags = {})
@@ -137,23 +119,20 @@ class Riffer::Tools::Runtime
     }.merge(tag_attributes(tags))
   end
 
-  # Maps normalized tags to their namespaced span attribute form. An empty map
-  # yields an empty hash, so merging it is a no-op.
   #--
   #: (Hash[String, String]) -> Hash[String, String]
   def tag_attributes(tags)
     tags.transform_keys { |key| "riffer.tag.#{key}" }
   end
 
-  # A deliberate error Response is a handled outcome, so its status stays unset.
-  # An error status is reserved for a Response carrying the exception it was
-  # folded from — the tool failed for a reason nobody anticipated.
   #--
   #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Tools::Response) -> void
   def record_tool_outcome(span, result)
     error_type = result.error_type
     span.set_attribute("error.type", error_type.to_s) if error_type
 
+    # A deliberate error Response is a handled outcome, so only one carrying the
+    # exception it was folded from gets an error status.
     exception = result.exception
     if exception
       span.record_exception(exception)

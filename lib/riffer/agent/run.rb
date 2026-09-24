@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# The generation loop — a pure module of functions over an +agent+, which owns
-# every per-call value; Run just orchestrates.
 module Riffer::Agent::Run
   extend self
 
-  # Runs the generate loop for the given agent. See Riffer::Agent#generate
-  # for prompt/files semantics.
-  #
   #--
   #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate(agent:, prompt: nil, files: nil, tags: {})
@@ -16,17 +11,13 @@ module Riffer::Agent::Run
     run_loop(agent, tags: tags)
   end
 
-  # Runs the streaming loop for the given agent. See Riffer::Agent#stream
-  # for prompt/files semantics.
-  #
   #--
   #: (agent: Riffer::Agent, ?prompt: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream(agent:, prompt: nil, files: nil, tags: {})
     append_user_message(agent, prompt, files: files)
     # The enumerator body runs in its own fiber, where the fiber-local OTEL
     # context is empty — capture here so the run span parents to the caller's
-    # trace. tags ride as an ordinary argument captured in the closure, so they
-    # cross the fiber boundary without any re-propagation.
+    # trace.
     trace_context = Riffer::Tracing.current_context
     Enumerator.new do |stream_yielder|
       Riffer::Tracing.with_context(trace_context) { run_loop(agent, tags: tags, stream_yielder: stream_yielder) }
@@ -35,12 +26,6 @@ module Riffer::Agent::Run
 
   private
 
-  # Both +generate+ and +stream+ funnel here, so this is the single place raw
-  # +tags+ are normalized and merged over the default tags (a caller tag wins
-  # on a shared key). The clean <tt>String => String</tt> map is then
-  # threaded to every span builder in the run as +riffer.tag.*+ and to each
-  # provider call (via +merged_model_options+) for native request-metadata
-  # mapping.
   #--
   #: (Riffer::Agent, ?tags: Hash[(String | Symbol), untyped]?, ?stream_yielder: Enumerator::Yielder?) -> Riffer::Agent::Response
   def run_loop(agent, tags: {}, stream_yielder: nil)
@@ -164,12 +149,12 @@ module Riffer::Agent::Run
 
       case event
       when Riffer::StreamEvents::TextDelta
-        # Append in place rather than += (which reallocates and copies the whole
-        # buffer per delta, O(n^2) over a stream). accumulated_content stays an
-        # owned buffer; replace (not =) on TextDone keeps it that way so a later
-        # delta's << can never mutate the string held by a TextDone event.
+        # << rather than +=, which copies the whole buffer per delta (O(n^2)
+        # over a stream).
         accumulated_content << event.content
       when Riffer::StreamEvents::TextDone
+        # replace, not =, so a later delta's << can never mutate the string
+        # this event holds.
         accumulated_content.replace(event.content)
       when Riffer::StreamEvents::ToolCallDone
         accumulated_tool_calls << Riffer::Messages::Assistant::ToolCall.new(
@@ -239,14 +224,12 @@ module Riffer::Agent::Run
     )
   end
 
-  # Checked in the order things happened. The loop being stopped (max_steps or
-  # an interrupt) beats the provider's finish reason, which beats riffer's own
-  # validation of the content. A truncated response that also fails the schema
-  # therefore reports :length, not :invalid_structured_output.
   #--
   #: (Riffer::Messages::Assistant?, Riffer::Agent::StructuredOutput::Result?, interrupted: bool, interrupt_reason: (String | Symbol)?) -> Riffer::Agent::Outcome
   def final_outcome(message, result, interrupted:, interrupt_reason:)
     finish_reason = message&.finish_reason
+    # Precedence follows the order things happened: a stopped loop beats the
+    # provider's finish reason, which beats schema validation of the content.
     if interrupted && interrupt_reason == Riffer::Agent::INTERRUPT_MAX_STEPS
       Riffer::Agent::Outcome.new(reason: :max_steps)
     elsif interrupted
@@ -374,20 +357,17 @@ module Riffer::Agent::Run
     discovered.empty? ? agent.tools : agent.tools + discovered
   end
 
-  # +tags+ rides in the options hash as a curated key the providers extract for
-  # native request-metadata mapping (alongside +:structured_output+); it never
-  # reaches an SDK call verbatim. Span tagging is threaded separately to each
-  # builder.
   #--
   #: (Riffer::Agent, ?Hash[String, String]) -> Hash[Symbol, untyped]
   def merged_model_options(agent, tags = {})
     opts = agent.config.model_options.dup
     opts[:structured_output] = agent.structured_output if agent.structured_output
+    # Providers extract :tags for native request metadata; it never reaches an
+    # SDK call verbatim.
     opts[:tags] = tags unless tags.empty?
     opts
   end
 
-  # The tags riffer adds to every run, identifying the agent it's on behalf of.
   #--
   #: (Riffer::Agent) -> Hash[String, String]
   def default_tags(agent)
@@ -434,11 +414,10 @@ module Riffer::Agent::Run
     )
   end
 
-  # Raises when +files+ are supplied without a +prompt+ — the provider needs
-  # text to anchor the attachments.
   #--
   #: (Riffer::Agent, String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?) -> void
   def append_user_message(agent, prompt, files: nil)
+    # The provider needs text to anchor the attachments.
     raise Riffer::ArgumentError, "files: requires a prompt" if files && !files.empty? && prompt.nil?
     return unless prompt
 

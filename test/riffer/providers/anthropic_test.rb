@@ -5,8 +5,6 @@ require "test_helper"
 describe Riffer::Providers::Anthropic do
   let(:api_key) { ENV.fetch("ANTHROPIC_API_KEY", "test_api_key") }
 
-  # Credentials now reach the provider only through config, so every test that
-  # builds a client needs one configured.
   before { Riffer.config.anthropic.api_key = api_key }
 
   after do
@@ -534,7 +532,6 @@ describe Riffer::Providers::Anthropic do
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
     let(:model) { "claude-haiku-4-5-20251001" }
 
-    # Tags arrive already normalized from Run, so these pass clean String maps.
     it "maps only the reserved user_id to metadata.user_id, dropping all other tags" do
       params = provider.send(
         :build_request_params,
@@ -562,9 +559,8 @@ describe Riffer::Providers::Anthropic do
   describe "per-call tags (end-to-end)" do
     let(:provider) { Riffer::Providers::Anthropic.new }
 
-    # The cassette records the request body Anthropic receives when tags are
-    # passed (only the reserved user_id is forwarded, as metadata.user_id).
-    # VCR's :body matcher fails the test if tags ever stop reaching the wire.
+    # The cassette records metadata.user_id in the request body; VCR's :body
+    # matcher fails the test if tags ever stop reaching the wire.
     it "forwards per-call tags to the request" do
       VCR.use_cassette("Riffer_Providers_Anthropic/tags/forwards_user_id_metadata") do
         result = provider.generate_text(

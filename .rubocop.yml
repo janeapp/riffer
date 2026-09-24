@@ -110,3 +110,8 @@ Performance/Sum:
     - lib/riffer/providers/base.rb
     - lib/riffer/evals/run_result.rb
     - lib/riffer/evals/scenario_result.rb
+
+# Each accessor carries its own trailing rbs-inline `#:` type; grouping them
+# onto one line drops every type but the first.
+Style/AccessorGrouping:
+  EnforcedStyle: separated

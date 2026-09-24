@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Resolves provider classes by identifier, combining the built-in REPO with
-# consumer registrations added through +register+. Registration is not
-# synchronized — register during boot, before concurrent generation begins.
 module Riffer::Providers::Repository
   extend self
 
@@ -22,11 +19,8 @@ module Riffer::Providers::Repository
 
   @registrations = {} #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  # Registers a custom provider under +identifier+, resolved lazily by the block.
-  # Takes precedence over a built-in sharing the identifier.
-  #
-  #   Riffer::Providers::Repository.register(:jane) { MyApp::JaneProvider }
-  #
+  # Not synchronized — register during boot, before concurrent generation
+  # begins.
   #--
   #: ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
   def register(identifier, &factory)
@@ -34,8 +28,6 @@ module Riffer::Providers::Repository
     @key_for = nil
   end
 
-  # Removes a custom registration by identifier, leaving any built-in of the
-  # same name intact.
   #--
   #: ((String | Symbol)) -> void
   def unregister(identifier)
@@ -43,9 +35,6 @@ module Riffer::Providers::Repository
     @key_for = nil
   end
 
-  # Finds a provider class by identifier, preferring a custom registration over
-  # a built-in of the same name.
-  #
   #--
   #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
   def find(identifier)
@@ -53,7 +42,6 @@ module Riffer::Providers::Repository
     (@registrations[key] || REPO[key])&.call
   end
 
-  # Returns the registry identifier for a provider class, or nil when unregistered.
   #--
   #: (singleton(Riffer::Providers::Base)) -> Symbol?
   def key_for(provider_class)

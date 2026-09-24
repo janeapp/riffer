@@ -15,7 +15,8 @@ class FakeTracingBackend
     def recording? = true
   end
 
-  attr_reader :opened, :context_calls
+  attr_reader :opened
+  attr_reader :context_calls
 
   def initialize
     @opened = []

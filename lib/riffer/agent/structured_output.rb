@@ -3,10 +3,7 @@
 
 require "json"
 
-# Parses and validates structured JSON responses against a Riffer::Params
-# schema.
 class Riffer::Agent::StructuredOutput
-  # The schema parameters.
   attr_reader :params #: Riffer::Params # @dynamic params
 
   #--
@@ -15,16 +12,12 @@ class Riffer::Agent::StructuredOutput
     @params = params
   end
 
-  # Returns the JSON Schema for this structured output.
-  #
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def json_schema(strict: false)
     @params.to_json_schema(strict: strict)
   end
 
-  # Parses a JSON string and validates it against the schema, returning a
-  # Result carrying either the validated object or an error message.
   #--
   #: (String) -> Riffer::Agent::StructuredOutput::Result
   def parse_and_validate(json_string)

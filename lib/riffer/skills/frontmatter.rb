@@ -3,33 +3,21 @@
 
 require "yaml"
 
-# Immutable value object holding parsed SKILL.md YAML frontmatter. Required
-# fields: +name+ and +description+; the optional +disable-model-invocation+
-# flag is recognized, and any other unrecognized top-level keys are merged into
-# +metadata+.
 class Riffer::Skills::Frontmatter
   NAME_PATTERN = /\A[a-z0-9]+(-[a-z0-9]+)*\z/ #: Regexp
   MAX_NAME_LENGTH = 64 #: Integer
   MAX_DESCRIPTION_LENGTH = 1024 #: Integer
 
-  # The skill name (1-64 chars, lowercase alphanumeric and hyphens).
   attr_reader :name #: String # @dynamic name
 
-  # The skill description (1-1024 chars).
   attr_reader :description #: String # @dynamic description
 
-  # Whether the skill opts out of model-driven activation. Hidden from the
-  # catalog and rejected at model activation; still reachable via programmatic
-  # activation.
   attr_reader :disable_model_invocation #: bool # @dynamic disable_model_invocation
 
-  # Metadata from the spec's +metadata+ field plus any unrecognized top-level
-  # keys.
   attr_reader :metadata #: Hash[Symbol, untyped] # @dynamic metadata
 
-  # Parses a raw SKILL.md string into a +[Frontmatter, body]+ pair — public so
-  # custom backends needn't reimplement parsing. Raises Riffer::ArgumentError
-  # if the frontmatter is invalid.
+  # Public so custom backends needn't reimplement parsing. Raises
+  # Riffer::ArgumentError if the frontmatter is invalid.
   #--
   #: (String) -> [Riffer::Skills::Frontmatter, String]
   def self.parse(raw)
@@ -47,7 +35,6 @@ class Riffer::Skills::Frontmatter
     ]
   end
 
-  # Parses only the frontmatter from a raw SKILL.md string, ignoring the body.
   # Raises Riffer::ArgumentError if the frontmatter is invalid.
   #--
   #: (String) -> Riffer::Skills::Frontmatter
@@ -80,7 +67,6 @@ class Riffer::Skills::Frontmatter
   private_class_method :split_frontmatter
 
   # Raises Riffer::ArgumentError if +name+ or +description+ is invalid.
-  # +disable_model_invocation+ is treated as set only when literally +true+.
   #--
   #: (name: String, description: String, ?disable_model_invocation: bool, ?metadata: Hash[Symbol, untyped]) -> void
   def initialize(name:, description:, disable_model_invocation: false, metadata: {})

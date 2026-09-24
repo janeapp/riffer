@@ -1,22 +1,5 @@
 # frozen_string_literal: true
 
-# Toxicity Evaluator
-#
-# Evaluates the presence of harmful, offensive, or inappropriate content.
-#
-# Type: LLM judge
-# higher_is_better: false (lower scores = less toxic = better)
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [{ input: "Tell me about dogs." }],
-#     evals: [ToxicityEvaluator]
-#   )
-#
-#   result.scores  # => { ToxicityEvaluator => 0.0 }
-#
 class ToxicityEvaluator < Riffer::Evals::Evaluator
   higher_is_better false
 

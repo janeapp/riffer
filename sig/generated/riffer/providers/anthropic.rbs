@@ -1,19 +1,14 @@
 # Generated from lib/riffer/providers/anthropic.rb with RBS::Inline
 
-# Anthropic provider for Claude models via the Anthropic API. Requires the
-# +anthropic+ gem.
 class Riffer::Providers::Anthropic < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE: String
 
   FINISH_REASONS: Hash[String, Symbol]
 
-  # Returns the XML skill adapter for Anthropic/Claude.
-  #
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
 
-  # The GenAI semconv well-known provider name.
   # --
   # : () -> String
   def self.semconv_provider_name: () -> String
@@ -28,9 +23,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # : () -> untyped
   def global_client: () -> untyped
 
-  # Compacted for the same reason as the other providers: never hand an SDK an
-  # explicit nil credential, so its own +ANTHROPIC_API_KEY+ resolution stays
-  # reachable regardless of how that SDK distinguishes nil from absent.
   # --
   # : () -> untyped
   def build_client: () -> untyped
@@ -55,8 +47,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # : (untyped) -> Riffer::Providers::FinishReason?
   def build_finish_reason: (untyped) -> Riffer::Providers::FinishReason?
 
-  # Anthropic's +input_tokens+ excludes the cache buckets; TokenUsage's
-  # input includes them.
   # --
   # : (untyped) -> Riffer::Providers::TokenUsage
   def build_token_usage: (untyped) -> Riffer::Providers::TokenUsage

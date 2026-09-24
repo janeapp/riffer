@@ -1,7 +1,5 @@
 # Generated from lib/riffer/guardrails.rb with RBS::Inline
 
-# Namespace for guardrail components that pre-process input and post-process
-# output in the agent pipeline.
 module Riffer::Guardrails
   PHASES: Array[Symbol]
 end

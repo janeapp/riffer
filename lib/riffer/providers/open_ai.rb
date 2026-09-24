@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# OpenAI provider for GPT models. Requires the +openai+ gem.
 class Riffer::Providers::OpenAI < Riffer::Providers::Base
   WEB_SEARCH_TOOL_TYPE = "web_search_preview" #: String
 
-  # The Responses API has no finish_reason field. The response +status+ is
-  # the primary signal; an +incomplete+ status is only meaningful together
-  # with <tt>incomplete_details.reason</tt>, so that branch nests one level.
+  # The Responses API has no finish_reason field, and an +incomplete+ status is only meaningful
+  # together with <tt>incomplete_details.reason</tt>.
   FINISH_REASONS = {
     "completed" => :stop,
     "incomplete" => {
@@ -20,7 +18,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     "queued" => :other,
   }.freeze #: Hash[String, Symbol | Hash[String, Symbol]]
 
-  # The GenAI semconv well-known provider name.
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -48,12 +45,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer.config.openai.client
   end
 
-  # Compacted so an unset value stays absent: the SDK reads +OPENAI_API_KEY+ /
-  # +OPENAI_BASE_URL+ only for a missing argument, and an explicit nil would
-  # suppress that fallback.
   #--
   #: () -> untyped
   def build_client
+    # The SDK falls back to +OPENAI_API_KEY+ / +OPENAI_BASE_URL+ only for a missing argument; an
+    # explicit nil suppresses that fallback.
     ::OpenAI::Client.new(**{
       api_key: Riffer.config.openai.api_key,
       base_url: Riffer.config.openai.base_url,
@@ -80,10 +76,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
-      # Merged over any metadata set in model_options; a tag wins on a shared key.
       params[:metadata] = (params[:metadata] || {}).merge(tags)
-      # The reserved user_id also maps to the native safety identifier while
-      # staying in metadata as an ordinary tag.
       user_id = tags["user_id"]
       params[:safety_identifier] = user_id if user_id
     end
@@ -165,7 +158,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     Riffer::Providers::FinishReason.new(reason: reason, raw: detail || status)
   end
 
-  # The nested field that names the cause behind an ambiguous status.
   #--
   #: (untyped, String) -> String?
   def finish_detail(response, status)
@@ -255,9 +247,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         end
       end
     ensure
-      # OpenAI SDK does not auto-close the underlying HTTP stream when
-      # iteration is interrupted (raise / fiber cancellation), so the SSE
-      # socket leaks until GC. close is idempotent and a no-op after EOF.
+      # The SDK doesn't close the SSE socket when iteration is interrupted (raise / fiber
+      # cancellation), so it leaks until GC. close is idempotent and a no-op after EOF.
       stream.close
     end
 
@@ -349,8 +340,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
     action = event.item.action
     case action
     when ::OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::OpenPage
-      # OpenPage carries a url but no query or sources, so it doesn't fit
-      # WebSearchDone — emit as a status notification instead.
+      # OpenPage carries a url but no query or sources, so it doesn't fit WebSearchDone.
       yielder << Riffer::StreamEvents::WebSearchStatus.new("open_page", url: action.url)
     when ::OpenAI::Models::Responses::ResponseFunctionWebSearch::Action::Search
       sources = (action.sources || []).map { |s| { title: nil, url: s.url } }

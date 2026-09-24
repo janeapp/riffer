@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents one tool invocation the model requested on an assistant message.
 class Riffer::Messages::Assistant::ToolCall
-  # The provider's identifier for the call, echoed back on the tool result.
   attr_reader :call_id #: String # @dynamic call_id
 
-  # The name of the tool to invoke.
   attr_reader :name #: String # @dynamic name
 
-  # The JSON-encoded arguments, exactly as the provider emitted them.
+  # JSON-encoded, exactly as the provider emitted them.
   attr_reader :arguments #: String # @dynamic arguments
 
-  # Builds a ToolCall from a hash, or returns +call+ unchanged when it is
-  # already a ToolCall. Raises Riffer::ArgumentError when the hash is missing
-  # a field.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Assistant::ToolCall)) -> Riffer::Messages::Assistant::ToolCall
   def self.from_hash(call)
@@ -35,8 +29,6 @@ class Riffer::Messages::Assistant::ToolCall
     @arguments = arguments
   end
 
-  # Serializes the call to a hash.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

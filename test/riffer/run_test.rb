@@ -2843,7 +2843,6 @@ describe Riffer::Agent::Run do
         provider = agent.provider
         3.times { provider.stub_response("", tool_calls: [{ name: "resume_step_tool", arguments: "{}" }]) }
 
-        # First generate: runs 2 steps then gets interrupted by callback
         interrupted_once = false
         agent.session.on_message do |msg|
           if msg.is_a?(Riffer::Messages::Tool) && !interrupted_once
@@ -2856,7 +2855,6 @@ describe Riffer::Agent::Run do
 
         expect(result.outcome.reason).must_equal :interrupted
 
-        # Resume via generate with array: step offset is auto-derived from assistant messages
         result = agent.generate("Continue")
 
         expect(result.outcome.reason).must_equal :max_steps

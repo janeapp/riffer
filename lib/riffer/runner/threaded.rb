@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Processes items concurrently using a thread pool of up to +max_concurrency+
-# workers pulling from a shared queue, so a slow item doesn't block others. If
-# multiple workers raise, only the first exception is re-raised after all finish.
 class Riffer::Runner::Threaded < Riffer::Runner
   # @rbs @max_concurrency: Integer
 

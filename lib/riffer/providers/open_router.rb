@@ -3,10 +3,6 @@
 
 require "json"
 
-# OpenRouter provider (https://openrouter.ai). Requires the +openai+ gem —
-# OpenRouter exposes an OpenAI-compatible endpoint, so this reuses the OpenAI
-# SDK with a +base_url+ override. +api_key+ resolves from config, then
-# +OPENROUTER_API_KEY+.
 class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   BASE_URL = "https://openrouter.ai/api/v1" #: String
 
@@ -19,7 +15,6 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     "error" => :error,
   }.freeze #: Hash[String, Symbol]
 
-  # The GenAI semconv well-known provider name.
   #--
   #: () -> String
   def self.semconv_provider_name
@@ -47,15 +42,12 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     Riffer.config.openrouter.client
   end
 
-  # Deliberately not compacted: this borrows the OpenAI SDK to talk to a
-  # different vendor, so omitting an unset +api_key+ would let the SDK fall
-  # back to +OPENAI_API_KEY+ and send an OpenAI credential to OpenRouter.
-  # Passing nil raises in the SDK instead. +OPENROUTER_API_KEY+ is read here
-  # rather than left to the SDK for the same reason.
   #--
   #: () -> untyped
   def build_client
     api_key = Riffer.config.openrouter.api_key || ENV.fetch("OPENROUTER_API_KEY", nil)
+    # Pass a nil api_key rather than omitting it: an omitted key lets the SDK
+    # fall back to OPENAI_API_KEY and send an OpenAI credential to OpenRouter.
     ::OpenAI::Client.new(api_key: api_key, base_url: BASE_URL)
   end
 
@@ -74,7 +66,6 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     } #: Hash[Symbol, untyped]
 
     unless tags.empty?
-      # Merged over any metadata set in model_options; a tag wins on a shared key.
       params[:metadata] = (params[:metadata] || {}).merge(tags)
       # OpenRouter exposes the legacy Chat Completions user field rather than
       # safety_identifier; the reserved user_id maps there and stays in metadata.
@@ -138,8 +129,6 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     build_finish_reason(choice&.finish_reason, native: native_finish_reason(choice))
   end
 
-  # +native+ is the upstream model's own finish reason, which OpenRouter
-  # reports alongside its normalized one; it wins as +raw+ when present.
   #--
   #: (untyped, ?native: untyped) -> Riffer::Providers::FinishReason?
   def build_finish_reason(finish_reason, native: nil)
@@ -148,15 +137,17 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
     normalized = finish_reason.to_s
     return nil if normalized.empty?
 
+    # OpenRouter reports the upstream model's own finish reason alongside its
+    # normalized one.
     raw = native.to_s.empty? ? normalized : native.to_s
     Riffer::Providers::FinishReason.new(reason: FINISH_REASONS.fetch(normalized, :other), raw: raw)
   end
 
-  # +native_finish_reason+ is outside the OpenAI schema, so it is only
-  # reachable through the SDK model's raw data hash.
   #--
   #: (untyped) -> untyped
   def native_finish_reason(choice)
+    # Outside the OpenAI schema, so only reachable through the SDK model's raw
+    # data hash.
     choice && choice.to_h[:native_finish_reason]
   end
 
@@ -203,11 +194,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
       native_finish_reason: nil,
     } #: Hash[Symbol, untyped]
 
-    # Use stream_raw (not stream) — the latter yields a higher-level
-    # ChatChunkEvent helper that aggregates content/tool calls into typed
-    # events. We want raw ChatCompletionChunk objects with
-    # +choices.first.delta+ so we can map deltas to Riffer::StreamEvents
-    # ourselves.
+    # stream_raw, not stream: stream aggregates chunks into higher-level
+    # events, but mapping to Riffer::StreamEvents needs the raw deltas.
     stream = client.chat.completions.stream_raw(**stream_params)
     begin
       stream.each do |chunk|
@@ -265,9 +253,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_delta(delta, state:, yielder:)
-    # The openai gem's typed Delta model strips fields not in OpenAI's spec
-    # (so +delta.reasoning+ raises NoMethodError), but the underlying data
-    # hash retains them. Access via +#[]+ which reads from BaseModel#@data.
+    # The typed Delta model strips fields outside OpenAI's spec (so
+    # +delta.reasoning+ raises NoMethodError); +#[]+ reads the raw data hash.
     reasoning = delta[:reasoning] if delta.respond_to?(:[])
     return if reasoning.nil? || reasoning.empty?
 

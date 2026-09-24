@@ -1,25 +1,5 @@
 # frozen_string_literal: true
 
-# Keyword Coverage Evaluator
-#
-# Evaluates keyword intersection coverage between the response and ground truth.
-#
-# Type: Rule-based (no LLM call)
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What is Ruby?",
-#         ground_truth: "Ruby is a dynamic, open-source programming language focused on simplicity and productivity." }
-#     ],
-#     evals: [KeywordCoverageEvaluator]
-#   )
-#
-#   result.scores  # => { KeywordCoverageEvaluator => 0.7 }
-#
 class KeywordCoverageEvaluator < Riffer::Evals::Evaluator
   STOP_WORDS = %w[
     a an the is are was were be been being have has had do does did

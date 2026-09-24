@@ -8,10 +8,6 @@ class Riffer::Files::Resolver
   # : (provider: Riffer::Providers::Base) -> void
   def initialize: (provider: Riffer::Providers::Base) -> void
 
-  # Resolves every file in every User message in place - downloading,
-  # verifying, and caching as the provider's capability and each file's
-  # sha256 require.  Raises Riffer::FileError on any file that can't be
-  # resolved
   # : (Array[Riffer::Messages::Base]) -> void
   def resolve!: (Array[Riffer::Messages::Base]) -> void
 
@@ -26,9 +22,6 @@ class Riffer::Files::Resolver
   # : (Riffer::Messages::User::FilePart) -> void
   def verify_inline!: (Riffer::Messages::User::FilePart) -> void
 
-  # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
-  # request still sends the URL, never the downloaded bytes, so caching them
-  # would hold memory nothing reads and let later turns skip re-verifying.
   # : (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> void
   def download!: (Riffer::Messages::User::FilePart, cache: false | Symbol) -> void
 

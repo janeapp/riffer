@@ -24,14 +24,12 @@ begin
   require "dotenv"
   Dotenv.load
 rescue LoadError
-  # Dotenv not available, skip loading .env file
+  nil
 end
 
-# Disable AWS EC2 instance metadata service credential lookup in tests
-# This prevents "Error retrieving instance profile credentials" messages
+# The AWS SDK otherwise probes EC2 instance metadata for credentials and logs errors.
 ENV["AWS_EC2_METADATA_DISABLED"] = "true"
 
-# Configure VCR for recording HTTP interactions
 VCR.configure do |config|
   config.cassette_library_dir = "test/fixtures/vcr_cassettes"
   config.hook_into :webmock
@@ -57,18 +55,15 @@ end
 
 SKILLS_FIXTURES_PATH = File.expand_path("fixtures/skills", __dir__)
 
-# Clears the MCP registry between tests, retiring any in-flight discovery threads.
 def clear_mcp_registry!
   Riffer::Mcp::Registry.registrations.each_key { |name| Riffer::Mcp::Registry.unregister(name) }
 end
 
-# Asserts +object+ survives a to_h -> JSON -> from_hash round trip. It also
-# requires to_h to emit every constructor keyword, so a fixture that doesn't
-# populate a newly added attribute fails rather than silently skipping it.
 def assert_round_trips(object)
   hash = object.to_h
   parameters = object.class.instance_method(:initialize).parameters
   keywords = parameters.filter_map { |kind, name| name if kind in :key | :keyreq }
+  # A fixture that doesn't populate a newly added attribute must fail rather than skip it silently.
   missing = keywords - hash.keys
 
   expect(missing).must_be_empty "#{object.class}#to_h omits #{missing.inspect}; populate them in the fixture"

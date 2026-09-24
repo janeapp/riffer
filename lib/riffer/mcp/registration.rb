@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Per-server state managed by Riffer::Mcp::Registry — discovers tools via
-# +tools/list+ and generates tool classes when a server is registered.
 class Riffer::Mcp::Registration
   # @rbs @cancelled: bool
   # @rbs @tools: Array[singleton(Riffer::Mcp::Tool)]
   # @rbs @mutex: Thread::Mutex
 
-  # The manifest that describes this server.
   attr_reader :manifest #: Riffer::Mcp::Manifest # @dynamic manifest
 
-  # Generated Riffer::Mcp::Tool subclasses.
-  #
   #--
   #: () -> Array[singleton(Riffer::Mcp::Tool)]
   def tools
@@ -29,17 +24,12 @@ class Riffer::Mcp::Registration
     run_discovery
   end
 
-  # Retires this registration, preventing in-flight discovery from publishing
-  # state.
-  #
   #--
   #: () -> void
   def retire!
     @mutex.synchronize { @cancelled = true }
   end
 
-  # Returns true if this registration has been retired.
-  #
   #--
   #: () -> bool
   def retired?

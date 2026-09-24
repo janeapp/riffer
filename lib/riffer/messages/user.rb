@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents a user message in a conversation.
 class Riffer::Messages::User < Riffer::Messages::Base
-  # Builds a User message from a hash, or returns +msg+ unchanged when it is
-  # already a User message. Raises Riffer::ArgumentError on an invalid file.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::User)) -> Riffer::Messages::User
   def self.from_hash(msg)
@@ -14,7 +11,6 @@ class Riffer::Messages::User < Riffer::Messages::Base
     new(msg[:content], id: msg[:id], files: files)
   end
 
-  # File attachments for this message.
   attr_reader :files #: Array[Riffer::Messages::User::FilePart] # @dynamic files
 
   #--

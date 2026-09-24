@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents the complete result of an evaluation run across multiple scenarios.
 class Riffer::Evals::RunResult
-  # Per-scenario evaluation results.
   attr_reader :scenario_results #: Array[Riffer::Evals::ScenarioResult] # @dynamic scenario_results
 
   #--
@@ -12,8 +10,6 @@ class Riffer::Evals::RunResult
     @scenario_results = scenario_results
   end
 
-  # Returns average scores keyed by evaluator class across all scenarios.
-  #
   #--
   #: () -> Hash[singleton(Riffer::Evals::Evaluator), Float]
   def scores
@@ -35,26 +31,18 @@ class Riffer::Evals::RunResult
     end
   end
 
-  # Returns the summed token usage the agents under test spent across every
-  # scenario, or nil when none reported usage.
-  #
   #--
   #: () -> Riffer::Providers::TokenUsage?
   def token_usage
     scenario_results.filter_map(&:token_usage).reduce(:+)
   end
 
-  # Returns the summed token usage across every scenario's LLM-as-judge
-  # evaluators, or nil when none reported usage.
-  #
   #--
   #: () -> Riffer::Providers::TokenUsage?
   def evaluator_token_usage
     scenario_results.filter_map(&:evaluator_token_usage).reduce(:+)
   end
 
-  # Returns a hash representation of the run result.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

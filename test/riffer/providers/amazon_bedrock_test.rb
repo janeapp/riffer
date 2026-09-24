@@ -5,9 +5,8 @@ require "test_helper"
 describe Riffer::Providers::AmazonBedrock do
   let(:api_token) { ENV.fetch("AWS_BEDROCK_API_TOKEN", "test_api_token") }
 
-  # Credentials now reach the provider only through config, so every test that
-  # builds a client needs them configured. Cassettes were recorded against
-  # us-east-1 unless a describe block overrides the region.
+  # Cassettes were recorded against us-east-1 unless a describe block overrides
+  # the region.
   before do
     Riffer.config.amazon_bedrock.api_token = api_token
     Riffer.config.amazon_bedrock.region = "us-east-1"
@@ -126,8 +125,6 @@ describe Riffer::Providers::AmazonBedrock do
     end
 
     it "does not match a stray 'anthropic' substring without a dot boundary" do
-      # Guards against regex drift: a model id like "panthropic-..." must not
-      # be treated as Anthropic just because it contains the substring.
       adapter = Riffer::Providers::AmazonBedrock.skills_adapter("panthropic-foo")
 
       expect(adapter).must_equal Riffer::Skills::MarkdownAdapter
@@ -588,8 +585,7 @@ describe Riffer::Providers::AmazonBedrock do
     let(:messages) { [Riffer::Messages::User.new("Hello")] }
     let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
 
-    # Tags arrive already normalized (Run stringifies keys/values and drops nils
-    # before they reach the provider), so these pass clean String=>String maps.
+    # Run normalizes tags to String=>String before they reach the provider.
     it "maps all tags (including the reserved user_id) to request_metadata" do
       params = provider.send(
         :build_request_params,
@@ -779,9 +775,6 @@ describe Riffer::Providers::AmazonBedrock do
         provider.instance_variable_set(:@client, client_double)
       end
 
-      # Covers the Types → Errors conversion for every stream-exception event
-      # type that Bedrock's ConverseStream can emit. Each Types::X struct must
-      # map to the same-named Aws::BedrockRuntime::Errors::X service error.
       {
         InternalServerException: :internal_server_exception,
         ModelStreamErrorException: :model_stream_error_exception,
@@ -822,10 +815,7 @@ describe Riffer::Providers::AmazonBedrock do
       end
 
       it "raises for a future exception type not explicitly known (auto-caught by class-name suffix)" do
-        # Simulates the SDK adding a new stream-exception type we haven't coded
-        # against. The class-name suffix check should still route it through
-        # Aws::BedrockRuntime::Errors (DynamicErrors synthesizes the class)
-        # rather than silently dropping it.
+        # Aws DynamicErrors synthesizes Errors::HypotheticalFutureException on lookup.
         provider
         fake_future_exception_class = Struct.new(:message, :event_type) do
           def self.name
@@ -842,8 +832,6 @@ describe Riffer::Providers::AmazonBedrock do
       end
 
       it "ignores unknown non-exception events (e.g. message_start) without raising" do
-        # Forward-compatible: unknown event types that aren't exceptions should be skipped,
-        # not raise. Verified with MessageStartEvent which Bedrock emits but we don't consume.
         provider # force SDK load before constructing the Aws types below
         message_start = Aws::BedrockRuntime::Types::MessageStartEvent.new(
           role: "assistant",
@@ -962,11 +950,8 @@ describe Riffer::Providers::AmazonBedrock do
         provider.instance_variable_set(:@client, client_double)
       end
 
-      # Guards the in-place << accumulation of streamed text: the assembled
-      # TextDone content must be byte-identical to the plain concatenation of a
-      # few hundred deltas. Catches both the frozen-string seed regression (a
-      # frozen "" would raise FrozenError on the first delta) and any
-      # mutation-aliasing where a shared reference gets clobbered mid-stream.
+      # Streamed text accumulates in place with <<, so a frozen seed or a buffer
+      # aliased into a delta would corrupt the result.
       it "assembles hundreds of deltas byte-identically to their concatenation" do
         provider # force SDK load before constructing the Aws types below
         deltas = Array.new(500) { |i| format("delta-%<index>03d-%<pad>s ", index: i, pad: "x" * 12) }
@@ -996,8 +981,6 @@ describe Riffer::Providers::AmazonBedrock do
         expect(text_done.content).must_equal expected
         expect(text_done.content.bytesize).must_equal expected.bytesize
 
-        # Each TextDelta must still carry its own unmutated fragment, and joining
-        # them must reproduce the buffer exactly.
         streamed = stream_events.grep(Riffer::StreamEvents::TextDelta).map(&:content)
 
         expect(streamed).must_equal deltas

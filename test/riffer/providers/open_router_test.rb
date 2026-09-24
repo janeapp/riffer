@@ -5,8 +5,6 @@ require "test_helper"
 describe Riffer::Providers::OpenRouter do
   let(:api_key) { ENV.fetch("OPENROUTER_API_KEY", "test_api_key") }
 
-  # Credentials now reach the provider only through config, so every test that
-  # builds a client needs one configured.
   before { Riffer.config.openrouter.api_key = api_key }
 
   after do
@@ -324,9 +322,7 @@ describe Riffer::Providers::OpenRouter do
   describe "per-call tags (end-to-end)" do
     let(:provider) { Riffer::Providers::OpenRouter.new }
 
-    # The cassette records the request body OpenRouter receives when tags are
-    # passed (all tags as metadata, user_id also as the user field). VCR's :body
-    # matcher fails the test if tags ever stop reaching the wire.
+    # VCR's :body matcher fails the test if tags stop reaching the wire.
     it "forwards per-call tags to the request" do
       VCR.use_cassette("Riffer_Providers_OpenRouter/tags/forwards_metadata_and_user") do
         result = provider.generate_text(
@@ -874,14 +870,12 @@ describe Riffer::Providers::OpenRouter do
     end
   end
 
-  # Stub structs that match the shape my stream code touches on real openai
-  # gem ChatCompletionChunk objects. Each has +:reasoning+ as a member so
-  # +delta[:reasoning]+ returns nil (rather than raising NameError) for
-  # non-reasoning chunks. Defined once in the describe blocks below.
   describe "#stream_text tool-call edge cases" do
     let(:provider) { Riffer::Providers::OpenRouter.new }
     let(:fn_struct) { Struct.new(:name, :arguments) }
     let(:tc_struct) { Struct.new(:index, :id, :function) }
+    # +:reasoning+ is a member so +delta[:reasoning]+ returns nil rather than
+    # raising NameError, as on real ChatCompletionChunk deltas.
     let(:delta_struct) { Struct.new(:content, :reasoning, :tool_calls) }
     let(:choice_struct) { Struct.new(:delta, :finish_reason) }
     let(:chunk_struct) { Struct.new(:choices, :usage) }
@@ -900,9 +894,7 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "flushes accumulated tool calls when the stream ends with finish_reason other than tool_calls" do
-      # Simulates a non-compliant upstream that emits a tool call but
-      # terminates with finish_reason: "stop". Without the post-loop flush
-      # the ToolCallDone event would be lost.
+      # Non-compliant upstreams can end a tool call with finish_reason: "stop".
       fn = fn_struct.new(name: "get_weather", arguments: '{"city":"Toronto"}')
       tc = tc_struct.new(index: 0, id: "call_abc", function: fn)
       delta = delta_struct.new(content: nil, reasoning: nil, tool_calls: [tc])
@@ -930,8 +922,6 @@ describe Riffer::Providers::OpenRouter do
     end
 
     it "assigns distinct fallback ids when multiple tool calls arrive without ids" do
-      # Two id-less tool calls at indices 0 and 1 must not collide on the
-      # done-event item_id/call_id.
       fn0 = fn_struct.new(name: "tool_a", arguments: "{}")
       fn1 = fn_struct.new(name: "tool_b", arguments: "{}")
       tc0 = tc_struct.new(index: 0, id: nil, function: fn0)

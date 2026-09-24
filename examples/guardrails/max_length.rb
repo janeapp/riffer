@@ -1,24 +1,5 @@
 # frozen_string_literal: true
 
-# Max Length Guardrail
-#
-# Blocks messages or responses that exceed a maximum character length.
-#
-# Usage:
-#
-#   class MyAgent < Riffer::Agent
-#     model "openai/gpt-4o"
-#
-#     # Block input messages over 1000 characters
-#     guardrail :before, with: MaxLengthGuardrail, max: 1000
-#
-#     # Block responses over 5000 characters
-#     guardrail :after, with: MaxLengthGuardrail, max: 5000
-#
-#     # Apply to both with default limit (10,000 characters)
-#     guardrail :around, with: MaxLengthGuardrail
-#   end
-#
 class MaxLengthGuardrail < Riffer::Guardrail
   DEFAULT_MAX = 10_000
 

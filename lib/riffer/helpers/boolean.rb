@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Coercion for boolean-ish configuration values.
 module Riffer::Helpers::Boolean
   extend self
 
-  # Coerces +value+ to a boolean so an env-var +"false"+ (truthy in Ruby)
-  # doesn't silently read as +true+. Raises Riffer::ArgumentError on an
-  # unrecognized value, naming +attribute+ in the message.
   #--
   #: (untyped, attribute: String) -> bool
   def coerce(value, attribute:)

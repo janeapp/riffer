@@ -4,8 +4,6 @@ require "test_helper"
 require "mcp"
 
 describe Riffer::Mcp::Client do
-  # Build a Riffer::Mcp::Client with a pre-constructed fake inner MCP::Client,
-  # bypassing real HTTP transport.
   def build_client(inner_client, endpoint: "https://example.com/mcp")
     Riffer::Mcp::Client.new(endpoint: endpoint, client: inner_client)
   end

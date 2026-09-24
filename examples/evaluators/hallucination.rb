@@ -1,25 +1,5 @@
 # frozen_string_literal: true
 
-# Hallucination Evaluator
-#
-# Evaluates the presence of unsupported claims relative to the provided ground truth.
-#
-# Type: LLM judge
-# higher_is_better: false (lower scores = fewer hallucinations = better)
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "Summarize this article about Ruby.",
-#         ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto. It prioritizes developer happiness." }
-#     ],
-#     evals: [HallucinationEvaluator]
-#   )
-#
-#   result.scores  # => { HallucinationEvaluator => 0.1 }
-#
 class HallucinationEvaluator < Riffer::Evals::Evaluator
   higher_is_better false
 

@@ -1,24 +1,5 @@
 # frozen_string_literal: true
 
-# Faithfulness Evaluator
-#
-# Evaluates the accuracy of the response relative to the provided ground truth context.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What year was Ruby created?", ground_truth: "Ruby was created in 1995 by Yukihiro Matsumoto." }
-#     ],
-#     evals: [FaithfulnessEvaluator]
-#   )
-#
-#   result.scores  # => { FaithfulnessEvaluator => 0.95 }
-#
 class FaithfulnessEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

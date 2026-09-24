@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Searches available MCP tools by name or description.
 class Riffer::Mcp::SearchTool < Riffer::Tool
   IDENTIFIER = "mcp_search"
 
-  # Successful search response carrying the matched tool classes.
   class Result < Riffer::Tools::Response
-    # Tool classes that matched the search query.
     attr_reader :discovered_tools #: Array[singleton(Riffer::Tool)] # @dynamic discovered_tools
 
     #--
@@ -25,7 +22,6 @@ class Riffer::Mcp::SearchTool < Riffer::Tool
     required :query, String, description: "Non-empty substring to filter tools by name or description."
   end
 
-  # Searches progressive MCP tools and returns a +Result+ with +discovered_tools+.
   #--
   #: (context: Riffer::Agent::Context?, query: String) -> Riffer::Tools::Response
   def call(context:, query:)

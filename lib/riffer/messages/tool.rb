@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Represents a tool execution result in a conversation.
 class Riffer::Messages::Tool < Riffer::Messages::Base
-  # Builds a Tool message from a hash, or returns +msg+ unchanged when it is
-  # already a Tool message.
   #--
   #: ((Hash[Symbol, untyped] | Riffer::Messages::Tool)) -> Riffer::Messages::Tool
   def self.from_hash(msg)
@@ -20,17 +17,9 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
     )
   end
 
-  # The ID of the tool call this result responds to.
   attr_reader :tool_call_id #: String # @dynamic tool_call_id
-
-  # The name of the tool that was called.
   attr_reader :name #: String # @dynamic name
-
-  # The error message if the tool execution failed.
   attr_reader :error #: String? # @dynamic error
-
-  # The type of error (:unknown_tool, :validation_error, :execution_error,
-  # :timeout_error, :unhandled_error).
   attr_reader :error_type #: Symbol? # @dynamic error_type
 
   #--
@@ -43,8 +32,6 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
     @error_type = error_type
   end
 
-  # Returns true if the tool execution resulted in an error.
-  #
   #--
   #: () -> bool
   def error?
@@ -57,8 +44,6 @@ class Riffer::Messages::Tool < Riffer::Messages::Base
     :tool
   end
 
-  # Converts the message to a hash.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

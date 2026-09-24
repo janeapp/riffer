@@ -3,10 +3,7 @@
 
 require "cgi/escape"
 
-# Renders a skill catalog as XML for the system prompt, optimized for
-# Anthropic/Claude.
 class Riffer::Skills::XmlAdapter < Riffer::Skills::Adapter
-  # Renders a skill catalog as XML.
   #--
   #: (Array[Riffer::Skills::Frontmatter]) -> String
   def render_catalog(skills)

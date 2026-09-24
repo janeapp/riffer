@@ -3,14 +3,11 @@
 
 require "json"
 
-# Executes LLM-as-judge evaluations, using tool calling internally to get
-# structured output from the judge model.
 class Riffer::Evals::Judge
   # @rbs @provider_instance: Riffer::Providers::Base?
   # @rbs @provider_name: String?
   # @rbs @model_name: String?
 
-  # Internal tool for structured evaluation output.
   class EvaluationTool < Riffer::Tool
     identifier "evaluation"
     description "Submit your evaluation score and reasoning"
@@ -27,13 +24,9 @@ class Riffer::Evals::Judge
     end
   end
 
-  # The model string (provider/model format).
   attr_reader :model #: String # @dynamic model
-
-  # The tags passed to the provider on every call.
   attr_reader :tags #: Hash[String, String] # @dynamic tags
 
-  # Raises Riffer::ArgumentError unless +model+ is "provider/model" format.
   #--
   #: (model: String, ?tags: Hash[String, String]) -> void
   def initialize(model:, tags: {})
@@ -46,7 +39,6 @@ class Riffer::Evals::Judge
     @tags = tags
   end
 
-  # Evaluates an input/output pair using the configured LLM.
   #--
   #: (instructions: String, input: String, output: String, ?ground_truth: String?) -> Hash[Symbol, untyped]
   def evaluate(instructions:, input:, output:, ground_truth: nil)

@@ -1,53 +1,26 @@
 # Generated from lib/riffer/tool.rb with RBS::Inline
 
-# Base class for all tools in the Riffer framework. Subclasses must implement
-# the +call+ method.
-#
-#   class WeatherLookupTool < Riffer::Tool
-#     description "Provides current weather information for a specified city."
-#
-#     params do
-#       required :city, String, description: "The city to look up"
-#       optional :units, String, default: "celsius"
-#     end
-#
-#     def call(context:, city:, units: nil)
-#       # Implementation
-#     end
-#   end
 class Riffer::Tool
   extend Riffer::Tools::Toolable
 
   extend Riffer::Registrable
 
-  # Executes the tool with the given arguments.
   # --
   # : (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
   def call: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
 
-  # Creates a text response.
-  #
   # --
   # : (untyped) -> Riffer::Tools::Response
   def text: (untyped) -> Riffer::Tools::Response
 
-  # Creates a JSON response.
-  #
   # --
   # : (untyped) -> Riffer::Tools::Response
   def json: (untyped) -> Riffer::Tools::Response
 
-  # Creates an error response.
-  #
   # --
   # : (String, ?type: Symbol) -> Riffer::Tools::Response
   def error: (String, ?type: Symbol) -> Riffer::Tools::Response
 
-  # Executes the tool with validation and timeout, folding every +StandardError+
-  # into an error Response. Anything outside +StandardError+ — an unimplemented
-  # +#call+ above all — still propagates, because a broken tool is a broken
-  # deploy rather than a bad request.
-  #
   # --
   # : (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response
   def call_with_validation: (context: Riffer::Agent::Context?, **untyped) -> Riffer::Tools::Response

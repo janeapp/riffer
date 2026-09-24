@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Built-in backend that reads skills from the filesystem. Scans configured
-# directories for immediate child directories containing +SKILL.md+; directory
-# names must match the skill +name+.
 class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
   # @rbs @paths: Array[String]
   # @rbs @skills_cache: Hash[String, String]?
@@ -16,8 +13,6 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
     @skills_cache = nil #: Hash[String, String]?
   end
 
-  # Returns frontmatter for all discovered skills; on a name collision across
-  # paths, first-path-wins.
   #--
   #: () -> Array[Riffer::Skills::Frontmatter]
   def list_skills
@@ -46,8 +41,6 @@ class Riffer::Skills::FilesystemBackend < Riffer::Skills::Backend
     frontmatters
   end
 
-  # Returns the full SKILL.md body (without frontmatter) for a skill. Raises
-  # Riffer::ArgumentError if the skill is not found.
   #--
   #: (String) -> String
   def read_skill(name)

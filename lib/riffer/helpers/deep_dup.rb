@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Copying for the nested Hashes and Arrays a configuration object holds.
 module Riffer::Helpers::DeepDup
   extend self
 
-  # Returns +value+ with every Hash and Array rebuilt, so a copy shares no
-  # collection with its source.
-  #
-  # Anything else is returned as-is, which a Class or a Proc needs: +Class#dup+
-  # answers a new anonymous class. One source collection maps to one copy, so
-  # references shared within +value+ stay shared in the result — an +:around+
-  # guardrail registered under two phases is still one registration afterwards.
   #--
   #: (untyped) -> untyped
   def call(value)
+    # References shared within +value+ stay shared in the copy — an +:around+
+    # guardrail registered under two phases is still one registration.
     seen = {} #: Hash[untyped, untyped]
 
     rebuild(value, seen.compare_by_identity)
@@ -36,6 +30,7 @@ module Riffer::Helpers::DeepDup
       copy = seen[value] = []
       value.each { |entry| copy << rebuild(entry, seen) }
       copy
+    # Class#dup answers a new anonymous class, so non-collections stay as-is.
     else value
     end
   end

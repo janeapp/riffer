@@ -1,14 +1,10 @@
 # Generated from lib/riffer/messages/user.rb with RBS::Inline
 
-# Represents a user message in a conversation.
 class Riffer::Messages::User < Riffer::Messages::Base
-  # Builds a User message from a hash, or returns +msg+ unchanged when it is
-  # already a User message. Raises Riffer::ArgumentError on an invalid file.
   # --
   # : ((Hash[Symbol, untyped] | Riffer::Messages::User)) -> Riffer::Messages::User
   def self.from_hash: (Hash[Symbol, untyped] | Riffer::Messages::User) -> Riffer::Messages::User
 
-  # File attachments for this message.
   attr_reader files: Array[Riffer::Messages::User::FilePart]
 
   # --

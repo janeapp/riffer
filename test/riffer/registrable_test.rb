@@ -4,10 +4,8 @@ require "test_helper"
 
 require "tmpdir"
 
-# Named container so classes assigned beneath it get permanent names; each test
-# removes the constants it creates (the classes stay named — that's fine).
-# Every test builds a fresh anonymous base class, so its registry never
-# collides with other tests' classes regardless of run order.
+# Classes assigned beneath a named module get the permanent names identifiers
+# derive from.
 module RegistrableTestNamespace; end
 
 describe Riffer::Registrable do

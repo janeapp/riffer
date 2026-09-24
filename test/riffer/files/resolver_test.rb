@@ -182,8 +182,7 @@ describe Riffer::Files::Resolver do
         message = Riffer::Messages::User.new("hi", files: [file])
         resolver_for(:bytes).resolve!([message])
 
-        # data_bytes returning the exact downloader-returned object (not an
-        # equal-but-new one) proves it was cached, not decoded a second time.
+        # Identity, not equality: proves the bytes were cached, not decoded again.
         expect(file.data_bytes).must_be_same_as downloaded_content
       end
     end

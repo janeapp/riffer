@@ -6,9 +6,9 @@ describe Riffer::Mcp do
   before { clear_mcp_registry! }
   after { clear_mcp_registry! }
 
-  # Injects a stub registration directly, bypassing inline discovery.
   def inject_stub_registration(name:, tags: [])
     manifest = Riffer::Mcp::Manifest.new(name: name, tags: tags, endpoint: "https://x.com")
+    # allocate skips Registration#initialize, which runs discovery.
     reg = Riffer::Mcp::Registration.allocate
     reg.instance_variable_set(:@manifest, manifest)
     reg.instance_variable_set(:@cancelled, false)

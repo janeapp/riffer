@@ -1,22 +1,16 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Skills context for an agent generation cycle — coordinates discovery,
-# activation, and prompt rendering, caching skill bodies to avoid redundant
-# backend reads. Exposed to tools via <tt>context.skills</tt>.
 class Riffer::Skills::Context
   # @rbs @backend: Riffer::Skills::Backend
   # @rbs @bodies: Hash[String, String]
   # @rbs @activated: Array[String]
   # @rbs @preactivated: Array[String]
 
-  # Skill catalog indexed by name.
   attr_reader :skills #: Hash[String, Riffer::Skills::Frontmatter] # @dynamic skills
 
-  # The skill adapter used for this context.
   attr_reader :adapter #: Riffer::Skills::Adapter # @dynamic adapter
 
-  # Optional callback invoked when a skill is first activated.
   attr_accessor :on_activate #: (^(String) -> void)? # @dynamic on_activate, on_activate=
 
   #--
@@ -30,10 +24,7 @@ class Riffer::Skills::Context
     @preactivated = [] #: Array[String]
   end
 
-  # Returns a skill's body without recording an activation.
-  #
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
-  #
   #--
   #: (String) -> String
   def read(name)
@@ -42,10 +33,7 @@ class Riffer::Skills::Context
     @bodies[name] ||= @backend.read_skill(name)
   end
 
-  # Activates a skill by name. Returns the cached body on re-activation.
-  #
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
-  #
   #--
   #: (String) -> String
   def activate(name)
@@ -57,11 +45,7 @@ class Riffer::Skills::Context
     body
   end
 
-  # Activates a skill and returns its body wrapped for injection as a user
-  # message.
-  #
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
-  #
   #--
   #: (String) -> String
   def activation_prompt(name)
@@ -69,11 +53,7 @@ class Riffer::Skills::Context
     @adapter.render_activation(skills.fetch(name), body)
   end
 
-  # Activates a skill whose body renders in the system prompt rather than the
-  # conversation.
-  #
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
-  #
   #--
   #: (String) -> void
   def preactivate(name)
@@ -81,10 +61,7 @@ class Riffer::Skills::Context
     @preactivated << name unless @preactivated.include?(name)
   end
 
-  # Clears a skill's activation so the next activation is treated as the first.
-  #
   # Raises Riffer::ArgumentError if the skill is not in the catalog.
-  #
   #--
   #: (String) -> void
   def deactivate(name)
@@ -94,30 +71,24 @@ class Riffer::Skills::Context
     nil
   end
 
-  # Returns whether a skill has been activated.
-  #
   #--
   #: (String) -> bool
   def activated?(name)
     @activated.include?(name)
   end
 
-  # Returns whether a skill exists and may be activated by the model.
   #--
   #: (String) -> bool
   def model_invocable?(name)
     skills.key?(name) && !skills.fetch(name).disable_model_invocation
   end
 
-  # Returns whether any skill is available for the model to activate.
   #--
   #: () -> bool
   def activatable?
     available_skills.any?
   end
 
-  # Returns the complete skills section for the system prompt — the catalog plus
-  # any pre-activated skill bodies.
   #--
   #: () -> String
   def system_prompt

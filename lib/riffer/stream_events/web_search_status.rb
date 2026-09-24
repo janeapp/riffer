@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# A web search status notification, emitted as a server-side web search
-# progresses.
 class Riffer::StreamEvents::WebSearchStatus < Riffer::StreamEvents::Base
-  # The web search status ("in_progress", "searching", "completed", "open_page").
+  # One of "in_progress", "searching", "open_page", or "completed".
   attr_reader :status #: String # @dynamic status
 
-  # The URL being fetched (present for "open_page" status).
   attr_reader :url #: String? # @dynamic url
 
-  # The search query (present when available during status changes).
   attr_reader :query #: String? # @dynamic query
 
   #--

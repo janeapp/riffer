@@ -1,71 +1,45 @@
 # Generated from lib/riffer/tools/response.rb with RBS::Inline
 
-# Represents the result of a tool execution; every tool's +call+ must return one.
-#
-#   class MyTool < Riffer::Tool
-#     def call(context:, **kwargs)
-#       result = perform_operation
-#       Riffer::Tools::Response.success(result)
-#     rescue MyError => e
-#       Riffer::Tools::Response.error(e.message)
-#     end
-#   end
+# Every tool's +call+ must return one.
 class Riffer::Tools::Response
   @success: bool
 
   VALID_FORMATS: Array[Symbol]
 
-  # The response content.
   attr_reader content: String
 
-  # The error message, or +nil+ on success.
   attr_reader error_message: String?
 
-  # The error type, or +nil+ on success.
   attr_reader error_type: Symbol?
 
-  # The exception an unhandled failure was folded from, or +nil+. Kept out of
-  # every serialized form so it never reaches an LLM or a message payload.
+  # Kept out of every serialized form so it never reaches an LLM or a message
+  # payload.
   attr_reader exception: Exception?
 
-  # Creates a success response.
-  #
-  # Raises Riffer::ArgumentError if format is invalid.
-  #
   # --
   # : (untyped, ?format: Symbol) -> Riffer::Tools::Response
   def self.success: (untyped, ?format: Symbol) -> Riffer::Tools::Response
 
-  # Creates a success response with text format.
-  #
   # --
   # : (untyped) -> Riffer::Tools::Response
   def self.text: (untyped) -> Riffer::Tools::Response
 
-  # Creates a success response with JSON format.
-  #
   # --
   # : (untyped) -> Riffer::Tools::Response
   def self.json: (untyped) -> Riffer::Tools::Response
 
-  # Creates an error response.
-  #
   # --
   # : (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
   def self.error: (String, ?type: Symbol, ?exception: Exception?) -> Riffer::Tools::Response
 
-  # Returns true if the tool execution succeeded.
   # --
   # : () -> bool
   def success?: () -> bool
 
-  # Returns true if the tool execution failed.
   # --
   # : () -> bool
   def error?: () -> bool
 
-  # Returns a hash representation of the response.
-  #
   # --
   # : () -> Hash[Symbol, untyped]
   def to_h: () -> Hash[Symbol, untyped]

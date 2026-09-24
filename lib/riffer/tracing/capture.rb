@@ -3,9 +3,6 @@
 
 require "json"
 
-# Serializes riffer messages into the GenAI semconv JSON message structure
-# for opt-in span content capture. File parts become metadata-only stubs —
-# bytes and URLs never reach a span attribute.
 module Riffer::Tracing::Capture # :nodoc: all
   extend self
 
@@ -73,13 +70,14 @@ module Riffer::Tracing::Capture # :nodoc: all
   #--
   #: (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]
   def file_part(file)
+    # Metadata only: file bytes and URLs must never reach a span attribute.
     part = { type: "file", media_type: file.media_type } #: Hash[Symbol, untyped]
     part[:name] = file.filename if file.filename
     part
   end
 
-  # Semconv's tool_call part carries arguments as a JSON object; riffer holds
-  # them as a string — parse so the captured payload isn't double-encoded.
+  # Semconv's tool_call part carries arguments as a JSON object, so a string
+  # would be double-encoded.
   #--
   #: (String) -> untyped
   def parse_arguments(arguments)

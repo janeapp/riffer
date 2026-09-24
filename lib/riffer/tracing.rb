@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Internal tracing port — emits OTEL spans when the host bundles the
-# OpenTelemetry API and no-ops otherwise, so riffer never declares an OTEL
-# dependency.
+# No-ops unless the host bundles the OpenTelemetry API, so riffer never
+# declares an OTEL dependency.
 module Riffer::Tracing # :nodoc: all
   extend self
 
@@ -15,7 +14,6 @@ module Riffer::Tracing # :nodoc: all
   # lives here as the documented contract version.
   SCHEMA_URL = "https://opentelemetry.io/schemas/1.37.0" #: String
 
-  # Opens a span around the block, yielding the span.
   #--
   #: [R] (String, ?attributes: Hash[String, untyped]?, ?kind: Symbol) { (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span) -> R } -> R
   def in_span(name, attributes: nil, kind: :internal, &)
@@ -24,8 +22,7 @@ module Riffer::Tracing # :nodoc: all
     backend.in_span(name, attributes: attributes, kind: kind, &)
   end
 
-  # Returns the active trace context, for re-attachment across fiber or
-  # thread boundaries.
+  # For re-attachment across fiber or thread boundaries.
   #--
   #: () -> untyped
   def current_context
@@ -34,8 +31,7 @@ module Riffer::Tracing # :nodoc: all
     backend.current_context
   end
 
-  # Runs the block with the given trace context active; +nil+ passes through
-  # so captures taken while tracing was dark stay harmless.
+  # +nil+ passes through so captures taken while tracing was off stay harmless.
   #--
   #: [R] (untyped) { () -> R } -> R
   def with_context(context, &)
@@ -44,8 +40,6 @@ module Riffer::Tracing # :nodoc: all
     backend.with_context(context, &)
   end
 
-  # Stamps token usage onto the span — the <tt>gen_ai.usage.*</tt> counts and,
-  # when the model was priced, <tt>riffer.cost</tt>.
   #--
   #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Providers::TokenUsage?) -> void
   def record_usage(span, usage)
@@ -58,7 +52,6 @@ module Riffer::Tracing # :nodoc: all
     span.set_attribute("riffer.cost", usage.cost) if usage.cost
   end
 
-  # Discards the resolved backend so the next span re-resolves it.
   #--
   #: () -> void
   def reset!

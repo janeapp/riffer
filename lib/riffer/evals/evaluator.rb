@@ -1,16 +1,6 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Base class for all evaluators. Set +instructions+ and the base class calls
-# the judge automatically; override +#evaluate+ for custom logic. See
-# examples/evaluators/ for reference implementations.
-#
-#   class MyEvaluator < Riffer::Evals::Evaluator
-#     instructions "Assess medical accuracy of the response..."
-#     higher_is_better true
-#     judge_model "anthropic/claude-opus-4-5-20251101"
-#   end
-#
 class Riffer::Evals::Evaluator
   # @rbs self.@instructions: String?
   # @rbs self.@higher_is_better: bool?
@@ -18,12 +8,9 @@ class Riffer::Evals::Evaluator
   # @rbs self.@identifier: String?
   # @rbs @judge: Riffer::Evals::Judge?
 
-  # The identifier for an anonymous evaluator class.
   DEFAULT_IDENTIFIER = "riffer/judge" #: String
 
   class << self
-    # Gets or sets the evaluation instructions (criteria and scoring rubric).
-    #
     #--
     #: (?String?) -> String?
     def instructions(value = nil)
@@ -32,8 +19,6 @@ class Riffer::Evals::Evaluator
       @instructions = value.to_s
     end
 
-    # Gets or sets whether higher scores are better.
-    #
     #--
     #: (?bool?) -> bool
     def higher_is_better(value = nil)
@@ -46,8 +31,6 @@ class Riffer::Evals::Evaluator
       @higher_is_better = value
     end
 
-    # Gets or sets the judge model for LLM-as-judge evaluations.
-    #
     #--
     #: (?String?) -> String?
     def judge_model(value = nil)
@@ -56,10 +39,6 @@ class Riffer::Evals::Evaluator
       @judge_model = value.to_s
     end
 
-    # Gets or sets the evaluator identifier, sent as the +agent+ tag on judge
-    # calls. Defaults to the snake_cased class name, or DEFAULT_IDENTIFIER for
-    # an anonymous class.
-    #
     #--
     #: (?String?) -> String
     def identifier(value = nil)
@@ -70,18 +49,15 @@ class Riffer::Evals::Evaluator
 
     private
 
-    # Anonymous classes derive an empty identifier.
     #--
     #: () -> String
     def derived_identifier
+      # Anonymous classes derive an empty identifier.
       derived = Riffer::Helpers::Identifier.for(self)
       derived.empty? ? DEFAULT_IDENTIFIER : derived
     end
   end
 
-  # Evaluates an input/output pair. The default calls the judge with the
-  # class-level +instructions+; override for custom logic (e.g. rule-based
-  # evaluators).
   #--
   #: (input: String | Array[Hash[Symbol, untyped] | Riffer::Messages::Base], output: String, ?ground_truth: String?, ?messages: Array[Riffer::Messages::Base]) -> Riffer::Evals::Result
   def evaluate(input:, output:, ground_truth: nil, messages: [])
@@ -120,9 +96,6 @@ class Riffer::Evals::Evaluator
 
   protected
 
-  # Returns a Judge instance configured for this evaluator. Its calls carry
-  # the +kind+ (+"judge"+) and +agent+ (the evaluator identifier) tags.
-  #
   #--
   #: () -> Riffer::Evals::Judge
   def judge
@@ -137,7 +110,6 @@ class Riffer::Evals::Evaluator
     end
   end
 
-  # Builds a Result for this evaluator.
   #--
   #: (score: Float, ?reason: String?, ?metadata: Hash[Symbol, untyped], ?token_usage: Riffer::Providers::TokenUsage?) -> Riffer::Evals::Result
   def result(score:, reason: nil, metadata: {}, token_usage: nil)

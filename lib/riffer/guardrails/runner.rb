@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Executes guardrails sequentially, passing each one's output to the next; if
-# any blocks, execution stops and a tripwire is returned.
 class Riffer::Guardrails::Runner
-  # The guardrail configs to execute.
   attr_reader :guardrail_configs #: Array[Hash[Symbol, untyped]] # @dynamic guardrail_configs
 
-  # The execution phase (:before or :after).
   attr_reader :phase #: Symbol # @dynamic phase
 
-  # The context passed to guardrails.
   attr_reader :context #: untyped # @dynamic context
 
-  # The normalized per-call tags, stamped as +riffer.tag.*+ on guardrail spans.
   attr_reader :tags #: Hash[String, String] # @dynamic tags
 
   #--
@@ -25,9 +19,6 @@ class Riffer::Guardrails::Runner
     @tags = tags
   end
 
-  # Runs the guardrails sequentially. For the +:before+ phase +data+ is the
-  # messages array; for +:after+ it's the response (and +messages+ must be
-  # provided).
   #--
   #: (untyped, ?messages: Array[Riffer::Messages::Base]?) -> [untyped, Riffer::Guardrails::Tripwire?, Array[Riffer::Guardrails::Modification]]
   def run(data, messages: nil)
@@ -124,12 +115,12 @@ class Riffer::Guardrails::Runner
     }.merge(tags.transform_keys { |key| "riffer.tag.#{key}" })
   end
 
-  # A block is a handled outcome, so its span status stays unset — an error
-  # span status is reserved for a raised exception.
   #--
   #: ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Guardrails::Result) -> void
   def record_guardrail_outcome(span, result)
     span.set_attribute("riffer.guardrail.action", result.type.to_s)
+    # A block is a handled outcome, so span status stays unset — error status
+    # is reserved for a raised exception.
     span.set_attribute("riffer.tripwire.reason", result.data) if result.block?
   end
 end

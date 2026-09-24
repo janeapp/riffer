@@ -1,24 +1,5 @@
 # frozen_string_literal: true
 
-# Answer Similarity Evaluator
-#
-# Evaluates the semantic similarity between the response and a ground truth answer.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What is the capital of France?", ground_truth: "The capital of France is Paris." }
-#     ],
-#     evals: [AnswerSimilarityEvaluator]
-#   )
-#
-#   result.scores  # => { AnswerSimilarityEvaluator => 0.9 }
-#
 class AnswerSimilarityEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

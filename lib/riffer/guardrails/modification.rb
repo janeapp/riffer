@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# Records a guardrail transformation event.
 class Riffer::Guardrails::Modification
-  # The guardrail class that transformed data.
   attr_reader :guardrail #: singleton(Riffer::Guardrail) # @dynamic guardrail
-
-  # The phase when the transformation occurred (:before or :after).
   attr_reader :phase #: Symbol # @dynamic phase
-
-  # The indices of messages that were changed.
   attr_reader :message_indices #: Array[Integer] # @dynamic message_indices
 
   #--
@@ -20,8 +14,6 @@ class Riffer::Guardrails::Modification
     @message_indices = message_indices
   end
 
-  # Converts the modification to a hash.
-  #
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h

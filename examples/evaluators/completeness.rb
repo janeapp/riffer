@@ -1,25 +1,5 @@
 # frozen_string_literal: true
 
-# Completeness Evaluator
-#
-# Evaluates whether the response includes all necessary information.
-#
-# Type: LLM judge
-# higher_is_better: true
-#
-# Usage:
-#
-#   result = Riffer::Evals::EvaluatorRunner.run(
-#     agent: MyAgent,
-#     scenarios: [
-#       { input: "What are the three primary colors?",
-#         ground_truth: "Red, blue, and yellow are the primary colors in traditional color theory." }
-#     ],
-#     evals: [CompletenessEvaluator]
-#   )
-#
-#   result.scores  # => { CompletenessEvaluator => 0.9 }
-#
 class CompletenessEvaluator < Riffer::Evals::Evaluator
   higher_is_better true
 

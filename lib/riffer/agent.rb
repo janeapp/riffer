@@ -3,17 +3,6 @@
 
 require "json"
 
-# Base class for all agents in the Riffer framework. Subclass it to define an
-# agent's model, instructions, tools, and guardrails.
-#
-#   class MyAgent < Riffer::Agent
-#     model 'openai/gpt-4o'
-#     instructions 'You are a helpful assistant.'
-#   end
-#
-#   agent = MyAgent.new
-#   agent.generate('Hello!')
-#
 class Riffer::Agent
   extend Riffer::Registrable
 
@@ -21,66 +10,48 @@ class Riffer::Agent
 
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol
 
-  # Returns the per-class Riffer::Agent::Config holding every DSL setting.
   #--
   #: () -> Riffer::Agent::Config
   def self.config
     @config ||= Riffer::Agent::Config.new
   end
 
-  # +identifier+ is cleared because it is configuration here but identity on the
-  # subclass; two classes claiming one raise Riffer::DuplicateIdentifierError at
-  # the next registry lookup.
   #--
   #: (Class) -> void
   def self.inherited(subclass)
     super
     copy = config.dup
+    # The identifier is identity, not inheritable config: two classes claiming
+    # one raise Riffer::DuplicateIdentifierError at the next registry lookup.
     copy.identifier = nil
     subclass.instance_variable_set(:@config, copy)
   end
   private_class_method :inherited
 
-  # Gets or sets the agent identifier.
-  #
   #--
   #: (?String?) -> String
   def self.identifier(value = nil)
     value.nil? ? (config.identifier || Riffer::Helpers::Identifier.for(self)) : (config.identifier = value)
   end
 
-  # Gets or sets the model string (e.g., "openai/gpt-4o").
-  #
   #--
   #: (?(String | Proc)?) -> (String | Proc)?
   def self.model(value = nil)
     value.nil? ? config.model : (config.model = value)
   end
 
-  # Gets or sets the agent instructions. A Proc is called at generate time with
-  # the +context+ hash (which may be +nil+).
-  #
-  #   instructions "You are a helpful assistant."
-  #
-  #   instructions -> (context) {
-  #     "You are assisting #{context[:name]}"
-  #   }
-  #
   #--
   #: (?(String | Proc)?) -> (String | Proc)?
   def self.instructions(value = nil)
     value.nil? ? config.instructions : (config.instructions = value)
   end
 
-  # Gets or sets model options passed to generate_text/stream_text.
-  #
   #--
   #: (?Hash[Symbol, untyped]?) -> Hash[Symbol, untyped]
   def self.model_options(options = nil)
     options.nil? ? config.model_options : (config.model_options = options)
   end
 
-  # Gets or sets the structured output schema for this agent.
   #--
   #: (?Riffer::Params?) ?{ (Riffer::Params) [self: Riffer::Params] -> void } -> Riffer::Params?
   def self.structured_output(params = nil, &block)
@@ -92,62 +63,39 @@ class Riffer::Agent
     config.structured_output
   end
 
-  # Gets or sets the maximum number of LLM call steps in the tool-use loop.
-  # The splat distinguishes a getter (no argument) from setting the limit to
-  # +nil+ (unlimited); it defaults to Riffer::Agent::Config::DEFAULT_MAX_STEPS.
-  #
-  #   max_steps        # reads the current limit
-  #   max_steps 8      # cap the loop at 8 steps
-  #   max_steps nil    # unlimited
-  #
   #--
   #: (*Numeric?) -> Numeric?
   def self.max_steps(*value)
+    # The splat tells a bare read apart from +max_steps nil+ (unlimited).
     return config.max_steps if value.empty?
 
     config.max_steps = value.first
   end
 
-  # Gets or sets the tools used by this agent.
-  #
   #--
   #: (?(Array[singleton(Riffer::Tool)] | Proc)?) -> (Array[singleton(Riffer::Tool)] | Proc)?
   def self.uses_tools(value = nil)
     value.nil? ? config.tools_config : (config.tools_config = value)
   end
 
-  # Opts this agent into MCP tools from registrations matching the given tag.
-  # Progressive registrations expose +mcp_search+ instead of every schema up front.
-  #
+  # +progressive+ exposes +mcp_search+ instead of every tool schema up front.
+  #--
   #: (String | Symbol, ?progressive: bool) -> void
   def self.use_mcp(tag, progressive: true)
     config.add_mcp(tag, progressive: progressive)
   end
 
-  # Returns the accumulated +use_mcp+ configurations for this agent class.
-  #
   #: () -> Array[Hash[Symbol, untyped]]
   def self.mcp_configs
     config.mcp_configs
   end
 
-  # Gets or sets the tool runtime for this agent; defaults to
-  # <tt>Riffer.config.tool_runtime</tt> when unset.
   #--
   #: (?(singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)
   def self.tool_runtime(value = nil)
     value.nil? ? config.tool_runtime : (config.tool_runtime = value)
   end
 
-  # Configures skills for this agent via a block DSL, or returns the current
-  # Riffer::Skills::Config when called without a block.
-  #
-  #   skills do
-  #     backend Riffer::Skills::FilesystemBackend.new(".skills")
-  #     adapter Riffer::Skills::XmlAdapter
-  #     activate ["code-review"]
-  #   end
-  #
   #--
   #: () ?{ (Riffer::Skills::Config) [self: Riffer::Skills::Config] -> void } -> Riffer::Skills::Config?
   def self.skills(&block)
@@ -159,21 +107,18 @@ class Riffer::Agent
     config.skills_config
   end
 
-  # Generates a response using a new agent instance.
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def self.generate(prompt = nil, files: nil, context: nil, tags: {})
     new(context: context).generate(prompt, files: files, tags: tags)
   end
 
-  # Streams a response using a new agent instance.
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?context: Hash[Symbol, untyped]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def self.stream(prompt = nil, files: nil, context: nil, tags: {})
     new(context: context).stream(prompt, files: files, tags: tags)
   end
 
-  # Reconstructs a runnable agent from a wire hash produced by +#to_h+.
   #--
   #: (Hash[Symbol, untyped], ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def self.from_h(
@@ -192,7 +137,6 @@ class Riffer::Agent
     )
   end
 
-  # Reconstructs a runnable agent from a JSON string produced by +#to_json+.
   #--
   #: (String, ?context: Hash[Symbol, untyped]?, ?session: Riffer::Agent::Session?, ?tool_resolver: ^(Hash[Symbol, untyped]) -> singleton(Riffer::Tool), ?tool_runtime: (singleton(Riffer::Tools::Runtime) | Riffer::Tools::Runtime | Proc)?) -> Riffer::Agent
   def self.from_json(
@@ -211,70 +155,33 @@ class Riffer::Agent
     )
   end
 
-  # Registers a guardrail for input, output, or both phases. Raises
-  # Riffer::ArgumentError unless +phase+ is :before, :after, or :around.
   #--
   #: (Symbol, with: singleton(Riffer::Guardrail), **untyped) -> void
   def self.guardrail(phase, with:, **options)
     config.add_guardrail(phase, klass: with, options: options)
   end
 
-  # Returns the registered guardrail configs for a given phase.
   #--
   #: (Symbol) -> Array[Hash[Symbol, untyped]]
   def self.guardrails_for(phase)
     config.guardrails_for(phase)
   end
 
-  # The conversation handle.
   attr_reader :session #: Riffer::Agent::Session # @dynamic session
-
-  # The per-instance Riffer::Agent::Config.
   attr_reader :config #: Riffer::Agent::Config # @dynamic config
-
-  # The system message built from the configured +instructions+, or +nil+ when
-  # none are configured.
   attr_reader :instruction_message #: Riffer::Messages::System? # @dynamic instruction_message
-
-  # The system message describing the configured skills catalog, or +nil+ when
-  # skills are unconfigured or the catalog is empty.
   attr_reader :skills_message #: Riffer::Messages::System? # @dynamic skills_message
-
-  # The mutable runtime context shared with every +Riffer::Agent::Run+ this
-  # agent executes and threaded through all Proc-based settings.
   attr_reader :context #: Riffer::Agent::Context # @dynamic context
-
-  # The resolved provider name (the part before "/" in the model string),
-  # e.g. +"openai"+.
   attr_reader :provider_name #: String # @dynamic provider_name
-
-  # The resolved model name (the part after "/" in the model string), used as
-  # the model argument on every LLM call.
   attr_reader :model_name #: String # @dynamic model_name
 
-  # The provider client. Public so tests can pre-queue responses on
-  # +Riffer::Providers::Mock+ before calling +#generate+.
+  # Public so tests can pre-queue responses on Riffer::Providers::Mock.
   attr_reader :provider #: Riffer::Providers::Base # @dynamic provider
 
-  # The +Riffer::Agent::StructuredOutput+ wrapping the configured schema, or
-  # +nil+ when not configured.
   attr_reader :structured_output #: Riffer::Agent::StructuredOutput? # @dynamic structured_output
-
-  # The tool classes the LLM sees on every call this agent makes.
   attr_reader :tools #: Array[singleton(Riffer::Tool)] # @dynamic tools
-
-  # The tool runtime instance used to execute tool calls.
   attr_reader :tool_runtime #: Riffer::Tools::Runtime # @dynamic tool_runtime
 
-  # Initializes a new agent.
-  #
-  # A provided +session:+ is used as-is — the caller owns its contents (e.g.
-  # cross-process resume from persisted history); an omitted one is seeded with
-  # the instruction and skills messages.
-  #
-  # Raises Riffer::ArgumentError unless the configured model string is
-  # "provider/model" format.
-  #
   #--
   #: (?session: Riffer::Agent::Session?, ?context: Hash[Symbol, untyped]?, ?config: Riffer::Agent::Config?) -> void
   def initialize(session: nil, context: nil, config: nil)
@@ -293,47 +200,24 @@ class Riffer::Agent
     @instruction_message = build_instruction_message
     @skills_message = build_skills_message
 
+    # A caller-supplied session owns its contents (e.g. resumed history), so it
+    # is not seeded.
     @session = session || Riffer::Agent::Session.new(messages: [@instruction_message, @skills_message].compact)
     @session.set(Riffer::Agent::Session::Repair.prune_orphans(@session.messages))
   end
 
-  # The identifier for this agent: the instance config's identifier when set
-  # (e.g. an agent restored with +Riffer::Agent.from_h+), otherwise the class
-  # identifier.
-  #
   #--
   #: () -> String
   def identifier
     config.identifier || self.class.identifier
   end
 
-  # Generates a response from the agent.
-  #
-  # With +prompt+, a new user message is appended (silently — +on_message+ does
-  # not fire for user inputs) before the loop runs. Without it, the loop runs
-  # against the current session, resuming a persisted conversation or pending
-  # tool calls. +files:+ requires +prompt+.
-  #
-  # +tags:+ is an optional flat hash of attribution tags applied to this single
-  # call: they propagate to the provider's native request-metadata field, and
-  # are stamped as +riffer.tag.*+ on every span the call emits. See
-  # +docs/AGENTS.md+ for the per-provider mapping. The reserved key
-  # +user_id+ also maps to the provider's native user identifier where one
-  # exists. Riffer adds the default tags +kind+ (+"agent"+) and +agent+ (the
-  # agent identifier); a caller tag with the same key wins.
-  #
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Riffer::Agent::Response
   def generate(prompt = nil, files: nil, tags: {})
     Riffer::Agent::Run.generate(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
-  # Streams a response from the agent as an +Enumerator+ of
-  # +Riffer::StreamEvents+ whose block-form +each+ returns the final
-  # Riffer::Agent::Response. See +#generate+ for prompt/files/tags semantics.
-  #
-  # Raises Riffer::ArgumentError if structured output is configured.
-  #
   #--
   #: (?String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, ?tags: Hash[(String | Symbol), untyped]) -> Enumerator[Riffer::StreamEvents::Base, Riffer::Agent::Response]
   def stream(prompt = nil, files: nil, tags: {})
@@ -345,24 +229,20 @@ class Riffer::Agent
     Riffer::Agent::Run.stream(agent: self, prompt: prompt, files: files, tags: tags)
   end
 
-  # Interrupts the agent loop from an +on_message+ callback. Equivalent to
-  # <tt>throw :riffer_interrupt, reason</tt>.
   #--
   #: (?(String | Symbol)?) -> void
   def interrupt!(reason = nil)
     throw :riffer_interrupt, reason
   end
 
-  # Snapshots this resolved agent into a self-contained, provider-neutral wire
-  # hash.
   #--
   #: () -> Hash[Symbol, untyped]
   def to_h
     Riffer::Agent::Serializer.to_h(agent: self)
   end
 
-  # Snapshots this resolved agent into a wire JSON string. The +*+ absorbs the
-  # JSON generator state argument so <tt>JSON.generate(agent)</tt> works too.
+  # The +*+ absorbs JSON's generator-state argument so
+  # <tt>JSON.generate(agent)</tt> works.
   #--
   #: (*untyped) -> String
   def to_json(*)

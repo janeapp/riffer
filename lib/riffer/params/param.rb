@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 # rbs_inline: enabled
 
-# A single parameter definition, handling type validation and JSON Schema
-# generation.
 class Riffer::Params::Param
-  # Maps Ruby types to JSON Schema type strings
   TYPE_MAPPINGS = {
     String => "string",
     Integer => "integer",
@@ -16,11 +13,8 @@ class Riffer::Params::Param
     Hash => "object",
   }.freeze #: Hash[Module, String]
 
-  # Primitive types allowed for the <tt>of:</tt> keyword on Array params
   PRIMITIVE_TYPES = (TYPE_MAPPINGS.keys - [Array, Hash]).freeze #: Array[Module]
 
-  # Maps JSON Schema type strings back to Ruby types (inverse of TYPE_MAPPINGS),
-  # collapsing the three boolean spellings onto Riffer::Params::Boolean.
   JSON_TYPE_MAPPINGS = {
     "string" => String,
     "integer" => Integer,
@@ -30,32 +24,22 @@ class Riffer::Params::Param
     "object" => Hash,
   }.freeze #: Hash[String, Module]
 
-  # The parameter name.
   attr_reader :name #: Symbol # @dynamic name
 
-  # The Ruby type.
   attr_reader :type #: Module # @dynamic type
 
-  # Whether the parameter is required.
   attr_reader :required #: bool # @dynamic required
 
-  # The parameter description, if any.
   attr_reader :description #: String? # @dynamic description
 
-  # Allowed values, if constrained.
   attr_reader :enum #: Array[untyped]? # @dynamic enum
 
-  # The default value, if any.
   attr_reader :default #: untyped # @dynamic default
 
-  # Element type for a typed array (+of:+).
   attr_reader :item_type #: Module? # @dynamic item_type
 
-  # Nested Params for object / array-of-object types.
   attr_reader :nested_params #: Riffer::Params? # @dynamic nested_params
 
-  # Reconstructs a Param from a single JSON Schema property. Raises
-  # Riffer::ArgumentError on a type outside the Params-expressible subset.
   #--
   #: (Symbol, Hash[Symbol, untyped], required: bool) -> Riffer::Params::Param
   def self.from_json_schema(name, schema, required:)
@@ -88,9 +72,6 @@ class Riffer::Params::Param
   end
   private_class_method :resolve_nesting
 
-  # Resolves a JSON Schema +type+ (or a <tt>[type, "null"]</tt> union) to its
-  # Ruby type. Returns a Module — Riffer::Params::Boolean is a Module, not a
-  # Class. Raises Riffer::ArgumentError on an unsupported type.
   #--
   #: (untyped) -> Module
   def self.json_type_to_ruby(type)
@@ -112,8 +93,6 @@ class Riffer::Params::Param
     @nested_params = nested_params
   end
 
-  # Validates that a value matches the expected type.
-  #
   #--
   #: (untyped) -> bool
   def valid_type?(value)
@@ -128,28 +107,20 @@ class Riffer::Params::Param
     end
   end
 
-  # Returns the JSON Schema type name for this parameter.
-  #
   #--
   #: () -> String
   def type_name
     TYPE_MAPPINGS[type] || type.to_s.downcase
   end
 
-  # Converts this parameter to JSON Schema format. When +strict+, optional
-  # params are made nullable (<tt>["type", "null"]</tt>) so strict providers
-  # distinguish absent from present; optional params with an +enum+ use +anyOf+
-  # instead, since providers like Anthropic reject
-  # <tt>{"type": ["string", "null"], "enum": [...]}</tt>. Raises
-  # Riffer::ArgumentError when +strict+ and a Hash param has no block or an
-  # Array param has neither a block nor <tt>of:</tt>, since strict providers
-  # reject objects without +properties+ and arrays without +items+.
   #--
   #: (?strict: bool) -> Hash[Symbol, untyped]
   def to_json_schema(strict: false)
     validate_strict_shape! if strict
+    # Nullable so strict providers can distinguish absent from present.
     nullable = strict && !required
 
+    # Providers like Anthropic reject a nullable type union combined with enum.
     if nullable && enum
       schema = { anyOf: [{ type: type_name, enum: enum }, { type: "null" }] } #: Hash[Symbol, untyped]
       schema[:description] = description if description
@@ -196,6 +167,7 @@ class Riffer::Params::Param
   #--
   #: () -> void
   def validate_strict_shape!
+    # Strict providers reject objects without properties and arrays without items.
     if type == Hash && nested_params.nil?
       raise Riffer::ArgumentError,
             "#{name}: a Hash param requires a block defining its properties under strict schemas"

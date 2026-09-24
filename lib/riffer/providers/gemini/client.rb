@@ -5,18 +5,8 @@ require "json"
 require "net/http"
 require "uri"
 
-# HTTP transport for the Gemini REST API. Riffer builds one from the
-# configured +api_key+ by default; construct your own to tune the HTTP knobs
-# and assign it to <tt>Riffer.config.gemini.client</tt>. Any object
-# implementing +post+ and +post_stream+ with these contracts works there —
-# the class is a default implementation, not a required base.
-#
-#   Riffer.configure do |config|
-#     config.gemini.client = Riffer::Providers::Gemini::Client.new(
-#       api_key: ENV["GEMINI_API_KEY"],
-#       read_timeout: 120
-#     )
-#   end
+# <tt>Riffer.config.gemini.client</tt> accepts any object implementing +post+ and +post_stream+
+# with these contracts; this class is the default, not a required base.
 class Riffer::Providers::Gemini::Client
   # @rbs @api_key: String?
   # @rbs @base_url: String
@@ -43,8 +33,7 @@ class Riffer::Providers::Gemini::Client
     @proxy_port = proxy_port
   end
 
-  # POSTs a JSON body to an API path and returns the parsed response hash.
-  # Raises Riffer::Error when the API responds with a non-success status.
+  # Raises Riffer::Error on a non-success status.
   #--
   #: (String, Hash[Symbol, untyped]) -> Hash[Symbol, untyped]
   def post(path, body)
@@ -54,9 +43,7 @@ class Riffer::Providers::Gemini::Client
     JSON.parse(response.body, symbolize_names: true)
   end
 
-  # POSTs a JSON body to an API path, yielding raw response body chunks as
-  # they arrive. Raises Riffer::Error when the API responds with a
-  # non-success status.
+  # Raises Riffer::Error on a non-success status.
   #--
   #: (String, Hash[Symbol, untyped]) { (String) -> void } -> void
   def post_stream(path, body, &block)

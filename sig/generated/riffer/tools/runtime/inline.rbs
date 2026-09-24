@@ -1,6 +1,5 @@
 # Generated from lib/riffer/tools/runtime/inline.rb with RBS::Inline
 
-# Executes tool calls sequentially in the current thread — the default runtime.
 class Riffer::Tools::Runtime::Inline < Riffer::Tools::Runtime
   # --
   # : () -> void

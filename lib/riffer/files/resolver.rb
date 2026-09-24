@@ -14,10 +14,6 @@ class Riffer::Files::Resolver
     @config = Riffer.config.files
   end
 
-  # Resolves every file in every User message in place - downloading,
-  # verifying, and caching as the provider's capability and each file's
-  # sha256 require.  Raises Riffer::FileError on any file that can't be
-  # resolved
   #: (Array[Riffer::Messages::Base]) -> void
   def resolve!(messages)
     files = messages.flat_map do |message|
@@ -51,6 +47,8 @@ class Riffer::Files::Resolver
 
     case delivery
     when :url
+      # The request still sends the URL, never these bytes, so caching them
+      # would hold memory nothing reads and let later turns skip re-verifying.
       download!(file, cache: false) if file.sha256
     when :base64
       file.data ? verify_inline!(file) : download!(file, cache: :base64)
@@ -69,9 +67,6 @@ class Riffer::Files::Resolver
     verify_bytes!(file.data_bytes, file.sha256)
   end
 
-  # +cache:+ is false for a :url-delivery provider verifying a sha256 — the
-  # request still sends the URL, never the downloaded bytes, so caching them
-  # would hold memory nothing reads and let later turns skip re-verifying.
   #: (Riffer::Messages::User::FilePart, cache: (false | Symbol)) -> void
   def download!(file, cache:)
     raise Riffer::FileDownloadsDisabledError, "File attachments are disabled" unless @config.allow_downloads

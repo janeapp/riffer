@@ -1,15 +1,11 @@
 # Generated from lib/riffer/stream_events/web_search_status.rb with RBS::Inline
 
-# A web search status notification, emitted as a server-side web search
-# progresses.
 class Riffer::StreamEvents::WebSearchStatus < Riffer::StreamEvents::Base
-  # The web search status ("in_progress", "searching", "completed", "open_page").
+  # One of "in_progress", "searching", "open_page", or "completed".
   attr_reader status: String
 
-  # The URL being fetched (present for "open_page" status).
   attr_reader url: String?
 
-  # The search query (present when available during status changes).
   attr_reader query: String?
 
   # --
