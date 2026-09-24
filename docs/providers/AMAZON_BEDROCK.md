@@ -166,6 +166,41 @@ class AWSAgent < Riffer::Agent
 end
 ```
 
+## Reasoning Models
+
+Models that reason through Converse, such as Claude with extended thinking, return their thought process as `reasoningContent` blocks. For Claude, enable thinking through `additional_model_request_fields`:
+
+```ruby
+class ThinkAgent < Riffer::Agent
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
+  model_options inference_config: {max_tokens: 2048},
+    additional_model_request_fields: {thinking: {type: "enabled", budget_tokens: 1024}}
+end
+
+ThinkAgent.new.stream('What is 2+2? Think step by step.').each do |event|
+  case event
+  when Riffer::StreamEvents::ReasoningDelta
+    print "[reasoning] #{event.content}"
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+### Reasoning Replay
+
+Each `reasoningContent` block becomes a [`ReasoningPart`](../MESSAGES.md#reasoning) on the assistant message, on both `generate_text` and `stream_text`, tagged with `format: "bedrock-converse-v1"` (`Riffer::Providers::AmazonBedrock::REASONING_FORMAT`):
+
+| `reasoningContent` member     | `ReasoningPart` fields                                                 |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| `reasoningText.text`          | `type: :text`, `text`                                                  |
+| `reasoningText.signature`     | `signature`                                                            |
+| `redactedContent` (raw bytes) | `type: :encrypted`, `data` (Base64-encoded, so the part survives JSON) |
+
+When streaming, a reasoning block arrives as several `reasoningContent` deltas: text in pieces, then the signature (or the redacted bytes) on its own. The provider concatenates them and yields one `ReasoningDone` part when the block stops. Each non-empty text fragment is also yielded as a `ReasoningDelta`.
+
+On the next request, the assistant message's parts go back as `reasoningContent` blocks ahead of its text and `toolUse` blocks, in their original order and unchanged, with encrypted parts decoded back to `redactedContent` bytes. This is what lets Claude continue signed thinking across a tool-call loop. Following the [replay contract](../MESSAGES.md#reasoning), only parts tagged `bedrock-converse-v1` are sent; parts with no `format`, or one produced by another adapter such as `anthropic-claude-v1` from OpenRouter, are skipped.
+
 ## File Support
 
 Bedrock accepts file attachments either as raw bytes, or as `s3://` URIs passed straight through to Converse — Bedrock fetches the S3 object itself:

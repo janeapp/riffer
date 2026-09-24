@@ -989,6 +989,267 @@ describe Riffer::Providers::AmazonBedrock do
     end
   end
 
+  describe "reasoning" do
+    let(:model) { "us.anthropic.claude-haiku-4-5-20251001-v1:0" }
+    let(:provider) do
+      # Instantiating triggers depends_on "aws-sdk-bedrockruntime", which makes
+      # the Aws::BedrockRuntime::Types constants below available.
+      Riffer::Providers::AmazonBedrock.new
+    end
+    # Force construction now so the constants resolve regardless of test order.
+    before { provider }
+    let(:redacted_bytes) { "\xFF\x00opaque\xFE".b }
+
+    def text_reasoning_block(text, signature)
+      Aws::BedrockRuntime::Types::ContentBlock::ReasoningContent.new(
+        reasoning_content: Aws::BedrockRuntime::Types::ReasoningContentBlock::ReasoningText.new(
+          reasoning_text: Aws::BedrockRuntime::Types::ReasoningTextBlock.new(text: text, signature: signature),
+        ),
+      )
+    end
+
+    def text_block(text)
+      Aws::BedrockRuntime::Types::ContentBlock.new(text: text)
+    end
+
+    def redacted_reasoning_block(bytes)
+      Aws::BedrockRuntime::Types::ContentBlock::ReasoningContent.new(
+        reasoning_content: Aws::BedrockRuntime::Types::ReasoningContentBlock::RedactedContent.new(
+          redacted_content: bytes,
+        ),
+      )
+    end
+
+    def build_response(content_blocks)
+      Aws::BedrockRuntime::Types::ConverseResponse.new(
+        output: Aws::BedrockRuntime::Types::ConverseOutput::Message.new(
+          message: Aws::BedrockRuntime::Types::Message.new(role: "assistant", content: content_blocks),
+        ),
+        usage: Aws::BedrockRuntime::Types::TokenUsage.new(input_tokens: 1, output_tokens: 1),
+        stop_reason: "end_turn",
+      )
+    end
+
+    def reasoning_delta(content_block_index, **fields)
+      Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+        delta: Aws::BedrockRuntime::Types::ContentBlockDelta::ReasoningContent.new(
+          reasoning_content: Aws::BedrockRuntime::Types::ReasoningContentBlockDelta.new(**fields),
+        ),
+        content_block_index: content_block_index,
+        event_type: :content_block_delta,
+      )
+    end
+
+    def text_delta(content_block_index, text)
+      Aws::BedrockRuntime::Types::ContentBlockDeltaEvent.new(
+        delta: Aws::BedrockRuntime::Types::ContentBlockDelta.new(text: text),
+        content_block_index: content_block_index,
+        event_type: :content_block_delta,
+      )
+    end
+
+    def block_stop(content_block_index)
+      Aws::BedrockRuntime::Types::ContentBlockStopEvent.new(
+        content_block_index: content_block_index,
+        event_type: :content_block_stop,
+      )
+    end
+
+    def stream_events(events)
+      events += [Aws::BedrockRuntime::Types::MessageStopEvent.new(stop_reason: "end_turn", event_type: :message_stop)]
+      stream_double = Object.new
+      stream_double.define_singleton_method(:on_event) { |&block| events.each { |e| block.call(e) } }
+      client_double = Object.new
+      client_double.define_singleton_method(:converse_stream) { |**_kwargs, &block| block.call(stream_double) }
+      provider.instance_variable_set(:@client, client_double)
+      provider.stream_text(prompt: "Hi", model: model).to_a
+    end
+
+    def part(**attributes)
+      Riffer::Messages::Assistant::ReasoningPart.new(**attributes)
+    end
+
+    def convert(reasoning, content: "42", tool_calls: [])
+      assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
+      provider.send(:convert_assistant_to_bedrock_format, assistant)
+    end
+
+    describe "capturing reasoning content blocks" do
+      it "maps reasoning_text onto a text part, keeping its signature" do
+        response = build_response([text_reasoning_block("Think", "sig"), text_block("42")])
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :text, text: "Think", signature: "sig", format: "bedrock-converse-v1" },
+        ]
+      end
+
+      it "maps redacted_content onto an encrypted part with Base64 data" do
+        response = build_response([redacted_reasoning_block(redacted_bytes)])
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :encrypted, data: Base64.strict_encode64(redacted_bytes), format: "bedrock-converse-v1" },
+        ]
+      end
+
+      it "keeps several reasoning blocks in response order" do
+        response = build_response([text_reasoning_block("One", "sig-1"), redacted_reasoning_block(redacted_bytes)])
+
+        expect(provider.send(:extract_reasoning, response).map(&:type)).must_equal %i[text encrypted]
+      end
+
+      it "returns no parts when the response carries no reasoning" do
+        response = build_response([text_block("42")])
+
+        expect(provider.send(:extract_reasoning, response)).must_equal []
+      end
+
+      it "attaches the parts to the assistant message from generate_text" do
+        response = build_response([text_reasoning_block("Think", "sig"), text_block("42")])
+        client_double = Object.new
+        client_double.define_singleton_method(:converse) { |**_kwargs| response }
+        provider.instance_variable_set(:@client, client_double)
+
+        result = provider.generate_text(prompt: "Hi", model: model)
+
+        expect(result.content).must_equal "42"
+        expect(result.reasoning.map(&:to_h)).must_equal [
+          { type: :text, text: "Think", signature: "sig", format: "bedrock-converse-v1" },
+        ]
+      end
+    end
+
+    describe "streaming reasoning deltas" do
+      it "accumulates a block's text and signature into one ReasoningDone" do
+        events = stream_events(
+          [
+            reasoning_delta(0, text: "Let me "),
+            reasoning_delta(0, text: "think."),
+            reasoning_delta(0, signature: "sig"),
+            block_stop(0),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)).must_equal ["Let me ", "think."]
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :text, text: "Let me think.", signature: "sig", format: "bedrock-converse-v1" },
+        ]
+      end
+
+      it "captures streamed redacted_content as an encrypted part" do
+        events = stream_events(
+          [
+            reasoning_delta(0, redacted_content: redacted_bytes[0, 3]),
+            reasoning_delta(0, redacted_content: redacted_bytes[3..]),
+            block_stop(0),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta)).must_be_empty
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :encrypted, data: Base64.strict_encode64(redacted_bytes), format: "bedrock-converse-v1" },
+        ]
+      end
+
+      it "emits one part per block and leaves the following text block intact" do
+        events = stream_events(
+          [
+            reasoning_delta(0, text: "First"),
+            reasoning_delta(0, signature: "sig-1"),
+            block_stop(0),
+            reasoning_delta(1, redacted_content: redacted_bytes),
+            block_stop(1),
+            text_delta(2, "4"),
+            text_delta(2, "2"),
+            block_stop(2),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.type }).must_equal %i[text encrypted]
+        expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal ["42"]
+      end
+    end
+
+    describe "replaying reasoning" do
+      it "sends recognized parts as reasoning_content blocks ahead of text and tool_use, in order" do
+        reasoning = [
+          part(type: :text, text: "Think", signature: "sig", format: "bedrock-converse-v1"),
+          part(type: :encrypted, data: Base64.strict_encode64(redacted_bytes), format: "bedrock-converse-v1"),
+        ]
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
+
+        content = convert(reasoning, tool_calls: [tool_call])[:content]
+
+        expect(content[0]).must_equal({ reasoning_content: { reasoning_text: { text: "Think", signature: "sig" } } })
+        expect(content[1]).must_equal({ reasoning_content: { redacted_content: redacted_bytes } })
+        expect(content[2]).must_equal({ text: "42" })
+        expect(content[3].keys).must_equal [:tool_use]
+      end
+
+      it "restores redacted bytes from a part that went through JSON" do
+        captured = provider.send(:extract_reasoning, build_response([redacted_reasoning_block(redacted_bytes)]))
+        persisted = captured.map { |p| JSON.parse(p.to_h.to_json, symbolize_names: true) }
+        restored = persisted.map { |h| Riffer::Messages::Assistant::ReasoningPart.from_hash(h) }
+
+        replayed = convert(restored)[:content].first
+
+        expect(replayed).must_equal({ reasoning_content: { redacted_content: redacted_bytes } })
+      end
+
+      # The SDK's stubbed client runs its own param validation and JSON
+      # serialization, so this pins the wire shape Converse receives.
+      it "round-trips captured reasoning through the SDK onto the next request body" do
+        client = Aws::BedrockRuntime::Client.new(stub_responses: true, region: "us-east-1")
+        client.stub_responses(
+          :converse,
+          {
+            output: {
+              message: {
+                role: "assistant",
+                content: [
+                  { reasoning_content: { reasoning_text: { text: "Think", signature: "sig" } } },
+                  { reasoning_content: { redacted_content: redacted_bytes } },
+                  { text: "42" },
+                ],
+              },
+            },
+            stop_reason: "end_turn",
+            usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
+            metrics: { latency_ms: 1 },
+          },
+        )
+        Riffer.config.amazon_bedrock.client = client
+        question = Riffer::Messages::User.new("Hi")
+
+        first = provider.generate_text(messages: [question], model: model)
+        provider.generate_text(messages: [question, first, Riffer::Messages::User.new("Again")], model: model)
+        body = JSON.parse(client.api_requests.last[:context].http_request.body.read)
+
+        expect(body["messages"][1]["content"]).must_equal [
+          { "reasoningContent" => { "reasoningText" => { "text" => "Think", "signature" => "sig" } } },
+          { "reasoningContent" => { "redactedContent" => Base64.strict_encode64(redacted_bytes) } },
+          { "text" => "42" },
+        ]
+      end
+
+      it "skips parts with no format or another adapter's format" do
+        reasoning = [
+          part(type: :text, text: "legacy"),
+          part(type: :text, text: "foreign", signature: "sig", format: "anthropic-claude-v1"),
+          part(type: :text, text: "kept", signature: "sig", format: "bedrock-converse-v1"),
+        ]
+
+        expect(convert(reasoning)[:content]).must_equal [
+          { reasoning_content: { reasoning_text: { text: "kept", signature: "sig" } } },
+          { text: "42" },
+        ]
+      end
+
+      it "omits reasoning_content when no part is replayable" do
+        expect(convert([part(type: :text, text: "legacy", format: "mock-v1")])[:content]).must_equal [{ text: "42" }]
+      end
+    end
+  end
+
   describe "usage" do
     describe "#generate_text returns usage" do
       it "includes usage in the response" do
