@@ -19,8 +19,6 @@ class Riffer::Agent::Response
 
   attr_reader messages: Array[Riffer::Messages::Base]
 
-  attr_reader healed_tool_call_ids: Array[String]
-
   # --
   # : (
   #     String,
@@ -30,11 +28,10 @@ class Riffer::Agent::Response
   #     ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #     ?structured_output: Hash[Symbol, untyped]?,
   #     ?messages: Array[Riffer::Messages::Base],
-  #     ?healed_tool_call_ids: Array[String],
   #     ?token_usage: Riffer::Providers::TokenUsage?,
   #     ?steps: Integer
   #   ) -> void
-  def initialize: (String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?healed_tool_call_ids: Array[String], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> void
+  def initialize: (String, outcome: Riffer::Agent::Outcome, ?tripwire: Riffer::Guardrails::Tripwire?, ?modifications: Array[Riffer::Guardrails::Modification], ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart], ?structured_output: Hash[Symbol, untyped]?, ?messages: Array[Riffer::Messages::Base], ?token_usage: Riffer::Providers::TokenUsage?, ?steps: Integer) -> void
 
   # --
   # : () -> bool

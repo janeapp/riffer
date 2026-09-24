@@ -253,15 +253,6 @@ class Riffer::Config
   # : (Symbol) -> void
   def message_id_strategy=: (Symbol) -> void
 
-  # Experimental: riffer maintains the +tool_use+ ↔ +tool_result+ invariant by
-  # stripping orphaned exchanges and filling interrupted ones. The surface may
-  # change without notice.
-  attr_reader experimental_history_healing: bool
-
-  # --
-  # : (untyped) -> void
-  def experimental_history_healing=: (untyped) -> void
-
   # --
   # : () -> void
   def initialize: () -> void

@@ -121,6 +121,24 @@ describe Riffer::Agent::Session do
 
       expect(s.messages).must_equal [user]
     end
+
+    it "places a tool result after its parent's tool results, ahead of later messages" do
+      second_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_2", name: "weather", arguments: "{}")
+      parent = Riffer::Messages::Assistant.new("", id: "a_3", tool_calls: [tc, second_call])
+      follow_up = Riffer::Messages::User.new("next", id: "u_2")
+      second = Riffer::Messages::Tool.new("rainy", id: "t_2", tool_call_id: "c_2", name: "weather")
+      s = Riffer::Agent::Session.new(messages: [user, parent, tool_msg, follow_up])
+      s.add(second)
+
+      expect(s.messages).must_equal [user, parent, tool_msg, second, follow_up]
+    end
+
+    it "appends a tool result whose parent is not in history" do
+      s = Riffer::Agent::Session.new(messages: [user])
+      s.add(tool_msg)
+
+      expect(s.messages).must_equal [user, tool_msg]
+    end
   end
 
   describe "#set" do
@@ -352,6 +370,80 @@ describe Riffer::Agent::Session do
 
       expect(assistant).must_equal asst
       expect(pending.map(&:call_id)).must_equal ["c_b"]
+    end
+  end
+
+  describe "#discard_pending_tool_calls" do
+    let(:tc_b) { Riffer::Messages::Assistant::ToolCall.new(call_id: "c_b", name: "weather", arguments: "{}") }
+    let(:pending_assistant) { Riffer::Messages::Assistant.new("", id: "a_3", tool_calls: [tc, tc_b]) }
+
+    it "returns the filled call ids" do
+      s = Riffer::Agent::Session.new(messages: [user, pending_assistant])
+
+      expect(s.discard_pending_tool_calls).must_equal %w[c_1 c_b]
+    end
+
+    it "appends :interrupted placeholder results after the parent assistant" do
+      s = Riffer::Agent::Session.new(messages: [user, pending_assistant])
+      s.discard_pending_tool_calls
+      placeholders = s.messages.drop(2) #: Array[Riffer::Messages::Tool]
+
+      expect(placeholders.map(&:tool_call_id)).must_equal %w[c_1 c_b]
+      expect(placeholders.map(&:error_type)).must_equal %i[interrupted interrupted]
+      expect(placeholders.first.content).must_equal "Tool call interrupted before completion."
+      expect(s.pending_tool_calls.last).must_equal []
+    end
+
+    it "only fills calls that have no result yet" do
+      done = Riffer::Messages::Tool.new("sunny", id: "t_2", tool_call_id: "c_1", name: "weather")
+      s = Riffer::Agent::Session.new(messages: [user, pending_assistant, done])
+
+      expect(s.discard_pending_tool_calls).must_equal ["c_b"]
+      expect(s.orphaned_tool_call_ids).must_equal []
+    end
+
+    it "returns [] and leaves messages unchanged when nothing is pending" do
+      original = session.messages.dup
+
+      expect(session.discard_pending_tool_calls).must_equal []
+      expect(session.messages).must_equal original
+    end
+
+    it "does not fire on_message for placeholders" do
+      seen = []
+      s = Riffer::Agent::Session.new(messages: [user, pending_assistant])
+      s.on_message { |m| seen << m }
+      s.discard_pending_tool_calls
+
+      expect(seen).must_equal []
+    end
+
+    it "fills pending calls left by a run aborted outside riffer's interrupt handling" do
+      tool = stub_tool("AbortedRunTool") do
+        description "Never runs"
+        def call(context:)
+          text("done")
+        end
+      end
+      agent_class = stub_agent("AbortedRunAgent") do
+        model "mock/riffer-1"
+        uses_tools [tool]
+      end
+      agent = agent_class.new
+      agent.provider.stub_response("", tool_calls: [{ name: "aborted_run_tool", arguments: "{}" }])
+      abort_error = Class.new(StandardError)
+      agent.session.on_message do |msg|
+        raise abort_error if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
+      end
+
+      expect { agent.generate("Call tool") }.must_raise abort_error
+
+      _, pending = agent.session.pending_tool_calls
+      filled = agent.session.discard_pending_tool_calls
+
+      expect(filled).must_equal pending.map(&:call_id)
+      expect(filled.length).must_equal 1
+      expect(agent.session.orphaned_tool_call_ids).must_equal []
     end
   end
 

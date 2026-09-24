@@ -13,8 +13,6 @@ module Riffer::Agent::Session::Repair
   #--
   #: (Array[Riffer::Messages::Base]) -> [Array[Riffer::Messages::Base], Array[String]]
   def fill_orphans(messages)
-    return [messages, []] unless Riffer.config.experimental_history_healing
-
     result_ids = messages.filter_map { |m| m.tool_call_id if m.is_a?(Riffer::Messages::Tool) }
     filled = [] #: Array[String]
     new_messages = [] #: Array[Riffer::Messages::Base]
@@ -44,8 +42,6 @@ module Riffer::Agent::Session::Repair
   #--
   #: (Array[Riffer::Messages::Base]) -> Array[Riffer::Messages::Base]
   def prune_orphans(messages)
-    return messages unless Riffer.config.experimental_history_healing
-
     resume_boundary = (messages.length - 1).downto(0).find do |idx|
       m = messages[idx]
       m.is_a?(Riffer::Messages::Assistant) &&

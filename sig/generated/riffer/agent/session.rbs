@@ -44,6 +44,10 @@ class Riffer::Agent::Session
   def pending_tool_calls: () -> [ Riffer::Messages::Assistant?, Array[Riffer::Messages::Assistant::ToolCall] ]
 
   # --
+  # : () -> Array[String]
+  def discard_pending_tool_calls: () -> Array[String]
+
+  # --
   # : () -> Enumerator[Riffer::Messages::Base, self]
   # : () { (Riffer::Messages::Base) -> void } -> untyped
   def each: () -> Enumerator[Riffer::Messages::Base, self]
@@ -58,6 +62,12 @@ class Riffer::Agent::Session
   def final_assistant_message: () -> Riffer::Messages::Assistant?
 
   private
+
+  # Providers require tool results to directly follow their tool_use, but a
+  # resumed turn appends the new user message before pending calls execute.
+  # --
+  # : (Riffer::Messages::Base) -> Integer
+  def insertion_index: (Riffer::Messages::Base) -> Integer
 
   # --
   # : (Riffer::Messages::Base, Riffer::Messages::Base) -> void

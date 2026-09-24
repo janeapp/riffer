@@ -3,12 +3,9 @@
 class Riffer::StreamEvents::Interrupt < Riffer::StreamEvents::Base
   attr_reader reason: (String | Symbol)?
 
-  # Tool calls given placeholder results; empty unless history healing is on.
-  attr_reader healed_tool_call_ids: Array[String]
-
   # --
-  # : (?reason: (String | Symbol)?, ?healed_tool_call_ids: Array[String]) -> void
-  def initialize: (?reason: (String | Symbol)?, ?healed_tool_call_ids: Array[String]) -> void
+  # : (?reason: (String | Symbol)?) -> void
+  def initialize: (?reason: (String | Symbol)?) -> void
 
   # --
   # : () -> Hash[Symbol, untyped]

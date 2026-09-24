@@ -1154,197 +1154,30 @@ describe Riffer::Agent do
     end
   end
 
-  describe "interrupt! with experimental_history_healing" do
-    let(:tool_class) do
-      stub_tool("InterruptHealTool") do
-        description "Slow tool"
-        def call(context:)
-          text("done")
-        end
-      end
-    end
-
-    after { Riffer.config.experimental_history_healing = false }
-
-    it "fills orphans and exposes healed_tool_call_ids when healing is on" do
-      Riffer.config.experimental_history_healing = true
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response(
-        "",
-        tool_calls: [
-          { name: "interrupt_heal_tool", arguments: "{}" },
-          { name: "interrupt_heal_tool", arguments: "{}" },
-        ],
-      )
-
-      agent.session.on_message do |msg|
-        agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
-      end
-
-      result = agent.generate("Call tools")
-
-      expect(result.outcome.reason).must_equal :interrupted
-      expect(result.healed_tool_call_ids.length).must_equal 2
-      expect(agent.session.orphaned_tool_call_ids).must_equal []
-      tools = agent.session.messages.grep(Riffer::Messages::Tool)
-
-      expect(tools.length).must_equal 2
-      expect(tools.first.error_type).must_equal :interrupted
-      expect(tools.first.content).must_equal "Tool call interrupted before completion."
-    end
-
-    it "leaves orphans in place when healing is off (default)" do
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
-
-      agent.session.on_message do |msg|
-        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
-      end
-
-      result = agent.generate("Call tools")
-
-      expect(result.outcome.reason).must_equal :interrupted
-      expect(result.healed_tool_call_ids).must_equal []
-      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
-    end
-
-    it "does not fire on_message for placeholder tool messages" do
-      Riffer.config.experimental_history_healing = true
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
-
-      seen = []
-      agent.session.on_message do |msg|
-        seen << msg
-        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
-      end
-
-      agent.generate("Call tools")
-
-      # The assistant message is observed, but the placeholder Tool result
-      # is not — placeholders bypass on_message because they aren't
-      # inference output.
-      expect(seen.count { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal 0
-    end
-  end
-
-  describe "max_steps interrupt with experimental_history_healing" do
-    let(:tool_class) do
-      stub_tool("MaxStepsHealTool") do
-        description "Loop tool"
-        def call(context:)
-          text("ok")
-        end
-      end
-    end
-
-    after { Riffer.config.experimental_history_healing = false }
-
-    it "fills orphan tool_use with the placeholder when healing is on" do
-      Riffer.config.experimental_history_healing = true
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-        max_steps 1
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-
-      result = agent.generate("Loop forever")
-
-      expect(result.outcome.reason).must_equal :max_steps
-      expect(result.healed_tool_call_ids.length).must_equal 1
-      expect(agent.session.orphaned_tool_call_ids).must_equal []
-      synth = agent.session.messages.last
-
-      expect(synth).must_be_kind_of Riffer::Messages::Tool
-      expect(synth.error_type).must_equal :interrupted
-    end
-
-    it "leaves orphan tool_use when healing is off" do
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-        max_steps 1
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-
-      result = agent.generate("Loop forever")
-
-      expect(result.outcome.reason).must_equal :max_steps
-      expect(result.healed_tool_call_ids).must_equal []
-      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
-    end
-  end
-
-  describe "seeded history with experimental_history_healing" do
-    let(:custom_class) { stub_agent("CustomAgent") { model "mock/riffer-1" } }
-
-    after { Riffer.config.experimental_history_healing = false }
-
-    it "passes seeded history through untouched when healing is off (default)" do
+  describe "seeded history repair" do
+    it "strips orphaned tool exchanges and parentless tool results from a provided session" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
+      kept = [
+        Riffer::Messages::User.new("hi"),
+        Riffer::Messages::User.new("follow up"),
+        Riffer::Messages::Assistant.new("ok"),
+      ]
       seeded = Riffer::Agent::Session.new(
         messages: [
-          Riffer::Messages::User.new("hi"),
-          Riffer::Messages::Tool.new(
-            "ghost",
-            tool_call_id: "c_missing",
-            name: "t",
-          ),
+          kept[0],
+          Riffer::Messages::Tool.new("ghost", tool_call_id: "c_missing", name: "t"),
           Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-          Riffer::Messages::User.new("follow up"),
-          Riffer::Messages::Assistant.new("ok"),
+          kept[1],
+          kept[2],
         ],
       )
-      agent = custom_class.new(session: seeded)
-      agent.provider.stub_response("Hello!")
-      agent.generate
 
-      assistant_with_orphan = agent.session.messages.find do |m|
-        m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
-      end
+      agent = stub_agent("CustomAgent") { model "mock/riffer-1" }.new(session: seeded)
 
-      refute_nil assistant_with_orphan
-      parentless = agent.session.messages.find do |m|
-        m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
-      end
-
-      refute_nil parentless
+      expect(agent.session.messages).must_equal kept
     end
 
-    it "preserves a pending tool_use on the resume boundary even when healing is on" do
-      Riffer.config.experimental_history_healing = true
+    it "preserves a pending tool_use on the resume boundary" do
       tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
       seeded = Riffer::Agent::Session.new(
         messages: [
@@ -1364,10 +1197,16 @@ describe Riffer::Agent do
       end
 
       agent = with_tools.new(session: seeded)
+
+      expect(agent.session.orphaned_tool_call_ids).must_equal ["c_pending"]
+
       agent.provider.stub_response("All done!")
       result = agent.generate
+      tool_result = agent.session.messages.grep(Riffer::Messages::Tool).first #: Riffer::Messages::Tool
 
       expect(result.outcome.reason).must_equal :completed
+      expect(tool_result.tool_call_id).must_equal "c_pending"
+      expect(tool_result.content).must_equal "done"
     end
   end
 end

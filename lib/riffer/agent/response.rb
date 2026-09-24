@@ -11,7 +11,6 @@ class Riffer::Agent::Response
   attr_reader :token_usage #: Riffer::Providers::TokenUsage? # @dynamic token_usage
   attr_reader :steps #: Integer # @dynamic steps
   attr_reader :messages #: Array[Riffer::Messages::Base] # @dynamic messages
-  attr_reader :healed_tool_call_ids #: Array[String] # @dynamic healed_tool_call_ids
 
   #--
   #: (
@@ -22,7 +21,6 @@ class Riffer::Agent::Response
   #    ?reasoning: Array[Riffer::Messages::Assistant::ReasoningPart],
   #    ?structured_output: Hash[Symbol, untyped]?,
   #    ?messages: Array[Riffer::Messages::Base],
-  #    ?healed_tool_call_ids: Array[String],
   #    ?token_usage: Riffer::Providers::TokenUsage?,
   #    ?steps: Integer
   #  ) -> void
@@ -34,7 +32,6 @@ class Riffer::Agent::Response
     reasoning: [],
     structured_output: nil,
     messages: [],
-    healed_tool_call_ids: [],
     token_usage: nil,
     steps: 0
   )
@@ -45,7 +42,6 @@ class Riffer::Agent::Response
     @reasoning = reasoning
     @structured_output = structured_output
     @messages = messages
-    @healed_tool_call_ids = healed_tool_call_ids
     @token_usage = token_usage
     @steps = steps
   end

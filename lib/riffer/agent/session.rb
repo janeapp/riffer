@@ -27,7 +27,7 @@ class Riffer::Agent::Session
   #--
   #: (Riffer::Messages::Base, ?silent: bool) -> Riffer::Messages::Base
   def add(message, silent: false)
-    @messages << message
+    @messages.insert(insertion_index(message), message)
     # +silent+ is for non-inference inputs (e.g. user messages) that subscribers don't expect.
     @callbacks.each { |callback| callback.call(message) } unless silent
     message
@@ -121,6 +121,14 @@ class Riffer::Agent::Session
   end
 
   #--
+  #: () -> Array[String]
+  def discard_pending_tool_calls
+    messages, filled = Repair.fill_orphans(@messages)
+    set(messages)
+    filled
+  end
+
+  #--
   #: () -> Enumerator[Riffer::Messages::Base, self]
   #: () { (Riffer::Messages::Base) -> void } -> untyped
   def each(&block)
@@ -143,6 +151,21 @@ class Riffer::Agent::Session
   end
 
   private
+
+  # Providers require tool results to directly follow their tool_use, but a
+  # resumed turn appends the new user message before pending calls execute.
+  #--
+  #: (Riffer::Messages::Base) -> Integer
+  def insertion_index(message)
+    return @messages.length unless message.is_a?(Riffer::Messages::Tool)
+
+    parent_idx = @messages.rindex do |m|
+      m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |tc| tc.call_id == message.tool_call_id }
+    end
+    return @messages.length unless parent_idx
+
+    parent_idx + 1 + @messages.drop(parent_idx + 1).take_while { |m| m.is_a?(Riffer::Messages::Tool) }.length
+  end
 
   #--
   #: (Riffer::Messages::Base, Riffer::Messages::Base) -> void

@@ -988,9 +988,9 @@ describe Riffer::Agent::Run do
     end
   end
 
-  describe "interrupt! with experimental_history_healing" do
+  describe "interrupt! with pending tool calls" do
     let(:tool_class) do
-      stub_tool("InterruptHealTool") do
+      stub_tool("InterruptPendingTool") do
         description "Slow tool"
         def call(context:)
           text("done")
@@ -998,108 +998,57 @@ describe Riffer::Agent::Run do
       end
     end
 
-    before { @original_history_healing = Riffer.config.experimental_history_healing }
-    after { Riffer.config.experimental_history_healing = @original_history_healing }
-
-    it "fills orphans and exposes healed_tool_call_ids when healing is on" do
-      Riffer.config.experimental_history_healing = true
+    let(:agent) do
       tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
+      stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
-      end
+      end.new
+    end
 
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response(
+    before do
+      agent.provider.stub_response(
         "",
         tool_calls: [
-          { name: "interrupt_heal_tool", arguments: "{}" },
-          { name: "interrupt_heal_tool", arguments: "{}" },
+          { name: "interrupt_pending_tool", arguments: "{}" },
+          { name: "interrupt_pending_tool", arguments: "{}" },
         ],
       )
-
       agent.session.on_message do |msg|
         agent.interrupt!(:user_interrupt) if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
       end
+    end
 
+    it "leaves pending tool calls in history without placeholders" do
       result = agent.generate("Call tools")
 
       expect(result.outcome.reason).must_equal :interrupted
-      expect(result.healed_tool_call_ids.length).must_equal 2
-      expect(agent.session.orphaned_tool_call_ids).must_equal []
-      tools = agent.session.messages.grep(Riffer::Messages::Tool)
-
-      expect(tools.length).must_equal 2
-      expect(tools.first.error_type).must_equal :interrupted
-      expect(tools.first.content).must_equal "Tool call interrupted before completion."
+      expect(agent.session.orphaned_tool_call_ids.length).must_equal 2
+      expect(agent.session.messages.grep(Riffer::Messages::Tool)).must_equal []
     end
 
-    it "leaves orphans in place when healing is off (default)" do
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
-
-      agent.session.on_message do |msg|
-        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
-      end
-
-      result = agent.generate("Call tools")
-
-      expect(result.outcome.reason).must_equal :interrupted
-      expect(result.healed_tool_call_ids).must_equal []
-      expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
-    end
-
-    it "does not fire on_message for placeholder tool messages" do
-      Riffer.config.experimental_history_healing = true
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "interrupt_heal_tool", arguments: "{}" }])
-
-      seen = []
-      agent.session.on_message do |msg|
-        seen << msg
-        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && !msg.tool_calls.empty?
-      end
-
+    it "lets the caller discard the pending calls after the interrupt" do
       agent.generate("Call tools")
+      _, pending = agent.session.pending_tool_calls
 
-      # The assistant message is observed, but the placeholder Tool result
-      # is not — placeholders bypass on_message because they aren't
-      # inference output.
-      expect(seen.count { |m| m.is_a?(Riffer::Messages::Tool) }).must_equal 0
+      filled = agent.session.discard_pending_tool_calls
+
+      expect(filled).must_equal pending.map(&:call_id)
+      expect(agent.session.orphaned_tool_call_ids).must_equal []
+      error_types = agent.session.messages.grep(Riffer::Messages::Tool).map(&:error_type)
+
+      expect(error_types).must_equal %i[interrupted interrupted]
     end
   end
 
-  describe "max_steps interrupt with experimental_history_healing" do
-    let(:tool_class) do
-      stub_tool("MaxStepsHealTool") do
+  describe "max_steps interrupt with pending tool calls" do
+    it "leaves the pending tool call in history without a placeholder" do
+      tc = stub_tool("MaxStepsPendingTool") do
         description "Loop tool"
         def call(context:)
           text("ok")
         end
       end
-    end
-
-    before { @original_history_healing = Riffer.config.experimental_history_healing }
-    after { Riffer.config.experimental_history_healing = @original_history_healing }
-
-    it "fills orphan tool_use with the placeholder when healing is on" do
-      Riffer.config.experimental_history_healing = true
-      tc = tool_class
       custom_class = stub_agent("CustomAgent") do
         model "mock/riffer-1"
         uses_tools [tc]
@@ -1107,104 +1056,13 @@ describe Riffer::Agent::Run do
       end
 
       agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
+      agent.provider.stub_response("", tool_calls: [{ name: "max_steps_pending_tool", arguments: "{}" }])
 
       result = agent.generate("Loop forever")
 
       expect(result.outcome.reason).must_equal :max_steps
-      expect(result.healed_tool_call_ids.length).must_equal 1
-      expect(agent.session.orphaned_tool_call_ids).must_equal []
-      synth = agent.session.messages.last
-
-      expect(synth).must_be_kind_of Riffer::Messages::Tool
-      expect(synth.error_type).must_equal :interrupted
-    end
-
-    it "leaves orphan tool_use when healing is off" do
-      tc = tool_class
-      custom_class = stub_agent("CustomAgent") do
-        model "mock/riffer-1"
-        uses_tools [tc]
-        max_steps 1
-      end
-
-      agent = custom_class.new
-      provider = agent.provider
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-      provider.stub_response("", tool_calls: [{ name: "max_steps_heal_tool", arguments: "{}" }])
-
-      result = agent.generate("Loop forever")
-
-      expect(result.outcome.reason).must_equal :max_steps
-      expect(result.healed_tool_call_ids).must_equal []
       expect(agent.session.orphaned_tool_call_ids.length).must_equal 1
-    end
-  end
-
-  describe "seeded history with experimental_history_healing" do
-    let(:custom_class) { stub_agent("CustomAgent") { model "mock/riffer-1" } }
-
-    before { @original_history_healing = Riffer.config.experimental_history_healing }
-    after { Riffer.config.experimental_history_healing = @original_history_healing }
-
-    it "passes seeded history through untouched when healing is off (default)" do
-      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_orphan", name: "t", arguments: "{}")
-      seeded = Riffer::Agent::Session.new(
-        messages: [
-          Riffer::Messages::User.new("hi"),
-          Riffer::Messages::Tool.new(
-            "ghost",
-            tool_call_id: "c_missing",
-            name: "t",
-          ),
-          Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-          Riffer::Messages::User.new("follow up"),
-          Riffer::Messages::Assistant.new("ok"),
-        ],
-      )
-      agent = custom_class.new(session: seeded)
-      agent.provider.stub_response("Hello!")
-      agent.generate
-
-      assistant_with_orphan = agent.session.messages.find do |m|
-        m.is_a?(Riffer::Messages::Assistant) && m.tool_calls.any? { |x| x.call_id == "c_orphan" }
-      end
-
-      refute_nil assistant_with_orphan
-      parentless = agent.session.messages.find do |m|
-        m.is_a?(Riffer::Messages::Tool) && m.tool_call_id == "c_missing"
-      end
-
-      refute_nil parentless
-    end
-
-    it "preserves a pending tool_use on the resume boundary even when healing is on" do
-      Riffer.config.experimental_history_healing = true
-      tc = Riffer::Messages::Assistant::ToolCall.new(call_id: "c_pending", name: "pending_seed_tool", arguments: "{}")
-      seeded = Riffer::Agent::Session.new(
-        messages: [
-          Riffer::Messages::User.new("Call tool"),
-          Riffer::Messages::Assistant.new("", tool_calls: [tc]),
-        ],
-      )
-      tool = stub_tool("PendingSeedTool") do
-        description "Pending tool"
-        def call(context:)
-          text("done")
-        end
-      end
-      with_tools = stub_agent("WithTools") do
-        model "mock/riffer-1"
-        uses_tools [tool]
-      end
-
-      agent = with_tools.new(session: seeded)
-      agent.provider.stub_response("All done!")
-      result = agent.generate
-
-      expect(result.outcome.reason).must_equal :completed
+      expect(agent.session.messages.last).must_be_kind_of Riffer::Messages::Assistant
     end
   end
 
@@ -3119,6 +2977,40 @@ describe Riffer::Agent::Run do
       tool_messages = agent.session.messages.grep(Riffer::Messages::Tool)
 
       expect(tool_messages.length).must_equal 2
+    end
+
+    it "places resumed tool results before the new user message" do
+      tc = stub_tool("ContinuationOrderTool") do
+        description "Simple tool"
+        def call(context:)
+          text("done")
+        end
+      end
+
+      tool = tc
+      custom_agent_class = stub_agent("CustomAgent") do
+        model "mock/riffer-1"
+        uses_tools [tool]
+      end
+
+      agent = custom_agent_class.new
+      agent.provider.stub_response("", tool_calls: [{ name: "continuation_order_tool", arguments: "{}" }])
+      agent.provider.stub_response("Done!")
+      agent.session.on_message do |msg|
+        agent.interrupt! if msg.is_a?(Riffer::Messages::Assistant) && msg.has_tool_calls?
+      end
+
+      expect(agent.generate("Call tool").outcome.reason).must_equal :interrupted
+
+      agent.generate("Go ahead")
+      roles = agent.session.messages.map(&:class)
+
+      expect(roles.last(4)).must_equal [
+        Riffer::Messages::Assistant,
+        Riffer::Messages::Tool,
+        Riffer::Messages::User,
+        Riffer::Messages::Assistant,
+      ]
     end
 
     it "enforces max_steps across continuations" do
