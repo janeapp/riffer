@@ -881,6 +881,9 @@ describe Riffer::Providers::OpenRouter do
     describe "capturing reasoning_details" do
       let(:provider) { Riffer::Providers::OpenRouter.new }
 
+      # OpenAI::Models::* only resolves once the provider is constructed (depends_on "openai").
+      before { provider }
+
       def completion_with(details)
         message = OpenAI::Models::Chat::ChatCompletionMessage.new(
           content: "42",
