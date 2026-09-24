@@ -191,7 +191,7 @@ The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.
 
 ### Reasoning Replay
 
-Riffer sends the reasoning back to Bedrock on every later turn, so Claude keeps its train of thought across a conversation. For tool calls this is required: when thinking is enabled, Claude needs its earlier reasoning back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
+Riffer sends the reasoning back to Bedrock on every later turn. How much of it Claude uses depends on the model; some only use the reasoning from the current tool-calling turn. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier reasoning back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
 
 If you persist sessions, keep the `reasoning` key when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop it, later turns lose the model's earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.
 
