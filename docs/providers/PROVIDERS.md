@@ -10,6 +10,7 @@ Providers are adapters that connect Riffer to LLM services. They implement a com
 | Azure OpenAI   | `azure_openai`   | `openai`                 |
 | Amazon Bedrock | `amazon_bedrock` | `aws-sdk-bedrockruntime` |
 | Anthropic      | `anthropic`      | `anthropic`              |
+| Claude Code    | `claude_code`    | None (uses the `claude` CLI) |
 | Gemini         | `gemini`         | None                     |
 | OpenRouter     | `openrouter`     | `openai`                 |
 | Mock           | `mock`           | None                     |
@@ -24,6 +25,7 @@ class MyAgent < Riffer::Agent
   model 'azure_openai/gpt-5-mini'                                     # Azure OpenAI
   model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'  # Bedrock
   model 'anthropic/claude-haiku-4-5-20251001'                         # Anthropic
+  model 'claude_code/sonnet'                                          # Claude Code CLI
   model 'gemini/gemini-2.5-flash-lite'                                # Gemini
   model 'openrouter/anthropic/claude-sonnet-4.6'                      # OpenRouter
   model 'mock/any'                                                    # Mock provider
@@ -39,6 +41,7 @@ Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes
 | OpenAI         | `config.openai.api_key`, `config.openai.base_url`                 |
 | Azure OpenAI   | `config.azure_openai.api_key`, `config.azure_openai.endpoint`     |
 | Anthropic      | `config.anthropic.api_key`                                        |
+| Claude Code    | None (uses the CLI login)                                         |
 | Amazon Bedrock | `config.amazon_bedrock.api_token`, `config.amazon_bedrock.region` |
 | Gemini         | `config.gemini.api_key`                                           |
 | OpenRouter     | `config.openrouter.api_key`                                       |
@@ -179,6 +182,9 @@ Riffer::Providers::Repository.find(:amazon_bedrock)
 Riffer::Providers::Repository.find(:anthropic)
 # => Riffer::Providers::Anthropic
 
+Riffer::Providers::Repository.find(:claude_code)
+# => Riffer::Providers::ClaudeCode
+
 Riffer::Providers::Repository.find(:gemini)
 # => Riffer::Providers::Gemini
 
@@ -193,6 +199,7 @@ Riffer::Providers::Repository.find(:mock)
 
 - [Amazon Bedrock](AMAZON_BEDROCK.md) - Claude and other models via AWS
 - [Anthropic](ANTHROPIC.md) - Claude models via Anthropic API
+- [Claude Code](CLAUDE_CODE.md) - Claude models via the Claude Code CLI
 - [OpenAI](OPENAI.md) - GPT models
 - [Azure OpenAI](AZURE_OPENAI.md) - GPT models via Azure
 - [Mock](MOCK_PROVIDER.md) - Mock provider for testing
