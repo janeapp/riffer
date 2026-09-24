@@ -1,0 +1,177 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"max_tokens":1200,"reasoning":{"max_tokens":1024},"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - openrouter.ai
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENROUTER_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '232'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 23 Sep 2026 00:30:33 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1790123432-yf1mFmyGqVLAvSWzng6T
+      Access-Control-Expose-Headers:
+      - X-Generation-Id,X-Provider-Name,request-id,cf-ray
+      Set-Cookie:
+      - __cf_bm=mCE7V0f71MbO8UeryGi8rZqmaZewTokwzeCylrWIwNc-1790123432.0479903-1.0.1.1-qvpZoDet6XGwiAVTxdQaWck71stPmmXFlqW_6QYiGMdtuEfS9GM2Gu8e.8NzvDpcxK4u8hz5XzGMDTF1QswVoVUJdaNjQ.zqL.LF3qTN8fuBM4I8NYdlu.Yco6_MLkbT;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
+        23 Sep 2026 01:00:33 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a3f570fa48fcad2d-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ZGF0YTogeyJpZCI6Imdlbi0xNzkwMTIzNDMyLXlmMW1GbXlHcVZMQXZTV3puZzZUIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5MDEyMzQzMiwibW9kZWwiOiJhbnRocm9waWMvY2xhdWRlLWhhaWt1LTQuNSIsInByb3ZpZGVyIjoiQW1hem9uIEJlZHJvY2siLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIxNyIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiMTciLCJmb3JtYXQiOiJhbnRocm9waWMtY2xhdWRlLXYxIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTAxMjM0MzIteWYxbUZteUdxVkxBdlNXem5nNlQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzkwMTIzNDMyLCJtb2RlbCI6ImFudGhyb3BpYy9jbGF1ZGUtaGFpa3UtNC41IiwicHJvdmlkZXIiOiJBbWF6b24gQmVkcm9jayIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IiB0aW1lcyAyMy4iLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiB0aW1lcyAyMy4iLCJmb3JtYXQiOiJhbnRocm9waWMtY2xhdWRlLXYxIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTAxMjM0MzIteWYxbUZteUdxVkxBdlNXem5nNlQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzkwMTIzNDMyLCJtb2RlbCI6ImFudGhyb3BpYy9jbGF1ZGUtaGFpa3UtNC41IiwicHJvdmlkZXIiOiJBbWF6b24gQmVkcm9jayIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IlxuXG4xNyDDlyAyMyA9IiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiJcblxuMTcgw5cgMjMgPSIsImZvcm1hdCI6ImFudGhyb3BpYy1jbGF1ZGUtdjEiLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5MDEyMzQzMi15ZjFtRm15R3FWTEF2U1d6bmc2VCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTAxMjM0MzIsIm1vZGVsIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS00LjUiLCJwcm92aWRlciI6IkFtYXpvbiBCZWRyb2NrIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiIDE3IMOXICgiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IiAxNyDDlyAoIiwiZm9ybWF0IjoiYW50aHJvcGljLWNsYXVkZS12MSIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzkwMTIzNDMyLXlmMW1GbXlHcVZMQXZTV3puZzZUIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5MDEyMzQzMiwibW9kZWwiOiJhbnRocm9waWMvY2xhdWRlLWhhaWt1LTQuNSIsInByb3ZpZGVyIjoiQW1hem9uIEJlZHJvY2siLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIyMCArIDMpID0gIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIyMCArIDMpID0gIiwiZm9ybWF0IjoiYW50aHJvcGljLWNsYXVkZS12MSIsImluZGV4IjowfV19LCJmaW5pc2hfcmVhc29uIjpudWxsLCJuYXRpdmVfZmluaXNoX3JlYXNvbiI6bnVsbH1dfQoKZGF0YTogeyJpZCI6Imdlbi0xNzkwMTIzNDMyLXlmMW1GbXlHcVZMQXZTV3puZzZUIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uLmNodW5rIiwiY3JlYXRlZCI6MTc5MDEyMzQzMiwibW9kZWwiOiJhbnRocm9waWMvY2xhdWRlLWhhaWt1LTQuNSIsInByb3ZpZGVyIjoiQW1hem9uIEJlZHJvY2siLCJjaG9pY2VzIjpbeyJpbmRleCI6MCwiZGVsdGEiOnsiY29udGVudCI6IiIsInJvbGUiOiJhc3Npc3RhbnQiLCJyZWFzb25pbmciOiIxNyDDlyAyMCArICIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJ0ZXh0IjoiMTcgw5cgMjAgKyAiLCJmb3JtYXQiOiJhbnRocm9waWMtY2xhdWRlLXYxIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTAxMjM0MzIteWYxbUZteUdxVkxBdlNXem5nNlQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzkwMTIzNDMyLCJtb2RlbCI6ImFudGhyb3BpYy9jbGF1ZGUtaGFpa3UtNC41IiwicHJvdmlkZXIiOiJBbWF6b24gQmVkcm9jayIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IjE3IMOXIDMgPSAiLCJyZWFzb25pbmdfZGV0YWlscyI6W3sidHlwZSI6InJlYXNvbmluZy50ZXh0IiwidGV4dCI6IjE3IMOXIDMgPSAiLCJmb3JtYXQiOiJhbnRocm9waWMtY2xhdWRlLXYxIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTAxMjM0MzIteWYxbUZteUdxVkxBdlNXem5nNlQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzkwMTIzNDMyLCJtb2RlbCI6ImFudGhyb3BpYy9jbGF1ZGUtaGFpa3UtNC41IiwicHJvdmlkZXIiOiJBbWF6b24gQmVkcm9jayIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6IjM0MCArIDUxID0gIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIzNDAgKyA1MSA9ICIsImZvcm1hdCI6ImFudGhyb3BpYy1jbGF1ZGUtdjEiLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5MDEyMzQzMi15ZjFtRm15R3FWTEF2U1d6bmc2VCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTAxMjM0MzIsIm1vZGVsIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS00LjUiLCJwcm92aWRlciI6IkFtYXpvbiBCZWRyb2NrIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIiLCJyb2xlIjoiYXNzaXN0YW50IiwicmVhc29uaW5nIjoiMzkxIiwicmVhc29uaW5nX2RldGFpbHMiOlt7InR5cGUiOiJyZWFzb25pbmcudGV4dCIsInRleHQiOiIzOTEiLCJmb3JtYXQiOiJhbnRocm9waWMtY2xhdWRlLXYxIiwiaW5kZXgiOjB9XX0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTAxMjM0MzIteWYxbUZteUdxVkxBdlNXem5nNlQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzkwMTIzNDMyLCJtb2RlbCI6ImFudGhyb3BpYy9jbGF1ZGUtaGFpa3UtNC41IiwicHJvdmlkZXIiOiJBbWF6b24gQmVkcm9jayIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZ19kZXRhaWxzIjpbeyJ0eXBlIjoicmVhc29uaW5nLnRleHQiLCJzaWduYXR1cmUiOiJFc3dDQ3B3QkNCSVFBUmdDS2tBZTB6TWNSUlpLcFhxUnN0WDBiQUVwTStLUzZMbkp6UlZsQjBLcjJ3bEVnczl4Q1JZL3VTTHNOS1JJeE9BWjZJbkZDdjlBTDYzaDFGQUVHK3gwemtBOU1obGpiR0YxWkdVdGFHRnBhM1V0TkMwMUxUSXdNalV4TURBeE9BQkNDSFJvYVc1cmFXNW5XZ3cxTXpZMk9UY3lORGszTWpoeUVDL3dkdUpaMWZTaDFuNGJyUlhnRjlPSUFRR29BYW03ek5VR3NBRUNFZ3dOb2RZOFlYTDhDVEFhUjhJYURBUHNNUHo4dG52Y25oQkJ6U0l3NnlTbm5XalFEZTZGSVVQODQzQjBaVnRMb3JxNW50aFdmSTIwTDZDVzJ6QmU1SExhc1Vxak4rdFV5aHRQR2ZpMUtsMmMzMHJUdzZobXV5bmdzc0Q1TjJpanMwOXdMWFRPeTBwNHAvbmpSbTNlSGp5UU5UbHdZY0IzNXJaTDU3Q2dEM3ZzcWc2YmNGZ3ZnMlZGL2FhT1A1TkJXV3VGNE1zdGc0ZnFvMFAxZkk4U0dncWlxaGdHR3hKUHlqdHVNWTBZQVE9PSIsImZvcm1hdCI6ImFudGhyb3BpYy1jbGF1ZGUtdjEiLCJpbmRleCI6MH1dfSwiZmluaXNoX3JlYXNvbiI6bnVsbCwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOm51bGx9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5MDEyMzQzMi15ZjFtRm15R3FWTEF2U1d6bmc2VCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTAxMjM0MzIsIm1vZGVsIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS00LjUiLCJwcm92aWRlciI6IkFtYXpvbiBCZWRyb2NrIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsImRlbHRhIjp7ImNvbnRlbnQiOiIzOTEiLCJyb2xlIjoiYXNzaXN0YW50In0sImZpbmlzaF9yZWFzb24iOm51bGwsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjpudWxsfV19CgpkYXRhOiB7ImlkIjoiZ2VuLTE3OTAxMjM0MzIteWYxbUZteUdxVkxBdlNXem5nNlQiLCJvYmplY3QiOiJjaGF0LmNvbXBsZXRpb24uY2h1bmsiLCJjcmVhdGVkIjoxNzkwMTIzNDMyLCJtb2RlbCI6ImFudGhyb3BpYy9jbGF1ZGUtaGFpa3UtNC41IiwicHJvdmlkZXIiOiJBbWF6b24gQmVkcm9jayIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCIsInJlYXNvbmluZyI6bnVsbH0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibmF0aXZlX2ZpbmlzaF9yZWFzb24iOiJlbmRfdHVybiJ9XX0KCmRhdGE6IHsiaWQiOiJnZW4tMTc5MDEyMzQzMi15ZjFtRm15R3FWTEF2U1d6bmc2VCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbi5jaHVuayIsImNyZWF0ZWQiOjE3OTAxMjM0MzIsIm1vZGVsIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS00LjUiLCJwcm92aWRlciI6IkFtYXpvbiBCZWRyb2NrIiwic2VydmljZV90aWVyIjoiZGVmYXVsdCIsImNob2ljZXMiOlt7ImluZGV4IjowLCJkZWx0YSI6eyJjb250ZW50IjoiIiwicm9sZSI6ImFzc2lzdGFudCJ9LCJmaW5pc2hfcmVhc29uIjoic3RvcCIsIm5hdGl2ZV9maW5pc2hfcmVhc29uIjoiZW5kX3R1cm4ifV0sInVzYWdlIjp7InByb21wdF90b2tlbnMiOjUxLCJjb21wbGV0aW9uX3Rva2VucyI6NjQsInRvdGFsX3Rva2VucyI6MTE1LCJjb3N0IjowLjAwMDM3MSwiaXNfYnlvayI6ZmFsc2UsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjYWNoZV93cml0ZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MCwidmlkZW9fdG9rZW5zIjowfSwiY29zdF9kZXRhaWxzIjp7InVwc3RyZWFtX2luZmVyZW5jZV9jb3N0IjowLjAwMDM3MSwidXBzdHJlYW1faW5mZXJlbmNlX3Byb21wdF9jb3N0IjowLjAwMDA1MSwidXBzdHJlYW1faW5mZXJlbmNlX2NvbXBsZXRpb25zX2Nvc3QiOjAuMDAwMzJ9LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjU4LCJpbWFnZV90b2tlbnMiOjAsImF1ZGlvX3Rva2VucyI6MH19fQoKZGF0YTogW0RPTkVdCgo=
+  recorded_at: Wed, 23 Sep 2026 00:30:33 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."},{"role":"assistant","content":"391","reasoning_details":[{"type":"reasoning.text","text":"17
+        times 23.\n\n17 × 23 = 17 × (20 + 3) = 17 × 20 + 17 × 3 = 340 + 51 = 391","signature":"EswCCpwBCBIQARgCKkAe0zMcRRZKpXqRstX0bAEpM+KS6LnJzRVlB0Kr2wlEgs9xCRY/uSLsNKRIxOAZ6InFCv9AL63h1FAEG+x0zkA9MhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw1MzY2OTcyNDk3MjhyEC/wduJZ1fSh1n4brRXgF9OIAQGoAam7zNUGsAECEgwNodY8YXL8CTAaR8IaDAPsMPz8tnvcnhBBzSIw6ySnnWjQDe6FIUP843B0ZVtLorq5nthWfI20L6CW2zBe5HLasUqjN+tUyhtPGfi1Kl2c30rTw6hmuyngssD5N2ijs09wLXTOy0p4p/njRm3eHjyQNTlwYcB35rZL57CgD3vsqg6bcFgvg2VF/aaOP5NBWWuF4Mstg4fqo0P1fI8SGgqiqhgGGxJPyjtuMY0YAQ==","format":"anthropic-claude-v1"}]},{"role":"user","content":"Now
+        add 10. Reply with just the number."}],"max_tokens":1200,"reasoning":{"max_tokens":1024},"stream_options":{"include_usage":true},"stream":true}'
+    headers:
+      Accept-Encoding:
+      - identity
+      Accept:
+      - text/event-stream
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - openrouter.ai
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENROUTER_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '972'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 23 Sep 2026 00:30:34 GMT
+      Content-Type:
+      - text/event-stream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache
+      X-Generation-Id:
+      - gen-1790123433-kc0kgouaXF8zuRkwouPc
+      Access-Control-Expose-Headers:
+      - X-Generation-Id,X-Provider-Name,request-id,cf-ray
+      Set-Cookie:
+      - __cf_bm=8FALR95vltFXqU4wZMt8zgRv8fwuFJ3bUQ8EXK0lr3w-1790123433.4943333-1.0.1.1-0S7daDrTdn8TF8zeHRGZuObQMQAMbPZ4xgDBNxBFJmJvNfs0S1QxFjJAgFHIhjcCOPX85DzQFvV.cxzuCUBDQ4UF.3sQsq43HAydZIitfjiXuwTgUEJ5ArQP1cHxuSdL;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
+        23 Sep 2026 01:00:34 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a3f571035e38ad2d-SEA
+    body:
+      encoding: UTF-8
+      string: |+
+        data: {"id":"gen-1790123433-kc0kgouaXF8zuRkwouPc","object":"chat.completion.chunk","created":1790123433,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":"391","reasoning_details":[{"type":"reasoning.text","text":"391","format":"anthropic-claude-v1","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1790123433-kc0kgouaXF8zuRkwouPc","object":"chat.completion.chunk","created":1790123433,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":" + 10 = 401","reasoning_details":[{"type":"reasoning.text","text":" + 10 = 401","format":"anthropic-claude-v1","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1790123433-kc0kgouaXF8zuRkwouPc","object":"chat.completion.chunk","created":1790123433,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning_details":[{"type":"reasoning.text","signature":"Eo0CCpwBCBIQARgCKkDFHgyF70XYJD+bZiqMvk2hX8mi1vxsDNPQxEz/5Qk6wVZoFTJJbe23KDLPQtQntgSwwzQO2KAC7eeECz9nKoqPMhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw1MzY2OTcyNDk3MjhyEC/wduJZ1fSh1n4brRXgF9OIAQGoAaq7zNUGsAECEgytZQsRLzxEmgchdogaDHXFreT5U3n9ONiN+SIwPbdkzh/Kq4qt3YZRABYtx09kL4pRwugOEi9eezHHx6Nld1MiUBBOAuja0II9n9wpKh6bsT+tOljCj4VCkTkZQCQTBRwKzEBCPoX3HGQlJVMYAQ==","format":"anthropic-claude-v1","index":0}]},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1790123433-kc0kgouaXF8zuRkwouPc","object":"chat.completion.chunk","created":1790123433,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","choices":[{"index":0,"delta":{"content":"401","role":"assistant"},"finish_reason":null,"native_finish_reason":null}]}
+
+        data: {"id":"gen-1790123433-kc0kgouaXF8zuRkwouPc","object":"chat.completion.chunk","created":1790123433,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","choices":[{"index":0,"delta":{"content":"","role":"assistant","reasoning":null},"finish_reason":"stop","native_finish_reason":"end_turn"}]}
+
+        data: {"id":"gen-1790123433-kc0kgouaXF8zuRkwouPc","object":"chat.completion.chunk","created":1790123433,"model":"anthropic/claude-haiku-4.5","provider":"Amazon Bedrock","service_tier":"default","choices":[{"index":0,"delta":{"content":"","role":"assistant"},"finish_reason":"stop","native_finish_reason":"end_turn"}],"usage":{"prompt_tokens":70,"completion_tokens":21,"total_tokens":91,"cost":0.000175,"is_byok":false,"prompt_tokens_details":{"cached_tokens":0,"cache_write_tokens":0,"audio_tokens":0,"video_tokens":0},"cost_details":{"upstream_inference_cost":0.000175,"upstream_inference_prompt_cost":0.00007,"upstream_inference_completions_cost":0.000105},"completion_tokens_details":{"reasoning_tokens":15,"image_tokens":0,"audio_tokens":0}}}
+
+        data: [DONE]
+
+  recorded_at: Wed, 23 Sep 2026 00:30:34 GMT
+recorded_with: VCR 6.4.0
+...

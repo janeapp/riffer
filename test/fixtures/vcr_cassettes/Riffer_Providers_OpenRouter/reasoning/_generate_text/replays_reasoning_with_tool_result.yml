@@ -1,0 +1,174 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"}],"max_tokens":1200,"reasoning":{"max_tokens":1024},"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - openrouter.ai
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENROUTER_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '440'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 23 Sep 2026 00:31:03 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1790123462-UrcFgRLiAQG6X7t0xy6P
+      Access-Control-Expose-Headers:
+      - X-Generation-Id,X-Provider-Name,request-id,cf-ray
+      Set-Cookie:
+      - __cf_bm=YyRB4HEhxl8CmzU6MK8fLeEW0FY6hgCmlgOCYeh27oY-1790123462.5086353-1.0.1.1-7OFuPWJZ_B6RdhuI5KlOElksFYLAh3T0euDnd01_..Zorrp5TlpLylUiB93sZE_6pfYCEsMoMwt87W1wTJcD.LpalErMgL3FrhLl7ZaGRtVRmM5lVsODkMCtIDPsgFN7;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
+        23 Sep 2026 01:01:03 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a3f571b8aeb175b8-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1790123462-UrcFgRLiAQG6X7t0xy6P\",\"object\":\"chat.completion\",\"created\":1790123462,\"model\":\"anthropic/claude-haiku-4.5\",\"provider\":\"Amazon
+        Bedrock\",\"system_fingerprint\":null,\"service_tier\":\"default\",\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_use\",\"message\":{\"role\":\"assistant\",\"content\":null,\"refusal\":null,\"reasoning\":\"The
+        user is asking about the weather in Toronto. I have access to a function called
+        `get_weather` that takes a city name as a parameter. I have all the required
+        information to make this call - the city is \\\"Toronto\\\".\",\"tool_calls\":[{\"type\":\"function\",\"index\":0,\"id\":\"toolu_bdrk_01GrwG1EUXsjvr36Ze1wnRvX\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":
+        \\\"Toronto\\\"}\"}}],\"reasoning_details\":[{\"type\":\"reasoning.text\",\"text\":\"The
+        user is asking about the weather in Toronto. I have access to a function called
+        `get_weather` that takes a city name as a parameter. I have all the required
+        information to make this call - the city is \\\"Toronto\\\".\",\"format\":\"anthropic-claude-v1\",\"index\":0,\"signature\":\"EtcDCpwBCBIQARgCKkDSN05seFaj9yHcIRXfdrXz4RpfSvih0zRyb0GORxfiEWnSSGfM1D/rHL8OoqEVjqGGpoH3SUdFihocXDg0JbMdMhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw1MzY2OTcyNDk3MjhyEC/wduJZ1fSh1n4brRXgF9OIAQGoAci7zNUGsAECEgztuU3iPgaFgVkxu+AaDN/z/9ccikr225ukMSIwiUP0Lg3CH2cRwAccHMNyrXbMoIbQKQkZUwzbsbZv0JTUbmlK7p1NBS/uKRZEr0L1KucBhzNltWfHIKwyn89XQ6JEGZK+JcpTyC9+GpSfuq9e44uHeogh8WKTg1pXefvwLjwVQ+3oL+ahYuqCoq8+rq3q+kJtsZALbP9SSz+lnFJSMSnMUXrDpGTLACmk3nFYc0Zq13DYIQoS2XSl9MA649Cr+4RqTcbnFTHMAt2W7pwuiigiF4Mw/+yULhBq1ghOEopZKdxgP+gI3GPfDBt4X0m5IkGWGZAD8OdvhAmLVssiwN8Cme3shmCpKijNFQYMZQ6h2+Yeg1OIDEV/3RnmZYSRPYN3DF2bd73gdOhQKrza1hwJYjf3YAFoGAE=\"}]}}],\"usage\":{\"prompt_tokens\":610,\"completion_tokens\":109,\"total_tokens\":719,\"cost\":0.001155,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.001155,\"upstream_inference_prompt_cost\":0.00061,\"upstream_inference_completions_cost\":0.000545},\"completion_tokens_details\":{\"reasoning_tokens\":54,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 23 Sep 2026 00:31:04 GMT
+- request:
+    method: post
+    uri: https://openrouter.ai/api/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"anthropic/claude-haiku-4.5","messages":[{"role":"user","content":"What
+        is the weather in Toronto?"},{"role":"assistant","tool_calls":[{"id":"toolu_bdrk_01GrwG1EUXsjvr36Ze1wnRvX","type":"function","function":{"name":"get_weather","arguments":"{\"city\":
+        \"Toronto\"}"}}],"reasoning_details":[{"type":"reasoning.text","text":"The
+        user is asking about the weather in Toronto. I have access to a function called
+        `get_weather` that takes a city name as a parameter. I have all the required
+        information to make this call - the city is \"Toronto\".","signature":"EtcDCpwBCBIQARgCKkDSN05seFaj9yHcIRXfdrXz4RpfSvih0zRyb0GORxfiEWnSSGfM1D/rHL8OoqEVjqGGpoH3SUdFihocXDg0JbMdMhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw1MzY2OTcyNDk3MjhyEC/wduJZ1fSh1n4brRXgF9OIAQGoAci7zNUGsAECEgztuU3iPgaFgVkxu+AaDN/z/9ccikr225ukMSIwiUP0Lg3CH2cRwAccHMNyrXbMoIbQKQkZUwzbsbZv0JTUbmlK7p1NBS/uKRZEr0L1KucBhzNltWfHIKwyn89XQ6JEGZK+JcpTyC9+GpSfuq9e44uHeogh8WKTg1pXefvwLjwVQ+3oL+ahYuqCoq8+rq3q+kJtsZALbP9SSz+lnFJSMSnMUXrDpGTLACmk3nFYc0Zq13DYIQoS2XSl9MA649Cr+4RqTcbnFTHMAt2W7pwuiigiF4Mw/+yULhBq1ghOEopZKdxgP+gI3GPfDBt4X0m5IkGWGZAD8OdvhAmLVssiwN8Cme3shmCpKijNFQYMZQ6h2+Yeg1OIDEV/3RnmZYSRPYN3DF2bd73gdOhQKrza1hwJYjf3YAFoGAE=","format":"anthropic-claude-v1"}]},{"role":"tool","tool_call_id":"toolu_bdrk_01GrwG1EUXsjvr36Ze1wnRvX","content":"15
+        degrees Celsius and sunny."}],"max_tokens":1200,"reasoning":{"max_tokens":1024},"tools":[{"type":"function","function":{"name":"get_weather","description":"Get
+        the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false},"strict":true}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - openrouter.ai
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENROUTER_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '1679'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 23 Sep 2026 00:31:06 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Generation-Id:
+      - gen-1790123464-qrT3a760jkpuF68ludYw
+      Access-Control-Expose-Headers:
+      - X-Generation-Id,X-Provider-Name,request-id,cf-ray
+      Set-Cookie:
+      - __cf_bm=XmAkeZ.tnUTjTiImdw7VpXc7U_OFBJT.gi7TCBhcxN8-1790123464.449387-1.0.1.1-.57_nFUHMOmGgSBRAiN0CvUFDZnltBwrBVnnqxnd2kB8IPSDPaRMJbof7OlU9ukqfGFq.JqqGgv83tphN7hhGGIJUVLfi1MLqd8_x7ouO2I5HkLX4R3n_sr7spM7RH8L;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=openrouter.ai; Expires=Wed,
+        23 Sep 2026 01:01:06 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a3f571c4ce2175b8-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: "\n         \n{\"id\":\"gen-1790123464-qrT3a760jkpuF68ludYw\",\"object\":\"chat.completion\",\"created\":1790123464,\"model\":\"anthropic/claude-haiku-4.5\",\"provider\":\"Amazon
+        Bedrock\",\"system_fingerprint\":null,\"service_tier\":\"default\",\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"end_turn\",\"message\":{\"role\":\"assistant\",\"content\":\"The
+        weather in Toronto is **15 degrees Celsius and sunny**. It's a nice day!\",\"refusal\":null,\"reasoning\":null}}],\"usage\":{\"prompt_tokens\":738,\"completion_tokens\":24,\"total_tokens\":762,\"cost\":0.000858,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.000858,\"upstream_inference_prompt_cost\":0.000738,\"upstream_inference_completions_cost\":0.00012},\"completion_tokens_details\":{\"reasoning_tokens\":0,\"image_tokens\":0,\"audio_tokens\":0}}}"
+  recorded_at: Wed, 23 Sep 2026 00:31:06 GMT
+recorded_with: VCR 6.4.0

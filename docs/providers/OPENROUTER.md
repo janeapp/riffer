@@ -173,7 +173,7 @@ end
 
 ## Reasoning Models
 
-Reasoning models surface their thought process via OpenRouter's normalised `reasoning` field. Enable it with the `reasoning` option:
+Reasoning models surface their thought process via OpenRouter's normalised `reasoning_details` field. Enable it with the `reasoning` option:
 
 ```ruby
 class ThinkAgent < Riffer::Agent
@@ -190,6 +190,23 @@ ThinkAgent.new.stream('What is 2+2? Think step by step.').each do |event|
   end
 end
 ```
+
+### Reasoning Replay
+
+Each entry in OpenRouter's `reasoning_details` becomes a [`ReasoningPart`](../MESSAGES.md#reasoning) on the assistant message, on both `generate_text` and `stream_text`, with nothing dropped:
+
+| `reasoning_details` field | `ReasoningPart` field                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `type`                    | `type`: `reasoning.text` → `:text`, `reasoning.summary` → `:summary`, `reasoning.encrypted` → `:encrypted` |
+| `text` / `summary`        | `text`                                                                                                        |
+| `data`                    | `data`                                                                                                        |
+| `signature`               | `signature`                                                                                                   |
+| `id`                      | `id`                                                                                                          |
+| `format`                  | `format` (e.g. `"anthropic-claude-v1"`, `"openai-responses-v1"`, `"unknown"`)                                 |
+
+When streaming, OpenRouter splits one block into many fragments that share an `index`. The provider concatenates their `text`, `summary`, and `data` and keeps the `signature`, `id`, and `format` that arrive along the way, so each block ends as one `ReasoningDone` part. Each non-empty `text` or `summary` fragment is also yielded as a `ReasoningDelta`. Detail types riffer doesn't know are skipped.
+
+On the next request, the assistant message's parts go back as `reasoning_details` in their original order and unchanged. This is what lets Anthropic and Gemini models continue signed thinking across a tool-call loop, and lets OpenAI models reuse their encrypted reasoning. Following the [replay contract](../MESSAGES.md#reasoning), only parts whose `format` is one OpenRouter documents are sent: `unknown`, `openai-responses-v1`, `azure-openai-responses-v1`, `bedrock-openai-responses-v1`, `bedrock-xai-responses-v1`, `xai-responses-v1`, `meta-responses-v1`, `anthropic-claude-v1`, and `google-gemini-v1` (listed in `Riffer::Providers::OpenRouter::REASONING_FORMATS`). Parts with no `format`, or one produced by another adapter such as `mock-v1`, are skipped. The `index` is not stored, since the parts' order already carries it.
 
 ## Routing & Fallbacks
 
