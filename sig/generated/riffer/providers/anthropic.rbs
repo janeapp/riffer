@@ -5,6 +5,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   FINISH_REASONS: Hash[String, Symbol]
 
+  # Only parts carrying this tag are replayed, so reasoning captured by another
+  # adapter, whose signatures the Messages API may not accept, never reaches the
+  # request.
+  REASONING_FORMAT: String
+
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -60,6 +65,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # --
+  # : (untyped) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_reasoning_part: (untyped) -> Riffer::Messages::Assistant::ReasoningPart?
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
@@ -77,19 +90,17 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_thinking_event: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-
-  # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_input_json_event: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
+  # The SDK's accumulated block already carries the full thinking text and the
+  # signature from its trailing signature_delta.
   # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_thinking: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  # : (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_reasoning: (untyped, yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
@@ -114,6 +125,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part_to_anthropic_format: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]

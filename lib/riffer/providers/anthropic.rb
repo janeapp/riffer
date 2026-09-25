@@ -16,6 +16,11 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     "pause_turn" => :other,
   }.freeze #: Hash[String, Symbol]
 
+  # Only parts carrying this tag are replayed, so reasoning captured by another
+  # adapter, whose signatures the Messages API may not accept, never reaches the
+  # request.
+  REASONING_FORMAT = "anthropic-messages-v1" #: String
+
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(_model = nil)
@@ -188,11 +193,33 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    message = response #: Anthropic::Models::Message
+    (message.content || []).filter_map { |block| build_reasoning_part(block) }
+  end
+
+  #--
+  #: (untyped) -> Riffer::Messages::Assistant::ReasoningPart?
+  def build_reasoning_part(block)
+    case block
+    when ::Anthropic::Models::ThinkingBlock
+      Riffer::Messages::Assistant::ReasoningPart.new(
+        type: :text,
+        text: block.thinking,
+        signature: block.signature,
+        format: REASONING_FORMAT,
+      )
+    when ::Anthropic::Models::RedactedThinkingBlock
+      Riffer::Messages::Assistant::ReasoningPart.new(type: :encrypted, data: block.data, format: REASONING_FORMAT)
+    end
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
-      reasoning: nil,
       tool_call: nil,
       web_search_index: nil,
       web_search_json: nil,
@@ -218,7 +245,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
         when ::Anthropic::Helpers::Streaming::TextEvent
           handle_text_event(event, state: current_state, yielder: yielder)
         when ::Anthropic::Helpers::Streaming::ThinkingEvent
-          handle_thinking_event(event, state: current_state, yielder: yielder)
+          yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
         when ::Anthropic::Helpers::Streaming::InputJsonEvent
           handle_input_json_event(event, state: current_state, yielder: yielder)
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
@@ -227,10 +254,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
             handle_content_block_stop_text(event, state: current_state, yielder: yielder) if current_state[:text]
           when ::Anthropic::Models::ToolUseBlock
             handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
-          when ::Anthropic::Models::ThinkingBlock
-            if current_state[:reasoning]
-              handle_content_block_stop_thinking(event, state: current_state, yielder: yielder)
-            end
+          when ::Anthropic::Models::ThinkingBlock, ::Anthropic::Models::RedactedThinkingBlock
+            handle_content_block_stop_reasoning(event, yielder: yielder)
           when ::Anthropic::Models::ServerToolUseBlock
             handle_content_block_stop_server_tool_use(event, state: current_state, yielder: yielder)
           when ::Anthropic::Models::WebSearchToolResultBlock
@@ -284,14 +309,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_thinking_event(event, state:, yielder:)
-    state[:reasoning] ||= +""
-    state[:reasoning] << event.thinking
-    yielder << Riffer::StreamEvents::ReasoningDelta.new(event.thinking)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_input_json_event(event, state:, yielder:)
     # server_tool_use (web_search) input streams through the raw-event path
     # (handle_raw_content_block_delta) and must not surface as tool-call deltas.
@@ -320,11 +337,13 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     state[:tool_call] = nil
   end
 
+  # The SDK's accumulated block already carries the full thinking text and the
+  # signature from its trailing signature_delta.
   #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_thinking(_event, state:, yielder:)
-    yield_reasoning_done(yielder, state[:reasoning])
-    state[:reasoning] = nil
+  #: (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_content_block_stop_reasoning(event, yielder:)
+    part = build_reasoning_part(event.content_block) #: Riffer::Messages::Assistant::ReasoningPart
+    yielder << Riffer::StreamEvents::ReasoningDone.new(part)
   end
 
   #--
@@ -413,7 +432,9 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_anthropic_format(message)
-    content = [] #: Array[Hash[Symbol, untyped]]
+    content = message.reasoning.filter_map do |part|
+      convert_reasoning_part_to_anthropic_format(part) if part.format == REASONING_FORMAT
+    end
     content << { type: "text", text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
@@ -426,6 +447,14 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
     end
 
     { role: "assistant", content: content }
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part_to_anthropic_format(part)
+    return { type: "redacted_thinking", data: part.data } if part.type == :encrypted
+
+    { type: "thinking", thinking: part.text, signature: part.signature }
   end
 
   #--
