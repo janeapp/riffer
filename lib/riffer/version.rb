@@ -2,5 +2,5 @@
 # rbs_inline: enabled
 
 module Riffer
-  VERSION = "0.48.0" #: String
+  VERSION = "0.49.0" #: String
 end
