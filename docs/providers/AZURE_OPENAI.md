@@ -87,6 +87,8 @@ Enables extended thinking (for supported models):
 model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
 ```
 
+Reasoning is captured and replayed on later turns exactly as with the [OpenAI provider](OPENAI.md#reasoning-replay), except that parts are tagged `format: "azure-openai-v1"`. Azure only accepts reasoning produced by the same resource, so parts from the OpenAI provider are never sent to Azure, and Azure's are never sent to OpenAI.
+
 ### structured_output
 
 Structured JSON output works identically to the OpenAI provider.

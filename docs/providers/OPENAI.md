@@ -82,6 +82,28 @@ model_options reasoning: 'medium'  # 'low', 'medium', or 'high'
 
 When reasoning is enabled, you'll receive `ReasoningDelta` and `ReasoningDone` events during streaming.
 
+#### Reasoning Replay
+
+Each `reasoning` item in a Responses API output becomes [reasoning parts](../MESSAGES.md#reasoning) on the assistant message, on both `generate_text` and `stream_text`, all tagged `format: "openai-v1"` and carrying the item's `id`:
+
+| Reasoning item field | `ReasoningPart`                         |
+| -------------------- | --------------------------------------- |
+| each `summary` entry | a `:summary` part with its `text`       |
+| each `content` entry | a `:text` part with its `text`          |
+| `encrypted_content`  | one `:encrypted` part with it as `data` |
+
+The `:encrypted` part is always present, even when the response carried no `encrypted_content`, so the item's `id` is kept. When streaming, the parts are yielded as `ReasoningDone` events once the item completes; summary text still arrives as `ReasoningDelta` events before that.
+
+On the next request, parts sharing an `id` go back as one `reasoning` item, ahead of the assistant's text and function calls, in their original order and unchanged. This lets reasoning models carry their reasoning across turns and tool-call loops. You don't have to do anything as long as the assistant messages stay in the history; if you persist sessions, keep the `reasoning` key when you store them.
+
+With `store` left on (the API default), OpenAI can resolve a replayed item from its `id` alone. With `model_options store: false`, the item can only be replayed from its encrypted payload, so request it explicitly:
+
+```ruby
+model_options reasoning: 'medium', store: false, include: ['reasoning.encrypted_content']
+```
+
+Only parts tagged `openai-v1` are sent. Reasoning from other providers stays on the messages but is left out, including OpenRouter's `openai-responses-v1` parts, which are encrypted under OpenRouter's organization rather than yours.
+
 ### web_search
 
 Enable server-side web search using OpenAI's `web_search_preview` tool. Pass `true` to use defaults or a hash to merge with the tool definition:

@@ -23,6 +23,16 @@ describe Riffer::Providers::AzureOpenAI do
     end
   end
 
+  describe "reasoning" do
+    it "tags parts with an Azure format so they are never replayed to OpenAI" do
+      provider = Riffer::Providers::AzureOpenAI.new
+      item = OpenAI::Models::Responses::ResponseReasoningItem.new(id: "rs_1", summary: [], encrypted_content: "b3Bh")
+      response = OpenAI::Models::Responses::Response.new(output: [item])
+
+      expect(provider.send(:extract_reasoning, response).map(&:format)).must_equal ["azure-openai-v1"]
+    end
+  end
+
   describe "#initialize" do
     it "creates the provider" do
       provider = Riffer::Providers::AzureOpenAI.new

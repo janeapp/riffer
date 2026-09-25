@@ -14,4 +14,9 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
   # --
   # : () -> untyped
   def build_client: () -> untyped
+
+  # Azure resolves and decrypts reasoning items only within the resource that produced them.
+  # --
+  # : () -> String
+  def reasoning_format: () -> String
 end
