@@ -2,9 +2,9 @@
 
 # @rbs module-self Class
 module Riffer::Registrable : Class
-  @identifier_registry: Hash[String, Class]?
-
   @explicit_registrations: Hash[String, Class]?
+
+  @identifier_registry: Hash[String, Class]?
 
   # --
   # : (String | Symbol) -> Class?
@@ -13,6 +13,12 @@ module Riffer::Registrable : Class
   # --
   # : () -> Array[Class]
   def all: () -> Array[Class]
+
+  # Whether the registry covers every descendant rather than only direct subclasses. A base whose
+  # subclasses are themselves subclassed overrides this, so an identifier resolves from any ancestor.
+  # --
+  # : () -> bool
+  def registers_descendants?: () -> bool
 
   # --
   # : (Class) -> void
@@ -27,6 +33,14 @@ module Riffer::Registrable : Class
   # --
   # : (Class) -> void
   def inherited: (Class) -> void
+
+  # --
+  # : (Class) -> bool
+  def registrable?: (Class) -> bool
+
+  # --
+  # : () -> Array[Class]
+  def registry_candidates: () -> Array[Class]
 
   # --
   # : () -> Hash[String, Class]

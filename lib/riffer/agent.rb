@@ -6,6 +6,13 @@ require "json"
 class Riffer::Agent
   extend Riffer::Registrable
 
+  # An agent can subclass a concrete agent, so an identifier has to resolve from any ancestor.
+  #--
+  #: () -> bool
+  def self.registers_descendants?
+    true
+  end
+
   # @rbs self.@config: Riffer::Agent::Config?
 
   INTERRUPT_MAX_STEPS = :max_steps #: Symbol

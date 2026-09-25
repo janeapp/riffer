@@ -353,12 +353,12 @@ Riffer::Agent.find('missing')         # => nil
 Riffer::Agent.all                     # => [SupportAgent, ...]
 ```
 
-Only **named direct subclasses** are found implicitly:
+Every **named descendant** is found implicitly, not only direct subclasses, because an agent can subclass another:
 
-- Grandchildren are not visible to a grandparent's `find` or `all`. If your app defines an intermediate base class (`class ApplicationAgent < Riffer::Agent`), call `find`/`all` on the intermediate class to look up its subclasses.
+- An agent is found from any of its ancestors. A subclass of `SupportAgent` is returned by `Riffer::Agent.find`, and by `find` on an intermediate base such as `ApplicationAgent`.
 - Anonymous classes (`Class.new(Riffer::Agent)`) are never findable implicitly, even when they set an explicit `identifier` — see [Registering an agent explicitly](#registering-an-agent-explicitly).
-- Two subclasses sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup.
-- A subclass whose constant no longer points at it — after a Zeitwerk reload or an RSpec `stub_const` — drops out of `find` and `all`. The check runs when the registry is rebuilt, which defining, registering, or unregistering a subclass triggers; removing or restoring a constant on its own does not, so lookups keep returning the old class until the next rebuild.
+- Two agents sharing an identifier raise `Riffer::DuplicateIdentifierError` at the first lookup, wherever they sit in the hierarchy. That includes a subclass declaring its parent's identifier.
+- An agent whose constant no longer points at it — after a Zeitwerk reload or an RSpec `stub_const` — drops out of `find` and `all`. The check runs when the registry is rebuilt, which defining, registering, or unregistering a subclass triggers; removing or restoring a constant on its own does not, so lookups keep returning the old class until the next rebuild.
 
 ### Registering an agent explicitly
 
@@ -374,7 +374,7 @@ Riffer::Agent.unregister(agent) # no-op if it was never registered
 Explicit registration differs from implicit in a few ways:
 
 - Anonymous classes are allowed, as long as they declare an `identifier`. A blank identifier raises `Riffer::ArgumentError`.
-- The class must be a **direct** subclass of the receiver, mirroring implicit registration. `Riffer::Agent.register(SomeAppAgent)` raises `Riffer::ArgumentError` when `SomeAppAgent` descends from an intermediate base — call `register` on that base instead.
+- The class must descend from the receiver, mirroring implicit registration; anything else raises `Riffer::ArgumentError`.
 - Taking an identifier already held by another agent, implicit or explicit, raises `Riffer::DuplicateIdentifierError`. Re-registering the same class raises too; there is no idempotent path.
 - The registration survives until you remove it — it is never dropped for a stale constant.
 

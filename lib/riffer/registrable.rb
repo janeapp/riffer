@@ -18,11 +18,20 @@ module Riffer::Registrable
     identifier_registry.values
   end
 
+  # Whether the registry covers every descendant rather than only direct subclasses. A base whose
+  # subclasses are themselves subclassed overrides this, so an identifier resolves from any ancestor.
+  #--
+  #: () -> bool
+  def registers_descendants?
+    false
+  end
+
   #--
   #: (Class) -> void
   def register(klass)
-    unless klass.superclass.equal?(self)
-      raise Riffer::ArgumentError, "#{klass} must be a direct subclass of #{self} to register"
+    unless registrable?(klass)
+      relation = registers_descendants? ? "descendant" : "direct subclass"
+      raise Riffer::ArgumentError, "#{klass} must be a #{relation} of #{self} to register"
     end
 
     key = identifier_key(klass)
@@ -53,9 +62,38 @@ module Riffer::Registrable
   #: (Class) -> void
   def inherited(subclass)
     super
-    # +self+ is the direct superclass — the only registry the new subclass
-    # joins — so busting self's memo is exactly sufficient.
-    @identifier_registry = nil
+    # The new class joins its direct superclass's registry, and every ancestor's as well where those
+    # register descendants, so each of those memos is stale now.
+    registry = self #: untyped
+    while registry.singleton_class.include?(Riffer::Registrable)
+      registry.instance_variable_set(:@identifier_registry, nil)
+      break unless registry.registers_descendants?
+
+      registry = registry.superclass
+    end
+  end
+
+  #--
+  #: (Class) -> bool
+  def registrable?(klass)
+    return klass.superclass.equal?(self) unless registers_descendants?
+
+    (klass < self) == true
+  end
+
+  #--
+  #: () -> Array[Class]
+  def registry_candidates
+    return subclasses unless registers_descendants?
+
+    found = [] #: Array[Class]
+    pending = subclasses.dup
+    until pending.empty?
+      klass = pending.shift #: Class
+      found << klass
+      pending.concat(klass.subclasses)
+    end
+    found
   end
 
   #--
@@ -75,7 +113,7 @@ module Riffer::Registrable
   def build_identifier_registry
     # Explicit entries skip +live?+ so an ephemeral class stays findable until
     # +unregister+, even once its name no longer resolves.
-    subclasses.each_with_object(explicit_registrations.dup) do |subclass, acc|
+    registry_candidates.each_with_object(explicit_registrations.dup) do |subclass, acc|
       next unless live?(subclass)
 
       key = identifier_key(subclass)
