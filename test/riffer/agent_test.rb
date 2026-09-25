@@ -134,6 +134,23 @@ describe Riffer::Agent do
       end
     end
 
+    describe "with a provider instance registered under a named identifier" do
+      it "uses that exact instance as the agent's provider" do
+        instance = Riffer::Providers::Mock.new(responses: [{ content: "Named instance reply" }])
+        Riffer::Providers::Repository.register(:named_instance) { instance }
+        klass = stub_agent("Agent") do
+          model "named_instance/any"
+        end
+
+        agent = klass.new
+
+        expect(agent.provider).must_be_same_as instance
+        expect(agent.generate("Hi").content).must_equal "Named instance reply"
+      ensure
+        Riffer::Providers::Repository.unregister(:named_instance)
+      end
+    end
+
     describe "with dynamic instructions" do
       it "resolves the Proc at Agent.new and seeds the session" do
         klass = stub_agent("Agent") do

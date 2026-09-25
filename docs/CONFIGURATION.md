@@ -87,7 +87,7 @@ Riffer.configure do |config|
 end
 ```
 
-Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see [Multiple Configurations](#multiple-configurations)).
+Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. To reach different accounts, regions, or endpoints from different agents, register a named provider instance that carries its own client (see [Multiple Configurations](#multiple-configurations)).
 
 A configured client always wins over configured credentials: once `config.<provider>.client` is set, the credential members are unused, since riffer no longer builds the client.
 
@@ -395,31 +395,35 @@ Riffer.configure do |config|
 end
 ```
 
-When a single process has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:
+When a single process has to reach two different accounts or endpoints, register a named provider instance that carries its own client, rather than reading from global config:
 
 ```ruby
-class InternalOpenAI < Riffer::Providers::OpenAI
-  InternalConfig = Struct.new(:api_key, :base_url, :client)
-
-  def self.config
-    @config ||= InternalConfig.new(ENV.fetch('INTERNAL_OPENAI_KEY'), ENV.fetch('INTERNAL_GATEWAY'))
-  end
-
-  private
-
-  def global_client
-    self.class.config.client
-  end
-
-  def build_client
-    ::OpenAI::Client.new(api_key: self.class.config.api_key, base_url: self.class.config.base_url)
-  end
+Riffer::Providers::Repository.register(:internal_openai) do
+  Riffer::Providers::OpenAI.new(
+    client: OpenAI::Client.new(api_key: ENV.fetch('INTERNAL_OPENAI_KEY'), base_url: ENV.fetch('INTERNAL_GATEWAY')),
+  )
 end
-
-Riffer::Providers::Repository.register(:internal_openai) { InternalOpenAI }
 ```
 
-Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere. What _can_ vary per agent is the model and the generation parameters:
+Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere.
+
+The registration block runs on every agent or judge build and must return a **new** instance each time — providers hold per-call state, so sharing one instance across concurrent agents is unsafe. `client:` accepts a client instance or a zero-arg `Proc` resolved on every call, same as `config.<provider>.client`. Resolution order is constructor `client:` first, then `config.<provider>.client`, then credentials:
+
+```ruby
+Riffer::Providers::Repository.register(:bedrock_ca_central_1) do
+  Riffer::Providers::AmazonBedrock.new(client: -> { BedrockClient.memoized(:ca_central_1) })
+end
+```
+
+Pricing entries are keyed by the registered name, not the provider class, so two registrations of the same class price independently:
+
+```ruby
+Riffer.config.pricing.set('bedrock_ca_central_1/us.anthropic.claude-sonnet-5', input: 3.0, output: 15.0)
+```
+
+Spans from a named instance carry `riffer.provider.key` set to the registered name — see [Tracing](TRACING.md).
+
+What _can_ vary per agent is the model and the generation parameters:
 
 ```ruby
 class ProductionAgent < Riffer::Agent

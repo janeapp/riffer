@@ -7,9 +7,14 @@ class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
   # @rbs @client: untyped
+  # @rbs @configured_client: untyped
+  # @rbs @registry_key: Symbol?
   # @rbs self.@semconv_provider_name: String?
 
   WIRE_SEPARATOR = "__" #: String
+
+  # Stamped by Riffer::Providers::Repository.build.
+  attr_writer :registry_key #: Symbol? # @dynamic registry_key=
 
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -27,6 +32,20 @@ class Riffer::Providers::Base
     # A default rather than NotImplementedError, so enabling tracing never
     # breaks an otherwise-working custom provider.
     @semconv_provider_name ||= Riffer::Helpers::Identifier.derive(class_name.split("::").last)
+  end
+
+  #--
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
+    @configured_client = client
+  end
+
+  # Falls back to the built-in prefix so a provider built with +.new+, outside
+  # the registry, still prices and traces under its default key.
+  #--
+  #: () -> Symbol?
+  def registry_key
+    @registry_key || Riffer::Providers::Repository.builtin_key_for(self.class)
   end
 
   #--
@@ -110,7 +129,8 @@ class Riffer::Providers::Base
   #--
   #: () -> untyped
   def client
-    configured = global_client
+    # A client passed to .new beats config.<provider>.client.
+    configured = @configured_client || global_client
     # Resolved on every call, never memoized, so a Proc can vary the client by
     # process or credential lifetime.
     return Riffer::Helpers::CallOrValue.resolve(configured) if configured
@@ -196,7 +216,7 @@ class Riffer::Providers::Base
     pricing = Riffer.config.pricing
     return nil if pricing.empty?
 
-    key = Riffer::Providers::Repository.key_for(self.class)
+    key = registry_key
     return nil unless key
 
     pricing.rates_for("#{key}/#{model}")
@@ -268,6 +288,7 @@ class Riffer::Providers::Base
       "gen_ai.provider.name" => self.class.semconv_provider_name,
     } #: Hash[String, untyped]
     attributes["gen_ai.request.model"] = model if model
+    attributes["riffer.provider.key"] = registry_key.to_s if registry_key
 
     REQUEST_PARAM_ATTRIBUTES.each do |key, attribute|
       value = options[key]

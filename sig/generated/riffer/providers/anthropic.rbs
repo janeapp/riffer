@@ -14,8 +14,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : () -> void
-  def initialize: () -> void
+  # : (?client: untyped) -> void
+  def initialize: (?client: untyped) -> void
 
   private
 

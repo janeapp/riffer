@@ -25,8 +25,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: () -> void
-  def initialize
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
     super
     depends_on "openai"
   end

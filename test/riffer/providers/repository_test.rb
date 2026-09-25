@@ -53,17 +53,87 @@ describe Riffer::Providers::Repository do
     end
   end
 
-  describe ".key_for" do
-    it "returns the registry symbol for a registered provider class" do
-      expect(Riffer::Providers::Repository.key_for(Riffer::Providers::OpenAI)).must_equal :openai
+  describe ".builtin_key_for" do
+    after { Riffer::Providers::Repository.unregister(:bedrock_canada) }
+
+    it "returns the built-in identifier for a built-in class" do
+      expect(Riffer::Providers::Repository.builtin_key_for(Riffer::Providers::OpenAI)).must_equal :openai
     end
 
     it "distinguishes providers that share a wire format" do
-      expect(Riffer::Providers::Repository.key_for(Riffer::Providers::AzureOpenAI)).must_equal :azure_openai
+      expect(Riffer::Providers::Repository.builtin_key_for(Riffer::Providers::AzureOpenAI)).must_equal :azure_openai
     end
 
-    it "returns nil for an unregistered class" do
-      expect(Riffer::Providers::Repository.key_for(String)).must_be_nil
+    it "ignores custom registrations of a built-in class" do
+      Riffer::Providers::Repository.register(:bedrock_canada) { Riffer::Providers::AmazonBedrock }
+
+      expect(Riffer::Providers::Repository.builtin_key_for(Riffer::Providers::AmazonBedrock)).must_equal :amazon_bedrock
+    end
+
+    it "returns nil for a class outside the built-ins" do
+      expect(Riffer::Providers::Repository.builtin_key_for(Class.new(Riffer::Providers::OpenAI))).must_be_nil
+    end
+  end
+
+  describe ".build" do
+    after do
+      %i[jane instance_jane openai].each { |id| Riffer::Providers::Repository.unregister(id) }
+    end
+
+    it "instantiates a class-returning factory" do
+      provider = Riffer::Providers::Repository.build(:mock)
+
+      expect(provider).must_be_instance_of Riffer::Providers::Mock
+    end
+
+    it "stamps the built-in identifier as the registry_key" do
+      provider = Riffer::Providers::Repository.build(:mock)
+
+      expect(provider.registry_key).must_equal :mock
+    end
+
+    it "works with a string identifier" do
+      provider = Riffer::Providers::Repository.build("mock")
+
+      expect(provider).must_be_instance_of Riffer::Providers::Mock
+    end
+
+    it "returns the same instance an instance-returning factory produced" do
+      instance = Riffer::Providers::Mock.new
+      Riffer::Providers::Repository.register(:instance_jane) { instance }
+
+      expect(Riffer::Providers::Repository.build(:instance_jane)).must_equal instance
+    end
+
+    it "stamps registry_key on an instance-returning factory's result" do
+      instance = Riffer::Providers::Mock.new
+      Riffer::Providers::Repository.register(:instance_jane) { instance }
+
+      Riffer::Providers::Repository.build(:instance_jane)
+
+      expect(instance.registry_key).must_equal :instance_jane
+    end
+
+    it "instantiates a class-returning custom registration" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:jane) { custom }
+
+      provider = Riffer::Providers::Repository.build(:jane)
+
+      expect(provider).must_be_instance_of custom
+    end
+
+    it "returns nil for unknown identifiers" do
+      expect(Riffer::Providers::Repository.build(:missing)).must_be_nil
+    end
+
+    it "prefers a registration over a built-in sharing the identifier" do
+      custom = Class.new(Riffer::Providers::Base)
+      Riffer::Providers::Repository.register(:openai) { custom }
+
+      provider = Riffer::Providers::Repository.build(:openai)
+
+      expect(provider).must_be_instance_of custom
     end
   end
 
@@ -100,13 +170,6 @@ describe Riffer::Providers::Repository do
       Riffer::Providers::Repository.register(:jane) { second }
 
       expect(Riffer::Providers::Repository.find(:jane)).must_equal second
-    end
-
-    it "makes key_for return the registered identifier" do
-      custom = Class.new(Riffer::Providers::Base)
-      Riffer::Providers::Repository.register(:jane) { custom }
-
-      expect(Riffer::Providers::Repository.key_for(custom)).must_equal :jane
     end
 
     it "does not add custom registrations to the built-in REPO" do

@@ -12,8 +12,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def self.semconv_provider_name: () -> String
 
   # --
-  # : () -> void
-  def initialize: () -> void
+  # : (?client: untyped) -> void
+  def initialize: (?client: untyped) -> void
 
   # --
   # : (Riffer::Messages::User::FilePart) -> Symbol

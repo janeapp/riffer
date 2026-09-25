@@ -51,6 +51,24 @@ end
 
 The setting accepts a client instance or a no-argument `Proc`, resolved on every LLM call — see [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
+## Multiple regions
+
+A single process reaching several Bedrock regions needs one client per region — register a named provider instance per region, each carrying its own client:
+
+```ruby
+catalog.aws_regions.each do |aws_region|
+  Riffer::Providers::Repository.register(:"bedrock_#{aws_region.tr('-', '_')}") do
+    Riffer::Providers::AmazonBedrock.new(
+      client: -> { BedrockClient.memoized(:"generate_#{aws_region}", region: aws_region) },
+    )
+  end
+end
+```
+
+Agents then select a region by model prefix: `model 'bedrock_ca_central_1/us.anthropic.claude-sonnet-5'`. See [Configuration → Multiple Configurations](../CONFIGURATION.md#multiple-configurations) for the general pattern, including why the registration block must return a new instance.
+
+A cross-region inference profile id (the `us.`, `eu.`, or `global.` prefix on the model id) routes Bedrock's own request to whichever region has capacity — it does not remove the need for a per-region client here. The client you build still picks the endpoint the request is _sent to_, which region is priced and shown in CloudTrail, and which region's IAM policy applies.
+
 ## Supported Models
 
 Use Bedrock model IDs in the `amazon_bedrock/model` format:

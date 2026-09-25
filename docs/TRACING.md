@@ -106,6 +106,7 @@ Any tags passed to `#generate` / `#stream` via `tags:` are stamped on **all four
 | `gen_ai.operation.name`                    | string | Always (`"invoke_agent"`)                            |
 | `gen_ai.agent.name`                        | string | Always — the agent's identifier                      |
 | `gen_ai.provider.name`                     | string | Always — see [provider names](#provider-names)       |
+| `riffer.provider.key`                      | string | When the provider has a registry key                 |
 | `gen_ai.request.model`                     | string | Always — the agent's configured model                |
 | `riffer.steps`                             | int    | Always — number of LLM calls in the run              |
 | `gen_ai.usage.input_tokens`                | int    | When the run made an LLM call that reported usage    |
@@ -133,6 +134,7 @@ Usage on this span is the run total, aggregated across every step. See [Token us
 | ------------------------------------------ | -------- | ----------------------------------------------------------------------------- |
 | `gen_ai.operation.name`                    | string   | Always (`"chat"`)                                                             |
 | `gen_ai.provider.name`                     | string   | Always — see [provider names](#provider-names)                                |
+| `riffer.provider.key`                      | string   | When the provider has a key — its registered name, or its built-in prefix     |
 | `gen_ai.request.model`                     | string   | When a model is set                                                           |
 | `gen_ai.request.temperature`               | float    | When the caller set it                                                        |
 | `gen_ai.request.max_tokens`                | int      | When the caller set `max_tokens` or `max_output_tokens`                       |
