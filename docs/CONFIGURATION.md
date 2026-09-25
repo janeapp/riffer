@@ -87,7 +87,7 @@ Riffer.configure do |config|
 end
 ```
 
-Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see [Multiple Configurations](#multiple-configurations)).
+Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. To reach different accounts, regions, or endpoints from different agents, register a named provider instance that carries its own client (see [Multiple Configurations](#multiple-configurations)).
 
 A configured client always wins over configured credentials: once `config.<provider>.client` is set, the credential members are unused, since riffer no longer builds the client.
 
@@ -258,6 +258,8 @@ cost = (input − cache_read − cache_write) × input_rate
 
 (all rates ÷ 1,000,000; an unset cache rate falls back to `input_rate`.) Cost is for observability, not billing — it's a `Float`, and sub-cent rounding can accumulate over a long run. See [Messages → Token Usage Semantics](MESSAGES.md#token-usage-semantics) for how cost surfaces and aggregates.
 
+The `provider` half of the id is the name the provider was resolved under — what agents, judges, and `Riffer::Providers::Repository.build` look it up by. A provider built directly with `.new` is priced only if you pass that name as `key:`; see [Provider Registry](providers/PROVIDERS.md#provider-registry).
+
 ### Message ID Strategy
 
 Opt in to stable identifiers on every message for logging, persistence, or replay:
@@ -395,31 +397,34 @@ Riffer.configure do |config|
 end
 ```
 
-When a single process has to reach two different accounts or endpoints, give the second one its own provider class and config, then register it under its own identifier:
+When a single process has to reach two different accounts or endpoints, register the provider class under another name with its own client, rather than reading from global config:
 
 ```ruby
-class InternalOpenAI < Riffer::Providers::OpenAI
-  InternalConfig = Struct.new(:api_key, :base_url, :client)
-
-  def self.config
-    @config ||= InternalConfig.new(ENV.fetch('INTERNAL_OPENAI_KEY'), ENV.fetch('INTERNAL_GATEWAY'))
-  end
-
-  private
-
-  def global_client
-    self.class.config.client
-  end
-
-  def build_client
-    ::OpenAI::Client.new(api_key: self.class.config.api_key, base_url: self.class.config.base_url)
-  end
-end
-
-Riffer::Providers::Repository.register(:internal_openai) { InternalOpenAI }
+Riffer::Providers::Repository.register(
+  :internal_openai,
+  client: OpenAI::Client.new(api_key: ENV.fetch('INTERNAL_OPENAI_KEY'), base_url: ENV.fetch('INTERNAL_GATEWAY')),
+) { Riffer::Providers::OpenAI }
 ```
 
-Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere. What _can_ vary per agent is the model and the generation parameters:
+Agents then select it by model prefix (`model 'internal_openai/gpt-5-mini'`), and the two accounts never interfere.
+
+Keyword arguments to `register` are passed to the provider's `new` each time an agent or judge builds it, along with `key:` set to the registered name. They are evaluated once, at registration, so a client instance is shared by every provider built from that registration — the same sharing `config.<provider>.client` has. `client:` accepts a client instance or a zero-arg `Proc` resolved on every call; use a `Proc` for anything that must vary per process or credential lifetime. Resolution order is constructor `client:` first, then `config.<provider>.client`, then credentials:
+
+```ruby
+Riffer::Providers::Repository.register(:bedrock_ca_central_1, client: -> { BedrockClient.memoized(:ca_central_1) }) do
+  Riffer::Providers::AmazonBedrock
+end
+```
+
+Pricing entries are keyed by the registered name, not the provider class, so two registrations of the same class price independently:
+
+```ruby
+Riffer.config.pricing.set('bedrock_ca_central_1/us.anthropic.claude-sonnet-5', input: 3.0, output: 15.0)
+```
+
+Spans from a named instance carry `riffer.provider.key` set to the registered name — see [Tracing](TRACING.md).
+
+What _can_ vary per agent is the model and the generation parameters:
 
 ```ruby
 class ProductionAgent < Riffer::Agent

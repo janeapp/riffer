@@ -98,7 +98,7 @@ describe Riffer::Providers::Anthropic do
       expect(provider).must_be_instance_of Riffer::Providers::Anthropic
     end
 
-    it "takes no arguments" do
+    it "takes no credential arguments" do
       expect { Riffer::Providers::Anthropic.new(api_key: api_key) }.must_raise ArgumentError
     end
 
@@ -158,6 +158,26 @@ describe Riffer::Providers::Anthropic do
     ensure
       ENV["ANTHROPIC_API_KEY"] = original
       Riffer.config.anthropic.api_key = nil
+    end
+
+    it "prefers a constructor client over the configured client" do
+      configured = Object.new
+      constructor_client = Object.new
+      Riffer.config.anthropic.client = configured
+
+      expect(
+        Riffer::Providers::Anthropic.new(client: constructor_client).send(:client),
+      ).must_be_same_as constructor_client
+    end
+
+    it "resolves a constructor client Proc on every call" do
+      calls = 0
+      provider = Riffer::Providers::Anthropic.new(client: -> { calls += 1 })
+
+      provider.send(:client)
+      provider.send(:client)
+
+      expect(calls).must_equal 2
     end
   end
 

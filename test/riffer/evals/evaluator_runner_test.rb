@@ -129,14 +129,12 @@ describe Riffer::Evals::EvaluatorRunner do
     end
 
     it "captures agent token usage on the scenario result" do
-      usage_mock = Class.new(Riffer::Providers::Mock) do
-        def initialize
-          super(responses: [
-            { content: "Answer", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 15, output_tokens: 6) },
-          ])
-        end
-      end
-      Riffer::Providers::Repository.register(:usage_mock) { usage_mock }
+      Riffer::Providers::Repository.register(
+        :usage_mock,
+        responses: [
+          { content: "Answer", token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 15, output_tokens: 6) },
+        ],
+      ) { Riffer::Providers::Mock }
 
       usage_agent = stub_agent("UsageAgent") do
         model "usage_mock/mock-model"

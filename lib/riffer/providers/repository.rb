@@ -5,7 +5,7 @@ module Riffer::Providers::Repository
   extend self
 
   # @rbs @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
-  # @rbs @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
+  # @rbs @options: Hash[Symbol, Hash[Symbol, untyped]]
 
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
@@ -18,21 +18,26 @@ module Riffer::Providers::Repository
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   @registrations = {} #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
+  @options = {} #: Hash[Symbol, Hash[Symbol, untyped]]
 
   # Not synchronized — register during boot, before concurrent generation
-  # begins.
+  # begins. +options+ are passed to +new+ on every build.
   #--
-  #: ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
-  def register(identifier, &factory)
-    @registrations[identifier.to_sym] = factory
-    @key_for = nil
+  #: ((String | Symbol), **untyped) { () -> singleton(Riffer::Providers::Base) } -> void
+  def register(identifier, **options, &factory)
+    raise Riffer::ArgumentError, "key: is set from the identifier, not an option" if options.key?(:key)
+
+    key = identifier.to_sym
+    @registrations[key] = factory
+    @options[key] = options
   end
 
   #--
   #: ((String | Symbol)) -> void
   def unregister(identifier)
-    @registrations.delete(identifier.to_sym)
-    @key_for = nil
+    key = identifier.to_sym
+    @registrations.delete(key)
+    @options.delete(key)
   end
 
   #--
@@ -43,16 +48,13 @@ module Riffer::Providers::Repository
   end
 
   #--
-  #: (singleton(Riffer::Providers::Base)) -> Symbol?
-  def key_for(provider_class)
-    (@key_for ||= build_key_index)[provider_class]
-  end
+  #: ((String | Symbol)) -> Riffer::Providers::Base?
+  def build(identifier)
+    key = identifier.to_sym
+    provider_class = find(key)
+    return nil unless provider_class
 
-  private
-
-  #--
-  #: () -> Hash[singleton(Riffer::Providers::Base), Symbol]
-  def build_key_index
-    REPO.merge(@registrations).to_h { |key, factory| [factory.call, key] }
+    options = @options[key] || {} #: Hash[Symbol, untyped]
+    provider_class.new(key: key, **options)
   end
 end

@@ -371,6 +371,22 @@ describe Riffer::Providers::Base do
       )
     end
 
+    it "omits riffer.provider.key on a provider built with .new" do
+      provider.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(chat_span.attributes).wont_include "riffer.provider.key"
+    end
+
+    it "stamps riffer.provider.key with the registered name when built through the registry" do
+      Riffer::Providers::Repository.register(:internal_mock) { Riffer::Providers::Mock }
+      registered = Riffer::Providers::Repository.build(:internal_mock)
+      registered.generate_text(prompt: "Hello", model: "riffer-1")
+
+      expect(chat_span.attributes["riffer.provider.key"]).must_equal "internal_mock"
+    ensure
+      Riffer::Providers::Repository.unregister(:internal_mock)
+    end
+
     it "records token usage when reported" do
       provider.stub_response(
         "Hi!",

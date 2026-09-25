@@ -32,7 +32,7 @@ end
 
 ## Credentials and Clients
 
-Every credential comes from configuration: `Riffer::Providers::OpenAI.new` takes no arguments.
+Every credential comes from configuration by default: `Riffer::Providers::OpenAI.new` needs no arguments. Pass `client:` to give one instance its own client instead — see [Provider Registry](#provider-registry) below and [Configuration → Multiple Configurations](../CONFIGURATION.md#multiple-configurations).
 
 | Provider       | Configured credentials                                            |
 | -------------- | ----------------------------------------------------------------- |
@@ -188,6 +188,17 @@ Riffer::Providers::Repository.find(:openrouter)
 Riffer::Providers::Repository.find(:mock)
 # => Riffer::Providers::Mock
 ```
+
+`find` returns the provider class. Agents and judges call `Repository.build` instead, which instantiates it with `key:` set to the identifier, plus any options given to `register`:
+
+```ruby
+Riffer::Providers::Repository.build(:openai)
+# => #<Riffer::Providers::OpenAI> with provider_key == :openai
+```
+
+`provider_key` is what [pricing](../CONFIGURATION.md#pricing) and the `riffer.provider.key` span attribute key off. A provider built directly with `.new` has no `provider_key` unless you pass `key:` (`Riffer::Providers::OpenAI.new(key: :openai)`); without one it is unpriced and its spans carry no `riffer.provider.key`.
+
+See [Custom Providers → Registering Your Provider](CUSTOM_PROVIDERS.md#registering-your-provider) for registering multiple named instances of the same provider class (different clients, credentials, or endpoints).
 
 ## Provider-Specific Guides
 

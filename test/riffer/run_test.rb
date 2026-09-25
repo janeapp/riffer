@@ -3327,6 +3327,12 @@ describe Riffer::Agent::Run do
       )
     end
 
+    it "stamps riffer.provider.key from the provider the agent resolved through the registry" do
+      agent_class.new.generate("Hello")
+
+      expect(run_span.attributes["riffer.provider.key"]).must_equal "mock"
+    end
+
     it "records the per-run step count across tool loops" do
       generate_with_tool_loop(agent_class_with_tools.new)
 

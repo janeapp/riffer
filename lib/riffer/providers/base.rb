@@ -7,9 +7,15 @@ class Riffer::Providers::Base
   # @rbs @current_tools: Array[singleton(Riffer::Tool)]
   # @rbs @current_model: String?
   # @rbs @client: untyped
+  # @rbs @configured_client: untyped
+  # @rbs @provider_key: Symbol?
   # @rbs self.@semconv_provider_name: String?
 
   WIRE_SEPARATOR = "__" #: String
+
+  # The name the provider is registered under, which prices and traces it.
+  # Repository.build passes it; nil leaves the provider unpriced.
+  attr_reader :provider_key #: Symbol? # @dynamic provider_key
 
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -27,6 +33,13 @@ class Riffer::Providers::Base
     # A default rather than NotImplementedError, so enabling tracing never
     # breaks an otherwise-working custom provider.
     @semconv_provider_name ||= Riffer::Helpers::Identifier.derive(class_name.split("::").last)
+  end
+
+  #--
+  #: (?key: (String | Symbol)?, ?client: untyped) -> void
+  def initialize(key: nil, client: nil)
+    @provider_key = key&.to_sym
+    @configured_client = client
   end
 
   #--
@@ -110,7 +123,8 @@ class Riffer::Providers::Base
   #--
   #: () -> untyped
   def client
-    configured = global_client
+    # A client passed to .new beats config.<provider>.client.
+    configured = @configured_client || global_client
     # Resolved on every call, never memoized, so a Proc can vary the client by
     # process or credential lifetime.
     return Riffer::Helpers::CallOrValue.resolve(configured) if configured
@@ -196,7 +210,7 @@ class Riffer::Providers::Base
     pricing = Riffer.config.pricing
     return nil if pricing.empty?
 
-    key = Riffer::Providers::Repository.key_for(self.class)
+    key = provider_key
     return nil unless key
 
     pricing.rates_for("#{key}/#{model}")
@@ -268,6 +282,7 @@ class Riffer::Providers::Base
       "gen_ai.provider.name" => self.class.semconv_provider_name,
     } #: Hash[String, untyped]
     attributes["gen_ai.request.model"] = model if model
+    attributes["riffer.provider.key"] = provider_key.to_s if provider_key
 
     REQUEST_PARAM_ATTRIBUTES.each do |key, attribute|
       value = options[key]

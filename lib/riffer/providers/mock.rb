@@ -24,9 +24,9 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   attr_reader :calls #: Array[Hash[Symbol, untyped]] # @dynamic calls
 
   #--
-  #: (?responses: Array[Hash[Symbol, untyped]]) -> void
-  def initialize(responses: [])
-    super()
+  #: (?responses: Array[Hash[Symbol, untyped]], ?key: (String | Symbol)?) -> void
+  def initialize(responses: [], key: nil)
+    super(key: key)
     @responses = responses.map { |r| normalize_response(r) }
     @current_index = 0
     @calls = []

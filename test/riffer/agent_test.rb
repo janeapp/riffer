@@ -134,6 +134,24 @@ describe Riffer::Agent do
       end
     end
 
+    describe "with a provider registered under a named identifier with options" do
+      it "builds the provider with those options and the registered key" do
+        Riffer::Providers::Repository.register(:named_instance, responses: [{ content: "Named instance reply" }]) do
+          Riffer::Providers::Mock
+        end
+        klass = stub_agent("Agent") do
+          model "named_instance/any"
+        end
+
+        agent = klass.new
+
+        expect(agent.provider.provider_key).must_equal :named_instance
+        expect(agent.generate("Hi").content).must_equal "Named instance reply"
+      ensure
+        Riffer::Providers::Repository.unregister(:named_instance)
+      end
+    end
+
     describe "with dynamic instructions" do
       it "resolves the Proc at Agent.new and seeds the session" do
         klass = stub_agent("Agent") do

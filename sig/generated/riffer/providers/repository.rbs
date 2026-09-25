@@ -3,15 +3,15 @@
 module Riffer::Providers::Repository
   @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
+  @options: Hash[Symbol, Hash[Symbol, untyped]]
 
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Not synchronized — register during boot, before concurrent generation
-  # begins.
+  # begins. +options+ are passed to +new+ on every build.
   # --
-  # : ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
-  def register: (String | Symbol) { () -> singleton(Riffer::Providers::Base) } -> void
+  # : ((String | Symbol), **untyped) { () -> singleton(Riffer::Providers::Base) } -> void
+  def register: (String | Symbol, **untyped) { () -> singleton(Riffer::Providers::Base) } -> void
 
   # --
   # : ((String | Symbol)) -> void
@@ -22,12 +22,6 @@ module Riffer::Providers::Repository
   def find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
 
   # --
-  # : (singleton(Riffer::Providers::Base)) -> Symbol?
-  def key_for: (singleton(Riffer::Providers::Base)) -> Symbol?
-
-  private
-
-  # --
-  # : () -> Hash[singleton(Riffer::Providers::Base), Symbol]
-  def build_key_index: () -> Hash[singleton(Riffer::Providers::Base), Symbol]
+  # : ((String | Symbol)) -> Riffer::Providers::Base?
+  def build: (String | Symbol) -> Riffer::Providers::Base?
 end

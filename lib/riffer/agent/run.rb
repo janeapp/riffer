@@ -438,6 +438,7 @@ module Riffer::Agent::Run
       "gen_ai.agent.name" => agent.identifier,
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name,
+      "riffer.provider.key" => agent.provider_name,
     }.merge(tag_attributes(tags))
   end
 

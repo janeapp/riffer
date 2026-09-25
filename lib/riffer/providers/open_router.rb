@@ -43,8 +43,8 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   end
 
   #--
-  #: () -> void
-  def initialize
+  #: (?key: (String | Symbol)?, ?client: untyped) -> void
+  def initialize(key: nil, client: nil)
     super
     depends_on "openai"
   end

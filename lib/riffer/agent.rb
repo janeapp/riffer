@@ -288,10 +288,10 @@ class Riffer::Agent
   #--
   #: () -> Riffer::Providers::Base
   def build_provider
-    provider_class = Riffer::Providers::Repository.find(@provider_name)
-    raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider_class
+    provider = Riffer::Providers::Repository.build(@provider_name)
+    raise Riffer::ArgumentError, "Provider not found: #{@provider_name}" unless provider
 
-    provider_class.new
+    provider
   end
 
   #--
