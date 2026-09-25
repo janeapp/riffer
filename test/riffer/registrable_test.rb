@@ -137,6 +137,81 @@ describe Riffer::Registrable do
     end
   end
 
+  describe "across generations of a Riffer::Agent lineage" do
+    let(:base) { Class.new(Riffer::Agent) }
+
+    it "registers descendants on agents but not on tools" do
+      expect(Riffer::Agent.registers_descendants?).must_equal true
+      expect(Riffer::Tool.registers_descendants?).must_equal false
+    end
+
+    it "finds a grandchild from the grandparent" do
+      child = define_named_subclass(base, :ChildAgent) { model "mock/riffer-1" }
+      grandchild = define_named_subclass(child, :GrandchildAgent)
+
+      expect(base.find(grandchild.identifier)).must_equal grandchild
+    end
+
+    it "lists every generation in all" do
+      child = define_named_subclass(base, :ChildAgent) { model "mock/riffer-1" }
+      grandchild = define_named_subclass(child, :GrandchildAgent)
+
+      expect(base.all).must_equal [child, grandchild]
+    end
+
+    # The grandchild's inherited hook runs on its direct parent; the grandparent's memo has to be
+    # busted too, or a registry built before the grandchild existed goes on missing it.
+    it "finds a grandchild defined after the grandparent's registry was built" do
+      child = define_named_subclass(base, :ChildAgent) { model "mock/riffer-1" }
+
+      expect(base.find(child.identifier)).must_equal child
+
+      grandchild = define_named_subclass(child, :GrandchildAgent)
+
+      expect(base.find(grandchild.identifier)).must_equal grandchild
+    end
+
+    it "raises DuplicateIdentifierError when a subclass reuses its parent's identifier" do
+      child = define_named_subclass(base, :ChildAgent, identifier: "shared-agent") { model "mock/riffer-1" }
+      define_named_subclass(child, :GrandchildAgent, identifier: "shared-agent")
+
+      expect { base.find("shared-agent") }.must_raise Riffer::DuplicateIdentifierError
+    end
+
+    it "skips a stale generation of a grandchild" do
+      child = define_named_subclass(base, :ChildAgent) { model "mock/riffer-1" }
+      stale = define_named_subclass(child, :GrandchildAgent)
+      RegistrableTestNamespace.send(:remove_const, :GrandchildAgent)
+      live = define_named_subclass(child, :GrandchildAgent)
+
+      expect(base.find(live.identifier)).must_equal live
+      expect(base.all).wont_include stale
+    end
+
+    it "never registers an anonymous grandchild" do
+      child = define_named_subclass(base, :ChildAgent) { model "mock/riffer-1" }
+      anonymous = Class.new(child) { identifier "anonymous-grandchild" }
+
+      expect(base.find("anonymous-grandchild")).must_be_nil
+      expect(base.all).wont_include anonymous
+    end
+
+    it "registers an anonymous grandchild explicitly" do
+      child = define_named_subclass(base, :ChildAgent) { model "mock/riffer-1" }
+      grandchild = Class.new(child) { identifier "registered-grandchild" }
+
+      base.register(grandchild)
+
+      expect(base.find("registered-grandchild")).must_equal grandchild
+    end
+
+    it "refuses to register a class outside the lineage as a descendant" do
+      error = expect { base.register(Object) }.must_raise Riffer::ArgumentError
+
+      expect(error.message).must_include "descendant"
+    end
+  end
+
   describe "liveness of implicit registrations" do
     let(:base) { Class.new(Riffer::Tool) }
 
