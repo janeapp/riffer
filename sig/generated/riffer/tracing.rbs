@@ -3,10 +3,6 @@
 # No-ops unless the host bundles the OpenTelemetry API, so riffer never
 # declares an OTEL dependency.
 module Riffer::Tracing
-  @backend: untyped
-
-  MUTEX: Mutex
-
   # The Ruby API cannot attach a schema URL to a tracer, so the semconv pin
   # lives here as the documented contract version.
   SCHEMA_URL: String
@@ -29,17 +25,9 @@ module Riffer::Tracing
   # : ((Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span), Riffer::Providers::TokenUsage?) -> void
   def record_usage: (Riffer::Tracing::Otel::Span | Riffer::Tracing::NoOp::Span, Riffer::Providers::TokenUsage?) -> void
 
-  # --
-  # : () -> void
-  def reset!: () -> void
-
   private
 
   # --
   # : () -> untyped
   def backend: () -> untyped
-
-  # --
-  # : () -> untyped
-  def resolve_backend: () -> untyped
 end

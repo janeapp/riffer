@@ -1,0 +1,21 @@
+# Generated from lib/riffer/config/azure_open_ai.rb with RBS::Inline
+
+class Riffer::Config::AzureOpenAI
+  attr_reader api_key: String?
+
+  attr_reader endpoint: String?
+
+  attr_accessor client: untyped
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def api_key=: (untyped) -> void
+
+  # --
+  # : (untyped) -> void
+  def endpoint=: (untyped) -> void
+end

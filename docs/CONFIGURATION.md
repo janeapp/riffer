@@ -18,6 +18,8 @@ end
 
 Providers take no constructor arguments — these settings are the only way to give a provider its credentials.
 
+Credential and endpoint settings — `amazon_bedrock.api_token` / `.region`, `anthropic.api_key`, `azure_openai.api_key` / `.endpoint`, `gemini.api_key`, `openai.api_key` / `.base_url`, `openrouter.api_key` — accept a `String` or `nil` and raise `Riffer::ArgumentError` naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. `client` is not validated (see [Provider Clients](#provider-clients)).
+
 ## Accessing Configuration
 
 Access the current configuration via `Riffer.config`:
@@ -101,10 +103,10 @@ The Gemini provider has no vendor SDK, so riffer ships its own transport: `Riffe
 
 Optional settings for [MCP server integrations](MCP.md):
 
-| Option             | Description                                                                                                     |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `credentials`      | Optional `Proc` for per-run `tools/call` HTTP headers: `->(manifest:, matched_tags:, context:) { Hash or nil }` |
-| `discovery_runner` | `Riffer::Runner` instance for tool discovery (default `Runner::Sequential.new`)                                 |
+| Option             | Description                                                                                                                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `credentials`      | Optional callable for per-run `tools/call` HTTP headers: `->(manifest:, matched_tags:, context:) { Hash or nil }`. Raises `Riffer::ArgumentError` unless `nil` or it responds to `#call`. |
+| `discovery_runner` | `Riffer::Runner` instance for tool discovery (default `Runner::Sequential.new`). Raises `Riffer::ArgumentError` for anything that isn't a `Riffer::Runner` instance.                      |
 
 ```ruby
 Riffer.configure do |config|
@@ -115,6 +117,16 @@ end
 ```
 
 See [MCP](MCP.md) for registration, tags, and agent `use_mcp`.
+
+### Evals
+
+```ruby
+Riffer.configure do |config|
+  config.evals.judge_model = "anthropic/claude-opus-4-5-20251101"
+end
+```
+
+`judge_model` is the default model evaluators use as the judge when they don't set their own. It must be a `provider/model` string or `nil` (the default); anything else raises `Riffer::ArgumentError`. See [Evals](EVALS.md).
 
 ### Tool Runtime
 
@@ -174,11 +186,11 @@ Riffer.configure do |config|
 end
 ```
 
-| Option             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `enabled`          | The kill switch, consulted on every span — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                                                                                                                                                                                                                           |
-| `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                               |
-| `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to `in_span`. See [Tracing → Routing to a non-OpenTelemetry backend](TRACING.md#routing-to-a-non-opentelemetry-backend). |
+| Option             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enabled`          | The kill switch, consulted on every span — flipping it at runtime takes effect immediately, short-circuiting to a no-op ahead of the backend. Accepts booleans or `'true'`/`'false'`/`'1'`/`'0'`. Defaults to `true`.                                                                                                                                                                                                                                                                                                                                                                                         |
+| `capture_messages` | Opt-in capture of full message content on LLM-call spans (`gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions`) as GenAI-semconv JSON. Defaults to `false` — message content routinely carries sensitive data. File attachments serialize as metadata-only stubs (media type and name, never bytes), and riffer applies no size limit of its own — cap oversized attributes with the OTEL SDK attribute length limits.                                                                                                                                                             |
+| `backend`          | The backend riffer routes spans through. Assign `Riffer::Tracing::Otel.build` (pass `provider:` to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (`in_span` / `current_context` / `with_context`) to route into a non-OTEL system (e.g. Datadog APM). Defaults to `nil` — a no-op. Raises `Riffer::ArgumentError` unless the value is `nil` or responds to all of `in_span`, `current_context`, and `with_context`. See [Tracing → Routing to a non-OpenTelemetry backend](TRACING.md#routing-to-a-non-opentelemetry-backend). |
 
 ### File Downloads
 

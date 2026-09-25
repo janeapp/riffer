@@ -1,0 +1,31 @@
+# Generated from lib/riffer/config/pricing.rb with RBS::Inline
+
+class Riffer::Config::Pricing
+  @rates: Hash[String, Riffer::Config::Pricing::Rates]
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : ((String | Array[String]), input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+  def set: (String | Array[String], input: Numeric, output: Numeric, ?cache_read: Numeric?, ?cache_write: Numeric?) -> void
+
+  # --
+  # : (String) -> Riffer::Config::Pricing::Rates?
+  def rates_for: (String) -> Riffer::Config::Pricing::Rates?
+
+  # --
+  # : () -> bool
+  def empty?: () -> bool
+
+  private
+
+  # --
+  # : (untyped, String) -> Float
+  def coerce_rate: (untyped, String) -> Float
+
+  # --
+  # : (untyped, String) -> Float?
+  def coerce_optional_rate: (untyped, String) -> Float?
+end

@@ -6,10 +6,6 @@
 module Riffer::Tracing # :nodoc: all
   extend self
 
-  # @rbs @backend: untyped
-
-  MUTEX = Mutex.new #: Mutex
-
   # The Ruby API cannot attach a schema URL to a tracer, so the semconv pin
   # lives here as the documented contract version.
   SCHEMA_URL = "https://opentelemetry.io/schemas/1.37.0" #: String
@@ -52,23 +48,11 @@ module Riffer::Tracing # :nodoc: all
     span.set_attribute("riffer.cost", usage.cost) if usage.cost
   end
 
-  #--
-  #: () -> void
-  def reset!
-    MUTEX.synchronize { @backend = nil }
-  end
-
   private
 
   #--
   #: () -> untyped
   def backend
-    @backend || MUTEX.synchronize { @backend ||= resolve_backend }
-  end
-
-  #--
-  #: () -> untyped
-  def resolve_backend
     Riffer.config.tracing.backend || NoOp
   end
 end

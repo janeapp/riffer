@@ -1,0 +1,15 @@
+# Generated from lib/riffer/config/anthropic.rb with RBS::Inline
+
+class Riffer::Config::Anthropic
+  attr_reader api_key: String?
+
+  attr_accessor client: untyped
+
+  # --
+  # : () -> void
+  def initialize: () -> void
+
+  # --
+  # : (untyped) -> void
+  def api_key=: (untyped) -> void
+end

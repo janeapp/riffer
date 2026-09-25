@@ -1,0 +1,19 @@
+# Generated from lib/riffer/config/pricing/rates.rb with RBS::Inline
+
+class Riffer::Config::Pricing::Rates
+  attr_reader input: Float
+
+  attr_reader output: Float
+
+  attr_reader cache_read: Float?
+
+  attr_reader cache_write: Float?
+
+  # --
+  # : (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
+  def initialize: (input: Float, output: Float, ?cache_read: Float?, ?cache_write: Float?) -> void
+
+  # --
+  # : (input_tokens: Integer, output_tokens: Integer, ?cache_read_tokens: Integer?, ?cache_write_tokens: Integer?) -> Float
+  def cost_for: (input_tokens: Integer, output_tokens: Integer, ?cache_read_tokens: Integer?, ?cache_write_tokens: Integer?) -> Float
+end

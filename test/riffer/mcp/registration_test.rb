@@ -105,11 +105,12 @@ describe Riffer::Mcp::Registration do
       original_runner = Riffer.config.mcp.discovery_runner
       runner_called = false
 
-      custom_runner = Object.new
-      custom_runner.define_singleton_method(:map) do |items, context:, &block|
-        runner_called = true
-        items.map(&block)
-      end
+      custom_runner = Class.new(Riffer::Runner) do
+        define_method(:map) do |items, context:, &block|
+          runner_called = true
+          items.map(&block)
+        end
+      end.new
 
       Riffer.config.mcp.discovery_runner = custom_runner
 

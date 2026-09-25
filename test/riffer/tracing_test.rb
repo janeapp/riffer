@@ -331,12 +331,8 @@ describe Riffer::Tracing do
     end
   end
 
-  describe "#reset!" do
-    it "returns without error" do
-      Riffer::Tracing.reset!
-    end
-
-    it "re-resolves the backend when the provider changes" do
+  describe "backend resolution" do
+    it "routes spans to whichever backend is configured at call time" do
       skip "opentelemetry is not bundled" unless OTEL_SDK_AVAILABLE
       first_exporter = install_in_memory_tracer_provider
       Riffer::Tracing.in_span("first") {}
