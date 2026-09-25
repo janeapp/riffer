@@ -1,0 +1,102 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]}],"system":[],"inferenceConfig":{"maxTokens":2048},"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 32eb350b-e888-47b0-9cd0-98f284b5ae2c
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '490'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Sep 2026 22:17:37 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1402'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 0ca75e18-ded6-4daf-a29c-5767612bb5f9
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":1072},"output":{"message":{"content":[{"reasoningContent":{"reasoningText":{"signature":"EuMDCoQBCBIQARgCKkATEQXXduqKT/Lm/jtZ4Aqkfpvh18Jb9GfurlNEoMsnhbIJzn6Vi1kVDmeJ3W6bo5X7Qx6A9kY9mscueEf4iKRKMhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw3MDI5Mjk5ODg1MjOoAYHD1tUGEgyQpUCZQu/TfeO/lG4aDMK++IFcmU3QWQ/tKCIwDjBoMi3hoVAbUYtRHxbg4qCMNMM6NWaf5RJblWf9DJl1H3LzGtNSVCoejMYtQeevKosCSpboBMuNRJiagaAqSWlc+TKqTt3RWTTN7yHDpAuIFQnHDDYOnAGxpofVcg6NuDC/pm6LArjn/5m5uzPjhurwMQuBB814b6szFA3jc2CaNd1/3gWuVsmDxLYQIQ+JI254VeYwp7nwyEngqS3A4XhCWvS5lCAg5XVjj2QurhPKrWkS64HEajDkn0MaFgCtPTcwiB609h6aLD6wPAaKwqch2qCG9K+FKolqpzNa0dmZ2ffUHiIwavLOmTwUVKlEU1e2WNag2/eEte1/p6ndVb/oOmNqPSucOQgQ1nRI4uySjhY7QBAo6TQo04LNELV3cPe/h6C8QQr9vEKzEoAYiCxyyGhZMp1hzaJpetTcGAE=","text":"The
+        user is asking for the weather in Toronto. I have a function available called
+        \"get_weather\" that takes a city name as a parameter. I have all the required
+        information - the city is \"Toronto\". I should call this function to get
+        the current weather."}}},{"toolUse":{"input":{"city":"Toronto"},"name":"get_weather","toolUseId":"tooluse_sya1hk0ZQxKGRDDbfUofhI","type":"tool_use"}}],"role":"assistant"}},"stopReason":"tool_use","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":610,"outputTokens":115,"serverToolUsage":{},"totalTokens":725}}'
+  recorded_at: Thu, 24 Sep 2026 22:17:37 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is the weather
+        in Toronto?"}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"The
+        user is asking for the weather in Toronto. I have a function available called
+        \"get_weather\" that takes a city name as a parameter. I have all the required
+        information - the city is \"Toronto\". I should call this function to get
+        the current weather.","signature":"EuMDCoQBCBIQARgCKkATEQXXduqKT/Lm/jtZ4Aqkfpvh18Jb9GfurlNEoMsnhbIJzn6Vi1kVDmeJ3W6bo5X7Qx6A9kY9mscueEf4iKRKMhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw3MDI5Mjk5ODg1MjOoAYHD1tUGEgyQpUCZQu/TfeO/lG4aDMK++IFcmU3QWQ/tKCIwDjBoMi3hoVAbUYtRHxbg4qCMNMM6NWaf5RJblWf9DJl1H3LzGtNSVCoejMYtQeevKosCSpboBMuNRJiagaAqSWlc+TKqTt3RWTTN7yHDpAuIFQnHDDYOnAGxpofVcg6NuDC/pm6LArjn/5m5uzPjhurwMQuBB814b6szFA3jc2CaNd1/3gWuVsmDxLYQIQ+JI254VeYwp7nwyEngqS3A4XhCWvS5lCAg5XVjj2QurhPKrWkS64HEajDkn0MaFgCtPTcwiB609h6aLD6wPAaKwqch2qCG9K+FKolqpzNa0dmZ2ffUHiIwavLOmTwUVKlEU1e2WNag2/eEte1/p6ndVb/oOmNqPSucOQgQ1nRI4uySjhY7QBAo6TQo04LNELV3cPe/h6C8QQr9vEKzEoAYiCxyyGhZMp1hzaJpetTcGAE="}}},{"toolUse":{"toolUseId":"tooluse_sya1hk0ZQxKGRDDbfUofhI","name":"get_weather","input":{"city":"Toronto"}}}]},{"role":"user","content":[{"toolResult":{"toolUseId":"tooluse_sya1hk0ZQxKGRDDbfUofhI","content":[{"text":"15
+        degrees Celsius and sunny."}]}}]}],"system":[],"inferenceConfig":{"maxTokens":2048},"toolConfig":{"tools":[{"toolSpec":{"name":"get_weather","description":"Get
+        the current weather for a city","inputSchema":{"json":{"type":"object","properties":{"city":{"type":"string","description":"The
+        city name"}},"required":["city"],"additionalProperties":false}}}}]},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 24503bcb-8342-4f03-bb40-70ce324f6f14
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '1746'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Sep 2026 22:17:38 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '402'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - ecb813cb-f955-4343-b77a-470bf0e8a9f1
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"latencyMs":751},"output":{"message":{"content":[{"text":"The
+        current weather in Toronto is **15 degrees Celsius and sunny**. It''s a nice
+        day out!"}],"role":"assistant"}},"stopReason":"end_turn","usage":{"cacheReadInputTokenCount":0,"cacheReadInputTokens":0,"cacheWriteInputTokenCount":0,"cacheWriteInputTokens":0,"inputTokens":744,"outputTokens":26,"serverToolUsage":{},"totalTokens":770}}'
+  recorded_at: Thu, 24 Sep 2026 22:17:38 GMT
+recorded_with: VCR 6.4.0

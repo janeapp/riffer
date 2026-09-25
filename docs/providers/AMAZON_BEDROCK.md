@@ -166,6 +166,37 @@ class AWSAgent < Riffer::Agent
 end
 ```
 
+## Reasoning Models
+
+Claude models on Bedrock can think before they answer. Enable extended thinking through `additional_model_request_fields`:
+
+```ruby
+class ThinkAgent < Riffer::Agent
+  model 'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'
+  model_options inference_config: {max_tokens: 2048},
+    additional_model_request_fields: {thinking: {type: "enabled", budget_tokens: 1024}}
+end
+
+ThinkAgent.new.stream('What is 2+2? Think step by step.').each do |event|
+  case event
+  when Riffer::StreamEvents::ReasoningDelta
+    print "[reasoning] #{event.content}"
+  when Riffer::StreamEvents::TextDelta
+    print event.content
+  end
+end
+```
+
+The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.md#reasoning), whether you call `generate` or `stream`. Read it with `response.reasoning`, or as plain text with `reasoning_text` on the message. Bedrock sometimes redacts part of Claude's reasoning. Those parts are stored and sent back like any other, but they have no readable text, so `reasoning_text` leaves them out.
+
+### Reasoning Replay
+
+Riffer sends the reasoning back to Bedrock on every later turn. How much of it Claude uses depends on the model; some only use the reasoning from the current tool-calling turn. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier reasoning back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
+
+If you persist sessions, keep the `reasoning` key when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop it, later turns lose the model's earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.
+
+Only reasoning that Bedrock produced is sent back to Bedrock. A conversation that switches providers midway still works: reasoning from other providers is kept on the messages but left out of Bedrock requests.
+
 ## File Support
 
 Bedrock accepts file attachments either as raw bytes, or as `s3://` URIs passed straight through to Converse — Bedrock fetches the S3 object itself:
