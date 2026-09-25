@@ -106,7 +106,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    client.messages.create(**params)
+    client(model: params[:model]).messages.create(**params)
   end
 
   #--
@@ -203,7 +203,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
     # Workaround for anthropics/anthropic-sdk-ruby#182: force identity
     # encoding so Net::HTTP/Zlib doesn't buffer SSE chunks until EOF.
-    stream = client.messages.stream(
+    stream = client(model: params[:model]).messages.stream(
       **params,
       request_options: { extra_headers: { "accept-encoding" => "identity" } },
     )

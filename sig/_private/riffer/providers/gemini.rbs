@@ -3,5 +3,5 @@
 class Riffer::Providers::Gemini
   private
 
-  def client: () -> Riffer::Providers::Gemini::Client
+  def client: (?model: String?) -> Riffer::Providers::Gemini::Client
 end

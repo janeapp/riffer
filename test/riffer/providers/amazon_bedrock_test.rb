@@ -176,6 +176,26 @@ describe Riffer::Providers::AmazonBedrock do
       expect(calls).must_equal 2
     end
 
+    it "passes the call's model to a client Proc on generate and stream" do
+      contexts = []
+      stop = Class.new(StandardError)
+      Riffer.config.amazon_bedrock.client = lambda { |context|
+        contexts << context
+        raise stop
+      }
+      provider = Riffer::Providers::AmazonBedrock.new
+
+      expect do
+        provider.generate_text(prompt: "Hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+      end.must_raise stop
+      expect do
+        provider.stream_text(prompt: "Hello", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+      end.must_raise stop
+
+      expect(contexts).must_equal [{ model: "us.anthropic.claude-haiku-4-5-20251001-v1:0" },
+                                   { model: "us.anthropic.claude-haiku-4-5-20251001-v1:0" },]
+    end
+
     it "memoizes the client it builds" do
       provider = Riffer::Providers::AmazonBedrock.new
 

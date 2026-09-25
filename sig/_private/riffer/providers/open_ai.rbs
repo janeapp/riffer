@@ -2,5 +2,5 @@
 class Riffer::Providers::OpenAI
   private
 
-  def client: () -> ::OpenAI::Client
+  def client: (?model: String?) -> ::OpenAI::Client
 end

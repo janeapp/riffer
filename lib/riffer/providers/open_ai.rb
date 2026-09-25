@@ -111,7 +111,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    client.responses.create(params)
+    client(model: params[:model]).responses.create(params)
   end
 
   #--
@@ -213,7 +213,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
 
     stream_completed = false
 
-    stream = client.responses.stream(params)
+    stream = client(model: params[:model]).responses.stream(params)
     begin
       stream.each do |event|
         case event.type

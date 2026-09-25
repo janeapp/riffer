@@ -108,12 +108,13 @@ class Riffer::Providers::Base
   end
 
   #--
-  #: () -> untyped
-  def client
+  #: (?model: String?) -> untyped
+  def client(model: nil)
     configured = global_client
     # Resolved on every call, never memoized, so a Proc can vary the client by
-    # process or credential lifetime.
-    return Riffer::Helpers::CallOrValue.resolve(configured) if configured
+    # process, credential lifetime, or model. The context is a Hash so keys can
+    # be added without breaking existing Procs.
+    return Riffer::Helpers::CallOrValue.resolve(configured, context: { model: model }) if configured
 
     @client ||= build_client
   end

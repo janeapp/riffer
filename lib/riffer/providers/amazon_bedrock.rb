@@ -155,7 +155,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    client.converse(**params)
+    client(model: params[:model_id]).converse(**params)
   end
 
   #--
@@ -246,7 +246,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
     stream_completed = false
 
-    client.converse_stream(**params) do |stream|
+    client(model: params[:model_id]).converse_stream(**params) do |stream|
       stream.on_event do |event|
         case event
         when Aws::BedrockRuntime::Types::ContentBlockStartEvent

@@ -130,6 +130,21 @@ describe Riffer::Providers::Gemini do
       expect(calls).must_equal 2
     end
 
+    it "passes the call's model to a client Proc on generate and stream" do
+      contexts = []
+      stop = Class.new(StandardError)
+      Riffer.config.gemini.client = lambda { |context|
+        contexts << context
+        raise stop
+      }
+      provider = Riffer::Providers::Gemini.new
+
+      expect { provider.generate_text(prompt: "Hello", model: "gemini-2.5-flash-lite") }.must_raise stop
+      expect { provider.stream_text(prompt: "Hello", model: "gemini-2.5-flash-lite").to_a }.must_raise stop
+
+      expect(contexts).must_equal [{ model: "gemini-2.5-flash-lite" }, { model: "gemini-2.5-flash-lite" }]
+    end
+
     it "memoizes the client it builds" do
       provider = Riffer::Providers::Gemini.new
 

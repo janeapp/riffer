@@ -163,6 +163,21 @@ describe Riffer::Providers::OpenAI do
       expect(calls).must_equal 2
     end
 
+    it "passes the call's model to a client Proc on generate and stream" do
+      contexts = []
+      stop = Class.new(StandardError)
+      Riffer.config.openai.client = lambda { |context|
+        contexts << context
+        raise stop
+      }
+      provider = Riffer::Providers::OpenAI.new
+
+      expect { provider.generate_text(prompt: "Hello", model: "gpt-5-mini") }.must_raise stop
+      expect { provider.stream_text(prompt: "Hello", model: "gpt-5-mini").to_a }.must_raise stop
+
+      expect(contexts).must_equal [{ model: "gpt-5-mini" }, { model: "gpt-5-mini" }]
+    end
+
     it "memoizes the client it builds" do
       provider = Riffer::Providers::OpenAI.new
 

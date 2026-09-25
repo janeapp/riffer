@@ -37,8 +37,8 @@ class Riffer::Providers::Base
   def depends_on: (String) -> true
 
   # --
-  # : () -> untyped
-  def client: () -> untyped
+  # : (?model: String?) -> untyped
+  def client: (?model: String?) -> untyped
 
   # --
   # : () -> untyped

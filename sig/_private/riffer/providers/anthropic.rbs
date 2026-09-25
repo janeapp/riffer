@@ -2,5 +2,5 @@
 class Riffer::Providers::Anthropic
   private
 
-  def client: () -> ::Anthropic::Client
+  def client: (?model: String?) -> ::Anthropic::Client
 end

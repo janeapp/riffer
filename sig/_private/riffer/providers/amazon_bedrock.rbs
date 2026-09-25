@@ -2,5 +2,5 @@
 class Riffer::Providers::AmazonBedrock
   private
 
-  def client: () -> ::Aws::BedrockRuntime::Client
+  def client: (?model: String?) -> ::Aws::BedrockRuntime::Client
 end

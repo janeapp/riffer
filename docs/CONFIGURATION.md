@@ -66,10 +66,11 @@ Every provider accepts a client instance or a `Proc` returning one:
 | Gemini         | `config.gemini.client`         | `Riffer::Providers::Gemini::Client` (riffer-owned, see below) |
 | OpenRouter     | `config.openrouter.client`     | `OpenAI::Client` (pinned to the OpenRouter endpoint)          |
 
-A `Proc` takes **no arguments** and is resolved on **every LLM call**, never cached by riffer — memoize inside the Proc when construction is expensive. This makes the Proc the right tool for:
+A `Proc` is resolved on **every LLM call**, never cached by riffer — memoize inside the Proc when construction is expensive. A zero-argument Proc is called with nothing; a one-argument Proc receives a context Hash, `{ model: }`, holding the model id of the call (without the provider prefix). This makes the Proc the right tool for:
 
 - **Fork safety** (Puma clustered, Sidekiq swarm): a client built at boot holds sockets that break across `fork`; build (and cache) per process instead.
 - **Expiring credentials** (Azure AD tokens, STS-vended keys): re-resolve before they go stale.
+- **Per-model routing**: pick a client by model, for example a Bedrock model that must be invoked through a different AWS region.
 
 ```ruby
 Riffer.configure do |config|
@@ -82,10 +83,16 @@ Riffer.configure do |config|
   config.azure_openai.client = -> {
     OpenAI::Client.new(api_key: AzureAd.current_token, base_url: ENV['AZURE_OPENAI_ENDPOINT'])
   }
+
+  # Routed by model: one model is served in-region, another from us-east-1.
+  config.amazon_bedrock.client = ->(context) {
+    region = context[:model].start_with?('us.') ? 'us-east-1' : 'ca-central-1'
+    ClientRegistry.bedrock_for(region)
+  }
 end
 ```
 
-Because the Proc receives no arguments, it can only vary the client by process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see [Multiple Configurations](#multiple-configurations)).
+Beyond the model, the Proc sees only process-wide state — it cannot route per agent or per request. Client selection is a global concern; to talk to different accounts or endpoints from different agents, register a provider subclass with its own config (see [Multiple Configurations](#multiple-configurations)).
 
 A configured client always wins over configured credentials: once `config.<provider>.client` is set, the credential members are unused, since riffer no longer builds the client.
 

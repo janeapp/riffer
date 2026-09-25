@@ -126,6 +126,21 @@ describe Riffer::Providers::Anthropic do
       expect(calls).must_equal 2
     end
 
+    it "passes the call's model to a client Proc on generate and stream" do
+      contexts = []
+      stop = Class.new(StandardError)
+      Riffer.config.anthropic.client = lambda { |context|
+        contexts << context
+        raise stop
+      }
+      provider = Riffer::Providers::Anthropic.new
+
+      expect { provider.generate_text(prompt: "Hello", model: "claude-haiku-4-5-20251001") }.must_raise stop
+      expect { provider.stream_text(prompt: "Hello", model: "claude-haiku-4-5-20251001").to_a }.must_raise stop
+
+      expect(contexts).must_equal [{ model: "claude-haiku-4-5-20251001" }, { model: "claude-haiku-4-5-20251001" }]
+    end
+
     it "memoizes the client it builds" do
       provider = Riffer::Providers::Anthropic.new
 

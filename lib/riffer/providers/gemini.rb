@@ -93,7 +93,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
   def execute_generate(params)
     model = params[:model]
     body = params.except(:model)
-    client.post(api_path(model, "generateContent"), body)
+    client(model: model).post(api_path(model, "generateContent"), body)
   end
 
   #--
@@ -218,7 +218,7 @@ class Riffer::Providers::Gemini < Riffer::Providers::Base
     end
 
     path = "#{api_path(model, 'streamGenerateContent')}?alt=sse"
-    client.post_stream(path, body) { |chunk| process_chunk.call(chunk) }
+    client(model: model).post_stream(path, body) { |chunk| process_chunk.call(chunk) }
 
     yielder << Riffer::StreamEvents::TextDone.new(full_text) unless full_text.empty?
     yield_finish_reason(yielder, build_finish_reason(raw_finish_reason, tool_calls: saw_function_call))

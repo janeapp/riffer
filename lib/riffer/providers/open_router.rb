@@ -117,7 +117,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
   #--
   #: (Hash[Symbol, untyped]) -> untyped
   def execute_generate(params)
-    client.chat.completions.create(**params)
+    client(model: params[:model]).chat.completions.create(**params)
   end
 
   #--
@@ -250,7 +250,7 @@ class Riffer::Providers::OpenRouter < Riffer::Providers::Base
 
     # stream_raw, not stream: stream aggregates chunks into higher-level
     # events, but mapping to Riffer::StreamEvents needs the raw deltas.
-    stream = client.chat.completions.stream_raw(**stream_params)
+    stream = client(model: params[:model]).chat.completions.stream_raw(**stream_params)
     begin
       stream.each do |chunk|
         handle_stream_chunk(chunk, state: state, yielder: yielder)
