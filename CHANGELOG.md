@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.49.0](https://github.com/janeapp/riffer/compare/riffer/v0.48.0...riffer/v0.49.0) (2026-09-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** provider string settings must be a String or nil; evals.judge_model must be in "provider/model" form; mcp.credentials must respond to #call; mcp.discovery_runner must be a Riffer::Runner. Struct behaviour ([] / to_a / members / value equality) is gone from those sections. Riffer::Tracing.reset! is removed; the tracing backend is read from config on every call instead of being cached.
+* **agent:** Riffer.config.experimental_history_healing is removed, as are Response#healed_tool_call_ids and StreamEvents::Interrupt#healed_tool_call_ids (and its to_h key). Orphan pruning on Agent.new is now always on. Interrupts never fill placeholders; call agent.session.discard_pending_tool_calls instead and use its return value for the filled call ids.
+
+### Features
+
+* **agent:** always repair seeded sessions, add discard_pending_tool_calls ([#456](https://github.com/janeapp/riffer/issues/456)) ([b1e8933](https://github.com/janeapp/riffer/commit/b1e89330f2b2f59b74f794d5a21d31b833cb64d8))
+* **open_router:** capture and replay reasoning_details ([#453](https://github.com/janeapp/riffer/issues/453)) ([a3e2523](https://github.com/janeapp/riffer/commit/a3e252324de97d3f03942c60a892126975bb1a60))
+
+
+### Code Refactoring
+
+* **config:** split Riffer::Config into one file per section ([#458](https://github.com/janeapp/riffer/issues/458)) ([c493684](https://github.com/janeapp/riffer/commit/c4936848c5c34903c160f90786e7493831ab21dd))
+
 ## [0.48.0](https://github.com/janeapp/riffer/compare/riffer/v0.47.2...riffer/v0.48.0) (2026-09-23)
 
 
