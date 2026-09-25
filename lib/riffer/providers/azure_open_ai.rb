@@ -26,4 +26,11 @@ class Riffer::Providers::AzureOpenAI < Riffer::Providers::OpenAI
     # OpenAI credential elsewhere. A nil raises in the SDK instead.
     ::OpenAI::Client.new(api_key: api_key, base_url: base_url)
   end
+
+  # Azure resolves and decrypts reasoning items only within the resource that produced them.
+  #--
+  #: () -> String
+  def reasoning_format
+    "azure-openai-v1"
+  end
 end

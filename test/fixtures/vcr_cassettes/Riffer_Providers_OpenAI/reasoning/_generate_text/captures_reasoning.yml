@@ -1,0 +1,206 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"input":[{"role":"user","content":"How many prime numbers are there
+        between 1 and 50? Reply with just the number."}],"model":"gpt-5-mini","reasoning":{"effort":"medium","summary":"auto"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - OpenAI::Client/Ruby 0.91.0
+      Host:
+      - api.openai.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 0.91.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_API_KEY>
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '188'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 Sep 2026 20:58:01 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cf-Ray:
+      - a40cf1bbcff8b1ca-SEA
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Expose-Headers:
+      - CF-Ray
+      - CF-Ray
+      - X-Request-ID
+      Openai-Organization:
+      - <OPENAI_ORGANIZATION>
+      Openai-Processing-Ms:
+      - '2676'
+      Openai-Project:
+      - <OPENAI_PROJECT>
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '500'
+      X-Ratelimit-Limit-Tokens:
+      - '500000'
+      X-Ratelimit-Remaining-Requests:
+      - '499'
+      X-Ratelimit-Remaining-Tokens:
+      - '500000'
+      X-Ratelimit-Reset-Requests:
+      - 120ms
+      X-Ratelimit-Reset-Tokens:
+      - 0s
+      X-Request-Id:
+      - req_481ea6b60ef443bfa202017ec2e6158f
+      Set-Cookie:
+      - __cf_bm=7T35zdP4r9qmnyTrMDOG6e0ZCCgX.s_14hEKITfuptM-1790369878.3637369-1.0.1.1-CRUv9KiD9fNsRhO2Yjt.9QGejzeFeDKh54W216j8UJfV8yfV8z7LmCNdMiCTZ33XF5DmsBWcsltTg8drAr.c4waFwRYlj6.rt6Veb1khmSFIW79quqlrJdTv.ExYJL5v;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api.openai.com; Expires=Fri,
+        25 Sep 2026 21:28:01 GMT
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "resp_0357a992f9b5cae0006ab6e056732887d0823cf7effcbb33fb",
+          "object": "response",
+          "created_at": 1790369878,
+          "status": "completed",
+          "access_programs": null,
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1790369880,
+          "error": null,
+          "frequency_penalty": 0.0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-5-mini-2025-08-07",
+          "moderation": null,
+          "output": [
+            {
+              "id": "rs_0357a992f9b5cae0006ab6e056c32487d095ac35798905bed5",
+              "type": "reasoning",
+              "content": [],
+              "encrypted_content": "gAAAAABqtuBZoHqfZMxsCKsbQdDRvlLTbbhpcc6sAJaODm-izooP82xde1jerHZVN2ZPIqjE6HzV2Iv07y9QGxHDcCzdv2jL8qn5lLrosiQYt22EUEoW7CC3HO9pxOunFuVJolQ0uzEQUT9uEV-zYezMwuB-nUZrC04SdfHOBb_kCiztGQqm5PapPgpBZWKKxiXwMe3cZMvPGT9B8nM2Ra2Ndq-joaAFA7i6vz5hwmgERw6xK4ZmO6iELq3y08RhnAMBQAqzDarUEjR71h82Ib3WcFdLr4zpHXY8q_2-1AKB1hFD6f7NCgdJ2hXNcMv649o_eWgUG4K26J7H29l_6BVdSTc4tCPXjub6qiSHEgzjbkX53PW0e2GMGVwd5efsdEyDlUpb17kpBd4x_vqh_gbSmreBBAENCWIBXNEYiZADPrOy6MQPq2d0kxNBOrW1wYtnTN6R05kf7_LY4CbYbrlwpGUu76Pw8TRaTX7M6E8MgWl4BHPEQOcvYePQyShQABSUHiqTuGS8WCVeQ3m-aJY641AFcj-0kPbre6kYFIWNYSKRPgnvJlW5mGfiL4-GEeAele2TcXH9k8t2t0qcMgOwQDIOndJS9YiSVg-w0xtRe85eZpBchFLsJjq6e1hffFsKAt7KONrNgVHE7HSrsDl10HeHWsTUA3nSTlwQI5nEQzv9J5jYnCFoi2w42AmV42N7f3IN7vXNbbepfS6HAqUY-eizrV18He2dTPhm7xFJPqTlKRSrDh57fkado_Ph3ol4b0uAI4BIdPKD6-JMoFk6OEpufbKBGsvnh3TvInK58sPH3-MXOMh5aDcW3SIAxYJP7wr2BVghuNaOyrkN6sCDjANJgfOJsYKiuceGGzguAiHn2Ut0S2pynweiv6Tt8kn3AtEhiPPUB4ls5rt0ndOWFYa4dm5MoPRgxqZ_HRswnyNkpZMKOOQlxPCH2jJTBrcygYMc1K7f_4wfmAV_8P1fb7Ip6TtOuvqc84lTgqwshRHbf62tRHU8Nx1A6ytyV7m8yfJphxraWUYLRHhIaIqVjjx9eUZxulFb48HapQYouCmYJ-Tn0p20ukCTE_-pp8w86t1WwvryHjS7RYGLx1HpY0ar1V_K1czLPOcynZMoB6kW9a9UqyoDZ6KOHRom53W2CgHUee1Ytp2EWQNTM33jqsxl8s3Wilvs-OQ9jUHSgF-7i74YtGTeM-bqwehvRw400765uD58Y05jGuu8w-R9wUSOu_aMW-E2o6Vtocuq8WD1oWTlakdlM0i4NwDn7bDEqKCE2TE7AoNC2Q01QJKpBcO6k8EMZn2n0A-SDkLxwTTxpBNxBJb0qP3dXh3hWBEahi5W9qLIZpOFAo4SmOA97eal9TPKJU0vGp9WiWEFUvc0bWQpr7YYf40QMmb1Ey2kQ2DupQ6kimGUgI4vzzBbGM7ywBnkMkOKOcYj02NlwlzF0chZLNOHlN5VTsoIDn-3j0H272exPp9HFpQJJqfzjT_hQ5GKL_VuvQySuGZ-L0HZ4MV5mgK-fnKeY_ZKFu6dVIwSQBvLQcEGzyPZUgI_xSejAANMFKmsFi92PQGwp3GApNxt0oamid_4QvknXuSyrKV46eOLuv7dx1TAgMHrOY3xfvvzqiYOVz_iUNApDQTeJbvvw13M9ydvrbbOjTWLVUI9U4FZcZfeluuAqqk-ySifDxEvk48q2YtVldX5oPgrXZE9LQkGoQoLqilLuiLozNT6UW4GoDoys7V9u0jpr4gLmtv6oE8BPGPj0ijHH90G9koHcW3hktGV4FWbOtGOHglXmbMZ",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "**Computing prime numbers**\n\nThe user is asking how many prime numbers there are between 1 and 50, and they want just the number in response. So, I'll count the primes: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, and 47. That makes a total of 15 primes. I need to ensure I output only \"15\" with no extra text, punctuation, or spaces. So, got it! I'll do that!"
+                }
+              ]
+            },
+            {
+              "id": "msg_0357a992f9b5cae0006ab6e058db2487d09c534a5e44c794fd",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "15"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0.0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": "current_turn",
+            "effort": "medium",
+            "mode": "standard",
+            "summary": "detailed"
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tool_usage": {
+            "image_gen": {
+              "input_tokens": 0,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "output_tokens": 0,
+              "output_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 0
+              },
+              "total_tokens": 0
+            },
+            "web_search": {
+              "num_requests": 0
+            }
+          },
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 25,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 180,
+            "output_tokens_details": {
+              "reasoning_tokens": 128
+            },
+            "total_tokens": 205
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: Fri, 25 Sep 2026 20:58:01 GMT
+recorded_with: VCR 6.4.0

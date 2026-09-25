@@ -205,6 +205,42 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    typed_response = response #: OpenAI::Models::Responses::Response
+    typed_response.output.
+      grep(::OpenAI::Models::Responses::ResponseReasoningItem).
+      flat_map { |item| build_reasoning_parts(item) }
+  end
+
+  # The trailing +:encrypted+ part is always present, even without a payload, so the item's id
+  # survives for replay: with +store+ on, OpenAI resolves the item from the id alone.
+  #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def build_reasoning_parts(item)
+    typed_item = item #: OpenAI::Models::Responses::ResponseReasoningItem
+    id = typed_item.id
+    summaries = typed_item.summary.map { |summary| build_reasoning_part(type: :summary, id: id, text: summary.text) }
+    texts = (typed_item.content || []).map { |content| build_reasoning_part(type: :text, id: id, text: content.text) }
+
+    [*summaries, *texts, build_reasoning_part(type: :encrypted, id: id, data: typed_item.encrypted_content)]
+  end
+
+  #--
+  #: (type: Symbol, id: String, ?text: String?, ?data: String?) -> Riffer::Messages::Assistant::ReasoningPart
+  def build_reasoning_part(type:, id:, text: nil, data: nil)
+    Riffer::Messages::Assistant::ReasoningPart.new(type: type, text: text, data: data, id: id, format: reasoning_format)
+  end
+
+  # Distinct from OpenRouter's +openai-responses-v1+: reasoning relayed through OpenRouter is
+  # encrypted and stored under OpenRouter's organization, so neither side can replay the other's.
+  #--
+  #: () -> String
+  def reasoning_format
+    "openai-v1"
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
@@ -227,8 +263,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           handle_output_text_done(event, state: current_state, yielder: yielder)
         when :"response.reasoning_summary_text.delta"
           handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
-        when :"response.reasoning_summary_text.done"
-          handle_reasoning_summary_text_done(event, state: current_state, yielder: yielder)
         when :"response.function_call_arguments.delta"
           handle_function_call_arguments_delta(event, state: current_state, yielder: yielder)
         when :"response.function_call_arguments.done"
@@ -240,7 +274,10 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
         when :"response.web_search_call.completed"
           handle_web_search_status(event, status: "completed", yielder: yielder)
         when :"response.output_item.done"
-          handle_output_item_done_web_search(event, yielder: yielder) if event.item&.type == :web_search_call
+          case event.item&.type
+          when :web_search_call then handle_output_item_done_web_search(event, yielder: yielder)
+          when :reasoning then handle_output_item_done_reasoning(event, yielder: yielder)
+          end
         when :"response.completed", :"response.incomplete", :"response.failed"
           stream_completed = true
           handle_response_finished(event, state: current_state, yielder: yielder)
@@ -283,12 +320,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_summary_text_delta(event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDelta.new(event.delta)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_reasoning_summary_text_done(event, state:, yielder:)
-    yield_reasoning_done(yielder, event.text)
   end
 
   #--
@@ -349,6 +380,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_output_item_done_reasoning(event, yielder:)
+    build_reasoning_parts(event.item).each { |part| yielder << Riffer::StreamEvents::ReasoningDone.new(part) }
+  end
+
+  #--
   #: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format(messages)
     messages.flat_map do |message|
@@ -378,12 +415,13 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   end
 
   #--
-  #: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
+  #: (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
   def convert_assistant_to_openai_format(message)
+    items = convert_reasoning_to_openai_format(message.reasoning)
+
     if message.tool_calls.empty?
-      { role: "assistant", content: message.content }
+      items << { role: "assistant", content: message.content }
     else
-      items = [] #: Array[Hash[Symbol, untyped]]
       if message.content && !message.content.empty?
         items << { type: "message", role: "assistant",
                    content: message.content, }
@@ -396,8 +434,33 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           arguments: tc.arguments,
         }
       end
-      items
     end
+
+    items
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Array[Hash[Symbol, untyped]]
+  def convert_reasoning_to_openai_format(reasoning)
+    reasoning.
+      select { |part| part.format == reasoning_format }.
+      chunk_while { |a, b| a.id == b.id }.
+      map { |parts| convert_reasoning_item_to_openai_format(parts) }
+  end
+
+  #--
+  #: (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Hash[Symbol, untyped]
+  def convert_reasoning_item_to_openai_format(parts)
+    summary = parts.filter_map { |part| { type: "summary_text", text: part.text } if part.type == :summary }
+    content = parts.filter_map { |part| { type: "reasoning_text", text: part.text } if part.type == :text }
+
+    {
+      type: "reasoning",
+      id: parts.first&.id,
+      summary: summary,
+      content: content.empty? ? nil : content,
+      encrypted_content: parts.find { |part| part.type == :encrypted }&.data,
+    }.compact
   end
 
   #--
