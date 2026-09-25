@@ -187,6 +187,16 @@ agent.stream("Solve this complex math problem").each do |event|
 end
 ```
 
+The reasoning is kept on the assistant message as [reasoning parts](../MESSAGES.md#reasoning), whether you call `generate` or `stream`. Read it with `response.reasoning`, or as plain text with `reasoning_text` on the message. Each `thinking` block becomes a `:text` part carrying its `signature`, and each `redacted_thinking` block becomes an `:encrypted` part whose `data` is the block's opaque payload. `reasoning_text` leaves the redacted parts out, since they have no readable text. Every part is tagged `format: "anthropic-messages-v1"` (`Riffer::Providers::Anthropic::REASONING_FORMAT`).
+
+### Reasoning Replay
+
+Riffer sends the reasoning back to Anthropic on every later turn, as `thinking` and `redacted_thinking` blocks ahead of the message's text and `tool_use` blocks, in their original order and unchanged. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don't have to do anything; it happens as long as the assistant messages stay in the history.
+
+If you persist sessions, keep the `reasoning` key when you store messages (see [Messages — Reasoning](../MESSAGES.md#reasoning)). If you drop it, later turns lose the model's earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.
+
+Only reasoning that this provider produced is sent back to Anthropic. A conversation that switches providers midway still works: reasoning from other providers (including OpenRouter's `anthropic-claude-v1` parts) is kept on the messages but left out of Anthropic requests.
+
 ## Web Search
 
 Web search allows Claude to search the web for up-to-date information. When enabled, the provider injects the `web_search_20250305` server tool into the request.
