@@ -97,4 +97,20 @@ describe Riffer::Evals::Judge do
       expect(result).must_equal({ score: 0.9, reason: "Matches ground truth.", token_usage: nil })
     end
   end
+
+  describe "with a provider instance registered under a named identifier" do
+    it "uses that exact instance to evaluate" do
+      instance = Riffer::Providers::Mock.new(
+        responses: [{ content: "", tool_calls: [{ name: "evaluation", arguments: { score: 1.0, reason: "ok" } }] }],
+      )
+      Riffer::Providers::Repository.register(:named_instance) { instance }
+      judge = Riffer::Evals::Judge.new(model: "named_instance/eval-model")
+
+      judge.evaluate(instructions: "Assess.", input: "in", output: "out")
+
+      expect(judge.send(:provider_instance)).must_be_same_as instance
+    ensure
+      Riffer::Providers::Repository.unregister(:named_instance)
+    end
+  end
 end

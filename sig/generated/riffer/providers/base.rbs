@@ -3,6 +3,10 @@
 class Riffer::Providers::Base
   self.@semconv_provider_name: String?
 
+  @registry_key: Symbol?
+
+  @configured_client: untyped
+
   @client: untyped
 
   @current_model: String?
@@ -11,6 +15,9 @@ class Riffer::Providers::Base
 
   WIRE_SEPARATOR: String
 
+  # Stamped by Riffer::Providers::Repository.build.
+  attr_writer registry_key: Symbol?
+
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -18,6 +25,16 @@ class Riffer::Providers::Base
   # --
   # : () -> String
   def self.semconv_provider_name: () -> String
+
+  # --
+  # : (?client: untyped) -> void
+  def initialize: (?client: untyped) -> void
+
+  # Falls back to the built-in prefix so a provider built with +.new+, outside
+  # the registry, still prices and traces under its default key.
+  # --
+  # : () -> Symbol?
+  def registry_key: () -> Symbol?
 
   # --
   # : (?prompt: String?, ?system: String?, ?messages: Array[Hash[Symbol, untyped] | Riffer::Messages::Base]?, ?model: String?, ?files: Array[Hash[Symbol, untyped] | Riffer::Messages::User::FilePart]?, **untyped) -> Riffer::Messages::Assistant

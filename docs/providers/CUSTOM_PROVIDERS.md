@@ -123,12 +123,22 @@ end
 
 ## Client resolution
 
-Riffer constructs providers with `provider_class.new`, so `initialize` takes no arguments; read credentials from configuration inside `build_client`. `Riffer::Providers::Base` provides a private `client` method for your `execute_generate`/`execute_stream` to call. It resolves, in order:
+The registry calls either `provider_class.new` or a registered factory's block (see "Registering Your Provider" below), so accept and forward a `client:` keyword to `super` even if your `initialize` does nothing else with it:
 
-1. **A configured client** — whatever `global_client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override that hook to read the client off your own configuration; it defaults to `nil`.
-2. **A memoized client** from `build_client` — implement this hook to build your SDK client from configured credentials.
+```ruby
+def initialize(client: nil)
+  super(client: client)
+  depends_on "my_provider_gem"
+end
+```
 
-This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
+`Riffer::Providers::Base` provides a private `client` method for your `execute_generate`/`execute_stream` to call. It resolves, in order:
+
+1. **The constructor client** — whatever was passed to `.new(client:)`.
+2. **A configured client** — whatever `global_client` returns: a client instance, or a no-argument `Proc` resolved on **every** call. Override that hook to read the client off your own configuration; it defaults to `nil`.
+3. **A memoized client** from `build_client` — implement this hook to build your SDK client from configured credentials.
+
+Both the constructor client and the configured client accept an instance or a no-argument `Proc`, resolved on **every** call rather than memoized. This gives your provider the same "works out of the box, bring your own client in production" behavior as the built-ins, plus the ability to carry a client that's specific to one registered instance. See [Configuration → Provider Clients](../CONFIGURATION.md#provider-clients).
 
 ## Using depends_on
 
@@ -136,8 +146,8 @@ For lazy loading of external gems:
 
 ```ruby
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize
-    super
+  def initialize(client: nil)
+    super(client: client)
     depends_on "my_provider_gem"  # Only loaded when provider is used
   end
 
@@ -157,7 +167,19 @@ Register your provider under an identifier.
 Riffer::Providers::Repository.register(:my_provider) { Riffer::Providers::MyProvider }
 ```
 
-The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Both `find` and `key_for` (used for pricing and observability keys) honor the registration. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
+The block resolves the provider class lazily, so it need not be loaded at registration time. Registration is idempotent — re-registering the same identifier replaces the previous factory — and a custom registration takes precedence over a built-in sharing the identifier, which lets you route an existing prefix (e.g. `openai`) through your own backend. Remove one with `Riffer::Providers::Repository.unregister(:my_provider)`.
+
+`Repository.build` (what agents and judges call) runs the factory and, if it returned a class, instantiates it with no arguments; if the block already returned an instance — e.g. `register(:my_provider) { Riffer::Providers::MyProvider.new(client: ...) }` — that exact instance is used as-is. Either way, `build` stamps the resolved `registry_key` onto the provider, which is what pricing lookups (`pricing.set("my_provider/model", ...)`) and the `riffer.provider.key` span attribute key off. A built-in provider built directly with `.new` falls back to its built-in prefix (`openai`, `amazon_bedrock`, …); a custom class built directly has no key, so it is not priced. A block that builds an instance runs on every agent/judge build and must return a **new** instance each time — a provider holds per-call state, so sharing one across concurrent agents is unsafe.
+
+Registering an instance is the common case when the existing OpenAI-compatible provider is enough and only the endpoint and credential differ — no new provider class needed:
+
+```ruby
+Riffer::Providers::Repository.register(:local_vllm) do
+  Riffer::Providers::OpenAI.new(client: OpenAI::Client.new(base_url: "http://vllm:8000/v1", api_key: "x"))
+end
+```
+
+`model 'local_vllm/llama-3.1-70b'` then routes to that vLLM deployment.
 
 Register during application boot — from a Rails initializer or equivalent — before you start handling requests. The registry is not synchronized for concurrent mutation, so treat registration as a one-time setup step rather than something you do from a live request path.
 
@@ -359,8 +381,8 @@ end
 # lib/riffer/providers/my_provider.rb
 
 class Riffer::Providers::MyProvider < Riffer::Providers::Base
-  def initialize
-    super
+  def initialize(client: nil)
+    super(client: client)
     depends_on "my_provider_gem"
   end
 

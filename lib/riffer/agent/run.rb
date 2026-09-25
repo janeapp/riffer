@@ -433,12 +433,16 @@ module Riffer::Agent::Run
   #--
   #: (Riffer::Agent, ?Hash[String, String]) -> Hash[String, untyped]
   def run_span_attributes(agent, tags = {})
-    {
+    attributes = {
       "gen_ai.operation.name" => "invoke_agent",
       "gen_ai.agent.name" => agent.identifier,
       "gen_ai.provider.name" => agent.provider.class.semconv_provider_name,
       "gen_ai.request.model" => agent.model_name,
-    }.merge(tag_attributes(tags))
+    } #: Hash[String, untyped]
+    registry_key = agent.provider.registry_key
+    attributes["riffer.provider.key"] = registry_key.to_s if registry_key
+
+    attributes.merge(tag_attributes(tags))
   end
 
   #--

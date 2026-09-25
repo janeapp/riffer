@@ -4,8 +4,8 @@
 module Riffer::Providers::Repository
   extend self
 
-  # @rbs @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
-  # @rbs @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
+  # @rbs @registrations: Hash[Symbol, ^() -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)]
+  # @rbs @builtin_keys: Hash[singleton(Riffer::Providers::Base), Symbol]?
 
   REPO = {
     amazon_bedrock: -> { Riffer::Providers::AmazonBedrock },
@@ -17,42 +17,44 @@ module Riffer::Providers::Repository
     mock: -> { Riffer::Providers::Mock },
   }.freeze #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
-  @registrations = {} #: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
+  @registrations = {} #: Hash[Symbol, ^() -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)]
 
   # Not synchronized — register during boot, before concurrent generation
   # begins.
   #--
-  #: ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
+  #: ((String | Symbol)) { () -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base) } -> void
   def register(identifier, &factory)
     @registrations[identifier.to_sym] = factory
-    @key_for = nil
   end
 
   #--
   #: ((String | Symbol)) -> void
   def unregister(identifier)
     @registrations.delete(identifier.to_sym)
-    @key_for = nil
   end
 
   #--
-  #: ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
+  #: ((String | Symbol)) -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)?
   def find(identifier)
     key = identifier.to_sym
     (@registrations[key] || REPO[key])&.call
   end
 
   #--
-  #: (singleton(Riffer::Providers::Base)) -> Symbol?
-  def key_for(provider_class)
-    (@key_for ||= build_key_index)[provider_class]
+  #: ((String | Symbol)) -> Riffer::Providers::Base?
+  def build(identifier)
+    found = find(identifier)
+    return nil unless found
+
+    provider = found.is_a?(Class) ? found.new : found
+    provider.registry_key = identifier.to_sym
+    provider
   end
 
-  private
-
+  # Built-ins only: custom registrations are never called to build the index.
   #--
-  #: () -> Hash[singleton(Riffer::Providers::Base), Symbol]
-  def build_key_index
-    REPO.merge(@registrations).to_h { |key, factory| [factory.call, key] }
+  #: (singleton(Riffer::Providers::Base)) -> Symbol?
+  def builtin_key_for(provider_class)
+    (@builtin_keys ||= REPO.to_h { |key, factory| [factory.call, key] })[provider_class]
   end
 end

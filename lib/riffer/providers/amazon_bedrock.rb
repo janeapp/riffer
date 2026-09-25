@@ -34,8 +34,8 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
-  #: () -> void
-  def initialize
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
     super
     depends_on "aws-sdk-bedrockruntime"
   end

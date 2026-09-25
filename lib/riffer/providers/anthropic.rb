@@ -29,8 +29,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: () -> void
-  def initialize
+  #: (?client: untyped) -> void
+  def initialize(client: nil)
     super
     depends_on "anthropic"
   end

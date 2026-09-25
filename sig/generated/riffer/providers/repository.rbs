@@ -1,33 +1,32 @@
 # Generated from lib/riffer/providers/repository.rb with RBS::Inline
 
 module Riffer::Providers::Repository
-  @registrations: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
+  @registrations: Hash[Symbol, ^() -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)]
 
-  @key_for: Hash[singleton(Riffer::Providers::Base), Symbol]?
+  @builtin_keys: Hash[singleton(Riffer::Providers::Base), Symbol]?
 
   REPO: Hash[Symbol, ^() -> singleton(Riffer::Providers::Base)]
 
   # Not synchronized — register during boot, before concurrent generation
   # begins.
   # --
-  # : ((String | Symbol)) { () -> singleton(Riffer::Providers::Base) } -> void
-  def register: (String | Symbol) { () -> singleton(Riffer::Providers::Base) } -> void
+  # : ((String | Symbol)) { () -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base) } -> void
+  def register: (String | Symbol) { () -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base) } -> void
 
   # --
   # : ((String | Symbol)) -> void
   def unregister: (String | Symbol) -> void
 
   # --
-  # : ((String | Symbol)) -> singleton(Riffer::Providers::Base)?
-  def find: (String | Symbol) -> singleton(Riffer::Providers::Base)?
+  # : ((String | Symbol)) -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)?
+  def find: (String | Symbol) -> (singleton(Riffer::Providers::Base) | Riffer::Providers::Base)?
 
+  # --
+  # : ((String | Symbol)) -> Riffer::Providers::Base?
+  def build: (String | Symbol) -> Riffer::Providers::Base?
+
+  # Built-ins only: custom registrations are never called to build the index.
   # --
   # : (singleton(Riffer::Providers::Base)) -> Symbol?
-  def key_for: (singleton(Riffer::Providers::Base)) -> Symbol?
-
-  private
-
-  # --
-  # : () -> Hash[singleton(Riffer::Providers::Base), Symbol]
-  def build_key_index: () -> Hash[singleton(Riffer::Providers::Base), Symbol]
+  def builtin_key_for: (singleton(Riffer::Providers::Base)) -> Symbol?
 end

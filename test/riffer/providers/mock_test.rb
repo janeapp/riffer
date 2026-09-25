@@ -537,6 +537,25 @@ describe Riffer::Providers::Mock do
 
       expect(usage_done.token_usage.cost).must_equal 18.0
     end
+
+    it "prices two registrations of the same provider class under their own keys" do
+      Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
+      Riffer.config.pricing.set("mock_two/riffer-1", input: 1.0, output: 1.0)
+      Riffer::Providers::Repository.register(:mock_two) { Riffer::Providers::Mock }
+      usage = Riffer::Providers::TokenUsage.new(input_tokens: 1_000_000, output_tokens: 1_000_000)
+
+      first = Riffer::Providers::Repository.build(:mock)
+      first.stub_response("hi", token_usage: usage)
+      second = Riffer::Providers::Repository.build(:mock_two)
+      second.stub_response("hi", token_usage: usage)
+
+      first_cost = first.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
+      second_cost = second.generate_text(prompt: "x", model: "riffer-1").token_usage.cost
+
+      expect([first_cost, second_cost]).must_equal [18.0, 2.0]
+    ensure
+      Riffer::Providers::Repository.unregister(:mock_two)
+    end
   end
   describe "reasoning" do
     let(:part) { { type: :text, text: "Let me think", format: "mock-v1" } }
