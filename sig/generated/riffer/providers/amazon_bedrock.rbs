@@ -6,6 +6,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   FINISH_REASONS: Hash[String, Symbol]
 
+  # Only parts carrying this tag are replayed, so reasoning captured by another
+  # adapter, whose signatures Converse cannot verify, never reaches the request.
+  REASONING_FORMAT: String
+
   # --
   # : (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter: (?String?) -> singleton(Riffer::Skills::Adapter)
@@ -73,6 +77,16 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # +redacted_content+ is raw bytes; it is stored Base64-encoded so the part
+  # survives JSON persistence.
+  # --
+  # : (?text: String?, ?signature: String?, ?redacted_content: String?) -> Riffer::Messages::Assistant::ReasoningPart
+  def build_reasoning_part: (?text: String?, ?signature: String?, ?redacted_content: String?) -> Riffer::Messages::Assistant::ReasoningPart
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
@@ -96,6 +110,16 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_delta_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
+  # A reasoning block streams its text in pieces, then its signature (or its
+  # redacted bytes) in a delta of its own.
+  # --
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_reasoning_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+
+  # --
+  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_reasoning_stop: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
@@ -115,6 +139,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   # --
   # : (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
+
+  # --
+  # : (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part_to_bedrock_format: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
 
   # --
   # : (Array[Hash[Symbol, untyped]], Riffer::Messages::Tool) -> void

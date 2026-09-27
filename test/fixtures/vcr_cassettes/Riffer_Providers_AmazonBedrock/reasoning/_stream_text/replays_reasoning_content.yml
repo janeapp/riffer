@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]}],"system":[],"inferenceConfig":{"maxTokens":2048},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - 471827e4-e620-404d-bbb1-ed7d4b9aec20
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '235'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Sep 2026 22:17:35 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 8e333568-a5f9-4b5a-89dd-82f8f6e911a6
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAjgAAAFLukeFCCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxIiwicm9sZSI6ImFzc2lzdGFudCJ99FCslQAAANAAAABXGdhkZws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsidGV4dCI6IjE3In19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUYifSJDKA4AAADiAAAAV8I5j4ELOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIgdGltZXMgMjMuIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QIn3jubWcAAAA7gAAAFcHyWKACzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiXG5cbkxldCJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNCJ9aWdR3QAAANYAAABXlpiRxws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsidGV4dCI6IiBtZSBjYWxjdWxhdGUgdGhpczpcbjE3IMOXIn19LCJwIjoiYWJjZGVmZ2hpamtsbW4ifZyhyR0AAADeAAAAV6bo2gYLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIgMjMgPSAxNyDDlyJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSksifWbZPicAAADlAAAAV3AZU5ELOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIgKDIwICsgMykifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUIn20rHc+AAAA2AAAAFcpqC+mCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiXG49IDE3IMOXIDIwIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNEIn3NDda4AAAA5AAAAFdNeXohCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiICsgMTcgw5cgMyJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSIn1/WaPAAAAA9gAAAFdXWb7DCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiXG49IDM0MCArIDUxIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3In3YPCmIAAAAywAAAFcO6ML0CzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiXG49IDM5MSJ9fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXYifSAEfA8AAADMAAAAV7zIHuQLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0QifVYFNpgAAAKiAAAAV9cCdsMLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InNpZ25hdHVyZSI6IkVzc0NDb1FCQ0JJUUFSZ0NLa0FvMUpGR1NHYkZYaiszbTNvN3ZoZXZKOVU2bWN1RndkZjZPZkcyUnkvM2NtQ2Y4bVFoYzNla1BmZGZlWnM3TU1pN3JnZzg0ZmxmSnRXdFk2YkJTQmV4TWhsamJHRjFaR1V0YUdGcGEzVXROQzAxTFRJd01qVXhNREF4T0FCQ0NIUm9hVzVyYVc1bldndzNNREk1TWprNU9EZzFNak9vQWYvQzF0VUdFZ3dHUVJqTjFEejdkSEVCeEdvYURNekxyUFRLWlhKbnExQ2tLU0l3bDAydjVQUU5idkd2T1hWSEZUM0dubDFwYnlHZFJUakJKaVdtdzVzdjhPMS8vd00yOGxKbEhrUTFmakh5L3dFdktuUys4RHR5L21lMTFORURyT0lEUHRkUGpibUp5TU92dktXSEJoV3Z4bUF3RUYyNjAyT2xTMDlRNGtsanhQT25COUZtMll4SHMxOXh6dmVHOFdWczU1dE5YMUdjNC9ibk9pVmR1VGtqME5XTDQwVEs1aUVLeE13ZUdCUzNZeWN0VlNZL3hYdmFkcUNuUGZhY2pUbWFFUXhNbDFLWlJSZ0IifX0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdISUpLTE1OT1BRUlNUVSJ9hJkeCgAAAIcAAABW5OxHKgs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiYyJ9y6nrtwAAANcAAABXq/i4dws6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjEsImRlbHRhIjp7InRleHQiOiIzOTEifSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVowMTIzNDU2In32k5YjAAAAjQAAAFauXF+LCzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJwIjoiYWJjZGVmZ2hpIn3Lo6ZQAAAAlgAAAFEnCGy7CzpldmVudC10eXBlBwALbWVzc2FnZVN0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1Iiwic3RvcFJlYXNvbiI6ImVuZF90dXJuIn0ASzi6AAAA+QAAAE6xYoHSCzpldmVudC10eXBlBwAIbWV0YWRhdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJtZXRyaWNzIjp7ImxhdGVuY3lNcyI6Nzk5fSwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGR0hJIiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjUxLCJvdXRwdXRUb2tlbnMiOjcxLCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6MTIyfX0kLb61
+  recorded_at: Thu, 24 Sep 2026 22:17:35 GMT
+- request:
+    method: post
+    uri: https://bedrock-runtime.us-east-1.amazonaws.com/model/us.anthropic.claude-haiku-4-5-20251001-v1:0/converse-stream
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":[{"text":"What is 17 times 23?
+        Reply with just the number."}]},{"role":"assistant","content":[{"reasoningContent":{"reasoningText":{"text":"17
+        times 23.\n\nLet me calculate this:\n17 × 23 = 17 × (20 + 3)\n= 17 × 20 +
+        17 × 3\n= 340 + 51\n= 391","signature":"EssCCoQBCBIQARgCKkAo1JFGSGbFXj+3m3o7vhevJ9U6mcuFwdf6OfG2Ry/3cmCf8mQhc3ekPfdfeZs7MMi7rgg84flfJtWtY6bBSBexMhljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxOABCCHRoaW5raW5nWgw3MDI5Mjk5ODg1MjOoAf/C1tUGEgwGQRjN1Dz7dHEBxGoaDMzLrPTKZXJnq1CkKSIwl02v5PQNbvGvOXVHFT3Gnl1pbyGdRTjBJiWmw5sv8O1//wM28lJlHkQ1fjHy/wEvKnS+8Dty/me11NEDrOIDPtdPjbmJyMOvvKWHBhWvxmAwEF2602OlS09Q4kljxPOnB9Fm2YxHs19xzveG8WVs55tNX1Gc4/bnOiVduTkj0NWL40TK5iEKxMweGBS3YyctVSY/xXvadqCnPfacjTmaEQxMl1KZRRgB"}}},{"text":"391"}]},{"role":"user","content":[{"text":"Now
+        add 10. Reply with just the number."}]}],"system":[],"inferenceConfig":{"maxTokens":2048},"additionalModelRequestFields":{"thinking":{"type":"enabled","budget_tokens":1024}}}'
+    headers:
+      Accept-Encoding:
+      - ''
+      Amz-Sdk-Invocation-Id:
+      - ce3bacf2-1201-49d4-994a-fb48f96b5995
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <AWS_BEDROCK_API_TOKEN>
+      User-Agent:
+      - aws-sdk-ruby3/3.257.0 ua/2.1 api/bedrock_runtime#1.85.0 os/macos#25 md/arm64
+        lang/ruby#4.0.5 md/4.0.5 m/Z,b,D
+      Content-Length:
+      - '982'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Sep 2026 22:17:36 GMT
+      Content-Type:
+      - application/vnd.amazon.eventstream
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - abaf4ace-ef9c-498d-8c0d-8dd0cf8f4275
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        AAAAkgAAAFJLgZvBCzpldmVudC10eXBlBwAMbWVzc2FnZVN0YXJ0DTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dSIsInJvbGUiOiJhc3Npc3RhbnQifVMJx7gAAAC7AAAAV/c6IjsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjowLCJkZWx0YSI6eyJyZWFzb25pbmdDb250ZW50Ijp7InRleHQiOiIzOTEifX0sInAiOiJhYmNkZWZnaGlqIn3f4DplAAAAwAAAAFd5OPPlCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiICsgMTAgPSA0MDEifX0sInAiOiJhYmNkZWZnIn0qIqv4AAAAzQAAAFeBqDdUCzpldmVudC10eXBlBwARY29udGVudEJsb2NrRGVsdGENOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwiZGVsdGEiOnsicmVhc29uaW5nQ29udGVudCI6eyJ0ZXh0IjoiIn19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERSJ9uP76VgAAAjcAAABXzuTeows6ZXZlbnQtdHlwZQcAEWNvbnRlbnRCbG9ja0RlbHRhDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsiY29udGVudEJsb2NrSW5kZXgiOjAsImRlbHRhIjp7InJlYXNvbmluZ0NvbnRlbnQiOnsic2lnbmF0dXJlIjoiRXZVQkNvUUJDQklRQVJnQ0trREZIZ3lGNzBYWUpEK2JaaXFNdmsyaFg4bWkxdnhzRE5QUXhFei81UWs2d1Zab0ZUSkpiZTIzS0RMUFF0UW50Z1N3d3pRTzJLQUM3ZWVFQ3o5bktvcVBNaGxqYkdGMVpHVXRhR0ZwYTNVdE5DMDFMVEl3TWpVeE1EQXhPQUJDQ0hSb2FXNXJhVzVuV2d3M01ESTVNams1T0RnMU1qT29BWUREMXRVR0Vnd3cweU9TSWlFdUVBTWphZVlhREwrUkdqMTN3NDA5bWMwd2RTSXdJOVZmV1VqajVmTFVtTTkrNEliZy9mTnQ5V0VHYWZudHVqM3BJRVZKTmlNMlRpa3R4ODlNTlo3bzdJM2tYaHZRS2g1Y1ZiUmlodzNiN1dld3UxK0Z3bHRNZWV6MmZJa0ZVNy82K1BWdHhTY1lBUT09In19LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWiJ90oZuewAAAJoAAABWfJwUGQs6ZXZlbnQtdHlwZQcAEGNvbnRlbnRCbG9ja1N0b3ANOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24NOm1lc3NhZ2UtdHlwZQcABWV2ZW50eyJjb250ZW50QmxvY2tJbmRleCI6MCwicCI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dXYifYnPYZMAAAC+AAAAVz/arUsLOmV2ZW50LXR5cGUHABFjb250ZW50QmxvY2tEZWx0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJkZWx0YSI6eyJ0ZXh0IjoiNDAxIn0sInAiOiJhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ekFCQ0RFRkdIIn2630LDAAAAuAAAAFbHnWh9CzpldmVudC10eXBlBwAQY29udGVudEJsb2NrU3RvcA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7ImNvbnRlbnRCbG9ja0luZGV4IjoxLCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWiJ99lOEmwAAAIUAAABRAEiB6Qs6ZXZlbnQtdHlwZQcAC21lc3NhZ2VTdG9wDTpjb250ZW50LXR5cGUHABBhcHBsaWNhdGlvbi9qc29uDTptZXNzYWdlLXR5cGUHAAVldmVudHsicCI6ImFiY2QiLCJzdG9wUmVhc29uIjoiZW5kX3R1cm4ifRz63QUAAAD2AAAATjMyFgMLOmV2ZW50LXR5cGUHAAhtZXRhZGF0YQ06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbg06bWVzc2FnZS10eXBlBwAFZXZlbnR7Im1ldHJpY3MiOnsibGF0ZW5jeU1zIjo2NTN9LCJwIjoiYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHIiwidXNhZ2UiOnsiaW5wdXRUb2tlbnMiOjcwLCJvdXRwdXRUb2tlbnMiOjIxLCJzZXJ2ZXJUb29sVXNhZ2UiOnt9LCJ0b3RhbFRva2VucyI6OTF9fbSkuXg=
+  recorded_at: Thu, 24 Sep 2026 22:17:36 GMT
+recorded_with: VCR 6.4.0

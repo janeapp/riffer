@@ -19,6 +19,10 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     "model_context_window_exceeded" => :context_window,
   }.freeze #: Hash[String, Symbol]
 
+  # Only parts carrying this tag are replayed, so reasoning captured by another
+  # adapter, whose signatures Converse cannot verify, never reaches the request.
+  REASONING_FORMAT = "bedrock-converse-v1" #: String
+
   #--
   #: (?String?) -> singleton(Riffer::Skills::Adapter)
   def self.skills_adapter(model = nil)
@@ -237,11 +241,49 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   end
 
   #--
+  #: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning(response)
+    typed_response = response #: Aws::BedrockRuntime::Client::_ConverseResponseSuccess
+    content_blocks = typed_response.output&.message&.content || []
+
+    content_blocks.filter_map do |block|
+      case (reasoning = block.reasoning_content)
+      when Aws::BedrockRuntime::Types::ReasoningContentBlock::RedactedContent
+        build_reasoning_part(redacted_content: reasoning.redacted_content)
+      when Aws::BedrockRuntime::Types::ReasoningContentBlock::ReasoningText
+        build_reasoning_part(text: reasoning.reasoning_text.text, signature: reasoning.reasoning_text.signature)
+      end
+    end
+  end
+
+  # +redacted_content+ is raw bytes; it is stored Base64-encoded so the part
+  # survives JSON persistence.
+  #--
+  #: (?text: String?, ?signature: String?, ?redacted_content: String?) -> Riffer::Messages::Assistant::ReasoningPart
+  def build_reasoning_part(text: nil, signature: nil, redacted_content: nil)
+    if redacted_content
+      Riffer::Messages::Assistant::ReasoningPart.new(
+        type: :encrypted,
+        data: Base64.strict_encode64(redacted_content),
+        format: REASONING_FORMAT,
+      )
+    else
+      Riffer::Messages::Assistant::ReasoningPart.new(
+        type: :text,
+        text: text,
+        signature: signature,
+        format: REASONING_FORMAT,
+      )
+    end
+  end
+
+  #--
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
       text: nil,
       tool_call: nil,
+      reasoning: nil,
     } #: Hash[Symbol, untyped]
 
     stream_completed = false
@@ -254,9 +296,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
         when Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
           handle_content_block_delta_text_delta(event, state: current_state, yielder: yielder) if event.delta&.text
           handle_content_block_delta_tool_use(event, state: current_state, yielder: yielder) if event.delta&.tool_use
+          handle_reasoning_delta(event, state: current_state, yielder: yielder) if event.delta&.reasoning_content
         when Aws::BedrockRuntime::Types::ContentBlockStopEvent
           handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
+          handle_reasoning_stop(event, state: current_state, yielder: yielder) if current_state[:reasoning]
         when Aws::BedrockRuntime::Types::MessageStopEvent
           stream_completed = true
           yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
@@ -339,6 +383,29 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     )
   end
 
+  # A reasoning block streams its text in pieces, then its signature (or its
+  # redacted bytes) in a delta of its own.
+  #--
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_reasoning_delta(event, state:, yielder:)
+    typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
+    delta = typed_event.delta.reasoning_content
+    reasoning = state[:reasoning] ||= { text: +"" }
+
+    reasoning[:text] << delta.text if delta.text
+    reasoning[:signature] = delta.signature if delta.signature
+    (reasoning[:redacted_content] ||= +"") << delta.redacted_content if delta.redacted_content
+
+    yielder << Riffer::StreamEvents::ReasoningDelta.new(delta.text) unless delta.text.nil? || delta.text.empty?
+  end
+
+  #--
+  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
+  def handle_reasoning_stop(_event, state:, yielder:)
+    yielder << Riffer::StreamEvents::ReasoningDone.new(build_reasoning_part(**state[:reasoning]))
+    state[:reasoning] = nil
+  end
+
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_text_delta(_event, state:, yielder:)
@@ -396,7 +463,9 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   #--
   #: (Riffer::Messages::Assistant) -> Hash[Symbol, untyped]
   def convert_assistant_to_bedrock_format(message)
-    content = [] #: Array[Hash[Symbol, untyped]]
+    content = message.reasoning.filter_map do |part|
+      convert_reasoning_part_to_bedrock_format(part) if part.format == REASONING_FORMAT
+    end
     content << { text: message.content } if message.content && !message.content.empty?
 
     message.tool_calls.each do |tc|
@@ -410,6 +479,15 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     end
 
     { role: "assistant", content: content }
+  end
+
+  #--
+  #: (Riffer::Messages::Assistant::ReasoningPart) -> Hash[Symbol, untyped]
+  def convert_reasoning_part_to_bedrock_format(part)
+    data = part.data
+    return { reasoning_content: { redacted_content: Base64.strict_decode64(data) } } if data
+
+    { reasoning_content: { reasoning_text: { text: part.text, signature: part.signature }.compact } }
   end
 
   #--
