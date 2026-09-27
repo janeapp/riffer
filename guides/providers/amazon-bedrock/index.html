@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.48.0</span>
+            <span class="version">v0.49.0</span>
           </div>
         </nav>
       </div>
@@ -194,6 +194,7 @@
               <li><a href="#example">Example</a></li>
               <li><a href="#streaming">Streaming</a></li>
               <li><a href="#tool-calling">Tool Calling</a></li>
+              <li><a href="#reasoning-models">Reasoning Models</a></li>
               <li><a href="#file-support">File Support</a></li>
               <li><a href="#message-format">Message Format</a></li>
               <li><a href="#direct-provider-usage">Direct Provider Usage</a></li>
@@ -357,6 +358,36 @@
   <span class="n">uses_tools</span> <span class="p">[</span><span class="no">S3ListTool</span><span class="p">]</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h2 id="reasoning-models">Reasoning Models</h2>
+
+<p>Claude models on Bedrock can think before they answer. Enable extended thinking through <code>additional_model_request_fields</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ThinkAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
+  <span class="n">model</span> <span class="s1">'amazon_bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0'</span>
+  <span class="n">model_options</span> <span class="ss">inference_config: </span><span class="p">{</span><span class="ss">max_tokens: </span><span class="mi">2048</span><span class="p">},</span>
+    <span class="ss">additional_model_request_fields: </span><span class="p">{</span><span class="ss">thinking: </span><span class="p">{</span><span class="ss">type: </span><span class="s2">"enabled"</span><span class="p">,</span> <span class="ss">budget_tokens: </span><span class="mi">1024</span><span class="p">}}</span>
+<span class="k">end</span>
+
+<span class="no">ThinkAgent</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">stream</span><span class="p">(</span><span class="s1">'What is 2+2? Think step by step.'</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+  <span class="k">case</span> <span class="n">event</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">ReasoningDelta</span>
+    <span class="nb">print</span> <span class="s2">"[reasoning] </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">content</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">when</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">StreamEvents</span><span class="o">::</span><span class="no">TextDelta</span>
+    <span class="nb">print</span> <span class="n">event</span><span class="p">.</span><span class="nf">content</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The reasoning is kept on the assistant message as <a href="/guides/messages/#reasoning">reasoning parts</a>, whether you call <code>generate</code> or <code>stream</code>. Read it with <code>response.reasoning</code>, or as plain text with <code>reasoning_text</code> on the message. Bedrock sometimes redacts part of Claude’s reasoning. Those parts are stored and sent back like any other, but they have no readable text, so <code>reasoning_text</code> leaves them out.</p>
+
+<h3 id="reasoning-replay">Reasoning Replay</h3>
+
+<p>Riffer sends the reasoning back to Bedrock on every later turn. How much of it Claude uses depends on the model; some only use the reasoning from the current tool-calling turn. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier reasoning back to carry on after a tool result. You don’t have to do anything; it happens as long as the assistant messages stay in the history.</p>
+
+<p>If you persist sessions, keep the <code>reasoning</code> key when you store messages (see <a href="/guides/messages/#reasoning">Messages — Reasoning</a>). If you drop it, later turns lose the model’s earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.</p>
+
+<p>Only reasoning that Bedrock produced is sent back to Bedrock. A conversation that switches providers midway still works: reasoning from other providers is kept on the messages but left out of Bedrock requests.</p>
 
 <h2 id="file-support">File Support</h2>
 

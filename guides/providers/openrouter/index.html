@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.48.0</span>
+            <span class="version">v0.49.0</span>
           </div>
         </nav>
       </div>
@@ -364,7 +364,7 @@
 
 <h2 id="reasoning-models">Reasoning Models</h2>
 
-<p>Reasoning models surface their thought process via OpenRouter’s normalised <code>reasoning</code> field. Enable it with the <code>reasoning</code> option:</p>
+<p>Reasoning models surface their thought process via OpenRouter’s normalised <code>reasoning_details</code> field. Enable it with the <code>reasoning</code> option:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ThinkAgent</span> <span class="o">&lt;</span> <span class="no">Riffer</span><span class="o">::</span><span class="no">Agent</span>
   <span class="n">model</span> <span class="s1">'openrouter/deepseek/deepseek-r1'</span>
@@ -380,6 +380,49 @@
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<h3 id="reasoning-replay">Reasoning Replay</h3>
+
+<p>Each entry in OpenRouter’s <code>reasoning_details</code> becomes a <a href="/guides/messages/#reasoning"><code>ReasoningPart</code></a> on the assistant message, on both <code>generate_text</code> and <code>stream_text</code>, with nothing dropped:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><code>reasoning_details</code> field</th>
+      <th><code>ReasoningPart</code> field</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>type</code></td>
+      <td><code>type</code>: <code>reasoning.text</code> → <code>:text</code>, <code>reasoning.summary</code> → <code>:summary</code>, <code>reasoning.encrypted</code> → <code>:encrypted</code></td>
+    </tr>
+    <tr>
+      <td><code>text</code> / <code>summary</code></td>
+      <td><code>text</code></td>
+    </tr>
+    <tr>
+      <td><code>data</code></td>
+      <td><code>data</code></td>
+    </tr>
+    <tr>
+      <td><code>signature</code></td>
+      <td><code>signature</code></td>
+    </tr>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>id</code></td>
+    </tr>
+    <tr>
+      <td><code>format</code></td>
+      <td><code>format</code> (e.g. <code>"anthropic-claude-v1"</code>, <code>"openai-responses-v1"</code>, <code>"unknown"</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>When streaming, OpenRouter splits one block into many fragments that share an <code>index</code>. The provider concatenates their <code>text</code>, <code>summary</code>, and <code>data</code> and keeps the <code>signature</code>, <code>id</code>, and <code>format</code> that arrive along the way, so each block ends as one <code>ReasoningDone</code> part. Each non-empty <code>text</code> or <code>summary</code> fragment is also yielded as a <code>ReasoningDelta</code>. Detail types riffer doesn’t know are skipped.</p>
+
+<p>On the next request, the assistant message’s parts go back as <code>reasoning_details</code> in their original order and unchanged. This is what lets Anthropic and Gemini models continue signed thinking across a tool-call loop, and lets OpenAI models reuse their encrypted reasoning. Following the <a href="/guides/messages/#reasoning">replay contract</a>, only parts whose <code>format</code> is one OpenRouter documents are sent: <code>unknown</code>, <code>openai-responses-v1</code>, <code>azure-openai-responses-v1</code>, <code>bedrock-openai-responses-v1</code>, <code>bedrock-xai-responses-v1</code>, <code>xai-responses-v1</code>, <code>meta-responses-v1</code>, <code>anthropic-claude-v1</code>, and <code>google-gemini-v1</code> (listed in <code>Riffer::Providers::OpenRouter::REASONING_FORMATS</code>). Parts with no <code>format</code>, or one produced by another adapter such as <code>mock-v1</code>, are skipped. The <code>index</code> is not stored, since the parts’ order already carries it.</p>
 
 <h2 id="routing--fallbacks">Routing &amp; Fallbacks</h2>
 

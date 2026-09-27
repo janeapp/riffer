@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.48.0</span>
+            <span class="version">v0.49.0</span>
           </div>
         </nav>
       </div>
@@ -192,7 +192,7 @@
               <li><a href="#json-schema-generation">JSON Schema Generation</a></li>
               <li><a href="#registering-tools-with-agents">Registering Tools with Agents</a></li>
               <li><a href="#error-handling">Error Handling</a></li>
-              <li><a href="#tool-runtime-experimental">Tool Runtime (Experimental)</a></li>
+              <li><a href="#tool-runtime">Tool Runtime</a></li>
             </ul>
           </nav>
           
@@ -330,11 +330,7 @@
 
 <p>The LLM receives the error message and can decide how to respond (retry, apologize, ask for different input, etc.).</p>
 
-<h2 id="tool-runtime-experimental">Tool Runtime (Experimental)</h2>
-
-<blockquote>
-  <p><strong>Warning:</strong> This feature is experimental and may be removed or changed without warning in a future release.</p>
-</blockquote>
+<h2 id="tool-runtime">Tool Runtime</h2>
 
 <p>By default, tool calls are executed sequentially in the current thread using <code>Riffer::Tools::Runtime::Inline</code>. You can change how tool calls are executed by configuring a different tool runtime.</p>
 

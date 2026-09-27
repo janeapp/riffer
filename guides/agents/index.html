@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.48.0</span>
+            <span class="version">v0.49.0</span>
           </div>
         </nav>
       </div>
@@ -430,11 +430,7 @@
 
 <p>Structured output is not compatible with streaming — calling <code>stream</code> on an agent with structured output configured raises <code>Riffer::ArgumentError</code>.</p>
 
-<h3 id="tool_runtime-experimental">tool_runtime (Experimental)</h3>
-
-<blockquote>
-  <p><strong>Warning:</strong> This feature is experimental and may be removed or changed without warning in a future release.</p>
-</blockquote>
+<h3 id="tool_runtime">tool_runtime</h3>
 
 <p>Configures how tool calls are executed. Defaults to sequential (inline) execution:</p>
 
@@ -445,7 +441,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Accepts a <code>Riffer::Tools::Runtime</code> subclass, a <code>Riffer::Tools::Runtime</code> instance, or a <code>Proc</code>. When unset, reads <code>Riffer.config.tool_runtime</code> at the point of use, so an agent that declares none follows a later change to the global. See <a href="/guides/advanced-tools/#tool-runtime-experimental">Tools — Tool Runtime</a> for details.</p>
+<p>Accepts a <code>Riffer::Tools::Runtime</code> subclass, a <code>Riffer::Tools::Runtime</code> instance, or a <code>Proc</code>. When unset, reads <code>Riffer.config.tool_runtime</code> at the point of use, so an agent that declares none follows a later change to the global. See <a href="/guides/advanced-tools/#tool-runtime">Tools — Tool Runtime</a> for details.</p>
 
 <h3 id="guardrail">guardrail</h3>
 
@@ -706,7 +702,7 @@
     <tr>
       <td>Run tools concurrently</td>
       <td>Tool Runtime</td>
-      <td><a href="/guides/advanced-tools/#tool-runtime-experimental">Advanced Tools</a></td>
+      <td><a href="/guides/advanced-tools/#tool-runtime">Advanced Tools</a></td>
     </tr>
     <tr>
       <td>Stream responses in real time</td>

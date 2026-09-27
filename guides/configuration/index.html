@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.48.0</span>
+            <span class="version">v0.49.0</span>
           </div>
         </nav>
       </div>
@@ -214,6 +214,8 @@
 
 <p>Providers take no constructor arguments — these settings are the only way to give a provider its credentials.</p>
 
+<p>Credential and endpoint settings — <code>amazon_bedrock.api_token</code> / <code>.region</code>, <code>anthropic.api_key</code>, <code>azure_openai.api_key</code> / <code>.endpoint</code>, <code>gemini.api_key</code>, <code>openai.api_key</code> / <code>.base_url</code>, <code>openrouter.api_key</code> — accept a <code>String</code> or <code>nil</code> and raise <code>Riffer::ArgumentError</code> naming the setting for anything else. An empty string is accepted; Amazon Bedrock treats it as unset. <code>client</code> is not validated (see <a href="#provider-clients">Provider Clients</a>).</p>
+
 <h2 id="accessing-configuration">Accessing Configuration</h2>
 
 <p>Access the current configuration via <code>Riffer.config</code>:</p>
@@ -339,11 +341,11 @@
   <tbody>
     <tr>
       <td><code>credentials</code></td>
-      <td>Optional <code>Proc</code> for per-run <code>tools/call</code> HTTP headers: <code>-&gt;(manifest:, matched_tags:, context:) { Hash or nil }</code></td>
+      <td>Optional callable for per-run <code>tools/call</code> HTTP headers: <code>-&gt;(manifest:, matched_tags:, context:) { Hash or nil }</code>. Raises <code>Riffer::ArgumentError</code> unless <code>nil</code> or it responds to <code>#call</code>.</td>
     </tr>
     <tr>
       <td><code>discovery_runner</code></td>
-      <td><code>Riffer::Runner</code> instance for tool discovery (default <code>Runner::Sequential.new</code>)</td>
+      <td><code>Riffer::Runner</code> instance for tool discovery (default <code>Runner::Sequential.new</code>). Raises <code>Riffer::ArgumentError</code> for anything that isn’t a <code>Riffer::Runner</code> instance.</td>
     </tr>
   </tbody>
 </table>
@@ -357,11 +359,16 @@
 
 <p>See <a href="/guides/mcp/">MCP</a> for registration, tags, and agent <code>use_mcp</code>.</p>
 
-<h3 id="tool-runtime-experimental">Tool Runtime (Experimental)</h3>
+<h3 id="evals">Evals</h3>
 
-<blockquote>
-  <p><strong>Warning:</strong> This feature is experimental and may be removed or changed without warning in a future release.</p>
-</blockquote>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">evals</span><span class="p">.</span><span class="nf">judge_model</span> <span class="o">=</span> <span class="s2">"anthropic/claude-opus-4-5-20251101"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code>judge_model</code> is the default model evaluators use as the judge when they don’t set their own. It must be a <code>provider/model</code> string or <code>nil</code> (the default); anything else raises <code>Riffer::ArgumentError</code>. See <a href="/guides/evals/">Evals</a>.</p>
+
+<h3 id="tool-runtime">Tool Runtime</h3>
 
 <p>Configure the default tool runtime for all agents:</p>
 
@@ -393,7 +400,7 @@
   </tbody>
 </table>
 
-<p>Per-agent configuration overrides this global default. See <a href="/guides/advanced-tools/#tool-runtime-experimental">Advanced Tool Configuration — Tool Runtime</a> for details.</p>
+<p>Per-agent configuration overrides this global default. See <a href="/guides/advanced-tools/#tool-runtime">Advanced Tool Configuration — Tool Runtime</a> for details.</p>
 
 <h3 id="skills">Skills</h3>
 
@@ -450,7 +457,7 @@
     </tr>
     <tr>
       <td><code>backend</code></td>
-      <td>The backend riffer routes spans through. Assign <code>Riffer::Tracing::Otel.build</code> (pass <code>provider:</code> to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (<code>in_span</code> / <code>current_context</code> / <code>with_context</code>) to route into a non-OTEL system (e.g. Datadog APM). Defaults to <code>nil</code> — a no-op. Raises <code>Riffer::ArgumentError</code> unless the value is <code>nil</code> or responds to <code>in_span</code>. See <a href="/guides/tracing/#routing-to-a-non-opentelemetry-backend">Tracing → Routing to a non-OpenTelemetry backend</a>.</td>
+      <td>The backend riffer routes spans through. Assign <code>Riffer::Tracing::Otel.build</code> (pass <code>provider:</code> to override the global tracer provider — e.g. an in-memory provider in tests), or any object satisfying the duck-typed contract (<code>in_span</code> / <code>current_context</code> / <code>with_context</code>) to route into a non-OTEL system (e.g. Datadog APM). Defaults to <code>nil</code> — a no-op. Raises <code>Riffer::ArgumentError</code> unless the value is <code>nil</code> or responds to all of <code>in_span</code>, <code>current_context</code>, and <code>with_context</code>. See <a href="/guides/tracing/#routing-to-a-non-opentelemetry-backend">Tracing → Routing to a non-OpenTelemetry backend</a>.</td>
     </tr>
   </tbody>
 </table>
@@ -606,30 +613,6 @@
 <p>When constructing a <code>Riffer::Agent::Session</code> from persisted history with the strategy enabled, supply ids on every seeded message yourself — Riffer never fabricates identifiers for pre-existing history. Messages built via the <code>Riffer::Messages::*</code> constructors auto-generate ids per the strategy, so as long as those constructors are used at message-creation time, ids flow through.</p>
 
 <p>See <a href="/guides/messages/#ids">Messages — IDs</a> for more details.</p>
-
-<h3 id="experimental-history-healing">Experimental: History Healing</h3>
-
-<blockquote>
-  <p><strong>Warning:</strong> This feature is experimental and may change without notice.</p>
-</blockquote>
-
-<p>Opts the agent into keeping the <code>tool_use</code> ↔ <code>tool_result</code> invariant intact on its own:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Riffer</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="p">.</span><span class="nf">experimental_history_healing</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="k">end</span>
-</code></pre></div></div>
-
-<p>When enabled, two repairs run automatically:</p>
-
-<ol>
-  <li><strong>Seeded session.</strong> Passing a pre-populated <code>Riffer::Agent::Session</code> to <code>Agent.new(session: ...)</code> silently drops orphaned <code>tool_use</code> exchanges (assistant <code>tool_call</code> with no matching <code>Tool</code> result) and parentless <code>Tool</code> messages before the next inference call. Pending tool calls on the <strong>resume boundary</strong> — the last assistant whose tail is purely <code>Tool</code> results (or none) — are preserved; <code>execute_pending_tool_calls</code> runs them on the next LLM call.</li>
-  <li><strong>Interrupts.</strong> Any orphan <code>tool_use</code> left when the loop is interrupted (caller-issued <code>interrupt!</code> or the built-in <code>INTERRUPT_MAX_STEPS</code> ceiling) is filled with a placeholder <code>Riffer::Messages::Tool</code> carrying <code>error_type: :interrupted</code> and the content <code>"Tool call interrupted before completion."</code>. Filled <code>call_id</code>s are exposed on <code>Riffer::Agent::Response#healed_tool_call_ids</code> (and <code>Riffer::StreamEvents::Interrupt#healed_tool_call_ids</code> when streaming).</li>
-</ol>
-
-<p>Defaults to <code>false</code> — pre-healing behavior. Seeded sessions pass through untouched, and orphan <code>tool_use</code> left by an interrupt remain in history for <code>execute_pending_tool_calls</code> to re-run on the next call.</p>
-
-<p>There is no per-call override and no customizable placeholder. Callers needing finer control can call <code>agent.session.update(tool_call_id:, ...)</code> after the interrupt returns to upgrade a placeholder in place. See <a href="/guides/agent-lifecycle/#healing-pending-tool-results-on-interrupt-experimental">Agent Lifecycle — Healing pending tool results on interrupt</a>.</p>
 
 <h2 id="agent-level-configuration">Agent-Level Configuration</h2>
 

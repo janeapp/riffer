@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.48.0</span>
+            <span class="version">v0.49.0</span>
           </div>
         </nav>
       </div>
@@ -257,7 +257,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The backend is duck-typed — any object satisfying the contract works, and the setter validates only that it responds to <code>in_span</code> (otherwise it raises <code>Riffer::ArgumentError</code>). It must respond to:</p>
+<p>The backend is duck-typed — any object satisfying the contract works, and the setter validates that it responds to <code>in_span</code>, <code>current_context</code>, and <code>with_context</code> (otherwise it raises <code>Riffer::ArgumentError</code>). It must respond to:</p>
 
 <ul>
   <li><code>in_span(name, attributes:, kind:) { |span| … }</code> — open a span around the block, yield a span object, and return the block’s value.</li>
