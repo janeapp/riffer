@@ -303,8 +303,8 @@ end
 
 When an agent uses tools during streaming, the flow is:
 
-1. `TextDelta` events stream in, and if tool calls are present, `ToolCallDelta` events, then `ToolCallDone`
-2. `TextDone` closes the response's text
+1. `TextDelta`, `ToolCallDelta` and `ToolCallDone` events stream in, in whatever order the model produces them. Text can come before, between or after tool calls.
+2. If the response contained any text, one `TextDone` follows with the full text. A response that only calls tools has no `TextDone`.
 3. Agent executes tools internally
 4. Agent sends results back to LLM
 5. More text events stream in
