@@ -66,6 +66,26 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def extract_tool_calls: (untyped) -> Array[Riffer::Messages::Assistant::ToolCall]
 
   # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def extract_reasoning: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # The trailing +:encrypted+ part is always present, even without a payload, so the item's id
+  # survives for replay: with +store+ on, OpenAI resolves the item from the id alone.
+  # --
+  # : (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+  def build_reasoning_parts: (untyped) -> Array[Riffer::Messages::Assistant::ReasoningPart]
+
+  # --
+  # : (type: Symbol, id: String, ?text: String?, ?data: String?) -> Riffer::Messages::Assistant::ReasoningPart
+  def build_reasoning_part: (type: Symbol, id: String, ?text: String?, ?data: String?) -> Riffer::Messages::Assistant::ReasoningPart
+
+  # Distinct from OpenRouter's +openai-responses-v1+: reasoning relayed through OpenRouter is
+  # encrypted and stored under OpenRouter's organization, so neither side can replay the other's.
+  # --
+  # : () -> String
+  def reasoning_format: () -> String
+
+  # --
   # : (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
 
@@ -84,10 +104,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_reasoning_summary_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-
-  # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_reasoning_summary_text_done: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
@@ -110,12 +126,24 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   def handle_output_item_done_web_search: (untyped, yielder: Riffer::Providers::_EventSink) -> void
 
   # --
+  # : (untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_output_item_done_reasoning: (untyped, yielder: Riffer::Providers::_EventSink) -> void
+
+  # --
   # : (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
   def convert_messages_to_openai_format: (Array[Riffer::Messages::Base]) -> Array[Hash[Symbol, untyped]]
 
   # --
-  # : (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
-  def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> (Hash[Symbol, untyped] | Array[Hash[Symbol, untyped]])
+  # : (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
+  def convert_assistant_to_openai_format: (Riffer::Messages::Assistant) -> Array[Hash[Symbol, untyped]]
+
+  # --
+  # : (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Array[Hash[Symbol, untyped]]
+  def convert_reasoning_to_openai_format: (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Array[Hash[Symbol, untyped]]
+
+  # --
+  # : (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Hash[Symbol, untyped]
+  def convert_reasoning_item_to_openai_format: (Array[Riffer::Messages::Assistant::ReasoningPart]) -> Hash[Symbol, untyped]
 
   # --
   # : (Riffer::Messages::User::FilePart) -> Hash[Symbol, untyped]

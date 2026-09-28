@@ -13,6 +13,14 @@ describe Riffer::Providers::OpenAI do
     Riffer.config.openai.client = nil
   end
 
+  def install_stream_double(provider, stream_double)
+    responses_double = Object.new
+    responses_double.define_singleton_method(:stream) { |_params| stream_double }
+    client_double = Object.new
+    client_double.define_singleton_method(:responses) { responses_double }
+    provider.instance_variable_set(:@client, client_double)
+  end
+
   describe ".semconv_provider_name" do
     it "returns the semconv well-known value" do
       expect(Riffer::Providers::OpenAI.semconv_provider_name).must_equal "openai"
@@ -751,9 +759,9 @@ describe Riffer::Providers::OpenAI do
           reasoning_done = events.find { |e| e.is_a?(Riffer::StreamEvents::ReasoningDone) }
 
           expect(reasoning_done).wont_be_nil
-          expect(reasoning_done.part.type).must_equal :text
+          expect(reasoning_done.part.type).must_equal :summary
           expect(reasoning_done.part.text).wont_be_empty
-          expect(reasoning_done.part.format).must_be_nil
+          expect(reasoning_done.part.format).must_equal "openai-v1"
         end
       end
 
@@ -767,6 +775,207 @@ describe Riffer::Providers::OpenAI do
           first_text_index = events.index { |e| e.is_a?(Riffer::StreamEvents::TextDelta) }
 
           expect(first_reasoning_index).must_be :<, first_text_index if first_reasoning_index && first_text_index
+        end
+      end
+    end
+  end
+
+  describe "reasoning" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    # Instantiating triggers depends_on "openai", which makes the OpenAI::Models constants below available.
+    before { provider }
+
+    def reasoning_item(id:, summary: [], content: nil, encrypted_content: nil)
+      OpenAI::Models::Responses::ResponseReasoningItem.new(
+        id: id,
+        summary: summary.map { |text| OpenAI::Models::Responses::ResponseReasoningItem::Summary.new(text: text) },
+        **{
+          content: content&.map { |text| OpenAI::Models::Responses::ResponseReasoningItem::Content.new(text: text) },
+          encrypted_content: encrypted_content,
+        }.compact,
+      )
+    end
+
+    def response_with(output)
+      OpenAI::Models::Responses::Response.new(output: output)
+    end
+
+    def part(**attributes)
+      Riffer::Messages::Assistant::ReasoningPart.new(**attributes)
+    end
+
+    def convert(reasoning, content: "42", tool_calls: [])
+      assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
+      provider.send(:convert_assistant_to_openai_format, assistant)
+    end
+
+    describe "capturing reasoning items" do
+      it "maps each summary, content entry, and the encrypted payload onto parts sharing the item id" do
+        response = response_with(
+          [reasoning_item(id: "rs_1", summary: %w[One Two], content: ["Think"], encrypted_content: "b3Bh")],
+        )
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :summary, text: "One", id: "rs_1", format: "openai-v1" },
+          { type: :summary, text: "Two", id: "rs_1", format: "openai-v1" },
+          { type: :text, text: "Think", id: "rs_1", format: "openai-v1" },
+          { type: :encrypted, data: "b3Bh", id: "rs_1", format: "openai-v1" },
+        ]
+      end
+
+      it "keeps an encrypted part carrying the id when the item has no summary or payload" do
+        response = response_with([reasoning_item(id: "rs_1")])
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :encrypted, id: "rs_1", format: "openai-v1" },
+        ]
+      end
+
+      it "returns no parts when the response carries no reasoning item" do
+        expect(provider.send(:extract_reasoning, response_with([]))).must_equal []
+      end
+    end
+
+    describe "streaming reasoning items" do
+      let(:event_struct) { Struct.new(:type, :item, :response) }
+
+      def stream_events(events)
+        events += [event_struct.new(type: :"response.completed")]
+        stream_double = Object.new
+        stream_double.define_singleton_method(:each) { |&block| events.each(&block) }
+        stream_double.define_singleton_method(:close) {}
+        install_stream_double(provider, stream_double)
+        provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+      end
+
+      it "yields one ReasoningDone per part when a reasoning item completes, in item order" do
+        events = stream_events(
+          [
+            event_struct.new(type: :"response.output_item.done", item: reasoning_item(id: "rs_1", summary: ["Sum"])),
+            event_struct.new(type: :"response.output_item.done",
+                             item: reasoning_item(id: "rs_2", encrypted_content: "b3Bh"),),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :summary, text: "Sum", id: "rs_1", format: "openai-v1" },
+          { type: :encrypted, id: "rs_1", format: "openai-v1" },
+          { type: :encrypted, data: "b3Bh", id: "rs_2", format: "openai-v1" },
+        ]
+      end
+    end
+
+    describe "replaying reasoning" do
+      it "sends each run of parts sharing an id back as one reasoning item ahead of the message" do
+        reasoning = [
+          part(type: :summary, text: "One", id: "rs_1", format: "openai-v1"),
+          part(type: :summary, text: "Two", id: "rs_1", format: "openai-v1"),
+          part(type: :encrypted, data: "b3Bh", id: "rs_1", format: "openai-v1"),
+          part(type: :text, text: "Think", id: "rs_2", format: "openai-v1"),
+          part(type: :encrypted, id: "rs_2", format: "openai-v1"),
+        ]
+
+        expect(convert(reasoning)).must_equal [
+          {
+            type: "reasoning",
+            id: "rs_1",
+            summary: [{ type: "summary_text", text: "One" }, { type: "summary_text", text: "Two" }],
+            encrypted_content: "b3Bh",
+          },
+          { type: "reasoning", id: "rs_2", summary: [], content: [{ type: "reasoning_text", text: "Think" }] },
+          { role: "assistant", content: "42" },
+        ]
+      end
+
+      it "places reasoning ahead of the function calls it produced" do
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "call_1", name: "get_weather", arguments: "{}")
+
+        items = convert([part(type: :encrypted, id: "rs_1", format: "openai-v1")], content: "", tool_calls: [tool_call])
+
+        expect(items.map { |item| item[:type] }).must_equal %w[reasoning function_call]
+      end
+
+      it "skips parts with no format or another adapter's format" do
+        reasoning = [
+          part(type: :text, text: "legacy"),
+          part(type: :encrypted, data: "b3Bh", id: "rs_x", format: "openai-responses-v1"),
+          part(type: :encrypted, data: "b3Bh", id: "rs_y", format: "azure-openai-v1"),
+        ]
+
+        expect(convert(reasoning)).must_equal [{ role: "assistant", content: "42" }]
+      end
+    end
+
+    describe "with reasoning enabled" do
+      let(:reasoning_options) { { model: "gpt-5-mini", reasoning: "medium" } }
+
+      it "captures reasoning items from #generate_text" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/reasoning/_generate_text/captures_reasoning") do
+          result = provider.generate_text(
+            prompt: "How many prime numbers are there between 1 and 50? Reply with just the number.",
+            **reasoning_options,
+          )
+
+          expect(result.reasoning.map(&:format).uniq).must_equal ["openai-v1"]
+          expect(result.reasoning.map(&:type)).must_equal %i[summary encrypted]
+          expect(result.reasoning.first.text).wont_be_empty
+          expect(result.reasoning.map(&:id).uniq.length).must_equal 1
+          expect(result.reasoning.last.data).wont_be_nil
+        end
+      end
+
+      it "sends turn one's streamed reasoning back and gets an answer" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/reasoning/_stream_text/replays_reasoning") do
+          question = Riffer::Messages::User.new("What is 17 times 23? Reply with just the number.")
+
+          first = provider.stream_text(messages: [question], **reasoning_options).to_a
+          parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
+          answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
+
+          expect(parts).wont_be_empty
+          expect(parts.last.type).must_equal :encrypted
+
+          history = [
+            question,
+            Riffer::Messages::Assistant.new(answer, reasoning: parts),
+            Riffer::Messages::User.new("Now add 10. Reply with just the number."),
+          ]
+          second = provider.stream_text(messages: history, **reasoning_options).to_a
+          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+          expect(text_done.content).must_include "401"
+        end
+      end
+
+      it "replays reasoning across a tool call round trip" do
+        VCR.use_cassette("Riffer_Providers_OpenAI/reasoning/_generate_text/replays_reasoning_with_tool_result") do
+          weather_tool = stub_tool("GetWeather") do
+            description "Get the current weather for a city"
+            params do
+              required :city, String, description: "The city name"
+            end
+          end
+          options = reasoning_options.merge(tools: [weather_tool])
+          question = Riffer::Messages::User.new("What is the weather in Toronto?")
+
+          first = provider.generate_text(messages: [question], **options)
+          tool_call = first.tool_calls.first
+
+          expect(first.reasoning).wont_be_empty
+          expect(tool_call.name).must_equal "get_weather"
+
+          history = [
+            question,
+            first,
+            Riffer::Messages::Tool.new(
+              "15 degrees Celsius and sunny.",
+              tool_call_id: tool_call.call_id,
+              name: tool_call.name,
+            ),
+          ]
+          second = provider.generate_text(messages: history, **options)
+
+          expect(second.content).must_include "15"
         end
       end
     end
@@ -1453,14 +1662,6 @@ describe Riffer::Providers::OpenAI do
 
   describe "#stream_text resource cleanup" do
     let(:provider) { Riffer::Providers::OpenAI.new }
-
-    def install_stream_double(provider, stream_double)
-      responses_double = Object.new
-      responses_double.define_singleton_method(:stream) { |_params| stream_double }
-      client_double = Object.new
-      client_double.define_singleton_method(:responses) { responses_double }
-      provider.instance_variable_set(:@client, client_double)
-    end
 
     it "calls stream.close when iteration raises mid-stream" do
       close_count = 0
