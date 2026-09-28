@@ -899,12 +899,8 @@ describe Riffer::Providers::AmazonBedrock do
 
         assert_raises(Riffer::IncompleteStreamError) { enum.each { |e| events << e } }
 
-        expect(events.map(&:class)).must_equal [
-          Riffer::StreamEvents::TextDelta,
-          Riffer::StreamEvents::TextDone,
-        ]
+        expect(events.map(&:class)).must_equal [Riffer::StreamEvents::TextDelta]
         expect(events.first.content).must_equal "Hel"
-        expect(events.last.content).must_equal "Hel"
       end
 
       # aws-sdk-core turns a `:message-type: error` frame into an EventError
@@ -985,6 +981,54 @@ describe Riffer::Providers::AmazonBedrock do
 
         expect(streamed).must_equal deltas
         expect(streamed.join).must_equal expected
+      end
+
+      it "yields one TextDone joining the text blocks on either side of a tool_use block" do
+        provider # force SDK load before constructing the Aws types below
+        types = Aws::BedrockRuntime::Types
+        text_delta = lambda do |index, text|
+          types::ContentBlockDeltaEvent.new(
+            delta: types::ContentBlockDelta.new(text: text),
+            content_block_index: index,
+            event_type: :content_block_delta,
+          )
+        end
+        block_stop = lambda do |index|
+          types::ContentBlockStopEvent.new(content_block_index: index, event_type: :content_block_stop)
+        end
+        tool_use_start = types::ContentBlockStart.new(
+          tool_use: types::ToolUseBlockStart.new(tool_use_id: "id-1", name: "calc"),
+        )
+        stub_stream_events(
+          provider,
+          [
+            text_delta.call(0, "Let me "),
+            text_delta.call(0, "check. "),
+            block_stop.call(0),
+            types::ContentBlockStartEvent.new(
+              start: tool_use_start,
+              content_block_index: 1,
+              event_type: :content_block_start,
+            ),
+            types::ContentBlockDeltaEvent.new(
+              delta: types::ContentBlockDelta.new(tool_use: types::ToolUseBlockDelta.new(input: "{}")),
+              content_block_index: 1,
+              event_type: :content_block_delta,
+            ),
+            block_stop.call(1),
+            text_delta.call(2, "The answer "),
+            text_delta.call(2, "is 42."),
+            block_stop.call(2),
+            types::MessageStopEvent.new(stop_reason: "end_turn", event_type: :message_stop),
+          ],
+        )
+
+        events = provider.stream_text(prompt: "Hi", model: "us.anthropic.claude-haiku-4-5-20251001-v1:0").to_a
+
+        expect(events.grep(Riffer::StreamEvents::ToolCallDone).map(&:call_id)).must_equal ["id-1"]
+        text_done = events.grep(Riffer::StreamEvents::TextDone).map(&:content)
+
+        expect(text_done).must_equal ["Let me check. The answer is 42."]
       end
     end
   end

@@ -770,6 +770,21 @@ describe Riffer::Providers::Anthropic do
         end
       end
 
+      it "keeps the text of every cited text block" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_generate_text/returns_an_Assistant_message") do
+          provider = Riffer::Providers::Anthropic.new
+          result = provider.generate_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          )
+
+          expect(result.content).must_equal "The current stable version is 4.0.1. " \
+                                            "Ruby 4.0.1 was released on January 14, 2026, " \
+                                            "making it the latest version available."
+        end
+      end
+
       it "accepts hash web_search options" do
         VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_generate_text/accepts_hash_web_search_options") do
           provider = Riffer::Providers::Anthropic.new
@@ -810,6 +825,22 @@ describe Riffer::Providers::Anthropic do
           web_search_result = events.find { |e| e.is_a?(Riffer::StreamEvents::WebSearchDone) }
 
           expect(web_search_result).wont_be_nil
+        end
+      end
+
+      it "yields one TextDone carrying the text of every cited text block" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/_stream_text/yields_web_search_result") do
+          provider = Riffer::Providers::Anthropic.new
+          events = provider.stream_text(
+            prompt: "What is the latest Ruby version?",
+            model: "claude-haiku-4-5-20251001",
+            web_search: true,
+          ).to_a
+          streamed = events.grep(Riffer::StreamEvents::TextDelta).map(&:content).join
+
+          expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal [streamed]
+          expect(streamed).must_include "The current stable version of Ruby is 4.0.1."
+          expect(streamed).must_include "making it the latest version available."
         end
       end
 
@@ -855,6 +886,22 @@ describe Riffer::Providers::Anthropic do
           tool_deltas = events.grep(Riffer::StreamEvents::ToolCallDelta)
 
           expect(tool_deltas).must_be_empty
+        end
+      end
+    end
+
+    describe "Agent#stream with web_search" do
+      it "keeps every streamed text block in the session" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/web_search/agent_stream/keeps_every_text_block_in_the_session") do
+          agent = stub_agent("WebSearchAgent") do
+            model "anthropic/claude-sonnet-5"
+            model_options web_search: true
+          end.new
+          events = agent.stream("What is the latest Ruby version?").to_a
+          streamed = events.grep(Riffer::StreamEvents::TextDelta).map(&:content).join
+
+          expect(streamed).wont_be_empty
+          expect(agent.session.messages.last.content).must_equal streamed
         end
       end
     end
@@ -1505,6 +1552,26 @@ describe Riffer::Providers::Anthropic do
         expect(provider.send(:extract_reasoning, build_response([text_block("42")]))).must_equal []
       end
 
+      it "keeps every text block around thinking, tool and web search blocks, in order" do
+        response = build_response(
+          [
+            thinking_block("Think", "sig"),
+            text_block("Searching. "),
+            Anthropic::Models::ServerToolUseBlock.new(
+              id: "srvtoolu_1", name: :web_search, input: { query: "ruby" }, type: :server_tool_use,
+            ),
+            Anthropic::Models::WebSearchToolResultBlock.new(
+              tool_use_id: "srvtoolu_1", content: [], type: :web_search_tool_result,
+            ),
+            text_block("Ruby 4.0.1"),
+            text_block(" is out."),
+            Anthropic::Models::ToolUseBlock.new(id: "toolu_1", name: "get_weather", input: {}, type: :tool_use),
+          ],
+        )
+
+        expect(provider.send(:extract_content, response)).must_equal "Searching. Ruby 4.0.1 is out."
+      end
+
       it "attaches the parts to the assistant message from generate_text" do
         response = build_response([thinking_block("Think", "sig"), text_block("42")])
         messages_double = Object.new
@@ -1569,6 +1636,31 @@ describe Riffer::Providers::Anthropic do
 
         expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.type }).must_equal %i[text encrypted]
         expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal ["42"]
+      end
+
+      it "yields one TextDone joining the text blocks on either side of a thinking block" do
+        events = stream_events(
+          [
+            text_event("Let me "),
+            text_event("check. "),
+            block_stop(0, text_block("Let me check. ")),
+            thinking_event("Hmm"),
+            block_stop(1, thinking_block("Hmm", "sig")),
+            text_event("The answer "),
+            text_event("is 42."),
+            block_stop(2, text_block("The answer is 42.")),
+          ],
+        )
+
+        text_done = events.grep(Riffer::StreamEvents::TextDone).map(&:content)
+
+        expect(text_done).must_equal ["Let me check. The answer is 42."]
+      end
+
+      it "yields no TextDone when the stream carries no text" do
+        events = stream_events([thinking_event("Hmm"), block_stop(0, thinking_block("Hmm", "sig"))])
+
+        expect(events.grep(Riffer::StreamEvents::TextDone)).must_be_empty
       end
     end
 

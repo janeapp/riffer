@@ -122,10 +122,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_text_delta: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-
-  # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --

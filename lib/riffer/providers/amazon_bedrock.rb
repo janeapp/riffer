@@ -298,11 +298,11 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
           handle_content_block_delta_tool_use(event, state: current_state, yielder: yielder) if event.delta&.tool_use
           handle_reasoning_delta(event, state: current_state, yielder: yielder) if event.delta&.reasoning_content
         when Aws::BedrockRuntime::Types::ContentBlockStopEvent
-          handle_content_block_stop_text_delta(event, state: current_state, yielder: yielder) if current_state[:text]
           handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder) if current_state[:tool_call]
           handle_reasoning_stop(event, state: current_state, yielder: yielder) if current_state[:reasoning]
         when Aws::BedrockRuntime::Types::MessageStopEvent
           stream_completed = true
+          yielder << Riffer::StreamEvents::TextDone.new(current_state[:text]) if current_state[:text]
           yield_finish_reason(yielder, build_finish_reason(event.stop_reason))
         when Aws::BedrockRuntime::Types::ConverseStreamMetadataEvent
           handle_metadata_usage(event, state: current_state, yielder: yielder) if event.usage
@@ -362,7 +362,7 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
     typed_event = event #: Aws::BedrockRuntime::Types::ContentBlockDeltaEvent
     delta_text = typed_event.delta.text
     # << avoids += copying the whole buffer per delta (O(n^2)); safe because
-    # nothing reads the pre-append string before block stop clears it.
+    # nothing reads the buffer before message stop hands it to TextDone.
     state[:text] ||= +""
     state[:text] << delta_text
     yielder << Riffer::StreamEvents::TextDelta.new(delta_text)
@@ -404,13 +404,6 @@ class Riffer::Providers::AmazonBedrock < Riffer::Providers::Base
   def handle_reasoning_stop(_event, state:, yielder:)
     yielder << Riffer::StreamEvents::ReasoningDone.new(build_reasoning_part(**state[:reasoning]))
     state[:reasoning] = nil
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_text_delta(_event, state:, yielder:)
-    yielder << Riffer::StreamEvents::TextDone.new(state[:text])
-    state[:text] = nil
   end
 
   #--

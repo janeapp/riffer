@@ -173,16 +173,12 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (untyped) -> String
   def extract_content(response)
     typed_response = response #: OpenAI::Models::Responses::Response
-    text_content = ""
 
-    typed_response.output.each do |item|
-      next unless item.is_a?(::OpenAI::Models::Responses::ResponseOutputMessage)
+    typed_response.output.flat_map do |item|
+      next [] unless item.is_a?(::OpenAI::Models::Responses::ResponseOutputMessage)
 
-      text_block = item.content.find { |c| c.is_a?(::OpenAI::Models::Responses::ResponseOutputText) }
-      text_content = text_block.text if text_block.is_a?(::OpenAI::Models::Responses::ResponseOutputText)
-    end
-
-    text_content
+      item.content.filter_map { |c| c.text if c.is_a?(::OpenAI::Models::Responses::ResponseOutputText) }
+    end.join
   end
 
   #--
@@ -244,6 +240,7 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #: (Hash[Symbol, untyped], Riffer::Providers::_EventSink) -> void
   def execute_stream(params, yielder)
     current_state = {
+      text: nil,
       tool_info: {},
     } #: Hash[Symbol, untyped]
 
@@ -259,8 +256,6 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
           end
         when :"response.output_text.delta"
           handle_output_text_delta(event, state: current_state, yielder: yielder)
-        when :"response.output_text.done"
-          handle_output_text_done(event, state: current_state, yielder: yielder)
         when :"response.reasoning_summary_text.delta"
           handle_reasoning_summary_text_delta(event, state: current_state, yielder: yielder)
         when :"response.function_call_arguments.delta"
@@ -307,13 +302,11 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_output_text_delta(event, state:, yielder:)
+    # << avoids += copying the whole buffer per delta (O(n^2)); safe because
+    # nothing reads the buffer before the response finishes and TextDone takes it.
+    state[:text] ||= +""
+    state[:text] << event.delta
     yielder << Riffer::StreamEvents::TextDelta.new(event.delta)
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_output_text_done(event, state:, yielder:)
-    yielder << Riffer::StreamEvents::TextDone.new(event.text)
   end
 
   #--
@@ -348,6 +341,8 @@ class Riffer::Providers::OpenAI < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_response_finished(event, state:, yielder:)
+    yielder << Riffer::StreamEvents::TextDone.new(state[:text]) if state[:text]
+
     response = event.response
     return unless response
 

@@ -53,7 +53,7 @@ event.content  # => "Hello, how can I help you?"
 event.to_h     # => {role: :assistant, content: "Hello, how can I help you?"}
 ```
 
-Contains the complete final text.
+Fires once per model response, after its last `TextDelta`, and contains the response's full text: every text block the provider returned, concatenated in order, so it always equals the joined `TextDelta` contents. A response that carries no text (for example, only tool calls) emits no `TextDone`.
 
 ### ToolCallDelta
 
@@ -303,8 +303,8 @@ end
 
 When an agent uses tools during streaming, the flow is:
 
-1. Text events stream in (`TextDelta`, `TextDone`)
-2. If tool calls are present: `ToolCallDelta` events, then `ToolCallDone`
+1. `TextDelta` events stream in, and if tool calls are present, `ToolCallDelta` events, then `ToolCallDone`
+2. `TextDone` closes the response's text
 3. Agent executes tools internally
 4. Agent sends results back to LLM
 5. More text events stream in
