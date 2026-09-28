@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.50.0](https://github.com/janeapp/riffer/compare/riffer/v0.49.0...riffer/v0.50.0) (2026-09-28)
+
+
+### Features
+
+* **anthropic:** capture and replay thinking blocks ([#463](https://github.com/janeapp/riffer/issues/463)) ([4a25851](https://github.com/janeapp/riffer/commit/4a25851141cb9b859778e38e58d701cbfe72939f))
+* **open_ai:** capture and replay reasoning items ([#464](https://github.com/janeapp/riffer/issues/464)) ([03d54a9](https://github.com/janeapp/riffer/commit/03d54a90547797a8c56321527fd73ae1d3b9becc))
+
+
+### Bug Fixes
+
+* **providers:** keep every text block in assistant content ([#468](https://github.com/janeapp/riffer/issues/468)) ([db14e7a](https://github.com/janeapp/riffer/commit/db14e7ac35bd764c1efa7eb2c7bea95c8050a984))
+
 ## [0.49.0](https://github.com/janeapp/riffer/compare/riffer/v0.48.0...riffer/v0.49.0) (2026-09-27)
 
 
