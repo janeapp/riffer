@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.49.0</span>
+            <span class="version">v0.50.0</span>
           </div>
         </nav>
       </div>
@@ -246,7 +246,7 @@
 <span class="n">event</span><span class="p">.</span><span class="nf">to_h</span>     <span class="c1"># =&gt; {role: :assistant, content: "Hello, how can I help you?"}</span>
 </code></pre></div></div>
 
-<p>Contains the complete final text.</p>
+<p>Fires once per model response, after its last <code>TextDelta</code>, and contains the response’s full text: every text block the provider returned, concatenated in order, so it always equals the joined <code>TextDelta</code> contents. A response that carries no text (for example, only tool calls) emits no <code>TextDone</code>.</p>
 
 <h3 id="toolcalldelta">ToolCallDelta</h3>
 
@@ -483,8 +483,8 @@
 <p>When an agent uses tools during streaming, the flow is:</p>
 
 <ol>
-  <li>Text events stream in (<code>TextDelta</code>, <code>TextDone</code>)</li>
-  <li>If tool calls are present: <code>ToolCallDelta</code> events, then <code>ToolCallDone</code></li>
+  <li><code>TextDelta</code>, <code>ToolCallDelta</code> and <code>ToolCallDone</code> events stream in, in whatever order the model produces them. Text can come before, between or after tool calls.</li>
+  <li>If the response contained any text, one <code>TextDone</code> follows with the full text. A response that only calls tools has no <code>TextDone</code>.</li>
   <li>Agent executes tools internally</li>
   <li>Agent sends results back to LLM</li>
   <li>More text events stream in</li>

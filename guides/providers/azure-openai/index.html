@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.49.0</span>
+            <span class="version">v0.50.0</span>
           </div>
         </nav>
       </div>
@@ -278,6 +278,8 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span>  <span class="c1"># 'low', 'medium', or 'high'</span>
 </code></pre></div></div>
+
+<p>Reasoning is captured and replayed on later turns exactly as with the <a href="/guides/providers/openai/#reasoning-replay">OpenAI provider</a>, except that parts are tagged <code>format: "azure-openai-v1"</code>. Azure only accepts reasoning produced by the same resource, so parts from the OpenAI provider are never sent to Azure, and Azure’s are never sent to OpenAI.</p>
 
 <h3 id="structured_output">structured_output</h3>
 

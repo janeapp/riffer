@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.49.0</span>
+            <span class="version">v0.50.0</span>
           </div>
         </nav>
       </div>
@@ -273,6 +273,44 @@
 </code></pre></div></div>
 
 <p>When reasoning is enabled, you’ll receive <code>ReasoningDelta</code> and <code>ReasoningDone</code> events during streaming.</p>
+
+<h4 id="reasoning-replay">Reasoning Replay</h4>
+
+<p>Each <code>reasoning</code> item in a Responses API output becomes <a href="/guides/messages/#reasoning">reasoning parts</a> on the assistant message, on both <code>generate_text</code> and <code>stream_text</code>, all tagged <code>format: "openai-v1"</code> and carrying the item’s <code>id</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Reasoning item field</th>
+      <th><code>ReasoningPart</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>each <code>summary</code> entry</td>
+      <td>a <code>:summary</code> part with its <code>text</code></td>
+    </tr>
+    <tr>
+      <td>each <code>content</code> entry</td>
+      <td>a <code>:text</code> part with its <code>text</code></td>
+    </tr>
+    <tr>
+      <td><code>encrypted_content</code></td>
+      <td>one <code>:encrypted</code> part with it as <code>data</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The <code>:encrypted</code> part is always present, even when the response carried no <code>encrypted_content</code>, so the item’s <code>id</code> is kept. When streaming, the parts are yielded as <code>ReasoningDone</code> events once the item completes; summary text still arrives as <code>ReasoningDelta</code> events before that.</p>
+
+<p>On the next request, parts sharing an <code>id</code> go back as one <code>reasoning</code> item, ahead of the assistant’s text and function calls, in their original order and unchanged. This lets reasoning models carry their reasoning across turns and tool-call loops. You don’t have to do anything as long as the assistant messages stay in the history; if you persist sessions, keep the <code>reasoning</code> key when you store them.</p>
+
+<p>With <code>store</code> left on (the API default), OpenAI can resolve a replayed item from its <code>id</code> alone. With <code>model_options store: false</code>, the item can only be replayed from its encrypted payload, so request it explicitly:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model_options</span> <span class="ss">reasoning: </span><span class="s1">'medium'</span><span class="p">,</span> <span class="ss">store: </span><span class="kp">false</span><span class="p">,</span> <span class="ss">include: </span><span class="p">[</span><span class="s1">'reasoning.encrypted_content'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Only parts tagged <code>openai-v1</code> are sent. Reasoning from other providers stays on the messages but is left out, including OpenRouter’s <code>openai-responses-v1</code> parts, which are encrypted under OpenRouter’s organization rather than yours.</p>
 
 <h3 id="web_search">web_search</h3>
 

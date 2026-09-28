@@ -23,7 +23,7 @@
             <a href="/guides/overview/">Guides</a>
             <a href="/api/">API Reference</a>
             <a href="https://github.com/janeapp/riffer">GitHub</a>
-            <span class="version">v0.49.0</span>
+            <span class="version">v0.50.0</span>
           </div>
         </nav>
       </div>
@@ -372,6 +372,16 @@
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>The reasoning is kept on the assistant message as <a href="/guides/messages/#reasoning">reasoning parts</a>, whether you call <code>generate</code> or <code>stream</code>. Read it with <code>response.reasoning</code>, or as plain text with <code>reasoning_text</code> on the message. Each <code>thinking</code> block becomes a <code>:text</code> part carrying its <code>signature</code>, and each <code>redacted_thinking</code> block becomes an <code>:encrypted</code> part whose <code>data</code> is the block’s opaque payload. <code>reasoning_text</code> leaves the redacted parts out, since they have no readable text. Every part is tagged <code>format: "anthropic-messages-v1"</code> (<code>Riffer::Providers::Anthropic::REASONING_FORMAT</code>).</p>
+
+<h3 id="reasoning-replay">Reasoning Replay</h3>
+
+<p>Riffer sends the reasoning back to Anthropic on every later turn, as <code>thinking</code> and <code>redacted_thinking</code> blocks ahead of the message’s text and <code>tool_use</code> blocks, in their original order and unchanged. For tool calls, sending it back is required: when thinking is enabled, Claude needs its earlier thinking blocks back to carry on after a tool result. You don’t have to do anything; it happens as long as the assistant messages stay in the history.</p>
+
+<p>If you persist sessions, keep the <code>reasoning</code> key when you store messages (see <a href="/guides/messages/#reasoning">Messages — Reasoning</a>). If you drop it, later turns lose the model’s earlier reasoning, and a tool-calling turn with thinking enabled may be rejected.</p>
+
+<p>Only reasoning that this provider produced is sent back to Anthropic. A conversation that switches providers midway still works: reasoning from other providers (including OpenRouter’s <code>anthropic-claude-v1</code> parts) is kept on the messages but left out of Anthropic requests.</p>
 
 <h2 id="web-search">Web Search</h2>
 
