@@ -104,10 +104,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   # --
   # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_text: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-
-  # --
-  # : (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_server_tool_use: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
@@ -115,8 +111,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   def handle_content_block_stop_web_search_result: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
 
   # --
-  # : (untyped, accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
-  def handle_message_stop: (untyped, accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
+  # : (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_message_stop: (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
 
   # --
   # : (Array[Riffer::Messages::Base]) -> Hash[Symbol, untyped]

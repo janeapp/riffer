@@ -1660,6 +1660,72 @@ describe Riffer::Providers::OpenAI do
     end
   end
 
+  describe "multiple text parts" do
+    let(:provider) { Riffer::Providers::OpenAI.new }
+    # Instantiating runs depends_on "openai", which loads the SDK constants below.
+    before { provider }
+
+    def output_message(*texts)
+      OpenAI::Models::Responses::ResponseOutputMessage.new(
+        id: "msg_1",
+        content: texts.map do |text|
+          OpenAI::Models::Responses::ResponseOutputText.new(text: text, annotations: [], type: :output_text)
+        end,
+        role: :assistant,
+        status: :completed,
+        type: :message,
+      )
+    end
+
+    def stream_events(events)
+      events += [Struct.new(:type, :response).new(:"response.completed", nil)]
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| events.each { |e| block.call(e) } }
+      stream_double.define_singleton_method(:close) { nil }
+      install_stream_double(provider, stream_double)
+      provider.stream_text(prompt: "Hi", model: "gpt-5-mini").to_a
+    end
+
+    def text_delta(delta)
+      Struct.new(:type, :delta).new(:"response.output_text.delta", delta)
+    end
+
+    def text_done(text)
+      Struct.new(:type, :text).new(:"response.output_text.done", text)
+    end
+
+    it "keeps every output_text part of every message item, in order" do
+      refusal = OpenAI::Models::Responses::ResponseOutputRefusal.new(refusal: "no", type: :refusal)
+      message_with_refusal = output_message("Let me ", "check. ")
+      message_with_refusal.content << refusal
+      tool_call = OpenAI::Models::Responses::ResponseFunctionToolCall.new(
+        arguments: "{}", call_id: "call_1", name: "get_weather", type: :function_call,
+      )
+      response = Struct.new(:output).new([message_with_refusal, tool_call, output_message("The answer is 42.")])
+
+      expect(provider.send(:extract_content, response)).must_equal "Let me check. The answer is 42."
+    end
+
+    it "yields one TextDone joining every streamed output_text part" do
+      events = stream_events(
+        [
+          text_delta("Let me "),
+          text_delta("check. "),
+          text_done("Let me check. "),
+          text_delta("The answer "),
+          text_delta("is 42."),
+          text_done("The answer is 42."),
+        ],
+      )
+
+      expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal ["Let me check. The answer is 42."]
+    end
+
+    it "yields no TextDone when the stream carries no text" do
+      expect(stream_events([]).grep(Riffer::StreamEvents::TextDone)).must_be_empty
+    end
+  end
+
   describe "#stream_text resource cleanup" do
     let(:provider) { Riffer::Providers::OpenAI.new }
 

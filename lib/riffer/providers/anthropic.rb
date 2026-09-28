@@ -158,16 +158,7 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #: (untyped) -> String
   def extract_content(response)
     message = response #: Anthropic::Models::Message
-    content_blocks = message.content
-    return "" if content_blocks.nil? || content_blocks.empty?
-
-    text_content = ""
-
-    content_blocks.each do |block|
-      text_content = block.text if block.is_a?(::Anthropic::Models::TextBlock)
-    end
-
-    text_content
+    (message.content || []).filter_map { |block| block.text if block.is_a?(::Anthropic::Models::TextBlock) }.join
   end
 
   #--
@@ -250,8 +241,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           handle_input_json_event(event, state: current_state, yielder: yielder)
         when ::Anthropic::Helpers::Streaming::ContentBlockStopEvent
           case event.content_block
-          when ::Anthropic::Models::TextBlock
-            handle_content_block_stop_text(event, state: current_state, yielder: yielder) if current_state[:text]
           when ::Anthropic::Models::ToolUseBlock
             handle_content_block_stop_tool_use(event, state: current_state, yielder: yielder)
           when ::Anthropic::Models::ThinkingBlock, ::Anthropic::Models::RedactedThinkingBlock
@@ -263,7 +252,9 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
           end
         when ::Anthropic::Helpers::Streaming::MessageStopEvent
           stream_completed = true
-          handle_message_stop(event, accumulated_message: stream.accumulated_message, yielder: yielder)
+          handle_message_stop(
+            event, state: current_state, accumulated_message: stream.accumulated_message, yielder: yielder,
+          )
         end
       end
     ensure
@@ -300,8 +291,8 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_text_event(event, state:, yielder:)
-    # Mutating append avoids O(n^2) copying per content block; the buffer is
-    # handed to TextDone and cleared on block stop, so no reader sees it mid-append.
+    # Mutating append avoids O(n^2) copying across the response; the buffer
+    # reaches TextDone only at message stop, so no reader sees it mid-append.
     state[:text] ||= +""
     state[:text] << event.text
     yielder << Riffer::StreamEvents::TextDelta.new(event.text)
@@ -348,13 +339,6 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
 
   #--
   #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
-  def handle_content_block_stop_text(_event, state:, yielder:)
-    yielder << Riffer::StreamEvents::TextDone.new(state[:text])
-    state[:text] = nil
-  end
-
-  #--
-  #: (untyped, state: Hash[Symbol, untyped], yielder: Riffer::Providers::_EventSink) -> void
   def handle_content_block_stop_server_tool_use(_event, state:, yielder:)
     return unless state[:web_search_json]
 
@@ -380,8 +364,10 @@ class Riffer::Providers::Anthropic < Riffer::Providers::Base
   end
 
   #--
-  #: (untyped, accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
-  def handle_message_stop(_event, accumulated_message:, yielder:)
+  #: (untyped, state: Hash[Symbol, untyped], accumulated_message: untyped, yielder: Riffer::Providers::_EventSink) -> void
+  def handle_message_stop(_event, state:, accumulated_message:, yielder:)
+    yielder << Riffer::StreamEvents::TextDone.new(state[:text]) if state[:text]
+
     message = accumulated_message #: Anthropic::Models::Message?
     yield_finish_reason(yielder, build_finish_reason(message&.stop_reason))
 
