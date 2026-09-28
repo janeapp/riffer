@@ -1406,7 +1406,290 @@ describe Riffer::Providers::Anthropic do
           expect(reasoning_done).wont_be_nil
           expect(reasoning_done.part.type).must_equal :text
           expect(reasoning_done.part.text).wont_be_empty
-          expect(reasoning_done.part.format).must_be_nil
+          expect(reasoning_done.part.signature).wont_be_nil
+          expect(reasoning_done.part.format).must_equal Riffer::Providers::Anthropic::REASONING_FORMAT
+        end
+      end
+    end
+  end
+
+  describe "reasoning" do
+    let(:model) { "claude-haiku-4-5-20251001" }
+    let(:provider) { Riffer::Providers::Anthropic.new }
+    # Instantiating runs depends_on "anthropic", which loads the SDK constants below.
+    before { provider }
+
+    def thinking_block(thinking, signature)
+      Anthropic::Models::ThinkingBlock.new(thinking: thinking, signature: signature, type: :thinking)
+    end
+
+    def redacted_thinking_block(data)
+      Anthropic::Models::RedactedThinkingBlock.new(data: data, type: :redacted_thinking)
+    end
+
+    def text_block(text)
+      Anthropic::Models::TextBlock.new(text: text, type: :text, citations: nil)
+    end
+
+    def build_response(content_blocks)
+      Anthropic::Models::Message.new(
+        content: content_blocks,
+        usage: Anthropic::Models::Usage.new(input_tokens: 1, output_tokens: 1),
+        stop_reason: :end_turn,
+      )
+    end
+
+    def thinking_event(thinking)
+      Anthropic::Helpers::Streaming::ThinkingEvent.new(type: :thinking, thinking: thinking, snapshot: thinking)
+    end
+
+    def text_event(text)
+      Anthropic::Helpers::Streaming::TextEvent.new(type: :text, text: text, snapshot: text)
+    end
+
+    def block_stop(index, content_block)
+      Anthropic::Helpers::Streaming::ContentBlockStopEvent.new(
+        type: :content_block_stop,
+        index: index,
+        content_block: content_block,
+      )
+    end
+
+    def stream_events(events)
+      events += [Anthropic::Helpers::Streaming::MessageStopEvent.new(type: :message_stop, message: nil)]
+      stream_double = Object.new
+      stream_double.define_singleton_method(:each) { |&block| events.each { |e| block.call(e) } }
+      stream_double.define_singleton_method(:accumulated_message) { nil }
+      stream_double.define_singleton_method(:close) { nil }
+      messages_double = Object.new
+      messages_double.define_singleton_method(:stream) { |**_kwargs| stream_double }
+      client_double = Object.new
+      client_double.define_singleton_method(:messages) { messages_double }
+      provider.instance_variable_set(:@client, client_double)
+      provider.stream_text(prompt: "Hi", model: model).to_a
+    end
+
+    def part(**attributes)
+      Riffer::Messages::Assistant::ReasoningPart.new(**attributes)
+    end
+
+    def convert(reasoning, content: "42", tool_calls: [])
+      assistant = Riffer::Messages::Assistant.new(content, reasoning: reasoning, tool_calls: tool_calls)
+      provider.send(:convert_assistant_to_anthropic_format, assistant)
+    end
+
+    describe "capturing thinking blocks" do
+      it "maps a thinking block onto a text part, keeping its signature" do
+        response = build_response([thinking_block("Think", "sig"), text_block("42")])
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :text, text: "Think", signature: "sig", format: "anthropic-messages-v1" },
+        ]
+      end
+
+      it "maps a redacted_thinking block onto an encrypted part" do
+        response = build_response([redacted_thinking_block("opaque")])
+
+        expect(provider.send(:extract_reasoning, response).map(&:to_h)).must_equal [
+          { type: :encrypted, data: "opaque", format: "anthropic-messages-v1" },
+        ]
+      end
+
+      it "keeps several reasoning blocks in response order" do
+        response = build_response([thinking_block("One", "sig-1"), redacted_thinking_block("opaque")])
+
+        expect(provider.send(:extract_reasoning, response).map(&:type)).must_equal %i[text encrypted]
+      end
+
+      it "returns no parts when the response carries no thinking" do
+        expect(provider.send(:extract_reasoning, build_response([text_block("42")]))).must_equal []
+      end
+
+      it "attaches the parts to the assistant message from generate_text" do
+        response = build_response([thinking_block("Think", "sig"), text_block("42")])
+        messages_double = Object.new
+        messages_double.define_singleton_method(:create) { |**_kwargs| response }
+        client_double = Object.new
+        client_double.define_singleton_method(:messages) { messages_double }
+        provider.instance_variable_set(:@client, client_double)
+
+        result = provider.generate_text(prompt: "Hi", model: model)
+
+        expect(result.content).must_equal "42"
+        expect(result.reasoning.map(&:to_h)).must_equal [
+          { type: :text, text: "Think", signature: "sig", format: "anthropic-messages-v1" },
+        ]
+      end
+    end
+
+    describe "streaming thinking blocks" do
+      it "yields each thinking delta and one signed ReasoningDone per block" do
+        events = stream_events(
+          [
+            thinking_event("Let me "),
+            thinking_event("think."),
+            block_stop(0, thinking_block("Let me think.", "sig")),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta).map(&:content)).must_equal ["Let me ", "think."]
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :text, text: "Let me think.", signature: "sig", format: "anthropic-messages-v1" },
+        ]
+      end
+
+      it "captures a streamed redacted_thinking block as an encrypted part" do
+        events = stream_events([block_stop(0, redacted_thinking_block("opaque"))])
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDelta)).must_be_empty
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :encrypted, data: "opaque", format: "anthropic-messages-v1" },
+        ]
+      end
+
+      it "keeps a signed thinking block whose text is empty" do
+        events = stream_events([block_stop(0, thinking_block("", "sig"))])
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.to_h }).must_equal [
+          { type: :text, text: "", signature: "sig", format: "anthropic-messages-v1" },
+        ]
+      end
+
+      it "emits parts in block order and leaves the following text block intact" do
+        events = stream_events(
+          [
+            thinking_event("First"),
+            block_stop(0, thinking_block("First", "sig-1")),
+            block_stop(1, redacted_thinking_block("opaque")),
+            text_event("4"),
+            text_event("2"),
+            block_stop(2, text_block("42")),
+          ],
+        )
+
+        expect(events.grep(Riffer::StreamEvents::ReasoningDone).map { |e| e.part.type }).must_equal %i[text encrypted]
+        expect(events.grep(Riffer::StreamEvents::TextDone).map(&:content)).must_equal ["42"]
+      end
+    end
+
+    describe "replaying reasoning" do
+      it "sends recognized parts as thinking blocks ahead of text and tool_use, in order" do
+        reasoning = [
+          part(type: :text, text: "Think", signature: "sig", format: "anthropic-messages-v1"),
+          part(type: :encrypted, data: "opaque", format: "anthropic-messages-v1"),
+        ]
+        tool_call = Riffer::Messages::Assistant::ToolCall.new(call_id: "toolu_1", name: "get_weather", arguments: "{}")
+
+        content = convert(reasoning, tool_calls: [tool_call])[:content]
+
+        expect(content[0]).must_equal({ type: "thinking", thinking: "Think", signature: "sig" })
+        expect(content[1]).must_equal({ type: "redacted_thinking", data: "opaque" })
+        expect(content[2]).must_equal({ type: "text", text: "42" })
+        expect(content[3][:type]).must_equal "tool_use"
+      end
+
+      it "replays parts restored from a persisted hash" do
+        captured = provider.send(:extract_reasoning, build_response([thinking_block("Think", "sig")]))
+        persisted = captured.map { |p| JSON.parse(p.to_h.to_json, symbolize_names: true) }
+        restored = persisted.map { |h| Riffer::Messages::Assistant::ReasoningPart.from_hash(h) }
+
+        expect(convert(restored)[:content].first).must_equal({ type: "thinking", thinking: "Think", signature: "sig" })
+      end
+
+      it "skips parts with no format or another adapter's format" do
+        reasoning = [
+          part(type: :text, text: "legacy"),
+          part(type: :text, text: "foreign", signature: "sig", format: "anthropic-claude-v1"),
+          part(type: :text, text: "kept", signature: "sig", format: "anthropic-messages-v1"),
+        ]
+
+        expect(convert(reasoning)[:content]).must_equal [
+          { type: "thinking", thinking: "kept", signature: "sig" },
+          { type: "text", text: "42" },
+        ]
+      end
+
+      it "omits thinking blocks when no part is replayable" do
+        expect(convert([part(type: :text, text: "legacy", format: "mock-v1")])[:content]).must_equal [
+          { type: "text", text: "42" },
+        ]
+      end
+    end
+
+    describe "with thinking enabled" do
+      let(:thinking_options) do
+        { model: model, max_tokens: 2048, thinking: { type: "enabled", budget_tokens: 1024 } }
+      end
+
+      it "captures signed reasoning from #generate_text" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/reasoning/_generate_text/captures_thinking_blocks") do
+          result = provider.generate_text(
+            prompt: "What is 17 times 23? Reply with just the number.",
+            **thinking_options,
+          )
+
+          expect(result.reasoning).wont_be_empty
+          expect(result.reasoning.map(&:format).uniq).must_equal [Riffer::Providers::Anthropic::REASONING_FORMAT]
+          expect(result.reasoning.first.type).must_equal :text
+          expect(result.reasoning.first.text).wont_be_empty
+          expect(result.reasoning.first.signature).wont_be_nil
+        end
+      end
+
+      it "sends turn one's streamed reasoning back and gets an answer" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/reasoning/_stream_text/replays_thinking_blocks") do
+          question = Riffer::Messages::User.new("What is 17 times 23? Reply with just the number.")
+
+          first = provider.stream_text(messages: [question], **thinking_options).to_a
+          parts = first.grep(Riffer::StreamEvents::ReasoningDone).map(&:part)
+          answer = first.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }.content
+
+          expect(first.grep(Riffer::StreamEvents::ReasoningDelta)).wont_be_empty
+          expect(parts).wont_be_empty
+          expect(parts.first.signature).wont_be_nil
+
+          history = [
+            question,
+            Riffer::Messages::Assistant.new(answer, reasoning: parts),
+            Riffer::Messages::User.new("Now add 10. Reply with just the number."),
+          ]
+          second = provider.stream_text(messages: history, **thinking_options).to_a
+          text_done = second.find { |e| e.is_a?(Riffer::StreamEvents::TextDone) }
+
+          expect(text_done.content).must_include "401"
+        end
+      end
+
+      it "replays reasoning across a tool call round trip" do
+        VCR.use_cassette("Riffer_Providers_Anthropic/reasoning/_generate_text/replays_thinking_with_tool_result") do
+          weather_tool = stub_tool("GetWeather") do
+            description "Get the current weather for a city"
+            params do
+              required :city, String, description: "The city name"
+            end
+          end
+          options = thinking_options.merge(tools: [weather_tool])
+          question = Riffer::Messages::User.new("What is the weather in Toronto?")
+
+          first = provider.generate_text(messages: [question], **options)
+          tool_call = first.tool_calls.first
+
+          expect(first.reasoning).wont_be_empty
+          expect(first.reasoning.first.signature).wont_be_nil
+          expect(tool_call.name).must_equal "get_weather"
+
+          history = [
+            question,
+            first,
+            Riffer::Messages::Tool.new(
+              "15 degrees Celsius and sunny.",
+              tool_call_id: tool_call.call_id,
+              name: tool_call.name,
+            ),
+          ]
+          second = provider.generate_text(messages: history, **options)
+
+          expect(second.content).must_include "15"
         end
       end
     end

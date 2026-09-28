@@ -1,0 +1,107 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-haiku-4-5-20251001","messages":[{"role":"user","content":"What
+        is 17 times 23? Reply with just the number."}],"max_tokens":2048,"thinking":{"type":"enabled","budget_tokens":1024}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.71.0
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.71.0
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 4.0.5
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '196'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 Sep 2026 20:49:47 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '10000000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-09-25T20:49:47Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '2000000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-09-25T20:49:47Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '20000'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '19999'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-09-25T20:49:47Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '12000000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-09-25T20:49:47Z'
+      Server:
+      - cloudflare
+      Request-Id:
+      - req_011CfQpLFzc4eZj3FHZdTqNG
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 448f7295-c0ce-49f3-9599-c18ee47b4fc1
+      Anthropic-Workspace-Id:
+      - wrkspc_01WVAqw8eVwpZsB2crLP6VPR
+      Traceresponse:
+      - 00-309d947a648b098a92c0c01ca567d2d2-dc9049943817572d-01
+      Vary:
+      - Accept-Encoding
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - a40ce5bd7c77760a-SEA
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1oYWlrdS00LTUtMjAyNTEwMDEiLCJpZCI6Im1zZ18wMTFDZlFwTEdNU3ZtU2Q2VFEzTUUxd0EiLCJ0eXBlIjoibWVzc2FnZSIsInJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50IjpbeyJ0eXBlIjoidGhpbmtpbmciLCJ0aGlua2luZyI6IjE3IHRpbWVzIDIzID0gP1xuXG5MZXQgbWUgY2FsY3VsYXRlIHRoaXM6XG4xNyDDlyAyMyA9IDE3IMOXICgyMCArIDMpXG49IDE3IMOXIDIwICsgMTcgw5cgM1xuPSAzNDAgKyA1MVxuPSAzOTEiLCJzaWduYXR1cmUiOiJFdVFDQ3BvQkNCSVlBaXBBcWcvc3lZdjRYNzBHWVM4NXBrM0xKUWNRd1MzOXRrWGNIaU1pT3VEd3NKSlNqMEtib3FvUFp1WUZZek51YkJWUXRVOGtvamJhSytzWmV4dXlnUkQ4RXpJWlkyeGhkV1JsTFdoaGFXdDFMVFF0TlMweU1ESTFNVEF3TVRnQVFnaDBhR2x1YTJsdVoxb2tORFE0WmpjeU9UVXRZekJqWlMwME9XWXpMVGsxT1RrdFl6RTRaV1UwTjJJMFptTXhxQUhydk52VkJoSU1OTkFZN1Z4NGtVd3lNckhWR2d5T0RieE5oV1F6bWdub1hKQWlNSDJoa3l3cWFYYVFsZHJOM1hMNGo4b2xQazREaU1UM29RWmRFV3lZUkpKOTVVSzNsWVZIeENmd2ZFRVU0eFlZMnlwM0JJYlphdUZSY0hrRXpNd2JlUlZ6MzJxZzQ5VkJUWUpnai9QWVNIMWdZalptUGRmRW45RjBsQkZMN1gxbjNaUUhxTldVRUh0T2ZvMm5HaHdhbWxVYWdnUTVWNXgvMkluc1ZGN1NCNm5XZHAxSnJ0MjNVVnJVUGxZZzN4cXJ4NVo5OGtoOW1lYU1xaklXSnF3NVljQTlVK2VXdy9zakxOUVlBUT09In0seyJ0eXBlIjoidGV4dCIsInRleHQiOiIzOTEifV0sImNvbnRhaW5lciI6bnVsbCwic3RvcF9yZWFzb24iOiJlbmRfdHVybiIsInN0b3Bfc2VxdWVuY2UiOm51bGwsInN0b3BfZGV0YWlscyI6bnVsbCwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjo1MSwiY2FjaGVfY3JlYXRpb25faW5wdXRfdG9rZW5zIjowLCJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6MCwiY2FjaGVfY3JlYXRpb24iOnsiZXBoZW1lcmFsXzVtX2lucHV0X3Rva2VucyI6MCwiZXBoZW1lcmFsXzFoX2lucHV0X3Rva2VucyI6MH0sIm91dHB1dF90b2tlbnMiOjczLCJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOnsidGhpbmtpbmdfdG9rZW5zIjo2N30sInNlcnZpY2VfdGllciI6InN0YW5kYXJkIiwiaW5mZXJlbmNlX2dlbyI6Im5vdF9hdmFpbGFibGUifSwiZGlhZ25vc3RpY3MiOm51bGx9
+  recorded_at: Fri, 25 Sep 2026 20:49:47 GMT
+recorded_with: VCR 6.4.0
