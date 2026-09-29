@@ -557,6 +557,15 @@ describe Riffer::Providers::Mock do
       Riffer::Providers::Repository.unregister(:mock_two)
     end
 
+    it "accepts a registered client" do
+      client = Object.new
+      Riffer::Providers::Repository.register(:mock_client, client: client) { Riffer::Providers::Mock }
+
+      expect(Riffer::Providers::Repository.build(:mock_client).send(:client)).must_be_same_as client
+    ensure
+      Riffer::Providers::Repository.unregister(:mock_client)
+    end
+
     it "leaves a provider built with .new unpriced" do
       Riffer.config.pricing.set("mock/riffer-1", input: 3.0, output: 15.0)
       provider = Riffer::Providers::Mock.new

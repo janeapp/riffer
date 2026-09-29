@@ -18,8 +18,8 @@ class Riffer::Providers::Mock < Riffer::Providers::Base
   attr_reader calls: Array[Hash[Symbol, untyped]]
 
   # --
-  # : (?responses: Array[Hash[Symbol, untyped]], ?key: (String | Symbol)?) -> void
-  def initialize: (?responses: Array[Hash[Symbol, untyped]], ?key: (String | Symbol)?) -> void
+  # : (?responses: Array[Hash[Symbol, untyped]], ?key: (String | Symbol)?, ?client: untyped) -> void
+  def initialize: (?responses: Array[Hash[Symbol, untyped]], ?key: (String | Symbol)?, ?client: untyped) -> void
 
   # --
   # : (String, ?tool_calls: Array[Hash[Symbol, untyped]], ?token_usage: Riffer::Providers::TokenUsage?, ?finish_reason: Symbol?, ?reasoning: Array[Hash[Symbol, untyped] | Riffer::Messages::Assistant::ReasoningPart]) -> void
