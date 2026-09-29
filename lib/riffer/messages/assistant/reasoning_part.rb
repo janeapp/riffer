@@ -12,7 +12,7 @@ class Riffer::Messages::Assistant::ReasoningPart
   attr_reader :signature #: String? # @dynamic signature
   attr_reader :id #: String? # @dynamic id
 
-  # Owned by the producing adapter (e.g. <tt>"anthropic-claude-v1"</tt>); adapters replay only the
+  # Owned by the producing adapter (e.g. <tt>"anthropic-messages-v1"</tt>); adapters replay only the
   # formats they recognize, so it is never validated here.
   attr_reader :format #: String? # @dynamic format
 

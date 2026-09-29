@@ -164,7 +164,7 @@ Each part carries:
 | `data`      | `String?` | The opaque payload, for `:encrypted` parts                                                                      |
 | `signature` | `String?` | The provider's signature over the part, when it issues one                                                      |
 | `id`        | `String?` | The provider's identifier for the part, when it issues one                                                      |
-| `format`    | `String?` | The wire format, owned by the adapter that produced the part (e.g. `"anthropic-claude-v1"`)                     |
+| `format`    | `String?` | The wire format, owned by the adapter that produced the part (e.g. `"anthropic-messages-v1"`)                   |
 
 A `type` outside the three values raises `Riffer::ArgumentError`. `format` is a free string riffer never validates — it exists so an adapter can tell its own parts apart from another adapter's.
 
